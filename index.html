@@ -167,12 +167,15 @@
                 </div>
             </div>
             
-            <div class="flex items-center gap-4">
-                <div class="hidden md:block text-right">
-                    <div id="userEmail" class="text-sm font-black text-slate-900">user@tasco.vn</div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-100 rounded-xl shadow-sm">
+                    <div class="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <div id="userEmail" class="text-[11px] font-black text-slate-700">user@tasco.vn</div>
                 </div>
-                <button onclick="handleLogout()" class="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-red-500 hover:border-red-100 transition-all">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <button onclick="handleLogout()" class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-red-500 hover:border-red-100 transition-all shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                 </button>
             </div>
         </header>
@@ -413,7 +416,7 @@
                 console.log("User detected, hiding login overlay...");
                 overlay.classList.add('hidden');
                 main.classList.remove('hidden');
-                document.getElementById('userEmail').innerText = user.email;
+                document.getElementById('userEmail').innerText = user.email || 'User';
             } else {
                 overlay.classList.remove('hidden');
                 main.classList.add('hidden');
