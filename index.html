@@ -401,7 +401,14 @@
             document.getElementById('searchHang').value = '';
             document.getElementById('searchHieu').value = '';
             document.getElementById('searchNam').value = '';
-            searchData();
+            
+            // Reset dữ liệu và giao diện thay vì load lại tất cả
+            MASTER_DATA = [];
+            CURRENT_PAGE = 1;
+            document.getElementById('resultsTableBody').innerHTML = '<tr><td colspan="6" class="px-6 py-40 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Sẵn sàng tra cứu</td></tr>';
+            document.getElementById('statCount').innerText = "0 kết quả";
+            document.getElementById('searchSummaryHeader').classList.add('hidden');
+            updatePaginationUI(0);
         }
 
         window.searchData = async function() {
