@@ -608,15 +608,28 @@
 
         async function confirmVerifyBulk(so_hsbt) {
             if (!so_hsbt) return;
+            console.log("Bắt đầu xác thực cho hồ sơ:", so_hsbt);
             const note = document.getElementById('verifyNote').value.trim();
             const btn = document.getElementById('confirmVerifyBtn');
             btn.disabled = true; btn.innerText = "ĐANG XỬ LÝ...";
             try {
                 const q = query(collection(db, "LichSuBaoGia"), where("so_hsbt", "==", so_hsbt));
                 const snap = await getDocs(q);
+                console.log("Tìm thấy số lượng tài liệu:", snap.size);
+                
+                if (snap.empty) {
+                    alert("Không tìm thấy dữ liệu phù hợp để xác thực.");
+                    return;
+                }
+
                 const batch = writeBatch(db);
-                snap.forEach(docSnap => batch.update(docSnap.ref, { verified: true, verification_note: note }));
+                snap.forEach(docSnap => {
+                    console.log("Thêm vào batch tài liệu ID:", docSnap.id);
+                    batch.update(docSnap.ref, { verified: true, verification_note: note });
+                });
+                
                 await batch.commit();
+                console.log("Xác thực hàng loạt thành công!");
                 
                 // Update local
                 MASTER_DATA.forEach(i => { 
@@ -628,7 +641,11 @@
                 renderTable();
                 closeModal('modalVerify');
                 document.getElementById('verifyNote').value = '';
-            } catch (e) { alert("Lỗi: " + e.message); }
+                alert("Xác thực thành công cho " + snap.size + " phụ tùng!");
+            } catch (e) { 
+                console.error("Firestore Update Error:", e);
+                alert("Lỗi Firestore (" + e.code + "): " + e.message); 
+            }
             finally { btn.disabled = false; btn.innerText = "XÁC NHẬN"; }
         }
 
