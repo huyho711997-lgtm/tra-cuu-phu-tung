@@ -3,246 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TASCO DLK - Hệ Thống Tra Cứu Phụ Tùng Cao Cấp</title>
+    <title>TASCO DLK - Tra Cứu Phụ Tùng</title>
     <!-- CSS & Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --primary-hover: #1d4ed8; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
-        .main-container { max-width: 1580px; margin: 0 auto; padding: 1.5rem; }
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #111827; }
+        .main-container { max-width: 1540px; margin: 0 auto; }
+        .pro-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .data-table thead th { background-color: #f9fafb; color: #4b5563; font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; padding: 16px 24px; border-bottom: 1px solid #e5e7eb; }
+        .data-table td { padding: 16px 24px; vertical-align: middle; border-bottom: 1px solid #f3f4f6; }
+        .badge-pro { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+        .badge-genuine { background-color: #def7ec; color: #03543f; border: 1px solid #bbf7d0; }
+        .badge-aftermarket { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .price-text { font-weight: 800; font-size: 17px; color: #1e40af; }
+        .input-pro { background-color: #f9fafb !important; border: 1px solid #d1d5db !important; border-radius: 10px !important; font-weight: 600 !important; font-size: 13px !important; height: 46px !important; }
+        .input-pro:focus { border-color: #2563eb !important; ring: 4px rgba(37, 99, 235, 0.1) !important; background-color: #fff !important; }
+        .stat-card { padding: 16px 24px; border-radius: 12px; background: white; border: 1px solid #e5e7eb; }
         
-        /* Unified Control Panel */
-        .control-panel {
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.03);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 2rem;
-        }
-        
-        .field-group { position: relative; }
-        .field-label {
-            font-size: 11px;
-            font-weight: 800;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .pro-input {
-            width: 100%;
-            height: 52px;
-            background: #f8fafc !important;
-            border: 1.5px solid #e2e8f0 !important;
-            border-radius: 14px !important;
-            padding-left: 44px !important;
-            font-size: 14px !important;
-            font-weight: 700 !important;
-            color: #1e293b;
-            transition: all 0.2s;
-        }
-        .pro-input:focus {
-            background: #ffffff !important;
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08) !important;
-        }
-        .field-icon { position: absolute; left: 16px; top: 40px; color: #94a3b8; z-index: 10; pointer-events: none; }
-
-        .multi-btn {
-            width: 100%;
-            height: 52px;
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 0 16px 0 44px;
-            font-size: 14px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.2s;
-        }
-        
-        /* Table Styling */
-        .data-section { background: white; border-radius: 28px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04); }
-        .data-table thead th { background: #f8fafc; padding: 18px 24px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; }
-        .data-table td { padding: 18px 24px; vertical-align: middle; border-bottom: 1px solid #f8fafc; }
-        
-        .badge-pro { padding: 4px 14px; border-radius: 99px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; }
-        .badge-genuine { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
-        .badge-aftermarket { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        
-        .price-text { font-size: 18px; font-weight: 900; color: #0f172a; }
-
-        /* New Search Button */
+        /* SEARCH Button Style */
         .search-btn {
-            width: 100%;
-            height: 52px;
-            background: var(--primary);
+            height: 46px;
+            background: #1d4ed8;
             color: white;
-            font-weight: 900;
+            font-weight: 800;
             text-transform: uppercase;
-            border-radius: 14px;
-            transition: all 0.3s;
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
+            padding: 0 24px;
+            transition: all 0.2s;
             letter-spacing: 0.05em;
         }
-        .search-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.4); }
-        .search-btn:active { transform: translateY(0); }
+        .search-btn:hover { background: #1e40af; transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 
-        .index-error { background: #fff1f2; border: 1px solid #fecdd3; padding: 1rem; border-radius: 16px; color: #9f1239; font-size: 13px; margin-bottom: 1.5rem; display: none; }
-        .index-error a { font-weight: 800; text-decoration: underline; color: #e11d48; }
+        #dropdownHieu { width: 300px; max-height: 300px; overflow-y: auto; padding: 8px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .checkbox-item:hover { background-color: #f3f4f6; }
     </style>
 </head>
 <body class="antialiased">
 
-    <div class="main-container">
-        <!-- Logo Area -->
-        <header class="flex items-center justify-between mb-10 px-2">
-            <div class="flex items-center gap-5">
-                <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/30">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <!-- Header -->
+    <nav class="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-50">
+        <div class="main-container flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-sm">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-black text-slate-900 tracking-tighter">TASCO <span class="text-blue-600">DLK</span></h1>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.25em] mt-1.5">Intelligent Parts Search Engine</p>
+                    <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">TASCO <span class="text-blue-700">DLK</span></h1>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Hệ thống tra cứu phụ tùng</p>
                 </div>
-            </div>
-        </header>
-
-        <!-- Index Error Banner -->
-        <div id="indexErrorBanner" class="index-error">
-            <div class="flex items-start gap-3">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                <p id="indexErrorMessage"></p>
             </div>
         </div>
+    </nav>
 
-        <!-- Unified Control Panel -->
-        <div class="control-panel">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
-                <div class="md:col-span-2 field-group">
-                    <label class="field-label">Hãng xe</label>
-                    <svg class="w-5 h-5 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    <select id="filterHang" onchange="updateHieuXeDropdown()" class="pro-input appearance-none">
-                        <option value="">Tất cả hãng</option>
+    <main class="main-container px-8 py-8">
+        
+        <!-- Search Card -->
+        <div class="pro-card p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                <div>
+                    <label class="block mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hãng xe</label>
+                    <select id="filterHang" onchange="updateHieuXeDropdown()" class="input-pro block w-full px-4">
+                        <option value="">Chọn hãng</option>
                     </select>
                 </div>
-                <div class="md:col-span-3 field-group">
-                    <label class="field-label">Dòng xe</label>
-                    <svg class="w-5 h-5 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    <button id="multiHieuBtn" data-dropdown-toggle="dropdownHieu" class="multi-btn">
-                        <span class="truncate">Tất cả dòng xe</span>
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+                <div>
+                    <label class="block mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hiệu xe (Chọn nhiều)</label>
+                    <button id="multiHieuBtn" data-dropdown-toggle="dropdownHieu" class="input-pro w-full flex items-center justify-between px-4 text-gray-400">
+                        <span class="truncate">Chọn hiệu xe...</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                     </button>
-                    <div id="dropdownHieu" class="z-50 hidden bg-white rounded-2xl shadow-2xl border border-slate-100 w-80 p-3">
-                        <div id="hieuXeCheckboxes" class="max-h-64 overflow-y-auto space-y-1">
-                            <p class="text-[11px] text-slate-400 italic p-3">Chọn hãng xe trước</p>
+                    <div id="dropdownHieu" class="z-50 hidden bg-white rounded-xl shadow-xl border border-gray-100">
+                        <div id="hieuXeCheckboxes" class="p-2 space-y-1">
+                            <p class="text-[11px] text-gray-400 italic p-3">Chọn hãng xe trước</p>
                         </div>
                     </div>
                 </div>
-                <div class="md:col-span-2 field-group">
-                    <label class="field-label">Năm SX</label>
-                    <svg class="w-5 h-5 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    <select id="filterNam" class="pro-input appearance-none">
+                <div>
+                    <label class="block mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Năm SX</label>
+                    <select id="filterNam" class="input-pro block w-full px-4">
                         <option value="">Tất cả</option>
                     </select>
                 </div>
-                <div class="md:col-span-2 field-group">
-                    <label class="field-label">Loại hàng</label>
-                    <svg class="w-5 h-5 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    <select id="filterType" class="pro-input appearance-none">
-                        <option value="all">Tất cả loại hàng</option>
-                        <option value="genuine">Chính hãng</option>
-                        <option value="aftermarket">Thay thế / Ngoài</option>
-                    </select>
+                <div>
+                    <label class="block mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Từ khóa</label>
+                    <input type="text" id="searchInput" placeholder="Tìm tên phụ tùng..." class="input-pro block w-full px-4" onkeydown="if(event.key==='Enter') searchData()">
                 </div>
-                <div class="md:col-span-3">
-                    <button onclick="searchData()" class="search-btn">
+                <div>
+                    <button onclick="searchData()" class="search-btn w-full">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         SEARCH
                     </button>
                 </div>
             </div>
-            
-            <div class="mt-8 pt-8 border-t border-slate-100 flex items-center justify-between">
-                <div class="flex items-center gap-10">
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Kết quả tìm được</span>
-                        <span id="statCount" class="text-2xl font-black text-slate-900">0</span>
-                    </div>
-                    <div class="h-10 w-px bg-slate-100"></div>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Giá linh kiện</span>
-                        <select id="sortPrice" onchange="searchData()" class="text-sm font-black border-none p-0 bg-transparent focus:ring-0 text-blue-600 cursor-pointer">
-                            <option value="none">Sắp xếp mặc định</option>
-                            <option value="asc">Giá thấp đến cao</option>
-                            <option value="desc">Giá cao đến thấp</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div id="loadingIndicator" class="hidden flex items-center gap-3 px-5 py-2.5 bg-blue-50 text-blue-600 rounded-2xl">
-                    <div class="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
-                    <span class="text-[11px] font-black uppercase">Searching Data...</span>
-                </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="stat-card">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tổng kết quả</span>
+                <p id="statCount" class="text-2xl font-extrabold text-blue-700 mt-1">0</p>
+            </div>
+            <div class="stat-card">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Loại hàng</span>
+                <select id="filterType" onchange="applyLocalFilters()" class="text-sm font-bold border-none p-0 bg-transparent focus:ring-0 text-gray-900 cursor-pointer mt-1">
+                    <option value="all">Tất cả loại hàng</option>
+                    <option value="genuine">Chính hãng</option>
+                    <option value="aftermarket">Thay thế / Ngoài</option>
+                </select>
+            </div>
+            <div class="stat-card">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sắp xếp đơn giá</span>
+                <select id="sortPrice" onchange="applyLocalFilters()" class="text-sm font-bold border-none p-0 bg-transparent focus:ring-0 text-gray-900 cursor-pointer mt-1">
+                    <option value="none">Mặc định</option>
+                    <option value="asc">Từ thấp đến cao</option>
+                    <option value="desc">Từ cao đến thấp</option>
+                </select>
             </div>
         </div>
 
-        <!-- Data Section -->
-        <div class="data-section">
-            <div class="px-8 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                <div class="flex items-center gap-6">
-                    <div class="flex items-center gap-3">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Hiển thị:</span>
-                        <select id="pageSize" onchange="changePageSize()" class="bg-white border border-slate-200 text-[11px] font-bold rounded-xl p-1.5 px-4 shadow-sm">
-                            <option value="10">10 dòng</option>
-                            <option value="25">25 dòng</option>
-                            <option value="50">50 dòng</option>
-                        </select>
-                    </div>
+        <!-- Result Table -->
+        <div class="pro-card overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <label class="text-[11px] font-bold text-gray-400 uppercase">Hiển thị:</label>
+                    <select id="pageSize" onchange="changePageSize()" class="bg-white border border-gray-300 text-[11px] font-bold rounded-lg p-1.5 px-3">
+                        <option value="10">10 dòng</option>
+                        <option value="25">25 dòng</option>
+                        <option value="50">50 dòng</option>
+                    </select>
+                    <div id="loadingIndicator" class="hidden animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
                 </div>
-                
                 <div class="flex items-center gap-6">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest" id="pageInfo">Trang 0 / 0</span>
-                    <div class="flex gap-2">
-                        <button id="btnPrev" onclick="changePage(-1)" class="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 disabled:opacity-30 transition-all shadow-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+                    <span class="text-[11px] font-bold text-gray-400 uppercase" id="pageInfo">Trang 0 / 0</span>
+                    <div class="flex gap-1">
+                        <button id="btnPrev" onclick="changePage(-1)" class="p-2 bg-white border border-gray-300 rounded-lg text-gray-400 hover:text-blue-600 disabled:opacity-30">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
-                        <button id="btnNext" onclick="changePage(1)" class="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 disabled:opacity-30 transition-all shadow-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                        <button id="btnNext" onclick="changePage(1)" class="p-2 bg-white border border-gray-300 rounded-lg text-gray-400 hover:text-blue-600 disabled:opacity-30">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
                 </div>
             </div>
             
-            <div class="overflow-x-auto min-h-[450px]">
+            <div class="overflow-x-auto min-h-[400px]">
                 <table class="data-table w-full text-sm text-left">
                     <thead>
                         <tr>
                             <th>Phụ tùng</th>
                             <th>Phân loại</th>
                             <th>Thông tin xe</th>
-                            <th>Đơn vị báo giá</th>
-                            <th class="text-right">Đơn giá duyệt</th>
+                            <th>Garage báo giá</th>
+                            <th class="text-right">Đơn giá</th>
                             <th class="text-center">#</th>
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody">
-                        <tr><td colspan="6" class="px-6 py-40 text-center text-slate-300 font-bold uppercase italic text-xs tracking-widest">Vui lòng thiết lập bộ lọc tra cứu</td></tr>
+                        <tr><td colspan="6" class="px-6 py-32 text-center text-gray-300 font-bold uppercase italic text-xs">Vui lòng tra cứu dữ liệu</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
+    </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script type="module">
@@ -262,7 +191,8 @@
         const db = getFirestore(app);
 
         let CAY_GIA_PHA = {}; let NAM_ALL = []; 
-        let MASTER_DATA = []; let CURRENT_PAGE = 1; let ITEMS_PER_PAGE = 10;
+        let MASTER_DATA = []; let FILTERED_DATA = []; 
+        let CURRENT_PAGE = 1; let ITEMS_PER_PAGE = 10;
 
         async function loadFilters() {
             try {
@@ -283,22 +213,26 @@
             const container = document.getElementById('hieuXeCheckboxes');
             const btn = document.getElementById('multiHieuBtn');
             container.innerHTML = '';
-            btn.innerHTML = '<span>Tất cả dòng xe</span><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>';
+            btn.innerHTML = '<span class="truncate">Chọn hiệu xe...</span><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>';
             if (hang && CAY_GIA_PHA[hang]) {
                 Object.keys(CAY_GIA_PHA[hang]).sort().forEach(hieu => {
                     const label = document.createElement('label');
-                    label.className = 'flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition-all';
-                    label.innerHTML = `<input type="checkbox" name="hieu_xe" value="${hieu}" onchange="onHieuXeChange()" class="w-5 h-5 text-blue-600 rounded-md border-slate-200"> <span class="text-sm font-bold text-slate-700">${hieu}</span>`;
+                    label.className = 'checkbox-item';
+                    label.innerHTML = `<input type="checkbox" name="hieu_xe" value="${hieu}" onchange="onHieuXeChange()" class="w-4 h-4 text-blue-600 rounded"> <span>${hieu}</span>`;
                     container.appendChild(label);
                 });
-            } else { container.innerHTML = '<p class="text-[11px] text-slate-400 italic p-3">Chọn hãng xe trước</p>'; }
+            } else { container.innerHTML = '<p class="text-[11px] text-gray-400 italic p-3">Chọn hãng xe trước</p>'; }
             fillNamSXDropdown(NAM_ALL);
         }
 
         window.onHieuXeChange = function() {
             const selected = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value);
             const btn = document.getElementById('multiHieuBtn');
-            btn.innerHTML = `<span class="truncate">${selected.length > 0 ? selected.length + ' dòng xe đã chọn' : 'Tất cả dòng xe'}</span><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>`;
+            if (selected.length > 0) {
+                btn.innerHTML = `<span class="truncate text-gray-900">${selected.length} hiệu xe đã chọn</span><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>`;
+            } else {
+                btn.innerHTML = '<span class="truncate">Chọn hiệu xe...</span><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>';
+            }
             updateNamSXDropdown();
         }
 
@@ -322,14 +256,11 @@
             const hang = document.getElementById('filterHang').value;
             const hieus = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value);
             const nam = document.getElementById('filterNam').value;
-            const type = document.getElementById('filterType').value;
-            const sortOrder = document.getElementById('sortPrice').value;
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
             const tableBody = document.getElementById('resultsTableBody');
             const loading = document.getElementById('loadingIndicator');
-            const errorBanner = document.getElementById('indexErrorBanner');
 
-            errorBanner.style.display = 'none';
-            tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center"><div class="flex justify-center items-center gap-2"><div class="w-3 h-3 bg-blue-600 rounded-full animate-bounce"></div><div class="w-3 h-3 bg-blue-600 rounded-full animate-bounce [animation-delay:0.2s]"></div><div class="w-3 h-3 bg-blue-600 rounded-full animate-bounce [animation-delay:0.4s]"></div></div></td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center"><div class="animate-pulse">Đang tải dữ liệu...</div></td></tr>';
             loading.classList.remove('hidden');
 
             let q = collection(db, "LichSuBaoGia");
@@ -337,7 +268,6 @@
             if (hang) constraints.push(where("hang_xe", "==", hang));
             if (hieus.length > 0) constraints.push(where("hieu_xe", "in", hieus.slice(0, 30)));
             if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
-            if (type === 'genuine') constraints.push(where("chinh_hang", "==", "Chính hãng"));
             constraints.push(limit(500)); 
 
             try {
@@ -346,60 +276,64 @@
                 MASTER_DATA = [];
                 snap.forEach(doc => {
                     const item = doc.data();
-                    const isGenuine = (item.chinh_hang || '').toLowerCase().includes("chính hãng");
-                    if (type === 'aftermarket' && isGenuine) return;
-                    MASTER_DATA.push(item);
+                    if (!search || (item.ten_phu_tung && item.ten_phu_tung.toLowerCase().includes(search))) MASTER_DATA.push(item);
                 });
-                
-                // Sort local
-                if (sortOrder === 'asc') MASTER_DATA.sort((a,b) => (a.gia_duyet || 0) - (b.gia_duyet || 0));
-                else if (sortOrder === 'desc') MASTER_DATA.sort((a,b) => (b.gia_duyet || 0) - (a.gia_duyet || 0));
-
-                document.getElementById('statCount').innerText = MASTER_DATA.length;
-                CURRENT_PAGE = 1;
-                renderTable();
+                applyLocalFilters();
             } catch (e) {
                 loading.classList.add('hidden');
                 console.error(e);
-                if (e.message.includes("index")) {
-                    errorBanner.style.display = 'block';
-                    document.getElementById('indexErrorMessage').innerHTML = `Lỗi Index: <a href="${e.message.match(/https:\/\/console\.firebase\.google\.com[^\s]*/)[0]}" target="_blank">Nhấn vào đây để tạo Index</a>`;
-                }
-                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center text-red-500 font-bold">LỖI TRUY VẤN</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center text-red-500 font-bold">LỖI KẾT NỐI: Vui lòng kiểm tra Index Firestore</td></tr>';
             }
+        }
+
+        window.applyLocalFilters = function() {
+            const typeFilter = document.getElementById('filterType').value;
+            const sortOrder = document.getElementById('sortPrice').value;
+            FILTERED_DATA = MASTER_DATA.filter(item => {
+                const val = (item.chinh_hang || '').toLowerCase();
+                if (typeFilter === 'all') return true;
+                if (typeFilter === 'genuine') return val.includes("chính hãng");
+                if (typeFilter === 'aftermarket') return !val.includes("chính hãng");
+                return true;
+            });
+            if (sortOrder === 'asc') FILTERED_DATA.sort((a,b) => (a.gia_duyet || 0) - (b.gia_duyet || 0));
+            else if (sortOrder === 'desc') FILTERED_DATA.sort((a,b) => (b.gia_duyet || 0) - (a.gia_duyet || 0));
+            document.getElementById('statCount').innerText = FILTERED_DATA.length;
+            CURRENT_PAGE = 1;
+            renderTable();
         }
 
         function renderTable() {
             const tableBody = document.getElementById('resultsTableBody');
-            const totalPages = Math.ceil(MASTER_DATA.length / ITEMS_PER_PAGE);
-            if (MASTER_DATA.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-32 text-center text-slate-300 font-bold uppercase italic text-xs tracking-widest">Không có dữ liệu phù hợp</td></tr>';
+            const totalPages = Math.ceil(FILTERED_DATA.length / ITEMS_PER_PAGE);
+            if (FILTERED_DATA.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-32 text-center text-gray-300 font-bold uppercase italic text-xs">Không có kết quả</td></tr>';
                 updatePaginationUI(0); return;
             }
             const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
-            const pageData = MASTER_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+            const pageData = FILTERED_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE);
             tableBody.innerHTML = '';
             pageData.forEach(item => {
                 const isGenuine = (item.chinh_hang || '').toLowerCase().includes("chính hãng");
                 const badge = isGenuine ? '<span class="badge-pro badge-genuine">Chính hãng</span>' : '<span class="badge-pro badge-aftermarket">Thay thế</span>';
                 tableBody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-all">
-                        <td class="px-8 py-5">
-                            <div class="text-[14px] font-black text-slate-900 uppercase">${item.ten_phu_tung}</div>
-                            <div class="text-[10px] text-slate-400 font-bold mt-1.5 uppercase">${item.so_hsbt || 'N/A'}</div>
+                    <tr>
+                        <td class="px-6 py-4">
+                            <div class="text-[13px] font-bold text-gray-900 uppercase">${item.ten_phu_tung}</div>
+                            <div class="text-[10px] text-gray-400 mt-1 uppercase">${item.so_hsbt || 'N/A'}</div>
                         </td>
-                        <td class="px-8 py-5">${badge}</td>
-                        <td class="px-8 py-5">
-                            <div class="text-[12px] font-extrabold text-slate-700">${item.hang_xe} ${item.hieu_xe}</div>
-                            <div class="text-[10px] text-slate-400 font-bold mt-1 uppercase">SX: ${item.nam_sx || '0'}</div>
+                        <td class="px-6 py-4">${badge}</td>
+                        <td class="px-6 py-4">
+                            <div class="text-[11px] font-bold text-gray-700">${item.hang_xe} ${item.hieu_xe}</div>
+                            <div class="text-[10px] text-gray-400 mt-1 uppercase">Sản xuất: ${item.nam_sx || '0'}</div>
                         </td>
-                        <td class="px-8 py-5">
-                            <div class="text-[12px] font-bold text-slate-700 truncate max-w-[200px]">${item.ten_garage || 'KHÁC'}</div>
-                            <div class="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-wider">${item.tinh_thanh || 'Toàn quốc'}</div>
+                        <td class="px-6 py-4">
+                            <div class="text-[11px] font-bold text-gray-700 truncate max-w-[180px]">${item.ten_garage || 'KHÁC'}</div>
+                            <div class="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">${item.tinh_thanh || 'Toàn quốc'}</div>
                         </td>
-                        <td class="px-8 py-5 text-right"><div class="price-text">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)} <span class="text-[10px] opacity-40">đ</span></div></td>
-                        <td class="px-8 py-5 text-center">
-                            <button onclick="copyPrice('${item.gia_duyet}')" class="p-3 text-slate-300 hover:text-blue-600 transition-all"><svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></button>
+                        <td class="px-6 py-4 text-right"><div class="price-text">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)} <span class="text-[10px] opacity-40">đ</span></div></td>
+                        <td class="px-6 py-4 text-center">
+                            <button onclick="copyPrice('${item.gia_duyet}')" class="p-2 text-gray-300 hover:text-blue-600 transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></button>
                         </td>
                     </tr>
                 `;
@@ -408,14 +342,14 @@
         }
 
         function updatePaginationUI(totalPages) {
-            document.getElementById('pageInfo').innerText = `Trang ${MASTER_DATA.length > 0 ? CURRENT_PAGE : 0} / ${totalPages}`;
+            document.getElementById('pageInfo').innerText = `Trang ${FILTERED_DATA.length > 0 ? CURRENT_PAGE : 0} / ${totalPages}`;
             document.getElementById('btnPrev').disabled = CURRENT_PAGE <= 1;
             document.getElementById('btnNext').disabled = CURRENT_PAGE >= totalPages;
         }
 
-        window.changePage = (offset) => { CURRENT_PAGE += offset; renderTable(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        window.changePage = (offset) => { CURRENT_PAGE += offset; renderTable(); }
         window.changePageSize = () => { ITEMS_PER_PAGE = parseInt(document.getElementById('pageSize').value); CURRENT_PAGE = 1; renderTable(); }
-        window.copyPrice = (p) => { navigator.clipboard.writeText(p).then(() => alert("Đã copy đơn giá!")); }
+        window.copyPrice = (p) => { navigator.clipboard.writeText(p).then(() => alert("Đã copy giá!")); }
 
         loadFilters();
     </script>
