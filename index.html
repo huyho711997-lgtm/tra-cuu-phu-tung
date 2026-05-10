@@ -265,6 +265,7 @@
                             <th>Loại hàng</th>
                             <th>Thông tin xe</th>
                             <th>Garage báo giá</th>
+                            <th>Ngày báo giá</th>
                             <th class="text-right">Đơn giá</th>
                             <th class="text-center">#</th>
                         </tr>
@@ -491,6 +492,11 @@
             pageData.forEach(item => {
                 const isGenuine = (item.chinh_hang || '').toLowerCase().includes("chính hãng");
                 const badge = isGenuine ? '<span class="badge-pro badge-genuine">Chính hãng</span>' : '<span class="badge-pro badge-aftermarket">Thay thế</span>';
+                
+                // Định dạng ngày báo giá
+                const ngayRaw = item.ngay_bao_gia || '';
+                const ngayFormatted = ngayRaw ? ngayRaw.split(' ')[0].split('-').reverse().join('/') : 'N/A';
+
                 tableBody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition-all">
                         <td class="px-6 py-4">
@@ -505,6 +511,9 @@
                         <td class="px-6 py-4">
                             <div class="text-[11px] font-bold text-slate-700 truncate max-w-[180px]">${item.ten_garage || 'KHÁC'}</div>
                             <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${item.tinh_thanh || 'Toàn quốc'}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-[11px] font-bold text-slate-600">${ngayFormatted}</div>
                         </td>
                         <td class="px-6 py-4 text-right"><div class="price-text">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)} <span class="text-[10px] opacity-40">đ</span></div></td>
                         <td class="px-6 py-4 text-center">
