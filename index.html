@@ -22,6 +22,27 @@
         .price-text { font-weight: 800; font-size: 16px; color: #059669; }
         .input-pro { background-color: #ffffff !important; border: 1px solid #d1d5db !important; border-radius: 8px !important; font-weight: 600 !important; font-size: 13px !important; }
         .stat-card { padding: 12px 20px; border-radius: 12px; background: white; border: 1px solid #e5e7eb; display: flex; flex-direction: column; }
+        
+        /* Multi-select styling */
+        #hieuXeContainer {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 8px;
+            background: white;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .checkbox-item:hover { background-color: #f3f4f6; }
     </style>
 </head>
 <body class="antialiased">
@@ -51,18 +72,18 @@
         
         <!-- Search Panel -->
         <div class="pro-card p-6 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-start">
                 <div>
                     <label class="block mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hãng xe</label>
                     <select id="filterHang" onchange="updateHieuXeDropdown()" class="input-pro block w-full p-2">
-                        <option value="">Tất cả</option>
+                        <option value="">Chọn hãng</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hiệu xe / Model</label>
-                    <select id="filterHieu" onchange="updateNamSXDropdown()" class="input-pro block w-full p-2">
-                        <option value="">Tất cả</option>
-                    </select>
+                    <label class="block mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hiệu xe (Chọn nhiều)</label>
+                    <div id="hieuXeContainer">
+                        <p class="text-[11px] text-gray-400 italic p-2">Vui lòng chọn hãng xe trước</p>
+                    </div>
                 </div>
                 <div class="w-24">
                     <label class="block mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Năm SX</label>
@@ -74,8 +95,8 @@
                     <label class="block mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Từ khóa linh kiện</label>
                     <input type="text" id="searchInput" placeholder="Tìm tên phụ tùng..." class="input-pro block w-full p-2" onkeydown="if(event.key==='Enter') searchData()">
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="searchData()" class="flex-1 text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-lg text-sm px-4 py-2.5 flex items-center justify-center gap-2 shadow-sm">
+                <div class="pt-6">
+                    <button onclick="searchData()" class="w-full text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-lg text-sm px-4 py-2.5 flex items-center justify-center gap-2 shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         Tra cứu
                     </button>
@@ -84,29 +105,25 @@
         </div>
 
         <!-- Quick Stats & Advanced Filters -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div class="stat-card">
-                <span class="text-[10px] font-bold text-gray-400 uppercase">Tổng số báo giá</span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase">Tổng số báo giá tìm thấy</span>
                 <span id="statCount" class="text-xl font-black text-blue-700">0</span>
             </div>
             <div class="stat-card">
-                <span class="text-[10px] font-bold text-gray-400 uppercase">Giá trung bình</span>
-                <span id="statAvg" class="text-xl font-black text-emerald-600">0 đ</span>
-            </div>
-            <div class="stat-card">
-                <span class="text-[10px] font-bold text-gray-400 uppercase">Lọc theo loại</span>
-                <select id="filterType" onchange="applyLocalFilters()" class="text-xs font-bold border-none p-0 bg-transparent focus:ring-0 text-gray-600 cursor-pointer">
+                <span class="text-[10px] font-bold text-gray-400 uppercase">Lọc theo loại hàng</span>
+                <select id="filterType" onchange="applyLocalFilters()" class="text-xs font-bold border-none p-0 bg-transparent focus:ring-0 text-gray-600 cursor-pointer mt-1">
                     <option value="all">Tất cả loại hàng</option>
                     <option value="genuine">Chính hãng</option>
                     <option value="aftermarket">Thay thế / Ngoài</option>
                 </select>
             </div>
             <div class="stat-card">
-                <span class="text-[10px] font-bold text-gray-400 uppercase">Sắp xếp theo giá</span>
-                <select id="sortPrice" onchange="applyLocalFilters()" class="text-xs font-bold border-none p-0 bg-transparent focus:ring-0 text-gray-600 cursor-pointer">
+                <span class="text-[10px] font-bold text-gray-400 uppercase">Sắp xếp đơn giá</span>
+                <select id="sortPrice" onchange="applyLocalFilters()" class="text-xs font-bold border-none p-0 bg-transparent focus:ring-0 text-gray-600 cursor-pointer mt-1">
                     <option value="none">Mặc định</option>
-                    <option value="asc">Giá thấp đến cao</option>
-                    <option value="desc">Giá cao đến thấp</option>
+                    <option value="asc">Giá thấp nhất lên trước</option>
+                    <option value="desc">Giá cao nhất lên trước</option>
                 </select>
             </div>
         </div>
@@ -136,7 +153,7 @@
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody">
-                        <tr><td colspan="6" class="px-6 py-32 text-center text-gray-400 font-bold uppercase tracking-widest opacity-30">Chưa có dữ liệu tra cứu</td></tr>
+                        <tr><td colspan="6" class="px-6 py-32 text-center text-gray-400 font-bold uppercase tracking-widest opacity-30">Vui lòng thực hiện tìm kiếm</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -172,8 +189,8 @@
 
         let CAY_GIA_PHA = {}; 
         let NAM_ALL = []; 
-        let MASTER_DATA = []; // Toàn bộ kết quả fetch về
-        let FILTERED_DATA = []; // Kết quả sau khi lọc local
+        let MASTER_DATA = []; 
+        let FILTERED_DATA = []; 
         let CURRENT_PAGE = 1;
         const ITEMS_PER_PAGE = 10;
 
@@ -193,19 +210,32 @@
 
         window.updateHieuXeDropdown = function() {
             const hang = document.getElementById('filterHang').value;
-            const selectHieu = document.getElementById('filterHieu');
-            selectHieu.innerHTML = '<option value="">Tất cả</option>';
+            const container = document.getElementById('hieuXeContainer');
+            container.innerHTML = '';
+            
             if (hang && CAY_GIA_PHA[hang]) {
-                Object.keys(CAY_GIA_PHA[hang]).sort().forEach(hieu => selectHieu.add(new Option(hieu, hieu)));
+                Object.keys(CAY_GIA_PHA[hang]).sort().forEach(hieu => {
+                    const label = document.createElement('label');
+                    label.className = 'checkbox-item';
+                    label.innerHTML = `<input type="checkbox" name="hieu_xe" value="${hieu}" onchange="updateNamSXDropdown()" class="w-4 h-4 text-blue-600 rounded"> ${hieu}`;
+                    container.appendChild(label);
+                });
+            } else {
+                container.innerHTML = '<p class="text-[11px] text-gray-400 italic p-2">Vui lòng chọn hãng xe trước</p>';
             }
             fillNamSXDropdown(NAM_ALL);
         }
 
         window.updateNamSXDropdown = function() {
             const hang = document.getElementById('filterHang').value;
-            const hieu = document.getElementById('filterHieu').value;
-            if (hang && hieu && CAY_GIA_PHA[hang][hieu]) {
-                fillNamSXDropdown(CAY_GIA_PHA[hang][hieu]);
+            const selectedHieus = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value);
+            
+            let combinedNams = new Set();
+            if (hang && selectedHieus.length > 0) {
+                selectedHieus.forEach(h => {
+                    if (CAY_GIA_PHA[hang][h]) CAY_GIA_PHA[hang][h].forEach(n => combinedNams.add(n));
+                });
+                fillNamSXDropdown(Array.from(combinedNams));
             } else {
                 fillNamSXDropdown(NAM_ALL);
             }
@@ -219,7 +249,7 @@
 
         window.searchData = async function() {
             const hang = document.getElementById('filterHang').value;
-            const hieu = document.getElementById('filterHieu').value;
+            const selectedHieus = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value);
             const nam = document.getElementById('filterNam').value;
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
             
@@ -228,28 +258,30 @@
             const loading = document.getElementById('loadingIndicator');
 
             tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center"><div class="flex justify-center items-center gap-2"><div class="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:0.2s]"></div><div class="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:0.4s]"></div></div></td></tr>';
-            statusArea.innerText = "Đang kết nối...";
+            statusArea.innerText = "Đang truy vấn...";
             loading.classList.remove('hidden');
 
             let q = collection(db, "LichSuBaoGia");
             let constraints = [];
             if (hang) constraints.push(where("hang_xe", "==", hang));
-            if (hieu) constraints.push(where("hieu_xe", "==", hieu));
+            
+            // Xử lý chọn nhiều hiệu xe (Giới hạn tối đa 30 theo Firestore 'in' query)
+            if (selectedHieus.length > 0) {
+                constraints.push(where("hieu_xe", "in", selectedHieus.slice(0, 30)));
+            }
+            
             if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
-            constraints.push(limit(300)); // Lấy bộ data đủ lớn để phân trang local
+            constraints.push(limit(500)); 
 
             try {
                 const snap = await getDocs(query(q, ...constraints));
                 loading.classList.add('hidden');
-                
                 MASTER_DATA = [];
                 snap.forEach(doc => {
                     const item = doc.data();
                     if (!search || (item.ten_phu_tung && item.ten_phu_tung.toLowerCase().includes(search))) MASTER_DATA.push(item);
                 });
-
                 applyLocalFilters();
-
             } catch (e) {
                 console.error(e);
                 tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center text-red-500 font-bold">Lỗi hệ thống.</td></tr>';
@@ -259,55 +291,35 @@
         window.applyLocalFilters = function() {
             const typeFilter = document.getElementById('filterType').value;
             const sortOrder = document.getElementById('sortPrice').value;
-
-            // 1. Lọc theo loại
             FILTERED_DATA = MASTER_DATA.filter(item => {
                 if (typeFilter === 'all') return true;
                 if (typeFilter === 'genuine') return item.chinh_hang === "Chính hãng";
                 if (typeFilter === 'aftermarket') return item.chinh_hang !== "Chính hãng";
                 return true;
             });
-
-            // 2. Sắp xếp
             if (sortOrder === 'asc') FILTERED_DATA.sort((a,b) => (a.gia_duyet || 0) - (b.gia_duyet || 0));
             else if (sortOrder === 'desc') FILTERED_DATA.sort((a,b) => (b.gia_duyet || 0) - (a.gia_duyet || 0));
-
-            // 3. Update Stats
-            updateStats();
-
-            // 4. Reset phân trang và render
+            document.getElementById('statCount').innerText = FILTERED_DATA.length;
             CURRENT_PAGE = 1;
             renderTable();
-        }
-
-        function updateStats() {
-            document.getElementById('statCount').innerText = FILTERED_DATA.length;
-            const avg = FILTERED_DATA.length > 0 
-                ? FILTERED_DATA.reduce((acc, curr) => acc + (curr.gia_duyet || 0), 0) / FILTERED_DATA.length 
-                : 0;
-            document.getElementById('statAvg').innerText = new Intl.NumberFormat('vi-VN').format(Math.round(avg)) + " đ";
         }
 
         function renderTable() {
             const tableBody = document.getElementById('resultsTableBody');
             const totalPages = Math.ceil(FILTERED_DATA.length / ITEMS_PER_PAGE);
-            
             if (FILTERED_DATA.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center font-bold text-gray-400 italic uppercase tracking-widest opacity-40">Không có kết quả phù hợp</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center font-bold text-gray-400 italic">Không có kết quả phù hợp</td></tr>';
                 updatePaginationUI(0);
                 return;
             }
-
             const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
             const pageData = FILTERED_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
             tableBody.innerHTML = '';
             pageData.forEach(item => {
                 const isGenuine = item.chinh_hang === "Chính hãng";
                 const badgeHtml = isGenuine ? 
                     `<span class="badge-pro badge-genuine"><svg class="w-2.5 h-2.5 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.9L10 1.55l7.834 3.35a1 1 0 01.666.927V15c0 4.075-3.35 7.45-7.834 8.7a1 1 0 01-.666 0C5.516 22.45 2.166 19.075 2.166 15V5.827a1 1 0 01.666-.927zM10 15a1 1 0 100-2 1 1 0 000 2zm1-4a1 1 0 11-2 0V7a1 1 0 112 0v4z" clip-rule="evenodd"></path></svg>Chính hãng</span>` : 
                     `<span class="badge-pro badge-aftermarket"><svg class="w-2.5 h-2.5 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2A1 1 0 004 4.236v5c0 .342.176.66.467.847L4.553 7.106z"></path></svg>Ngoài/Thay thế</span>`;
-
                 const rowHtml = `
                     <tr class="hover:bg-gray-50/80 transition-colors">
                         <td class="px-6 py-4">
@@ -336,9 +348,8 @@
                 `;
                 tableBody.innerHTML += rowHtml;
             });
-
             updatePaginationUI(totalPages);
-            document.getElementById('statusArea').innerText = `Trình chiếu ${startIndex + 1} - ${Math.min(startIndex + ITEMS_PER_PAGE, FILTERED_DATA.length)} / ${FILTERED_DATA.length}`;
+            document.getElementById('statusArea').innerText = `Hiển thị ${startIndex + 1} - ${Math.min(startIndex + ITEMS_PER_PAGE, FILTERED_DATA.length)} / ${FILTERED_DATA.length}`;
         }
 
         function updatePaginationUI(totalPages) {
@@ -361,7 +372,7 @@
 
         window.exportToCSV = function() {
             if (FILTERED_DATA.length === 0) return alert("Không có dữ liệu để xuất!");
-            let csv = "\uFEFF"; // BOM for Excel UTF-8
+            let csv = "\uFEFF"; 
             csv += "Tên phụ tùng,Hãng xe,Hiệu xe,Năm SX,Loại hàng,Garage,Đơn giá duyệt\n";
             FILTERED_DATA.forEach(i => {
                 csv += `"${i.ten_phu_tung}","${i.hang_xe}","${i.hieu_xe}","${i.nam_sx}","${i.chinh_hang}","${i.ten_garage}","${i.gia_duyet}"\n`;
