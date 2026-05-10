@@ -116,6 +116,7 @@
             padding: 40px; border-radius: 32px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
         }
+        .hidden { display: none !important; }
 
         /* Dropdown Search Styles */
         .dropdown-item { padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
@@ -401,7 +402,15 @@
         onAuthStateChanged(auth, (user) => {
             const overlay = document.getElementById('loginOverlay');
             const main = document.getElementById('mainApp');
+            
+            // Nếu là user ẩn danh (từ phiên bản cũ), hãy đăng xuất để buộc login lại bằng email
+            if (user && user.isAnonymous) {
+                signOut(auth);
+                return;
+            }
+
             if (user) {
+                console.log("User detected, hiding login overlay...");
                 overlay.classList.add('hidden');
                 main.classList.remove('hidden');
                 document.getElementById('userEmail').innerText = user.email;
