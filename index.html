@@ -81,17 +81,17 @@
         
         .price-text { font-size: 17px; font-weight: 900; color: #0f172a; }
         .search-btn {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
             width: 100%;
             height: 48px;
-            background: var(--primary);
             color: white;
             font-weight: 800;
             text-transform: uppercase;
             border-radius: 12px;
             transition: all 0.2s;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
         }
-        .search-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .search-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.5); }
 
         .index-error {
             background: #fff1f2;
@@ -105,6 +105,18 @@
         }
         .index-error a { font-weight: 800; text-decoration: underline; color: #e11d48; }
 
+        /* Login Styles */
+        #loginOverlay {
+            position: fixed; inset: 0; z-index: 10000;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-card {
+            background: white; width: 100%; max-width: 400px;
+            padding: 40px; border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
         /* Dropdown Search Styles */
         .dropdown-item { padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
         .dropdown-item:hover { background: #f1f5f9; color: var(--primary); }
@@ -113,11 +125,37 @@
         .search-inner:focus { border-color: var(--primary); background: #ffffff; }
     </style>
 </head>
-<body class="antialiased">
+<body class="bg-slate-50 text-slate-700 min-h-screen">
 
-    <div class="main-container">
+    <!-- Login Screen -->
+    <div id="loginOverlay">
+        <div class="login-card animate-[scale_0.3s_ease-out]">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight">Hệ thống TASCO DLK</h2>
+                <p class="text-slate-400 font-bold text-[10px] uppercase mt-1 tracking-widest">Đăng nhập để tiếp tục</p>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tài khoản Email</label>
+                    <input type="email" id="loginEmail" required class="w-full bg-slate-50 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
+                    <input type="password" id="loginPass" required class="w-full bg-slate-50 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all">
+                </div>
+                <button type="submit" id="loginBtn" class="w-full bg-blue-600 text-white font-black py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition-all uppercase tracking-widest text-xs mt-4">ĐĂNG NHẬP</button>
+                <p id="loginError" class="text-red-500 text-[10px] font-bold text-center mt-4 hidden uppercase tracking-wider"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content (Hidden by default) -->
+    <div id="mainApp" class="hidden main-container">
         <!-- Logo & Title -->
-        <header class="flex items-center justify-between mb-8 px-2">
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 px-2">
             <div class="flex items-center gap-4">
                 <div class="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -127,7 +165,15 @@
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Hệ thống tra cứu phụ tùng</p>
                 </div>
             </div>
-            <!-- Excel Export Button Removed -->
+            
+            <div class="flex items-center gap-4">
+                <div class="hidden md:block text-right">
+                    <div id="userEmail" class="text-sm font-black text-slate-900">user@tasco.vn</div>
+                </div>
+                <button onclick="handleLogout()" class="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-red-500 hover:border-red-100 transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                </button>
+            </div>
         </header>
 
         <!-- Index Error Banner -->
@@ -335,7 +381,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, collection, query, where, getDocs, limit, orderBy, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -351,8 +397,44 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Đăng nhập ẩn danh để có quyền ghi (nếu rules yêu cầu auth)
-        signInAnonymously(auth).catch(e => console.error("Auth Error:", e));
+        // Quản lý trạng thái đăng nhập
+        onAuthStateChanged(auth, (user) => {
+            const overlay = document.getElementById('loginOverlay');
+            const main = document.getElementById('mainApp');
+            if (user) {
+                overlay.classList.add('hidden');
+                main.classList.remove('hidden');
+                document.getElementById('userEmail').innerText = user.email;
+            } else {
+                overlay.classList.remove('hidden');
+                main.classList.add('hidden');
+            }
+        });
+
+        // Xử lý Form đăng nhập
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            const err = document.getElementById('loginError');
+            const btn = document.getElementById('loginBtn');
+
+            btn.disabled = true; btn.innerText = "ĐANG KIỂM TRA...";
+            err.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (error) {
+                err.innerText = "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
+                err.classList.remove('hidden');
+            } finally {
+                btn.disabled = false; btn.innerText = "ĐĂNG NHẬP";
+            }
+        });
+
+        window.handleLogout = () => {
+            if (confirm("Bạn muốn đăng xuất?")) signOut(auth);
+        }
 
         let CAY_GIA_PHA = {}; let NAM_ALL = []; 
         let MASTER_DATA = []; let CURRENT_PAGE = 1; let ITEMS_PER_PAGE = 10;
