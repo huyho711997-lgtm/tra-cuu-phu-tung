@@ -425,7 +425,14 @@
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (error) {
-                err.innerText = "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
+                console.error("Login Error:", error);
+                let msg = "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
+                if (error.code === 'auth/unauthorized-domain') {
+                    msg = "LỖI: TÊN MIỀN CHƯA ĐƯỢC CẤP PHÉP TRÊN FIREBASE!";
+                } else if (error.code === 'auth/too-many-requests') {
+                    msg = "LỖI: THỬ QUÁ NHIỀU LẦN, VUI LÒNG ĐỢI!";
+                }
+                err.innerText = msg;
                 err.classList.remove('hidden');
             } finally {
                 btn.disabled = false; btn.innerText = "ĐĂNG NHẬP";
