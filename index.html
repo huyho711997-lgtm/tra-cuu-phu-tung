@@ -8,21 +8,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
-        .filter-select { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-size: 14px; width: 100%; outline: none; }
-        .filter-select:focus { border-color: #3b82f6; }
+        .filter-select { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-size: 14px; width: 100%; outline: none; transition: border-color 0.2s; }
+        .filter-select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
         .flat-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; transition: transform 0.2s, box-shadow 0.2s; }
         .flat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased text-slate-900">
 
     <div class="max-w-2xl mx-auto px-4 py-6">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h1 class="text-xl font-extrabold text-blue-700">TASCO ĐẮK LẮK</h1>
-                <p class="text-xs text-slate-500 font-medium uppercase tracking-widest">Hệ thống giám định 2026</p>
+                <h1 class="text-xl font-extrabold text-blue-700 tracking-tight">TASCO ĐẮK LẮK</h1>
+                <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Workspace Giám Định</p>
             </div>
-            <div class="bg-blue-100 p-2 rounded-lg">
+            <div class="bg-blue-100 p-2.5 rounded-xl shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -30,34 +30,40 @@
         </div>
 
         <div class="flat-card p-5 shadow-sm mb-6">
-            <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="grid grid-cols-2 gap-3 mb-5">
                 <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Hãng xe</label>
-                    <select id="filterHang" class="filter-select">
-                        <option value="">-- Tất cả --</option>
-                        </select>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">1. Hãng xe</label>
+                    <select id="filterHang" class="filter-select" onchange="updateHieuXeDropdown()">
+                        <option value="">-- Chọn hãng --</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Năm SX</label>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">2. Hiệu xe</label>
+                    <select id="filterHieu" class="filter-select" onchange="updateNamSXDropdown()">
+                        <option value="">-- Chọn hiệu xe --</option>
+                    </select>
+                </div>
+                <div class="col-span-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">3. Năm SX</label>
                     <select id="filterNam" class="filter-select">
-                        <option value="">-- Tất cả --</option>
-                        </select>
+                        <option value="">-- Tất cả năm --</option>
+                    </select>
                 </div>
-                <div class="col-span-2">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Tên phụ tùng</label>
-                    <input type="text" id="searchInput" placeholder="Ví dụ: đèn pha, vè trước..." 
-                           class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:border-blue-500">
+                <div class="col-span-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">4. Tên phụ tùng</label>
+                    <input type="text" id="searchInput" placeholder="Ví dụ: đèn pha..." 
+                           class="w-full p-2.5 border border-slate-200 rounded-xl outline-none focus:border-blue-500 text-sm">
                 </div>
             </div>
-            <button onclick="searchData()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">
-                TRA CỨU DỮ LIỆU
+            <button onclick="searchData()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 shadow-md shadow-blue-200 transition-all uppercase tracking-wider text-sm">
+                Tra cứu báo giá
             </button>
         </div>
 
-        <div id="statusArea" class="text-xs font-bold text-slate-400 mb-3 px-1 uppercase"></div>
-        <div id="resultsList" class="space-y-4 pb-10">
-            <div class="text-center py-10 text-slate-400">
-                <p>Nhập thông tin để bắt đầu tra cứu</p>
+        <div id="statusArea" class="text-xs font-bold text-slate-400 mb-3 px-1 uppercase tracking-wider"></div>
+        <div id="resultsList" class="space-y-3 pb-10">
+            <div class="text-center py-12 text-slate-400 bg-white rounded-xl border border-dashed border-slate-300">
+                <p>Nhập thông tin xe và phụ tùng để tra cứu</p>
             </div>
         </div>
     </div>
@@ -66,128 +72,149 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Cấu hình Firebase đã được cập nhật chuẩn
+        // Cấu hình Firebase mới
         const firebaseConfig = {
             apiKey: "AIzaSyCT8G6mI1w5woinOU5QgfHGhUhcVzuy5Oo",
             authDomain: "tra-cuu-phu-tung-e70b3.firebaseapp.com",
             projectId: "tra-cuu-phu-tung-e70b3",
             storageBucket: "tra-cuu-phu-tung-e70b3.firebasestorage.app",
             messagingSenderId: "948573734280",
-            appId: "1:948573734280:web:5708bba29b6b6dce6f263d",
-            measurementId: "G-1BFCZ0V268"
+            appId: "1:948573734280:web:5708bba29b6b6dce6f263d"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        let CAY_GIA_PHA = {}; 
+        let NAM_ALL = []; 
+
         // ==========================================
-        // 1. HÀM TỰ ĐỘNG ĐỔ DỮ LIỆU VÀO DROPDOWN
+        // 1. TẢI DỮ LIỆU BỘ LỌC TỪ FIREBASE
         // ==========================================
         async function loadFilters() {
             try {
-                // Đọc file metadata từ Firebase
-                const docRef = doc(db, "metadata", "filters");
-                const docSnap = await getDoc(docRef);
-
+                const docSnap = await getDoc(doc(db, "metadata", "filters"));
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    
-                    // Điền Hãng xe
-                    const selectHang = document.getElementById('filterHang');
-                    if(data.hang_xe) {
-                        data.hang_xe.forEach(hang => {
-                            selectHang.add(new Option(hang, hang));
-                        });
-                    }
+                    CAY_GIA_PHA = data.cay_gia_pha_xe || {};
+                    NAM_ALL = data.nam_sx_all || [];
 
-                    // Điền Năm sản xuất
-                    const selectNam = document.getElementById('filterNam');
-                    if(data.nam_sx) {
-                        data.nam_sx.forEach(nam => {
-                            selectNam.add(new Option(nam, nam));
-                        });
-                    }
+                    // Đổ dữ liệu Hãng xe
+                    const selectHang = document.getElementById('filterHang');
+                    Object.keys(CAY_GIA_PHA).sort().forEach(hang => {
+                        selectHang.add(new Option(hang, hang));
+                    });
+
+                    // Đổ toàn bộ năm vào ô Năm SX (mặc định)
+                    fillNamSXDropdown(NAM_ALL);
                 } else {
-                    console.log("Chưa có dữ liệu filter. Cần chạy file Python để tạo metadata trước.");
+                    console.log("Chưa có dữ liệu metadata/filters trên Firebase.");
                 }
             } catch (error) {
                 console.error("Lỗi khi tải bộ lọc: ", error);
             }
         }
 
-        // Tự động chạy hàm loadFilters khi trang web vừa mở
+        // ==========================================
+        // 2. LOGIC LỌC LIÊN HOÀN (CASCADING DROPDOWNS)
+        // ==========================================
+        window.updateHieuXeDropdown = function() {
+            const hangChon = document.getElementById('filterHang').value;
+            const selectHieu = document.getElementById('filterHieu');
+            
+            // Xóa dữ liệu cũ, reset năm
+            selectHieu.innerHTML = '<option value="">-- Chọn hiệu xe --</option>';
+            fillNamSXDropdown(NAM_ALL); 
+
+            // Cập nhật Hiệu xe theo Hãng
+            if (hangChon && CAY_GIA_PHA[hangChon]) {
+                Object.keys(CAY_GIA_PHA[hangChon]).sort().forEach(hieu => {
+                    selectHieu.add(new Option(hieu, hieu));
+                });
+            }
+        }
+
+        window.updateNamSXDropdown = function() {
+            const hangChon = document.getElementById('filterHang').value;
+            const hieuChon = document.getElementById('filterHieu').value;
+            
+            // Lọc Năm SX chính xác theo Hãng và Hiệu
+            if (hangChon && hieuChon && CAY_GIA_PHA[hangChon][hieuChon]) {
+                const cacNamCuaXeNay = CAY_GIA_PHA[hangChon][hieuChon];
+                fillNamSXDropdown(cacNamCuaXeNay);
+            } else {
+                fillNamSXDropdown(NAM_ALL);
+            }
+        }
+
+        function fillNamSXDropdown(mangNam) {
+            const selectNam = document.getElementById('filterNam');
+            selectNam.innerHTML = '<option value="">-- Tất cả năm --</option>';
+            mangNam.forEach(nam => {
+                selectNam.add(new Option(nam, nam));
+            });
+        }
+
+        // Tự động tải bộ lọc khi mở web
         loadFilters();
 
         // ==========================================
-        // 2. HÀM TÌM KIẾM THEO BỘ LỌC
+        // 3. HÀM TÌM KIẾM DỮ LIỆU
         // ==========================================
         window.searchData = async function() {
             const hang = document.getElementById('filterHang').value;
+            const hieu = document.getElementById('filterHieu').value;
             const nam = document.getElementById('filterNam').value;
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
             
             const resultsList = document.getElementById('resultsList');
             const statusArea = document.getElementById('statusArea');
 
-            resultsList.innerHTML = '<div class="text-center py-12 text-slate-400 italic">Đang lọc dữ liệu...</div>';
+            resultsList.innerHTML = '<div class="text-center py-10 text-slate-400">Đang truy vấn dữ liệu...</div>';
             statusArea.innerText = "";
+
+            let q = collection(db, "LichSuBaoGia");
+            let constraints = [];
+
+            if (hang) constraints.push(where("hang_xe", "==", hang));
+            if (hieu) constraints.push(where("hieu_xe", "==", hieu));
+            if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
+            if (search) constraints.push(where("ten_phu_tung", "==", search));
             
+            constraints.push(limit(50));
+
             try {
-                let q = collection(db, "LichSuBaoGia");
-                let constraints = [];
-
-                // Xây dựng câu truy vấn dựa trên những ô người dùng chọn
-                if (hang) constraints.push(where("hang_xe", "==", hang));
-                if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
-                if (search) constraints.push(where("ten_phu_tung", "==", search));
-
-                // Giới hạn 50 kết quả để tránh đứng máy
-                constraints.push(limit(50));
-
-                const finalQuery = query(q, ...constraints);
-                const querySnapshot = await getDocs(finalQuery);
-                
+                const querySnapshot = await getDocs(query(q, ...constraints));
                 resultsList.innerHTML = '';
-                
+
                 if (querySnapshot.empty) {
-                    resultsList.innerHTML = '<div class="bg-white p-8 rounded-2xl text-center text-slate-400 border border-dashed border-slate-300">Không tìm thấy dữ liệu phù hợp với bộ lọc này.</div>';
+                    resultsList.innerHTML = '<div class="text-center p-8 text-amber-600 bg-amber-50 rounded-xl border border-amber-100">Không tìm thấy báo giá nào khớp với cấu hình này.</div>';
                     statusArea.innerText = "0 kết quả";
                     return;
                 }
 
-                statusArea.innerText = `Tìm thấy ${querySnapshot.size} báo giá phù hợp`;
+                statusArea.innerText = `Tìm thấy ${querySnapshot.size} báo giá`;
 
-                // Đổ dữ liệu ra thẻ (Card)
                 querySnapshot.forEach((doc) => {
                     const item = doc.data();
                     const card = `
-                        <div class="flat-card p-4 shadow-sm border-l-4 border-l-blue-500 mb-3 bg-white">
+                        <div class="flat-card p-4 shadow-sm border-l-4 border-l-blue-500 bg-white">
                             <div class="flex justify-between items-start mb-2">
-                                <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded uppercase">${item.so_hsbt}</span>
-                                <span class="font-bold text-green-600">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet)} đ</span>
+                                <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded uppercase">${item.so_hsbt || 'N/A'}</span>
+                                <span class="font-bold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet)} đ</span>
                             </div>
-                            <h3 class="font-bold text-slate-800 uppercase text-sm mb-3">${item.ten_phu_tung}</h3>
-                            <div class="grid grid-cols-2 gap-2 text-[11px]">
-                                <div>
-                                    <span class="text-slate-400 block uppercase">Xe & Đời</span>
-                                    <span class="font-semibold text-slate-600">${item.hang_xe} ${item.hieu_xe} (${item.nam_sx})</span>
-                                </div>
-                                <div>
-                                    <span class="text-slate-400 block uppercase">Khu vực</span>
-                                    <span class="font-semibold text-slate-600">${item.tinh_thanh}</span>
-                                </div>
-                                <div class="col-span-2 mt-1 pt-2 border-t border-slate-50 italic text-slate-400">
-                                    ${item.ten_garage}
-                                </div>
+                            <h3 class="font-bold text-slate-800 uppercase text-sm mb-2">${item.ten_phu_tung}</h3>
+                            <div class="grid grid-cols-1 gap-1 text-[11px] text-slate-500 bg-slate-50 p-2 rounded-lg">
+                                <div><span class="font-semibold text-slate-600">Xe:</span> ${item.hang_xe} ${item.hieu_xe} (${item.nam_sx})</div>
+                                <div><span class="font-semibold text-slate-600">Garage:</span> ${item.ten_garage} - ${item.tinh_thanh}</div>
                             </div>
                         </div>
                     `;
                     resultsList.innerHTML += card;
                 });
-
-            } catch (error) {
-                console.error(error);
-                resultsList.innerHTML = '<div class="text-red-500 p-4 bg-red-50 rounded-xl text-center text-sm border border-red-200">Hệ thống yêu cầu tạo Index cho cấu hình tìm kiếm này. Vui lòng mở F12 (Console) trên máy tính, nhấn vào đường link báo lỗi màu đỏ để Firebase tự động thiết lập Index.</div>';
+            } catch (e) {
+                console.error(e);
+                resultsList.innerHTML = '<div class="text-red-500 p-4 bg-red-50 rounded-xl text-center text-sm border border-red-200">Hệ thống yêu cầu tạo Index. Vui lòng mở F12 (Console) trên máy tính, nhấn vào đường link báo lỗi màu đỏ để Firebase thiết lập Index.</div>';
             }
         }
     </script>
