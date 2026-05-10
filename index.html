@@ -3,76 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TASCO DLK - Tra Cứu Thông Minh</title>
+    <title>TASCO DLK - Tra Cứu Phụ Tùng Cao Cấp</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
-        .filter-select { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-size: 14px; width: 100%; outline: none; transition: border-color 0.2s; }
-        .filter-select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-        .flat-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; transition: transform 0.2s, box-shadow 0.2s; }
-        .flat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --accent: #f59e0b;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg-gradient);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+        }
+        .filter-select {
+            background-color: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            outline: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+        .filter-select:focus {
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+        .search-input {
+            background-color: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            font-weight: 800;
+            padding: 14px;
+            border-radius: 14px;
+            box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.4);
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -4px rgba(37, 99, 235, 0.5);
+            opacity: 0.95;
+        }
+        .btn-primary:active { transform: translateY(0); }
+        
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #f1f5f9;
+            padding: 18px;
+            transition: all 0.3s ease;
+        }
+        .result-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-light);
+        }
+        .tag-genuine {
+            background: #eef2ff;
+            color: #3730a3;
+            border: 1px solid #e0e7ff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .tag-aftermarket {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fef3c7;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        
+        /* Shimmer loading */
+        @keyframes shimmer {
+            0% { background-position: -468px 0; }
+            100% { background-position: 468px 0; }
+        }
+        .loading-pulse {
+            background: #f6f7f8;
+            background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-repeat: no-repeat;
+            background-size: 800px 100%;
+            animation: shimmer 1.5s infinite linear;
+        }
     </style>
 </head>
-<body class="antialiased text-slate-900">
+<body class="antialiased text-slate-800">
 
-    <div class="max-w-2xl mx-auto px-4 py-6">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h1 class="text-xl font-extrabold text-blue-700 tracking-tight">TASCO ĐẮK LẮK</h1>
-                <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Workspace Giám Định</p>
-            </div>
-            <div class="bg-blue-100 p-2.5 rounded-xl shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+    <div class="max-w-2xl mx-auto px-4 py-10">
+        <!-- Header Section -->
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900 leading-none tracking-tight">TASCO <span class="text-blue-600">DLK</span></h1>
+                    <p class="text-[11px] text-slate-400 font-extrabold uppercase tracking-[0.2em] mt-1.5">Tra cứu báo giá thông minh</p>
+                </div>
             </div>
         </div>
 
-        <div class="flat-card p-5 shadow-sm mb-6">
-            <div class="grid grid-cols-2 gap-3 mb-5">
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">1. Hãng xe</label>
+        <!-- Filter Section -->
+        <div class="glass-card p-6 mb-8">
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="col-span-1">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-2 block tracking-widest px-1">1. Hãng xe</label>
                     <select id="filterHang" class="filter-select" onchange="updateHieuXeDropdown()">
                         <option value="">-- Chọn hãng --</option>
                     </select>
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">2. Hiệu xe</label>
+                <div class="col-span-1">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-2 block tracking-widest px-1">2. Hiệu xe</label>
                     <select id="filterHieu" class="filter-select" onchange="updateNamSXDropdown()">
                         <option value="">-- Chọn hiệu xe --</option>
                     </select>
                 </div>
                 <div class="col-span-1">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">3. Năm SX</label>
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-2 block tracking-widest px-1">3. Năm sản xuất</label>
                     <select id="filterNam" class="filter-select">
                         <option value="">-- Tất cả năm --</option>
                     </select>
                 </div>
                 <div class="col-span-1">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">4. Tên phụ tùng</label>
-                    <input type="text" id="searchInput" placeholder="Ví dụ: đèn pha..." 
-                           class="w-full p-2.5 border border-slate-200 rounded-xl outline-none focus:border-blue-500 text-sm">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-2 block tracking-widest px-1">4. Tên phụ tùng</label>
+                    <input type="text" id="searchInput" placeholder="Ví dụ: đèn pha, cản trước..." 
+                           class="search-input w-full"
+                           onkeydown="if(event.key==='Enter') searchData()">
                 </div>
             </div>
-            <button onclick="searchData()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 shadow-md shadow-blue-200 transition-all uppercase tracking-wider text-sm">
-                Tra cứu báo giá
+            <button onclick="searchData()" class="btn-primary w-full flex items-center justify-center gap-2">
+                <span>Tra cứu dữ liệu</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
             </button>
         </div>
 
-        <div id="statusArea" class="text-xs font-bold text-slate-400 mb-3 px-1 uppercase tracking-wider"></div>
-        <div id="resultsList" class="space-y-3 pb-10">
-            <div class="text-center py-12 text-slate-400 bg-white rounded-xl border border-dashed border-slate-300">
-                <p>Nhập thông tin xe và phụ tùng để tra cứu</p>
+        <!-- Status & Results -->
+        <div class="flex items-center justify-between px-2 mb-4">
+            <h2 id="statusArea" class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.15em]"></h2>
+            <div id="loadingIndicator" class="hidden">
+                 <div class="flex items-center gap-2 text-blue-600 text-[10px] font-bold uppercase">
+                     <svg class="animate-spin h-3 w-3" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                     Đang tải...
+                 </div>
+            </div>
+        </div>
+
+        <div id="resultsList" class="space-y-4 pb-20">
+            <div class="text-center py-20 bg-white/50 border-2 border-dashed border-slate-200 rounded-[32px]">
+                <p class="text-slate-400 font-semibold text-sm">Vui lòng nhập thông tin để tìm kiếm báo giá</p>
             </div>
         </div>
     </div>
 
+    <!-- Firebase Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, limit, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Cấu hình Firebase mới
         const firebaseConfig = {
             apiKey: "AIzaSyCT8G6mI1w5woinOU5QgfHGhUhcVzuy5Oo",
             authDomain: "tra-cuu-phu-tung-e70b3.firebaseapp.com",
@@ -88,9 +219,6 @@
         let CAY_GIA_PHA = {}; 
         let NAM_ALL = []; 
 
-        // ==========================================
-        // 1. TẢI DỮ LIỆU BỘ LỌC TỪ FIREBASE
-        // ==========================================
         async function loadFilters() {
             try {
                 const docSnap = await getDoc(doc(db, "metadata", "filters"));
@@ -99,34 +227,22 @@
                     CAY_GIA_PHA = data.cay_gia_pha_xe || {};
                     NAM_ALL = data.nam_sx_all || [];
 
-                    // Đổ dữ liệu Hãng xe
                     const selectHang = document.getElementById('filterHang');
                     Object.keys(CAY_GIA_PHA).sort().forEach(hang => {
                         selectHang.add(new Option(hang, hang));
                     });
-
-                    // Đổ toàn bộ năm vào ô Năm SX (mặc định)
                     fillNamSXDropdown(NAM_ALL);
-                } else {
-                    console.log("Chưa có dữ liệu metadata/filters trên Firebase.");
                 }
             } catch (error) {
-                console.error("Lỗi khi tải bộ lọc: ", error);
+                console.error("Load filters error:", error);
             }
         }
 
-        // ==========================================
-        // 2. LOGIC LỌC LIÊN HOÀN (CASCADING DROPDOWNS)
-        // ==========================================
         window.updateHieuXeDropdown = function() {
             const hangChon = document.getElementById('filterHang').value;
             const selectHieu = document.getElementById('filterHieu');
-            
-            // Xóa dữ liệu cũ, reset năm
             selectHieu.innerHTML = '<option value="">-- Chọn hiệu xe --</option>';
             fillNamSXDropdown(NAM_ALL); 
-
-            // Cập nhật Hiệu xe theo Hãng
             if (hangChon && CAY_GIA_PHA[hangChon]) {
                 Object.keys(CAY_GIA_PHA[hangChon]).sort().forEach(hieu => {
                     selectHieu.add(new Option(hieu, hieu));
@@ -137,11 +253,8 @@
         window.updateNamSXDropdown = function() {
             const hangChon = document.getElementById('filterHang').value;
             const hieuChon = document.getElementById('filterHieu').value;
-            
-            // Lọc Năm SX chính xác theo Hãng và Hiệu
             if (hangChon && hieuChon && CAY_GIA_PHA[hangChon][hieuChon]) {
-                const cacNamCuaXeNay = CAY_GIA_PHA[hangChon][hieuChon];
-                fillNamSXDropdown(cacNamCuaXeNay);
+                fillNamSXDropdown(CAY_GIA_PHA[hangChon][hieuChon]);
             } else {
                 fillNamSXDropdown(NAM_ALL);
             }
@@ -149,18 +262,14 @@
 
         function fillNamSXDropdown(mangNam) {
             const selectNam = document.getElementById('filterNam');
+            const currentVal = selectNam.value;
             selectNam.innerHTML = '<option value="">-- Tất cả năm --</option>';
-            mangNam.forEach(nam => {
+            mangNam.sort((a,b) => b-a).forEach(nam => {
                 selectNam.add(new Option(nam, nam));
             });
+            if (mangNam.includes(parseInt(currentVal))) selectNam.value = currentVal;
         }
 
-        // Tự động tải bộ lọc khi mở web
-        loadFilters();
-
-        // ==========================================
-        // 3. HÀM TÌM KIẾM DỮ LIỆU
-        // ==========================================
         window.searchData = async function() {
             const hang = document.getElementById('filterHang').value;
             const hieu = document.getElementById('filterHieu').value;
@@ -169,9 +278,16 @@
             
             const resultsList = document.getElementById('resultsList');
             const statusArea = document.getElementById('statusArea');
+            const loading = document.getElementById('loadingIndicator');
 
-            resultsList.innerHTML = '<div class="text-center py-10 text-slate-400">Đang truy vấn dữ liệu...</div>';
-            statusArea.innerText = "";
+            resultsList.innerHTML = `
+                <div class="space-y-4">
+                    <div class="result-card loading-pulse h-32"></div>
+                    <div class="result-card loading-pulse h-32"></div>
+                    <div class="result-card loading-pulse h-32"></div>
+                </div>`;
+            statusArea.innerText = "Đang tìm kiếm...";
+            loading.classList.remove('hidden');
 
             let q = collection(db, "LichSuBaoGia");
             let constraints = [];
@@ -179,34 +295,79 @@
             if (hang) constraints.push(where("hang_xe", "==", hang));
             if (hieu) constraints.push(where("hieu_xe", "==", hieu));
             if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
-            if (search) constraints.push(where("ten_phu_tung", "==", search));
             
-            constraints.push(limit(50));
+            constraints.push(limit(40));
 
             try {
                 const querySnapshot = await getDocs(query(q, ...constraints));
                 resultsList.innerHTML = '';
+                loading.classList.add('hidden');
 
-                if (querySnapshot.empty) {
-                    resultsList.innerHTML = '<div class="text-center p-8 text-amber-600 bg-amber-50 rounded-xl border border-amber-100">Không tìm thấy báo giá nào khớp với cấu hình này.</div>';
+                let finalItems = [];
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (!search || data.ten_phu_tung.toLowerCase().includes(search)) {
+                        finalItems.push(data);
+                    }
+                });
+
+                if (finalItems.length === 0) {
+                    resultsList.innerHTML = `
+                        <div class="text-center p-12 bg-amber-50 rounded-[32px] border border-amber-100">
+                            <p class="text-amber-700 font-bold">Không tìm thấy báo giá nào</p>
+                            <p class="text-amber-600/60 text-xs mt-1">Hãy thử thay đổi từ khóa hoặc bộ lọc</p>
+                        </div>`;
                     statusArea.innerText = "0 kết quả";
                     return;
                 }
 
-                statusArea.innerText = `Tìm thấy ${querySnapshot.size} báo giá`;
+                statusArea.innerText = `Tìm thấy ${finalItems.length} kết quả phù hợp`;
 
-                querySnapshot.forEach((doc) => {
-                    const item = doc.data();
+                finalItems.forEach((item) => {
+                    // Logic xác định chính hãng (Dựa trên tên hoặc mã hoặc trường phân loại)
+                    const isGenuine = item.ten_phu_tung.toLowerCase().includes('chính hãng') || 
+                                     (item.loai_phu_tung && item.loai_phu_tung.toLowerCase().includes('chính hãng')) ||
+                                     (item.phan_loai && item.phan_loai.toLowerCase().includes('chính hãng'));
+
+                    const tag = isGenuine ? 
+                        `<span class="tag-genuine flex items-center gap-1">
+                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.9L10 1.55l7.834 3.35a1 1 0 01.666.927V15c0 4.075-3.35 7.45-7.834 8.7a1 1 0 01-.666 0C5.516 22.45 2.166 19.075 2.166 15V5.827a1 1 0 01.666-.927zM10 15a1 1 0 100-2 1 1 0 000 2zm1-4a1 1 0 11-2 0V7a1 1 0 112 0v4z" clip-rule="evenodd"/></svg>
+                            Chính hãng
+                        </span>` : 
+                        `<span class="tag-aftermarket flex items-center gap-1">
+                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2A1 1 0 004 4.236v5c0 .342.176.66.467.847L4.553 7.106zM11.447 8.894l4-2A1 1 0 0016 6.001V4.236a1 1 0 00-1.447-.894l-4 2A1 1 0 0010 6.236v1.765a1 1 0 00.447.894l1 1z"/></svg>
+                            Thay thế
+                        </span>`;
+
                     const card = `
-                        <div class="flat-card p-4 shadow-sm border-l-4 border-l-blue-500 bg-white">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded uppercase">${item.so_hsbt || 'N/A'}</span>
-                                <span class="font-bold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet)} đ</span>
+                        <div class="result-card shadow-sm">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex flex-col gap-1.5">
+                                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">${item.so_hsbt || 'HSBT-UNKNOWN'}</span>
+                                    ${tag}
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-black text-emerald-600 leading-none">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet)} <span class="text-[10px]">đ</span></p>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase mt-1">Đã duyệt</p>
+                                </div>
                             </div>
-                            <h3 class="font-bold text-slate-800 uppercase text-sm mb-2">${item.ten_phu_tung}</h3>
-                            <div class="grid grid-cols-1 gap-1 text-[11px] text-slate-500 bg-slate-50 p-2 rounded-lg">
-                                <div><span class="font-semibold text-slate-600">Xe:</span> ${item.hang_xe} ${item.hieu_xe} (${item.nam_sx})</div>
-                                <div><span class="font-semibold text-slate-600">Garage:</span> ${item.ten_garage} - ${item.tinh_thanh}</div>
+                            <h3 class="font-extrabold text-slate-800 uppercase text-sm mb-3 leading-snug">${item.ten_phu_tung}</h3>
+                            <div class="grid grid-cols-2 gap-2 text-[11px] bg-slate-50/80 p-3 rounded-xl border border-slate-100">
+                                <div>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">Thông tin xe</p>
+                                    <p class="font-bold text-slate-700">${item.hang_xe} ${item.hieu_xe} (${item.nam_sx})</p>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">Địa điểm báo giá</p>
+                                    <p class="font-bold text-slate-700 truncate" title="${item.ten_garage}">${item.ten_garage}</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-[10px] text-slate-400 font-bold flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                    ${item.tinh_thanh || 'Đắk Lắk'}
+                                </span>
+                                <button class="text-[10px] font-black text-blue-600 uppercase hover:underline">Chi tiết hồ sơ</button>
                             </div>
                         </div>
                     `;
@@ -214,9 +375,11 @@
                 });
             } catch (e) {
                 console.error(e);
-                resultsList.innerHTML = '<div class="text-red-500 p-4 bg-red-50 rounded-xl text-center text-sm border border-red-200">Hệ thống yêu cầu tạo Index. Vui lòng mở F12 (Console) trên máy tính, nhấn vào đường link báo lỗi màu đỏ để Firebase thiết lập Index.</div>';
+                resultsList.innerHTML = '<div class="text-red-500 p-6 bg-red-50 rounded-2xl text-center text-xs font-bold border border-red-100">Lỗi kết nối cơ sở dữ liệu. Vui lòng thử lại sau.</div>';
             }
         }
+
+        loadFilters();
     </script>
 </body>
 </html>
