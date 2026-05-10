@@ -117,10 +117,7 @@
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Hệ thống tra cứu phụ tùng</p>
                 </div>
             </div>
-            <button onclick="exportToCSV()" class="bg-white border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-xs text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Xuất Excel
-            </button>
+            <!-- Excel Export Button Removed -->
         </header>
 
         <!-- Index Error Banner -->
@@ -176,7 +173,7 @@
                     <input type="text" id="searchInput" placeholder="Tìm tên..." class="pro-input" onkeydown="if(event.key==='Enter') searchData()">
                 </div>
                 <div class="md:col-span-1">
-                    <button onclick="searchData()" class="search-btn">Tìm</button>
+                    <button onclick="searchData()" class="search-btn">TÌM KIẾM</button>
                 </div>
             </div>
         </div>
@@ -330,11 +327,7 @@
             if (hieus.length > 0) constraints.push(where("hieu_xe", "in", hieus.slice(0, 30)));
             if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
             
-            // Xử lý Loại hàng trực tiếp trong Query để đồng bộ
             if (type === 'genuine') constraints.push(where("chinh_hang", "==", "Chính hãng"));
-            // Lưu ý: Firestore không hỗ trợ "!=" cùng với các điều kiện in/range phức tạp mà không có index đặc biệt.
-            // Để an toàn và đồng bộ nhất, ta sẽ chỉ lọc server-side cho "Chính hãng". 
-            // "Thay thế" và "Tất cả" sẽ được xử lý linh hoạt hơn.
 
             constraints.push(limit(500)); 
 
@@ -345,7 +338,6 @@
                 snap.forEach(doc => {
                     const item = doc.data();
                     const chinhHangValue = (item.chinh_hang || '').toLowerCase();
-                    // Lọc lại client-side cho trường hợp "Thay thế" (vì server-side != phức tạp hơn)
                     if (type === 'aftermarket' && chinhHangValue.includes("chính hãng")) return;
                     if (!search || (item.ten_phu_tung && item.ten_phu_tung.toLowerCase().includes(search))) {
                         MASTER_DATA.push(item);
@@ -414,16 +406,6 @@
         window.changePage = (offset) => { CURRENT_PAGE += offset; renderTable(); }
         window.changePageSize = () => { ITEMS_PER_PAGE = parseInt(document.getElementById('pageSize').value); CURRENT_PAGE = 1; renderTable(); }
         window.copyPrice = (p) => { navigator.clipboard.writeText(p).then(() => alert("Đã copy giá!")); }
-        window.exportToCSV = () => {
-            if (MASTER_DATA.length === 0) return alert("Không có dữ liệu!");
-            let csv = "\uFEFFTên phụ tùng,Hãng xe,Hiieu xe,Năm SX,Loại hàng,Garage,Giá\n";
-            MASTER_DATA.forEach(i => csv += `"${i.ten_phu_tung}","${i.hang_xe}","${i.hieu_xe}","${i.nam_sx}","${i.chinh_hang}","${i.ten_garage}","${i.gia_duyet}"\n`);
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "bao_gia.csv";
-            link.click();
-        }
 
         loadFilters();
     </script>
