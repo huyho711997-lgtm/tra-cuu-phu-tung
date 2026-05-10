@@ -684,9 +684,11 @@
                 statCount.innerText = "0 kết quả";
                 return;
             }
+
+            const totalPages = Math.ceil(MASTER_DATA.length / ITEMS_PER_PAGE);
             const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
             const pageData = MASTER_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-            tableBody.innerHTML = '';
+
             pageData.forEach(item => {
                 const isGenuine = (item.chinh_hang || '').toLowerCase().includes("chính hãng");
                 const badge = isGenuine ? '<span class="badge-pro badge-genuine">Chính hãng</span>' : '<span class="badge-pro badge-aftermarket">Thay thế</span>';
