@@ -167,16 +167,22 @@
                 </div>
             </div>
             
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-100 rounded-xl shadow-sm">
-                    <div class="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
-                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+            <div class="flex items-center">
+                <div class="flex items-center bg-white border border-slate-200 p-1.5 rounded-[20px] shadow-sm hover:shadow-md transition-all">
+                    <div class="flex items-center gap-3 px-3">
+                        <div class="w-9 h-9 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shadow-inner">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1">Đang đăng nhập</span>
+                            <span id="userEmail" class="text-[12px] font-black text-slate-700 leading-none">user@tasco.vn</span>
+                        </div>
                     </div>
-                    <div id="userEmail" class="text-[11px] font-black text-slate-700">user@tasco.vn</div>
+                    <div class="w-px h-8 bg-slate-100 mx-1"></div>
+                    <button onclick="handleLogout()" class="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-[14px] transition-all group" title="Đăng xuất">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    </button>
                 </div>
-                <button onclick="handleLogout()" class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-red-500 hover:border-red-100 transition-all shadow-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                </button>
             </div>
         </header>
 
@@ -378,9 +384,22 @@
         </div>
     </div>
 
-    <style>
-        @keyframes scale { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    </style>
+    <!-- Modal Đăng xuất -->
+    <div id="modalLogout" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 mb-2">Đăng xuất</h3>
+                <p class="text-slate-500 font-medium text-sm mb-8">Bạn có chắc chắn muốn thoát khỏi hệ thống không?</p>
+                <div class="flex gap-3">
+                    <button onclick="closeModal('modalLogout')" class="flex-1 px-6 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all uppercase text-xs">HỦY</button>
+                    <button onclick="confirmLogout()" class="flex-1 px-6 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all uppercase text-xs">ĐĂNG XUẤT</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script type="module">
@@ -462,7 +481,12 @@
         });
 
         window.handleLogout = () => {
-            if (confirm("Bạn muốn đăng xuất?")) signOut(auth);
+            openModal('modalLogout');
+        }
+
+        window.confirmLogout = () => {
+            signOut(auth);
+            closeModal('modalLogout');
         }
 
         let CAY_GIA_PHA = {}; let NAM_ALL = []; 
