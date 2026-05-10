@@ -536,15 +536,18 @@
                     alert("Lỗi kết nối: " + e.message);
                 }
                 tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center text-red-500 font-bold">TRUY VẤN THẤT BẠI</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" class="px-6 py-20 text-center text-red-500 font-bold">TRUY VẤN THẤT BẠI</td></tr>';
             }
         }
 
         function renderTable() {
             const tableBody = document.getElementById('resultsTableBody');
-            const totalPages = Math.ceil(MASTER_DATA.length / ITEMS_PER_PAGE);
+            tableBody.innerHTML = '';
+            
             if (MASTER_DATA.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-32 text-center text-slate-300 font-bold uppercase italic text-xs">Không tìm thấy dữ liệu</td></tr>';
-                updatePaginationUI(0); return;
+                tableBody.innerHTML = '<tr><td colspan="8" class="px-6 py-40 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Sẵn sàng tra cứu</td></tr>';
+                statCount.innerText = "0 kết quả";
+                return;
             }
             const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
             const pageData = MASTER_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE);
