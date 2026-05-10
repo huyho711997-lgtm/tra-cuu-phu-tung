@@ -3,125 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TASCO DLK - Hệ Thống Tra Cứu Báo Giá Phụ Tùng</title>
-    <!-- Tailwind & Flowbite -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+    <title>TASCO DLK - Hệ Thống Tra Cứu Phụ Tùng Cao Cấp</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
-        .data-table-container { background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; }
-        .tag-genuine { background-color: #def7ec; color: #03543f; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; }
-        .tag-aftermarket { background-color: #fef3c7; color: #92400e; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; }
+        :root {
+            --primary: #2563eb;
+            --primary-glow: rgba(37, 99, 235, 0.2);
+            --bg-sidebar: #0f172a;
+            --bg-main: #f8fafc;
+        }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg-main);
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 320px;
+            background: var(--bg-sidebar);
+            height: 100vh;
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .main-content {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        /* Premium Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 14px;
+            padding: 12px 16px;
+            width: 100%;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        
+        .premium-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+        }
+        .premium-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e1;
+        }
+        
+        .tag-pill {
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tag-genuine { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
+        .tag-aftermarket { background: #fffbeb; color: #d97706; border: 1px solid #fef3c7; }
+        
+        .search-btn {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            transition: all 0.2s;
+        }
+        .search-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.5);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+        
+        .price-label {
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
-<body class="antialiased">
+<body class="flex antialiased">
 
-    <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200 px-4 py-2.5 fixed left-0 right-0 top-0 z-50">
-        <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-            <a href="#" class="flex items-center gap-3">
-                <div class="bg-blue-600 p-1.5 rounded-lg">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                </div>
-                <span class="self-center text-xl font-extrabold whitespace-nowrap text-gray-900 tracking-tight">TASCO <span class="text-blue-600">DLK</span></span>
-            </a>
-            <div class="flex items-center lg:order-2">
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest mr-4">Phân hệ tra cứu giá</span>
-                <div class="h-8 w-px bg-gray-200 mr-4"></div>
-                <button type="button" class="text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 rounded-lg text-sm p-2.5">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-                </button>
+    <!-- Sidebar Lọc -->
+    <aside class="sidebar flex flex-col p-8">
+        <div class="flex items-center gap-4 mb-12">
+            <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/40">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight">TASCO <span class="text-blue-500">DLK</span></h1>
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Hệ thống tra cứu chuyên sâu</p>
             </div>
         </div>
-    </nav>
 
-    <main class="pt-24 pb-16 px-4 mx-auto max-w-screen-xl">
-        
-        <!-- Header Title -->
-        <div class="mb-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Tra cứu lịch sử báo giá</h2>
-            <p class="text-gray-500 font-medium">Hệ thống hỗ trợ giám định viên truy vấn nhanh đơn giá phụ tùng đã duyệt.</p>
-        </div>
-
-        <!-- Filter Card -->
-        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                <div>
-                    <label for="filterHang" class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">1. Hãng xe</label>
-                    <select id="filterHang" onchange="updateHieuXeDropdown()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 font-semibold">
-                        <option value="">-- Chọn hãng --</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="filterHieu" class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">2. Hiệu xe</label>
-                    <select id="filterHieu" onchange="updateNamSXDropdown()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 font-semibold">
-                        <option value="">-- Chọn hiệu xe --</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="filterNam" class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">3. Năm sản xuất</label>
-                    <select id="filterNam" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 font-semibold">
-                        <option value="">-- Tất cả các năm --</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="searchInput" class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">4. Tên phụ tùng</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
-                        <input type="text" id="searchInput" placeholder="Tìm đèn, gương, cản..." class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 font-semibold" onkeydown="if(event.key==='Enter') searchData()">
+        <nav class="flex-1 flex flex-col gap-8">
+            <div>
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 block px-1">Bộ lọc xe</label>
+                <div class="space-y-4">
+                    <div>
+                        <select id="filterHang" onchange="updateHieuXeDropdown()" class="glass-input text-sm font-semibold">
+                            <option value="">-- Chọn hãng xe --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="filterHieu" onchange="updateNamSXDropdown()" class="glass-input text-sm font-semibold">
+                            <option value="">-- Chọn hiệu xe --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="filterNam" class="glass-input text-sm font-semibold">
+                            <option value="">-- Tất cả năm sản xuất --</option>
+                        </select>
                     </div>
                 </div>
             </div>
-            <div class="flex justify-end">
-                <button onclick="searchData()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-10 py-3 text-center inline-flex items-center gap-2 transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    Tìm kiếm dữ liệu
-                </button>
+
+            <div>
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 block px-1">Từ khóa tìm kiếm</label>
+                <input type="text" id="searchInput" placeholder="Ví dụ: Đèn pha trước..." 
+                       class="glass-input text-sm font-semibold"
+                       onkeydown="if(event.key==='Enter') searchData()">
+            </div>
+
+            <button onclick="searchData()" class="search-btn w-full py-4 rounded-2xl text-white font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                Truy vấn ngay
+            </button>
+        </nav>
+
+        <div class="pt-8 mt-auto border-t border-white/5 flex items-center gap-3 text-slate-500">
+            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-black">?</div>
+            <div>
+                <p class="text-[10px] font-bold leading-none">Phiên bản</p>
+                <p class="text-[11px] font-black text-slate-400">Premium v2.0</p>
             </div>
         </div>
+    </aside>
 
-        <!-- Status & Results -->
-        <div class="flex items-center justify-between mb-4">
-            <h3 id="statusArea" class="text-sm font-bold text-gray-500 uppercase tracking-wider">Sẵn sàng tra cứu</h3>
+    <!-- Vùng hiển thị kết quả -->
+    <main class="main-content">
+        <header class="p-8 pb-4 flex items-center justify-between">
+            <div>
+                <h2 class="text-3xl font-black text-slate-900 tracking-tight">Cơ sở dữ liệu báo giá</h2>
+                <p id="statusArea" class="text-slate-500 font-bold text-sm mt-1 uppercase tracking-widest">Sẵn sàng phục vụ tra cứu</p>
+            </div>
             <div id="loadingIndicator" class="hidden">
-                <div class="flex items-center gap-2 text-blue-600 font-bold text-xs">
-                    <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    ĐANG TẢI DỮ LIỆU...
+                 <div class="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
+                    <svg class="animate-spin h-5 w-5 text-blue-600" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span class="text-xs font-black text-slate-700 uppercase tracking-widest">Đang tải dữ liệu...</span>
+                 </div>
+            </div>
+        </header>
+
+        <div class="p-8">
+            <div id="resultsList" class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
+                <!-- Empty State -->
+                <div class="col-span-full flex flex-col items-center justify-center py-32 bg-white/40 border-2 border-dashed border-slate-200 rounded-[40px]">
+                    <div class="w-24 h-24 bg-slate-100 rounded-3xl flex items-center justify-center mb-6">
+                        <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    </div>
+                    <p class="text-xl font-extrabold text-slate-400 tracking-tight">Chưa có dữ liệu tra cứu</p>
+                    <p class="text-slate-400 font-medium text-sm mt-2">Vui lòng điều chỉnh bộ lọc và nhấn "Truy vấn ngay"</p>
                 </div>
             </div>
         </div>
-
-        <div class="data-table-container shadow-sm">
-            <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th scope="col" class="px-6 py-4">Thông tin phụ tùng</th>
-                        <th scope="col" class="px-6 py-4">Phân loại</th>
-                        <th scope="col" class="px-6 py-4">Xe áp dụng</th>
-                        <th scope="col" class="px-6 py-4">Garage / Địa phương</th>
-                        <th scope="col" class="px-6 py-4 text-right">Đơn giá duyệt</th>
-                        <th scope="col" class="px-6 py-4 text-center">Hành động</th>
-                    </tr>
-                </thead>
-                <tbody id="resultsTableBody">
-                    <tr class="bg-white border-b border-gray-100">
-                        <td colspan="6" class="px-6 py-20 text-center">
-                            <div class="flex flex-col items-center gap-3 text-gray-400">
-                                <svg class="w-12 h-12 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                                <p class="font-bold">Nhập thông tin để bắt đầu tra cứu</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
     </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -149,9 +222,7 @@
                     CAY_GIA_PHA = data.cay_gia_pha_xe || {};
                     NAM_ALL = data.nam_sx_all || [];
                     const selectHang = document.getElementById('filterHang');
-                    Object.keys(CAY_GIA_PHA).sort().forEach(hang => {
-                        selectHang.add(new Option(hang, hang));
-                    });
+                    Object.keys(CAY_GIA_PHA).sort().forEach(hang => selectHang.add(new Option(hang, hang)));
                     fillNamSXDropdown(NAM_ALL);
                 }
             } catch (e) { console.error(e); }
@@ -179,7 +250,7 @@
 
         function fillNamSXDropdown(list) {
             const selectNam = document.getElementById('filterNam');
-            selectNam.innerHTML = '<option value="">-- Tất cả --</option>';
+            selectNam.innerHTML = '<option value="">-- Tất cả năm SX --</option>';
             list.sort((a,b) => b-a).forEach(n => selectNam.add(new Option(n, n)));
         }
 
@@ -189,12 +260,11 @@
             const nam = document.getElementById('filterNam').value;
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
             
-            const tableBody = document.getElementById('resultsTableBody');
+            const resultsList = document.getElementById('resultsList');
             const statusArea = document.getElementById('statusArea');
             const loading = document.getElementById('loadingIndicator');
 
-            tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center"><div class="flex justify-center"><div class="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div></div></td></tr>';
-            statusArea.innerText = "Đang truy vấn...";
+            resultsList.innerHTML = '<div class="col-span-full py-32 text-center text-slate-400 font-bold uppercase tracking-widest animate-pulse">Đang quét cơ sở dữ liệu...</div>';
             loading.classList.remove('hidden');
 
             let q = collection(db, "LichSuBaoGia");
@@ -202,64 +272,80 @@
             if (hang) constraints.push(where("hang_xe", "==", hang));
             if (hieu) constraints.push(where("hieu_xe", "==", hieu));
             if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
-            constraints.push(limit(80));
+            constraints.push(limit(100));
 
             try {
                 const snap = await getDocs(query(q, ...constraints));
                 loading.classList.add('hidden');
-                tableBody.innerHTML = '';
+                resultsList.innerHTML = '';
 
                 let data = [];
                 snap.forEach(doc => {
                     const item = doc.data();
-                    if (!search || (item.ten_phu_tung && item.ten_phu_tung.toLowerCase().includes(search))) {
-                        data.push(item);
-                    }
+                    if (!search || (item.ten_phu_tung && item.ten_phu_tung.toLowerCase().includes(search))) data.push(item);
                 });
 
                 if (data.length === 0) {
-                    statusArea.innerText = "0 kết quả";
-                    tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center font-bold text-gray-400 italic">Không tìm thấy dữ liệu phù hợp với yêu cầu.</td></tr>';
+                    statusArea.innerText = "0 KẾT QUẢ";
+                    resultsList.innerHTML = '<div class="col-span-full py-20 text-center text-slate-400 font-bold italic">Không tìm thấy dữ liệu.</div>';
                     return;
                 }
 
-                statusArea.innerText = `Tìm thấy ${data.length} báo giá phù hợp`;
-                data.forEach(item => {
-                    // SỬ DỤNG TRƯỜNG chinh_hang TỪ FIREBASE
+                statusArea.innerText = `Cập nhật: ${data.length} BÁO GIÁ PHÙ HỢP`;
+                data.forEach((item, index) => {
                     const isGenuine = item.chinh_hang === "Chính hãng";
                     const tagHtml = isGenuine ? 
-                        `<span class="tag-genuine"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.9L10 1.55l7.834 3.35a1 1 0 01.666.927V15c0 4.075-3.35 7.45-7.834 8.7a1 1 0 01-.666 0C5.516 22.45 2.166 19.075 2.166 15V5.827a1 1 0 01.666-.927zM10 15a1 1 0 100-2 1 1 0 000 2zm1-4a1 1 0 11-2 0V7a1 1 0 112 0v4z" clip-rule="evenodd"></path></svg>Chính hãng</span>` : 
-                        `<span class="tag-aftermarket"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2A1 1 0 004 4.236v5c0 .342.176.66.467.847L4.553 7.106z"></path></svg>Ngoài / Thay thế</span>`;
+                        `<span class="tag-pill tag-genuine"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.9L10 1.55l7.834 3.35a1 1 0 01.666.927V15c0 4.075-3.35 7.45-7.834 8.7a1 1 0 01-.666 0C5.516 22.45 2.166 19.075 2.166 15V5.827a1 1 0 01.666-.927zM10 15a1 1 0 100-2 1 1 0 000 2zm1-4a1 1 0 11-2 0V7a1 1 0 112 0v4z" clip-rule="evenodd"></path></svg>Chính hãng</span>` : 
+                        `<span class="tag-pill tag-aftermarket"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2A1 1 0 004 4.236v5c0 .342.176.66.467.847L4.553 7.106z"></path></svg>Hàng thay thế</span>`;
 
-                    const row = `
-                        <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="text-sm font-extrabold text-gray-900 uppercase">${item.ten_phu_tung}</div>
-                                <div class="text-[11px] text-gray-400 font-bold mt-1">${item.so_hsbt || 'N/A'}</div>
-                            </td>
-                            <td class="px-6 py-4">${tagHtml}</td>
-                            <td class="px-6 py-4">
-                                <div class="text-xs font-bold text-gray-700">${item.hang_xe} ${item.hieu_xe}</div>
-                                <div class="text-[10px] text-gray-400 font-semibold mt-0.5">Năm SX: ${item.nam_sx || 'N/A'}</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-xs font-bold text-gray-700 truncate max-w-[200px]" title="${item.ten_garage}">${item.ten_garage}</div>
-                                <div class="text-[10px] text-gray-400 font-semibold mt-0.5 uppercase">${item.tinh_thanh || 'Đắk Lắk'}</div>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="text-base font-black text-emerald-600">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)} đ</div>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <button class="font-bold text-blue-600 hover:underline text-xs">Xem hồ sơ</button>
-                            </td>
-                        </tr>
+                    const card = `
+                        <div class="premium-card animate-fade" style="animation-delay: ${index * 0.05}s">
+                            <div class="flex justify-between items-start mb-6">
+                                ${tagHtml}
+                                <div class="text-right">
+                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Đơn giá đã duyệt</p>
+                                    <p class="price-label">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)} đ</p>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-lg font-black text-slate-800 uppercase leading-tight mb-6 h-12 line-clamp-2">${item.ten_phu_tung}</h3>
+                            
+                            <div class="space-y-4 mb-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Áp dụng cho xe</p>
+                                        <p class="text-sm font-extrabold text-slate-700">${item.hang_xe} ${item.hieu_xe} (${item.nam_sx || 'N/A'})</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Garage báo giá</p>
+                                        <p class="text-sm font-extrabold text-slate-700 truncate max-w-[200px]" title="${item.ten_garage}">${item.ten_garage || 'KHÁC'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                                    ${item.tinh_thanh || 'Đắk Lắk'}
+                                </span>
+                                <button class="text-[10px] font-black text-blue-600 uppercase hover:text-blue-800 transition-colors">Xem hồ sơ gốc</button>
+                            </div>
+                        </div>
                     `;
-                    tableBody.innerHTML += row;
+                    resultsList.innerHTML += card;
                 });
 
             } catch (e) {
                 console.error(e);
-                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center text-red-500 font-bold">Lỗi kết nối Firebase.</td></tr>';
+                resultsList.innerHTML = '<div class="col-span-full py-20 text-center text-red-500 font-bold">Lỗi truy cập hệ thống.</div>';
             }
         }
 
