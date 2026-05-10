@@ -275,17 +275,54 @@
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody">
-                        <tr><td colspan="6" class="px-6 py-40 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Sẵn sàng tra cứu</td></tr>
+                        <tr><td colspan="8" class="px-6 py-40 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Sẵn sàng tra cứu</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
+    <!-- Modal Xác thực -->
+    <div id="modalVerify" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 4.908-3.307 9.13-7.813 10.453a.75.75 0 01-.374 0C5.307 16.13 2 11.908 2 7c0-.68.056-1.35.166-2.001zm8.384 1.21a.75.75 0 00-1.1 0l-3.25 3.5a.75.75 0 101.1 1.02l2.7-2.908 1.45 1.45a.75.75 0 001.06-1.06l-2-2z" clip-rule="evenodd"></path></svg>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 mb-2">Xác thực phụ tùng</h3>
+                <p class="text-slate-500 font-medium text-sm leading-relaxed mb-8 px-4">Bạn xác nhận các phụ tùng trong hồ sơ <span id="verifyHSBT" class="font-bold text-blue-600"></span> tương thích hoàn toàn với dòng xe này?</p>
+                <div class="flex gap-3">
+                    <button onclick="closeModal('modalVerify')" class="flex-1 px-6 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all">HỦY BỎ</button>
+                    <button id="confirmVerifyBtn" class="flex-1 px-6 py-3.5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all">XÁC NHẬN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Chi tiết -->
+    <div id="modalDetail" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scale_0.2s_ease-out]">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-lg font-black text-slate-900 uppercase">Chi tiết phụ tùng</h3>
+                <button onclick="closeModal('modalDetail')" class="p-2 text-slate-400 hover:text-red-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <div class="p-8 grid grid-cols-2 gap-8" id="detailContent">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal('modalDetail')" class="px-8 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-100 transition-all">ĐÓNG</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes scale { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, collection, query, where, getDocs, limit, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, limit, orderBy, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCT8G6mI1w5woinOU5QgfHGhUhcVzuy5Oo",
@@ -509,25 +546,25 @@
                     : `<span class="badge-pro badge-unverified" onclick="verifyPart('${item.id}')">Xác thực ngay</span>`;
 
                 tableBody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-all">
-                        <td class="px-6 py-4">
+                    <tr class="hover:bg-slate-50 transition-all cursor-pointer">
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">
                             <div class="text-[13px] font-black text-slate-900 uppercase">${item.ten_phu_tung}</div>
                             <div class="text-[9px] text-slate-400 font-bold mt-1 uppercase">${item.so_hsbt || 'N/A'}</div>
                         </td>
-                        <td class="px-6 py-4">${badge}</td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">${badge}</td>
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">
                             <div class="text-[11px] font-black text-slate-700">${item.hang_xe} ${item.hieu_xe}</div>
                             <div class="text-[9px] text-slate-400 font-bold uppercase">Năm: ${item.nam_sx || '0'}</div>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">
                             <div class="text-[11px] font-bold text-slate-700 truncate max-w-[180px]">${item.ten_garage || 'KHÁC'}</div>
                             <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${item.tinh_thanh || 'Toàn quốc'}</div>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">
                             <div class="text-[11px] font-bold text-slate-600">${ngayFormatted}</div>
                         </td>
                         <td class="px-6 py-4">${verifyBadge}</td>
-                        <td class="px-6 py-4 text-right"><div class="price-text">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)} <span class="text-[10px] opacity-40">đ</span></div></td>
+                        <td class="px-6 py-4 text-right" onclick="showDetail('${item.id}')"><div class="price-text">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)} <span class="text-[10px] opacity-40">đ</span></div></td>
                         <td class="px-6 py-4 text-center">
                             <button onclick="copyPrice('${item.gia_duyet}')" class="p-2 text-slate-300 hover:text-blue-600 transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></button>
                         </td>
@@ -547,16 +584,60 @@
         window.changePageSize = () => { ITEMS_PER_PAGE = parseInt(document.getElementById('pageSize').value); CURRENT_PAGE = 1; renderTable(); }
         window.copyPrice = (p) => { navigator.clipboard.writeText(p).then(() => alert("Đã copy giá!")); }
 
-        window.verifyPart = async function(id) {
-            if (!confirm("Bạn xác nhận phụ tùng này tương thích hoàn toàn với dòng xe này?")) return;
+        window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+
+        window.verifyPart = function(id) {
+            const item = MASTER_DATA.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('verifyHSBT').innerText = item.so_hsbt || 'N/A';
+            openModal('modalVerify');
+            document.getElementById('confirmVerifyBtn').onclick = () => confirmVerifyBulk(item.so_hsbt);
+        }
+
+        async function confirmVerifyBulk(so_hsbt) {
+            if (!so_hsbt) return;
+            const btn = document.getElementById('confirmVerifyBtn');
+            btn.disabled = true; btn.innerText = "ĐANG XỬ LÝ...";
             try {
-                await updateDoc(doc(db, "LichSuBaoGia", id), { verified: true });
-                alert("Cảm ơn bạn đã xác thực!");
-                // Cập nhật local data để không phải load lại trang
-                const item = MASTER_DATA.find(i => i.id === id);
-                if (item) item.verified = true;
+                const q = query(collection(db, "LichSuBaoGia"), where("so_hsbt", "==", so_hsbt));
+                const snap = await getDocs(q);
+                const batch = writeBatch(db);
+                snap.forEach(docSnap => batch.update(docSnap.ref, { verified: true }));
+                await batch.commit();
+                
+                // Update local
+                MASTER_DATA.forEach(i => { if (i.so_hsbt === so_hsbt) i.verified = true; });
                 renderTable();
-            } catch (e) { alert("Lỗi khi xác thực: " + e.message); }
+                closeModal('modalVerify');
+            } catch (e) { alert("Lỗi: " + e.message); }
+            finally { btn.disabled = false; btn.innerText = "XÁC NHẬN"; }
+        }
+
+        window.showDetail = function(id) {
+            const item = MASTER_DATA.find(i => i.id === id);
+            if (!item) return;
+            const content = document.getElementById('detailContent');
+            const fields = [
+                { l: "Tên phụ tùng", v: item.ten_phu_tung, c: "col-span-2 font-black text-blue-600 text-lg uppercase" },
+                { l: "Số hồ sơ", v: item.so_hsbt },
+                { l: "Hãng xe", v: item.hang_xe },
+                { l: "Dòng xe", v: item.hieu_xe },
+                { l: "Năm sản xuất", v: item.nam_sx },
+                { l: "Loại hàng", v: item.chinh_hang },
+                { l: "Đơn giá", v: new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0) + " VNĐ", c: "text-green-600 font-bold" },
+                { l: "Ngày báo giá", v: item.ngay_bao_gia },
+                { l: "Garage báo giá", v: item.ten_garage, c: "col-span-2" },
+                { l: "Tỉnh thành", v: item.tinh_thanh },
+                { l: "Loại hình", v: item.loại_hình || item.loai_hinh || 'N/A' }
+            ];
+            content.innerHTML = fields.map(f => `
+                <div class="${f.c || ''}">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">${f.l}</label>
+                    <div class="text-sm font-bold text-slate-700">${f.v || 'N/A'}</div>
+                </div>
+            `).join('');
+            openModal('modalDetail');
         }
 
         loadFilters();
