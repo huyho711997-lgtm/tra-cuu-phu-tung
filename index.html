@@ -287,7 +287,7 @@
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
             <div class="p-8 text-center pb-0">
                 <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 4.908-3.307 9.13-7.813 10.453a.75.75 0 01-.374 0C5.307 16.13 2 11.908 2 7c0-.68.056-1.35.166-2.001zm8.384 1.21a.75.75 0 00-1.1 0l-3.25 3.5a.75.75 0 101.1 1.02l2.7-2.908 1.45 1.45a.75.75 0 001.06-1.06l-2-2z" clip-rule="evenodd"></path></svg>
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <h3 class="text-xl font-black text-slate-900 mb-2">Xác thực phụ tùng</h3>
                 <p class="text-slate-500 font-medium text-sm leading-relaxed mb-6 px-4">Bạn xác nhận các phụ tùng trong hồ sơ <span id="verifyHSBT" class="font-bold text-green-600"></span> tương thích hoàn toàn với dòng xe này?</p>
@@ -296,6 +296,13 @@
             <div class="px-8 mb-8">
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-3">Ghi chú xác thực (tùy chọn)</label>
                 <textarea id="verifyNote" placeholder="Ví dụ: Lắp đặt hoàn hảo, phụ tùng rất tốt cho đời xe này..." class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none min-h-[100px] transition-all"></textarea>
+                
+                <div class="flex flex-wrap gap-2 mt-3">
+                    <button onclick="addTag('Phù hợp')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># PHÙ HỢP</button>
+                    <button onclick="addTag('Đúng đời xe')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># ĐÚNG ĐỜI XE</button>
+                    <button onclick="addTag('Hữu ích')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># HỮU ÍCH</button>
+                    <button onclick="addTag('Cần lưu ý')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># CẦN LƯU Ý</button>
+                </div>
             </div>
 
             <div class="p-8 pt-0 flex gap-3">
@@ -597,6 +604,12 @@
 
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+
+        window.addTag = function(text) {
+            const area = document.getElementById('verifyNote');
+            if (area.value.includes(text)) return;
+            area.value = area.value ? area.value + ", " + text : text;
+        }
 
         window.verifyPart = function(id) {
             const item = MASTER_DATA.find(i => i.id === id);
