@@ -170,6 +170,11 @@
         .btn-executive:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
         .btn-executive:active { transform: translateY(0); }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Dropdown Search Styles */
         .dropdown-item { padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
         .dropdown-item:hover { background: #f1f5f9; color: var(--primary); }
@@ -643,17 +648,29 @@
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPass').value;
+            const pass = document.getElementById('loginPass').value.trim();
             const remember = document.getElementById('rememberMe').checked;
             const err = document.getElementById('loginError');
             const btn = document.getElementById('loginBtn');
-            btn.disabled = true; btn.innerText = "ĐANG KIỂM TRA...";
+            
+            btn.disabled = true; btn.innerText = "ĐANG XÁC THỰC...";
             err.classList.add('hidden');
+            
             try {
-                await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+                // Thử thiết lập persistence, nếu lỗi thì vẫn tiếp tục đăng nhập
+                try {
+                    await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+                } catch (pErr) { console.warn("Persistence Error:", pErr); }
+                
                 await signInWithEmailAndPassword(auth, email, pass);
+                console.log("Login successful!");
             } catch (error) {
-                err.innerText = "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
+                console.error("Login error:", error);
+                let msg = "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
+                if (error.code === 'auth/network-request-failed') msg = "LỖI KẾT NỐI MẠNG!";
+                else if (error.code === 'auth/too-many-requests') msg = "QUÁ NHIỀU LẦN THỬ, HÃY ĐỢI GIÂY LÁT!";
+                
+                err.innerText = msg;
                 err.classList.remove('hidden');
             } finally {
                 btn.disabled = false; btn.innerText = "ĐĂNG NHẬP HỆ THỐNG";
