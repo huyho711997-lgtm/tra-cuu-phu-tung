@@ -122,80 +122,53 @@
         }
         .index-error a { font-weight: 800; text-decoration: underline; color: #e11d48; }
 
-        /* Premium Aurora Background */
-        @keyframes auroraMove {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0, 0) scale(1); }
-        }
-        .aurora-bg {
-            position: fixed; inset: 0; z-index: -1;
-            background: #f8fafc; overflow: hidden;
-        }
-        html.dark .aurora-bg { background: #020617; }
-        .orb {
-            position: absolute; border-radius: 50%; filter: blur(80px);
-            opacity: 0.4; animation: auroraMove 20s infinite ease-in-out;
-        }
-        .orb-1 { width: 500px; height: 500px; background: #3b82f6; top: -10%; left: -10%; animation-delay: 0s; }
-        .orb-2 { width: 400px; height: 400px; background: #8b5cf6; bottom: -5%; right: -5%; animation-delay: -5s; }
-        .orb-3 { width: 300px; height: 300px; background: #06b6d4; top: 40%; left: 30%; animation-delay: -10s; }
-
+        /* Minimalist Executive Background */
         #loginOverlay {
             position: fixed; inset: 0; z-index: 10000;
+            background: #f1f5f9;
             display: flex; align-items: center; justify-content: center;
-            perspective: 1000px;
         }
+        html.dark #loginOverlay { background: #020617; }
+        
         .login-card {
-            background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(30px) saturate(180%);
+            background: #ffffff;
             width: 100%; max-width: 440px;
-            padding: 56px; border-radius: 48px;
-            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-            border: none; position: relative;
+            padding: 56px; border-radius: 32px;
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            position: relative;
         }
         html.dark .login-card {
-            background: rgba(15, 23, 42, 0.6) !important;
-            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
-        }
-        .login-card::before {
-            content: ""; position: absolute; inset: -1px; border-radius: 48px;
-            padding: 1px; background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.1), rgba(255,255,255,0.5));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor; mask-composite: exclude;
-            pointer-events: none;
+            background: #0f172a !important;
+            border: 1px solid #1e293b !important;
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.3) !important;
         }
         
         .premium-input-group { position: relative; }
         .premium-input {
-            width: 100%; height: 56px; background: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(0,0,0,0.05); border-radius: 20px;
-            padding: 0 24px 0 52px; font-size: 14px; font-weight: 700;
-            transition: all 0.3s; color: #1e293b;
+            width: 100%; height: 52px; background: #f8fafc;
+            border: 1.5px solid #e2e8f0; border-radius: 14px;
+            padding: 0 24px 0 52px; font-size: 14px; font-weight: 600;
+            transition: all 0.2s; color: #1e293b;
         }
-        html.dark .premium-input { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.05); color: #f8fafc; }
+        html.dark .premium-input { background: #1e293b; border-color: #334155; color: #f8fafc; }
         .premium-input:focus {
-            background: #fff; border-color: #3b82f6;
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
+            background: #fff; border-color: #2563eb; outline: none;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
-        html.dark .premium-input:focus { background: rgba(0,0,0,0.4); border-color: #3b82f6; }
-        .input-icon { position: absolute; left: 20px; top: 18px; color: #94a3b8; transition: all 0.3s; }
-        .premium-input:focus + .input-icon { color: #3b82f6; transform: scale(1.1); }
+        html.dark .premium-input:focus { background: #1e293b; border-color: #2563eb; }
+        .input-icon { position: absolute; left: 18px; top: 16px; color: #94a3b8; transition: all 0.2s; }
+        .premium-input:focus + .input-icon { color: #2563eb; }
 
-        .btn-shine {
-            position: relative; overflow: hidden;
-            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-            box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.4);
+        .btn-executive {
+            background: #2563eb;
+            color: white; font-weight: 700;
+            padding: 14px; border-radius: 14px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
-        .btn-shine::after {
-            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg); transition: 0.6s;
-        }
-        .btn-shine:hover::after { left: 100%; top: 100%; }
-        .hidden { display: none !important; }
+        .btn-executive:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
+        .btn-executive:active { transform: translateY(0); }
 
         /* Dropdown Search Styles */
         .dropdown-item { padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
@@ -348,44 +321,39 @@
     </script>
 
     <div id="loginOverlay">
-        <div class="aurora-bg">
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div>
-        </div>
-        <div class="login-card animate-[scale_0.4s_cubic-bezier(0.175,0.885,0.32,1.275)]">
+        <div class="login-card animate-[fadeIn_0.5s_ease-out]">
             <div class="text-center mb-10">
-                <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-violet-600 rounded-[24px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-blue-500/40 rotate-3">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-500/20">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
-                <h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">TASCO <span class="text-blue-600">DLK</span></h2>
-                <p class="text-slate-500 dark:text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] mt-3 opacity-60">Hệ thống tra cứu phụ tùng</p>
+                <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Hệ thống TASCO DLK</h2>
+                <p class="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Tra cứu phụ tùng chuyên nghiệp</p>
             </div>
 
             <form id="loginForm" class="space-y-6">
                 <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3 px-1">Email Access</label>
-                    <input type="email" id="loginEmail" required placeholder="name@tasco.com" class="premium-input">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tài khoản Email</label>
+                    <input type="email" id="loginEmail" required placeholder="example@tasco.vn" class="premium-input">
                     <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
                 </div>
                 <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3 px-1">Security Key</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu truy cập</label>
                     <input type="password" id="loginPass" required placeholder="••••••••" class="premium-input">
                     <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
                 
                 <div class="flex items-center justify-between px-1">
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" id="rememberMe" class="w-5 h-5 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500 transition-all">
-                        <span class="text-[11px] font-black text-slate-500 group-hover:text-blue-600 transition-colors uppercase tracking-wider">Lưu phiên</span>
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all">
+                        <span class="text-[11px] font-bold text-slate-500 group-hover:text-slate-700 transition-colors">Ghi nhớ đăng nhập</span>
                     </label>
-                    <button type="button" onclick="forgotPassword()" class="text-[11px] font-black text-blue-600 hover:text-blue-700 transition-all uppercase tracking-wider">Cần hỗ trợ?</button>
+                    <button type="button" onclick="forgotPassword()" class="text-[11px] font-bold text-blue-600 hover:text-blue-700 transition-all">Quên mật khẩu?</button>
                 </div>
 
-                <button type="submit" id="loginBtn" class="w-full btn-shine text-white font-black py-4 rounded-[20px] transition-all uppercase tracking-[0.2em] text-xs mt-4">
-                    Xác thực truy cập
+                <button type="submit" id="loginBtn" class="w-full btn-executive text-sm uppercase tracking-widest mt-2">
+                    Đăng nhập hệ thống
                 </button>
-                <p id="loginError" class="text-red-500 text-[10px] font-black text-center mt-4 hidden uppercase tracking-widest"></p>
+                <p id="loginError" class="text-red-500 text-[10px] font-bold text-center mt-4 hidden uppercase tracking-widest"></p>
             </form>
         </div>
     </div>
