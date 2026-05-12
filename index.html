@@ -788,7 +788,7 @@
             // Reset dữ liệu và giao diện thay vì load lại tất cả
             MASTER_DATA = [];
             CURRENT_PAGE = 1;
-            document.getElementById('resultsTableBody').innerHTML = '<tr><td colspan="6" class="px-6 py-40 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Sẵn sàng tra cứu</td></tr>';
+            document.getElementById('resultsTableBody').innerHTML = '<tr><td colspan="8" class="px-6 py-40 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Sẵn sàng tra cứu</td></tr>';
             document.getElementById('statCount').innerText = "0 kết quả";
             document.getElementById('searchSummaryHeader').classList.add('hidden');
             updatePaginationUI(0);
@@ -820,7 +820,7 @@
             }
 
             errorBanner.style.display = 'none';
-            tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center"><div class="animate-pulse flex flex-col items-center gap-3"><div class="h-2 w-40 bg-slate-200 rounded"></div><div class="h-2 w-32 bg-slate-100 rounded"></div></div></td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="8" class="px-6 py-20 text-center"><div class="animate-pulse flex flex-col items-center gap-3"><div class="h-2 w-40 bg-slate-200 rounded"></div><div class="h-2 w-32 bg-slate-100 rounded"></div></div></td></tr>';
             loading.classList.remove('hidden');
 
             let q = collection(db, "LichSuBaoGia");
@@ -858,7 +858,6 @@
                 } else {
                     alert("Lỗi kết nối: " + e.message);
                 }
-                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-20 text-center text-red-500 font-bold">TRUY VẤN THẤT BẠI</td></tr>';
                 tableBody.innerHTML = '<tr><td colspan="8" class="px-6 py-20 text-center text-red-500 font-bold">TRUY VẤN THẤT BẠI</td></tr>';
             }
         }
