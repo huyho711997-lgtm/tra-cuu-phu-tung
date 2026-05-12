@@ -3,208 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TASCO DLK - Tra Cứu Phụ Tùng Cao Cấp</title>
+    <title>TASCO DLK - Hệ Thống Tra Cứu Phụ Tùng Cao Cấp</title>
     <!-- CSS & Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --primary: #2563eb; 
-            --primary-hover: #1d4ed8;
-            --sidebar: #0f172a;
-            --card-bg: #ffffff;
-            --bg-main: #fcfcfc;
-        }
+        :root { --primary: #2563eb; --primary-hover: #1d4ed8; }
         
-        .dark {
-            --card-bg: #111827;
-            --bg-main: #0b0e14;
-            --slate-border: #1f2937;
-        }
+        /* Dark Mode overrides for vanilla elements */
+        .dark .bg-white { background-color: #0f172a !important; }
+        .dark .bg-slate-50 { background-color: #020617 !important; }
+        .dark .text-slate-900 { color: #f1f5f9 !important; }
+        .dark .text-slate-700 { color: #cbd5e1 !important; }
+        .dark .border-slate-100, .dark .border-slate-200 { border-color: #1e293b !important; }
+        .dark .bg-slate-100 { background-color: #1e293b !important; }
+        .dark input, .dark select, .dark textarea { background-color: #1e293b !important; color: #f1f5f9 !important; border-color: #334155 !important; }
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-main); 
-            color: #1e293b;
-            letter-spacing: -0.01em;
-        }
-
-        .dark body { color: #f1f5f9; }
-
-        .main-container { max-width: 1440px; margin: 0 auto; padding: 2rem; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .main-container { max-width: 1580px; margin: 0 auto; padding: 1.5rem; }
         
-        /* Premium Card / Panel */
+        /* Unified Control Center */
         .control-panel {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px -10px rgba(0,0,0,0.02);
-            border: 1px solid #e5e7eb;
-            margin-bottom: 2rem;
-            position: relative;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1.5rem;
         }
-        .dark .control-panel { border-color: #1f2937; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.4); }
         
+        .field-group { position: relative; }
         .field-label {
             font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
+            font-weight: 800;
+            color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 10px;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
             display: block;
         }
-        .dark .field-label { color: #94a3b8; }
-
         .pro-input {
             width: 100%;
-            height: 44px;
-            background: #f9fafb !important;
-            border: 1px solid #e5e7eb !important;
-            border-radius: 10px !important;
-            padding-left: 38px !important;
+            height: 48px;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding-left: 40px !important;
             font-size: 13px !important;
-            font-weight: 600 !important;
+            font-weight: 700 !important;
             color: #1e293b;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s;
         }
-        .dark .pro-input { background: #1f2937 !important; border-color: #374151 !important; color: #f9fafb; }
         .pro-input:focus {
             background: #ffffff !important;
             border-color: var(--primary) !important;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.06) !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08) !important;
         }
-        .dark .pro-input:focus { background: #111827 !important; }
-
-        .field-icon { position: absolute; left: 14px; top: 34px; color: #94a3b8; z-index: 10; pointer-events: none; }
+        .field-icon { position: absolute; left: 14px; top: 35px; color: #94a3b8; z-index: 10; pointer-events: none; }
 
         .multi-btn {
             width: 100%;
-            height: 44px;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 0 14px 0 38px;
+            height: 48px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0 16px 0 40px;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: space-between;
             transition: all 0.2s;
-            color: #1e293b;
         }
-        .dark .multi-btn { background: #1f2937; border-color: #374151; color: #f9fafb; }
-        .multi-btn:hover { border-color: #cbd5e1; }
-        .dark .multi-btn:hover { border-color: #4b5563; }
         
         /* Table Styling */
-        .data-section { background: var(--card-bg); border-radius: 20px; border: 1px solid #e5e7eb; overflow: hidden; }
-        .dark .data-section { border-color: #1f2937; }
+        .data-section { background: white; border-radius: 24px; border: 1px solid #e2e8f0; overflow: hidden; }
+        .data-table thead th { background: #f8fafc; padding: 16px 24px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; }
+        .data-table td { padding: 16px 24px; vertical-align: middle; border-bottom: 1px solid #f8fafc; }
         
-        .data-table thead th { 
-            background: #f9fafb; 
-            padding: 14px 24px; 
-            font-size: 10px; 
-            font-weight: 700; 
-            color: #64748b; 
-            text-transform: uppercase; 
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid #f1f5f9; 
-        }
-        .dark .data-table thead th { background: #1f2937; color: #94a3b8; border-bottom-color: #111827; }
+        .badge-pro { padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-genuine { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .badge-aftermarket { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .badge-verified { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
+        .badge-unverified { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; cursor: pointer; }
+        .badge-unverified:hover { background: #e2e8f0; color: #475569; }
         
-        .data-table td { padding: 20px 24px; vertical-align: middle; border-bottom: 1px solid #f9fafb; font-size: 13px; font-weight: 500; }
-        .dark .data-table td { border-bottom-color: #1f2937; }
-        .data-table tr:hover { background: #fcfcfc; }
-        .dark .data-table tr:hover { background: #1f2937/40; }
-        
-        .badge-pro { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase; }
-        .badge-genuine { background: #ecfdf5; color: #065f46; border: 1px solid #d1fae5; }
-        .badge-aftermarket { background: #fffbeb; color: #92400e; border: 1px solid #fef3c7; }
-        .badge-verified { background: #eff6ff; color: #1e40af; border: 1px solid #dbeafe; }
-        .badge-unverified { background: #f8fafb; color: #64748b; border: 1px solid #e5e7eb; cursor: pointer; }
-        
-        .price-text { font-size: 15px; font-weight: 800; color: #0f172a; font-family: 'Inter', sans-serif; letter-spacing: -0.02em; }
-        .dark .price-text { color: #f1f5f9; }
-
+        .price-text { font-size: 17px; font-weight: 900; color: #0f172a; }
         .search-btn {
-            background: #000;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            width: 100%;
+            height: 48px;
             color: white;
-            font-weight: 700;
-            font-size: 12px;
-            letter-spacing: 0.05em;
-            border-radius: 10px;
-            height: 44px;
-            padding: 0 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-radius: 12px;
             transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .dark .search-btn { background: #f9fafb; color: #000; }
-        .search-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .search-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.5); }
 
-        /* Login Screen */
+        .index-error {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            padding: 1rem;
+            border-radius: 12px;
+            color: #9f1239;
+            font-size: 13px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .index-error a { font-weight: 800; text-decoration: underline; color: #e11d48; }
+
+        /* Login Styles */
         #loginOverlay {
             position: fixed; inset: 0; z-index: 10000;
-            background: #ffffff;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             display: flex; align-items: center; justify-content: center;
         }
-        .dark #loginOverlay { background: #0b0e14; }
-        
         .login-card {
-            background: white; width: 100%; max-width: 440px;
-            padding: 48px; border-radius: 24px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.05);
+            background: white; width: 100%; max-width: 400px;
+            padding: 40px; border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
         }
-        .dark .login-card { background: #111827; border-color: #1f2937; box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5); }
-
-        /* Vercel Tabs */
-        .vercel-tabs-list {
-            position: relative;
-            display: inline-flex;
-            gap: 2px;
-            background: #f3f4f6;
-            padding: 3px;
-            border-radius: 10px;
-        }
-        .dark .vercel-tabs-list { background: #1f2937; }
-        
-        .vercel-tab-trigger {
-            position: relative;
-            z-index: 10;
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #64748b;
-            cursor: pointer;
-            transition: color 0.2s;
-            border: none; background: none;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .vercel-tab-trigger.active { color: #000; }
-        .dark .vercel-tab-trigger.active { color: #fff; }
-        
-        .vercel-tab-hover-bg {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.04);
-            border-radius: 7px;
-            transition: all 0.2s;
-            opacity: 0; z-index: 1;
-        }
-        .dark .vercel-tab-hover-bg { background: rgba(255, 255, 255, 0.06); }
-        
-        .vercel-tab-active-bg {
-            position: absolute;
-            background: #ffffff;
-            border-radius: 7px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1;
-        }
-        .dark .vercel-tab-active-bg { background: #374151; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-
         .hidden { display: none !important; }
+
+        /* Dropdown Search Styles */
+        .dropdown-item { padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+        .dropdown-item:hover { background: #f1f5f9; color: var(--primary); }
+        .dropdown-item.active { background: #eff6ff; color: var(--primary); }
+        .search-inner { width: 100%; font-size: 12px; font-weight: 700; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; outline: none !important; }
+        .search-inner:focus { border-color: var(--primary); background: #ffffff; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-700 min-h-screen transition-colors duration-300">
@@ -299,7 +228,7 @@
 
         <!-- Unified Control Panel -->
         <div class="control-panel">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+            <div class="grid grid-cols-1 md:grid-cols-11 gap-4 items-end">
                 <!-- Hãng xe -->
                 <div class="md:col-span-2 field-group">
                     <label class="field-label">Hãng xe</label>
@@ -347,22 +276,14 @@
                 </div>
 
                 <!-- Loại hàng -->
-                <div class="md:col-span-3 field-group">
+                <div class="md:col-span-2 field-group">
                     <label class="field-label">Loại hàng</label>
-                    <div class="vercel-tabs-list" id="typeTabs">
-                        <div class="vercel-tab-hover-bg" id="tabHoverBg"></div>
-                        <div class="vercel-tab-active-bg" id="tabActiveBg"></div>
-                        <button type="button" class="vercel-tab-trigger active" data-value="all">
-                            Tất cả
-                        </button>
-                        <button type="button" class="vercel-tab-trigger" data-value="genuine">
-                            Chính hãng
-                        </button>
-                        <button type="button" class="vercel-tab-trigger" data-value="aftermarket">
-                            Thay thế
-                        </button>
-                    </div>
-                    <input type="hidden" id="filterType" value="all">
+                    <svg class="w-4 h-4 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <select id="filterType" class="pro-input appearance-none">
+                        <option value="all">Tất cả loại hàng</option>
+                        <option value="genuine">Chính hãng</option>
+                        <option value="aftermarket">Thay thế / Ngoài</option>
+                    </select>
                 </div>
 
                 <!-- Tên phụ tùng -->
@@ -374,12 +295,12 @@
 
                 <!-- Nút thao tác -->
                 <div class="md:col-span-2 flex gap-2">
-                    <button onclick="searchData()" class="search-btn flex-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        Tìm kiếm
+                    <button onclick="searchData()" class="search-btn flex-1 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        TÌM KIẾM
                     </button>
-                    <button onclick="clearFilters()" class="w-11 h-11 flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-red-500 rounded-lg transition-all" title="Xóa bộ lọc">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    <button onclick="clearFilters()" class="w-12 h-12 flex items-center justify-center bg-slate-100 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all" title="Xóa bộ lọc">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                     </button>
                 </div>
             </div>
@@ -401,11 +322,11 @@
                     <div class="flex flex-col">
                         <span id="statCount" class="text-xs font-black text-slate-900">0 kết quả</span>
                     </div>
-                    <!-- Thông tin xe đang tra cứu (Elegant Summary) -->
+                    <!-- Thông tin xe đang tra cứu (Di chuyển sang trái) -->
                     <div id="searchSummaryHeader" class="hidden md:flex items-center">
-                        <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                            <span id="summaryTextHeader" class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide"></span>
+                        <div class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-xl border border-blue-100">
+                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+                            <span id="summaryTextHeader" class="text-[10px] font-black text-blue-600 uppercase tracking-tight"></span>
                         </div>
                     </div>
                 </div>
@@ -805,42 +726,42 @@
             const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
             const pageData = MASTER_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-            pageData.forEach((item, index) => {
+            pageData.forEach(item => {
                 const isGenuine = (item.chinh_hang || '').toLowerCase().includes("chính hãng");
                 const badge = isGenuine ? '<span class="badge-pro badge-genuine">Chính hãng</span>' : '<span class="badge-pro badge-aftermarket">Thay thế</span>';
                 
+                // Định dạng ngày báo giá
                 const ngayRaw = item.ngay_bao_gia || '';
                 const ngayFormatted = ngayRaw ? ngayRaw.split(' ')[0].split('-').reverse().join('/') : 'N/A';
 
+                // Badge xác thực
                 const isVerified = item.verified === true;
                 const verifyBadge = isVerified 
-                    ? '<span class="text-blue-600 dark:text-blue-400 font-bold text-[10px] uppercase flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> Verified</span>'
-                    : `<button onclick="verifyPart('${item.id}')" class="text-slate-400 hover:text-slate-600 font-bold text-[10px] uppercase underline decoration-slate-200 underline-offset-4">Xác thực</button>`;
+                    ? '<span class="badge-pro badge-verified"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 4.908-3.307 9.13-7.813 10.453a.75.75 0 01-.374 0C5.307 16.13 2 11.908 2 7c0-.68.056-1.35.166-2.001zm8.384 1.21a.75.75 0 00-1.1 0l-3.25 3.5a.75.75 0 101.1 1.02l2.7-2.908 1.45 1.45a.75.75 0 001.06-1.06l-2-2z" clip-rule="evenodd"></path></svg> Đã xác thực</span>'
+                    : `<span class="badge-pro badge-unverified" onclick="verifyPart('${item.id}')">Xác thực ngay</span>`;
 
                 tableBody.innerHTML += `
-                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors cursor-pointer group">
-                        <td class="px-6 py-5" onclick="showDetail('${item.id}')">
-                            <div class="text-[13px] font-bold text-slate-900 dark:text-slate-100 uppercase tracking-tight group-hover:text-blue-600 transition-colors">${item.ten_phu_tung}</div>
-                            <div class="text-[10px] text-slate-400 font-medium mt-1 uppercase">HSBT: ${item.so_hsbt || 'N/A'}</div>
+                    <tr class="hover:bg-slate-50 transition-all cursor-pointer">
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">
+                            <div class="text-[13px] font-black text-slate-900 uppercase">${item.ten_phu_tung}</div>
+                            <div class="text-[9px] text-slate-400 font-bold mt-1 uppercase">${item.so_hsbt || 'N/A'}</div>
                         </td>
-                        <td class="px-6 py-5" onclick="showDetail('${item.id}')">${badge}</td>
-                        <td class="px-6 py-5" onclick="showDetail('${item.id}')">
-                            <div class="text-[12px] font-bold text-slate-700 dark:text-slate-300">${item.hang_xe} ${item.hieu_xe}</div>
-                            <div class="text-[10px] text-slate-400 font-medium uppercase mt-0.5">${item.nam_sx || '0'}</div>
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">${badge}</td>
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">
+                            <div class="text-[11px] font-black text-slate-700">${item.hang_xe} ${item.hieu_xe}</div>
+                            <div class="text-[9px] text-slate-400 font-bold uppercase">Năm: ${item.nam_sx || '0'}</div>
                         </td>
-                        <td class="px-6 py-5" onclick="showDetail('${item.id}')">
-                            <div class="text-[12px] font-semibold text-slate-600 dark:text-slate-400 truncate max-w-[160px]">${item.ten_garage || 'KHÁC'}</div>
-                            <div class="text-[10px] text-slate-400 font-medium uppercase">${item.tinh_thanh || 'Toàn quốc'}</div>
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">
+                            <div class="text-[11px] font-bold text-slate-700 truncate max-w-[180px]">${item.ten_garage || 'KHÁC'}</div>
+                            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${item.tinh_thanh || 'Toàn quốc'}</div>
                         </td>
-                        <td class="px-6 py-5" onclick="showDetail('${item.id}')">
-                            <div class="text-[11px] font-semibold text-slate-500">${ngayFormatted}</div>
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">
+                            <div class="text-[11px] font-bold text-slate-600">${ngayFormatted}</div>
                         </td>
-                        <td class="px-6 py-5">${verifyBadge}</td>
-                        <td class="px-6 py-5 text-right" onclick="showDetail('${item.id}')">
-                            <div class="price-text">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)}<span class="text-[10px] font-medium ml-1 opacity-40">đ</span></div>
-                        </td>
-                        <td class="px-6 py-5 text-center">
-                            <button onclick="copyPrice('${item.gia_duyet}')" class="p-2 text-slate-300 hover:text-blue-500 transition-all opacity-0 group-hover:opacity-100"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></button>
+                        <td class="px-6 py-4">${verifyBadge}</td>
+                        <td class="px-6 py-4 text-right" onclick="showDetail('${item.id}')"><div class="price-text">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)} <span class="text-[10px] opacity-40">đ</span></div></td>
+                        <td class="px-6 py-4 text-center">
+                            <button onclick="copyPrice('${item.gia_duyet}')" class="p-2 text-slate-300 hover:text-blue-600 transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></button>
                         </td>
                     </tr>
                 `;
@@ -951,64 +872,6 @@
         }
 
         loadFilters();
-
-        // Vercel Tabs Logic
-        function initVercelTabs() {
-            const tabsList = document.getElementById('typeTabs');
-            if (!tabsList) return;
-            const triggers = tabsList.querySelectorAll('.vercel-tab-trigger');
-            const hoverBg = document.getElementById('tabHoverBg');
-            const activeBg = document.getElementById('tabActiveBg');
-            const filterInput = document.getElementById('filterType');
-
-            function updateActiveBg(element) {
-                activeBg.style.width = `${element.offsetWidth}px`;
-                activeBg.style.left = `${element.offsetLeft}px`;
-                activeBg.style.height = `${element.offsetHeight}px`;
-                activeBg.style.top = `${element.offsetTop}px`;
-            }
-
-            // Set initial active bg
-            const activeTab = tabsList.querySelector('.vercel-tab-trigger.active');
-            if (activeTab) updateActiveBg(activeTab);
-
-            triggers.forEach(trigger => {
-                trigger.addEventListener('mouseenter', (e) => {
-                    const el = e.currentTarget;
-                    hoverBg.style.width = `${el.offsetWidth}px`;
-                    hoverBg.style.left = `${el.offsetLeft}px`;
-                    hoverBg.style.height = `${el.offsetHeight}px`;
-                    hoverBg.style.top = `${el.offsetTop}px`;
-                    hoverBg.style.opacity = '1';
-                });
-
-                trigger.addEventListener('mouseleave', () => {
-                    hoverBg.style.opacity = '0';
-                });
-
-                trigger.addEventListener('click', (e) => {
-                    const el = e.currentTarget;
-                    triggers.forEach(t => t.classList.remove('active'));
-                    el.classList.add('active');
-                    filterInput.value = el.getAttribute('data-value');
-                    updateActiveBg(el);
-                    
-                    if (MASTER_DATA.length > 0 || document.getElementById('searchInput').value) {
-                        searchData();
-                    }
-                });
-            });
-
-            window.addEventListener('resize', () => {
-                const active = tabsList.querySelector('.vercel-tab-trigger.active');
-                if (active) updateActiveBg(active);
-            });
-        }
-
-        // Run init after DOM content loaded
-        document.addEventListener('DOMContentLoaded', initVercelTabs);
-        // Also call it immediately if we are in a module and DOM might be ready
-        setTimeout(initVercelTabs, 500);
     </script>
 </body>
 </html>
