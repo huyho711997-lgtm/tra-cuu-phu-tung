@@ -655,7 +655,7 @@
         function renderHangList() {
             const list = document.getElementById('listHang');
             const sortedHang = Object.keys(CAY_GIA_PHA).sort();
-            list.innerHTML = '<div class="dropdown-item active" onclick="selectHang(\'\')">Tất cả hãng</div>';
+            list.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600 uppercase" onclick="selectHang(\'\')">Tất cả hãng</div>';
             sortedHang.forEach(hang => {
                 list.innerHTML += `<div class="dropdown-item" onclick="selectHang('${hang}')">${hang}</div>`;
             });
@@ -727,7 +727,7 @@
 
         function fillNamSXDropdown(list) {
             const container = document.getElementById('listNam');
-            container.innerHTML = '<div class="dropdown-item active" onclick="selectNam(\'\')">Tất cả</div>';
+            container.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600 uppercase" onclick="selectNam(\'\')">Tất cả năm</div>';
             list.sort((a,b) => b-a).forEach(n => {
                 container.innerHTML += `<div class="dropdown-item" onclick="selectNam('${n}')">${n}</div>`;
             });
