@@ -671,7 +671,7 @@
         function renderHangList() {
             const list = document.getElementById('listHang');
             const sortedHang = Object.keys(CAY_GIA_PHA).sort();
-            list.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600 uppercase" onclick="selectHang(\'\')">Tất cả hãng</div>';
+            list.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectHang(\'\')">Tất cả hãng</div>';
             sortedHang.forEach(hang => {
                 list.innerHTML += `<div class="dropdown-item" onclick="selectHang('${hang}')">${hang}</div>`;
             });
@@ -698,7 +698,7 @@
                 // Add Select All option
                 const allItem = document.createElement('label');
                 allItem.className = 'dropdown-item border-b border-slate-100 dark:border-slate-800 mb-1 pb-2';
-                allItem.innerHTML = `<input type="checkbox" id="selectAllHieu" onchange="toggleSelectAllHieu(this)" class="w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="font-black text-blue-600">CHỌN TẤT CẢ</span>`;
+                allItem.innerHTML = `<input type="checkbox" id="selectAllHieu" onchange="toggleSelectAllHieu(this)" class="w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="font-black text-blue-600">Chọn tất cả</span>`;
                 container.appendChild(allItem);
 
                 Object.keys(CAY_GIA_PHA[hang]).sort().forEach(hieu => {
@@ -743,7 +743,7 @@
 
         function fillNamSXDropdown(list) {
             const container = document.getElementById('listNam');
-            container.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600 uppercase" onclick="selectNam(\'\')">Tất cả năm</div>';
+            container.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectNam(\'\')">Tất cả năm</div>';
             list.sort((a,b) => b-a).forEach(n => {
                 container.innerHTML += `<div class="dropdown-item" onclick="selectNam('${n}')">${n}</div>`;
             });
