@@ -134,6 +134,62 @@
         .dropdown-item.active { background: #eff6ff; color: var(--primary); }
         .search-inner { width: 100%; font-size: 12px; font-weight: 700; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; outline: none !important; }
         .search-inner:focus { border-color: var(--primary); background: #ffffff; }
+
+        /* Vercel Tabs Style */
+        .vercel-tabs-list {
+            position: relative;
+            display: inline-flex;
+            gap: 4px;
+            background: transparent;
+            padding: 4px;
+            border-radius: 10px;
+        }
+        .vercel-tab-trigger {
+            position: relative;
+            z-index: 10;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            border: none;
+            background: none;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            outline: none !important;
+        }
+        .vercel-tab-trigger.active {
+            color: #0f172a;
+        }
+        .dark .vercel-tab-trigger.active {
+            color: #fff;
+        }
+        .vercel-tab-hover-bg {
+            position: absolute;
+            background: rgba(14, 15, 17, 0.06);
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .dark .vercel-tab-hover-bg {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .vercel-tab-active-line {
+            position: absolute;
+            bottom: 0px;
+            height: 2px;
+            background: #2563eb;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+        .dark .vercel-tab-active-line {
+            background: #3b82f6;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-700 min-h-screen transition-colors duration-300">
@@ -228,7 +284,7 @@
 
         <!-- Unified Control Panel -->
         <div class="control-panel">
-            <div class="grid grid-cols-1 md:grid-cols-11 gap-4 items-end">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                 <!-- Hãng xe -->
                 <div class="md:col-span-2 field-group">
                     <label class="field-label">Hãng xe</label>
@@ -276,14 +332,25 @@
                 </div>
 
                 <!-- Loại hàng -->
-                <div class="md:col-span-2 field-group">
+                <div class="md:col-span-3 field-group">
                     <label class="field-label">Loại hàng</label>
-                    <svg class="w-4 h-4 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    <select id="filterType" class="pro-input appearance-none">
-                        <option value="all">Tất cả loại hàng</option>
-                        <option value="genuine">Chính hãng</option>
-                        <option value="aftermarket">Thay thế / Ngoài</option>
-                    </select>
+                    <div class="vercel-tabs-list" id="typeTabs">
+                        <div class="vercel-tab-hover-bg" id="tabHoverBg"></div>
+                        <div class="vercel-tab-active-line" id="tabActiveLine"></div>
+                        <button type="button" class="vercel-tab-trigger active" data-value="all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                            Tất cả
+                        </button>
+                        <button type="button" class="vercel-tab-trigger" data-value="genuine">
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            Chính hãng
+                        </button>
+                        <button type="button" class="vercel-tab-trigger" data-value="aftermarket">
+                            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                            Thay thế
+                        </button>
+                    </div>
+                    <input type="hidden" id="filterType" value="all">
                 </div>
 
                 <!-- Tên phụ tùng -->
@@ -872,6 +939,62 @@
         }
 
         loadFilters();
+
+        // Vercel Tabs Logic
+        function initVercelTabs() {
+            const tabsList = document.getElementById('typeTabs');
+            if (!tabsList) return;
+            const triggers = tabsList.querySelectorAll('.vercel-tab-trigger');
+            const hoverBg = document.getElementById('tabHoverBg');
+            const activeLine = document.getElementById('tabActiveLine');
+            const filterInput = document.getElementById('filterType');
+
+            function updateActiveLine(element) {
+                activeLine.style.width = `${element.offsetWidth}px`;
+                activeLine.style.left = `${element.offsetLeft}px`;
+            }
+
+            // Set initial active line
+            const activeTab = tabsList.querySelector('.vercel-tab-trigger.active');
+            if (activeTab) updateActiveLine(activeTab);
+
+            triggers.forEach(trigger => {
+                trigger.addEventListener('mouseenter', (e) => {
+                    const el = e.currentTarget;
+                    hoverBg.style.width = `${el.offsetWidth}px`;
+                    hoverBg.style.left = `${el.offsetLeft}px`;
+                    hoverBg.style.opacity = '1';
+                });
+
+                trigger.addEventListener('mouseleave', () => {
+                    hoverBg.style.opacity = '0';
+                });
+
+                trigger.addEventListener('click', (e) => {
+                    const el = e.currentTarget;
+                    triggers.forEach(t => t.classList.remove('active'));
+                    el.classList.add('active');
+                    filterInput.value = el.getAttribute('data-value');
+                    updateActiveLine(el);
+                    
+                    // Trigger search automatically when tab changes if data was already searched
+                    if (MASTER_DATA.length > 0 || document.getElementById('searchInput').value) {
+                        searchData();
+                    }
+                });
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                const active = tabsList.querySelector('.vercel-tab-trigger.active');
+                if (active) updateActiveLine(active);
+            });
+        }
+
+        // Run init after DOM content loaded
+        document.addEventListener('DOMContentLoaded', initVercelTabs);
+        // Also call it immediately if we are in a module and DOM might be ready
+        setTimeout(initVercelTabs, 500);
     </script>
 </body>
 </html>
