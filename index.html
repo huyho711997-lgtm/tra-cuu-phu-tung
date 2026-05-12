@@ -635,13 +635,17 @@
         onAuthStateChanged(auth, (user) => {
             const overlay = document.getElementById('loginOverlay');
             const main = document.getElementById('mainApp');
+            console.log("Auth State Changed. User:", user ? user.email : "None");
+            
             if (user && !user.isAnonymous) {
-                overlay.classList.add('hidden');
-                main.classList.remove('hidden');
+                console.log("Hiding login overlay...");
+                overlay.style.display = 'none';
+                main.style.display = 'block';
                 document.getElementById('userEmail').innerText = user.email || 'User';
             } else {
-                overlay.classList.remove('hidden');
-                main.classList.add('hidden');
+                console.log("Showing login overlay...");
+                overlay.style.display = 'flex';
+                main.style.display = 'none';
             }
         });
 
