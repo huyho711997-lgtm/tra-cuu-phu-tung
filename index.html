@@ -115,79 +115,123 @@
         }
         .index-error a { font-weight: 800; text-decoration: underline; color: #e11d48; }
 
-        /* Login Styles Redesign */
+        /* Login Styles Redesign - EXTREME WOW */
         #loginOverlay {
             position: fixed; inset: 0; z-index: 10000;
-            background: #0f172a;
+            background: #020617;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
+            perspective: 1000px;
         }
-        .login-bg-glow {
-            position: absolute; width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(37, 99, 235, 0) 70%);
-            border-radius: 50%; blur: 80px; filter: blur(80px);
+        
+        /* Animated Mesh Gradient Background */
+        .login-mesh {
+            position: absolute; inset: -50%;
+            background: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.2) 0, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.2) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(30, 64, 175, 0.2) 0, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(37, 99, 235, 0.2) 0, transparent 50%);
+            filter: blur(80px);
+            animation: meshAnim 25s ease infinite alternate;
             z-index: 0;
         }
+        @keyframes meshAnim {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1.2) rotate(10deg); }
+        }
+
+        /* Floating Particles */
+        .particles { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+        .particle { position: absolute; background: white; border-radius: 50%; opacity: 0.2; animation: float 15s infinite linear; }
+        @keyframes float {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
         .login-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            width: 100%; max-width: 420px;
-            padding: 48px; border-radius: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            width: 100%; max-width: 440px;
+            padding: 56px; border-radius: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 80px -20px rgba(37, 99, 235, 0.3);
             z-index: 10;
             position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
         }
+        
         .login-input-group {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 4px 4px 4px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 22px;
+            padding: 6px 6px 6px 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            transition: all 0.3s;
+            gap: 14px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .login-input-group:focus-within {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            background: rgba(37, 99, 235, 0.05);
+            border-color: rgba(37, 99, 235, 0.5);
+            box-shadow: 
+                0 0 0 1px rgba(37, 99, 235, 0.5),
+                0 0 25px rgba(37, 99, 235, 0.2);
+            transform: scale(1.02);
         }
         .login-input-field {
             background: transparent !important;
             border: none !important;
             color: #fff !important;
-            font-size: 14px !important;
+            font-size: 15px !important;
             font-weight: 600 !important;
             width: 100%;
-            height: 48px;
+            height: 54px;
             outline: none !important;
             box-shadow: none !important;
         }
-        .login-input-field::placeholder { color: rgba(255, 255, 255, 0.3); }
+        .login-input-field::placeholder { color: rgba(255, 255, 255, 0.15); }
         
         .login-btn-premium {
+            position: relative;
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: white;
-            font-weight: 800;
-            font-size: 13px;
-            letter-spacing: 0.1em;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            padding: 16px;
-            border-radius: 16px;
+            padding: 22px;
+            border-radius: 22px;
             width: 100%;
-            transition: all 0.3s;
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px -10px rgba(37, 99, 235, 0.7);
             border: none;
             cursor: pointer;
+            overflow: hidden;
+        }
+        .login-btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .login-btn-premium:hover::before {
+            left: 100%;
         }
         .login-btn-premium:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.5);
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            transform: translateY(-4px);
+            box-shadow: 0 25px 45px -10px rgba(37, 99, 235, 0.9);
+            filter: brightness(1.1);
         }
-        .login-btn-premium:active { transform: translateY(0); }
+        .login-btn-premium:active { transform: translateY(-1px); }
 
         .hidden { display: none !important; }
 
@@ -275,51 +319,85 @@
 
     <!-- Login Screen -->
     <div id="loginOverlay">
-        <div class="login-bg-glow" style="top: -10%; left: -10%;"></div>
-        <div class="login-bg-glow" style="bottom: -10%; right: -10%; background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, rgba(124, 58, 237, 0) 70%);"></div>
+        <div class="login-mesh"></div>
+        <div class="particles" id="particles"></div>
         
-        <div class="login-card animate-[scale_0.3s_ease-out]">
-            <div class="text-center mb-10">
-                <div class="w-20 h-20 bg-blue-600/20 border border-blue-500/30 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-blue-500/20 backdrop-blur-md">
-                    <svg class="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <div class="login-card" id="loginCard">
+            <div class="text-center mb-12">
+                <div class="login-logo-container">
+                    <div class="login-logo-ring"></div>
+                    <div class="w-20 h-20 bg-blue-600/30 border border-blue-500/40 rounded-[28px] flex items-center justify-center mx-auto shadow-2xl shadow-blue-500/30 backdrop-blur-xl relative z-10">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    </div>
                 </div>
-                <h2 class="text-3xl font-black text-white tracking-tighter uppercase mb-2">TASCO <span class="text-blue-500">DLK</span></h2>
-                <p class="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em]">Hệ thống tra cứu phụ tùng</p>
+                <h2 class="text-4xl font-black text-white tracking-tighter uppercase mb-2 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50">TASCO <span class="text-blue-500">DLK</span></h2>
+                <p class="text-blue-400/60 font-black text-[11px] uppercase tracking-[0.4em]">Phụ tùng chính hãng</p>
             </div>
 
-            <form id="loginForm" class="space-y-6">
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block px-1">Tài khoản truy cập</label>
+            <form id="loginForm" class="space-y-8">
+                <div class="space-y-3">
+                    <label class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] block px-2">Access Portal</label>
                     <div class="login-input-group">
-                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                        <input type="email" id="loginEmail" required placeholder="name@tasco.vn" class="login-input-field">
+                        <svg class="w-5 h-5 text-blue-500/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        <input type="email" id="loginEmail" required placeholder="admin@tasco.vn" class="login-input-field">
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block px-1">Mật khẩu hệ thống</label>
+                <div class="space-y-3">
+                    <label class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] block px-2">Secure Key</label>
                     <div class="login-input-group">
-                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <svg class="w-5 h-5 text-blue-500/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         <input type="password" id="loginPass" required placeholder="••••••••" class="login-input-field">
                     </div>
                 </div>
 
-                <div class="pt-4">
-                    <button type="submit" id="loginBtn" class="login-btn-premium">ĐĂNG NHẬP NGAY</button>
+                <div class="pt-6">
+                    <button type="submit" id="loginBtn" class="login-btn-premium">AUTHENTICATE</button>
                 </div>
                 
-                <p id="loginError" class="text-red-400 text-[10px] font-bold text-center hidden uppercase tracking-wider bg-red-500/10 py-3 rounded-xl border border-red-500/20"></p>
+                <p id="loginError" class="text-red-400 text-[11px] font-black text-center hidden uppercase tracking-[0.1em] bg-red-500/10 py-4 rounded-2xl border border-red-500/20 backdrop-blur-md"></p>
             </form>
             
-            <div class="mt-10 pt-6 border-t border-white/5 flex items-center justify-between">
-                <span class="text-[9px] text-slate-600 font-bold uppercase tracking-widest">© 2024 TASCO DLK</span>
-                <div class="flex gap-3">
-                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Server Online</span>
+            <div class="mt-12 pt-8 border-t border-white/10 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] text-slate-500 font-black uppercase tracking-widest block">System Node 01</span>
+                    <span class="text-[9px] text-blue-500/40 font-bold uppercase tracking-widest mt-1">Operational status</span>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+                    <div class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Extreme WOW Particles
+        const partContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 3 + 1;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 15 + 's';
+            p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            partContainer.appendChild(p);
+        }
+
+        // 3D Tilt Effect
+        const card = document.getElementById('loginCard');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 45;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 45;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+        document.addEventListener('mouseenter', () => card.style.transition = 'none');
+        document.addEventListener('mouseleave', () => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+    </script>
 
     <!-- Main Content (Hidden by default) -->
     <div id="mainApp" class="hidden main-container">
