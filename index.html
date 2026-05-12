@@ -155,22 +155,38 @@
             background: #0f172a !important; 
             border: 1px solid #334155 !important; 
         }
-        /* Specific override for Toggle Button to make it stand out */
+        /* Theme Toggle Button - Forced Visibility */
         .theme-toggle-btn {
-            background: white !important;
-            border: 1px solid #e2e8f0 !important;
-            color: #eab308 !important; /* yellow-500 */
+            background: #ffffff !important;
+            border: 2px solid #e2e8f0 !important;
+            color: #f59e0b !important; /* amber-500 */
+            width: 44px !important;
+            height: 44px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: 14px !important;
+            padding: 0 !important;
         }
         html.dark .theme-toggle-btn {
             background: #1e293b !important;
-            border-color: #334155 !important;
-            color: #facc15 !important; /* yellow-400 */
-            box-shadow: 0 0 15px rgba(234, 179, 8, 0.1) !important;
+            border-color: #475569 !important;
+            color: #fbbf24 !important; /* amber-400 */
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.15) !important;
+        }
+        .theme-toggle-btn svg {
+            width: 20px !important;
+            height: 20px !important;
+            fill: currentColor !important;
         }
         .theme-toggle-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+            transform: scale(1.1) rotate(5deg);
+            background: #f8fafc !important;
+        }
+        html.dark .theme-toggle-btn:hover {
+            background: #334155 !important;
+            border-color: #fbbf24 !important;
         }
         html.dark .bg-slate-50, 
         html.dark .bg-slate-50\/50, 
