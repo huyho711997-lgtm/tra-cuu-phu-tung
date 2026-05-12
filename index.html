@@ -178,8 +178,13 @@
         .theme-toggle-btn svg {
             width: 22px !important;
             height: 22px !important;
-            stroke: currentColor !important;
+            transition: all 0.3s ease !important;
         }
+        #sunIcon { display: none !important; color: #fbbf24 !important; }
+        #moonIcon { display: block !important; color: #f59e0b !important; }
+        
+        html.dark #sunIcon { display: block !important; }
+        html.dark #moonIcon { display: none !important; }
         .theme-toggle-btn:hover {
             transform: scale(1.1) rotate(5deg);
             background: #f8fafc !important;
@@ -325,10 +330,10 @@
             <div class="flex items-center gap-3">
                 <!-- Theme Toggle -->
                 <button onclick="toggleTheme()" class="theme-toggle-btn shadow-sm" title="Chuyển chế độ sáng/tối">
-                    <!-- Sun Icon (Show in Dark Mode) -->
-                    <svg id="sunIcon" class="hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <!-- Moon Icon (Show in Light Mode) -->
-                    <svg id="moonIcon" class="block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <!-- Sun Icon -->
+                    <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <!-- Moon Icon -->
+                    <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
 
                 <div class="flex items-center bg-white border border-slate-200 p-1.5 rounded-[20px] shadow-sm hover:shadow-md transition-all">
