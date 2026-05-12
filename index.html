@@ -115,10 +115,10 @@
         }
         .index-error a { font-weight: 800; text-decoration: underline; color: #e11d48; }
 
-        /* Login Styles - Split Layout (Image Inspired) */
+        /* Login Styles - Split Layout (Synchronized & Animated) */
         #loginOverlay {
             position: fixed; inset: 0; z-index: 10000;
-            background: #06100b; /* Dark background from image */
+            background: #0f172a; /* Dark slate for better contrast */
             display: flex; align-items: center; justify-content: center;
             padding: 20px;
         }
@@ -127,10 +127,16 @@
             background: #ffffff;
             width: 100%; max-width: 1000px;
             min-height: 650px;
-            border-radius: 48px;
+            border-radius: 40px;
             display: flex;
             overflow: hidden;
             box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardEntry 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        @keyframes cardEntry {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .login-left {
@@ -145,6 +151,7 @@
             flex: 1.1;
             padding: 24px;
             display: block;
+            background: #f8fafc;
         }
         @media (max-width: 900px) {
             .login-right { display: none; }
@@ -153,9 +160,14 @@
 
         .login-illustration {
             width: 100%; height: 100%;
-            border-radius: 40px;
+            border-radius: 32px;
             object-fit: cover;
-            background: #f8fafc;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            animation: floatIllustration 6s ease-in-out infinite;
+        }
+        @keyframes floatIllustration {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .login-title {
@@ -164,6 +176,9 @@
             color: #0f172a;
             margin-bottom: 8px;
             letter-spacing: -0.02em;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s ease forwards 0.3s;
         }
 
         .login-subtitle {
@@ -171,10 +186,19 @@
             color: #64748b;
             font-weight: 500;
             margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s ease forwards 0.4s;
         }
         
-        .login-input-wrap {
-            margin-bottom: 24px;
+        .login-form-group {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s ease forwards 0.5s;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .login-label {
@@ -189,7 +213,7 @@
         .login-input-group {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 0 20px;
             display: flex;
             align-items: center;
@@ -197,8 +221,8 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .login-input-group:focus-within {
-            border-color: #f97316;
-            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
 
         .login-input-field {
@@ -215,23 +239,26 @@
         .login-input-field::placeholder { color: #94a3b8; font-weight: 500; }
         
         .login-btn-premium {
-            background: #f97316;
+            background: #2563eb;
             color: white;
             font-weight: 700;
             font-size: 15px;
             padding: 16px;
-            border-radius: 20px;
+            border-radius: 16px;
             width: 100%;
             transition: all 0.3s;
             border: none;
             cursor: pointer;
             margin-top: 10px;
-            box-shadow: 0 10px 20px -5px rgba(249, 115, 22, 0.3);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s ease forwards 0.6s;
         }
         .login-btn-premium:hover {
-            background: #ea580c;
+            background: #1d4ed8;
             transform: translateY(-2px);
-            box-shadow: 0 15px 25px -5px rgba(249, 115, 22, 0.4);
+            box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.4);
         }
         .login-btn-premium:active { transform: translateY(0); }
 
@@ -242,8 +269,12 @@
             align-items: center;
             font-size: 13px;
             font-weight: 600;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards 0.8s;
         }
-        .login-footer-links a { color: #f97316; text-decoration: none; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        
+        .login-footer-links a { color: #2563eb; text-decoration: none; }
         .login-footer-links a:hover { text-decoration: underline; }
 
         .hidden { display: none !important; }
@@ -334,40 +365,42 @@
     <div id="loginOverlay">
         <div class="login-card">
             <div class="login-left">
-                <div class="mb-10">
+                <div>
                     <h2 class="login-title">Welcome back 👋</h2>
                     <p class="login-subtitle">Vui lòng nhập thông tin để truy cập hệ thống.</p>
                 </div>
 
                 <form id="loginForm">
-                    <div class="login-input-wrap">
-                        <label class="login-label">Tài khoản Email</label>
-                        <div class="login-input-group">
-                            <input type="email" id="loginEmail" required placeholder="name@tasco.vn" class="login-input-field">
+                    <div class="login-form-group">
+                        <div class="login-input-wrap">
+                            <label class="login-label">Tài khoản Email</label>
+                            <div class="login-input-group">
+                                <input type="email" id="loginEmail" required placeholder="name@tasco.vn" class="login-input-field">
+                            </div>
+                        </div>
+
+                        <div class="login-input-wrap">
+                            <label class="login-label">Mật khẩu</label>
+                            <div class="login-input-group">
+                                <input type="password" id="loginPass" required placeholder="••••••••" class="login-input-field">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mb-8 px-1">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600">
+                                <span class="text-xs font-semibold text-slate-600">Ghi nhớ đăng nhập</span>
+                            </label>
+                            <a href="#" class="text-xs font-bold text-blue-600 hover:underline">Quên mật khẩu?</a>
                         </div>
                     </div>
 
-                    <div class="login-input-wrap">
-                        <label class="login-label">Mật khẩu</label>
-                        <div class="login-input-group">
-                            <input type="password" id="loginPass" required placeholder="••••••••" class="login-input-field">
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between mb-8 px-1">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-orange-500 focus:ring-orange-500">
-                            <span class="text-xs font-semibold text-slate-600">Ghi nhớ đăng nhập</span>
-                        </label>
-                        <a href="#" class="text-xs font-bold text-orange-500 hover:underline">Quên mật khẩu?</a>
-                    </div>
-
-                    <button type="submit" id="loginBtn" class="login-btn-premium">Đăng nhập</button>
+                    <button type="submit" id="loginBtn" class="login-btn-premium">Đăng nhập hệ thống</button>
                     
                     <p id="loginError" class="text-red-500 text-xs font-bold text-center hidden p-4 bg-red-50 rounded-2xl border border-red-100 mt-6"></p>
                 </form>
                 
-                <div class="mt-auto pt-10 border-t border-slate-100 flex items-center justify-between">
+                <div class="login-footer-links mt-auto pt-10 border-t border-slate-100 flex items-center justify-between">
                     <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">© 2024 TASCO DLK</span>
                     <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">System Node 01</span>
                 </div>
