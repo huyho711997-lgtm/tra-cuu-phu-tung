@@ -401,11 +401,16 @@
                 <div class="md:col-span-2 field-group">
                     <label class="field-label">Loại hàng</label>
                     <svg class="w-4 h-4 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    <select id="filterType" class="pro-input appearance-none">
-                        <option value="all">Tất cả loại hàng</option>
-                        <option value="genuine">Chính hãng</option>
-                        <option value="aftermarket">Thay thế / Ngoài</option>
-                    </select>
+                    <button id="btnType" data-dropdown-toggle="dropdownType" class="multi-btn">
+                        <span id="labelType" class="truncate">Tất cả loại hàng</span>
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="dropdownType" class="z-50 hidden bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 w-56 p-2">
+                        <div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectType('all')">Tất cả loại hàng</div>
+                        <div class="dropdown-item" onclick="selectType('genuine')">Chính hãng</div>
+                        <div class="dropdown-item" onclick="selectType('aftermarket')">Thay thế / Ngoài</div>
+                    </div>
+                    <input type="hidden" id="filterType" value="all">
                 </div>
 
                 <div class="md:col-span-2 field-group">
@@ -690,6 +695,15 @@
             } else { fillNamSXDropdown(NAM_ALL); }
         }
 
+        window.selectType = function(val) {
+            document.getElementById('filterType').value = val;
+            const labels = { 'all': 'Tất cả loại hàng', 'genuine': 'Chính hãng', 'aftermarket': 'Thay thế / Ngoài' };
+            document.getElementById('labelType').innerText = labels[val];
+            document.querySelectorAll('#dropdownType .dropdown-item').forEach(el => {
+                el.classList.toggle('active', el.innerText === labels[val]);
+            });
+        }
+
         function fillNamSXDropdown(list) {
             const container = document.getElementById('listNam');
             container.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectNam(\'\')">Tất cả năm</div>';
@@ -715,7 +729,7 @@
         window.clearFilters = function() {
             selectHang('');
             selectNam('');
-            document.getElementById('filterType').value = 'all';
+            selectType('all');
             document.getElementById('searchInput').value = '';
             MASTER_DATA = [];
             CURRENT_PAGE = 1;
