@@ -809,14 +809,23 @@
             try {
                 if (email === MGR_EMAIL) {
                     // Đăng nhập Admin qua Firebase Auth
+                    try {
+                        await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+                    } catch (pErr) { console.warn("Persistence Error:", pErr); }
                     await signInWithEmailAndPassword(auth, email, pass);
                 } else {
                     // Đăng nhập Sub-user qua Firestore
                     await handleSubUserLogin(email, pass);
                 }
+                console.log("Login successful!");
             } catch (error) {
                 console.error("Login error:", error);
-                err.innerText = error.message || "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
+                let msg = "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
+                if (error.code === 'auth/network-request-failed') msg = "LỖI KẾT NỐI MẠNG!";
+                else if (error.code === 'auth/too-many-requests') msg = "QUÁ NHIỀU LẦN THỬ, HÃY ĐỢI GIÂY LÁT!";
+                else if (error.message) msg = error.message;
+                
+                err.innerText = msg;
                 err.classList.remove('hidden');
             } finally {
                 btn.disabled = false; btn.innerText = "ĐĂNG NHẬP HỆ THỐNG";
@@ -951,37 +960,7 @@
             }
         }
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPass').value.trim();
-            const remember = document.getElementById('rememberMe').checked;
-            const err = document.getElementById('loginError');
-            const btn = document.getElementById('loginBtn');
-            
-            btn.disabled = true; btn.innerText = "ĐANG XÁC THỰC...";
-            err.classList.add('hidden');
-            
-            try {
-                // Thử thiết lập persistence, nếu lỗi thì vẫn tiếp tục đăng nhập
-                try {
-                    await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
-                } catch (pErr) { console.warn("Persistence Error:", pErr); }
-                
-                await signInWithEmailAndPassword(auth, email, pass);
-                console.log("Login successful!");
-            } catch (error) {
-                console.error("Login error:", error);
-                let msg = "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
-                if (error.code === 'auth/network-request-failed') msg = "LỖI KẾT NỐI MẠNG!";
-                else if (error.code === 'auth/too-many-requests') msg = "QUÁ NHIỀU LẦN THỬ, HÃY ĐỢI GIÂY LÁT!";
-                
-                err.innerText = msg;
-                err.classList.remove('hidden');
-            } finally {
-                btn.disabled = false; btn.innerText = "ĐĂNG NHẬP HỆ THỐNG";
-            }
-        });
+
 
         window.forgotPassword = async function() {
             const email = document.getElementById('loginEmail').value.trim();
@@ -994,8 +973,7 @@
             }
         }
 
-        window.handleLogout = () => { openModal('modalLogout'); }
-        window.confirmLogout = () => { signOut(auth); closeModal('modalLogout'); }
+
 
         let CAY_GIA_PHA = {}; let NAM_ALL = []; 
         let MASTER_DATA = []; let CURRENT_PAGE = 1; let ITEMS_PER_PAGE = 10;
