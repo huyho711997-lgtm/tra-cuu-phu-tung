@@ -376,6 +376,11 @@
             </div>
             
             <div class="flex items-center gap-3">
+                <button id="adminBtn" onclick="toggleAdminView()" class="hidden h-11 px-4 bg-slate-900 dark:bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-slate-900/20 dark:shadow-blue-600/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    QUẢN TRỊ
+                </button>
+
                 <button onclick="toggleTheme()" class="theme-toggle-btn shadow-sm" title="Chuyển chế độ sáng/tối">
                     <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                     <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -398,6 +403,75 @@
                 </div>
             </div>
         </header>
+
+        <div id="adminSection" class="hidden main-container">
+            <header class="flex items-center justify-between mb-8 px-2">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleAdminView()" class="w-11 h-11 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-all">
+                        <svg class="w-6 h-6 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    </button>
+                    <div>
+                        <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tighter">QUẢN LÝ <span class="text-blue-600">NGƯỜI DÙNG</span></h1>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Danh sách tài khoản hệ thống</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="refreshUserList()" class="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-blue-600 shadow-sm hover:shadow-md transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="data-section">
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full text-sm text-left">
+                        <thead>
+                            <tr>
+                                <th>Người dùng</th>
+                                <th>Vai trò</th>
+                                <th>Lần đăng nhập cuối</th>
+                                <th>Ngày tạo</th>
+                                <th class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <tr><td colspan="5" class="px-6 py-20 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="modalEditUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+                <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Cập nhật vai trò</h3>
+                </div>
+                <div class="p-8">
+                    <div class="mb-6">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Email người dùng</label>
+                        <div id="editUserEmail" class="text-sm font-bold text-slate-700 dark:text-slate-300 px-1"></div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4 px-1">Chọn vai trò mới</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="setUserRole('user')" id="roleUserBtn" class="p-4 border-2 border-slate-100 dark:border-slate-800 rounded-2xl text-left hover:border-blue-500 transition-all group">
+                                <div class="text-[10px] font-black text-slate-400 group-hover:text-blue-500 uppercase mb-1">Standard</div>
+                                <div class="text-sm font-bold text-slate-700 dark:text-slate-300">Người dùng</div>
+                            </button>
+                            <button onclick="setUserRole('admin')" id="roleAdminBtn" class="p-4 border-2 border-slate-100 dark:border-slate-800 rounded-2xl text-left hover:border-blue-500 transition-all group">
+                                <div class="text-[10px] font-black text-slate-400 group-hover:text-blue-500 uppercase mb-1">Privileged</div>
+                                <div class="text-sm font-bold text-slate-700 dark:text-slate-300">Quản trị viên</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex gap-3">
+                    <button onclick="closeModal('modalEditUser')" class="flex-1 py-3.5 text-slate-500 font-bold uppercase text-xs">Hủy</button>
+                    <button id="saveUserRoleBtn" class="flex-1 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 uppercase text-xs">Lưu thay đổi</button>
+                </div>
+            </div>
+        </div>
 
         <div id="indexErrorBanner" class="index-error">
             <div class="flex items-start gap-3">
@@ -617,7 +691,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, query, where, getDocs, limit, orderBy, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, limit, orderBy, updateDoc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCT8G6mI1w5woinOU5QgfHGhUhcVzuy5Oo",
@@ -632,22 +706,151 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        onAuthStateChanged(auth, (user) => {
+        let currentUserProfile = null;
+
+        onAuthStateChanged(auth, async (user) => {
             const overlay = document.getElementById('loginOverlay');
             const main = document.getElementById('mainApp');
+            const adminSec = document.getElementById('adminSection');
             console.log("Auth State Changed. User:", user ? user.email : "None");
             
             if (user && !user.isAnonymous) {
-                console.log("Hiding login overlay...");
                 overlay.style.display = 'none';
                 main.style.display = 'block';
+                adminSec.style.display = 'none';
                 document.getElementById('userEmail').innerText = user.email || 'User';
+                
+                // Cập nhật/Lấy hồ sơ người dùng
+                await updateUserProfile(user);
             } else {
-                console.log("Showing login overlay...");
                 overlay.style.display = 'flex';
                 main.style.display = 'none';
+                adminSec.style.display = 'none';
+                currentUserProfile = null;
             }
         });
+
+        async function updateUserProfile(user) {
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+                
+                if (snap.exists()) {
+                    currentUserProfile = snap.data();
+                    await updateDoc(userRef, { lastLogin: serverTimestamp() });
+                } else {
+                    // Tạo mới nếu chưa có
+                    const initialData = {
+                        email: user.email,
+                        role: user.email === 'admin@tasco.vn' ? 'admin' : 'user', // Mặc định admin cho email này
+                        createdAt: serverTimestamp(),
+                        lastLogin: serverTimestamp()
+                    };
+                    await setDoc(userRef, initialData);
+                    currentUserProfile = initialData;
+                }
+                
+                // Kiểm tra quyền Admin để hiện nút
+                if (currentUserProfile.role === 'admin') {
+                    document.getElementById('adminBtn').classList.remove('hidden');
+                } else {
+                    document.getElementById('adminBtn').classList.add('hidden');
+                }
+            } catch (e) {
+                console.error("Error updating user profile:", e);
+            }
+        }
+
+        window.toggleAdminView = function() {
+            const main = document.getElementById('mainApp');
+            const adminSec = document.getElementById('adminSection');
+            if (adminSec.style.display === 'none') {
+                main.style.display = 'none';
+                adminSec.style.display = 'block';
+                refreshUserList();
+            } else {
+                main.style.display = 'block';
+                adminSec.style.display = 'none';
+            }
+        }
+
+        let editingUserId = null;
+        let editingUserRole = 'user';
+
+        window.refreshUserList = async function() {
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-20 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>';
+            
+            try {
+                const snap = await getDocs(query(collection(db, "users"), orderBy("createdAt", "desc")));
+                tableBody.innerHTML = '';
+                snap.forEach(docSnap => {
+                    const u = docSnap.data();
+                    const uid = docSnap.id;
+                    const isMe = uid === auth.currentUser.uid;
+                    const lastLogin = u.lastLogin ? new Date(u.lastLogin.seconds * 1000).toLocaleString('vi-VN') : 'N/A';
+                    const createdAt = u.createdAt ? new Date(u.createdAt.seconds * 1000).toLocaleDateString('vi-VN') : 'N/A';
+                    
+                    tableBody.innerHTML += `
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
+                            <td class="px-6 py-4">
+                                <div class="text-[13px] font-black text-slate-900 dark:text-white">${u.email}</div>
+                                <div class="text-[9px] text-slate-400 font-bold uppercase">${uid} ${isMe ? '(BẠN)' : ''}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="badge-pro ${u.role === 'admin' ? 'badge-verified' : 'badge-unverified'}">${u.role === 'admin' ? 'Quản trị viên' : 'Người dùng'}</span>
+                            </td>
+                            <td class="px-6 py-4 text-[11px] font-bold text-slate-600 dark:text-slate-400">${lastLogin}</td>
+                            <td class="px-6 py-4 text-[11px] font-bold text-slate-600 dark:text-slate-400">${createdAt}</td>
+                            <td class="px-6 py-4 text-center">
+                                ${isMe ? '' : `
+                                <button onclick="openEditUser('${uid}', '${u.email}', '${u.role}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                </button>
+                                `}
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (e) {
+                console.error("Error fetching users:", e);
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-20 text-center text-red-400 font-bold uppercase text-xs">Lỗi khi tải dữ liệu!</td></tr>';
+            }
+        }
+
+        window.openEditUser = function(uid, email, role) {
+            editingUserId = uid;
+            editingUserRole = role;
+            document.getElementById('editUserEmail').innerText = email;
+            updateRoleUI();
+            openModal('modalEditUser');
+        }
+
+        window.setUserRole = function(role) {
+            editingUserRole = role;
+            updateRoleUI();
+        }
+
+        function updateRoleUI() {
+            const userBtn = document.getElementById('roleUserBtn');
+            const adminBtn = document.getElementById('roleAdminBtn');
+            userBtn.classList.toggle('border-blue-500', editingUserRole === 'user');
+            userBtn.classList.toggle('bg-blue-50', editingUserRole === 'user');
+            adminBtn.classList.toggle('border-blue-500', editingUserRole === 'admin');
+            adminBtn.classList.toggle('bg-blue-50', editingUserRole === 'admin');
+        }
+
+        document.getElementById('saveUserRoleBtn').onclick = async () => {
+            if (!editingUserId) return;
+            try {
+                await updateDoc(doc(db, "users", editingUserId), { role: editingUserRole });
+                closeModal('modalEditUser');
+                refreshUserList();
+                alert("Cập nhật thành công!");
+            } catch (e) {
+                alert("Lỗi: " + e.message);
+            }
+        }
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
