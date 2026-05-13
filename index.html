@@ -404,7 +404,7 @@
             </div>
         </header>
 
-        <div id="sysMgrSection" class="main-container" style="display: none; border: 2px solid red;">
+        <div id="sysMgrSection" style="display: none;">
             <header class="flex items-center justify-between mb-8 px-2">
                 <div class="flex items-center gap-4">
                     <button onclick="toggleSysMgrView()" class="w-11 h-11 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-all">
@@ -750,7 +750,7 @@
             const sysMgr = document.getElementById('sysMgrSection');
             
             // Chọn đích danh các thành phần phục vụ việc "Tra cứu phụ tùng" (nằm trực tiếp trong mainApp)
-            const traCuuElements = document.querySelectorAll('#mainApp > .control-panel, #mainApp > .data-section, #indexErrorBanner');
+            const traCuuElements = document.querySelectorAll('#mainApp > .control-panel, #mainApp > .data-section');
 
             if (view === 'login') {
                 overlay.style.display = 'flex';
