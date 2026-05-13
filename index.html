@@ -493,7 +493,11 @@
                 </div>
                 <div class="p-8 space-y-4">
                     <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Email / Tên đăng nhập</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị (Họ tên)</label>
+                        <input type="text" id="addFullName" placeholder="ví dụ: Nguyễn Văn A" class="premium-input">
+                    </div>
+                    <div class="premium-input-group">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên đăng nhập</label>
                         <input type="text" id="addUserName" placeholder="ví dụ: user01" class="premium-input">
                     </div>
                     <div class="premium-input-group">
@@ -515,12 +519,16 @@
                 </div>
                 <div class="p-8 space-y-4">
                     <div class="mb-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Email người dùng</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tài khoản đang sửa</label>
                         <div id="editUserEmail" class="text-sm font-bold text-slate-700 dark:text-slate-300 px-1"></div>
                     </div>
                     <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu mới</label>
-                        <input type="text" id="editUserPass" placeholder="Nhập mật khẩu mới..." class="premium-input">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị</label>
+                        <input type="text" id="editFullName" placeholder="Ví dụ: Nguyễn Văn A" class="premium-input">
+                    </div>
+                    <div class="premium-input-group">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
+                        <input type="text" id="editUserPass" placeholder="Nhập mật khẩu..." class="premium-input">
                     </div>
                 </div>
                 <div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex gap-3">
@@ -855,13 +863,13 @@
         async function checkLoginStatus() {
             const subUser = JSON.parse(localStorage.getItem('subUserSession'));
             if (subUser) {
-                showApp(subUser.email, 'user');
+                showApp(subUser.email, 'user', subUser.fullName); // Truyền thêm fullName
             }
         }
 
         onAuthStateChanged(auth, async (user) => {
             if (user && user.email === MGR_EMAIL) {
-                showApp(user.email, 'admin');
+                showApp(user.email, 'admin', 'Admin Tasco'); // Gắn cứng tên cho Admin
             } else if (!localStorage.getItem('subUserSession')) {
                 hideApp();
             }
@@ -896,12 +904,13 @@
             }
         }
 
-        function showApp(email, role) {
+        function showApp(email, role, fullName = '') {
             console.log("Showing App for:", email, "Role:", role);
             updateView('main');
             
-            document.getElementById('userEmail').innerText = email;
-            currentUserProfile = { email, role };
+            // Nếu có fullName thì hiển thị, không thì mới lấy email/username
+            document.getElementById('userEmail').innerText = fullName || email;
+            currentUserProfile = { email, role, fullName };
             
             const mgrBtn = document.getElementById('sysMgrBtn');
             if (role === 'admin') {
@@ -982,9 +991,9 @@
                     timestamp: serverTimestamp()
                 });
 
-                const userData = { id: userDoc.id, email, role: 'user' };
+                const userData = { id: userDoc.id, email, role: 'user', fullName: uData.fullName || email };
                 localStorage.setItem('subUserSession', JSON.stringify(userData));
-                showApp(email, 'user');
+                showApp(email, 'user', uData.fullName || email);
             } else {
                 throw new Error("SAI TÀI KHOẢN HOẶC MẬT KHẨU!");
             }
@@ -1007,23 +1016,26 @@
             }
         }
 
-        // Quản lý người dùng con
         window.openAddUserModal = () => {
+            document.getElementById('addFullName').value = '';
             document.getElementById('addUserName').value = '';
             document.getElementById('addUserPass').value = '';
             openModal('modalAddUser');
         }
 
         document.getElementById('confirmAddUserBtn').onclick = async () => {
+            const fullName = document.getElementById('addFullName').value.trim();
             const email = document.getElementById('addUserName').value.trim().toLowerCase();
             const pass = document.getElementById('addUserPass').value.trim();
-            if (!email || !pass) return customAlert("Vui lòng nhập đủ thông tin!");
+            
+            if (!email || !pass || !fullName) return customAlert("Vui lòng nhập đủ thông tin!");
             
             try {
                 const check = await getDocs(query(collection(db, "sub_users"), where("email", "==", email)));
-                if (!check.empty) return customAlert("Email này đã tồn tại!");
+                if (!check.empty) return customAlert("Tên đăng nhập này đã tồn tại!");
 
                 await setDoc(doc(collection(db, "sub_users")), {
+                    fullName: fullName,
                     email: email,
                     password: pass,
                     createdAt: serverTimestamp(),
@@ -1062,8 +1074,8 @@
                     tableBody.innerHTML += `
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
                             <td class="px-6 py-4">
-                                <div class="text-[13px] font-black text-slate-900 dark:text-white uppercase">${u.email}</div>
-                                <div class="text-[10px] font-bold text-slate-400 mt-1">MK: <span class="text-slate-600 dark:text-slate-300">${u.password}</span> • Tạo: ${createdAt}</div>
+                                <div class="text-[13px] font-black text-slate-900 dark:text-white uppercase">${u.fullName || 'Chưa có tên'}</div>
+                                <div class="text-[10px] font-bold text-slate-400 mt-1">TK: <span class="text-slate-600 dark:text-slate-300">${u.email}</span> • MK: <span class="text-slate-600 dark:text-slate-300">${u.password}</span></div>
                             </td>
                             <td class="px-6 py-4 text-left">${statusBadge}</td>
                             <td class="px-6 py-4">
@@ -1153,21 +1165,27 @@
         }
 
         let editingUserId = null;
-        window.openEditUser = (uid, email, pass) => {
+        window.openEditUser = (uid, email, pass, fullName) => {
             editingUserId = uid;
             document.getElementById('editUserEmail').innerText = email;
+            document.getElementById('editFullName').value = fullName || '';
             document.getElementById('editUserPass').value = pass;
             openModal('modalEditUser');
         }
 
         document.getElementById('saveUserEditBtn').onclick = async () => {
+            const newFullName = document.getElementById('editFullName').value.trim();
             const newPass = document.getElementById('editUserPass').value.trim();
-            if (!newPass) return customAlert("Vui lòng nhập mật khẩu mới!");
+            
+            if (!newPass || !newFullName) return customAlert("Vui lòng nhập đầy đủ Tên và Mật khẩu!");
             try {
-                await updateDoc(doc(db, "sub_users", editingUserId), { password: newPass });
+                await updateDoc(doc(db, "sub_users", editingUserId), { 
+                    fullName: newFullName,
+                    password: newPass 
+                });
                 closeModal('modalEditUser');
                 refreshUserList();
-                customAlert("Cập nhật mật khẩu thành công!", "success");
+                customAlert("Cập nhật thông tin thành công!", "success");
             } catch (e) { customAlert("Lỗi: " + e.message); }
         }
 
