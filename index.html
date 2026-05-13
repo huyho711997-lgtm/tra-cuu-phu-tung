@@ -744,9 +744,9 @@
         });
 
         function showApp(email, role) {
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('sysMgrSection').style.display = 'none';
+            document.getElementById('loginOverlay').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('sysMgrSection').classList.add('hidden');
             document.getElementById('userEmail').innerText = email;
             currentUserProfile = { email, role };
             
@@ -758,9 +758,10 @@
         }
 
         function hideApp() {
-            document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('sysMgrSection').style.display = 'none';
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('loginOverlay').style.display = 'flex'; // Overlay cần flex để căn giữa
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('sysMgrSection').classList.add('hidden');
             currentUserProfile = null;
         }
 
@@ -815,13 +816,14 @@
         window.toggleSysMgrView = function() {
             const main = document.getElementById('mainApp');
             const adminSec = document.getElementById('sysMgrSection');
-            if (adminSec.style.display === 'none') {
-                main.style.display = 'none';
-                adminSec.style.display = 'block';
+            
+            if (adminSec.classList.contains('hidden')) {
+                main.classList.add('hidden');
+                adminSec.classList.remove('hidden');
                 refreshUserList();
             } else {
-                main.style.display = 'block';
-                adminSec.style.display = 'none';
+                main.classList.remove('hidden');
+                adminSec.classList.add('hidden');
             }
         }
 
