@@ -749,22 +749,27 @@
             const main = document.getElementById('mainApp');
             const sysMgr = document.getElementById('sysMgrSection');
             
-            const views = [overlay, main, sysMgr];
-            
-            views.forEach(el => {
-                el.style.display = 'none';
-            });
+            // Chọn đích danh các thành phần phục vụ việc "Tra cứu phụ tùng" (nằm trực tiếp trong mainApp)
+            const traCuuElements = document.querySelectorAll('#mainApp > .control-panel, #mainApp > .data-section, #indexErrorBanner');
 
             if (view === 'login') {
                 overlay.style.display = 'flex';
+                main.style.display = 'none';
             } else if (view === 'main') {
-                main.style.display = 'block';
+                overlay.style.display = 'none';
+                main.style.display = 'block'; // Hiện khung ứng dụng chính
+                sysMgr.style.display = 'none'; // Ẩn phần quản trị
+                // Hiển thị lại các phần tử tra cứu
+                traCuuElements.forEach(el => el.style.display = 'block');
             } else if (view === 'admin') {
-                sysMgr.style.display = 'block';
+                overlay.style.display = 'none';
+                main.style.display = 'block'; // QUAN TRỌNG: Vẫn giữ mainApp để giữ lại thanh Header (Logo, Nút DarkMode, Avatar)
+                sysMgr.style.display = 'block'; // Hiện phần quản trị
+                // Tắt các khung tìm kiếm, bảng phụ tùng đi
+                traCuuElements.forEach(el => el.style.display = 'none');
+                
                 refreshUserList();
             }
-
-            if (view === 'admin') refreshUserList();
         }
 
         function showApp(email, role) {
