@@ -686,7 +686,38 @@
             </div>
         </div>
     </div>
+    <!-- Form Custom Alert (Thông báo) -->
+    <div id="modalCustomAlert" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
+            <div class="p-8 text-center pb-6">
+                <div id="alertIconContainer" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <!-- Icon sẽ được JS chèn tự động dựa vào loại thông báo -->
+                </div>
+                <h3 id="alertTitle" class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">Thông báo</h3>
+                <p id="alertMessage" class="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed px-4"></p>
+            </div>
+            <div class="p-6 pt-0 flex">
+                <button onclick="closeModal('modalCustomAlert')" id="alertOkBtn" class="flex-1 px-6 py-3.5 bg-blue-600 text-white font-bold rounded-2xl hover:opacity-90 shadow-lg shadow-blue-500/30 transition-all uppercase text-xs">ĐÓNG LẠI</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- Form Custom Confirm (Xác nhận) -->
+    <div id="modalCustomConfirm" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
+            <div class="p-8 text-center pb-6">
+                <div class="w-20 h-20 bg-orange-50 dark:bg-orange-900/30 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">Xác nhận</h3>
+                <p id="confirmMessage" class="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed px-4"></p>
+            </div>
+            <div class="p-6 pt-0 flex gap-3">
+                <button onclick="closeModal('modalCustomConfirm')" class="flex-1 px-6 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all uppercase text-xs">HỦY BỎ</button>
+                <button id="btnCustomConfirmOk" class="flex-1 px-6 py-3.5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 shadow-lg shadow-orange-500/30 transition-all uppercase text-xs">ĐỒNG Ý</button>
+            </div>
+        </div>
+    </div>
     <div id="modalLogout" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
             <div class="p-8 text-center">
@@ -906,24 +937,24 @@
         document.getElementById('confirmAddUserBtn').onclick = async () => {
             const email = document.getElementById('addUserName').value.trim().toLowerCase();
             const pass = document.getElementById('addUserPass').value.trim();
-            if (!email || !pass) return alert("Vui lòng nhập đủ thông tin!");
+            if (!email || !pass) return customAlert("Vui lòng nhập đủ thông tin!");
             
             try {
                 const check = await getDocs(query(collection(db, "sub_users"), where("email", "==", email)));
-                if (!check.empty) return alert("Email này đã tồn tại!");
+                if (!check.empty) return customAlert("Email này đã tồn tại!");
 
                 await setDoc(doc(collection(db, "sub_users")), {
                     email: email,
                     password: pass,
                     createdAt: serverTimestamp(),
-                    status: 'active', // Trạng thái: active hoặc locked
+                    status: 'active',
                     loginCount: 0,
                     searchCount: 0
                 });
                 closeModal('modalAddUser');
                 refreshUserList();
-                alert("Đã tạo người dùng mới!");
-            } catch (e) { alert("Lỗi: " + e.message); }
+                customAlert("Đã tạo người dùng mới thành công!", "success");
+            } catch (e) { customAlert("Lỗi: " + e.message); }
         }
 
         window.refreshUserList = async function() {
@@ -985,16 +1016,17 @@
             }
         }
 
-        // Logic Khóa/Mở và Xem Lịch sử
         window.toggleUserStatus = async (uid, currentStatus) => {
             const newStatus = currentStatus === 'locked' ? 'active' : 'locked';
             const confirmMsg = newStatus === 'locked' ? 'Khóa tài khoản này không cho đăng nhập?' : 'Mở khóa cho phép tài khoản này hoạt động lại?';
-            if (confirm(confirmMsg)) {
+            
+            customConfirm(confirmMsg, async () => {
                 try {
                     await updateDoc(doc(db, "sub_users", uid), { status: newStatus });
                     refreshUserList();
-                } catch (e) { alert("Lỗi: " + e.message); }
-            }
+                    customAlert(newStatus === 'locked' ? "Đã khóa tài khoản!" : "Đã mở khóa tài khoản!", "success");
+                } catch (e) { customAlert("Lỗi: " + e.message); }
+            });
         }
 
         window.viewUserHistory = async (email) => {
@@ -1045,35 +1077,37 @@
 
         document.getElementById('saveUserEditBtn').onclick = async () => {
             const newPass = document.getElementById('editUserPass').value.trim();
-            if (!newPass) return alert("Vui lòng nhập mật khẩu!");
+            if (!newPass) return customAlert("Vui lòng nhập mật khẩu mới!");
             try {
                 await updateDoc(doc(db, "sub_users", editingUserId), { password: newPass });
                 closeModal('modalEditUser');
                 refreshUserList();
-                alert("Đã cập nhật mật khẩu!");
-            } catch (e) { alert("Lỗi: " + e.message); }
+                customAlert("Cập nhật mật khẩu thành công!", "success");
+            } catch (e) { customAlert("Lỗi: " + e.message); }
         }
 
         window.deleteSubUser = async (uid, email) => {
-            if (confirm(`Bạn có chắc chắn muốn xóa người dùng ${email}?`)) {
+            customConfirm(`Bạn có chắc chắn muốn xóa vĩnh viễn người dùng ${email}?`, async () => {
                 try {
                     await deleteDoc(doc(db, "sub_users", uid));
                     refreshUserList();
-                } catch (e) { alert("Lỗi: " + e.message); }
-            }
+                    customAlert("Đã xóa người dùng!", "success");
+                } catch (e) { customAlert("Lỗi: " + e.message); }
+            });
         }
 
 
 
         window.forgotPassword = async function() {
             const email = document.getElementById('loginEmail').value.trim();
-            if (!email) { alert("Vui lòng nhập Email trước khi khôi phục mật khẩu!"); return; }
-            if (confirm("Gửi liên kết khôi phục mật khẩu tới " + email + "?")) {
+            if (!email) { return customAlert("Vui lòng nhập Email trước khi yêu cầu khôi phục mật khẩu!"); }
+            
+            customConfirm(`Hệ thống sẽ gửi liên kết khôi phục mật khẩu tới ${email}. Bạn xác nhận chứ?`, async () => {
                 try {
                     await sendPasswordResetEmail(auth, email);
-                    alert("Liên kết khôi phục đã được gửi! Vui lòng kiểm tra hộp thư.");
-                } catch (e) { alert("Lỗi: " + e.message); }
-            }
+                    customAlert("Liên kết khôi phục đã được gửi! Vui lòng kiểm tra hộp thư.", "success");
+                } catch (e) { customAlert("Lỗi: " + e.message); }
+            });
         }
 
 
@@ -1308,6 +1342,40 @@
         window.changePageSize = () => { ITEMS_PER_PAGE = parseInt(document.getElementById('pageSize').value); CURRENT_PAGE = 1; renderTable(); }
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+        // --- HÀM ĐIỀU KHIỂN CUSTOM THÔNG BÁO VÀ XÁC NHẬN ---
+        window.customAlert = function(message, type = 'error') {
+            const titleEl = document.getElementById('alertTitle');
+            const msgEl = document.getElementById('alertMessage');
+            const iconContainer = document.getElementById('alertIconContainer');
+            const okBtn = document.getElementById('alertOkBtn');
+            
+            msgEl.innerText = message;
+            
+            if (type === 'success') {
+                titleEl.innerText = 'Thành công';
+                iconContainer.className = 'w-20 h-20 bg-green-50 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm';
+                iconContainer.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                okBtn.className = 'flex-1 px-6 py-3.5 bg-green-500 text-white font-bold rounded-2xl hover:bg-green-600 shadow-lg shadow-green-500/30 transition-all uppercase text-xs';
+            } else {
+                titleEl.innerText = 'Lỗi / Chú ý';
+                iconContainer.className = 'w-20 h-20 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm';
+                iconContainer.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                okBtn.className = 'flex-1 px-6 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all uppercase text-xs';
+            }
+            openModal('modalCustomAlert');
+        }
+
+        let currentConfirmCallback = null;
+        window.customConfirm = function(message, callback) {
+            document.getElementById('confirmMessage').innerText = message;
+            currentConfirmCallback = callback;
+            openModal('modalCustomConfirm');
+        }
+
+        document.getElementById('btnCustomConfirmOk').onclick = () => {
+            closeModal('modalCustomConfirm');
+            if (currentConfirmCallback) currentConfirmCallback();
+        }
 
         window.verifyPart = function(id) {
             const item = MASTER_DATA.find(i => i.id === id);
@@ -1324,7 +1392,7 @@
             snap.forEach(docSnap => batch.update(docSnap.ref, { verified: true, verification_note: note }));
             await batch.commit();
             MASTER_DATA.forEach(i => { if (i.so_hsbt === so_hsbt) { i.verified = true; i.verification_note = note; } });
-            renderTable(); closeModal('modalVerify'); alert("Xác thực thành công!");
+            renderTable(); closeModal('modalVerify'); customAlert("Xác thực hồ sơ thành công!", "success");
         }
 
         window.showDetail = function(id) {
