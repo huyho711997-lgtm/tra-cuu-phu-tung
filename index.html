@@ -376,7 +376,7 @@
             </div>
             
             <div class="flex items-center gap-3">
-                <button id="adminBtn" onclick="toggleAdminView()" class="hidden h-11 px-4 bg-slate-900 dark:bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-slate-900/20 dark:shadow-blue-600/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+                <button id="sysMgrBtn" onclick="toggleSysMgrView()" class="hidden h-11 px-4 bg-slate-900 dark:bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-slate-900/20 dark:shadow-blue-600/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     QUẢN TRỊ
                 </button>
@@ -404,10 +404,10 @@
             </div>
         </header>
 
-        <div id="adminSection" class="hidden main-container">
+        <div id="sysMgrSection" class="hidden main-container">
             <header class="flex items-center justify-between mb-8 px-2">
                 <div class="flex items-center gap-4">
-                    <button onclick="toggleAdminView()" class="w-11 h-11 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-all">
+                    <button onclick="toggleSysMgrView()" class="w-11 h-11 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-all">
                         <svg class="w-6 h-6 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     </button>
                     <div>
@@ -723,7 +723,7 @@
         const auth = getAuth(app);
 
         let currentUserProfile = null;
-        const ADMIN_EMAIL = 'huyho71@gmail.com';
+        const MGR_EMAIL = 'huyho71@gmail.com';
 
         // Khởi tạo trạng thái ban đầu
         checkLoginStatus();
@@ -736,7 +736,7 @@
         }
 
         onAuthStateChanged(auth, async (user) => {
-            if (user && user.email === ADMIN_EMAIL) {
+            if (user && user.email === MGR_EMAIL) {
                 showApp(user.email, 'admin');
             } else if (!localStorage.getItem('subUserSession')) {
                 hideApp();
@@ -746,21 +746,21 @@
         function showApp(email, role) {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('sysMgrSection').style.display = 'none';
             document.getElementById('userEmail').innerText = email;
             currentUserProfile = { email, role };
             
             if (role === 'admin') {
-                document.getElementById('adminBtn').classList.remove('hidden');
+                document.getElementById('sysMgrBtn').classList.remove('hidden');
             } else {
-                document.getElementById('adminBtn').classList.add('hidden');
+                document.getElementById('sysMgrBtn').classList.add('hidden');
             }
         }
 
         function hideApp() {
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('sysMgrSection').style.display = 'none';
             currentUserProfile = null;
         }
 
@@ -776,7 +776,7 @@
             err.classList.add('hidden');
             
             try {
-                if (email === ADMIN_EMAIL) {
+                if (email === MGR_EMAIL) {
                     // Đăng nhập Admin qua Firebase Auth
                     await signInWithEmailAndPassword(auth, email, pass);
                 } else {
@@ -812,9 +812,9 @@
             closeModal('modalLogout'); 
         }
 
-        window.toggleAdminView = function() {
+        window.toggleSysMgrView = function() {
             const main = document.getElementById('mainApp');
-            const adminSec = document.getElementById('adminSection');
+            const adminSec = document.getElementById('sysMgrSection');
             if (adminSec.style.display === 'none') {
                 main.style.display = 'none';
                 adminSec.style.display = 'block';
