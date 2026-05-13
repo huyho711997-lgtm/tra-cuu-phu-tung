@@ -363,7 +363,7 @@
         </div>
     </div>
 
-    <div id="mainApp" class="hidden main-container">
+    <div id="mainApp" class="main-container" style="display: none;">
         <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 px-2">
             <div class="flex items-center gap-4">
                 <div class="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -404,7 +404,7 @@
             </div>
         </header>
 
-        <div id="sysMgrSection" class="hidden main-container">
+        <div id="sysMgrSection" class="main-container" style="display: none; border: 2px solid red;">
             <header class="flex items-center justify-between mb-8 px-2">
                 <div class="flex items-center gap-4">
                     <button onclick="toggleSysMgrView()" class="w-11 h-11 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-all">
@@ -749,22 +749,20 @@
             const main = document.getElementById('mainApp');
             const sysMgr = document.getElementById('sysMgrSection');
             
-            // Danh sách các phần tử cần quản lý
-            const views = [
-                { el: overlay, display: 'flex', name: 'login' },
-                { el: main, display: 'block', name: 'main' },
-                { el: sysMgr, display: 'block', name: 'admin' }
-            ];
-
-            views.forEach(v => {
-                if (v.name === view) {
-                    v.el.style.setProperty('display', v.display, 'important');
-                    v.el.classList.remove('hidden');
-                } else {
-                    v.el.style.setProperty('display', 'none', 'important');
-                    v.el.classList.add('hidden');
-                }
+            const views = [overlay, main, sysMgr];
+            
+            views.forEach(el => {
+                el.style.display = 'none';
             });
+
+            if (view === 'login') {
+                overlay.style.display = 'flex';
+            } else if (view === 'main') {
+                main.style.display = 'block';
+            } else if (view === 'admin') {
+                sysMgr.style.display = 'block';
+                refreshUserList();
+            }
 
             if (view === 'admin') refreshUserList();
         }
@@ -841,7 +839,8 @@
         }
 
         window.toggleSysMgrView = function() {
-            if (document.getElementById('sysMgrSection').classList.contains('hidden')) {
+            const sysMgr = document.getElementById('sysMgrSection');
+            if (sysMgr.style.display === 'none') {
                 updateView('admin');
             } else {
                 updateView('main');
