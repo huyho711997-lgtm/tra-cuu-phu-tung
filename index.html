@@ -1274,15 +1274,34 @@
         }
 
         window.clearFilters = function() {
+            // Reset các giá trị lọc chính
             selectHang('');
             selectNam('');
             selectType('all');
             document.getElementById('searchInput').value = '';
+
+            // XÓA TEXT TRONG CÁC Ô TÌM KIẾM CỦA DROPDOWN
+            document.getElementById('searchHang').value = '';
+            document.getElementById('searchHieu').value = '';
+            document.getElementById('searchNam').value = '';
+
+            // HIỂN THỊ LẠI TOÀN BỘ DANH SÁCH (Hủy bỏ trạng thái ẩn do gõ tìm kiếm trước đó)
+            document.querySelectorAll('#listHang .dropdown-item').forEach(item => {
+                item.style.display = 'flex';
+            });
+            // Lưu ý: Danh sách Dòng xe và Năm SX sẽ tự động được render lại khi selectHang('') 
+            // nên không cần lặp qua để reset display như Hãng xe.
+
+            // Clear dữ liệu bảng
             MASTER_DATA = [];
             CURRENT_PAGE = 1;
             document.getElementById('resultsTableBody').innerHTML = '<tr><td colspan="8" class="px-6 py-40 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Sẵn sàng tra cứu</td></tr>';
             document.getElementById('statCount').innerText = "0 kết quả";
-            document.getElementById('searchSummaryHeader').classList.add('hidden');
+            
+            // Ẩn thanh tóm tắt
+            const summaryHeader = document.getElementById('searchSummaryHeader');
+            if(summaryHeader) summaryHeader.classList.add('hidden');
+            
             updatePaginationUI(0);
         }
 
