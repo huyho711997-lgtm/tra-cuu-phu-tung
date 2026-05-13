@@ -110,6 +110,24 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
         }
+        .search-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.5); }
+        /* Hiệu ứng Nút Xóa (Trash Icon) */
+        .btn-trash {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-trash svg {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-trash:hover {
+            transform: translateY(-2px);
+        }
+        .btn-trash:active {
+            transform: translateY(0);
+        }
+        .btn-trash:hover svg {
+            transform: scale(1.15) rotate(10deg);
+        }
+
         .search-btn:hover { 
             background-position: right center; 
             transform: translateY(-2px); 
@@ -124,7 +142,6 @@
         .search-btn:hover svg {
             transform: scale(1.15) rotate(-10deg);
         }
-
         .index-error {
             background: #fff1f2;
             border: 1px solid #fecdd3;
@@ -582,7 +599,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         TÌM KIẾM
                     </button>
-                    <button onclick="clearFilters()" class="w-12 h-12 flex items-center justify-center bg-slate-100 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all" title="Xóa bộ lọc">
+                    <button onclick="clearFilters()" class="btn-trash w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:text-red-500 hover:border-red-200 hover:bg-red-50 dark:hover:text-red-400 dark:hover:border-red-800 dark:hover:bg-red-900/30 rounded-xl shadow-sm" title="Xóa bộ lọc">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                     </button>
                 </div>
@@ -1017,7 +1034,7 @@
                                     <button onclick="openEditUser('${uid}', '${u.email}', '${u.password}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all" title="Đổi MK">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </button>
-                                    <button onclick="deleteSubUser('${uid}', '${u.email}')" class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all" title="Xóa">
+                                    <button onclick="deleteSubUser('${uid}', '${u.email}')" class="btn-trash p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg" title="Xóa">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                 </div>
