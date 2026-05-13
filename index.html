@@ -841,13 +841,22 @@
             const main = document.getElementById('mainApp');
             const adminSec = document.getElementById('sysMgrSection');
             
-            if (adminSec.classList.contains('hidden')) {
+            // Kiểm tra cả class và style inline để quyết định trạng thái
+            const isHidden = adminSec.classList.contains('hidden') || adminSec.style.display === 'none';
+            
+            if (isHidden) {
                 main.classList.add('hidden');
+                main.style.display = 'none';
+                
                 adminSec.classList.remove('hidden');
+                adminSec.style.display = 'block';
                 refreshUserList();
             } else {
                 main.classList.remove('hidden');
+                main.style.display = 'block';
+                
                 adminSec.classList.add('hidden');
+                adminSec.style.display = 'none';
             }
         }
 
