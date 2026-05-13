@@ -744,24 +744,48 @@
         });
 
         function showApp(email, role) {
-            document.getElementById('loginOverlay').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            document.getElementById('sysMgrSection').classList.add('hidden');
+            console.log("Showing App for:", email, "Role:", role);
+            const overlay = document.getElementById('loginOverlay');
+            const main = document.getElementById('mainApp');
+            const sysMgr = document.getElementById('sysMgrSection');
+            
+            overlay.style.display = 'none';
+            overlay.classList.add('hidden');
+            
+            main.style.display = 'block';
+            main.classList.remove('hidden');
+            
+            sysMgr.style.display = 'none';
+            sysMgr.classList.add('hidden');
+            
             document.getElementById('userEmail').innerText = email;
             currentUserProfile = { email, role };
             
+            const mgrBtn = document.getElementById('sysMgrBtn');
             if (role === 'admin') {
-                document.getElementById('sysMgrBtn').classList.remove('hidden');
+                mgrBtn.classList.remove('hidden');
+                mgrBtn.style.display = 'flex';
             } else {
-                document.getElementById('sysMgrBtn').classList.add('hidden');
+                mgrBtn.classList.add('hidden');
+                mgrBtn.style.display = 'none';
             }
         }
 
         function hideApp() {
-            document.getElementById('loginOverlay').classList.remove('hidden');
-            document.getElementById('loginOverlay').style.display = 'flex'; // Overlay cần flex để căn giữa
-            document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('sysMgrSection').classList.add('hidden');
+            console.log("Hiding App (Returning to Login)");
+            const overlay = document.getElementById('loginOverlay');
+            const main = document.getElementById('mainApp');
+            const sysMgr = document.getElementById('sysMgrSection');
+
+            overlay.style.display = 'flex';
+            overlay.classList.remove('hidden');
+            
+            main.style.display = 'none';
+            main.classList.add('hidden');
+            
+            sysMgr.style.display = 'none';
+            sysMgr.classList.add('hidden');
+            
             currentUserProfile = null;
         }
 
