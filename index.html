@@ -743,20 +743,35 @@
             }
         });
 
-        function showApp(email, role) {
-            console.log("Showing App for:", email, "Role:", role);
+        function updateView(view) {
+            console.log("Updating View to:", view);
             const overlay = document.getElementById('loginOverlay');
             const main = document.getElementById('mainApp');
             const sysMgr = document.getElementById('sysMgrSection');
             
-            overlay.style.display = 'none';
-            overlay.classList.add('hidden');
-            
-            main.style.display = 'block';
-            main.classList.remove('hidden');
-            
-            sysMgr.style.display = 'none';
-            sysMgr.classList.add('hidden');
+            // Danh sách các phần tử cần quản lý
+            const views = [
+                { el: overlay, display: 'flex', name: 'login' },
+                { el: main, display: 'block', name: 'main' },
+                { el: sysMgr, display: 'block', name: 'admin' }
+            ];
+
+            views.forEach(v => {
+                if (v.name === view) {
+                    v.el.style.setProperty('display', v.display, 'important');
+                    v.el.classList.remove('hidden');
+                } else {
+                    v.el.style.setProperty('display', 'none', 'important');
+                    v.el.classList.add('hidden');
+                }
+            });
+
+            if (view === 'admin') refreshUserList();
+        }
+
+        function showApp(email, role) {
+            console.log("Showing App for:", email, "Role:", role);
+            updateView('main');
             
             document.getElementById('userEmail').innerText = email;
             currentUserProfile = { email, role };
@@ -764,28 +779,16 @@
             const mgrBtn = document.getElementById('sysMgrBtn');
             if (role === 'admin') {
                 mgrBtn.classList.remove('hidden');
-                mgrBtn.style.display = 'flex';
+                mgrBtn.style.setProperty('display', 'flex', 'important');
             } else {
                 mgrBtn.classList.add('hidden');
-                mgrBtn.style.display = 'none';
+                mgrBtn.style.setProperty('display', 'none', 'important');
             }
         }
 
         function hideApp() {
             console.log("Hiding App (Returning to Login)");
-            const overlay = document.getElementById('loginOverlay');
-            const main = document.getElementById('mainApp');
-            const sysMgr = document.getElementById('sysMgrSection');
-
-            overlay.style.display = 'flex';
-            overlay.classList.remove('hidden');
-            
-            main.style.display = 'none';
-            main.classList.add('hidden');
-            
-            sysMgr.style.display = 'none';
-            sysMgr.classList.add('hidden');
-            
+            updateView('login');
             currentUserProfile = null;
         }
 
@@ -838,25 +841,10 @@
         }
 
         window.toggleSysMgrView = function() {
-            const main = document.getElementById('mainApp');
-            const adminSec = document.getElementById('sysMgrSection');
-            
-            // Kiểm tra cả class và style inline để quyết định trạng thái
-            const isHidden = adminSec.classList.contains('hidden') || adminSec.style.display === 'none';
-            
-            if (isHidden) {
-                main.classList.add('hidden');
-                main.style.display = 'none';
-                
-                adminSec.classList.remove('hidden');
-                adminSec.style.display = 'block';
-                refreshUserList();
+            if (document.getElementById('sysMgrSection').classList.contains('hidden')) {
+                updateView('admin');
             } else {
-                main.classList.remove('hidden');
-                main.style.display = 'block';
-                
-                adminSec.classList.add('hidden');
-                adminSec.style.display = 'none';
+                updateView('main');
             }
         }
 
@@ -893,7 +881,8 @@
             tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>';
             
             try {
-                const snap = await getDocs(query(collection(db, "sub_users"), orderBy("createdAt", "desc")));
+                // Tạm thời bỏ orderBy để tránh lỗi index Firestore
+                const snap = await getDocs(collection(db, "sub_users"));
                 tableBody.innerHTML = '';
                 if (snap.empty) {
                     tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-slate-400 font-bold italic text-xs uppercase">Chưa có người dùng nào</td></tr>';
