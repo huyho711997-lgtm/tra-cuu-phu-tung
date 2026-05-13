@@ -431,9 +431,9 @@
                     <table class="data-table w-full text-sm text-left">
                         <thead>
                             <tr>
-                                <th>Email người dùng</th>
-                                <th>Mật khẩu</th>
-                                <th>Ngày tạo</th>
+                                <th>Tài khoản</th>
+                                <th>Trạng thái</th>
+                                <th>Hoạt động</th>
                                 <th class="text-center">Thao tác</th>
                             </tr>
                         </thead>
@@ -702,12 +702,25 @@
             </div>
         </div>
     </div>
-
+    <!-- Modal Xem Lịch sử User -->
+    <div id="modalHistory" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scale_0.2s_ease-out] flex flex-col max-h-[80vh]">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Lịch sử hoạt động: <span id="historyEmailText" class="text-blue-600"></span></h3>
+                <button onclick="closeModal('modalHistory')" class="p-2 text-slate-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 overflow-y-auto flex-1 custom-scrollbar">
+                <div class="space-y-3" id="historyListContainer">
+                    <!-- Dữ liệu lịch sử sẽ render ở đây -->
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, query, where, getDocs, limit, orderBy, updateDoc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, query, where, getDocs, limit, orderBy, updateDoc, writeBatch, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCT8G6mI1w5woinOU5QgfHGhUhcVzuy5Oo",
@@ -837,7 +850,28 @@
             const q = query(collection(db, "sub_users"), where("email", "==", email), where("password", "==", pass));
             const snap = await getDocs(q);
             if (!snap.empty) {
-                const userData = { email, role: 'user' };
+                const userDoc = snap.docs[0];
+                const uData = userDoc.data();
+                
+                // 1. Kiểm tra trạng thái khóa
+                if (uData.status === 'locked') {
+                    throw new Error("TÀI KHOẢN ĐÃ BỊ KHÓA, LIÊN HỆ QUẢN TRỊ!");
+                }
+
+                // 2. Cập nhật số lần đăng nhập và thời gian
+                await updateDoc(userDoc.ref, {
+                    lastLogin: serverTimestamp(),
+                    loginCount: (uData.loginCount || 0) + 1
+                });
+
+                // 3. Ghi log hoạt động
+                await addDoc(collection(db, "user_logs"), {
+                    email: email,
+                    action: "Đăng nhập",
+                    timestamp: serverTimestamp()
+                });
+
+                const userData = { id: userDoc.id, email, role: 'user' };
                 localStorage.setItem('subUserSession', JSON.stringify(userData));
                 showApp(email, 'user');
             } else {
@@ -870,20 +904,21 @@
         }
 
         document.getElementById('confirmAddUserBtn').onclick = async () => {
-            // Đưa toàn bộ username/email về chữ thường khi lưu vào database
             const email = document.getElementById('addUserName').value.trim().toLowerCase();
             const pass = document.getElementById('addUserPass').value.trim();
             if (!email || !pass) return alert("Vui lòng nhập đủ thông tin!");
             
             try {
-                // Kiểm tra trùng
                 const check = await getDocs(query(collection(db, "sub_users"), where("email", "==", email)));
                 if (!check.empty) return alert("Email này đã tồn tại!");
 
                 await setDoc(doc(collection(db, "sub_users")), {
                     email: email,
                     password: pass,
-                    createdAt: serverTimestamp()
+                    createdAt: serverTimestamp(),
+                    status: 'active', // Trạng thái: active hoặc locked
+                    loginCount: 0,
+                    searchCount: 0
                 });
                 closeModal('modalAddUser');
                 refreshUserList();
@@ -896,7 +931,6 @@
             tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>';
             
             try {
-                // Tạm thời bỏ orderBy để tránh lỗi index Firestore
                 const snap = await getDocs(collection(db, "sub_users"));
                 tableBody.innerHTML = '';
                 if (snap.empty) {
@@ -907,17 +941,34 @@
                     const u = docSnap.data();
                     const uid = docSnap.id;
                     const createdAt = u.createdAt ? new Date(u.createdAt.seconds * 1000).toLocaleDateString('vi-VN') : 'N/A';
+                    const lastLogin = u.lastLogin ? new Date(u.lastLogin.seconds * 1000).toLocaleString('vi-VN') : 'Chưa đăng nhập';
                     
+                    const statusBadge = u.status === 'locked' ? '<span class="px-2 py-1 bg-red-100 text-red-600 rounded-md font-bold text-[10px] uppercase">Đã khóa</span>' : '<span class="px-2 py-1 bg-green-100 text-green-600 rounded-md font-bold text-[10px] uppercase">Hoạt động</span>';
+                    const lockIcon = u.status === 'locked' ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>' : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>';
+                    const lockTitle = u.status === 'locked' ? 'Mở khóa' : 'Khóa tài khoản';
+                    const lockColor = u.status === 'locked' ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20';
+
                     tableBody.innerHTML += `
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
                             <td class="px-6 py-4">
                                 <div class="text-[13px] font-black text-slate-900 dark:text-white uppercase">${u.email}</div>
+                                <div class="text-[10px] font-bold text-slate-400 mt-1">MK: <span class="text-slate-600 dark:text-slate-300">${u.password}</span> • Tạo: ${createdAt}</div>
                             </td>
-                            <td class="px-6 py-4 text-[11px] font-bold text-slate-600 dark:text-slate-400">${u.password}</td>
-                            <td class="px-6 py-4 text-[11px] font-bold text-slate-600 dark:text-slate-400">${createdAt}</td>
+                            <td class="px-6 py-4 text-left">${statusBadge}</td>
+                            <td class="px-6 py-4">
+                                <div class="text-[10px] font-bold text-slate-500">Đăng nhập: <span class="text-blue-600">${u.loginCount || 0}</span> lần</div>
+                                <div class="text-[10px] font-bold text-slate-500">Tra cứu: <span class="text-blue-600">${u.searchCount || 0}</span> lần</div>
+                                <div class="text-[9px] text-slate-400 mt-1 uppercase">Vào cuối: ${lastLogin}</div>
+                            </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button onclick="openEditUser('${uid}', '${u.email}', '${u.password}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all" title="Sửa">
+                                    <button onclick="viewUserHistory('${u.email}')" class="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all" title="Xem lịch sử">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </button>
+                                    <button onclick="toggleUserStatus('${uid}', '${u.status}')" class="p-2 ${lockColor} rounded-lg transition-all" title="${lockTitle}">
+                                        ${lockIcon}
+                                    </button>
+                                    <button onclick="openEditUser('${uid}', '${u.email}', '${u.password}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all" title="Đổi MK">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </button>
                                     <button onclick="deleteSubUser('${uid}', '${u.email}')" class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all" title="Xóa">
@@ -931,6 +982,56 @@
             } catch (e) {
                 console.error("Error fetching users:", e);
                 tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-red-400 font-bold uppercase text-xs">Lỗi khi tải dữ liệu!</td></tr>';
+            }
+        }
+
+        // Logic Khóa/Mở và Xem Lịch sử
+        window.toggleUserStatus = async (uid, currentStatus) => {
+            const newStatus = currentStatus === 'locked' ? 'active' : 'locked';
+            const confirmMsg = newStatus === 'locked' ? 'Khóa tài khoản này không cho đăng nhập?' : 'Mở khóa cho phép tài khoản này hoạt động lại?';
+            if (confirm(confirmMsg)) {
+                try {
+                    await updateDoc(doc(db, "sub_users", uid), { status: newStatus });
+                    refreshUserList();
+                } catch (e) { alert("Lỗi: " + e.message); }
+            }
+        }
+
+        window.viewUserHistory = async (email) => {
+            document.getElementById('historyEmailText').innerText = email;
+            const container = document.getElementById('historyListContainer');
+            container.innerHTML = '<p class="text-center text-sm font-bold text-slate-400 py-10">Đang tải dữ liệu...</p>';
+            openModal('modalHistory');
+
+            try {
+                const q = query(collection(db, "user_logs"), where("email", "==", email));
+                const snap = await getDocs(q);
+                let logs = [];
+                snap.forEach(d => logs.push(d.data()));
+                
+                if (logs.length === 0) {
+                    container.innerHTML = '<p class="text-center text-sm font-bold text-slate-400 py-10">Chưa có hoạt động nào</p>';
+                    return;
+                }
+
+                // Sắp xếp mới nhất lên đầu (Client-side để tránh lỗi index)
+                logs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                container.innerHTML = logs.map(log => {
+                    const time = log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString('vi-VN') : 'N/A';
+                    const actionColor = log.action === 'Đăng nhập' ? 'text-green-600 bg-green-50 border-green-200' : 'text-blue-600 bg-blue-50 border-blue-200';
+                    return `
+                        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="px-2.5 py-1 text-[9px] font-black rounded-lg border ${actionColor} uppercase tracking-widest">${log.action}</span>
+                                <span class="text-[11px] font-bold text-slate-400">${time}</span>
+                            </div>
+                            ${log.details ? `<p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2">${log.details}</p>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                container.innerHTML = '<p class="text-center text-sm font-bold text-red-500 py-10">Lỗi khi tải lịch sử!</p>';
             }
         }
 
@@ -1136,6 +1237,26 @@
                 document.getElementById('statCount').innerText = MASTER_DATA.length + " kết quả";
                 CURRENT_PAGE = 1;
                 renderTable();
+
+                // ĐOẠN MÃ MỚI CHÈN VÀO: Lưu log tìm kiếm cho Sub-user
+                if (currentUserProfile && currentUserProfile.role === 'user') {
+                    const subUserSession = JSON.parse(localStorage.getItem('subUserSession'));
+                    if (subUserSession && subUserSession.id) {
+                        const userRef = doc(db, "sub_users", subUserSession.id);
+                        const userSnap = await getDoc(userRef);
+                        if(userSnap.exists()) {
+                            await updateDoc(userRef, { searchCount: (userSnap.data().searchCount || 0) + 1 });
+                        }
+                        
+                        await addDoc(collection(db, "user_logs"), {
+                            email: currentUserProfile.email,
+                            action: "Tra cứu",
+                            details: `Từ khóa: "${search || 'Trống'}" - Hãng: ${hang || 'Tất cả'}, Dòng: ${hieus.length ? hieus.length + ' dòng' : 'Tất cả'}`,
+                            timestamp: serverTimestamp()
+                        });
+                    }
+                }
+                
             } catch (e) {
                 console.error(e);
             } finally {
