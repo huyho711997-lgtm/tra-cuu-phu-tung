@@ -702,23 +702,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 
     <script type="module">
+        // 1. IMPORT THƯ VIỆN FIREBASE
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, 
                  setPersistence, browserLocalPersistence, browserSessionPersistence, 
                  sendPasswordResetEmail, updatePassword, reauthenticateWithCredential,
                  EmailAuthProvider, createUserWithEmailAndPassword, updateProfile,
                  deleteUser } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // Khởi tạo app phụ để Admin tạo user mà không bị đăng xuất
-        const secondaryApp = initializeApp(firebaseConfig, "secondary");
-        const secondaryAuth = getAuth(secondaryApp);
-        // THÊM DÒNG NÀY ĐỂ GỌI HÀM SERVER
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, query, 
+                 where, getDocs, limit, orderBy, updateDoc, writeBatch, 
+                 serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // ============================================================
-        // CẤU HÌNH FIREBASE — MAIN APP
+        // 2. CẤU HÌNH FIREBASE — MAIN APP
         // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCT8G6mI1w5woinOU5QgfHGhUhcVzuy5Oo",
@@ -732,12 +728,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const functions = getFunctions(app); // Khởi tạo Cloud Functions
+
+        // ============================================================
+        // 3. SECONDARY APP — dùng để tạo sub_user mà không đăng xuất Admin
+        // ============================================================
+        const secondaryApp = initializeApp(firebaseConfig, "secondary");
+        const secondaryAuth = getAuth(secondaryApp);
 
         // ============================================================
         // CONSTANTS
         // ============================================================
-        const MGR_EMAIL = 'huyho71@gmail.com';
         let currentUserProfile = null;
 
         // ============================================================
