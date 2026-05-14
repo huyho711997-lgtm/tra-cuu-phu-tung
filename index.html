@@ -378,7 +378,12 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div id="dropdownHang" class="z-50 hidden bg-white rounded-xl shadow-xl border border-slate-100 w-64 p-2">
-                        <input type="text" id="searchHang" oninput="filterDropdown('Hang')" placeholder="Tìm hãng xe..." class="search-inner">
+                        <div class="relative w-full mb-2">
+                            <input type="text" id="searchHang" oninput="filterDropdown('Hang'); toggleDropdownClearBtn('Hang')" placeholder="Tìm hãng xe..." class="search-inner !mb-0 pr-8">
+                            <button id="clearSearchHang" onclick="clearDropdownSearch('Hang')" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-full flex items-center justify-center transition-all cursor-pointer z-10" title="Xóa">
+                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
                         <div id="listHang" class="max-h-60 overflow-y-auto space-y-0.5"></div>
                     </div>
                     <input type="hidden" id="filterHang" value="">
@@ -392,7 +397,12 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div id="dropdownHieu" class="z-50 hidden bg-white rounded-xl shadow-xl border border-slate-100 w-72 p-2">
-                        <input type="text" id="searchHieu" oninput="filterDropdown('Hieu')" placeholder="Tìm dòng xe..." class="search-inner">
+                        <div class="relative w-full mb-2">
+                            <input type="text" id="searchHieu" oninput="filterDropdown('Hieu'); toggleDropdownClearBtn('Hieu')" placeholder="Tìm dòng xe..." class="search-inner !mb-0 pr-8">
+                            <button id="clearSearchHieu" onclick="clearDropdownSearch('Hieu')" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-full flex items-center justify-center transition-all cursor-pointer z-10" title="Xóa">
+                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
                         <div id="hieuXeCheckboxes" class="max-h-60 overflow-y-auto space-y-0.5">
                             <p class="text-[11px] text-slate-400 italic p-3">Chọn hãng xe trước</p>
                         </div>
@@ -407,7 +417,12 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div id="dropdownNam" class="z-50 hidden bg-white rounded-xl shadow-xl border border-slate-100 w-40 p-2">
-                        <input type="text" id="searchNam" oninput="filterDropdown('Nam')" placeholder="Tìm năm..." class="search-inner">
+                        <div class="relative w-full mb-2">
+                            <input type="text" id="searchNam" oninput="filterDropdown('Nam'); toggleDropdownClearBtn('Nam')" placeholder="Tìm năm..." class="search-inner !mb-0 pr-8">
+                            <button id="clearSearchNam" onclick="clearDropdownSearch('Nam')" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-full flex items-center justify-center transition-all cursor-pointer z-10" title="Xóa">
+                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
                         <div id="listNam" class="max-h-60 overflow-y-auto space-y-0.5"></div>
                     </div>
                     <input type="hidden" id="filterNam" value="">
@@ -431,11 +446,12 @@
                 <div class="md:col-span-2 field-group">
                     <label class="field-label">Tên phụ tùng</label>
                     <svg class="w-4 h-4 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="searchInput" placeholder="Tìm tên..." class="pro-input pr-10" onkeydown="if(event.key==='Enter') searchData()" oninput="toggleClearBtn()">
-                    
-                    <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute right-3 top-[34px] w-5 h-5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-full flex items-center justify-center transition-all cursor-pointer z-10" title="Xóa từ khóa">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
+                    <div class="relative w-full">
+                        <input type="text" id="searchInput" placeholder="Tìm tên..." class="pro-input pr-10" onkeydown="if(event.key==='Enter') searchData()" oninput="toggleClearBtn()">
+                        <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-full flex items-center justify-center transition-all cursor-pointer z-10" title="Xóa từ khóa">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="md:col-span-2 flex gap-2">
@@ -1327,22 +1343,38 @@
             items.forEach(item => { item.style.display = item.innerText.toLowerCase().includes(input) ? 'flex' : 'none'; });
         };
 
-        // --- MỚI THÊM: CÁC HÀM XỬ LÝ NÚT XÓA NHANH ---
+        // --- CÁC HÀM XỬ LÝ NÚT XÓA NHANH ---
         window.toggleClearBtn = function() {
             const input = document.getElementById('searchInput');
             const btn = document.getElementById('clearSearchBtn');
-            if (input.value.length > 0) {
-                btn.classList.remove('hidden');
-            } else {
-                btn.classList.add('hidden');
-            }
+            if (input.value.length > 0) btn.classList.remove('hidden');
+            else btn.classList.add('hidden');
         };
 
         window.clearSearchInput = function() {
             const input = document.getElementById('searchInput');
             input.value = '';
-            toggleClearBtn(); // Ẩn nút đi
-            input.focus(); // Đưa con trỏ chuột quay lại ô nhập liệu để gõ tiếp
+            toggleClearBtn();
+            input.focus();
+        };
+
+        window.toggleDropdownClearBtn = function(type) {
+            const input = document.getElementById('search' + type);
+            const btn = document.getElementById('clearSearch' + type);
+            if (input && btn) {
+                if (input.value.length > 0) btn.classList.remove('hidden');
+                else btn.classList.add('hidden');
+            }
+        };
+
+        window.clearDropdownSearch = function(type) {
+            const input = document.getElementById('search' + type);
+            if (input) {
+                input.value = '';
+                toggleDropdownClearBtn(type);
+                filterDropdown(type); // Kích hoạt hiển thị lại toàn bộ list
+                input.focus();
+            }
         };
         // ---------------------------------------------
 
@@ -1350,9 +1382,14 @@
             selectHang(''); selectNam(''); selectType('all');
             document.getElementById('searchInput').value = '';
             
-            // ĐÃ THÊM: Đảm bảo nút X nhỏ cũng bị ẩn khi ấn nút Xóa bộ lọc (Thùng rác)
             const clearBtn = document.getElementById('clearSearchBtn');
             if (clearBtn) clearBtn.classList.add('hidden');
+
+            // Ẩn luôn các nút X trong dropdown nếu đang hiển thị
+            ['Hang', 'Hieu', 'Nam'].forEach(type => {
+                const dropBtn = document.getElementById('clearSearch' + type);
+                if (dropBtn) dropBtn.classList.add('hidden');
+            });
 
             ['searchHang', 'searchHieu', 'searchNam'].forEach(id => document.getElementById(id).value = '');
             document.querySelectorAll('#listHang .dropdown-item').forEach(item => item.style.display = 'flex');
