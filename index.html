@@ -738,7 +738,7 @@
         // ============================================================
         // CONSTANTS
         // ============================================================
-        const MGR_EMAIL = 'huyho71@gmial.com'; // Cập nhật thành email quản trị thực tế của bạn
+        const MGR_EMAIL = 'huyho71@gmail.com'; // Cập nhật thành email quản trị thực tế của bạn
         let currentUserProfile = null;
 
         // ============================================================
@@ -805,11 +805,13 @@
             
             const mgrBtn = document.getElementById('sysMgrBtn');
             if (role === 'admin') {
-                mgrBtn.style.setProperty('display', 'flex', 'important');
+                // Tối ưu hóa việc bật hiển thị dạng flex và loại bỏ class ẩn
                 mgrBtn.classList.remove('hidden');
+                mgrBtn.style.display = 'flex';
             } else {
-                mgrBtn.style.setProperty('display', 'none', 'important');
+                // Ẩn hoàn toàn khỏi DOM
                 mgrBtn.classList.add('hidden');
+                mgrBtn.style.display = 'none';
             }
         }
 
