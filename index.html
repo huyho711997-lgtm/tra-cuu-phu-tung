@@ -711,6 +711,8 @@
         import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, query, 
                  where, getDocs, limit, orderBy, updateDoc, writeBatch, 
                  serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // THÊM DÒNG NÀY ĐỂ GỌI HÀM SERVER
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
 
         // ============================================================
         // CẤU HÌNH FIREBASE — MAIN APP
@@ -727,14 +729,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-
-        // ============================================================
-        // SECONDARY APP — dùng để tạo sub_user mà không đăng xuất Admin
-        // Admin tạo user qua secondaryApp, sau đó secondaryApp sign out
-        // Admin vẫn giữ phiên trên mainApp
-        // ============================================================
-        const secondaryApp = initializeApp(firebaseConfig, "secondary");
-        const secondaryAuth = getAuth(secondaryApp);
+        const functions = getFunctions(app); // Khởi tạo Cloud Functions
 
         // ============================================================
         // CONSTANTS
@@ -905,26 +900,16 @@
             if (pass.length < 6) return customAlert("Mật khẩu tối thiểu 6 ký tự!");
 
             try {
-                // Tạo tài khoản qua secondaryAuth — Admin KHÔNG bị đăng xuất
-                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
-                const newUser = userCredential.user;
+                // Gọi Cloud Function để tạo tài khoản an toàn từ phía Server
+                document.getElementById('confirmAddUserBtn').innerText = "ĐANG TẠO...";
+                document.getElementById('confirmAddUserBtn').disabled = true;
 
-                // Cập nhật displayName trên Firebase Auth
-                await updateProfile(newUser, { displayName: fullName });
-
-                // Lưu metadata vào Firestore (không lưu mật khẩu!)
-                await setDoc(doc(db, "user_profiles", newUser.uid), {
-                    fullName: fullName,
+                const createAdminUser = httpsCallable(functions, 'createUserByAdmin');
+                await createAdminUser({
                     email: email,
-                    role: 'user',
-                    status: 'active',
-                    createdAt: serverTimestamp(),
-                    loginCount: 0,
-                    searchCount: 0
+                    password: pass,
+                    fullName: fullName
                 });
-
-                // Sign out khỏi secondary app ngay sau khi tạo xong
-                await signOut(secondaryAuth);
 
                 // Ghi log
                 await addDoc(collection(db, "user_logs"), {
@@ -938,12 +923,17 @@
                 refreshUserList();
                 customAlert(`Đã tạo tài khoản ${email} thành công!`, "success");
             } catch (e) {
-                await signOut(secondaryAuth).catch(() => {}); // đảm bảo sign out dù lỗi
-                if (e.code === 'auth/email-already-in-use') {
+                document.getElementById('confirmAddUserBtn').innerText = "TẠO TÀI KHOẢN";
+                document.getElementById('confirmAddUserBtn').disabled = false;
+                
+                if (e.message && e.message.includes('email-already-in-use')) {
                     customAlert("Email này đã được sử dụng!");
                 } else {
                     customAlert("Lỗi: " + e.message);
                 }
+            } finally {
+                document.getElementById('confirmAddUserBtn').innerText = "TẠO TÀI KHOẢN";
+                document.getElementById('confirmAddUserBtn').disabled = false;
             }
         };
 
