@@ -1652,7 +1652,7 @@
                     const item = docSnap.data();
                     item.id = docSnap.id;
                     const chinhHangValue = (item.chinh_hang || '').toLowerCase();
-                    if (type === 'aftermarket' && chinhHangValue.includes("chính hãng")) return;
+                    if (type === 'aftermarket' && chinhHangValue === "chính hãng") return;
                     if (!search || (item.ten_phu_tung && item.ten_phu_tung.toLowerCase().includes(search))) {
                         MASTER_DATA.push(item);
                     }
@@ -1692,7 +1692,7 @@
             const totalPages = Math.ceil(MASTER_DATA.length / ITEMS_PER_PAGE);
             const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
             MASTER_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE).forEach(item => {
-                const isGenuine = (item.chinh_hang || '').toLowerCase().includes("chính hãng");
+                const isGenuine = (item.chinh_hang || '').toLowerCase() === "chính hãng";
                 const badge = isGenuine ? '<span class="badge-pro badge-genuine">Chính hãng</span>' : '<span class="badge-pro badge-aftermarket">Thay thế</span>';
                 const ngay = (item.ngay_bao_gia || '').split(' ')[0].split('-').reverse().join('/');
                 tableBody.innerHTML += `
