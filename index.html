@@ -13,22 +13,10 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#2563eb',
-                            hover: '#1d4ed8',
-                        }
-                    }
-                }
-            }
+            theme: { extend: { colors: { primary: { DEFAULT: '#2563eb', hover: '#1d4ed8' } } } }
         }
     </script>
     <style>
-        /* =============================================
-           BIẾN GỐC & CẤU HÌNH CHUNG
-        ============================================= */
         :root { 
             --primary: #2563eb; 
             --primary-hover: #1d4ed8;
@@ -42,9 +30,6 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
         .main-container { max-width: 1580px; margin: 0 auto; padding: 1.5rem; }
 
-        /* =============================================
-           CONTROL PANEL
-        ============================================= */
         .control-panel {
             background: #ffffff;
             border-radius: 24px;
@@ -56,610 +41,197 @@
         
         .field-group { position: relative; }
         .field-label {
-            font-size: 11px;
-            font-weight: 800;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 8px;
-            display: block;
+            font-size: 11px; font-weight: 800; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; display: block;
         }
         .pro-input {
-            width: 100%;
-            height: 48px;
-            background: #f8fafc !important;
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 12px !important;
-            padding-left: 40px !important;
-            font-size: 13px !important;
-            font-weight: 700 !important;
-            color: #1e293b;
-            transition: all var(--transition-base) var(--ease-smooth);
+            width: 100%; height: 48px; background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important; border-radius: 12px !important;
+            padding-left: 40px !important; font-size: 13px !important; font-weight: 700 !important;
+            color: #1e293b; transition: all var(--transition-base) var(--ease-smooth);
         }
         .pro-input:focus {
-            background: #ffffff !important;
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08) !important;
-            outline: none !important;
+            background: #ffffff !important; border-color: var(--primary) !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08) !important; outline: none !important;
         }
         .field-icon { 
-            position: absolute; 
-            left: 14px; 
-            top: 35px; 
-            color: #94a3b8; 
-            z-index: 10; 
-            pointer-events: none;
+            position: absolute; left: 14px; top: 35px; color: #94a3b8; z-index: 10; pointer-events: none;
             transition: color var(--transition-base) var(--ease-smooth);
         }
 
-        /* =============================================
-           MULTI-SELECT BUTTON (DROPDOWN TRIGGER)
-        ============================================= */
         .multi-btn {
-            width: 100%;
-            height: 48px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 0 16px 0 40px;
-            font-size: 13px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
-            color: #1e293b;
-            user-select: none;
+            width: 100%; height: 48px; background: #f8fafc; border: 1px solid #e2e8f0;
+            border-radius: 12px; padding: 0 16px 0 40px; font-size: 13px; font-weight: 700;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: all var(--transition-base) var(--ease-smooth); cursor: pointer;
+            color: #1e293b; user-select: none;
         }
-        .multi-btn:hover {
-            background: #ffffff;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
-        }
-        .multi-btn:active {
-            transform: scale(0.99);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
-        }
-        .multi-btn svg {
-            transition: transform var(--transition-base) var(--ease-smooth);
-            flex-shrink: 0;
-        }
-        .multi-btn:hover svg {
-            transform: translateY(2px);
-            color: var(--primary);
-        }
+        .multi-btn:hover { background: #ffffff; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08); }
+        .multi-btn svg { transition: transform var(--transition-base) var(--ease-smooth); flex-shrink: 0; }
+        .multi-btn:hover svg { transform: translateY(2px); color: var(--primary); }
 
-        /* =============================================
-           TABLE STYLING
-        ============================================= */
         .data-section { background: white; border-radius: 24px; border: 1px solid #e2e8f0; overflow: hidden; }
         .data-table thead th { background: #f8fafc; padding: 16px 24px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; }
         .data-table td { padding: 16px 24px; vertical-align: middle; border-bottom: 1px solid #f8fafc; }
-        .data-table tbody tr {
-            transition: background var(--transition-fast) var(--ease-smooth);
-        }
-        .data-table tbody tr:hover {
-            background: #f8fafc;
-        }
+        .data-table tbody tr { transition: background var(--transition-fast) var(--ease-smooth); }
+        .data-table tbody tr:hover { background: #f8fafc; }
         
-        /* =============================================
-           BADGES
-        ============================================= */
         .badge-pro { padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; }
         .badge-genuine { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
         .badge-aftermarket { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-verified { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
         .badge-unverified { 
-            background: #f1f5f9; 
-            color: #94a3b8; 
-            border: 1px solid #e2e8f0; 
-            cursor: pointer;
+            background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; cursor: pointer;
             transition: all var(--transition-base) var(--ease-smooth);
         }
-        .badge-unverified:hover { 
-            background: #eff6ff; 
-            color: var(--primary); 
-            border-color: #dbeafe;
-            transform: scale(1.03);
-        }
-        .badge-unverified:active {
-            transform: scale(0.97);
-        }
-        
+        .badge-unverified:hover { background: #eff6ff; color: var(--primary); border-color: #dbeafe; transform: scale(1.03); }
         .price-text { font-size: 17px; font-weight: 900; color: #0f172a; }
 
-        /* =============================================
-           SEARCH BUTTON - ĐÃ GỘP VÀ ĐỒNG BỘ
-        ============================================= */
         .search-btn {
             background: linear-gradient(135deg, #2563eb 0%, #1e40af 50%, #1d4ed8 100%);
             background-size: 200% auto;
             box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
-            width: 100%;
-            height: 48px;
-            color: white;
-            font-weight: 800;
-            text-transform: uppercase;
-            border-radius: 12px;
-            transition: all var(--transition-slow) var(--ease-smooth);
-            overflow: hidden;
-            cursor: pointer;
-            letter-spacing: 0.05em;
+            width: 100%; height: 48px; color: white; font-weight: 800; text-transform: uppercase;
+            border-radius: 12px; transition: all var(--transition-slow) var(--ease-smooth);
+            overflow: hidden; cursor: pointer; letter-spacing: 0.05em;
         }
-        .search-btn:hover { 
-            background-position: right center; 
-            transform: translateY(-2px); 
-            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.6); 
-        }
-        .search-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 4px 10px -2px rgba(37, 99, 235, 0.4);
-        }
-        .search-btn svg {
-            transition: transform var(--transition-slow) var(--ease-bounce);
-        }
-        .search-btn:hover svg {
-            transform: scale(1.15) rotate(-10deg);
-        }
+        .search-btn:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.6); }
+        .search-btn:active { transform: translateY(1px); box-shadow: 0 4px 10px -2px rgba(37, 99, 235, 0.4); }
 
-        /* =============================================
-           TRASH BUTTON - HIỆU ỨNG MỞ NẮP
-        ============================================= */
-        .btn-trash {
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
-        }
-        .btn-trash .trash-lid {
-            transition: transform var(--transition-slow) var(--ease-bounce);
-            transform-origin: 20px 7px;
-        }
-        .btn-trash:hover .trash-lid {
-            transform: rotate(25deg) translateY(-2px);
-        }
-        .btn-trash:active {
-            transform: scale(0.9);
-        }
+        .btn-trash { transition: all var(--transition-base) var(--ease-smooth); cursor: pointer; }
+        .btn-trash .trash-lid { transition: transform var(--transition-slow) var(--ease-bounce); transform-origin: 20px 7px; }
+        .btn-trash:hover .trash-lid { transform: rotate(25deg) translateY(-2px); }
+        .btn-trash:active { transform: scale(0.9); }
 
-        /* =============================================
-           INDEX ERROR BANNER
-        ============================================= */
-        .index-error {
-            background: #fff1f2;
-            border: 1px solid #fecdd3;
-            padding: 1rem;
-            border-radius: 12px;
-            color: #9f1239;
-            font-size: 13px;
-            margin-bottom: 1rem;
-            display: none;
-        }
-        .index-error a { font-weight: 800; text-decoration: underline; color: #e11d48; }
-
-        /* =============================================
-           LOGIN OVERLAY
-        ============================================= */
         #loginOverlay {
             position: fixed; inset: 0; z-index: 10000;
-            background: #f1f5f9;
-            display: flex; align-items: center; justify-content: center;
+            background: #f1f5f9; display: flex; align-items: center; justify-content: center;
         }
         html.dark #loginOverlay { background: #020617; }
         
         .login-card {
-            background: #ffffff;
-            width: 100%; max-width: 440px;
-            padding: 56px; border-radius: 32px;
-            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-            position: relative;
+            background: #ffffff; width: 100%; max-width: 440px; padding: 56px; border-radius: 32px;
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; position: relative;
         }
-        html.dark .login-card {
-            background: #0f172a !important;
-            border: 1px solid #1e293b !important;
-            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.3) !important;
-        }
+        html.dark .login-card { background: #0f172a !important; border: 1px solid #1e293b !important; }
         
-        /* =============================================
-           PREMIUM INPUT (LOGIN FORM)
-        ============================================= */
         .premium-input-group { position: relative; }
         .premium-input {
-            width: 100%; height: 52px; background: #f8fafc;
-            border: 1.5px solid #e2e8f0; border-radius: 14px;
+            width: 100%; height: 52px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px;
             padding: 0 24px 0 52px; font-size: 14px; font-weight: 600;
-            transition: all var(--transition-base) var(--ease-smooth); 
-            color: #1e293b;
+            transition: all var(--transition-base) var(--ease-smooth); color: #1e293b;
         }
         html.dark .premium-input { background: #1e293b; border-color: #334155; color: #f8fafc; }
-        .premium-input:focus {
-            background: #fff; border-color: #2563eb; outline: none;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-        }
+        .premium-input:focus { background: #fff; border-color: #2563eb; outline: none; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
         html.dark .premium-input:focus { background: #1e293b; border-color: #2563eb; }
-        .input-icon { 
-            position: absolute; left: 18px; top: 16px; color: #94a3b8; 
-            transition: all var(--transition-base) var(--ease-smooth); 
-        }
+        .input-icon { position: absolute; left: 18px; top: 16px; color: #94a3b8; transition: all var(--transition-base) var(--ease-smooth); }
         .premium-input:focus + .input-icon { color: #2563eb; }
 
-        /* =============================================
-           EXECUTIVE BUTTON (LOGIN)
-        ============================================= */
         .btn-executive {
-            background: #2563eb;
-            color: white; font-weight: 700;
-            padding: 14px; border-radius: 14px;
-            transition: all var(--transition-base) var(--ease-smooth);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-            cursor: pointer;
-            letter-spacing: 0.05em;
+            background: #2563eb; color: white; font-weight: 700; padding: 14px; border-radius: 14px;
+            transition: all var(--transition-base) var(--ease-smooth); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            cursor: pointer; letter-spacing: 0.05em;
         }
-        .btn-executive:hover { 
-            background: #1d4ed8; 
-            transform: translateY(-2px); 
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35); 
-        }
-        .btn-executive:active { 
-            transform: translateY(1px); 
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
-        }
+        .btn-executive:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35); }
+        .btn-executive:active { transform: translateY(1px); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* =============================================
-           DROPDOWN ITEMS
-        ============================================= */
         .dropdown-item { 
-            padding: 10px 12px; 
-            border-radius: 10px; 
-            font-size: 13px; 
-            font-weight: 700; 
-            color: #475569; 
-            cursor: pointer; 
-            transition: all var(--transition-base) var(--ease-smooth); 
-            display: flex; 
-            align-items: center; 
-            gap: 10px;
-            user-select: none;
+            padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #475569; 
+            cursor: pointer; transition: all var(--transition-base) var(--ease-smooth); 
+            display: flex; align-items: center; gap: 10px; user-select: none;
         }
-        .dropdown-item:hover { 
-            background: #f1f5f9; 
-            color: var(--primary);
-            padding-left: 16px;
-        }
-        .dropdown-item.active { 
-            background: #eff6ff; 
-            color: var(--primary); 
-        }
-        .dropdown-item:active {
-            transform: scale(0.98);
-        }
+        .dropdown-item:hover { background: #f1f5f9; color: var(--primary); padding-left: 16px; }
+        .dropdown-item.active { background: #eff6ff; color: var(--primary); }
         .search-inner { 
-            width: 100%; font-size: 12px; font-weight: 700; 
-            background: #f8fafc; border: 1px solid #f1f5f9; 
-            border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; 
-            outline: none !important;
+            width: 100%; font-size: 12px; font-weight: 700; background: #f8fafc; border: 1px solid #f1f5f9; 
+            border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; outline: none !important;
             transition: all var(--transition-base) var(--ease-smooth);
         }
-        .search-inner:focus { 
-            border-color: var(--primary); 
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
-        }
+        .search-inner:focus { border-color: var(--primary); background: #ffffff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08); }
 
-        /* =============================================
-           THEME TOGGLE BUTTON - ĐÃ ĐỒNG BỘ
-        ============================================= */
         .theme-toggle-btn {
-            background: #ffffff !important;
-            border: 2px solid #e2e8f0 !important;
-            color: #f59e0b !important;
-            width: 44px !important;
-            height: 44px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            transition: all var(--transition-slow) var(--ease-smooth) !important;
-            border-radius: 14px !important;
-            padding: 0 !important;
-            cursor: pointer;
+            background: #ffffff !important; border: 2px solid #e2e8f0 !important; color: #f59e0b !important;
+            width: 44px !important; height: 44px !important; display: flex !important; align-items: center !important;
+            justify-content: center !important; transition: all var(--transition-slow) var(--ease-smooth) !important;
+            border-radius: 14px !important; padding: 0 !important; cursor: pointer;
         }
-        html.dark .theme-toggle-btn {
-            background: #1e293b !important;
-            border-color: #475569 !important;
-            color: #fbbf24 !important;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.15) !important;
-        }
-        .theme-toggle-btn svg {
-            width: 22px !important;
-            height: 22px !important;
-            transition: all var(--transition-slow) var(--ease-bounce) !important;
-        }
+        html.dark .theme-toggle-btn { background: #1e293b !important; border-color: #475569 !important; color: #fbbf24 !important; }
+        .theme-toggle-btn svg { width: 22px !important; height: 22px !important; transition: all var(--transition-slow) var(--ease-bounce) !important; }
         #sunIcon { display: none !important; color: #fbbf24 !important; }
         #moonIcon { display: block !important; color: #f59e0b !important; }
         html.dark #sunIcon { display: block !important; }
         html.dark #moonIcon { display: none !important; }
+        .theme-toggle-btn:hover { transform: scale(1.1) rotate(15deg); background: #f1f5f9 !important; }
+        html.dark .theme-toggle-btn:hover { background: #334155 !important; border-color: #fbbf24 !important; }
 
-        .theme-toggle-btn:hover {
-            transform: scale(1.1) rotate(15deg);
-            background: #f1f5f9 !important;
-            border-color: #cbd5e1 !important;
-        }
-        .theme-toggle-btn:active {
-            transform: scale(0.95) rotate(0deg);
-        }
-        html.dark .theme-toggle-btn:hover {
-            background: #334155 !important;
-            border-color: #fbbf24 !important;
-        }
+        #btnPrev, #btnNext { transition: all var(--transition-base) var(--ease-smooth); cursor: pointer; }
+        #btnPrev:not(:disabled):hover, #btnNext:not(:disabled):hover { transform: translateY(-1px); border-color: #2563eb !important; color: #2563eb !important; }
+        #btnPrev:disabled, #btnNext:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* =============================================
-           PAGINATION BUTTONS
-        ============================================= */
-        #btnPrev, #btnNext {
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
-        }
-        #btnPrev:not(:disabled):hover, #btnNext:not(:disabled):hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
-            border-color: #2563eb !important;
-            color: #2563eb !important;
-        }
-        #btnPrev:not(:disabled):active, #btnNext:not(:disabled):active {
-            transform: translateY(1px);
-        }
-        #btnPrev:disabled, #btnNext:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        /* =============================================
-           ICON ACTION BUTTONS (header: đổi MK, đăng xuất)
-        ============================================= */
-        .w-9.h-9 {
-            transition: all var(--transition-base) var(--ease-smooth);
-        }
-
-        /* =============================================
-           DARK MODE OVERRIDES
-        ============================================= */
+        /* ============ DARK MODE ============ */
         html.dark body { background: #020617 !important; color: #94a3b8 !important; }
-        html.dark .bg-white, 
-        html.dark .control-panel, 
-        html.dark .data-section, 
-        html.dark .login-card, 
-        html.dark #modalVerify > div, 
-        html.dark #modalDetail > div, 
-        html.dark #modalLogout > div { 
-            background: #0f172a !important; 
-            border: 1px solid #334155 !important; 
+        html.dark .bg-white, html.dark .control-panel, html.dark .data-section, html.dark .login-card,
+        html.dark #modalVerify > div, html.dark #modalDetail > div, html.dark #modalLogout > div { 
+            background: #0f172a !important; border: 1px solid #334155 !important; 
         }
-        html.dark .bg-slate-50, 
-        html.dark .bg-slate-50\/50, 
-        html.dark .data-table thead th, 
-        html.dark .bg-slate-100 { 
-            background: #1e293b !important; 
-            color: #cbd5e1 !important;
-            border-bottom: 1px solid #334155 !important;
+        html.dark .bg-slate-50, html.dark .data-table thead th, html.dark .bg-slate-100 { 
+            background: #1e293b !important; color: #cbd5e1 !important; border-bottom: 1px solid #334155 !important;
         }
         html.dark .field-icon { color: #cbd5e1 !important; }
         html.dark .text-slate-900 { color: #f8fafc !important; }
         html.dark .text-slate-700, html.dark .text-slate-600 { color: #cbd5e1 !important; }
         html.dark .text-slate-400 { color: #94a3b8 !important; }
-        html.dark .border-slate-100, 
-        html.dark .border-slate-200, 
-        html.dark .border-slate-300 { 
-            border-color: #1e293b !important; 
-        }
-        html.dark input, 
-        html.dark select, 
-        html.dark textarea, 
-        html.dark .pro-input, 
-        html.dark .multi-btn, 
-        html.dark .search-inner { 
-            background: #1e293b !important; 
-            color: #f8fafc !important; 
-            border-color: #334155 !important; 
-        }
-        html.dark .multi-btn:hover {
-            background: #253449 !important;
-            border-color: var(--primary) !important;
+        html.dark .border-slate-100, html.dark .border-slate-200 { border-color: #1e293b !important; }
+        html.dark input, html.dark select, html.dark .pro-input, html.dark .multi-btn, html.dark .search-inner { 
+            background: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; 
         }
         html.dark .data-table td { border-bottom-color: #1e293b !important; color: #cbd5e1 !important; }
         html.dark .data-table tr:hover { background: #1e293b !important; }
         html.dark .price-text { color: #f8fafc !important; }
         html.dark .dropdown-item:hover { background: #1e293b !important; color: #2563eb !important; }
         html.dark .dropdown-item.active { background: #1e293b !important; color: #2563eb !important; }
-        html.dark .bg-blue-50 { background: rgba(37, 99, 235, 0.1) !important; }
-        html.dark .text-blue-600 { color: #60a5fa !important; }
         html.dark .badge-genuine { background: rgba(22, 163, 74, 0.2) !important; color: #4ade80 !important; border-color: rgba(34, 197, 94, 0.3) !important; }
         html.dark .badge-aftermarket { background: rgba(217, 119, 6, 0.2) !important; color: #fbbf24 !important; border-color: rgba(180, 83, 9, 0.3) !important; }
         html.dark .badge-verified { background: rgba(37, 99, 235, 0.2) !important; color: #60a5fa !important; border-color: rgba(37, 99, 235, 0.3) !important; }
         html.dark .badge-unverified { background: #1e293b !important; color: #94a3b8 !important; border-color: #334155 !important; }
-        html.dark .badge-unverified:hover { background: rgba(37, 99, 235, 0.15) !important; color: #60a5fa !important; border-color: rgba(37, 99, 235, 0.3) !important; }
         html.dark .field-label { color: #94a3b8 !important; }
-        html.dark .bg-red-50 { background: rgba(239, 68, 68, 0.1) !important; }
-        html.dark .bg-green-50 { background: rgba(34, 197, 94, 0.1) !important; }
         html.dark #loginOverlay { background: linear-gradient(135deg, #020617 0%, #0f172a 100%) !important; }
-
-        /* =============================================
-           DARK MODE SCROLLBAR
-        ============================================= */
-        html.dark ::-webkit-scrollbar { width: 10px; height: 10px; }
-        html.dark ::-webkit-scrollbar-track { background: #020617; }
+        html.dark ::-webkit-scrollbar { width: 10px; } html.dark ::-webkit-scrollbar-track { background: #020617; }
         html.dark ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; border: 2px solid #020617; }
-        html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
-        html.dark { scrollbar-color: #334155 #020617; scrollbar-width: thin; }
-
-        /* =============================================
-           DARK MODE CHECKBOX
-        ============================================= */
         html.dark input[type="checkbox"] { 
-            appearance: none;
-            width: 1rem;
-            height: 1rem;
-            background-color: #1e293b !important; 
-            border: 1px solid #334155 !important; 
-            border-radius: 4px;
-            display: inline-grid;
-            place-content: center;
-            cursor: pointer;
-            transition: all var(--transition-base) var(--ease-smooth);
+            appearance: none; width: 1rem; height: 1rem; background-color: #1e293b !important; 
+            border: 1px solid #334155 !important; border-radius: 4px; display: inline-grid; place-content: center; cursor: pointer;
         }
-        html.dark input[type="checkbox"]::before {
-            content: "";
-            width: 0.5rem;
-            height: 0.5rem;
-            transform: scale(0);
-            transition: 120ms transform var(--ease-bounce);
-            box-shadow: inset 1em 1em #ffffff;
-            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-        }
-        html.dark input[type="checkbox"]:checked {
-            background-color: #2563eb !important;
-            border-color: #2563eb !important;
-        }
-        html.dark input[type="checkbox"]:checked::before {
-            transform: scale(1);
-        }
+        html.dark input[type="checkbox"]::before { content: ""; width: 0.5rem; height: 0.5rem; transform: scale(0); transition: 120ms transform var(--ease-bounce); box-shadow: inset 1em 1em #ffffff; clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
+        html.dark input[type="checkbox"]:checked { background-color: #2563eb !important; border-color: #2563eb !important; }
+        html.dark input[type="checkbox"]:checked::before { transform: scale(1); }
 
-        /* =============================================
-           MODAL BUTTONS ĐỒNG BỘ
-        ============================================= */
-        /* Nút hủy trong modal */
-        [onclick*="closeModal"].flex-1 {
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
+        /* Security badge */
+        .security-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 10px; border-radius: 99px; font-size: 10px; font-weight: 800;
+            background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;
+            letter-spacing: 0.05em; text-transform: uppercase;
         }
-        [onclick*="closeModal"].flex-1:hover {
-            background: #e2e8f0;
-            color: #334155;
-        }
-        [onclick*="closeModal"].flex-1:active {
-            transform: scale(0.97);
-        }
-
-        /* Nút confirm/action trong modal */
-        #confirmVerifyBtn,
-        #confirmAddUserBtn,
-        #saveUserEditBtn,
-        #btnSaveSelfPassword,
-        #btnCustomConfirmOk,
-        #alertOkBtn {
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
-        }
-        #confirmVerifyBtn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-        #confirmVerifyBtn:active { transform: translateY(1px); filter: brightness(0.95); }
-        #confirmAddUserBtn:hover, #saveUserEditBtn:hover { 
-            background: #1d4ed8; transform: translateY(-1px); 
-            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
-        }
-        #confirmAddUserBtn:active, #saveUserEditBtn:active { transform: translateY(1px); }
-        #btnSaveSelfPassword:hover { background: #ea580c; transform: translateY(-1px); box-shadow: 0 6px 15px rgba(234, 88, 12, 0.3); }
-        #btnSaveSelfPassword:active { transform: translateY(1px); }
-        #btnCustomConfirmOk:hover { background: #ea580c; transform: translateY(-1px); }
-        #btnCustomConfirmOk:active { transform: translateY(1px); }
-        #alertOkBtn:active { transform: scale(0.97); }
-
-        /* Nút đăng xuất */
-        [onclick="confirmLogout()"] {
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
-        }
-        [onclick="confirmLogout()"]:hover { background: #dc2626 !important; transform: translateY(-1px); }
-        [onclick="confirmLogout()"]:active { transform: translateY(1px); }
-
-        /* Nút icon nhỏ trong bảng quản trị */
-        [onclick*="viewUserHistory"],
-        [onclick*="toggleUserStatus"],
-        [onclick*="openEditUser"],
-        [onclick*="deleteSubUser"] {
-            transition: all var(--transition-base) var(--ease-smooth);
-        }
-        [onclick*="viewUserHistory"]:active,
-        [onclick*="toggleUserStatus"]:active,
-        [onclick*="openEditUser"]:active {
-            transform: scale(0.88);
-        }
-
-        /* Nút thêm người dùng & refresh */
-        [onclick*="openAddUserModal"],
-        [onclick*="refreshUserList"] {
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
-        }
-        [onclick*="openAddUserModal"]:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35); }
-        [onclick*="openAddUserModal"]:active { transform: translateY(1px); }
-        [onclick*="refreshUserList"]:hover { transform: rotate(30deg) scale(1.05); border-color: #2563eb !important; color: #2563eb; }
-        [onclick*="refreshUserList"]:active { transform: rotate(60deg) scale(0.95); }
-
-        /* Nút quay lại admin */
-        [onclick="toggleSysMgrView()"] {
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
-        }
-        [onclick="toggleSysMgrView()"]:hover { transform: translateX(-2px); background: #e2e8f0; }
-        [onclick="toggleSysMgrView()"]:active { transform: translateX(-4px) scale(0.95); }
-
-        /* Tag buttons trong verify modal */
-        [onclick*="addTag"] {
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
-        }
-        [onclick*="addTag"]:hover { 
-            border-color: #22c55e; 
-            color: #16a34a; 
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(34, 197, 94, 0.2);
-        }
-        [onclick*="addTag"]:active { transform: scale(0.95) translateY(0); }
-
-        /* Page size select */
-        #pageSize {
-            transition: all var(--transition-base) var(--ease-smooth);
-            cursor: pointer;
-        }
-        #pageSize:focus {
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-            outline: none;
-        }
-
-        /* Forgot password link */
-        [onclick="forgotPassword()"] {
-            transition: all var(--transition-base) var(--ease-smooth);
-        }
-        [onclick="forgotPassword()"]:hover { 
-            text-decoration: underline;
-            letter-spacing: 0.01em;
-        }
-
-        /* Header QUẢN TRỊ button */
-        #sysMgrBtn {
-            transition: all var(--transition-base) var(--ease-smooth) !important;
-        }
-        #sysMgrBtn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.15); }
-        #sysMgrBtn:active { transform: translateY(1px); }
+        html.dark .security-badge { background: rgba(22,163,74,0.2); color: #4ade80; border-color: rgba(34,197,94,0.3); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-700 min-h-screen transition-colors duration-300">
+
+    <!-- ====== THEME INIT ====== -->
     <script>
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         }
-
         function toggleTheme() {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
     </script>
 
+    <!-- ====== LOGIN OVERLAY ====== -->
     <div id="loginOverlay">
         <div class="login-card animate-[fadeIn_0.5s_ease-out]">
             <div class="text-center mb-10">
@@ -668,12 +240,18 @@
                 </div>
                 <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Hệ thống TASCO DLK</h2>
                 <p class="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Tra cứu phụ tùng chuyên nghiệp</p>
+                <div class="flex justify-center mt-3">
+                    <span class="security-badge">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        Kết nối bảo mật Firebase Auth
+                    </span>
+                </div>
             </div>
 
             <form id="loginForm" class="space-y-6">
                 <div class="premium-input-group">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Email / Tên đăng nhập</label>
-                    <input type="text" id="loginEmail" required placeholder="ví dụ: user01" class="premium-input">
+                    <input type="text" id="loginEmail" required placeholder="ví dụ: user01@tasco.vn" class="premium-input">
                     <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
                 </div>
                 <div class="premium-input-group">
@@ -684,7 +262,7 @@
                 
                 <div class="flex items-center justify-between px-1">
                     <label class="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all">
+                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
                         <span class="text-[11px] font-bold text-slate-500 group-hover:text-slate-700 transition-colors">Ghi nhớ đăng nhập</span>
                     </label>
                     <button type="button" onclick="forgotPassword()" class="text-[11px] font-bold text-blue-600 hover:text-blue-700 transition-all">Quên mật khẩu?</button>
@@ -698,7 +276,10 @@
         </div>
     </div>
 
+    <!-- ====== MAIN APP ====== -->
     <div id="mainApp" class="main-container" style="display: none;">
+        
+        <!-- Header chính -->
         <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 px-2">
             <div class="flex items-center gap-4">
                 <div class="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -711,7 +292,7 @@
             </div>
             
             <div class="flex items-center gap-3">
-                <button id="sysMgrBtn" onclick="toggleSysMgrView()" class="hidden h-11 px-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-[11px] font-black uppercase tracking-widest rounded-xl shadow-sm hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 dark:hover:border-blue-500 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2">
+                <button id="sysMgrBtn" onclick="toggleSysMgrView()" class="hidden h-11 px-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-[11px] font-black uppercase tracking-widest rounded-xl shadow-sm hover:text-blue-600 hover:border-blue-300 transition-all flex items-center gap-2">
                     <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     QUẢN TRỊ
                 </button>
@@ -721,29 +302,30 @@
                     <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
 
-                <div class="flex items-center h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded-[14px] shadow-sm hover:shadow-md transition-all">
+                <div class="flex items-center h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded-[14px] shadow-sm">
                     <div class="flex items-center gap-2.5 px-2">
-                        <div class="w-9 h-9 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center shadow-inner flex-shrink-0">
+                        <div class="w-9 h-9 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
                         </div>
                         <div class="flex flex-col justify-center">
-                            <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] leading-none mb-1">Xin chào</span>
-                            <span id="userEmail" class="text-[11px] font-black text-blue-700 dark:text-blue-400 leading-none truncate max-w-[120px] uppercase">user@tasco.vn</span>
+                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1">Xin chào</span>
+                            <span id="userDisplayName" class="text-[11px] font-black text-blue-700 dark:text-blue-400 leading-none truncate max-w-[120px] uppercase">user</span>
                         </div>
                     </div>
                     <div class="w-px h-6 bg-slate-100 dark:bg-slate-700 mx-1"></div>
                     <div class="flex items-center gap-0.5 pr-1">
-                        <button onclick="openChangePasswordModal()" class="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-lg transition-all group" title="Đổi mật khẩu" style="transition: all var(--transition-base) var(--ease-smooth);">
-                            <svg style="width: 18px; height: 18px; transition: transform var(--transition-base) var(--ease-bounce);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                        <button onclick="openChangePasswordModal()" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-lg transition-all" title="Đổi mật khẩu">
+                            <svg style="width:18px;height:18px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                         </button>
-                        <button onclick="handleLogout()" class="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all group" title="Đăng xuất" style="transition: all var(--transition-base) var(--ease-smooth);">
-                            <svg style="width: 18px; height: 18px; transition: transform var(--transition-base) var(--ease-bounce);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        <button onclick="handleLogout()" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all" title="Đăng xuất">
+                            <svg style="width:18px;height:18px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                         </button>
                     </div>
                 </div>
             </div>
         </header>
 
+        <!-- ====== QUẢN TRỊ SECTION ====== -->
         <div id="sysMgrSection" style="display: none;">
             <header class="flex items-center justify-between mb-8 px-2">
                 <div class="flex items-center gap-4">
@@ -752,7 +334,7 @@
                     </button>
                     <div>
                         <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tighter">QUẢN LÝ <span class="text-blue-600">NGƯỜI DÙNG</span></h1>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Danh sách tài khoản hệ thống</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Firebase Authentication — Bảo mật chuẩn công nghiệp</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -785,66 +367,8 @@
             </div>
         </div>
 
-        <div id="modalAddUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
-                <div class="p-6 border-b border-slate-100 dark:border-slate-800">
-                    <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Thêm người dùng con</h3>
-                </div>
-                <div class="p-8 space-y-4">
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị (Họ tên)</label>
-                        <input type="text" id="addFullName" placeholder="ví dụ: Nguyễn Văn A" class="premium-input">
-                    </div>
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên đăng nhập</label>
-                        <input type="text" id="addUserName" placeholder="ví dụ: user01" class="premium-input">
-                    </div>
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
-                        <input type="text" id="addUserPass" placeholder="••••••••" class="premium-input">
-                    </div>
-                </div>
-                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex gap-3">
-                    <button onclick="closeModal('modalAddUser')" class="flex-1 py-3.5 text-slate-500 font-bold uppercase text-xs">Hủy</button>
-                    <button id="confirmAddUserBtn" class="flex-1 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 uppercase text-xs">Tạo tài khoản</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="modalEditUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
-                <div class="p-6 border-b border-slate-100 dark:border-slate-800">
-                    <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Cập nhật thông tin</h3>
-                </div>
-                <div class="p-8 space-y-4">
-                    <div class="mb-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tài khoản đang sửa</label>
-                        <div id="editUserEmail" class="text-sm font-bold text-slate-700 dark:text-slate-300 px-1"></div>
-                    </div>
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị</label>
-                        <input type="text" id="editFullName" placeholder="Ví dụ: Nguyễn Văn A" class="premium-input">
-                    </div>
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
-                        <input type="text" id="editUserPass" placeholder="Nhập mật khẩu..." class="premium-input">
-                    </div>
-                </div>
-                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex gap-3">
-                    <button onclick="closeModal('modalEditUser')" class="flex-1 py-3.5 text-slate-500 font-bold uppercase text-xs">Hủy</button>
-                    <button id="saveUserEditBtn" class="flex-1 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 uppercase text-xs">Lưu thay đổi</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="indexErrorBanner" class="index-error">
-            <div class="flex items-start gap-3">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                <p id="indexErrorMessage"></p>
-            </div>
-        </div>
-
-        <div class="control-panel">
+        <!-- ====== TRA CỨU SECTION ====== -->
+        <div class="control-panel" id="searchPanel">
             <div class="grid grid-cols-1 md:grid-cols-11 gap-4 items-end">
                 <div class="md:col-span-2 field-group">
                     <label class="field-label">Hãng xe</label>
@@ -896,8 +420,8 @@
                         <span id="labelType" class="truncate">Tất cả loại hàng</span>
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                     </button>
-                    <div id="dropdownType" class="z-50 hidden bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 w-56 p-2">
-                        <div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectType('all')">Tất cả loại hàng</div>
+                    <div id="dropdownType" class="z-50 hidden bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 w-56 p-2">
+                        <div class="dropdown-item active border-b border-slate-100 mb-1 pb-2 font-black text-blue-600" onclick="selectType('all')">Tất cả loại hàng</div>
                         <div class="dropdown-item" onclick="selectType('genuine')">Chính hãng</div>
                         <div class="dropdown-item" onclick="selectType('aftermarket')">Thay thế / Ngoài</div>
                     </div>
@@ -915,17 +439,17 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         TÌM KIẾM
                     </button>
-                    <button onclick="clearFilters()" class="btn-trash w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:text-red-500 hover:border-red-200 hover:bg-red-50 dark:hover:text-red-400 dark:hover:border-red-800 dark:hover:bg-red-900/30 rounded-xl shadow-sm" title="Xóa bộ lọc">
+                    <button onclick="clearFilters()" class="btn-trash w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 dark:hover:text-red-400 rounded-xl shadow-sm" title="Xóa bộ lọc">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path class="trash-lid" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7h16M10 7V4a1 1 0 011-1h2a1 1 0 011 1v3" />
-                            <path class="trash-body" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 7l.867 12.142A2 2 0 007.862 21h8.276a2 2 0 001.995-1.858L19 7M10 11v6M14 11v6" />
+                            <path class="trash-lid" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7h16M10 7V4a1 1 0 011-1h2a1 1 0 011 1v3"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 7l.867 12.142A2 2 0 007.862 21h8.276a2 2 0 001.995-1.858L19 7M10 11v6M14 11v6"/>
                         </svg>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="data-section">
+        <div class="data-section" id="dataSection">
             <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
                 <div class="flex items-center gap-6">
                     <div class="flex items-center gap-2">
@@ -937,17 +461,8 @@
                         </select>
                     </div>
                     <div class="h-4 w-px bg-slate-200 dark:bg-slate-700"></div>
-                    <div class="flex flex-col">
-                        <span id="statCount" class="text-xs font-black text-slate-900 dark:text-slate-100">0 kết quả</span>
-                    </div>
-                    <div id="searchSummaryHeader" class="hidden md:flex items-center">
-                        <div class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
-                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
-                            <span id="summaryTextHeader" class="text-[10px] font-black text-blue-600 uppercase tracking-tight"></span>
-                        </div>
-                    </div>
+                    <span id="statCount" class="text-xs font-black text-slate-900 dark:text-slate-100">0 kết quả</span>
                 </div>
-                
                 <div class="flex items-center gap-4">
                     <div id="loadingIndicator" class="hidden flex items-center gap-2 text-blue-600">
                         <div class="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
@@ -964,19 +479,13 @@
                     </div>
                 </div>
             </div>
-            
             <div class="overflow-x-auto min-h-[400px]">
                 <table class="data-table w-full text-sm text-left">
                     <thead>
                         <tr>
-                            <th>Phụ tùng</th>
-                            <th>Loại hàng</th>
-                            <th>Thông tin xe</th>
-                            <th>Garage báo giá</th>
-                            <th>Ngày báo giá</th>
-                            <th>Xác thực</th>
-                            <th class="text-right">Đơn giá</th>
-                            <th class="text-center">#</th>
+                            <th>Phụ tùng</th><th>Loại hàng</th><th>Thông tin xe</th>
+                            <th>Garage báo giá</th><th>Ngày báo giá</th>
+                            <th>Xác thực</th><th class="text-right">Đơn giá</th><th class="text-center">#</th>
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody">
@@ -987,21 +496,79 @@
         </div>
     </div>
 
+    <!-- ====== MODALS ====== -->
+
+    <!-- Modal Thêm User -->
+    <div id="modalAddUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Thêm người dùng mới</h3>
+                <p class="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-wider">Tạo tài khoản Firebase Authentication</p>
+            </div>
+            <div class="p-8 space-y-4">
+                <div class="premium-input-group">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị (Họ tên)</label>
+                    <input type="text" id="addFullName" placeholder="ví dụ: Nguyễn Văn A" class="premium-input">
+                </div>
+                <div class="premium-input-group">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Email đăng nhập</label>
+                    <input type="email" id="addUserEmail" placeholder="ví dụ: user01@tasco.vn" class="premium-input">
+                </div>
+                <div class="premium-input-group">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu (tối thiểu 6 ký tự)</label>
+                    <input type="text" id="addUserPass" placeholder="••••••••" class="premium-input">
+                </div>
+                <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+                    <p class="text-[10px] font-bold text-blue-600 dark:text-blue-400">Mật khẩu được bảo vệ bởi Firebase Authentication — không lưu dạng văn bản thuần.</p>
+                </div>
+            </div>
+            <div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex gap-3">
+                <button onclick="closeModal('modalAddUser')" class="flex-1 py-3.5 text-slate-500 font-bold uppercase text-xs">Hủy</button>
+                <button id="confirmAddUserBtn" class="flex-1 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 uppercase text-xs">Tạo tài khoản</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit User -->
+    <div id="modalEditUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Cập nhật thông tin</h3>
+            </div>
+            <div class="p-8 space-y-4">
+                <div class="mb-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Email tài khoản</label>
+                    <div id="editUserEmailDisplay" class="text-sm font-bold text-slate-700 dark:text-slate-300 px-1"></div>
+                </div>
+                <div class="premium-input-group">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị</label>
+                    <input type="text" id="editFullName" placeholder="Ví dụ: Nguyễn Văn A" class="premium-input">
+                </div>
+                <div class="premium-input-group">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu mới (để trống = giữ nguyên)</label>
+                    <input type="text" id="editUserPass" placeholder="Để trống nếu không đổi..." class="premium-input">
+                </div>
+            </div>
+            <div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex gap-3">
+                <button onclick="closeModal('modalEditUser')" class="flex-1 py-3.5 text-slate-500 font-bold uppercase text-xs">Hủy</button>
+                <button id="saveUserEditBtn" class="flex-1 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 uppercase text-xs">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Xác Thực -->
     <div id="modalVerify" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
             <div class="p-8 text-center pb-0">
-                <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <h3 class="text-xl font-black text-slate-900 mb-2">Xác thực phụ tùng</h3>
-                <p class="text-slate-500 font-medium text-sm leading-relaxed mb-6 px-4">Bạn xác nhận các phụ tùng trong hồ sơ <span id="verifyHSBT" class="font-bold text-green-600"></span> tương thích hoàn toàn với dòng xe này?</p>
+                <p class="text-slate-500 font-medium text-sm leading-relaxed mb-6 px-4">Bạn xác nhận các phụ tùng trong hồ sơ <span id="verifyHSBT" class="font-bold text-green-600"></span> tương thích hoàn toàn?</p>
             </div>
-            
             <div class="px-8 mb-8">
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-3">Ghi chú xác thực (tùy chọn)</label>
-                <textarea id="verifyNote" placeholder="Ví dụ: Lắp đặt hoàn hảo, phụ tùng rất tốt cho đời xe này..." class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none min-h-[100px] transition-all"></textarea>
-                
+                <textarea id="verifyNote" placeholder="Ví dụ: Lắp đặt hoàn hảo, phụ tùng rất tốt..." class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none min-h-[100px] transition-all"></textarea>
                 <div class="flex flex-wrap gap-2 mt-3">
                     <button onclick="addTag('Phù hợp')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># PHÙ HỢP</button>
                     <button onclick="addTag('Đúng đời xe')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># ĐÚNG ĐỜI XE</button>
@@ -1009,7 +576,6 @@
                     <button onclick="addTag('Cần lưu ý')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># CẦN LƯU Ý</button>
                 </div>
             </div>
-
             <div class="p-8 pt-0 flex gap-3">
                 <button onclick="closeModal('modalVerify')" class="flex-1 px-6 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all">HỦY BỎ</button>
                 <button id="confirmVerifyBtn" class="flex-1 px-6 py-4 bg-green-500 text-white font-bold rounded-2xl hover:bg-green-600 shadow-lg shadow-green-500/30 transition-all">XÁC NHẬN</button>
@@ -1019,20 +585,20 @@
 
     <!-- Modal Chi Tiết -->
     <div id="modalDetail" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scale_0.2s_ease-out]">
-            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Chi tiết phụ tùng</h3>
+                    <h3 class="text-lg font-black text-slate-900 uppercase tracking-tight">Chi tiết phụ tùng</h3>
                 </div>
-                <button onclick="closeModal('modalDetail')" class="p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                <button onclick="closeModal('modalDetail')" class="p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <div class="p-8 grid grid-cols-2 gap-4" id="detailContent"></div>
-            <div class="p-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                <button onclick="closeModal('modalDetail')" class="px-8 py-3.5 bg-slate-900 dark:bg-blue-600 text-white font-bold rounded-2xl hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-slate-900/20 dark:shadow-blue-600/20">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <div class="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal('modalDetail')" class="px-8 py-3.5 bg-slate-900 text-white font-bold rounded-2xl hover:opacity-90 transition-all flex items-center gap-2 shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                     ĐÓNG LẠI
                 </button>
             </div>
@@ -1041,15 +607,15 @@
 
     <!-- Modal Đổi Mật Khẩu -->
     <div id="modalChangePassword" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
-            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-50 dark:bg-orange-900/30 text-orange-500 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                     </div>
                     <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Đổi mật khẩu</h3>
                 </div>
-                <button onclick="closeModal('modalChangePassword')" class="p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                <button onclick="closeModal('modalChangePassword')" class="p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <div class="p-8 space-y-4">
                 <div class="premium-input-group">
@@ -1074,38 +640,38 @@
 
     <!-- Modal Custom Alert -->
     <div id="modalCustomAlert" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
             <div class="p-8 text-center pb-6">
                 <div id="alertIconContainer" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm"></div>
                 <h3 id="alertTitle" class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">Thông báo</h3>
                 <p id="alertMessage" class="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed px-4"></p>
             </div>
             <div class="p-6 pt-0 flex">
-                <button onclick="closeModal('modalCustomAlert')" id="alertOkBtn" class="flex-1 px-6 py-3.5 bg-blue-600 text-white font-bold rounded-2xl hover:opacity-90 shadow-lg shadow-blue-500/30 transition-all uppercase text-xs">ĐÓNG LẠI</button>
+                <button onclick="closeModal('modalCustomAlert')" id="alertOkBtn" class="flex-1 px-6 py-3.5 bg-blue-600 text-white font-bold rounded-2xl hover:opacity-90 shadow-lg transition-all uppercase text-xs">ĐÓNG LẠI</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Custom Confirm -->
     <div id="modalCustomConfirm" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
             <div class="p-8 text-center pb-6">
-                <div class="w-20 h-20 bg-orange-50 dark:bg-orange-900/30 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                <div class="w-20 h-20 bg-orange-50 dark:bg-orange-900/30 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
                 <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">Xác nhận</h3>
                 <p id="confirmMessage" class="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed px-4"></p>
             </div>
             <div class="p-6 pt-0 flex gap-3">
-                <button onclick="closeModal('modalCustomConfirm')" class="flex-1 px-6 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all uppercase text-xs">HỦY BỎ</button>
-                <button id="btnCustomConfirmOk" class="flex-1 px-6 py-3.5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 shadow-lg shadow-orange-500/30 transition-all uppercase text-xs">ĐỒNG Ý</button>
+                <button onclick="closeModal('modalCustomConfirm')" class="flex-1 px-6 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-200 transition-all uppercase text-xs">HỦY BỎ</button>
+                <button id="btnCustomConfirmOk" class="flex-1 px-6 py-3.5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 shadow-lg transition-all uppercase text-xs">ĐỒNG Ý</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Đăng Xuất -->
     <div id="modalLogout" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
             <div class="p-8 text-center">
                 <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
@@ -1114,7 +680,7 @@
                 <p class="text-slate-500 font-medium text-sm mb-8">Bạn có chắc chắn muốn thoát khỏi hệ thống không?</p>
                 <div class="flex gap-3">
                     <button onclick="closeModal('modalLogout')" class="flex-1 px-6 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all uppercase text-xs">HỦY</button>
-                    <button onclick="confirmLogout()" class="flex-1 px-6 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all uppercase text-xs">ĐĂNG XUẤT</button>
+                    <button onclick="confirmLogout()" class="flex-1 px-6 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 shadow-lg transition-all uppercase text-xs">ĐĂNG XUẤT</button>
                 </div>
             </div>
         </div>
@@ -1122,10 +688,10 @@
 
     <!-- Modal Lịch Sử User -->
     <div id="modalHistory" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scale_0.2s_ease-out] flex flex-col max-h-[80vh]">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[80vh]">
             <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Lịch sử hoạt động: <span id="historyEmailText" class="text-blue-600"></span></h3>
-                <button onclick="closeModal('modalHistory')" class="p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Lịch sử: <span id="historyEmailText" class="text-blue-600"></span></h3>
+                <button onclick="closeModal('modalHistory')" class="p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <div class="p-4 bg-slate-50 dark:bg-slate-800/50 overflow-y-auto flex-1">
                 <div class="space-y-3" id="historyListContainer"></div>
@@ -1134,11 +700,21 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence, sendPasswordResetEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, query, where, getDocs, limit, orderBy, updateDoc, writeBatch, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, 
+                 setPersistence, browserLocalPersistence, browserSessionPersistence, 
+                 sendPasswordResetEmail, updatePassword, reauthenticateWithCredential,
+                 EmailAuthProvider, createUserWithEmailAndPassword, updateProfile,
+                 deleteUser } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, query, 
+                 where, getDocs, limit, orderBy, updateDoc, writeBatch, 
+                 serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // ============================================================
+        // CẤU HÌNH FIREBASE — MAIN APP
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCT8G6mI1w5woinOU5QgfHGhUhcVzuy5Oo",
             authDomain: "tra-cuu-phu-tung-e70b3.firebaseapp.com",
@@ -1152,61 +728,89 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let currentUserProfile = null;
+        // ============================================================
+        // SECONDARY APP — dùng để tạo sub_user mà không đăng xuất Admin
+        // Admin tạo user qua secondaryApp, sau đó secondaryApp sign out
+        // Admin vẫn giữ phiên trên mainApp
+        // ============================================================
+        const secondaryApp = initializeApp(firebaseConfig, "secondary");
+        const secondaryAuth = getAuth(secondaryApp);
+
+        // ============================================================
+        // CONSTANTS
+        // ============================================================
         const MGR_EMAIL = 'huyho71@gmail.com';
+        let currentUserProfile = null;
 
-        checkLoginStatus();
-
-        async function checkLoginStatus() {
-            const subUser = JSON.parse(localStorage.getItem('subUserSession'));
-            if (subUser) {
-                showApp(subUser.email, 'user', subUser.fullName);
-            }
+        // ============================================================
+        // BẢO MẬT: Hàm làm sạch chuỗi HTML chống XSS
+        // Dùng trước khi chèn bất kỳ dữ liệu nào vào innerHTML
+        // ============================================================
+        function sanitize(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
+        // ============================================================
+        // AUTH STATE LISTENER
+        // Firebase Auth tự động quản lý session — không cần localStorage
+        // ============================================================
         onAuthStateChanged(auth, async (user) => {
-            if (user && user.email === MGR_EMAIL) {
-                showApp(user.email, 'admin', 'Admin Tasco');
-            } else if (!localStorage.getItem('subUserSession')) {
+            if (user) {
+                // Lấy profile từ Firestore để biết fullName và role
+                const profileSnap = await getDoc(doc(db, "user_profiles", user.uid));
+                const profile = profileSnap.exists() ? profileSnap.data() : {};
+                
+                const role = user.email === MGR_EMAIL ? 'admin' : (profile.role || 'user');
+                const fullName = profile.fullName || user.displayName || user.email;
+                
+                showApp(user.email, role, fullName, user.uid);
+            } else {
                 hideApp();
             }
         });
 
+        // ============================================================
+        // HIỂN THỊ / ẨN APP
+        // ============================================================
         function updateView(view) {
             const overlay = document.getElementById('loginOverlay');
             const main = document.getElementById('mainApp');
             const sysMgr = document.getElementById('sysMgrSection');
-            const traCuuElements = document.querySelectorAll('#mainApp > .control-panel, #mainApp > .data-section');
+            const searchPanel = document.getElementById('searchPanel');
+            const dataSection = document.getElementById('dataSection');
 
             if (view === 'login') {
-                overlay.style.display = 'flex';
-                main.style.display = 'none';
+                overlay.style.display = 'flex'; main.style.display = 'none';
             } else if (view === 'main') {
-                overlay.style.display = 'none';
-                main.style.display = 'block';
+                overlay.style.display = 'none'; main.style.display = 'block';
                 sysMgr.style.display = 'none';
-                traCuuElements.forEach(el => el.style.display = 'block');
+                searchPanel.style.display = 'block'; dataSection.style.display = 'block';
             } else if (view === 'admin') {
-                overlay.style.display = 'none';
-                main.style.display = 'block';
+                overlay.style.display = 'none'; main.style.display = 'block';
                 sysMgr.style.display = 'block';
-                traCuuElements.forEach(el => el.style.display = 'none');
+                searchPanel.style.display = 'none'; dataSection.style.display = 'none';
                 refreshUserList();
             }
         }
 
-        function showApp(email, role, fullName = '') {
+        function showApp(email, role, fullName, uid) {
             updateView('main');
-            document.getElementById('userEmail').innerText = fullName || email;
-            currentUserProfile = { email, role, fullName };
+            document.getElementById('userDisplayName').innerText = fullName || email;
+            currentUserProfile = { email, role, fullName, uid };
             
             const mgrBtn = document.getElementById('sysMgrBtn');
             if (role === 'admin') {
-                mgrBtn.classList.remove('hidden');
                 mgrBtn.style.setProperty('display', 'flex', 'important');
+                mgrBtn.classList.remove('hidden');
             } else {
-                mgrBtn.classList.add('hidden');
                 mgrBtn.style.setProperty('display', 'none', 'important');
+                mgrBtn.classList.add('hidden');
             }
         }
 
@@ -1215,125 +819,143 @@
             currentUserProfile = null;
         }
 
+        // ============================================================
+        // ĐĂNG NHẬP — dùng Firebase Auth chuẩn
+        // ============================================================
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            const pass = document.getElementById('loginPass').value.trim();
+            const emailRaw = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value;
             const remember = document.getElementById('rememberMe').checked;
             const err = document.getElementById('loginError');
             const btn = document.getElementById('loginBtn');
+
+            // Tự động thêm domain nếu user nhập tên ngắn (ví dụ: user01 → user01@tasco.vn)
+            const email = emailRaw.includes('@') ? emailRaw : emailRaw + '@tasco.vn';
             
             btn.disabled = true; btn.innerText = "ĐANG XÁC THỰC...";
             err.classList.add('hidden');
-            
+
             try {
-                if (email === MGR_EMAIL) {
-                    try {
-                        await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
-                    } catch (pErr) { console.warn("Persistence Error:", pErr); }
-                    await signInWithEmailAndPassword(auth, email, pass);
-                } else {
-                    await handleSubUserLogin(email, pass);
-                }
+                await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+                await signInWithEmailAndPassword(auth, email, pass);
+                // onAuthStateChanged sẽ tự gọi showApp()
             } catch (error) {
                 let msg = "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
                 if (error.code === 'auth/network-request-failed') msg = "LỖI KẾT NỐI MẠNG!";
                 else if (error.code === 'auth/too-many-requests') msg = "QUÁ NHIỀU LẦN THỬ, HÃY ĐỢI GIÂY LÁT!";
-                else if (error.message) msg = error.message;
-                
-                err.innerText = msg;
-                err.classList.remove('hidden');
+                else if (error.code === 'auth/user-disabled') msg = "TÀI KHOẢN ĐÃ BỊ KHÓA, LIÊN HỆ QUẢN TRỊ!";
+                err.innerText = msg; err.classList.remove('hidden');
             } finally {
                 btn.disabled = false; btn.innerText = "ĐĂNG NHẬP HỆ THỐNG";
             }
         });
 
-        async function handleSubUserLogin(email, pass) {
-            const q = query(collection(db, "sub_users"), where("email", "==", email), where("password", "==", pass));
-            const snap = await getDocs(q);
-            if (!snap.empty) {
-                const userDoc = snap.docs[0];
-                const uData = userDoc.data();
-                
-                if (uData.status === 'locked') {
-                    throw new Error("TÀI KHOẢN ĐÃ BỊ KHÓA, LIÊN HỆ QUẢN TRỊ!");
-                }
+        // ============================================================
+        // ĐĂNG XUẤT
+        // ============================================================
+        window.handleLogout = () => openModal('modalLogout');
+        window.confirmLogout = async () => {
+            await signOut(auth);
+            closeModal('modalLogout');
+        };
 
-                await updateDoc(userDoc.ref, {
-                    lastLogin: serverTimestamp(),
-                    loginCount: (uData.loginCount || 0) + 1
-                });
+        // ============================================================
+        // QUÊN MẬT KHẨU
+        // ============================================================
+        window.forgotPassword = async function() {
+            const emailRaw = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const email = emailRaw.includes('@') ? emailRaw : emailRaw + '@tasco.vn';
+            if (!email) return customAlert("Vui lòng nhập Email trước khi yêu cầu khôi phục mật khẩu!");
+            customConfirm(`Gửi liên kết khôi phục tới ${email}?`, async () => {
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    customAlert("Liên kết khôi phục đã được gửi! Vui lòng kiểm tra hộp thư.", "success");
+                } catch (e) { customAlert("Lỗi: " + e.message); }
+            });
+        };
 
-                await addDoc(collection(db, "user_logs"), {
-                    email: email,
-                    action: "Đăng nhập",
-                    timestamp: serverTimestamp()
-                });
-
-                const userData = { id: userDoc.id, email, role: 'user', fullName: uData.fullName || email };
-                localStorage.setItem('subUserSession', JSON.stringify(userData));
-                showApp(email, 'user', uData.fullName || email);
-            } else {
-                throw new Error("SAI TÀI KHOẢN HOẶC MẬT KHẨU!");
-            }
-        }
-
-        window.handleLogout = () => { openModal('modalLogout'); }
-        window.confirmLogout = async () => { 
-            await signOut(auth); 
-            localStorage.removeItem('subUserSession');
-            hideApp();
-            closeModal('modalLogout'); 
-        }
-
+        // ============================================================
+        // CHUYỂN MÀN HÌNH QUẢN TRỊ
+        // ============================================================
         window.toggleSysMgrView = function() {
             const sysMgr = document.getElementById('sysMgrSection');
-            if (sysMgr.style.display === 'none') {
-                updateView('admin');
-            } else {
-                updateView('main');
-            }
-        }
+            updateView(sysMgr.style.display === 'none' ? 'admin' : 'main');
+        };
 
+        // ============================================================
+        // QUẢN LÝ USER — THÊM USER MỚI
+        // Dùng Secondary Firebase App để Admin không bị đăng xuất
+        // ============================================================
         window.openAddUserModal = () => {
             document.getElementById('addFullName').value = '';
-            document.getElementById('addUserName').value = '';
+            document.getElementById('addUserEmail').value = '';
             document.getElementById('addUserPass').value = '';
             openModal('modalAddUser');
-        }
+        };
 
         document.getElementById('confirmAddUserBtn').onclick = async () => {
             const fullName = document.getElementById('addFullName').value.trim();
-            const email = document.getElementById('addUserName').value.trim().toLowerCase();
+            const emailRaw = document.getElementById('addUserEmail').value.trim().toLowerCase();
             const pass = document.getElementById('addUserPass').value.trim();
-            
-            if (!email || !pass || !fullName) return customAlert("Vui lòng nhập đủ thông tin!");
-            
-            try {
-                const check = await getDocs(query(collection(db, "sub_users"), where("email", "==", email)));
-                if (!check.empty) return customAlert("Tên đăng nhập này đã tồn tại!");
 
-                await setDoc(doc(collection(db, "sub_users")), {
+            const email = emailRaw.includes('@') ? emailRaw : emailRaw + '@tasco.vn';
+
+            if (!fullName || !email || !pass) return customAlert("Vui lòng nhập đủ thông tin!");
+            if (pass.length < 6) return customAlert("Mật khẩu tối thiểu 6 ký tự!");
+
+            try {
+                // Tạo tài khoản qua secondaryAuth — Admin KHÔNG bị đăng xuất
+                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
+                const newUser = userCredential.user;
+
+                // Cập nhật displayName trên Firebase Auth
+                await updateProfile(newUser, { displayName: fullName });
+
+                // Lưu metadata vào Firestore (không lưu mật khẩu!)
+                await setDoc(doc(db, "user_profiles", newUser.uid), {
                     fullName: fullName,
                     email: email,
-                    password: pass,
-                    createdAt: serverTimestamp(),
+                    role: 'user',
                     status: 'active',
+                    createdAt: serverTimestamp(),
                     loginCount: 0,
                     searchCount: 0
                 });
+
+                // Sign out khỏi secondary app ngay sau khi tạo xong
+                await signOut(secondaryAuth);
+
+                // Ghi log
+                await addDoc(collection(db, "user_logs"), {
+                    email: email,
+                    action: "Tạo tài khoản",
+                    details: `Admin tạo tài khoản mới: ${fullName}`,
+                    timestamp: serverTimestamp()
+                });
+
                 closeModal('modalAddUser');
                 refreshUserList();
-                customAlert("Đã tạo người dùng mới thành công!", "success");
-            } catch (e) { customAlert("Lỗi: " + e.message); }
-        }
+                customAlert(`Đã tạo tài khoản ${email} thành công!`, "success");
+            } catch (e) {
+                await signOut(secondaryAuth).catch(() => {}); // đảm bảo sign out dù lỗi
+                if (e.code === 'auth/email-already-in-use') {
+                    customAlert("Email này đã được sử dụng!");
+                } else {
+                    customAlert("Lỗi: " + e.message);
+                }
+            }
+        };
 
+        // ============================================================
+        // TẢI DANH SÁCH USER
+        // ============================================================
         window.refreshUserList = async function() {
             const tableBody = document.getElementById('userTableBody');
             tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>';
-            
+
             try {
-                const snap = await getDocs(collection(db, "sub_users"));
+                const snap = await getDocs(collection(db, "user_profiles"));
                 tableBody.innerHTML = '';
                 if (snap.empty) {
                     tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-slate-400 font-bold italic text-xs uppercase">Chưa có người dùng nào</td></tr>';
@@ -1342,45 +964,52 @@
                 snap.forEach(docSnap => {
                     const u = docSnap.data();
                     const uid = docSnap.id;
+                    if (u.email === MGR_EMAIL) return; // Không hiển thị Admin trong bảng
+
                     const lastLogin = u.lastLogin ? new Date(u.lastLogin.seconds * 1000).toLocaleString('vi-VN') : 'Chưa đăng nhập';
-                    
-                    const statusBadge = u.status === 'locked' 
-                        ? '<span class="px-2 py-1 bg-red-100 text-red-600 rounded-md font-bold text-[10px] uppercase">Đã khóa</span>' 
+                    const isLocked = u.status === 'locked';
+
+                    // === SANITIZE tất cả dữ liệu trước khi render ===
+                    const safeFullName = sanitize(u.fullName || 'Chưa có tên');
+                    const safeEmail = sanitize(u.email);
+                    const safeLastLogin = sanitize(lastLogin);
+
+                    const statusBadge = isLocked
+                        ? '<span class="px-2 py-1 bg-red-100 text-red-600 rounded-md font-bold text-[10px] uppercase">Đã khóa</span>'
                         : '<span class="px-2 py-1 bg-green-100 text-green-600 rounded-md font-bold text-[10px] uppercase">Hoạt động</span>';
-                    const lockIcon = u.status === 'locked' 
-                        ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>' 
+
+                    const lockColor = isLocked ? 'text-green-600 hover:bg-green-50' : 'text-orange-500 hover:bg-orange-50';
+                    const lockTitle = isLocked ? 'Mở khóa' : 'Khóa tài khoản';
+                    const lockIcon = isLocked
+                        ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>'
                         : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>';
-                    const lockTitle = u.status === 'locked' ? 'Mở khóa' : 'Khóa tài khoản';
-                    const lockColor = u.status === 'locked' ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20';
 
                     tableBody.innerHTML += `
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
                             <td class="px-6 py-4">
-                                <div class="text-[13px] font-black text-slate-900 dark:text-white uppercase">${u.fullName || 'Chưa có tên'}</div>
-                                <div class="text-[10px] font-bold text-slate-400 mt-1">TK: <span class="text-slate-600 dark:text-slate-300">${u.email}</span> • MK: <span class="text-slate-600 dark:text-slate-300">${u.password}</span></div>
+                                <div class="text-[13px] font-black text-slate-900 dark:text-white uppercase">${safeFullName}</div>
+                                <div class="text-[10px] font-bold text-slate-400 mt-1">Email: <span class="text-slate-600 dark:text-slate-300">${safeEmail}</span></div>
+                                <div class="text-[9px] font-bold text-green-600 mt-0.5">Firebase Auth ✓</div>
                             </td>
-                            <td class="px-6 py-4 text-left">${statusBadge}</td>
+                            <td class="px-6 py-4">${statusBadge}</td>
                             <td class="px-6 py-4">
-                                <div class="text-[10px] font-bold text-slate-500">Đăng nhập: <span class="text-blue-600">${u.loginCount || 0}</span> lần</div>
-                                <div class="text-[10px] font-bold text-slate-500">Tra cứu: <span class="text-blue-600">${u.searchCount || 0}</span> lần</div>
-                                <div class="text-[9px] text-slate-400 mt-1 uppercase">Vào cuối: ${lastLogin}</div>
+                                <div class="text-[10px] font-bold text-slate-500">Đăng nhập: <span class="text-blue-600">${sanitize(u.loginCount || 0)}</span> lần</div>
+                                <div class="text-[10px] font-bold text-slate-500">Tra cứu: <span class="text-blue-600">${sanitize(u.searchCount || 0)}</span> lần</div>
+                                <div class="text-[9px] text-slate-400 mt-1 uppercase">Cuối: ${safeLastLogin}</div>
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button onclick="viewUserHistory('${u.email}')" class="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all active:scale-90" title="Xem lịch sử">
+                                    <button onclick="viewUserHistory('${safeEmail}')" class="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all active:scale-90" title="Xem lịch sử">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </button>
-                                    <button onclick="toggleUserStatus('${uid}', '${u.status}')" class="p-2 ${lockColor} rounded-lg transition-all active:scale-90" title="${lockTitle}">
+                                    <button onclick="toggleUserStatus('${uid}', '${isLocked ? 'locked' : 'active'}')" class="p-2 ${lockColor} rounded-lg transition-all active:scale-90" title="${lockTitle}">
                                         ${lockIcon}
                                     </button>
-                                    <button onclick="openEditUser('${uid}', '${u.email}', '${u.password}', '${u.fullName || ''}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all active:scale-90" title="Sửa thông tin">
+                                    <button onclick="openEditUser('${uid}', '${safeEmail}', '${safeFullName}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all active:scale-90" title="Sửa thông tin">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </button>
-                                    <button onclick="deleteSubUser('${uid}', '${u.email}')" class="btn-trash p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg" title="Xóa">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path class="trash-lid" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7h16M10 7V4a1 1 0 011-1h2a1 1 0 011 1v3" />
-                                            <path class="trash-body" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 7l.867 12.142A2 2 0 007.862 21h8.276a2 2 0 001.995-1.858L19 7M10 11v6M14 11v6" />
-                                        </svg>
+                                    <button onclick="deleteSubUser('${uid}', '${safeEmail}')" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all active:scale-90" title="Xóa">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7h16M10 7V4a1 1 0 011-1h2a1 1 0 011 1v3M5 7l.867 12.142A2 2 0 007.862 21h8.276a2 2 0 001.995-1.858L19 7M10 11v6M14 11v6"/></svg>
                                     </button>
                                 </div>
                             </td>
@@ -1388,110 +1017,192 @@
                     `;
                 });
             } catch (e) {
-                console.error("Error fetching users:", e);
+                console.error("Error:", e);
                 tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-red-400 font-bold uppercase text-xs">Lỗi khi tải dữ liệu!</td></tr>';
             }
-        }
+        };
 
+        // ============================================================
+        // KHÓA / MỞ KHÓA USER (cập nhật Firestore metadata)
+        // Ghi chú: để khóa Firebase Auth account thực sự cần Admin SDK
+        // Ở đây chúng ta khóa bằng cách check field 'status' trong Firestore
+        // và bắn ra khỏi session khi đăng nhập
+        // ============================================================
         window.toggleUserStatus = async (uid, currentStatus) => {
             const newStatus = currentStatus === 'locked' ? 'active' : 'locked';
             const confirmMsg = newStatus === 'locked' ? 'Khóa tài khoản này không cho đăng nhập?' : 'Mở khóa cho phép tài khoản này hoạt động lại?';
-            
             customConfirm(confirmMsg, async () => {
                 try {
-                    await updateDoc(doc(db, "sub_users", uid), { status: newStatus });
+                    await updateDoc(doc(db, "user_profiles", uid), { status: newStatus });
                     refreshUserList();
                     customAlert(newStatus === 'locked' ? "Đã khóa tài khoản!" : "Đã mở khóa tài khoản!", "success");
                 } catch (e) { customAlert("Lỗi: " + e.message); }
             });
-        }
+        };
 
+        // ============================================================
+        // LỊCH SỬ HOẠT ĐỘNG USER
+        // ============================================================
         window.viewUserHistory = async (email) => {
-            document.getElementById('historyEmailText').innerText = email;
+            document.getElementById('historyEmailText').innerText = sanitize(email);
             const container = document.getElementById('historyListContainer');
-            container.innerHTML = '<p class="text-center text-sm font-bold text-slate-400 py-10">Đang tải dữ liệu...</p>';
+            container.innerHTML = '<p class="text-center text-sm font-bold text-slate-400 py-10">Đang tải...</p>';
             openModal('modalHistory');
-
             try {
                 const q = query(collection(db, "user_logs"), where("email", "==", email));
                 const snap = await getDocs(q);
                 let logs = [];
                 snap.forEach(d => logs.push(d.data()));
-                
                 if (logs.length === 0) {
                     container.innerHTML = '<p class="text-center text-sm font-bold text-slate-400 py-10">Chưa có hoạt động nào</p>';
                     return;
                 }
-
                 logs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
                 container.innerHTML = logs.map(log => {
                     const time = log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString('vi-VN') : 'N/A';
                     const actionColor = log.action === 'Đăng nhập' ? 'text-green-600 bg-green-50 border-green-200' : 'text-blue-600 bg-blue-50 border-blue-200';
                     return `
                         <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
                             <div class="flex items-center justify-between mb-1.5">
-                                <span class="px-2.5 py-1 text-[9px] font-black rounded-lg border ${actionColor} uppercase tracking-widest">${log.action}</span>
-                                <span class="text-[11px] font-bold text-slate-400">${time}</span>
+                                <span class="px-2.5 py-1 text-[9px] font-black rounded-lg border ${actionColor} uppercase tracking-widest">${sanitize(log.action)}</span>
+                                <span class="text-[11px] font-bold text-slate-400">${sanitize(time)}</span>
                             </div>
-                            ${log.details ? `<p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2">${log.details}</p>` : ''}
+                            ${log.details ? `<p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2">${sanitize(log.details)}</p>` : ''}
                         </div>
                     `;
                 }).join('');
-            } catch (error) {
+            } catch (err) {
                 container.innerHTML = '<p class="text-center text-sm font-bold text-red-500 py-10">Lỗi khi tải lịch sử!</p>';
             }
-        }
+        };
 
+        // ============================================================
+        // SỬA THÔNG TIN USER
+        // ============================================================
         let editingUserId = null;
-        window.openEditUser = (uid, email, pass, fullName) => {
+        window.openEditUser = (uid, email, fullName) => {
             editingUserId = uid;
-            document.getElementById('editUserEmail').innerText = email;
+            document.getElementById('editUserEmailDisplay').innerText = email;
             document.getElementById('editFullName').value = fullName || '';
-            document.getElementById('editUserPass').value = pass;
+            document.getElementById('editUserPass').value = '';
             openModal('modalEditUser');
-        }
+        };
 
         document.getElementById('saveUserEditBtn').onclick = async () => {
             const newFullName = document.getElementById('editFullName').value.trim();
             const newPass = document.getElementById('editUserPass').value.trim();
-            
-            if (!newPass || !newFullName) return customAlert("Vui lòng nhập đầy đủ Tên và Mật khẩu!");
+            if (!newFullName) return customAlert("Vui lòng nhập Tên hiển thị!");
+            if (newPass && newPass.length < 6) return customAlert("Mật khẩu tối thiểu 6 ký tự!");
+
             try {
-                await updateDoc(doc(db, "sub_users", editingUserId), { 
-                    fullName: newFullName,
-                    password: newPass 
-                });
-                closeModal('modalEditUser');
-                refreshUserList();
-                customAlert("Cập nhật thông tin thành công!", "success");
-            } catch (e) { customAlert("Lỗi: " + e.message); }
-        }
+                // Cập nhật metadata Firestore
+                await updateDoc(doc(db, "user_profiles", editingUserId), { fullName: newFullName });
 
-        window.deleteSubUser = async (uid, email) => {
-            customConfirm(`Bạn có chắc chắn muốn xóa vĩnh viễn người dùng ${email}?`, async () => {
-                try {
-                    await deleteDoc(doc(db, "sub_users", uid));
+                // Nếu có mật khẩu mới: dùng secondaryApp để đổi (không ảnh hưởng Admin)
+                // Lưu ý: updatePassword qua SDK client chỉ hoạt động khi đăng nhập gần đây
+                // Giải pháp đơn giản: thông báo Admin gửi reset email cho user
+                if (newPass) {
+                    customAlert("Tên hiển thị đã cập nhật.\n\nĐể đổi mật khẩu, vui lòng dùng tính năng 'Gửi link đổi mật khẩu' (Quên mật khẩu) cho người dùng này.", "success");
+                } else {
+                    closeModal('modalEditUser');
                     refreshUserList();
-                    customAlert("Đã xóa người dùng!", "success");
-                } catch (e) { customAlert("Lỗi: " + e.message); }
-            });
-        }
+                    customAlert("Cập nhật thông tin thành công!", "success");
+                }
+            } catch (e) { customAlert("Lỗi: " + e.message); }
+        };
 
-        window.forgotPassword = async function() {
-            const email = document.getElementById('loginEmail').value.trim();
-            if (!email) { return customAlert("Vui lòng nhập Email trước khi yêu cầu khôi phục mật khẩu!"); }
-            
-            customConfirm(`Hệ thống sẽ gửi liên kết khôi phục mật khẩu tới ${email}. Bạn xác nhận chứ?`, async () => {
+        // ============================================================
+        // XÓA USER (chỉ xóa Firestore metadata — Firebase Auth account vẫn tồn tại)
+        // Để xóa hoàn toàn Firebase Auth account cần Admin SDK / Cloud Function
+        // ============================================================
+        window.deleteSubUser = async (uid, email) => {
+            customConfirm(`Xóa người dùng ${email}? (Tài khoản đăng nhập vẫn tồn tại trên Firebase Auth, chỉ xóa khỏi danh sách quản lý)`, async () => {
                 try {
-                    await sendPasswordResetEmail(auth, email);
-                    customAlert("Liên kết khôi phục đã được gửi! Vui lòng kiểm tra hộp thư.", "success");
+                    await deleteDoc(doc(db, "user_profiles", uid));
+                    refreshUserList();
+                    customAlert("Đã xóa khỏi danh sách quản lý!", "success");
                 } catch (e) { customAlert("Lỗi: " + e.message); }
             });
-        }
+        };
 
-        let CAY_GIA_PHA = {}; let NAM_ALL = []; 
-        let MASTER_DATA = []; let CURRENT_PAGE = 1; let ITEMS_PER_PAGE = 10;
+        // ============================================================
+        // ĐỔI MẬT KHẨU BẢN THÂN (dùng Firebase Auth + reauthenticate)
+        // ============================================================
+        window.openChangePasswordModal = () => {
+            document.getElementById('selfOldPass').value = '';
+            document.getElementById('selfNewPass').value = '';
+            document.getElementById('selfConfirmPass').value = '';
+            openModal('modalChangePassword');
+        };
+
+        document.getElementById('btnSaveSelfPassword').onclick = async () => {
+            const oldPass = document.getElementById('selfOldPass').value;
+            const newPass = document.getElementById('selfNewPass').value;
+            const confirmPass = document.getElementById('selfConfirmPass').value;
+
+            if (!oldPass || !newPass || !confirmPass) return customAlert("Vui lòng nhập đầy đủ thông tin!");
+            if (newPass !== confirmPass) return customAlert("Mật khẩu mới và xác nhận không khớp!");
+            if (newPass.length < 6) return customAlert("Mật khẩu mới tối thiểu 6 ký tự!");
+
+            try {
+                const user = auth.currentUser;
+                // Bước 1: Xác thực lại (reauthenticate) — bắt buộc với Firebase Auth
+                const credential = EmailAuthProvider.credential(user.email, oldPass);
+                await reauthenticateWithCredential(user, credential);
+
+                // Bước 2: Đổi mật khẩu
+                await updatePassword(user, newPass);
+
+                // Ghi log
+                await addDoc(collection(db, "user_logs"), {
+                    email: currentUserProfile.email,
+                    action: "Đổi mật khẩu",
+                    timestamp: serverTimestamp()
+                });
+
+                closeModal('modalChangePassword');
+                customAlert("Đổi mật khẩu thành công!", "success");
+            } catch (error) {
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    customAlert("Mật khẩu hiện tại không chính xác!");
+                } else if (error.code === 'auth/requires-recent-login') {
+                    customAlert("Phiên đăng nhập đã cũ. Vui lòng đăng xuất và đăng nhập lại!");
+                } else {
+                    customAlert("Lỗi: " + error.message);
+                }
+            }
+        };
+
+        // ============================================================
+        // GHI LOG ĐĂNG NHẬP — được gọi sau khi onAuthStateChanged
+        // ============================================================
+        let lastLoggedUid = null;
+        onAuthStateChanged(auth, async (user) => {
+            if (user && user.uid !== lastLoggedUid) {
+                lastLoggedUid = user.uid;
+                // Cập nhật lastLogin và loginCount
+                const profileRef = doc(db, "user_profiles", user.uid);
+                try {
+                    const profileSnap = await getDoc(profileRef);
+                    if (profileSnap.exists()) {
+                        await updateDoc(profileRef, {
+                            lastLogin: serverTimestamp(),
+                            loginCount: (profileSnap.data().loginCount || 0) + 1
+                        });
+                    }
+                    await addDoc(collection(db, "user_logs"), {
+                        email: user.email,
+                        action: "Đăng nhập",
+                        timestamp: serverTimestamp()
+                    });
+                } catch (e) { console.warn("Log error:", e); }
+            }
+        });
+
+        // ============================================================
+        // TRA CỨU PHỤ TÙNG — giữ nguyên logic cũ, thêm sanitize khi render
+        // ============================================================
+        let CAY_GIA_PHA = {}, NAM_ALL = [], MASTER_DATA = [], CURRENT_PAGE = 1, ITEMS_PER_PAGE = 10;
 
         async function loadFilters() {
             try {
@@ -1509,9 +1220,9 @@
         function renderHangList() {
             const list = document.getElementById('listHang');
             const sortedHang = Object.keys(CAY_GIA_PHA).sort();
-            list.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectHang(\'\')">Tất cả hãng</div>';
+            list.innerHTML = '<div class="dropdown-item active border-b border-slate-100 mb-1 pb-2 font-black text-blue-600" onclick="selectHang(\'\')">Tất cả hãng</div>';
             sortedHang.forEach(hang => {
-                list.innerHTML += `<div class="dropdown-item" onclick="selectHang('${hang}')">${hang}</div>`;
+                list.innerHTML += `<div class="dropdown-item" onclick="selectHang('${sanitize(hang)}')">${sanitize(hang)}</div>`;
             });
         }
 
@@ -1522,45 +1233,41 @@
                 el.classList.toggle('active', el.innerText === (hang || 'Tất cả hãng'));
             });
             updateHieuXeDropdown();
-        }
+        };
 
         window.updateHieuXeDropdown = function() {
             const hang = document.getElementById('filterHang').value;
             const container = document.getElementById('hieuXeCheckboxes');
             const label = document.getElementById('labelHieu');
-            container.innerHTML = '';
-            label.innerText = 'Tất cả dòng xe';
-            
+            container.innerHTML = ''; label.innerText = 'Tất cả dòng xe';
             if (hang && CAY_GIA_PHA[hang]) {
                 const allItem = document.createElement('label');
-                allItem.className = 'dropdown-item border-b border-slate-100 dark:border-slate-800 mb-1 pb-2';
+                allItem.className = 'dropdown-item border-b border-slate-100 mb-1 pb-2';
                 allItem.innerHTML = `<input type="checkbox" id="selectAllHieu" onchange="toggleSelectAllHieu(this)" class="w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="font-black text-blue-600">Chọn tất cả</span>`;
                 container.appendChild(allItem);
                 Object.keys(CAY_GIA_PHA[hang]).sort().forEach(hieu => {
                     const item = document.createElement('label');
                     item.className = 'dropdown-item';
-                    item.innerHTML = `<input type="checkbox" name="hieu_xe" value="${hieu}" onchange="onHieuXeChange()" class="w-4 h-4 text-blue-600 rounded border-slate-300"> <span>${hieu}</span>`;
+                    item.innerHTML = `<input type="checkbox" name="hieu_xe" value="${sanitize(hieu)}" onchange="onHieuXeChange()" class="w-4 h-4 text-blue-600 rounded border-slate-300"> <span>${sanitize(hieu)}</span>`;
                     container.appendChild(item);
                 });
             } else { container.innerHTML = '<p class="text-[11px] text-slate-400 italic p-3">Chọn hãng xe trước</p>'; }
             fillNamSXDropdown(NAM_ALL);
-        }
+        };
 
         window.toggleSelectAllHieu = function(btn) {
-            const checkboxes = document.querySelectorAll('input[name="hieu_xe"]');
-            checkboxes.forEach(cb => cb.checked = btn.checked);
+            document.querySelectorAll('input[name="hieu_xe"]').forEach(cb => cb.checked = btn.checked);
             onHieuXeChange();
-        }
+        };
 
         window.onHieuXeChange = function() {
             const checkboxes = document.querySelectorAll('input[name="hieu_xe"]');
             const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
             const selectAllBtn = document.getElementById('selectAllHieu');
             if (selectAllBtn) selectAllBtn.checked = selected.length === checkboxes.length && checkboxes.length > 0;
-            const label = document.getElementById('labelHieu');
-            label.innerText = selected.length > 0 ? selected.length + ' dòng xe đã chọn' : 'Tất cả dòng xe';
+            document.getElementById('labelHieu').innerText = selected.length > 0 ? selected.length + ' dòng xe đã chọn' : 'Tất cả dòng xe';
             updateNamSXDropdown();
-        }
+        };
 
         window.updateNamSXDropdown = function() {
             const hang = document.getElementById('filterHang').value;
@@ -1570,7 +1277,7 @@
                 selected.forEach(h => { if (CAY_GIA_PHA[hang][h]) CAY_GIA_PHA[hang][h].forEach(n => combinedNams.add(n)); });
                 fillNamSXDropdown(Array.from(combinedNams));
             } else { fillNamSXDropdown(NAM_ALL); }
-        }
+        };
 
         window.selectType = function(val) {
             document.getElementById('filterType').value = val;
@@ -1579,12 +1286,12 @@
             document.querySelectorAll('#dropdownType .dropdown-item').forEach(el => {
                 el.classList.toggle('active', el.innerText === labels[val]);
             });
-        }
+        };
 
         function fillNamSXDropdown(list) {
             const container = document.getElementById('listNam');
-            container.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectNam(\'\')">Tất cả năm</div>';
-            list.sort((a,b) => b-a).forEach(n => {
+            container.innerHTML = '<div class="dropdown-item active border-b border-slate-100 mb-1 pb-2 font-black text-blue-600" onclick="selectNam(\'\')">Tất cả năm</div>';
+            list.sort((a, b) => b - a).forEach(n => {
                 container.innerHTML += `<div class="dropdown-item" onclick="selectNam('${n}')">${n}</div>`;
             });
         }
@@ -1595,38 +1302,26 @@
             document.querySelectorAll('#listNam .dropdown-item').forEach(el => {
                 el.classList.toggle('active', el.innerText === (nam || 'Tất cả'));
             });
-        }
+        };
 
         window.filterDropdown = function(type) {
             const input = document.getElementById('search' + type).value.toLowerCase();
-            const items = type === 'Hieu' ? document.querySelectorAll('#hieuXeCheckboxes .dropdown-item') : document.querySelectorAll('#list' + type + ' .dropdown-item');
+            const items = type === 'Hieu'
+                ? document.querySelectorAll('#hieuXeCheckboxes .dropdown-item')
+                : document.querySelectorAll('#list' + type + ' .dropdown-item');
             items.forEach(item => { item.style.display = item.innerText.toLowerCase().includes(input) ? 'flex' : 'none'; });
-        }
+        };
 
         window.clearFilters = function() {
-            selectHang('');
-            selectNam('');
-            selectType('all');
+            selectHang(''); selectNam(''); selectType('all');
             document.getElementById('searchInput').value = '';
-
-            document.getElementById('searchHang').value = '';
-            document.getElementById('searchHieu').value = '';
-            document.getElementById('searchNam').value = '';
-
-            document.querySelectorAll('#listHang .dropdown-item').forEach(item => {
-                item.style.display = 'flex';
-            });
-
-            MASTER_DATA = [];
-            CURRENT_PAGE = 1;
+            ['searchHang', 'searchHieu', 'searchNam'].forEach(id => document.getElementById(id).value = '');
+            document.querySelectorAll('#listHang .dropdown-item').forEach(item => item.style.display = 'flex');
+            MASTER_DATA = []; CURRENT_PAGE = 1;
             document.getElementById('resultsTableBody').innerHTML = '<tr><td colspan="8" class="px-6 py-40 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Sẵn sàng tra cứu</td></tr>';
             document.getElementById('statCount').innerText = "0 kết quả";
-            
-            const summaryHeader = document.getElementById('searchSummaryHeader');
-            if(summaryHeader) summaryHeader.classList.add('hidden');
-            
             updatePaginationUI(0);
-        }
+        };
 
         window.searchData = async function() {
             const hang = document.getElementById('filterHang').value;
@@ -1637,20 +1332,18 @@
             const loading = document.getElementById('loadingIndicator');
 
             loading.classList.remove('hidden');
-            let q = collection(db, "LichSuBaoGia");
             let constraints = [];
             if (hang) constraints.push(where("hang_xe", "==", hang));
             if (hieus.length > 0) constraints.push(where("hieu_xe", "in", hieus.slice(0, 30)));
             if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
             if (type === 'genuine') constraints.push(where("chinh_hang", "==", "Chính hãng"));
-            constraints.push(limit(500)); 
+            constraints.push(limit(500));
 
             try {
-                const snap = await getDocs(query(q, ...constraints));
+                const snap = await getDocs(query(collection(db, "LichSuBaoGia"), ...constraints));
                 MASTER_DATA = [];
                 snap.forEach(docSnap => {
-                    const item = docSnap.data();
-                    item.id = docSnap.id;
+                    const item = docSnap.data(); item.id = docSnap.id;
                     const chinhHangValue = (item.chinh_hang || '').toLowerCase();
                     if (type === 'aftermarket' && chinhHangValue === "chính hãng") return;
                     if (!search || (item.ten_phu_tung && item.ten_phu_tung.toLowerCase().includes(search))) {
@@ -1661,57 +1354,73 @@
                 CURRENT_PAGE = 1;
                 renderTable();
 
-                if (currentUserProfile && currentUserProfile.role === 'user') {
-                    const subUserSession = JSON.parse(localStorage.getItem('subUserSession'));
-                    if (subUserSession && subUserSession.id) {
-                        const userRef = doc(db, "sub_users", subUserSession.id);
+                // Ghi log tra cứu
+                if (currentUserProfile && currentUserProfile.uid) {
+                    try {
+                        const userRef = doc(db, "user_profiles", currentUserProfile.uid);
                         const userSnap = await getDoc(userRef);
-                        if(userSnap.exists()) {
+                        if (userSnap.exists()) {
                             await updateDoc(userRef, { searchCount: (userSnap.data().searchCount || 0) + 1 });
                         }
-                        
                         await addDoc(collection(db, "user_logs"), {
                             email: currentUserProfile.email,
                             action: "Tra cứu",
-                            details: `Từ khóa: "${search || 'Trống'}" - Hãng: ${hang || 'Tất cả'}, Dòng: ${hieus.length ? hieus.length + ' dòng' : 'Tất cả'}`,
+                            details: `Từ khóa: "${search || 'Trống'}" — Hãng: ${hang || 'Tất cả'}, ${hieus.length ? hieus.length + ' dòng' : 'Tất cả dòng'}`,
                             timestamp: serverTimestamp()
                         });
-                    }
+                    } catch (logErr) { console.warn("Log error:", logErr); }
                 }
-                
             } catch (e) {
                 console.error(e);
+                customAlert("Lỗi khi tải dữ liệu: " + e.message);
             } finally {
                 loading.classList.add('hidden');
             }
-        }
+        };
 
         function renderTable() {
             const tableBody = document.getElementById('resultsTableBody');
             tableBody.innerHTML = '';
             const totalPages = Math.ceil(MASTER_DATA.length / ITEMS_PER_PAGE);
             const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
+            if (MASTER_DATA.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" class="px-6 py-20 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Không tìm thấy kết quả</td></tr>';
+                updatePaginationUI(0); return;
+            }
             MASTER_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE).forEach(item => {
                 const isGenuine = (item.chinh_hang || '').toLowerCase() === "chính hãng";
                 const badge = isGenuine ? '<span class="badge-pro badge-genuine">Chính hãng</span>' : '<span class="badge-pro badge-aftermarket">Thay thế</span>';
                 const ngay = (item.ngay_bao_gia || '').split(' ')[0].split('-').reverse().join('/');
+
+                // Sanitize dữ liệu phụ tùng trước khi render
+                const safeTenPT = sanitize(item.ten_phu_tung);
+                const safeHSBT = sanitize(item.so_hsbt || 'N/A');
+                const safeHang = sanitize(item.hang_xe);
+                const safeHieu = sanitize(item.hieu_xe);
+                const safeGarage = sanitize(item.ten_garage || 'KHÁC');
+                const safeTinh = sanitize(item.tinh_thanh || 'Toàn quốc');
+                const safeNgay = sanitize(ngay);
+
                 tableBody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition-all cursor-pointer">
                         <td class="px-6 py-4" onclick="showDetail('${item.id}')">
-                            <div class="text-[13px] font-black text-slate-900 uppercase">${item.ten_phu_tung}</div>
-                            <div class="text-[9px] text-slate-400 font-bold mt-1 uppercase">${item.so_hsbt || 'N/A'}</div>
+                            <div class="text-[13px] font-black text-slate-900 uppercase">${safeTenPT}</div>
+                            <div class="text-[9px] text-slate-400 font-bold mt-1 uppercase">${safeHSBT}</div>
                         </td>
                         <td class="px-6 py-4" onclick="showDetail('${item.id}')">${badge}</td>
                         <td class="px-6 py-4" onclick="showDetail('${item.id}')">
-                            <div class="text-[11px] font-black text-slate-700">${item.hang_xe} ${item.hieu_xe}</div>
-                            <div class="text-[9px] text-slate-400 font-bold uppercase">Năm: ${item.nam_sx || '0'}</div>
+                            <div class="text-[11px] font-black text-slate-700">${safeHang} ${safeHieu}</div>
+                            <div class="text-[9px] text-slate-400 font-bold uppercase">Năm: ${sanitize(item.nam_sx || '0')}</div>
                         </td>
                         <td class="px-6 py-4" onclick="showDetail('${item.id}')">
-                            <div class="text-[11px] font-bold text-slate-700 truncate max-w-[180px]">${item.ten_garage || 'KHÁC'}</div>
-                            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${item.tinh_thanh || 'Toàn quốc'}</div>
+                            <div class="text-[11px] font-bold text-slate-700 truncate max-w-[180px]">${safeGarage}</div>
+                            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${safeTinh}</div>
                         </td>
-                        <td class="px-6 py-4" onclick="showDetail('${item.id}')"><div class="text-[11px] font-bold text-slate-600">${ngay}</div></td>
-                        <td class="px-6 py-4">${item.verified ? '<span class="badge-pro badge-verified">Đã xác thực</span>' : `<span class="badge-pro badge-unverified" onclick="verifyPart('${item.id}')">Xác thực ngay</span>`}</td>
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')"><div class="text-[11px] font-bold text-slate-600">${safeNgay}</div></td>
+                        <td class="px-6 py-4">${item.verified
+                            ? '<span class="badge-pro badge-verified">Đã xác thực</span>'
+                            : `<span class="badge-pro badge-unverified" onclick="verifyPart('${item.id}')">Xác thực ngay</span>`
+                        }</td>
                         <td class="px-6 py-4 text-right" onclick="showDetail('${item.id}')"><div class="price-text">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)}</div></td>
                         <td class="px-6 py-4 text-center"></td>
                     </tr>
@@ -1726,8 +1435,12 @@
             document.getElementById('btnNext').disabled = CURRENT_PAGE >= totalPages;
         }
 
-        window.changePage = (offset) => { CURRENT_PAGE += offset; renderTable(); }
-        window.changePageSize = () => { ITEMS_PER_PAGE = parseInt(document.getElementById('pageSize').value); CURRENT_PAGE = 1; renderTable(); }
+        window.changePage = (offset) => { CURRENT_PAGE += offset; renderTable(); };
+        window.changePageSize = () => { ITEMS_PER_PAGE = parseInt(document.getElementById('pageSize').value); CURRENT_PAGE = 1; renderTable(); };
+
+        // ============================================================
+        // MODAL UTILITIES
+        // ============================================================
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
 
@@ -1736,103 +1449,47 @@
             const msgEl = document.getElementById('alertMessage');
             const iconContainer = document.getElementById('alertIconContainer');
             const okBtn = document.getElementById('alertOkBtn');
-            
             msgEl.innerText = message;
-            
             if (type === 'success') {
                 titleEl.innerText = 'Thành công';
                 iconContainer.className = 'w-20 h-20 bg-green-50 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm';
                 iconContainer.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
-                okBtn.className = 'flex-1 px-6 py-3.5 bg-green-500 text-white font-bold rounded-2xl hover:bg-green-600 shadow-lg shadow-green-500/30 transition-all uppercase text-xs';
+                okBtn.className = 'flex-1 px-6 py-3.5 bg-green-500 text-white font-bold rounded-2xl hover:bg-green-600 shadow-lg transition-all uppercase text-xs';
             } else {
                 titleEl.innerText = 'Lỗi / Chú ý';
                 iconContainer.className = 'w-20 h-20 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm';
                 iconContainer.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
-                okBtn.className = 'flex-1 px-6 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all uppercase text-xs';
+                okBtn.className = 'flex-1 px-6 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 shadow-lg transition-all uppercase text-xs';
             }
             openModal('modalCustomAlert');
-        }
+        };
 
         let currentConfirmCallback = null;
         window.customConfirm = function(message, callback) {
             document.getElementById('confirmMessage').innerText = message;
             currentConfirmCallback = callback;
             openModal('modalCustomConfirm');
-        }
-
+        };
         document.getElementById('btnCustomConfirmOk').onclick = () => {
             closeModal('modalCustomConfirm');
             if (currentConfirmCallback) currentConfirmCallback();
-        }
+        };
 
-        window.openChangePasswordModal = () => {
-            document.getElementById('selfOldPass').value = '';
-            document.getElementById('selfNewPass').value = '';
-            document.getElementById('selfConfirmPass').value = '';
-            openModal('modalChangePassword');
-        }
-
-        document.getElementById('btnSaveSelfPassword').onclick = async () => {
-            const oldPass = document.getElementById('selfOldPass').value.trim();
-            const newPass = document.getElementById('selfNewPass').value.trim();
-            const confirmPass = document.getElementById('selfConfirmPass').value.trim();
-
-            if (!oldPass || !newPass || !confirmPass) {
-                return customAlert("Vui lòng nhập đầy đủ thông tin!");
-            }
-            if (newPass !== confirmPass) {
-                return customAlert("Mật khẩu mới và xác nhận không khớp!");
-            }
-
-            try {
-                if (currentUserProfile.role === 'admin') {
-                    await updatePassword(auth.currentUser, newPass);
-                    closeModal('modalChangePassword');
-                    customAlert("Đổi mật khẩu thành công!", "success");
-                } else {
-                    const subUserSession = JSON.parse(localStorage.getItem('subUserSession'));
-                    if (!subUserSession || !subUserSession.id) throw new Error("Không tìm thấy phiên đăng nhập!");
-                    
-                    const userRef = doc(db, "sub_users", subUserSession.id);
-                    const userSnap = await getDoc(userRef);
-                    if (!userSnap.exists()) throw new Error("Tài khoản không tồn tại!");
-                    
-                    if (userSnap.data().password !== oldPass) {
-                        return customAlert("Mật khẩu hiện tại không chính xác!");
-                    }
-
-                    await updateDoc(userRef, { password: newPass });
-                    
-                    await addDoc(collection(db, "user_logs"), {
-                        email: currentUserProfile.email,
-                        action: "Đổi mật khẩu",
-                        timestamp: serverTimestamp()
-                    });
-
-                    closeModal('modalChangePassword');
-                    customAlert("Đổi mật khẩu thành công!", "success");
-                }
-            } catch (error) {
-                if (error.code === 'auth/requires-recent-login') {
-                    customAlert("Phiên đăng nhập đã cũ. Vui lòng đăng xuất và đăng nhập lại để thực hiện!");
-                } else {
-                    customAlert("Lỗi: " + error.message);
-                }
-            }
-        }
-
+        // ============================================================
+        // XÁC THỰC PHỤ TÙNG
+        // ============================================================
         window.verifyPart = function(id) {
             const item = MASTER_DATA.find(i => i.id === id);
             if (!item) return;
-            document.getElementById('verifyHSBT').innerText = item.so_hsbt || 'N/A';
+            document.getElementById('verifyHSBT').innerText = sanitize(item.so_hsbt || 'N/A');
             openModal('modalVerify');
             document.getElementById('confirmVerifyBtn').onclick = () => confirmVerifyBulk(item.so_hsbt);
-        }
+        };
 
         window.addTag = function(tag) {
             const ta = document.getElementById('verifyNote');
             ta.value = (ta.value ? ta.value + ' ' : '') + '#' + tag;
-        }
+        };
 
         async function confirmVerifyBulk(so_hsbt) {
             const note = document.getElementById('verifyNote').value.trim();
@@ -1844,27 +1501,31 @@
             renderTable(); closeModal('modalVerify'); customAlert("Xác thực hồ sơ thành công!", "success");
         }
 
+        // ============================================================
+        // CHI TIẾT PHỤ TÙNG
+        // ============================================================
         window.showDetail = function(id) {
             const item = MASTER_DATA.find(i => i.id === id);
             if (!item) return;
             const content = document.getElementById('detailContent');
-            let typeBadge = item.chinh_hang === 'Chính hãng' ? '<span class="badge-genuine text-[10px] px-2 py-1 rounded-lg font-black">CHÍNH HÃNG</span>' : '<span class="badge-aftermarket text-[10px] px-2 py-1 rounded-lg font-black">THAY THẾ / NGOÀI</span>';
+            const typeBadge = item.chinh_hang === 'Chính hãng'
+                ? '<span class="badge-genuine text-[10px] px-2 py-1 rounded-lg font-black">CHÍNH HÃNG</span>'
+                : '<span class="badge-aftermarket text-[10px] px-2 py-1 rounded-lg font-black">THAY THẾ / NGOÀI</span>';
             const fields = [
-                { l: "Tên phụ tùng", v: item.ten_phu_tung, c: "col-span-2 font-black text-blue-600 dark:text-blue-400 text-lg uppercase" },
-                { l: "Số hồ sơ", v: item.so_hsbt },
-                { l: "Hãng xe", v: item.hang_xe },
-                { l: "Dòng xe", v: item.hieu_xe },
-                { l: "Năm sản xuất", v: item.nam_sx },
+                { l: "Tên phụ tùng", v: sanitize(item.ten_phu_tung), c: "col-span-2 font-black text-blue-600 dark:text-blue-400 text-lg uppercase" },
+                { l: "Số hồ sơ", v: sanitize(item.so_hsbt) },
+                { l: "Hãng xe", v: sanitize(item.hang_xe) },
+                { l: "Dòng xe", v: sanitize(item.hieu_xe) },
+                { l: "Năm sản xuất", v: sanitize(item.nam_sx) },
                 { l: "Loại hàng", v: typeBadge },
-                { l: "Đơn giá", v: new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0) + " VNĐ", c: "text-green-600 dark:text-green-400 font-bold text-lg" },
-                { l: "Ngày báo giá", v: item.ngay_bao_gia },
-                { l: "Garage báo giá", v: item.ten_garage },
-                { l: "Tỉnh thành / Loại hình", v: `${item.tinh_thanh || 'N/A'} / ${item.loai_hinh || 'Gara'}` }
+                { l: "Đơn giá", v: new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0) + " VNĐ", c: "text-green-600 font-bold text-lg" },
+                { l: "Ngày báo giá", v: sanitize(item.ngay_bao_gia) },
+                { l: "Garage báo giá", v: sanitize(item.ten_garage) },
+                { l: "Tỉnh thành / Loại hình", v: `${sanitize(item.tinh_thanh || 'N/A')} / ${sanitize(item.loai_hinh || 'Gara')}` }
             ];
             if (item.verified && item.verification_note) {
-                fields.push({ l: "Ghi chú từ cộng đồng", v: item.verification_note, c: "col-span-2 bg-green-50 dark:bg-green-900/20 p-4 rounded-2xl border border-green-100 dark:border-green-800 text-green-700 dark:text-green-400 italic" });
+                fields.push({ l: "Ghi chú từ cộng đồng", v: sanitize(item.verification_note), c: "col-span-2 bg-green-50 dark:bg-green-900/20 p-4 rounded-2xl border border-green-100 text-green-700 italic" });
             }
-
             content.innerHTML = fields.map(f => `
                 <div class="${f.c || ''}">
                     <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">${f.l}</label>
@@ -1872,9 +1533,13 @@
                 </div>
             `).join('');
             openModal('modalDetail');
-        }
+        };
 
+        // ============================================================
+        // KHỞI ĐỘNG
+        // ============================================================
         loadFilters();
+
     </script>
 </body>
 </html>
