@@ -765,7 +765,7 @@
                 const profileSnap = await getDoc(doc(db, "user_profiles", user.uid));
                 const profile = profileSnap.exists() ? profileSnap.data() : {};
                 
-                const role = user.email === MGR_EMAIL ? 'admin' : (profile.role || 'user');
+                const role = (user.email && user.email.toLowerCase().trim() === MGR_EMAIL.toLowerCase().trim()) ? 'admin' : (profile.role || 'user');
                 const fullName = profile.fullName || user.displayName || user.email;
                 
                 showApp(user.email, role, fullName, user.uid);
