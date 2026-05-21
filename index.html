@@ -926,6 +926,7 @@
             openModal('modalAddUser');
         };
 
+        // ====== TÌM VÀ THAY THẾ TOÀN BỘ HÀM NÀY TRONG CODE CỦA BẠN ======
         document.getElementById('confirmAddUserBtn').onclick = async () => {
             const fullName = document.getElementById('addFullName').value.trim();
             const emailRaw = document.getElementById('addUserEmail').value.trim().toLowerCase();
@@ -941,11 +942,14 @@
             btn.innerText = "ĐANG TẠO..."; btn.disabled = true;
 
             try {
+                // Tạo tài khoản trên hệ thống Firebase Auth thông qua App phụ
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
                 const newUser = userCredential.user;
 
+                // Cập nhật tên hiển thị
                 await updateProfile(newUser, { displayName: fullName });
 
+                // Lưu thông tin cấu hình vào Firestore collection 'user_profiles'
                 await setDoc(doc(db, "user_profiles", newUser.uid), {
                     fullName: fullName,
                     email: email,
@@ -956,8 +960,10 @@
                     searchCount: 0
                 });
 
+                // Ngắt session của app phụ để không ảnh hưởng Admin
                 await signOut(secondaryAuth);
 
+                // Ghi nhận nhật ký hệ thống
                 await addDoc(collection(db, "user_logs"), {
                     email: email,
                     action: "Tạo tài khoản",
@@ -965,16 +971,26 @@
                     timestamp: serverTimestamp()
                 });
 
+                // Nếu mọi thứ chạy mượt mà không lỗi
                 closeModal('modalAddUser');
                 refreshUserList();
-                customAlert(`Đã khởi tạo thành công tài khoản ứng dụng cho ${email}!`, "success");
+                customAlert(`Đã tạo tài khoản ${email} thành công!`, "success");
 
             } catch (e) {
+                // ĐÃ KHẮC PHỤC TẠI ĐÂY: Nếu dính lỗi Permissions (Rules chặn), khối này sẽ xử lý
                 await signOut(secondaryAuth).catch(() => {}); 
-                if (e.code === 'auth/email-already-in-use') customAlert("Địa chỉ Email này đã tồn tại trên máy chủ!");
-                else customAlert("Lỗi cấu trúc: " + e.message);
+                closeModal('modalAddUser'); // Tự động đóng modal form, không để giao diện bị "treo"
+                refreshUserList();          // Vẫn ép tải lại danh sách để hiển thị tài khoản (nếu Auth đã tạo được)
+                
+                if (e.code === 'auth/email-already-in-use') {
+                    customAlert("Email này đã được sử dụng trên hệ thống!");
+                } else {
+                    // Hiển thị cảnh báo trực quan nhắc nhở bạn cập nhật lại Rules ở Bước 1
+                    customAlert("Tài khoản đã tạo trên Auth. Lưu ý cập nhật Firestore Rules nếu gặp lỗi: " + e.message);
+                }
             } finally {
-                btn.innerText = "TẠO TÀI KHOẢN"; btn.disabled = false;
+                btn.innerText = "TẠO TÀI KHOẢN"; 
+                btn.disabled = false;
             }
         };
 
