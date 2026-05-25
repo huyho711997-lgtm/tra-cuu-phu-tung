@@ -215,6 +215,49 @@
         }
         .dropdown-item:hover { background: #f1f5f9; color: var(--primary); padding-left: 16px; }
         .dropdown-item.active { background: #eff6ff; color: var(--primary); }
+
+        .part-suggest-box {
+            min-width: 420px;
+            max-width: 560px;
+            width: max-content;
+            left: 0;
+            right: auto;
+        }
+        .part-suggest-item {
+            padding: 11px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #334155;
+            cursor: pointer;
+            transition: all var(--transition-base) var(--ease-smooth);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            user-select: none;
+            white-space: normal;
+            line-height: 1.35;
+        }
+        .part-suggest-item:hover {
+            background: #eff6ff;
+            color: var(--primary);
+            padding-left: 16px;
+        }
+        .part-suggest-name {
+            display: block;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: unset;
+            word-break: break-word;
+        }
+        html.dark .part-suggest-item {
+            color: #cbd5e1 !important;
+        }
+        html.dark .part-suggest-item:hover {
+            background: #1e293b !important;
+            color: #60a5fa !important;
+        }
+
         .search-inner { 
             width: 100%; font-size: 12px; font-weight: 700; background: #f8fafc; border: 1px solid #f1f5f9; 
             border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; outline: none !important;
@@ -524,7 +567,7 @@
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
 
-                            <div id="partNameSuggestBox" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 p-2 max-h-72 overflow-y-auto"></div>
+                            <div id="partNameSuggestBox" class="hidden absolute z-50 mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 p-2 max-h-80 overflow-y-auto part-suggest-box"></div>
                         </div>
 
                         <button id="btnExactPartName" type="button" onclick="toggleExactPartName()" class="exact-match-btn" title="Bật/tắt khớp chính xác tên phụ tùng">
@@ -1484,11 +1527,11 @@
             }
 
             box.innerHTML = matched.map(name => `
-                <div class="dropdown-item" onmousedown="selectPartNameSuggestion('${String(name).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')">
-                    <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="part-suggest-item" onmousedown="selectPartNameSuggestion('${String(name).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')">
+                    <svg class="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
-                    <span class="truncate">${sanitize(name)}</span>
+                    <span class="part-suggest-name">${sanitize(name)}</span>
                 </div>
             `).join('');
 
