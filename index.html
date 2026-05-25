@@ -756,6 +756,7 @@
         const MGR_EMAIL = 'huyho71@gmail.com'; 
         let currentUserProfile = null;
         let lastLoggedUid = null; // Kiểm soát ghi log trùng lặp
+        let appDataLoaded = false;
 
         // CHỐNG XSS
         function sanitize(str) {
@@ -768,41 +769,67 @@
                 .replace(/'/g, '&#039;');
         }
 
+        async function initAppDataAfterLogin() {
+            try {
+                if (appDataLoaded) return;
+
+                await loadFilters();
+
+                // Nếu muốn tự tải luôn bảng dữ liệu ban đầu sau đăng nhập:
+                // await searchData();
+
+                appDataLoaded = true;
+            } catch (e) {
+                console.error("Lỗi khởi tạo dữ liệu sau đăng nhập:", e);
+            }
+        }
+
         // ============================================================
         // TỐI ƯU HÓA: GỘP DANH SÁCH AUTH STATE LISTENER & KIỂM TRA KHÓA USER
         // ============================================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
-                    // Chỉ gọi Firestore duy nhất 1 lần cho mỗi phiên thay đổi trạng thái
                     const profileSnap = await getDoc(doc(db, "user_profiles", user.uid));
                     const profile = profileSnap.exists() ? profileSnap.data() : {};
-                    
-                    // KIỂM TRA TRẠNG THÁI KHÓA TÀI KHOẢN (Tính năng bị thiếu)
-                    if (profile.status === 'locked' && user.email.toLowerCase().trim() !== MGR_EMAIL.toLowerCase().trim()) {
+
+                    if (
+                        profile.status === 'locked' &&
+                        user.email.toLowerCase().trim() !== MGR_EMAIL.toLowerCase().trim()
+                    ) {
                         await signOut(auth);
                         hideApp();
+
                         const err = document.getElementById('loginError');
                         err.innerText = "TÀI KHOẢN NÀY ĐÃ BỊ KHÓA! VUI LÒNG LIÊN HỆ QUẢN TRỊ VIÊN.";
                         err.classList.remove('hidden');
                         return;
                     }
 
-                    const role = (user.email && user.email.toLowerCase().trim() === MGR_EMAIL.toLowerCase().trim()) ? 'admin' : (profile.role || 'user');
+                    const role =
+                        user.email && user.email.toLowerCase().trim() === MGR_EMAIL.toLowerCase().trim()
+                            ? 'admin'
+                            : (profile.role || 'user');
+
                     const fullName = profile.fullName || user.displayName || user.email;
-                    
+
                     showApp(user.email, role, fullName, user.uid);
 
-                    // Đồng bộ tích hợp lịch sử hoạt động & tăng bộ đếm loginCount tự động từ Listener cũ
+                    // FIX: nạp dữ liệu input/dropdown ngay sau khi đăng nhập
+                    await initAppDataAfterLogin();
+
                     if (user.uid !== lastLoggedUid) {
                         lastLoggedUid = user.uid;
+
                         const profileRef = doc(db, "user_profiles", user.uid);
+
                         if (profileSnap.exists()) {
                             await updateDoc(profileRef, {
                                 lastLogin: serverTimestamp(),
                                 loginCount: (profile.loginCount || 0) + 1
                             });
                         }
+
                         await addDoc(collection(db, "user_logs"), {
                             email: user.email,
                             action: "Đăng nhập",
@@ -814,6 +841,10 @@
                 }
             } else {
                 lastLoggedUid = null;
+                appDataLoaded = false;
+                CAY_GIA_PHA = {};
+                NAM_ALL = [];
+                MASTER_DATA = [];
                 hideApp();
             }
         });
