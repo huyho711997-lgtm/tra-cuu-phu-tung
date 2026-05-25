@@ -482,10 +482,12 @@
                     <label class="field-label">Tên phụ tùng</label>
                     <svg class="w-4 h-4 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     <div class="relative w-full">
-                        <input type="text" id="searchInput" placeholder="Tìm tên..." class="pro-input pr-10" onkeydown="if(event.key==='Enter') searchData()" oninput="toggleClearBtn()">
+                        <input type="text" id="searchInput" placeholder="Tìm tên." class="pro-input pr-10" onkeydown="if(event.key==='Enter') searchData()" oninput="toggleClearBtn(); renderPartNameSuggestions()" onfocus="renderPartNameSuggestions()" onblur="setTimeout(hidePartNameSuggestions, 180)">
                         <button id="clearSearchBtn" onclick="clearSearchInput()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-full flex items-center justify-center transition-all cursor-pointer z-10" title="Xóa từ khóa">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
+
+                        <div id="partNameSuggestBox" class="hidden absolute z-50 left-0 right-0 mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 p-2 max-h-72 overflow-y-auto"></div>
                     </div>
                 </div>
 
@@ -1283,7 +1285,7 @@
         // ============================================================
         // TRA CỨU PHỤ TÙNG XE — ĐỒNG BỘ DỮ LIỆU
         // ============================================================
-        let CAY_GIA_PHA = {}, NAM_ALL = [], MASTER_DATA = [], CURRENT_PAGE = 1, ITEMS_PER_PAGE = 10;
+        let CAY_GIA_PHA = {}, NAM_ALL = [], PART_NAME_ALL = [], MASTER_DATA = [], CURRENT_PAGE = 1, ITEMS_PER_PAGE = 10;
 
         async function loadFilters() {
             try {
@@ -1295,6 +1297,8 @@
                     renderHangList();
                     fillNamSXDropdown(NAM_ALL);
                 }
+
+                await loadPartNameOptions();
             } catch (e) { console.error("Lỗi đồng bộ bộ lọc xe:", e); }
         }
 
@@ -1393,6 +1397,79 @@
             items.forEach(item => { item.style.display = item.innerText.toLowerCase().includes(input) ? 'flex' : 'none'; });
         };
 
+        async function loadPartNameOptions() {
+            try {
+                const snap = await getDocs(query(collection(db, "LichSuBaoGia"), limit(1000)));
+                const names = new Set();
+
+                snap.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const name = (item.ten_phu_tung || '').trim();
+                    if (name) names.add(name);
+                });
+
+                PART_NAME_ALL = Array.from(names).sort((a, b) => a.localeCompare(b, 'vi'));
+            } catch (e) {
+                console.error("Lỗi tải danh sách tên phụ tùng:", e);
+                PART_NAME_ALL = [];
+            }
+        }
+
+        window.renderPartNameSuggestions = function() {
+            const input = document.getElementById('searchInput');
+            const box = document.getElementById('partNameSuggestBox');
+            if (!input || !box) return;
+
+            const keyword = input.value.toLowerCase().trim();
+
+            if (!keyword) {
+                box.classList.add('hidden');
+                box.innerHTML = '';
+                return;
+            }
+
+            const matched = PART_NAME_ALL
+                .filter(name => name.toLowerCase().includes(keyword))
+                .slice(0, 30);
+
+            if (matched.length === 0) {
+                box.innerHTML = '<div class="px-3 py-3 text-[11px] font-bold text-slate-400 italic">Không có phụ tùng phù hợp</div>';
+                box.classList.remove('hidden');
+                return;
+            }
+
+            box.innerHTML = matched.map(name => `
+                <div class="dropdown-item" onmousedown="selectPartNameSuggestion('${String(name).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')">
+                    <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <span class="truncate">${sanitize(name)}</span>
+                </div>
+            `).join('');
+
+            box.classList.remove('hidden');
+        };
+
+        window.selectPartNameSuggestion = function(name) {
+            const input = document.getElementById('searchInput');
+            const box = document.getElementById('partNameSuggestBox');
+
+            input.value = name;
+            toggleClearBtn();
+
+            if (box) {
+                box.classList.add('hidden');
+                box.innerHTML = '';
+            }
+
+            searchData();
+        };
+
+        window.hidePartNameSuggestions = function() {
+            const box = document.getElementById('partNameSuggestBox');
+            if (box) box.classList.add('hidden');
+        };
+
         window.toggleClearBtn = function() {
             const input = document.getElementById('searchInput');
             const btn = document.getElementById('clearSearchBtn');
@@ -1404,6 +1481,7 @@
             const input = document.getElementById('searchInput');
             input.value = '';
             toggleClearBtn();
+            hidePartNameSuggestions();
             input.focus();
         };
 
@@ -1429,6 +1507,7 @@
         window.clearFilters = function() {
             selectHang(''); selectNam(''); selectType('all');
             document.getElementById('searchInput').value = '';
+            hidePartNameSuggestions();
             
             const clearBtn = document.getElementById('clearSearchBtn');
             if (clearBtn) clearBtn.classList.add('hidden');
