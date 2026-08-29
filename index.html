@@ -1097,12 +1097,12 @@
 <tr>
 <th>Phụ tùng</th><th>Loại hàng</th><th>Phạm vi BH</th><th>Thông tin xe</th>
 <th>Garage báo giá</th><th>Ngày báo giá</th>
-<th>Xác thực</th><th class="text-right">Đơn giá</th>
+<th class="text-right">Đơn giá</th>
 </tr>
 </thead>
 <tbody id="resultsTableBody">
 <tr>
-<td class="!p-0" colspan="8">
+<td class="!p-0" colspan="7">
 <div class="premium-empty-state">
 <svg class="premium-empty-svg text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
 <circle class="opacity-20" cx="11" cy="11" r="10" stroke="currentColor" stroke-dasharray="3 3"></circle>
@@ -1277,46 +1277,7 @@
 </div>
 </div>
 
-<div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" id="modalVerify">
-<div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 dark:border-slate-800 transition-all duration-300">
 
-<div class="p-6 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/20">
-<div class="flex items-center gap-3.5">
-<div class="w-11 h-11 bg-green-50 dark:bg-green-950/40 text-green-600 dark:text-green-400 rounded-2xl flex items-center justify-center shadow-inner">
-<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><path d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.746 3.746 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-</div>
-<div>
-<h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">Xác thực phụ tùng</h3>
-<p class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-0.5">Xác minh tương thích của dữ liệu</p>
-</div>
-</div>
-<button class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all rounded-lg" onclick="closeModal('modalVerify')">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-</button>
-</div>
-
-<div class="p-8 space-y-5">
-<div class="p-4 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800/40 rounded-2xl">
-<p class="text-xs font-bold text-slate-700 dark:text-slate-300 leading-relaxed">Bạn xác nhận các phụ tùng trong hồ sơ <span class="font-black text-emerald-600 dark:text-emerald-400" id="verifyHSBT"></span> tương thích hoàn toàn?</p>
-</div>
-<div>
-<label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-2 px-1">Ghi chú xác thực (tùy chọn)</label>
-<textarea class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl p-4 text-xs font-bold text-slate-700 dark:text-slate-200 outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 min-h-[100px] transition-all" id="verifyNote" placeholder="Ví dụ: Lắp đặt hoàn hảo, phụ tùng rất tốt..." style="resize:none"></textarea>
-<div class="flex flex-wrap gap-1.5 mt-3">
-<button class="px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[9px] font-bold text-slate-500 dark:text-slate-400 hover:border-green-500 dark:hover:border-green-500 hover:text-green-600 dark:hover:text-green-400 transition-all" onclick="addTag('Phù hợp')"># PHÙ HỢP</button>
-<button class="px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[9px] font-bold text-slate-500 dark:text-slate-400 hover:border-green-500 dark:hover:border-green-500 hover:text-green-600 dark:hover:text-green-400 transition-all" onclick="addTag('Đúng đời xe')"># ĐÚNG ĐỜI XE</button>
-<button class="px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[9px] font-bold text-slate-500 dark:text-slate-400 hover:border-green-500 dark:hover:border-green-500 hover:text-green-600 dark:hover:text-green-400 transition-all" onclick="addTag('Hữu ích')"># HỮU ÍCH</button>
-<button class="px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[9px] font-bold text-slate-500 dark:text-slate-400 hover:border-green-500 dark:hover:border-green-500 hover:text-green-600 dark:hover:text-green-400 transition-all" onclick="addTag('Cần lưu ý')"># CẦN LƯU Ý</button>
-</div>
-</div>
-</div>
-
-<div class="p-6 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800/80 flex gap-3.5">
-<button class="flex-1 h-12 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold rounded-xl text-xs uppercase tracking-wider transition-all duration-200" onclick="closeModal('modalVerify')">Hủy bỏ</button>
-<button class="flex-1 h-12 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black rounded-xl shadow-lg shadow-green-500/20 uppercase text-xs tracking-wider transition-all duration-200 active:scale-95" id="confirmVerifyBtn">Xác nhận</button>
-</div>
-</div>
-</div>
 
 <div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" id="modalDetail">
 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-100 dark:border-slate-800 transition-all duration-300">
@@ -1859,7 +1820,7 @@
                 'hang_xe', 'hieu_xe', 'nam_sx', 'chinh_hang', 'gia_duyet', 'ngay_bao_gia',
                 'ten_garage', 'tinh_thanh', 'loai_hinh', 'pham_vi_bao_hiem', 'loai_bao_hiem',
                 'is_vcx', 'is_tnds', 'insurance_scope_source', 'insurance_scope_updated_at',
-                'verified', 'verification_note', 'import_source', 'import_row_index', 'imported_by',
+                'import_source', 'import_row_index', 'imported_by',
                 'duplicate_key', 'import_doc_id', 'is_duplicate_import', 'duplicate_of', 'raw',
                 'created_at', 'updated_at'
             ];
@@ -4313,10 +4274,6 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                             <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${safeTinh}</div>
                         </td>
                         <td class="px-6 py-4" onclick="showDetail('${item.id}')"><div class="text-[11px] font-bold text-slate-600">${safeNgay}</div></td>
-                        <td class="px-6 py-4">${item.verified
-                            ? '<span class="badge-pro badge-verified">Đã xác thực</span>'
-                            : `<span class="badge-pro badge-unverified" onclick="verifyPart('${item.id}')">Xác thực ngay</span>`
-                        }</td>
                         <td class="px-6 py-4 text-right" onclick="showDetail('${item.id}')">
                             <div class="price-text">${new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0)}</div>
                             ${getPriceSignalBadge(item)}
@@ -6923,27 +6880,7 @@ ${text}` });
             closeModal('modalCustomConfirm');
             if (currentConfirmCallback) currentConfirmCallback();
         };
-        // XÁC THỰC PHỤ TÙNG CHUYÊN SÂU
-        window.verifyPart = function(id) {
-            const item = MASTER_DATA.find(i => i.id === id);
-            if (!item) return;
-            document.getElementById('verifyHSBT').innerText = sanitize(item.so_hsbt || 'N/A');
-            openModal('modalVerify');
-            document.getElementById('confirmVerifyBtn').onclick = () => confirmVerifyBulk(item.so_hsbt);
-        };
-        window.addTag = function(tag) {
-            const ta = document.getElementById('verifyNote');
-            ta.value = (ta.value ? ta.value + ' ' : '') + '#' + tag;
-        };
-        async function confirmVerifyBulk(so_hsbt) {
-            const note = document.getElementById('verifyNote').value.trim();
-            const snap = await getDocs(query(collection(db, "LichSuBaoGia"), where("so_hsbt", "==", so_hsbt)));
-            const batch = writeBatch(db);
-            snap.forEach(docSnap => batch.update(docSnap.ref, { verified: true, verification_note: note }));
-            await batch.commit();
-            MASTER_DATA.forEach(i => { if (i.so_hsbt === so_hsbt) { i.verified = true; i.verification_note = note; } });
-            renderTable(); closeModal('modalVerify'); customAlert("Xác thực đồng bộ thành công hồ sơ!", "success");
-        }
+
         window.showDetail = async function(id) {
             let item = MASTER_DATA.find(i => i.id === id);
             if (!item && typeof QUOTE_RESULTS !== 'undefined' && QUOTE_RESULTS.length) {
@@ -7010,9 +6947,6 @@ ${text}` });
                 { l: "Phạm vi bảo hiểm", v: sanitize(item.pham_vi_bao_hiem || item.loai_bao_hiem || 'Chưa gắn') },
                 { l: "Tỉnh thành / Loại hình", v: `${sanitize(getItemProvince(item) || 'N/A')} / ${sanitize(getItemBusinessType(item) || 'Gara')}` }
             ];
-            if (item.verified && item.verification_note) {
-                fields.push({ l: "Ghi chú từ cộng đồng", v: sanitize(item.verification_note), c: "col-span-2 bg-green-50 dark:bg-green-900/20 p-4 rounded-2xl border border-green-100 text-green-700 italic" });
-            }
             content.innerHTML = fields.map(f => `
                 <div class="${f.c || ''}">
                     <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">${f.l}</label>
@@ -7324,7 +7258,6 @@ ${text}` });
                 loai_hinh: String(readField(row, headerMap, 'loai_hinh') || '').trim(),
                 pham_vi_bao_hiem: explicitScope,
                 loai_bao_hiem: explicitScope,
-                verified: false,
                 import_source: 'excel_admin',
                 import_row_index: rowIndex,
                 imported_by: currentUserProfile?.email || '',
