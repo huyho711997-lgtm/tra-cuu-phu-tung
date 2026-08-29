@@ -330,20 +330,13 @@
 <div class="import-step"><b>Bước 03</b><span>Nhấn Import, hệ thống tự ghi dữ liệu và tự cập nhật cây gia phả xe.</span></div>
 </div>
 </div>
-<div class="xl:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="xl:col-span-7">
 <div class="import-dropzone" id="importExcelDropZone" onclick="document.getElementById('importExcelInput').click()">
 <input accept=".xlsx,.xls,.csv" class="hidden" id="importExcelInput" onchange="handleImportExcelFile(event)" type="file"/>
 <div class="import-drop-icon"><svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.4" viewbox="0 0 24 24"><path d="M12 16V4m0 12-4-4m4 4 4-4M4 20h16" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
-<div class="import-drop-title">File dữ liệu tổng hợp</div>
-<div class="import-drop-note" id="importFileMeta">Kéo thả hoặc bấm để chọn file .xlsx/.xls/.csv. File mẫu WAW hiện nhận diện được 14 cột.</div>
-<div class="import-mini-status" id="importStatus">Chưa chọn file. Hệ thống sẽ tự tìm header, preview tối đa 200 dòng đầu và xử lý toàn bộ dòng hợp lệ khi import.</div>
-</div>
-<div class="import-dropzone" id="importVcxDropZone" onclick="document.getElementById('importVcxInput').click()">
-<input accept=".xlsx,.xls,.csv" class="hidden" id="importVcxInput" onchange="handleImportVcxScopeFile(event)" type="file"/>
-<div class="import-drop-icon bg-emerald-600"><svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.4" viewbox="0 0 24 24"><path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
-<div class="import-drop-title">Danh sách VCX tuỳ chọn</div>
-<div class="import-drop-note">Dùng khi cần gắn phạm vi bảo hiểm theo Số HSBT. Có thể chạy độc lập để cập nhật các hồ sơ đã có.</div>
-<div class="import-mini-status" id="importVcxStatus">Chưa chọn file VCX. Nếu bỏ qua, hệ thống chỉ dùng cột phạm vi bảo hiểm có sẵn trong file tổng hợp.</div>
+<div class="import-drop-title">Nhập file dữ liệu phụ tùng</div>
+<div class="import-drop-note" id="importFileMeta">Kéo thả hoặc bấm để chọn file .xlsx/.xls/.csv. Tất cả 25 cột dữ liệu sẽ được tự động nhận diện.</div>
+<div class="import-mini-status" id="importStatus">Chưa chọn file. Hệ thống sẽ tự tìm header, xem trước dữ liệu và tự động gộp thành luồng duy nhất.</div>
 </div>
 </div>
 </div>
@@ -6972,12 +6965,7 @@ ${text}` });
         // ============================================================
         let IMPORT_ROWS = [];
         let IMPORT_EXISTING_MAP = new Map();
-        let IMPORT_VCX_CLAIM_SET = new Set();
-        let IMPORT_VCX_CLAIM_RAW_MAP = new Map();
-        let IMPORT_VCX_FILE_NAME = '';
-        let IMPORT_VCX_ONLY_ROWS = [];
-        let IMPORT_VCX_STANDALONE_DATA_MODE = false;
-        const IMPORT_REQUIRED_FIELDS = [
+                                                const IMPORT_REQUIRED_FIELDS = [
             'so_hsbt', 'ten_phu_tung', 'hang_xe', 'hieu_xe',
             'chinh_hang', 'gia_duyet', 'ngay_bao_gia', 'ten_garage'
         ];
@@ -7001,7 +6989,7 @@ ${text}` });
             ten_garage: ['ten_garage', 'tên garage', 'ten garage', 'garage', 'gara', 'tên gara', 'ten gara', 'đơn vị báo giá', 'don vi bao gia'],
             tinh_thanh: ['tinh_thanh', 'tỉnh thành', 'tinh thanh', 'tỉnh/tp', 'tinh/tp', 'địa phương', 'dia phuong', 'tỉnh garage', 'tinh garage', 'tỉnh gara', 'tinh gara', 'tỉnh garage/gara', 'tinh garage/gara', 'tỉnh báo giá', 'tinh bao gia'],
             loai_hinh: ['loai_hinh', 'loại hình', 'loai hinh'],
-            pham_vi_bao_hiem: ['pham_vi_bao_hiem', 'phạm vi bảo hiểm', 'pham vi bao hiem', 'loại bảo hiểm', 'loai bao hiem', 'nhóm bảo hiểm', 'nhom bao hiem', 'vcx/tnds', 'vcx', 'tnds'],
+            pham_vi_bao_hiem: ['pham_vi_bao_hiem', 'phạm vi bảo hiểm', 'pham vi bao hiem', 'loại hình bảo hiểm', 'loai hinh bao hiem', 'loại bảo hiểm', 'loai bao hiem', 'nhóm bảo hiểm', 'nhom bao hiem', 'vcx/tnds', 'vcx', 'tnds'],
             ngay_tbtt: ['ngày tbtt', 'ngay tbtt', 'ngày thông báo tổn thất', 'ngay thong bao ton that'],
             ngay_ton_that: ['ngày tổn thất', 'ngay ton that', 'ngày xảy ra tổn thất', 'ngay xay ra ton that'],
             don_gia_garage: ['đơn giá garage', 'don gia garage', 'đơn giá gara', 'don gia gara'],
@@ -7224,21 +7212,14 @@ ${text}` });
             };
         }
         function applyInsuranceScopeToRow(item) {
-            const claimKey = normalizeClaimScopeKey(item.so_hsbt);
             const explicitScope = normalizeInsuranceScope(item.pham_vi_bao_hiem || item.loai_bao_hiem);
-            let scope = explicitScope;
-            let source = explicitScope ? 'excel_column' : '';
-            if (IMPORT_VCX_CLAIM_SET.size && claimKey) {
-                scope = IMPORT_VCX_CLAIM_SET.has(claimKey) ? 'VCX' : 'TNDS';
-                source = 'vcx_claim_file';
-            }
-            if (scope) {
-                item.pham_vi_bao_hiem = scope;
-                item.loai_bao_hiem = scope;
-                item.is_vcx = scope === 'VCX';
-                item.is_tnds = scope === 'TNDS';
-                item.insurance_scope_source = source;
-                item._scope_matched_vcx = scope === 'VCX';
+            if (explicitScope) {
+                item.pham_vi_bao_hiem = explicitScope;
+                item.loai_bao_hiem = explicitScope;
+                item.is_vcx = explicitScope === 'VCX';
+                item.is_tnds = explicitScope === 'TNDS';
+                item.insurance_scope_source = 'excel_column';
+                item._scope_matched_vcx = explicitScope === 'VCX';
             } else {
                 item.pham_vi_bao_hiem = '';
                 item.loai_bao_hiem = '';
@@ -7337,10 +7318,10 @@ ${text}` });
             return existing;
         }
         function isVcxOnlyImportMode() {
-            return !IMPORT_ROWS.length && IMPORT_VCX_ONLY_ROWS.length > 0;
+            return false;
         }
         function isVcxStandaloneDataMode() {
-            return IMPORT_VCX_STANDALONE_DATA_MODE && IMPORT_ROWS.length > 0;
+            return false;
         }
         function setImportButtonEnabled(enabled) {
             const btn = document.getElementById('btnRunImport');
@@ -7683,14 +7664,15 @@ ${text}` });
             const invalidEl = document.getElementById('importInvalidRows');
             const vcxEl = document.getElementById('importVcxRows');
             const tndsEl = document.getElementById('importTndsRows');
-            const isVcxOnly = isVcxOnlyImportMode();
-            const rowsForPreview = IMPORT_ROWS.length ? IMPORT_ROWS : IMPORT_VCX_ONLY_ROWS;
-            const duplicateCount = isVcxOnly ? 0 : IMPORT_ROWS.filter(row => (row._duplicate || row._fileDuplicate) && !row._invalid?.includes('trùng trong file')).length;
-            const fileDuplicateCount = isVcxOnly ? 0 : IMPORT_ROWS.filter(row => row._fileDuplicate).length;
-            const invalidCount = isVcxOnly ? 0 : IMPORT_ROWS.filter(row => row._invalid?.length).length;
-            const cleanCount = isVcxOnly ? IMPORT_VCX_ONLY_ROWS.length : IMPORT_ROWS.filter(row => !row._duplicate && !row._fileDuplicate && !row._invalid?.length).length;
+
+            const rowsForPreview = IMPORT_ROWS;
+            const duplicateCount = IMPORT_ROWS.filter(row => (row._duplicate || row._fileDuplicate) && !row._invalid?.includes('trùng trong file')).length;
+            const fileDuplicateCount = IMPORT_ROWS.filter(row => row._fileDuplicate).length;
+            const invalidCount = IMPORT_ROWS.filter(row => row._invalid?.length).length;
+            const cleanCount = IMPORT_ROWS.filter(row => !row._duplicate && !row._fileDuplicate && !row._invalid?.length).length;
             const vcxCount = rowsForPreview.filter(row => row.pham_vi_bao_hiem === 'VCX' && !row._invalid?.length).length;
             const tndsCount = rowsForPreview.filter(row => row.pham_vi_bao_hiem === 'TNDS' && !row._invalid?.length).length;
+            
             const warningCount = duplicateCount + fileDuplicateCount + invalidCount;
             if (totalEl) totalEl.innerText = rowsForPreview.length;
             if (cleanEl) cleanEl.innerText = Math.max(cleanCount, 0);
@@ -7699,6 +7681,7 @@ ${text}` });
             if (vcxEl) vcxEl.innerText = vcxCount;
             if (tndsEl) tndsEl.innerText = tndsCount;
             setImportText('importWarningRows', `${warningCount} cảnh báo`);
+            
             if (!rowsForPreview.length) {
                 if (body) body.innerHTML = `<tr><td colspan="8" class="!p-0">
                     ${getPremiumEmptyStateHTML({
@@ -8072,11 +8055,9 @@ ${text}` });
                 customAlert('Lỗi đọc file Excel: ' + error.message);
             }
         };
-        window.clearImportExcelState = function(options = {}) {
-            const keepVcxScope = !!options.keepVcxScope;
+        window.clearImportExcelState = function() {
             IMPORT_ROWS = [];
             IMPORT_EXISTING_MAP = new Map();
-            IMPORT_VCX_STANDALONE_DATA_MODE = false;
             IMPORT_SOURCE_FILE_NAME = '';
             IMPORT_SOURCE_SHEET_NAME = '';
             IMPORT_SOURCE_HEADER_ROW = 0;
@@ -8085,19 +8066,10 @@ ${text}` });
             const input = document.getElementById('importExcelInput');
             if (input) input.value = '';
             const status = document.getElementById('importStatus');
-            if (status) status.innerText = 'Chưa chọn file. Hệ thống sẽ tự tìm header, preview tối đa 200 dòng đầu và xử lý toàn bộ dòng hợp lệ khi import.';
+            if (status) status.innerText = 'Chưa chọn file. Hệ thống sẽ tự tìm header, xem trước dữ liệu và tự động gộp thành luồng duy nhất.';
             const fileMeta = document.getElementById('importFileMeta');
-            if (fileMeta) fileMeta.innerText = 'Kéo thả hoặc bấm để chọn file .xlsx/.xls/.csv. File mẫu WAW hiện nhận diện được 14 cột.';
+            if (fileMeta) fileMeta.innerText = 'Kéo thả hoặc bấm để chọn file .xlsx/.xls/.csv. Tất cả 25 cột dữ liệu sẽ được tự động nhận diện.';
             updateImportAnalysisPanel(null, []);
-            if (!keepVcxScope) {
-                IMPORT_VCX_CLAIM_SET = new Set();
-                IMPORT_VCX_CLAIM_RAW_MAP = new Map();
-                IMPORT_VCX_ONLY_ROWS = [];
-                IMPORT_VCX_FILE_NAME = '';
-                const vcxInput = document.getElementById('importVcxInput');
-                if (vcxInput) vcxInput.value = '';
-                setVcxImportStatus('Chưa chọn file VCX. Nếu bỏ qua, hệ thống chỉ dùng cột phạm vi bảo hiểm có sẵn trong file tổng hợp.');
-            }
             renderImportPreview();
         };
         async function updateFilterMetadataAfterImport(rows = [], options = {}) {
@@ -8209,76 +8181,6 @@ ${text}` });
             }
             return updatedDocs;
         }
-        async function updateExistingVcxClaimsFromScopeFile(onProgress = null) {
-            if (!IMPORT_VCX_CLAIM_RAW_MAP.size) return 0;
-            const scopeRows = new Map();
-            IMPORT_VCX_CLAIM_RAW_MAP.forEach((rawClaim, normalizedClaim) => {
-                if (!normalizedClaim) return;
-                scopeRows.set(normalizedClaim, { so_hsbt: rawClaim, scope: 'VCX' });
-            });
-            const docs = await findDocsByClaimScopeKeys(scopeRows);
-            const idsByClaim = new Map();
-            docs.forEach(docSnap => {
-                const data = docSnap.data();
-                const claimKey = normalizeClaimScopeKey(data.so_hsbt || data.normalized_so_hsbt || data.claim_scope_key);
-                if (!scopeRows.has(claimKey)) return;
-                if (!idsByClaim.has(claimKey)) idsByClaim.set(claimKey, []);
-                idsByClaim.get(claimKey).push(docSnap.id);
-            });
-            const groups = [...idsByClaim.entries()].map(([claimKey, ids]) => ({ claimKey, ids }));
-            const totalDocs = groups.reduce((sum, group) => sum + group.ids.length, 0);
-            let updatedDocs = 0;
-            for (const group of groups) {
-                const payload = {
-                    ...buildInsuranceScopePayload('VCX', 'vcx_claim_file'),
-                    normalized_so_hsbt: group.claimKey,
-                    claim_scope_key: group.claimKey
-                };
-                await bulkUpdateLichSuBaoGiaByIds(group.ids, payload, doneInGroup => {
-                    if (typeof onProgress === 'function') onProgress(updatedDocs + doneInGroup, totalDocs);
-                });
-                updatedDocs += group.ids.length;
-                if (typeof onProgress === 'function') onProgress(updatedDocs, totalDocs);
-            }
-            return updatedDocs;
-        }
-        async function runVcxScopeOnlyUpdate() {
-            if (!IMPORT_VCX_CLAIM_SET.size) return customAlert('Bạn chưa chọn file danh sách VCX.');
-            const btn = document.getElementById('btnRunImport');
-            const status = document.getElementById('importStatus');
-            customConfirm(`Xác nhận cập nhật phạm vi VCX cho ${IMPORT_VCX_CLAIM_SET.size} hồ sơ trong file "${IMPORT_VCX_FILE_NAME || 'VCX'}"?\n\nLuồng này không cần file dữ liệu tổng hợp và không tạo dòng phụ tùng mới.`, async () => {
-                const oldText = btn?.innerText || '';
-                try {
-                    if (btn) {
-                        btn.disabled = true;
-                        btn.innerText = 'ĐANG CẬP NHẬT VCX...';
-                    }
-                    setImportRuntimeProgress(10, 'Đang tìm các dòng LichSuBaoGia có Số HSBT trùng file VCX và cập nhật phạm vi bảo hiểm...');
-                    const vcxExistingUpdated = await updateExistingVcxClaimsFromScopeFile((done, total) => {
-                        const percent = total ? 10 + (done / total) * 70 : 55;
-                        setImportRuntimeProgress(percent, `Đang cập nhật VCX: ${done}/${total || '?'} dòng...`);
-                    });
-                    setImportRuntimeProgress(88, 'Đã cập nhật VCX. Đang làm mới bộ lọc xe...');
-                    await loadFilters();
-                    setImportRuntimeProgress(100, 'Hoàn tất cập nhật VCX.');
-                    await addDoc(collection(db, 'user_logs'), {
-                        email: currentUserProfile?.email || '',
-                        action: 'Cập nhật phạm vi VCX độc lập',
-                        details: `vcxFile=${IMPORT_VCX_FILE_NAME || 'none'}, vcxClaims=${IMPORT_VCX_CLAIM_SET.size}, updatedDocs=${vcxExistingUpdated}`,
-                        timestamp: serverTimestamp()
-                    });
-                    if (status) status.innerText = `Hoàn tất cập nhật VCX độc lập: nhận ${IMPORT_VCX_CLAIM_SET.size} hồ sơ từ file, cập nhật ${vcxExistingUpdated} dòng dữ liệu đã có trong Supabase.`;
-                    customAlert(`Cập nhật VCX hoàn tất!\nHồ sơ VCX trong file: ${IMPORT_VCX_CLAIM_SET.size}\nDòng dữ liệu đã cập nhật trong Supabase: ${vcxExistingUpdated}`, 'success');
-                } catch (error) {
-                    console.error('VCX only update error:', error);
-                    if (status) status.innerText = 'Cập nhật VCX thất bại: ' + error.message;
-                    customAlert('Lỗi cập nhật VCX: ' + error.message);
-                } finally {
-                    if (btn) btn.innerText = oldText;
-                    setImportButtonEnabled(true);
-                }
-            });
-        }
         window.deleteAllSupabaseData = function(event) {
             customConfirm('Bạn có chắc chắn muốn xóa TOÀN BỘ dữ liệu phụ tùng trên Supabase không? Hành động này không thể hoàn tác!', async () => {
                 const btn = event?.currentTarget;
@@ -8320,8 +8222,7 @@ ${text}` });
         };
         window.runExcelImportToFirestore = async function() {
             if (!IMPORT_ROWS.length) {
-                if (IMPORT_VCX_CLAIM_SET.size) return runVcxScopeOnlyUpdate();
-                return customAlert('Bạn chưa chọn file Excel dữ liệu tổng hợp hoặc file danh sách VCX.');
+                return customAlert('Bạn chưa chọn file Excel dữ liệu.');
             }
             const mode = document.querySelector('input[name="importDuplicateMode"]:checked')?.value || 'update';
             const validRows = IMPORT_ROWS.filter(row => !row._invalid?.length);
@@ -8344,10 +8245,8 @@ ${text}` });
             const vcxCount = validRows.filter(row => row.pham_vi_bao_hiem === 'VCX').length;
             const tndsCount = validRows.filter(row => row.pham_vi_bao_hiem === 'TNDS').length;
             const duplicateSkippedCount = validRows.length - rowsToWrite.length;
-            const scopeNote = IMPORT_VCX_CLAIM_SET.size
-                ? `\nGắn phạm vi: VCX ${vcxCount}, TNDS ${tndsCount}.\nĐồng thời cập nhật nhãn VCX/TNDS cho các dòng đã có theo Số HSBT.`
-                : '\nChưa chọn file VCX; hệ thống chỉ ghi phạm vi bảo hiểm nếu file tổng hợp có cột tương ứng.';
-            if (!rowsToWrite.length && !IMPORT_VCX_CLAIM_SET.size) return customAlert('Tất cả dòng hợp lệ đều bị trùng và bạn đang chọn chế độ bỏ qua.');
+            const scopeNote = `\nGắn phạm vi: VCX ${vcxCount}, TNDS ${tndsCount}.`;
+            if (!rowsToWrite.length) return customAlert('Tất cả dòng hợp lệ đều bị trùng và bạn đang chọn chế độ bỏ qua.');
             customConfirm(`Xác nhận xử lý ${validRows.length} dòng hợp lệ?\nDòng ghi dữ liệu: ${rowsToWrite.length}\nDòng trùng chỉ cập nhật nhãn: ${duplicateSkippedCount}\nChế độ xử lý trùng: ${mode.toUpperCase()}${scopeNote}\nCây gia phả xe: hệ thống tự kiểm tra và cập nhật sau khi ghi dữ liệu.`, async () => {
                 const btn = document.getElementById('btnRunImport');
                 const status = document.getElementById('importStatus');
@@ -8373,10 +8272,7 @@ ${text}` });
                         const percent = total ? 74 + (done / total) * 8 : 78;
                         setImportRuntimeProgress(percent, `Đang cập nhật nhãn theo dữ liệu import: ${done}/${total || '?'} dòng...`);
                     });
-                    vcxExistingUpdated = await updateExistingVcxClaimsFromScopeFile((done, total) => {
-                        const percent = total ? 82 + (done / total) * 6 : 85;
-                        setImportRuntimeProgress(percent, `Đang cập nhật nhãn theo file VCX: ${done}/${total || '?'} dòng...`);
-                    });
+
                     setImportRuntimeProgress(90, 'Đã ghi xong. Đang tạo lại cây gia phả xe từ toàn bộ bảng Supabase...');
                     await refreshDataAfterImportSuccess(rowsToWrite.length ? rowsToWrite : validRows, {
                         onProgress: (loaded, total) => {
