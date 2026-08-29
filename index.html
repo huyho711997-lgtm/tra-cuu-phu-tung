@@ -1094,14 +1094,14 @@
 <table class="data-table w-full text-sm text-left">
 <thead>
 <tr>
-<th>Phụ tùng</th><th>Loại hàng</th><th>Thông tin xe</th>
+<th>Phụ tùng</th><th>Số HSBT</th><th>Loại hàng</th><th>Thông tin xe</th>
 <th>Garage báo giá</th><th>Ngày báo giá</th>
 <th class="text-right">Đơn giá</th>
 </tr>
 </thead>
 <tbody id="resultsTableBody">
 <tr>
-<td class="!p-0" colspan="6">
+<td class="!p-0" colspan="7">
 <div class="premium-empty-state">
 <svg class="premium-empty-svg text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
 <circle class="opacity-20" cx="11" cy="11" r="10" stroke="currentColor" stroke-dasharray="3 3"></circle>
@@ -4254,7 +4254,15 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                     <tr class="hover:bg-slate-50 transition-all cursor-pointer">
                         <td class="px-6 py-4" onclick="showDetail('${item.id}')">
                             <div class="text-[13px] font-black text-slate-900 uppercase">${safeTenPT}</div>
-                            <div class="text-[9px] text-slate-400 font-bold mt-1 uppercase flex items-center gap-1.5 w-fit">
+                            <button type="button" class="quick-exact-btn mt-2" onclick="event.stopPropagation(); searchExactPartFromResult('${safeItemIdForJs}')" title="Tra cứu chính xác phụ tùng này trong tất cả hồ sơ">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/>
+                                </svg>
+                                Lọc đúng tên
+                            </button>
+                        </td>
+                        <td class="px-6 py-4" onclick="showDetail('${item.id}')">
+                            <div class="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5 whitespace-nowrap">
                                 <span>${safeHSBT}</span>
                                 ${item.so_hsbt ? `
                                 <button type="button" class="text-slate-300 hover:text-blue-500 transition-colors p-0.5" onclick="event.stopPropagation(); navigator.clipboard.writeText('${safeHSBT}').then(()=>customAlert('Đã copy số hồ sơ!', 'success'))" title="Sao chép số hồ sơ">
@@ -4262,12 +4270,6 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                                 </button>
                                 ` : ''}
                             </div>
-                            <button type="button" class="quick-exact-btn mt-2" onclick="event.stopPropagation(); searchExactPartFromResult('${safeItemIdForJs}')" title="Tra cứu chính xác phụ tùng này trong tất cả hồ sơ">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/>
-                                </svg>
-                                Lọc đúng tên
-                            </button>
                         </td>
                         <td class="px-6 py-4" onclick="showDetail('${item.id}')">${badge}</td>
                         <td class="px-6 py-4" onclick="showDetail('${item.id}')">
