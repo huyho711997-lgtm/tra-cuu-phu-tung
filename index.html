@@ -529,7 +529,7 @@
 <div class="flex gap-2">
 <div class="relative w-full">
 <svg class="w-4 h-4 part-input-icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
-<input class="pro-input pr-10" id="searchInput" oninput="toggleClearBtn()" onkeydown="if(event.key==='Enter') searchData()" placeholder="Tìm tên." type="text"/>
+<input class="pro-input pr-10" id="searchInput" autocomplete="off" name="search_query" oninput="toggleClearBtn()" onkeydown="if(event.key==='Enter') { event.preventDefault(); searchData(); }" placeholder="Tìm tên." type="text"/>
 <button class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-full flex items-center justify-center transition-all cursor-pointer z-10" id="clearSearchBtn" onclick="clearSearchInput()" title="Xóa từ khóa">
 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
 </button>
@@ -2431,12 +2431,14 @@
             const userUsage = document.getElementById('currentUserUsageDashboard');
             if (view === 'login') {
                 overlay.style.display = 'flex'; main.style.display = 'none';
+                const lp = document.getElementById('loginPass'); if (lp) lp.type = 'password';
                 if (lookupTabs) lookupTabs.style.display = 'none';
                 if (headerTabs) headerTabs.style.display = 'none';
                 if (userUsage) userUsage.classList.add('hidden');
                 if (homeDashboardContent) homeDashboardContent.style.display = 'none';
             } else if (view === 'main') {
                 overlay.style.display = 'none'; main.style.display = 'block';
+                const lp = document.getElementById('loginPass'); if (lp) { lp.value = ''; lp.type = 'text'; }
                 sysMgr.style.display = 'none';
                 if (heroPanel) heroPanel.style.display = 'none';
                 if (lookupTabs) lookupTabs.style.display = 'none';
@@ -2446,6 +2448,7 @@
                 window.initHomeActivityFeed?.();
             } else if (view === 'admin') {
                 overlay.style.display = 'none'; main.style.display = 'block';
+                const lp = document.getElementById('loginPass'); if (lp) { lp.value = ''; lp.type = 'text'; }
                 sysMgr.style.display = 'block';
                 if (heroPanel) heroPanel.style.display = 'none';
                 if (homeDashboardContent) homeDashboardContent.style.display = 'none';
