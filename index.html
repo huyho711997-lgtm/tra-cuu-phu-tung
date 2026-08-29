@@ -3304,17 +3304,42 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
         };
         function fillNamSXDropdown(list) {
             const container = document.getElementById('listNam');
-            container.innerHTML = '<div class="dropdown-item active border-b border-slate-100 mb-1 pb-2 font-black text-blue-600" onclick="selectNam(\'\')">Tất cả năm</div>';
+            container.innerHTML = '';
+            document.getElementById('labelNam').innerText = 'Tất cả năm';
+            const allItem = document.createElement('div');
+            allItem.className = 'flex items-center justify-between px-3 py-2 border-b border-slate-100 mb-1';
+            allItem.innerHTML = `
+                <label class="flex items-center gap-2 cursor-pointer m-0 flex-1">
+                    <input type="checkbox" id="selectAllNam" onchange="toggleSelectAllNam(this)" class="w-4 h-4 text-blue-600 rounded border-slate-300"> 
+                    <span class="font-black text-blue-600 text-[13px]">Chọn tất cả</span>
+                </label>
+                <button type="button" onclick="clearAllNam(event)" class="text-[10.5px] bg-slate-100 hover:bg-red-50 text-slate-500 hover:text-red-600 px-2.5 py-1 rounded-md transition-colors font-bold whitespace-nowrap ml-2">Xóa tất cả</button>
+            `;
+            container.appendChild(allItem);
             list.sort((a, b) => b - a).forEach(n => {
-                container.innerHTML += `<div class="dropdown-item" onclick="selectNam('${n}')">${n}</div>`;
+                const item = document.createElement('label');
+                item.className = 'dropdown-item';
+                item.innerHTML = `<input type="checkbox" name="nam_sx" value="${n}" onchange="onNamSXChange()" class="w-4 h-4 text-blue-600 rounded border-slate-300"> <span>${n}</span>`;
+                container.appendChild(item);
             });
         }
-        window.selectNam = function(nam) {
-            document.getElementById('filterNam').value = nam;
-            document.getElementById('labelNam').innerText = nam || 'Tất cả';
-            document.querySelectorAll('#listNam .dropdown-item').forEach(el => {
-                el.classList.toggle('active', el.innerText === (nam || 'Tất cả'));
-            });
+        window.toggleSelectAllNam = function(btn) {
+            document.querySelectorAll('input[name="nam_sx"]').forEach(cb => cb.checked = btn.checked);
+            onNamSXChange();
+        };
+        window.clearAllNam = function(e) {
+            if (e) e.stopPropagation();
+            document.querySelectorAll('input[name="nam_sx"]').forEach(cb => cb.checked = false);
+            const selectAllBtn = document.getElementById('selectAllNam');
+            if (selectAllBtn) selectAllBtn.checked = false;
+            onNamSXChange();
+        };
+        window.onNamSXChange = function() {
+            const checkboxes = document.querySelectorAll('input[name="nam_sx"]');
+            const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+            const selectAllBtn = document.getElementById('selectAllNam');
+            if (selectAllBtn) selectAllBtn.checked = selected.length === checkboxes.length && checkboxes.length > 0;
+            document.getElementById('labelNam').innerText = selected.length > 0 ? selected.length + ' năm đã chọn' : 'Tất cả năm';
         };
         function setSelectOptions(select, options, placeholder, selectedValue = '') {
             if (!select) return;
@@ -3352,7 +3377,8 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             const hang = document.getElementById('quoteHangSelect')?.value || '';
             const hieu = document.getElementById('quoteHieuSelect')?.value || '';
             const namSelect = document.getElementById('quoteNamSelect');
-            const currentNam = namSelect?.value || document.getElementById('filterNam')?.value || '';
+            const mainNam = Array.from(document.querySelectorAll('input[name="nam_sx"]:checked')).map(cb => cb.value)[0] || '';
+            const currentNam = namSelect?.value || mainNam;
             const years = hang && hieu && CAY_GIA_PHA[hang]?.[hieu] ? [...CAY_GIA_PHA[hang][hieu]].sort((a, b) => Number(b) - Number(a)) : [];
             setSelectOptions(namSelect, years, hieu ? 'Chọn năm sản xuất' : 'Chọn dòng trước', currentNam);
             if (currentNam && years.map(String).includes(String(currentNam))) namSelect.value = currentNam;
@@ -3365,7 +3391,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
         window.syncQuoteVehicleFromMainFilters = function() {
             const hang = document.getElementById('filterHang')?.value || '';
             const hieu = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value)[0] || '';
-            const nam = document.getElementById('filterNam')?.value || '';
+            const nam = Array.from(document.querySelectorAll('input[name="nam_sx"]:checked')).map(cb => cb.value)[0] || '';
             const type = document.getElementById('filterType')?.value || 'all';
             const hangSelect = document.getElementById('quoteHangSelect');
             const hieuSelect = document.getElementById('quoteHieuSelect');
@@ -3863,7 +3889,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             closeAllQuoteDropdowns();
         });
         window.clearFilters = function() {
-            selectHang(''); selectNam(''); selectType('all');
+            selectHang(''); clearAllNam(); selectType('all');
             document.getElementById('searchInput').value = '';
             document.getElementById('exactPartName').value = '0';
             document.getElementById('btnExactPartName')?.classList.remove('active');
@@ -3889,7 +3915,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
         window.searchData = async function(options = {}) {
             const hang = document.getElementById('filterHang').value;
             const hieus = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value);
-            const nam = document.getElementById('filterNam').value;
+            const nams = Array.from(document.querySelectorAll('input[name="nam_sx"]:checked')).map(cb => cb.value);
             const type = document.getElementById('filterType').value;
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
             const exactPartName = document.getElementById('exactPartName')?.value === '1';
@@ -3900,9 +3926,16 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             let constraints = [];
             if (hang) constraints.push(where("hang_xe", "==", hang));
             if (hieus.length > 0) constraints.push(where("hieu_xe", "in", hieus.slice(0, 30)));
-            if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
+            
+            // Firestore only allows one 'in' clause. If hieus has 'in', we can't use 'in' for nams.
+            if (nams.length === 1) {
+                constraints.push(where("nam_sx", "==", parseInt(nams[0])));
+            } else if (nams.length > 1 && hieus.length === 0) {
+                constraints.push(where("nam_sx", "in", nams.map(n => parseInt(n)).slice(0, 30)));
+            }
             if (type === 'genuine') constraints.push(where("chinh_hang", "==", "Chính hãng"));
             if (type === 'aftermarket') constraints.push(where("chinh_hang", "==", "Thay thế"));
+
             const queryLimit = exactPartName && search ? 1500 : 500;
             constraints.push(limit(queryLimit));
             try {
@@ -3910,6 +3943,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                 MASTER_DATA = [];
                 snap.forEach(docSnap => {
                     const item = docSnap.data(); item.id = docSnap.id;
+                    if (nams.length > 0 && !nams.includes(String(item.nam_sx))) return;
                     item.chinh_hang = normalizePartTypeValue(item.chinh_hang);
                     const tenPhuTung = (item.ten_phu_tung || '').toLowerCase().trim();
                     if (type === 'genuine' && !isGenuinePartType(item.chinh_hang)) return;
@@ -4315,7 +4349,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             const quoteType = document.getElementById('quoteTypeSelect')?.value || '';
             const mainHang = document.getElementById('filterHang')?.value || '';
             const mainHieus = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value).filter(Boolean);
-            const mainNam = document.getElementById('filterNam')?.value || '';
+            const mainNam = Array.from(document.querySelectorAll('input[name="nam_sx"]:checked')).map(cb => cb.value)[0] || '';
             const mainType = document.getElementById('filterType')?.value || 'all';
             const hang = preferQuoteSelectors ? (quoteHang || mainHang) : quoteHang;
             const hieus = preferQuoteSelectors ? (quoteHieu ? [quoteHieu] : mainHieus) : (quoteHieu ? [quoteHieu] : []);
@@ -8797,7 +8831,10 @@ ${text}` });
                     cb.checked = true;
                     updateMultiHieuLabel();
                 }
-                if (nam) selectNam(nam);
+                if (nam) {
+                    const ncb = document.querySelector(`input[name="nam_sx"][value="${nam}"]`);
+                    if (ncb) { ncb.checked = true; onNamSXChange(); }
+                }
                 // Trigger search
                 searchData();
             }, 150);
