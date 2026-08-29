@@ -438,13 +438,23 @@
 </div>
 </div>
 
-<div class="control-panel" id="searchPanel">
-<div class="search-panel-head">
-<div>
-<div class="search-panel-title">Bộ lọc tra cứu phụ tùng</div>
-<div class="search-panel-desc">Thiết lập nhanh tiêu chí tra cứu theo hãng xe, dòng xe, năm sản xuất, loại hàng và tên phụ tùng. Khi cần đối chiếu chuyên sâu, bạn có thể bật khớp chính xác để so sánh đúng một phụ tùng qua nhiều hồ sơ.</div>
-</div>
+<div class="control-panel relative overflow-hidden" id="searchPanel" style="box-shadow: 0 32px 64px -24px rgba(37,99,235,0.12), 0 0 0 1px rgba(226,232,240,0.8) inset;">
+<!-- Premium subtle top gradient border -->
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 opacity-90"></div>
+<!-- Glowing orbs in corners for a glassy premium feel -->
+<div class="absolute -top-32 -right-32 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-32 -left-32 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
+<div class="search-panel-head relative z-10 border-slate-200/60 pb-5 mb-6">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-[0_2px_10px_-2px_rgba(37,99,235,0.2)] border border-blue-100 dark:border-blue-800/50">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+</div>
+<h2 class="text-[22px] font-black tracking-tight text-slate-800 dark:text-white">Bộ lọc tra cứu phụ tùng</h2>
+</div>
+<div class="text-[12.5px] text-slate-500 dark:text-slate-400 leading-relaxed max-w-4xl pl-12">Thiết lập nhanh tiêu chí tra cứu theo hãng xe, dòng xe, năm sản xuất, loại hàng và tên phụ tùng. Khi cần đối chiếu chuyên sâu, bạn có thể bật khớp chính xác để so sánh đúng một phụ tùng qua nhiều hồ sơ.</div>
+</div>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
 <div class="md:col-span-2 field-group">
