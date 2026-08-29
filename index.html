@@ -3254,7 +3254,12 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                         <input type="checkbox" id="selectAllHieu" onchange="toggleSelectAllHieu(this)" class="w-4 h-4 text-blue-600 rounded border-slate-300"> 
                         <span class="font-black text-blue-600 text-[13px] whitespace-nowrap">Chọn tất cả</span>
                     </label>
-                    <button type="button" onclick="clearAllHieu(event)" class="text-[10.5px] bg-slate-100 hover:bg-red-50 text-slate-500 hover:text-red-600 px-2.5 py-1 rounded-md transition-colors font-bold whitespace-nowrap ml-2">Xóa tất cả</button>
+                    <button type="button" onclick="clearAllHieu(event)" title="Xóa tất cả" class="btn-trash ml-2 w-7 h-7 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-lg transition-all duration-300">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path class="trash-lid" d="M4 7h16M10 7V4a1 1 0 011-1h2a1 1 0 011 1v3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                    </button>
                 `;
                 container.appendChild(allItem);
                 Object.keys(CAY_GIA_PHA[hang]).sort().forEach(hieu => {
@@ -3313,7 +3318,12 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                     <input type="checkbox" id="selectAllNam" onchange="toggleSelectAllNam(this)" class="w-4 h-4 text-blue-600 rounded border-slate-300"> 
                     <span class="font-black text-blue-600 text-[13px] whitespace-nowrap">Chọn tất cả</span>
                 </label>
-                <button type="button" onclick="clearAllNam(event)" class="text-[10.5px] bg-slate-100 hover:bg-red-50 text-slate-500 hover:text-red-600 px-2.5 py-1 rounded-md transition-colors font-bold whitespace-nowrap ml-2">Xóa tất cả</button>
+                <button type="button" onclick="clearAllNam(event)" title="Xóa tất cả" class="btn-trash ml-2 w-7 h-7 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-lg transition-all duration-300">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path class="trash-lid" d="M4 7h16M10 7V4a1 1 0 011-1h2a1 1 0 011 1v3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
             `;
             container.appendChild(allItem);
             list.sort((a, b) => b - a).forEach(n => {
