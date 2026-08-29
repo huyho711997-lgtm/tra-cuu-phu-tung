@@ -3985,7 +3985,8 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                     search: search,
                     hang: hang,
                     hieus: hieus,
-                    nam: nam,
+                    nam: nams[0] || '',
+                    nams: nams,
                     resultsCount: MASTER_DATA.length
                 });
                 if (!skipLog && currentUserProfile && currentUserProfile.uid) {
