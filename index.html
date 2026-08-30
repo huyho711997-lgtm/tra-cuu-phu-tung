@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="vi">
 <head>
@@ -1813,7 +1813,7 @@
             const requiredColumns = [
                 'id', 'so_hsbt', 'normalized_so_hsbt', 'claim_scope_key', 'ten_phu_tung',
                 'hang_xe', 'hieu_xe', 'nam_sx', 'chinh_hang', 'gia_duyet', 'ngay_bao_gia',
-                'ten_garage', 'tinh_thanh', 'loai_hinh',
+                'ten_garage', 'ten_gara_viet_tat', 'tinh_thanh', 'loai_hinh',
                 'is_vcx', 'is_tnds', 'insurance_scope_source', 'insurance_scope_updated_at',
                 'import_source', 'import_row_index', 'imported_by',
                 'duplicate_key', 'import_doc_id', 'is_duplicate_import', 'duplicate_of', 'raw',
@@ -6971,7 +6971,7 @@ ${text}` });
                 { l: "Loại hàng", v: typeBadge },
                 { l: "Đơn giá", v: new Intl.NumberFormat('vi-VN').format(item.gia_duyet || 0) + " VNĐ", c: "text-green-600 font-bold text-lg" },
                 { l: "Ngày báo giá", v: sanitize(item.ngay_bao_gia) },
-                { l: "Garage báo giá", v: sanitize(item.ten_garage) },
+                { l: "Garage báo giá", v: sanitize(item.ten_gara_viet_tat || item.ten_garage) },
                 { l: "Tỉnh thành / Loại hình", v: `${sanitize(getItemProvince(item) || 'N/A')} / ${sanitize(getItemBusinessType(item) || 'Gara')}` }
             ];
             content.innerHTML = fields.map(f => `
@@ -6992,7 +6992,7 @@ ${text}` });
             'chinh_hang', 'gia_duyet', 'ngay_bao_gia', 'ten_garage'
         ];
         const IMPORT_PREVIEW_LIMIT = 200;
-        const IMPORT_OPTIONAL_FIELDS = ['tinh_thanh', 'loai_hinh'];
+        const IMPORT_OPTIONAL_FIELDS = ['ten_gara_viet_tat', 'tinh_thanh', 'loai_hinh'];
         let IMPORT_SOURCE_FILE_NAME = '';
         let IMPORT_SOURCE_SHEET_NAME = '';
         let IMPORT_SOURCE_HEADER_ROW = 0;
@@ -7009,6 +7009,7 @@ ${text}` });
             gia_duyet: ['gia_duyet', 'giá duyệt', 'gia duyet', 'duyệt - tiền phụ tùng', 'duyet tien phu tung', 'duyệt tiền phụ tùng', 'trình - tiền phụ tùng', 'trinh tien phu tung', 'đơn giá garage', 'don gia garage', 'đơn giá', 'don gia', 'giá', 'gia'],
             ngay_bao_gia: ['ngay_bao_gia', 'ngày báo giá', 'ngay bao gia', 'ngày bg', 'ngay bg'],
             ten_garage: ['ten_garage', 'tên garage', 'ten garage', 'garage', 'gara', 'tên gara', 'ten gara', 'đơn vị báo giá', 'don vi bao gia'],
+            ten_gara_viet_tat: ['ten_gara_viet_tat', 'tên gara viết tắt', 'gara viết tắt', 'tên viết tắt gara', 'viết tắt gara', 'tên gara thường gọi', 'gara thường gọi'],
             tinh_thanh: ['tinh_thanh', 'tỉnh thành', 'tinh thanh', 'tỉnh/tp', 'tinh/tp', 'địa phương', 'dia phuong', 'tỉnh garage', 'tinh garage', 'tỉnh gara', 'tinh gara', 'tỉnh garage/gara', 'tinh garage/gara', 'tỉnh báo giá', 'tinh bao gia'],
             loai_hinh: ['loai_hinh', 'loại hình', 'loai hinh'],
             pham_vi_bao_hiem: ['pham_vi_bao_hiem', 'phạm vi bảo hiểm', 'pham vi bao hiem', 'loại hình bảo hiểm', 'loai hinh bao hiem', 'loại bảo hiểm', 'loai bao hiem', 'nhóm bảo hiểm', 'nhom bao hiem', 'vcx/tnds', 'vcx', 'tnds'],
@@ -7269,6 +7270,7 @@ ${text}` });
                 gia_duyet: parseMoney(readField(row, headerMap, 'gia_duyet')),
                 ngay_bao_gia: excelDateToDisplay(readField(row, headerMap, 'ngay_bao_gia')),
                 ten_garage: String(readField(row, headerMap, 'ten_garage') || '').trim(),
+                ten_gara_viet_tat: String(readField(row, headerMap, 'ten_gara_viet_tat') || '').trim(),
                 tinh_thanh: String(readField(row, headerMap, 'tinh_thanh') || '').trim(),
                 loai_hinh: String(readField(row, headerMap, 'loai_hinh') || '').trim(),
                 pham_vi_bao_hiem: explicitScope,
@@ -7538,7 +7540,7 @@ ${text}` });
         function getImportFieldLabel(field) {
             const labels = {
                 so_hsbt: 'Số HSBT', ten_phu_tung: 'Tên phụ tùng', hang_xe: 'Hãng xe', hieu_xe: 'Hiệu xe', nam_sx: 'Năm SX',
-                chinh_hang: 'Chính hãng', gia_duyet: 'Giá duyệt', ngay_bao_gia: 'Ngày báo giá', ten_garage: 'Tên Garage',
+                chinh_hang: 'Chính hãng', gia_duyet: 'Giá duyệt', ngay_bao_gia: 'Ngày báo giá', ten_garage: 'Tên Garage', ten_gara_viet_tat: 'Tên Gara (viết tắt)',
                 tinh_thanh: 'Tỉnh garage', loai_hinh: 'Loại hình'
             };
             return labels[field] || field;
@@ -8778,3 +8780,5 @@ ${text}` });
         });</script>
 </div></body>
 </html>
+
+
