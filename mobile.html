@@ -405,6 +405,11 @@
             </div>
 
             <form id="loginForm" class="space-y-6">
+                <div class="premium-input-group hidden" id="registerNameGroup">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Họ và tên</label>
+                    <input type="text" id="registerName" placeholder="Ví dụ: Nguyễn Văn A" class="premium-input">
+                    <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                </div>
                 <div class="premium-input-group">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Email / Tên đăng nhập</label>
                     <input type="text" id="loginEmail" required placeholder="ví dụ: user01" class="premium-input">
@@ -428,6 +433,10 @@
                     Đăng nhập hệ thống
                 </button>
                 <p id="loginError" class="text-red-500 text-[10px] font-bold text-center mt-4 hidden uppercase tracking-widest"></p>
+                <div class="text-center mt-4 text-[11px] font-bold text-slate-500">
+                    <span id="registerPromptText">Chưa có tài khoản?</span>
+                    <button type="button" class="text-blue-600 hover:text-blue-700 ml-1 uppercase tracking-wider font-black transition-colors" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký ngay</button>
+                </div>
             </form>
         </div>
     </div>
@@ -1542,6 +1551,31 @@
             currentUserProfile = null;
         }
 
+        
+        let isRegisterMode = false;
+        function toggleRegisterMode() {
+            isRegisterMode = !isRegisterMode;
+            const nameGroup = document.getElementById('registerNameGroup');
+            const nameInput = document.getElementById('registerName');
+            const loginBtn = document.getElementById('loginBtn');
+            const prompt = document.getElementById('registerPromptText');
+            const toggleBtn = document.getElementById('toggleRegisterBtn');
+
+            if (isRegisterMode) {
+                nameGroup.classList.remove('hidden');
+                nameInput.required = true;
+                loginBtn.innerText = "Đăng ký tài khoản";
+                prompt.innerText = "Đã có tài khoản?";
+                toggleBtn.innerText = "Đăng nhập";
+            } else {
+                nameGroup.classList.add('hidden');
+                nameInput.required = false;
+                loginBtn.innerText = "Đăng nhập hệ thống";
+                prompt.innerText = "Chưa có tài khoản?";
+                toggleBtn.innerText = "Đăng ký ngay";
+            }
+        }
+        
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             // Đưa toàn bộ về chữ thường để không bị lỗi phân biệt hoa/thường
@@ -1551,7 +1585,43 @@
             const err = document.getElementById('loginError');
             const btn = document.getElementById('loginBtn');
             
+            
+            if (isRegisterMode) {
+                const fullName = document.getElementById('registerName').value.trim();
+                btn.disabled = true; btn.innerText = "ĐANG ĐĂNG KÝ...";
+                err.classList.add('hidden');
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    const newUser = userCredential.user;
+                    await updateProfile(newUser, { displayName: fullName });
+                    await setDoc(doc(db, "user_profiles", newUser.uid), {
+                        email: email,
+                        fullName: fullName,
+                        role: 'user', // default role
+                        status: 'active',
+                        loginCount: 0,
+                        searchCount: 0,
+                        createdAt: serverTimestamp(),
+                        lastLogin: null
+                    });
+                    // onAuthStateChanged will handle the login transition automatically
+                    return;
+                } catch (error) {
+                    let msg = "LỖI ĐĂNG KÝ: " + error.message;
+                    if (error.message.includes('User already registered') || error.message.includes('already_registered')) {
+                        msg = "EMAIL ĐÃ ĐƯỢC ĐĂNG KÝ!";
+                    } else if (error.message.includes('Password should be at least 6 characters') || error.message.includes('weak_password')) {
+                        msg = "MẬT KHẨU TỐI THIỂU 6 KÝ TỰ!";
+                    }
+                    err.innerText = msg;
+                    err.classList.remove('hidden');
+                    btn.disabled = false; btn.innerText = "ĐĂNG KÝ TÀI KHOẢN";
+                    return;
+                }
+            }
+
             btn.disabled = true; btn.innerText = "ĐANG XÁC THỰC...";
+
             err.classList.add('hidden');
             
             try {
