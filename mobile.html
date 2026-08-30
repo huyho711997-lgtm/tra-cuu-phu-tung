@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1407,6 +1407,26 @@
             updatePaginationUI(0);
         }
 
+        // Helper để sắp xếp ngày tháng
+        function parseDateForSort(value) {
+            if (!value) return 0;
+            if (value && typeof value === 'object' && typeof value.seconds === 'number') {
+                return value.seconds * 1000;
+            }
+            if (typeof value === 'number') {
+                if (value > 20000 && value < 80000) return Math.round((value - 25569) * 86400 * 1000);
+                return value;
+            }
+            const raw = String(value).trim();
+            const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+            if (isoMatch) return new Date(`${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}T00:00:00Z`).getTime();
+            const vnSlashMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if (vnSlashMatch) return new Date(`${vnSlashMatch[3]}-${vnSlashMatch[2].padStart(2, '0')}-${vnSlashMatch[1].padStart(2, '0')}T00:00:00Z`).getTime();
+            const vnDashMatch = raw.match(/^(\d{1,2})-(\d{1,2})-(\d{4})/);
+            if (vnDashMatch) return new Date(`${vnDashMatch[3]}-${vnDashMatch[2].padStart(2, '0')}-${vnDashMatch[1].padStart(2, '0')}T00:00:00Z`).getTime();
+            return new Date(raw).getTime() || 0;
+        }
+
         window.searchData = async function() {
             const hang = document.getElementById('filterHang').value;
             const hieus = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value);
@@ -1436,6 +1456,10 @@
                         MASTER_DATA.push(item);
                     }
                 });
+                
+                // Sort array newest first (largest unix timestamp first)
+                MASTER_DATA.sort((a, b) => parseDateForSort(b.ngay_bao_gia) - parseDateForSort(a.ngay_bao_gia));
+
                 document.getElementById('statCount').innerText = MASTER_DATA.length + " kết quả";
                 CURRENT_PAGE = 1;
                 renderTable();
