@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="vi">
 <head>
@@ -515,7 +515,7 @@
 <div class="z-[99999] hidden bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 w-56 p-2" id="dropdownType">
 <div class="dropdown-item active border-b border-slate-100 mb-1 pb-2 font-black text-blue-600" onclick="selectType('all')">Tất cả loại hàng</div>
 <div class="dropdown-item" onclick="selectType('genuine')">Chính hãng</div>
-<div class="dropdown-item" onclick="selectType('aftermarket')">Thay thế / Ngoài</div>
+<div class="dropdown-item" onclick="selectType('aftermarket')">Hàng ngoài</div>
 </div>
 <input id="filterType" type="hidden" value="all"/>
 </div>
@@ -3267,7 +3267,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
         };
         window.selectType = function(val) {
             document.getElementById('filterType').value = val;
-            const labels = { 'all': 'Tất cả loại hàng', 'genuine': 'Chính hãng', 'aftermarket': 'Thay thế / Ngoài' };
+            const labels = { 'all': 'Tất cả loại hàng', 'genuine': 'Chính hãng', 'aftermarket': 'Hàng ngoài' };
             document.getElementById('labelType').innerText = labels[val];
             document.querySelectorAll('#dropdownType .dropdown-item').forEach(el => {
                 el.classList.toggle('active', el.innerText === labels[val]);
@@ -3730,7 +3730,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                 input.focus();
             }
         };
-        const QUOTE_TYPE_LABELS = { all: 'Tất cả loại hàng', genuine: 'Chính hãng', aftermarket: 'Thay thế / Ngoài' };
+        const QUOTE_TYPE_LABELS = { all: 'Tất cả loại hàng', genuine: 'Chính hãng', aftermarket: 'Hàng ngoài' };
         function closeAllQuoteDropdowns(exceptType = '') {
             ['Hang', 'Hieu', 'Nam', 'Type'].forEach(type => {
                 if (type === exceptType) return;
@@ -3762,7 +3762,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             const current = document.getElementById('quoteTypeSelect')?.value || 'all';
             box.innerHTML = ['all', 'genuine', 'aftermarket'].map(value => {
                 const active = value === current ? ' active' : '';
-                const note = value === 'genuine' ? 'Ưu tiên phụ tùng chính hãng' : value === 'aftermarket' ? 'Nhóm thay thế / ngoài hãng' : 'Không giới hạn loại hàng';
+                const note = value === 'genuine' ? 'Ưu tiên phụ tùng chính hãng' : value === 'aftermarket' ? 'Nhóm Hàng ngoài hãng' : 'Không giới hạn loại hàng';
                 return `<button type="button" class="dropdown-item${active}" onclick="selectQuoteType('${value}')"><span>${QUOTE_TYPE_LABELS[value]}</span><small>${note}</small></button>`;
             }).join('');
             updateQuoteTypeButtonLabel();
@@ -4467,7 +4467,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             const raw = String(value || '').trim();
             const normalizedType = normalizePartTypeValue(raw, '');
             if (normalizedType === 'Chính hãng') return 'Chính hãng';
-            if (normalizedType === 'Thay thế') return 'Thay thế / Ngoài';
+            if (normalizedType === 'Thay thế') return 'Hàng ngoài';
             return raw || 'Không rõ';
         }
         function quoteTypeOrder(type) {
@@ -7047,7 +7047,7 @@ ${text}` });
         }
         function buildPartTypeBadge(value, sizeClass = '') {
             const type = normalizePartTypeValue(value);
-            const label = type === 'Chính hãng' ? 'Chính hãng' : 'Thay thế';
+            const label = type === 'Chính hãng' ? 'Chính hãng' : 'Hàng ngoài';
             const badgeClass = type === 'Chính hãng' ? 'badge-genuine' : 'badge-aftermarket';
             return `<span class="badge-pro ${badgeClass} ${sizeClass}">${label}</span>`;
         }
