@@ -1174,6 +1174,9 @@
                     updated_at: new Date().toISOString()
                 };
             }
+            if (config && config.pk) {
+                payload[config.pk] = refId;
+            }
             if (collectionName === 'user_logs' && !payload.user_id && auth.currentUser) {
                 payload.user_id = auth.currentUser.uid;
             }
