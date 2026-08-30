@@ -1008,6 +1008,9 @@
         async function createUserWithEmailAndPassword(authRef, email, password) {
             const { data, error } = await authRef._client.auth.signUp({ email, password });
             if (error) throw normalizeAuthError(error, 'Không tạo được tài khoản Supabase');
+            if (!data.session && data.user) {
+                throw new Error('Bạn chưa tắt "Confirm email" trên Supabase. Vui lòng vào Supabase Dashboard -> Authentication -> Providers -> Email và TẮT "Confirm email" để tính năng đăng ký hoạt động.');
+            }
             authRef._setCurrentUser(data?.user || null);
             if (!authRef.currentUser?.uid) throw normalizeAuthError(null, 'Supabase đã nhận yêu cầu tạo tài khoản nhưng chưa trả về User ID. Hãy kiểm tra cấu hình xác nhận email trong Authentication.');
             return { user: authRef.currentUser };
