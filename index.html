@@ -2058,7 +2058,9 @@
         }
         async function addDoc(colRef, data = {}) {
             const ref = doc(colRef);
-            await setDoc(ref, data, { merge: false });
+            const payload = toDbPayload(ref.collectionName, data, ref.id);
+            const { error } = await supabase.from(ref.table).insert(payload);
+            if (error) throw new Error(error.message);
             return ref;
         }
         function writeBatch() {
