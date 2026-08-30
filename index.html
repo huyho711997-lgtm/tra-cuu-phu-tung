@@ -4152,19 +4152,39 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             if (warningIcon) warningIcon.className = `analysis-warning-icon ${statusClass}`;
             box.classList.remove('hidden');
         }
+        let SEARCH_PRICE_STATS = null;
         function getPriceSignalBadge(item) {
-            if (!PRICE_ANALYSIS || PRICE_ANALYSIS.sampleCount < 2) return '';
+            const searchInput = document.getElementById('searchInput');
+            if (!(searchInput?.value || '').trim()) return '';
+
+            if (!SEARCH_PRICE_STATS) {
+                const prices = MASTER_DATA.map(i => parsePriceValue(i.gia_duyet)).filter(p => p > 0);
+                if (prices.length >= 3) {
+                    const sorted = [...prices].sort((a,b)=>a-b);
+                    SEARCH_PRICE_STATS = {
+                        q1: sorted[Math.floor(sorted.length * 0.33)],
+                        q3: sorted[Math.floor(sorted.length * 0.66)]
+                    };
+                } else {
+                    SEARCH_PRICE_STATS = { none: true };
+                }
+            }
+            if (SEARCH_PRICE_STATS.none) return '';
+            
             const price = parsePriceValue(item.gia_duyet);
             if (!price) return '';
-            const median = PRICE_ANALYSIS.median || 0;
-            const diffPercent = median > 0 ? Math.round(((price - median) / median) * 100) : 0;
-            if (price > PRICE_ANALYSIS.highThreshold) return `<span class="price-signal-badge price-signal-high">Cao bất thường +${Math.abs(diffPercent)}%</span>`;
-            if (price < PRICE_ANALYSIS.lowThreshold && PRICE_ANALYSIS.sampleCount >= 3) return `<span class="price-signal-badge price-signal-low">Thấp bất thường ${diffPercent}%</span>`;
-            if (price > PRICE_ANALYSIS.suggestedHigh) return `<span class="price-signal-badge price-signal-watch">Cao hơn tham chiếu</span>`;
-            if (price < PRICE_ANALYSIS.suggestedLow) return `<span class="price-signal-badge price-signal-low">Thấp hơn tham chiếu</span>`;
-            return `<span class="price-signal-badge price-signal-ok">Trong khoảng đề xuất</span>`;
+
+            const { q1, q3 } = SEARCH_PRICE_STATS;
+            if (price <= q1) {
+                return `<div class="mt-1" title="Mức giá thấp trong kết quả tìm kiếm"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg> Thấp</span></div>`;
+            } else if (price >= q3) {
+                return `<div class="mt-1" title="Mức giá cao trong kết quả tìm kiếm"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> Cao</span></div>`;
+            } else {
+                return `<div class="mt-1" title="Mức giá trung bình trong kết quả tìm kiếm"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12h16"></path></svg> Trung bình</span></div>`;
+            }
         }
         function updatePriceSummary() {
+            SEARCH_PRICE_STATS = null;
             const box = document.getElementById('priceSummaryBox');
             const minEl = document.getElementById('priceMinValue');
             const avgEl = document.getElementById('priceAvgValue');
