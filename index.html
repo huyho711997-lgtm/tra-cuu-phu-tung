@@ -1844,6 +1844,9 @@
                     updated_at: new Date().toISOString()
                 };
             }
+            if (collectionName === 'user_logs' && !payload.user_id && auth.currentUser) {
+                payload.user_id = auth.currentUser.uid;
+            }
             if (collectionName === 'user_profiles') {
                 payload.id = refId;
                 if ('email' in data) {
