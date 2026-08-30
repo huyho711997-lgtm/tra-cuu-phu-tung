@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="vi">
 <head>
@@ -4266,7 +4266,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                 const safeHSBT = sanitize(item.so_hsbt || 'N/A');
                 const safeHang = sanitize(item.hang_xe);
                 const safeHieu = sanitize(item.hieu_xe);
-                const safeGarage = sanitize(item.ten_garage || 'KHÁC');
+                const safeGarage = sanitize(item.ten_gara_viet_tat || item.ten_garage || 'KHÁC');
                 const safeTinh = sanitize(getItemProvince(item) || 'Toàn quốc');
                 const safeNgay = sanitize(ngay);
                 const safeItemIdForJs = String(item.id || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
