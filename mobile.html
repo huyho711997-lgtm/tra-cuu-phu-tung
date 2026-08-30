@@ -1557,7 +1557,7 @@
 
         
         let isRegisterMode = false;
-        function toggleRegisterMode() {
+        window.toggleRegisterMode = function() {
             isRegisterMode = !isRegisterMode;
             const nameGroup = document.getElementById('registerNameGroup');
             const nameInput = document.getElementById('registerName');
