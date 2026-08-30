@@ -1442,13 +1442,17 @@
                     }
                     
                     if (
-                        profile.status === 'locked' &&
+                        (profile.status === 'locked' || profile.status === 'pending') &&
                         user.email.toLowerCase().trim() !== MGR_EMAIL.toLowerCase().trim()
                     ) {
                         await signOut(auth);
                         hideApp();
                         const err = document.getElementById('loginError');
-                        err.innerText = "TÀI KHOẢN NÀY ĐÃ BỊ KHÓA! VUI LÒNG LIÊN HỆ QUẢN TRỊ VIÊN.";
+                        if (profile.status === 'locked') {
+                            err.innerText = "TÀI KHOẢN NÀY ĐÃ BỊ KHÓA! VUI LÒNG LIÊN HỆ QUẢN TRỊ VIÊN.";
+                        } else {
+                            err.innerText = "TÀI KHOẢN ĐANG CHỜ PHÊ DUYỆT TỪ QUẢN TRỊ VIÊN.";
+                        }
                         err.classList.remove('hidden');
                         return;
                     }
@@ -1598,7 +1602,7 @@
                         email: email,
                         fullName: fullName,
                         role: 'user', // default role
-                        status: 'active',
+                        status: 'pending',
                         loginCount: 0,
                         searchCount: 0,
                         createdAt: serverTimestamp(),
