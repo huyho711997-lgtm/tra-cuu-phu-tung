@@ -1428,6 +1428,7 @@
 
                 let lastLoggedUid = null;
         onAuthStateChanged(auth, async (user) => {
+            if (window.IS_REGISTERING) return;
             if (user) {
                 try {
                     let profileSnap = null;
@@ -1591,6 +1592,7 @@
             
             
             if (isRegisterMode) {
+                window.IS_REGISTERING = true;
                 const fullName = document.getElementById('registerName').value.trim();
                 btn.disabled = true; btn.innerText = "ĐANG ĐĂNG KÝ...";
                 err.classList.add('hidden');
@@ -1608,9 +1610,19 @@
                         createdAt: serverTimestamp(),
                         lastLogin: null
                     });
-                    // onAuthStateChanged will handle the login transition automatically
+                    
+                    window.IS_REGISTERING = false;
+                    await signOut(auth); // Sign out immediately so they can't enter
+                    
+                    err.innerText = "ĐĂNG KÝ THÀNH CÔNG! VUI LÒNG CHỜ QUẢN TRỊ VIÊN PHÊ DUYỆT.";
+                    err.classList.remove('hidden');
+                    err.classList.remove('text-red-500');
+                    err.classList.add('text-emerald-500');
+                    btn.disabled = false; btn.innerText = "ĐĂNG KÝ TÀI KHOẢN";
+                    
                     return;
                 } catch (error) {
+                    window.IS_REGISTERING = false;
                     let msg = "LỖI ĐĂNG KÝ: " + error.message;
                     if (error.message.includes('User already registered') || error.message.includes('already_registered')) {
                         msg = "EMAIL ĐÃ ĐƯỢC ĐĂNG KÝ!";
