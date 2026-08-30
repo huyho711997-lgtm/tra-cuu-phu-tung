@@ -1039,6 +1039,33 @@
                     action: "Đăng nhập",
                     timestamp: serverTimestamp()
                 });
+                
+                // ĐỒNG BỘ LÊN SUPABASE
+                try {
+                    const S_URL = "https://yxwmcpoklxpzlikxojez.supabase.co/rest/v1";
+                    const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4d21jcG9rbHhwemxpa3hvamV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njk0MDEsImV4cCI6MjA5NjE0NTQwMX0.dmyjtDDo_KTlUFyxQgoCGqEt5Bsq2krEEYg2BCyXeFc";
+                    const headers = { "apikey": S_KEY, "Authorization": "Bearer " + S_KEY, "Content-Type": "application/json" };
+                    
+                    await fetch(`${S_URL}/user_logs`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({ email: email, action: "Đăng nhập", created_at: new Date().toISOString() })
+                    });
+                    
+                    const profileRes = await fetch(`${S_URL}/user_profiles?email=eq.${encodeURIComponent(email)}&select=id,login_count`, { headers });
+                    if (profileRes.ok) {
+                        const profiles = await profileRes.json();
+                        if (profiles && profiles.length > 0) {
+                            const prof = profiles[0];
+                            const nextCount = Number(prof.login_count || 0) + 1;
+                            await fetch(`${S_URL}/user_profiles?id=eq.${prof.id}`, {
+                                method: 'PATCH',
+                                headers: { ...headers, "Prefer": "return=minimal" },
+                                body: JSON.stringify({ login_count: nextCount, last_login: new Date().toISOString(), updated_at: new Date().toISOString() })
+                            });
+                        }
+                    }
+                } catch(e) { console.warn("Lỗi đồng bộ login lên Supabase:", e); }
 
                 const userData = { id: userDoc.id, email, role: 'user', fullName: uData.fullName || email };
                 localStorage.setItem('subUserSession', JSON.stringify(userData));
@@ -1491,6 +1518,47 @@
                             details: `Từ khóa: "${search || 'Trống'}" - Hãng: ${hang || 'Tất cả'}, Dòng: ${hieus.length ? hieus.length + ' dòng' : 'Tất cả'}`,
                             timestamp: serverTimestamp()
                         });
+                        
+                        // ĐỒNG BỘ LÊN SUPABASE (Admin Dashboard dùng Supabase)
+                        try {
+                            const S_URL = "https://yxwmcpoklxpzlikxojez.supabase.co/rest/v1";
+                            const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4d21jcG9rbHhwemxpa3hvamV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njk0MDEsImV4cCI6MjA5NjE0NTQwMX0.dmyjtDDo_KTlUFyxQgoCGqEt5Bsq2krEEYg2BCyXeFc";
+                            const headers = { "apikey": S_KEY, "Authorization": "Bearer " + S_KEY, "Content-Type": "application/json" };
+                            
+                            // Ghi user_logs
+                            await fetch(`${S_URL}/user_logs`, {
+                                method: 'POST',
+                                headers,
+                                body: JSON.stringify({
+                                    search_keyword: search || '',
+                                    result_count: MASTER_DATA ? MASTER_DATA.length : 0,
+                                    exact_part_name: false,
+                                    hang_xe: hang || '',
+                                    hieu_xe_count: hieus ? hieus.length : 0,
+                                    exact_source_hsbt: '',
+                                    exact_source_doc_id: '',
+                                    email: currentUserProfile.email,
+                                    action: "Tra cứu",
+                                    details: `Từ khóa: "${search || 'Trống'}" - Hãng: ${hang || 'Tất cả'}, Dòng: ${hieus.length ? hieus.length + ' dòng' : 'Tất cả'}`,
+                                    created_at: new Date().toISOString()
+                                })
+                            });
+                            
+                            // Tăng search_count trên user_profiles
+                            const profileRes = await fetch(`${S_URL}/user_profiles?email=eq.${encodeURIComponent(currentUserProfile.email)}&select=id,search_count`, { headers });
+                            if (profileRes.ok) {
+                                const profiles = await profileRes.json();
+                                if (profiles && profiles.length > 0) {
+                                    const prof = profiles[0];
+                                    const nextCount = Number(prof.search_count || 0) + 1;
+                                    await fetch(`${S_URL}/user_profiles?id=eq.${prof.id}`, {
+                                        method: 'PATCH',
+                                        headers: { ...headers, "Prefer": "return=minimal" },
+                                        body: JSON.stringify({ search_count: nextCount, updated_at: new Date().toISOString() })
+                                    });
+                                }
+                            }
+                        } catch(e) { console.warn("Lỗi đồng bộ log lên Supabase:", e); }
                     }
                 }
                 
