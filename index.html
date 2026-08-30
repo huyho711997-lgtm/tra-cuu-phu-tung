@@ -3954,7 +3954,7 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                 constraints.push(where("nam_sx", "in", nams.map(n => parseInt(n)).slice(0, 30)));
             }
             if (type === 'genuine') constraints.push(where("chinh_hang", "==", "Chính hãng"));
-            if (type === 'aftermarket') constraints.push(where("chinh_hang", "==", "Thay thế"));
+            // if (type === 'aftermarket') constraints.push(where("chinh_hang", "==", "Thay thế")); // Bỏ filter DB vì giá trị aftermarket có thể là Thay thế hoặc Hàng ngoài
 
             const queryLimit = exactPartName && search ? 1500 : 500;
             constraints.push(limit(queryLimit));
@@ -6678,7 +6678,7 @@ ${text}` });
             constraints.push(where('hieu_xe', 'in', criteria.hieus.slice(0, 30)));
             constraints.push(where('nam_sx', '==', parseInt(criteria.nam)));
             if (criteria.type === 'genuine') constraints.push(where('chinh_hang', '==', 'Chính hãng'));
-            if (criteria.type === 'aftermarket') constraints.push(where('chinh_hang', '==', 'Thay thế'));
+            // if (criteria.type === 'aftermarket') constraints.push(where('chinh_hang', '==', 'Thay thế'));
             constraints.push(limit(2000));
             const snap = await getDocs(query(collection(db, 'LichSuBaoGia'), ...constraints));
             const data = [];
