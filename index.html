@@ -3238,7 +3238,12 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             fillNamSXDropdown(NAM_ALL);
         };
         window.toggleSelectAllHieu = function(btn) {
-            document.querySelectorAll('input[name="hieu_xe"]').forEach(cb => cb.checked = btn.checked);
+            document.querySelectorAll('input[name="hieu_xe"]').forEach(cb => {
+                const parent = cb.closest('.dropdown-item');
+                if (!parent || parent.style.display !== 'none') {
+                    cb.checked = btn.checked;
+                }
+            });
             onHieuXeChange();
         };
         window.clearAllHieu = function(e) {
@@ -3252,7 +3257,13 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             const checkboxes = document.querySelectorAll('input[name="hieu_xe"]');
             const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
             const selectAllBtn = document.getElementById('selectAllHieu');
-            if (selectAllBtn) selectAllBtn.checked = selected.length === checkboxes.length && checkboxes.length > 0;
+            if (selectAllBtn) {
+                const visibleCheckboxes = Array.from(checkboxes).filter(cb => {
+                    const p = cb.closest('.dropdown-item');
+                    return !p || p.style.display !== 'none';
+                });
+                selectAllBtn.checked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+            }
             document.getElementById('labelHieu').innerText = selected.length > 0 ? selected.length + ' dòng xe đã chọn' : 'Tất cả dòng xe';
             updateNamSXDropdown();
         };
@@ -3300,7 +3311,12 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             });
         }
         window.toggleSelectAllNam = function(btn) {
-            document.querySelectorAll('input[name="nam_sx"]').forEach(cb => cb.checked = btn.checked);
+            document.querySelectorAll('input[name="nam_sx"]').forEach(cb => {
+                const parent = cb.closest('.dropdown-item');
+                if (!parent || parent.style.display !== 'none') {
+                    cb.checked = btn.checked;
+                }
+            });
             onNamSXChange();
         };
         window.clearAllNam = function(e) {
@@ -3314,7 +3330,13 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
             const checkboxes = document.querySelectorAll('input[name="nam_sx"]');
             const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
             const selectAllBtn = document.getElementById('selectAllNam');
-            if (selectAllBtn) selectAllBtn.checked = selected.length === checkboxes.length && checkboxes.length > 0;
+            if (selectAllBtn) {
+                const visibleCheckboxes = Array.from(checkboxes).filter(cb => {
+                    const p = cb.closest('.dropdown-item');
+                    return !p || p.style.display !== 'none';
+                });
+                selectAllBtn.checked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+            }
             document.getElementById('labelNam').innerText = selected.length > 0 ? selected.length + ' năm đã chọn' : 'Tất cả năm';
         };
         function setSelectOptions(select, options, placeholder, selectedValue = '') {
@@ -3685,6 +3707,8 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
                 ? document.querySelectorAll('#hieuXeCheckboxes .dropdown-item')
                 : document.querySelectorAll('#list' + type + ' .dropdown-item');
             items.forEach(item => { item.style.display = item.innerText.toLowerCase().includes(input) ? 'flex' : 'none'; });
+            if (type === 'Hieu' && window.onHieuXeChange) onHieuXeChange();
+            if (type === 'Nam' && window.onNamSXChange) onNamSXChange();
         };
         window.toggleExactPartName = function() {
             const input = document.getElementById('exactPartName');
