@@ -4179,7 +4179,9 @@ Năm SX: ${nextMeta.nam_sx_all?.length || 0}`, 'success');
         let SEARCH_PRICE_STATS = null;
         function getPriceSignalBadge(item) {
             const searchInput = document.getElementById('searchInput');
+            const exactInput = document.getElementById('exactPartName');
             if (!(searchInput?.value || '').trim()) return '';
+            if (!exactInput || exactInput.value !== '1') return '';
 
             if (!SEARCH_PRICE_STATS) {
                 const prices = MASTER_DATA.map(i => parsePriceValue(i.gia_duyet)).filter(p => p > 0);

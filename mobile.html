@@ -1572,8 +1572,7 @@
 
         let SEARCH_PRICE_STATS = null;
         function getPriceSignalBadge(item) {
-            const searchInput = document.getElementById('searchInput');
-            if (!(searchInput?.value || '').trim()) return '';
+            return ''; // Báo giá cao thấp chỉ hoạt động khi dùng tính năng Lọc đúng tên (Desktop)
 
             if (!SEARCH_PRICE_STATS) {
                 const prices = MASTER_DATA.map(i => {
