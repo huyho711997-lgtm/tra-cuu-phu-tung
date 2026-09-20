@@ -596,8 +596,8 @@
                 <button onclick="clearFilters()" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full">Xóa bộ lọc</button>
             </div>
             
-            <div class="grid grid-cols-4 gap-3">
-                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnHang" data-dropdown-toggle="dropdownHang">
+                        <div class="grid grid-cols-4 gap-3">
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnHang" onclick="openFilterModal('hang')">
                     <div class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-active:scale-95 transition-transform">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     </div>
@@ -606,7 +606,7 @@
                         <div class="text-[9px] font-medium text-zinc-500 w-16 truncate" id="labelHang">Tất cả</div>
                     </div>
                 </div>
-                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="multiHieuBtn" data-dropdown-toggle="dropdownHieu">
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="multiHieuBtn" onclick="openFilterModal('hieu')">
                     <div class="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-active:scale-95 transition-transform">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                     </div>
@@ -615,7 +615,7 @@
                         <div class="text-[9px] font-medium text-zinc-500 w-16 truncate" id="labelHieu">Tất cả</div>
                     </div>
                 </div>
-                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnNam" data-dropdown-toggle="dropdownNam">
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnNam" onclick="openFilterModal('nam')">
                     <div class="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400 group-active:scale-95 transition-transform">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </div>
@@ -624,7 +624,7 @@
                         <div class="text-[9px] font-medium text-zinc-500 w-16 truncate" id="labelNam">Tất cả</div>
                     </div>
                 </div>
-                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnType" data-dropdown-toggle="dropdownType">
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnType" onclick="openFilterModal('type')">
                     <div class="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 group-active:scale-95 transition-transform">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     </div>
@@ -634,31 +634,12 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Hidden Dropdowns -->
-            <div id="dropdownHang" class="z-50 hidden bg-white rounded-xl shadow-xl border border-zinc-100 w-64 p-2">
-                <input type="text" id="searchHang" oninput="filterDropdown('Hang')" placeholder="Tìm hãng xe..." class="search-inner">
-                <div id="listHang" class="max-h-60 overflow-y-auto space-y-0.5"></div>
-            </div>
-            <input type="hidden" id="filterHang" value="">
-            <div id="dropdownHieu" class="z-50 hidden bg-white rounded-xl shadow-xl border border-zinc-100 w-72 p-2">
-                <input type="text" id="searchHieu" oninput="filterDropdown('Hieu')" placeholder="Tìm dòng xe..." class="search-inner">
-                <div id="hieuXeCheckboxes" class="max-h-60 overflow-y-auto space-y-0.5">
-                    <p class="text-[11px] text-zinc-400 italic p-3">Chọn hãng xe trước</p>
-                </div>
-            </div>
-            <div id="dropdownNam" class="z-50 hidden bg-white rounded-xl shadow-xl border border-zinc-100 w-40 p-2">
-                <input type="text" id="searchNam" oninput="filterDropdown('Nam')" placeholder="Tìm năm..." class="search-inner">
-                <div id="listNam" class="max-h-60 overflow-y-auto space-y-0.5"></div>
-            </div>
-            <input type="hidden" id="filterNam" value="">
-            <div id="dropdownType" class="z-50 hidden bg-white dark:bg-zinc-900 rounded-xl shadow-xl border border-zinc-100 dark:border-zinc-800 w-56 p-2">
-                <div class="dropdown-item active border-b border-zinc-100 dark:border-zinc-800 mb-1 pb-2 font-black text-indigo-600" onclick="selectType('all')">Tất cả loại hàng</div>
-                <div class="dropdown-item" onclick="selectType('genuine')">Chính hãng</div>
-                <div class="dropdown-item" onclick="selectType('aftermarket')">Hàng ngoài</div>
-            </div>
-            <input type="hidden" id="filterType" value="all">
         </div>
+
+        <!-- End Control Panel -->
+        <input type="hidden" id="filterHang" value="">
+        <input type="hidden" id="filterNam" value="">
+        <input type="hidden" id="filterType" value="all">
 
         <div class="px-4 mb-32">
             <div class="flex items-center justify-between mb-4">
@@ -695,6 +676,39 @@
             </div>
         </div>
     </div>
+
+    
+    <!-- BOTTOM SHEET FILTER MODAL -->
+    <div id="modalFilterSelection" class="fixed inset-0 z-[100] hidden flex-col justify-end" style="display: none;">
+        <div class="absolute inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity" onclick="closeFilterModal()"></div>
+        <div class="bg-white dark:bg-zinc-900 w-full rounded-t-3xl max-h-[85vh] flex flex-col relative z-10 animate-[slideUp_0.3s_ease-out]">
+            <div class="w-12 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full mx-auto mt-3 mb-2"></div>
+            <div class="px-6 py-2 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center shrink-0">
+                <h3 class="text-[17px] font-black text-zinc-900 dark:text-white" id="filterModalTitle">Chọn</h3>
+                <button onclick="closeFilterModal()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-4 border-b border-zinc-100 dark:border-zinc-800 shrink-0" id="filterModalSearchContainer">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    <input type="text" id="filterModalSearch" oninput="handleFilterModalSearch()" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-[14px] py-3 pl-10 pr-4 text-[13px] font-bold text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Tìm kiếm...">
+                </div>
+            </div>
+            <div class="overflow-y-auto p-4 pb-12 flex-1" id="filterModalList">
+                <!-- Items injected via JS -->
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
 
     <div id="modalVerify" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
@@ -1883,167 +1897,182 @@
             } catch (e) { console.error(e); }
         }
 
-        function renderHangList() {
-            const list = document.getElementById('listHang');
-            const sortedHang = Object.keys(CAY_GIA_PHA).sort();
-            list.innerHTML = '<div class="dropdown-item active border-b border-zinc-100 dark:border-zinc-800 mb-1 pb-2 font-black text-indigo-600" onclick="selectHang(\'\')">Tất cả hãng</div>';
-            sortedHang.forEach(hang => {
-                list.innerHTML += `<div class="dropdown-item" onclick="selectHang('${hang}')">${hang}</div>`;
-            });
-        }
+        
+        // --- NEW FILTER MODAL LOGIC ---
+        let currentFilterType = '';
+        let selectedHieuList = []; // For multi-select dòng xe
 
-        window.selectHang = function(hang) {
-            document.getElementById('filterHang').value = hang;
-            document.getElementById('labelHang').innerText = hang || 'Tất cả hãng';
-            document.querySelectorAll('#listHang .dropdown-item').forEach(el => {
-                el.classList.toggle('active', el.innerText === (hang || 'Tất cả hãng'));
-            });
-            updateHieuXeDropdown();
-        }
-
-        window.updateHieuXeDropdown = function() {
-            const hang = document.getElementById('filterHang').value;
-            const container = document.getElementById('hieuXeCheckboxes');
-            const label = document.getElementById('labelHieu');
-            container.innerHTML = '';
-            label.innerText = 'Tất cả dòng xe';
+        function openFilterModal(type) {
+            currentFilterType = type;
+            const modal = document.getElementById('modalFilterSelection');
+            const title = document.getElementById('filterModalTitle');
+            const list = document.getElementById('filterModalList');
+            const searchInput = document.getElementById('filterModalSearch');
+            const searchContainer = document.getElementById('filterModalSearchContainer');
             
-            if (hang && CAY_GIA_PHA[hang]) {
-                const allItem = document.createElement('label');
-                allItem.className = 'dropdown-item border-b border-zinc-100 dark:border-zinc-800 mb-1 pb-2';
-                allItem.innerHTML = `<input type="checkbox" id="selectAllHieu" onchange="toggleSelectAllHieu(this)" class="w-4 h-4 text-indigo-600 rounded border-zinc-300"> <span class="font-black text-indigo-600">Chọn tất cả</span>`;
-                container.appendChild(allItem);
-                Object.keys(CAY_GIA_PHA[hang]).sort().forEach(hieu => {
-                    const item = document.createElement('label');
-                    item.className = 'dropdown-item';
-                    item.innerHTML = `<input type="checkbox" name="hieu_xe" value="${hieu}" onchange="onHieuXeChange()" class="w-4 h-4 text-indigo-600 rounded border-zinc-300"> <span>${hieu}</span>`;
-                    container.appendChild(item);
-                });
-            } else { container.innerHTML = '<p class="text-[11px] text-zinc-400 italic p-3">Chọn hãng xe trước</p>'; }
-            fillNamSXDropdown(NAM_ALL);
-        }
-
-        window.toggleSelectAllHieu = function(btn) {
-            document.querySelectorAll('input[name="hieu_xe"]').forEach(cb => {
-                const parent = cb.closest('.dropdown-item');
-                if (!parent || parent.style.display !== 'none') {
-                    cb.checked = btn.checked;
+            modal.style.display = 'flex';
+            modal.classList.remove('hidden');
+            searchInput.value = '';
+            
+            if (type === 'hang') {
+                title.innerText = 'Chọn Hãng xe';
+                searchContainer.style.display = 'block';
+                renderFilterList(Object.keys(CAY_GIA_PHA).sort(), document.getElementById('filterHang').value);
+            } else if (type === 'hieu') {
+                title.innerText = 'Chọn Dòng xe';
+                searchContainer.style.display = 'block';
+                const hang = document.getElementById('filterHang').value;
+                if (!hang) {
+                    list.innerHTML = '<div class="p-6 text-center text-zinc-400 font-bold italic text-xs">Vui lòng chọn Hãng xe trước.</div>';
+                } else {
+                    const hieuArr = CAY_GIA_PHA[hang] || [];
+                    renderFilterMultiList(hieuArr, selectedHieuList);
                 }
-            });
-            onHieuXeChange();
-        }
-
-        window.onHieuXeChange = function() {
-            const checkboxes = document.querySelectorAll('input[name="hieu_xe"]');
-            const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-            const selectAllBtn = document.getElementById('selectAllHieu');
-            if (selectAllBtn) {
-                const visibleCheckboxes = Array.from(checkboxes).filter(cb => {
-                    const p = cb.closest('.dropdown-item');
-                    return !p || p.style.display !== 'none';
-                });
-                selectAllBtn.checked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+            } else if (type === 'nam') {
+                title.innerText = 'Chọn Năm sản xuất';
+                searchContainer.style.display = 'block';
+                renderFilterList(NAM_ALL, document.getElementById('filterNam').value);
+            } else if (type === 'type') {
+                title.innerText = 'Chọn Loại hàng';
+                searchContainer.style.display = 'none';
+                const currentType = document.getElementById('filterType').value;
+                list.innerHTML = `
+                    <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${currentType === 'all' ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('all')">
+                        <span class="text-sm font-bold ${currentType === 'all' ? 'text-indigo-600' : 'text-zinc-700'}">Tất cả loại hàng</span>
+                        ${currentType === 'all' ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    </div>
+                    <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${currentType === 'genuine' ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('genuine')">
+                        <span class="text-sm font-bold ${currentType === 'genuine' ? 'text-indigo-600' : 'text-zinc-700'}">Chính hãng</span>
+                        ${currentType === 'genuine' ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-colors ${currentType === 'aftermarket' ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('aftermarket')">
+                        <span class="text-sm font-bold ${currentType === 'aftermarket' ? 'text-indigo-600' : 'text-zinc-700'}">Hàng ngoài</span>
+                        ${currentType === 'aftermarket' ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    </div>
+                `;
             }
+        }
+
+        function closeFilterModal() {
+            document.getElementById('modalFilterSelection').style.display = 'none';
+            if (currentFilterType === 'hieu') {
+                updateHieuLabel();
+                if(window.searchData) searchData();
+            }
+        }
+
+        function renderFilterList(items, selectedValue, query = '') {
+            const list = document.getElementById('filterModalList');
+            const filtered = items.filter(i => i.toLowerCase().includes(query.toLowerCase()));
+            
+            let html = `
+                <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${!selectedValue ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('')">
+                    <span class="text-sm font-bold ${!selectedValue ? 'text-indigo-600' : 'text-zinc-700'}">Tất cả</span>
+                    ${!selectedValue ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                </div>
+            `;
+            
+            filtered.forEach(item => {
+                const isSelected = item === selectedValue;
+                html += `
+                    <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${isSelected ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('${item}')">
+                        <span class="text-sm font-bold ${isSelected ? 'text-indigo-600' : 'text-zinc-700'}">${item}</span>
+                        ${isSelected ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function renderFilterMultiList(items, selectedArray, query = '') {
+            const list = document.getElementById('filterModalList');
+            const filtered = items.filter(i => i.toLowerCase().includes(query.toLowerCase()));
+            
+            let html = '';
+            filtered.forEach(item => {
+                const isSelected = selectedArray.includes(item);
+                html += `
+                    <label class="flex items-center p-4 mb-2 rounded-xl cursor-pointer transition-colors bg-zinc-50 border border-zinc-100 active:bg-zinc-100">
+                        <div class="flex-1 text-sm font-bold ${isSelected ? 'text-indigo-600' : 'text-zinc-700'}">${item}</div>
+                        <input type="checkbox" value="${item}" class="w-5 h-5 text-indigo-600 rounded-md border-zinc-300 focus:ring-indigo-500" ${isSelected ? 'checked' : ''} onchange="toggleMultiSelect(this.value, this.checked)">
+                    </label>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function handleFilterModalSearch() {
+            const query = document.getElementById('filterModalSearch').value;
+            if (currentFilterType === 'hang') {
+                renderFilterList(Object.keys(CAY_GIA_PHA).sort(), document.getElementById('filterHang').value, query);
+            } else if (currentFilterType === 'hieu') {
+                const hang = document.getElementById('filterHang').value;
+                if (hang) renderFilterMultiList(CAY_GIA_PHA[hang] || [], selectedHieuList, query);
+            } else if (currentFilterType === 'nam') {
+                renderFilterList(NAM_ALL, document.getElementById('filterNam').value, query);
+            }
+        }
+
+        function selectFilterItem(value) {
+            if (currentFilterType === 'hang') {
+                document.getElementById('filterHang').value = value;
+                document.getElementById('labelHang').innerText = value || 'Tất cả';
+                
+                // Reset hieu
+                selectedHieuList = [];
+                updateHieuLabel();
+            } else if (currentFilterType === 'nam') {
+                document.getElementById('filterNam').value = value;
+                document.getElementById('labelNam').innerText = value || 'Tất cả';
+            } else if (currentFilterType === 'type') {
+                document.getElementById('filterType').value = value;
+                let text = 'Tất cả';
+                if (value === 'genuine') text = 'Chính hãng';
+                if (value === 'aftermarket') text = 'Hàng ngoài';
+                document.getElementById('labelType').innerText = text;
+            }
+            
+            closeFilterModal();
+            if(window.searchData) searchData();
+        }
+
+        function toggleMultiSelect(value, isChecked) {
+            if (isChecked) {
+                if (!selectedHieuList.includes(value)) selectedHieuList.push(value);
+            } else {
+                selectedHieuList = selectedHieuList.filter(v => v !== value);
+            }
+        }
+
+        function updateHieuLabel() {
             const label = document.getElementById('labelHieu');
-            label.innerText = selected.length > 0 ? selected.length + ' dòng xe đã chọn' : 'Tất cả dòng xe';
-            updateNamSXDropdown();
-        }
-
-        window.updateNamSXDropdown = function() {
-            const hang = document.getElementById('filterHang').value;
-            const selected = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value);
-            let combinedNams = new Set();
-            if (hang && selected.length > 0) {
-                selected.forEach(h => { if (CAY_GIA_PHA[hang][h]) CAY_GIA_PHA[hang][h].forEach(n => combinedNams.add(n)); });
-                fillNamSXDropdown(Array.from(combinedNams));
-            } else { fillNamSXDropdown(NAM_ALL); }
-        }
-
-        window.selectType = function(val) {
-            document.getElementById('filterType').value = val;
-            const labels = { 'all': 'Tất cả loại hàng', 'genuine': 'Chính hãng', 'aftermarket': 'Hàng ngoài' };
-            document.getElementById('labelType').innerText = labels[val];
-            document.querySelectorAll('#dropdownType .dropdown-item').forEach(el => {
-                el.classList.toggle('active', el.innerText === labels[val]);
-            });
-        }
-
-        function fillNamSXDropdown(list) {
-            const container = document.getElementById('listNam');
-            container.innerHTML = '<div class="dropdown-item active border-b border-zinc-100 dark:border-zinc-800 mb-1 pb-2 font-black text-indigo-600" onclick="selectNam(\'\')">Tất cả năm</div>';
-            list.sort((a,b) => b-a).forEach(n => {
-                container.innerHTML += `<div class="dropdown-item" onclick="selectNam('${n}')">${n}</div>`;
-            });
-        }
-
-        window.selectNam = function(nam) {
-            document.getElementById('filterNam').value = nam;
-            document.getElementById('labelNam').innerText = nam || 'Tất cả';
-            document.querySelectorAll('#listNam .dropdown-item').forEach(el => {
-                el.classList.toggle('active', el.innerText === (nam || 'Tất cả'));
-            });
-        }
-
-        window.filterDropdown = function(type) {
-            const input = document.getElementById('search' + type).value.toLowerCase();
-            const items = type === 'Hieu' ? document.querySelectorAll('#hieuXeCheckboxes .dropdown-item') : document.querySelectorAll('#list' + type + ' .dropdown-item');
-            items.forEach(item => { item.style.display = item.innerText.toLowerCase().includes(input) ? 'flex' : 'none'; });
-            if (type === 'Hieu' && window.onHieuXeChange) onHieuXeChange();
+            if (selectedHieuList.length === 0) {
+                label.innerText = 'Tất cả';
+            } else if (selectedHieuList.length === 1) {
+                label.innerText = selectedHieuList[0];
+            } else {
+                label.innerText = `${selectedHieuList.length} dòng xe`;
+            }
         }
 
         window.clearFilters = function() {
-            // Reset các giá trị lọc chính
-            selectHang('');
-            selectNam('');
-            selectType('all');
             document.getElementById('searchInput').value = '';
-
-            // XÓA TEXT TRONG CÁC Ô TÌM KIẾM CỦA DROPDOWN
-            document.getElementById('searchHang').value = '';
-            document.getElementById('searchHieu').value = '';
-            document.getElementById('searchNam').value = '';
-
-            // HIỂN THỊ LẠI TOÀN BỘ DANH SÁCH (Hủy bỏ trạng thái ẩn do gõ tìm kiếm trước đó)
-            document.querySelectorAll('#listHang .dropdown-item').forEach(item => {
-                item.style.display = 'flex';
-            });
-
-            // Clear dữ liệu bảng
-            MASTER_DATA = []; SEARCH_PRICE_STATS = null;
-            CURRENT_PAGE = 1;
-            document.getElementById('resultsTableBody').innerHTML = '<div class="py-32 text-center text-zinc-300 font-bold uppercase italic text-xs tracking-[0.2em] w-full">Sẵn sàng tra cứu</div>';
-            document.getElementById('statCount').innerText = "0 kết quả";
-            
-            // Ẩn thanh tóm tắt
-            const summaryHeader = document.getElementById('searchSummaryHeader');
-            if(summaryHeader) summaryHeader.classList.add('hidden');
-            
-            updatePaginationUI(0);
+            document.getElementById('filterHang').value = '';
+            document.getElementById('labelHang').innerText = 'Tất cả';
+            selectedHieuList = [];
+            updateHieuLabel();
+            document.getElementById('filterNam').value = '';
+            document.getElementById('labelNam').innerText = 'Tất cả';
+            document.getElementById('filterType').value = 'all';
+            document.getElementById('labelType').innerText = 'Tất cả';
+            if(window.searchData) searchData();
         }
 
-        // Helper để sắp xếp ngày tháng
-        function parseDateForSort(value) {
-            if (!value) return 0;
-            if (value && typeof value === 'object' && typeof value.seconds === 'number') {
-                return value.seconds * 1000;
-            }
-            if (typeof value === 'number') {
-                if (value > 20000 && value < 80000) return Math.round((value - 25569) * 86400 * 1000);
-                return value;
-            }
-            const raw = String(value).trim();
-            const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
-            if (isoMatch) return new Date(`${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}T00:00:00Z`).getTime();
-            const vnSlashMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-            if (vnSlashMatch) return new Date(`${vnSlashMatch[3]}-${vnSlashMatch[2].padStart(2, '0')}-${vnSlashMatch[1].padStart(2, '0')}T00:00:00Z`).getTime();
-            const vnDashMatch = raw.match(/^(\d{1,2})-(\d{1,2})-(\d{4})/);
-            if (vnDashMatch) return new Date(`${vnDashMatch[3]}-${vnDashMatch[2].padStart(2, '0')}-${vnDashMatch[1].padStart(2, '0')}T00:00:00Z`).getTime();
-            return new Date(raw).getTime() || 0;
-        }
+        // --- END NEW LOGIC ---
 
         window.searchData = async function() {
             const hang = document.getElementById('filterHang').value;
-            const hieus = Array.from(document.querySelectorAll('input[name="hieu_xe"]:checked')).map(cb => cb.value);
+            const hieus = selectedHieuList;
             const nam = document.getElementById('filterNam').value;
             const type = document.getElementById('filterType').value;
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
