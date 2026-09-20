@@ -1956,7 +1956,7 @@
             document.getElementById('modalFilterSelection').style.display = 'none';
             if (currentFilterType === 'hieu') {
                 updateHieuLabel();
-                if(window.searchData) searchData();
+                
             }
         }
 
@@ -1987,7 +1987,12 @@
             const list = document.getElementById('filterModalList');
             const filtered = items.filter(i => String(i).toLowerCase().includes(query.toLowerCase()));
             
-            let html = '';
+            let html = `
+                <div class="flex gap-2 mb-3 sticky top-0 bg-white dark:bg-zinc-900 z-10 pb-2">
+                    <button type="button" onclick="selectAllHieu()" class="flex-1 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-xl border border-indigo-100 dark:border-indigo-800">Chọn tất cả</button>
+                    <button type="button" onclick="deselectAllHieu()" class="flex-1 py-2.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-xs font-bold rounded-xl border border-zinc-200 dark:border-zinc-700">Bỏ chọn tất cả</button>
+                </div>
+            `;
             filtered.forEach(item => {
                 const isSelected = selectedArray.includes(item);
                 html += `
@@ -2032,7 +2037,7 @@
             }
             
             closeFilterModal();
-            if(window.searchData) searchData();
+            
         }
 
         window.toggleMultiSelect = function(value, isChecked) {
@@ -2064,7 +2069,27 @@
             document.getElementById('labelNam').innerText = 'Tất cả';
             document.getElementById('filterType').value = 'all';
             document.getElementById('labelType').innerText = 'Tất cả';
-            if(window.searchData) searchData();
+            
+        }
+
+        
+        window.selectAllHieu = function() {
+            const hang = document.getElementById('filterHang').value;
+            if (hang && CAY_GIA_PHA[hang]) {
+                const allHieus = Object.keys(CAY_GIA_PHA[hang]);
+                selectedHieuList = [...allHieus];
+                renderFilterMultiList(allHieus.sort(), selectedHieuList, document.getElementById('filterModalSearch').value);
+                updateHieuLabel();
+            }
+        }
+        
+        window.deselectAllHieu = function() {
+            selectedHieuList = [];
+            const hang = document.getElementById('filterHang').value;
+            if (hang && CAY_GIA_PHA[hang]) {
+                renderFilterMultiList(Object.keys(CAY_GIA_PHA[hang]).sort(), selectedHieuList, document.getElementById('filterModalSearch').value);
+                updateHieuLabel();
+            }
         }
 
         // --- END NEW LOGIC ---
