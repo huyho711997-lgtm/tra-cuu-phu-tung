@@ -466,27 +466,17 @@
     </div>
 
     <div id="mainApp" class="main-container" style="display: none;">
-        <header class="flex items-center justify-between mb-8 px-2 mt-4">
-            <div class="flex items-center gap-3" onclick="openChangePasswordModal()" style="cursor: pointer;">
-                <div class="w-12 h-12 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center justify-center bg-indigo-50 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 flex-shrink-0">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                </div>
-                <div class="flex flex-col justify-center">
-                    <span class="text-[12px] text-zinc-500 font-medium leading-tight mb-0.5">Xin chào</span>
-                    <span id="userEmail" class="text-[16px] font-bold text-zinc-900 dark:text-white leading-tight truncate max-w-[180px] tracking-tight capitalize">User</span>
-                </div>
+        <!-- NEW HEADER -->
+        <header class="px-2 pt-6 pb-2 flex justify-between items-start">
+            <div>
+                <div class="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5" id="headerDate">HỆ THỐNG TRA CỨU</div>
+                <h1 class="text-[26px] font-black text-zinc-900 dark:text-white leading-tight mb-1 tracking-tight">Xin chào, <span id="headerName" class="text-zinc-900 dark:text-white">bạn</span>.</h1>
+                <div class="text-[11px] font-semibold text-zinc-500">TASCO INSURANCE</div>
             </div>
-            
-            <button onclick="toggleTheme()" class="theme-toggle-btn w-12 h-12 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm flex items-center justify-center text-zinc-700 dark:text-zinc-300" title="Chuyển chế độ sáng/tối">
-                <svg id="sunIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                <svg id="moonIcon" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-            </button>
+            <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-[15px] flex-shrink-0 cursor-pointer shadow-sm" onclick="toggleSysMgrView()" id="headerAvatar">
+                HQ
+            </div>
         </header>
-
-        <div class="px-2 mb-6">
-            <h1 class="text-3xl font-black text-zinc-900 dark:text-white tracking-tighter leading-none mb-1">TASCO <span class="text-indigo-600">INSURANCE</span></h1>
-            <p class="text-[11px] font-bold text-zinc-400 uppercase tracking-widest leading-none">Hệ thống tra cứu phụ tùng</p>
-        </div>
 
         <div id="sysMgrSection" style="display: none;">
             <header class="flex items-center justify-between mb-8 px-2">
@@ -510,209 +500,38 @@
                 </div>
             </header>
 
-            <div class="data-section">
-                <div class="overflow-x-auto">
-                    <table class="data-table w-full text-sm text-left">
-                        <thead>
-                            <tr>
-                                <th>Tài khoản</th>
-                                <th>Trạng thái</th>
-                                <th>Hoạt động</th>
-                                <th class="text-center">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userTableBody">
-                            <tr><td colspan="4" class="px-6 py-20 text-center text-zinc-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="px-6 mb-32">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-[17px] font-black text-zinc-900 dark:text-white tracking-tight">Kết quả tra cứu</h3>
+                <span id="statCount" class="text-[11px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">0 kết quả</span>
             </div>
-        </div>
-
-        <div id="modalAddUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
-            <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
-                <div class="p-6 border-b border-zinc-100 dark:border-zinc-800">
-                    <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Thêm người dùng con</h3>
+            
+            <div class="flex items-center justify-between mb-4 pb-4 border-b border-zinc-100 dark:border-zinc-800">
+                <div class="flex items-center gap-2">
+                    <select id="pageSize" onchange="changePageSize()" class="bg-transparent border-none text-[11px] font-bold text-zinc-500 p-0 focus:ring-0 cursor-pointer">
+                        <option value="10">10 dòng / trang</option>
+                        <option value="25">25 dòng / trang</option>
+                        <option value="50">50 dòng / trang</option>
+                    </select>
                 </div>
-                <div class="p-8 space-y-4">
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị (Họ tên)</label>
-                        <input type="text" id="addFullName" placeholder="ví dụ: Nguyễn Văn A" class="premium-input">
-                    </div>
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Tên đăng nhập</label>
-                        <input type="text" id="addUserName" placeholder="ví dụ: user01" class="premium-input">
-                    </div>
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
-                        <input type="text" id="addUserPass" placeholder="••••••••" class="premium-input">
-                    </div>
-                </div>
-                <div class="p-6 bg-zinc-50 dark:bg-zinc-800/50 flex gap-3">
-                    <button onclick="closeModal('modalAddUser')" class="flex-1 py-3.5 text-zinc-500 font-bold uppercase text-xs">Hủy</button>
-                    <button id="confirmAddUserBtn" class="flex-1 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 uppercase text-xs">Tạo tài khoản</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="modalEditUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
-            <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
-                <div class="p-6 border-b border-zinc-100 dark:border-zinc-800">
-                    <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Cập nhật thông tin</h3>
-                </div>
-                <div class="p-8 space-y-4">
-                    <div class="mb-2">
-                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Tài khoản đang sửa</label>
-                        <div id="editUserEmail" class="text-sm font-bold text-zinc-700 dark:text-zinc-300 px-1"></div>
-                    </div>
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị</label>
-                        <input type="text" id="editFullName" placeholder="Ví dụ: Nguyễn Văn A" class="premium-input">
-                    </div>
-                    <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
-                        <input type="text" id="editUserPass" placeholder="Nhập mật khẩu..." class="premium-input">
-                    </div>
-                </div>
-                <div class="p-6 bg-zinc-50 dark:bg-zinc-800/50 flex gap-3">
-                    <button onclick="closeModal('modalEditUser')" class="flex-1 py-3.5 text-zinc-500 font-bold uppercase text-xs">Hủy</button>
-                    <button id="saveUserEditBtn" class="flex-1 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 uppercase text-xs">Lưu thay đổi</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="indexErrorBanner" class="index-error">
-            <div class="flex items-start gap-3">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                <p id="indexErrorMessage"></p>
-            </div>
-        </div>
-
-        <div class="control-panel">
-            <div class="flex flex-col gap-3">
-                <div class="field-group mb-0">
-                    <label class="field-label">Tên phụ tùng</label>
-                    <svg class="w-5 h-5 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="searchInput" placeholder="Tìm tên phụ tùng..." class="pro-input" onkeydown="if(event.key==='Enter') searchData()">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="field-group mb-0">
-                        <label class="field-label">Hãng xe</label>
-                        <svg class="w-5 h-5 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                        <button id="btnHang" data-dropdown-toggle="dropdownHang" class="multi-btn">
-                            <span id="labelHang" class="truncate">Tất cả hãng</span>
-                        </button>
-                        <div id="dropdownHang" class="z-50 hidden bg-white rounded-xl shadow-xl border border-zinc-100 w-64 p-2">
-                            <input type="text" id="searchHang" oninput="filterDropdown('Hang')" placeholder="Tìm hãng xe..." class="search-inner">
-                            <div id="listHang" class="max-h-60 overflow-y-auto space-y-0.5"></div>
-                        </div>
-                        <input type="hidden" id="filterHang" value="">
-                    </div>
-
-                    <div class="field-group mb-0">
-                        <label class="field-label">Dòng xe</label>
-                        <svg class="w-5 h-5 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                        <button id="multiHieuBtn" data-dropdown-toggle="dropdownHieu" class="multi-btn">
-                            <span id="labelHieu" class="truncate">Chọn dòng xe...</span>
-                        </button>
-                        <div id="dropdownHieu" class="z-50 hidden bg-white rounded-xl shadow-xl border border-zinc-100 w-72 p-2">
-                            <input type="text" id="searchHieu" oninput="filterDropdown('Hieu')" placeholder="Tìm dòng xe..." class="search-inner">
-                            <div id="hieuXeCheckboxes" class="max-h-60 overflow-y-auto space-y-0.5">
-                                <p class="text-[11px] text-zinc-400 italic p-3">Chọn hãng xe trước</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="field-group mb-0">
-                        <label class="field-label">Năm SX</label>
-                        <svg class="w-5 h-5 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        <button id="btnNam" data-dropdown-toggle="dropdownNam" class="multi-btn">
-                            <span id="labelNam" class="truncate">Tất cả năm</span>
-                        </button>
-                        <div id="dropdownNam" class="z-50 hidden bg-white rounded-xl shadow-xl border border-zinc-100 w-40 p-2">
-                            <input type="text" id="searchNam" oninput="filterDropdown('Nam')" placeholder="Tìm năm..." class="search-inner">
-                            <div id="listNam" class="max-h-60 overflow-y-auto space-y-0.5"></div>
-                        </div>
-                        <input type="hidden" id="filterNam" value="">
-                    </div>
-
-                    <div class="field-group mb-0">
-                        <label class="field-label">Loại hàng</label>
-                        <svg class="w-5 h-5 field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                        <button id="btnType" data-dropdown-toggle="dropdownType" class="multi-btn">
-                            <span id="labelType" class="truncate">Tất cả loại</span>
-                        </button>
-                        <div id="dropdownType" class="z-50 hidden bg-white dark:bg-zinc-900 rounded-xl shadow-xl border border-zinc-100 dark:border-zinc-800 w-56 p-2">
-                            <div class="dropdown-item active border-b border-zinc-100 dark:border-zinc-800 mb-1 pb-2 font-black text-indigo-600" onclick="selectType('all')">Tất cả loại hàng</div>
-                            <div class="dropdown-item" onclick="selectType('genuine')">Chính hãng</div>
-                            <div class="dropdown-item" onclick="selectType('aftermarket')">Hàng ngoài</div>
-                        </div>
-                        <input type="hidden" id="filterType" value="all">
-                    </div>
-                </div>
-
-                <div class="flex gap-3 mt-2">
-                    <button onclick="searchData()" class="search-btn flex-1">
-                        TÌM KIẾM
-                    </button>
-                    <button onclick="clearFilters()" class="btn-trash" title="Xóa bộ lọc">
-                        <svg class="w-6 h-6 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path class="trash-lid" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7h16M10 7V4a1 1 0 011-1h2a1 1 0 011 1v3" />
-                            <path class="trash-body" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 7l.867 12.142A2 2 0 007.862 21h8.276a2 2 0 001.995-1.858L19 7M10 11v6M14 11v6" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="data-section">
-            <div class="px-6 py-4 border-b border-zinc-100 bg-zinc-50/50 flex items-center justify-between">
-                <div class="flex items-center gap-6">
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Hiển thị:</span>
-                        <select id="pageSize" onchange="changePageSize()" class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[11px] font-bold rounded-lg p-1 px-3 text-zinc-700 dark:text-zinc-300">
-                            <option value="10">10 dòng</option>
-                            <option value="25">25 dòng</option>
-                            <option value="50">50 dòng</option>
-                        </select>
-                    </div>
-                    <div class="h-4 w-px bg-zinc-200 dark:bg-zinc-700"></div>
-                    <div class="flex flex-col">
-                        <span id="statCount" class="text-xs font-black text-zinc-900 dark:text-zinc-100">0 kết quả</span>
-                    </div>
-                    <div id="searchSummaryHeader" class="hidden md:flex items-center">
-                        <div class="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800">
-                            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
-                            <span id="summaryTextHeader" class="text-[10px] font-black text-indigo-600 uppercase tracking-tight"></span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-4">
-                    <div id="loadingIndicator" class="hidden flex items-center gap-2 text-indigo-600">
+                <div class="flex items-center gap-3">
+                    <div id="loadingIndicator" class="hidden flex items-center gap-1 text-indigo-600">
                         <div class="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
-                        <span class="text-[10px] font-black uppercase">Đang tải...</span>
                     </div>
                     <span class="text-[10px] font-bold text-zinc-400 uppercase" id="pageInfo">Trang 0 / 0</span>
-                    <div class="flex gap-1">
-                        <button id="btnPrev" onclick="changePage(-1)" class="p-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-400 hover:text-indigo-600 disabled:opacity-30">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+                    <div class="flex gap-2">
+                        <button id="btnPrev" onclick="changePage(-1)" class="text-zinc-400 hover:text-indigo-600 disabled:opacity-30">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
-                        <button id="btnNext" onclick="changePage(1)" class="p-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-400 hover:text-indigo-600 disabled:opacity-30">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                        <button id="btnNext" onclick="changePage(1)" class="text-zinc-400 hover:text-indigo-600 disabled:opacity-30">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
                 </div>
             </div>
             
-            <!-- Dạng Card cho Mobile -->
-            <div class="overflow-y-auto min-h-[400px] pb-24 px-2" id="resultsContainer">
-                <div id="resultsTableBody" class="flex flex-col">
-                    <div class="py-32 text-center text-zinc-300 font-bold uppercase italic text-xs tracking-[0.2em] w-full">Sẵn sàng tra cứu</div>
-                </div>
+            <div id="resultsTableBody" class="flex flex-col gap-3 pb-8">
+                <div class="py-20 text-center text-zinc-300 font-bold uppercase italic text-[11px] tracking-widest w-full">Sẵn sàng tra cứu</div>
             </div>
         </div>
     </div>
