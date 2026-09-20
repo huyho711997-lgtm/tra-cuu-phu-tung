@@ -442,47 +442,34 @@
     </div>
 
     <div id="mainApp" class="main-container" style="display: none;">
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 px-2">
-            <div class="flex items-center gap-4">
-                <div class="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <header class="flex items-center justify-between mb-6 px-2 mt-2">
+            <!-- Left: Logo & text -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
-                <div>
-                    <h1 class="text-xl font-black text-slate-900 tracking-tighter">TASCO <span class="text-blue-600">INSURANCE</span></h1>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Hệ thống tra cứu phụ tùng</p>
+                <div class="flex flex-col justify-center">
+                    <h1 class="text-[16px] font-black text-slate-900 dark:text-white tracking-tighter leading-none mb-[2px]">TASCO <span class="text-blue-600">INSURANCE</span></h1>
+                    <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Hệ thống tra cứu</p>
                 </div>
             </div>
             
-            <div class="flex items-center gap-3">
-                <button id="sysMgrBtn" onclick="toggleSysMgrView()" class="hidden h-11 px-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-[11px] font-black uppercase tracking-widest rounded-xl shadow-sm hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 dark:hover:border-blue-500 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    QUẢN TRỊ
-                </button>
-
-                <button onclick="toggleTheme()" class="theme-toggle-btn shadow-sm" title="Chuyển chế độ sáng/tối">
+            <!-- Right: Theme + User Icon -->
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" class="theme-toggle-btn shadow-sm" style="width: 36px; height: 36px; min-width: 36px;" title="Chuyển chế độ sáng/tối">
                     <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                     <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
 
-                <div class="flex items-center h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded-[14px] shadow-sm hover:shadow-md transition-all">
-                    <div class="flex items-center gap-2.5 px-2">
-                        <div class="w-9 h-9 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center shadow-inner flex-shrink-0">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                        </div>
-                        <div class="flex flex-col justify-center">
-                            <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] leading-none mb-1">Xin chào</span>
-                            <span id="userEmail" class="text-[11px] font-black text-blue-700 dark:text-blue-400 leading-none truncate max-w-[120px] uppercase">user@tasco.vn</span>
-                        </div>
+                <div class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 h-[36px] px-2 rounded-xl shadow-sm">
+                    <div class="w-6 h-6 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
                     </div>
-                    <div class="w-px h-6 bg-slate-100 dark:bg-slate-700 mx-1"></div>
-                    <div class="flex items-center gap-0.5 pr-1">
-                        <button onclick="openChangePasswordModal()" class="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-lg transition-all group" title="Đổi mật khẩu">
-                            <svg class="w-4.5 h-4.5" style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-                        </button>
-                        <button onclick="handleLogout()" class="w-9 h-9 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all group" title="Đăng xuất">
-                            <svg class="w-4.5 h-4.5" style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        </button>
-                    </div>
+                    <span id="userEmail" class="text-[10px] font-black text-blue-700 dark:text-blue-400 truncate max-w-[65px] uppercase">User</span>
+                    <div class="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-0.5"></div>
+                    <button onclick="openChangePasswordModal()" class="w-6 h-6 flex items-center justify-center text-slate-400 hover:text-orange-500 transition-colors" title="Đổi mật khẩu">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                    </button>
                 </div>
             </div>
         </header>
@@ -1544,12 +1531,16 @@
             const mgrBtn = document.getElementById('sysMgrBtn');
             const navAdminBtn = document.getElementById('navAdminBtn');
             if (role === 'admin') {
-                mgrBtn.classList.remove('hidden');
-                mgrBtn.style.setProperty('display', 'flex', 'important');
+                if (mgrBtn) {
+                    mgrBtn.classList.remove('hidden');
+                    mgrBtn.style.setProperty('display', 'flex', 'important');
+                }
                 if(navAdminBtn) navAdminBtn.style.display = 'flex';
             } else {
-                mgrBtn.classList.add('hidden');
-                mgrBtn.style.setProperty('display', 'none', 'important');
+                if (mgrBtn) {
+                    mgrBtn.classList.add('hidden');
+                    mgrBtn.style.setProperty('display', 'none', 'important');
+                }
                 if(navAdminBtn) navAdminBtn.style.display = 'none';
             }
         }
