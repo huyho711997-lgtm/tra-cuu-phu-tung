@@ -31,7 +31,7 @@
         :root { --primary: #4f46e5; --primary-hover: #4338ca; }
         
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfc; color: #1e293b; }
-        .main-container { max-width: 1580px; margin: 0 auto; padding: 1.5rem; padding-bottom: 110px !important; }
+        .main-container { max-width: 1580px; margin: 0 auto; padding: 0; padding-bottom: 110px !important; }
         
         /* Unified Control Center */
         .control-panel {
@@ -458,7 +458,7 @@
 
     <div id="mainApp" class="main-container" style="display: none;">
         <!-- NEW HEADER -->
-        <header class="px-2 pt-6 pb-2 flex justify-between items-start">
+        <header class="px-4 pt-6 pb-2 flex justify-between items-start">
             <div>
                 <div class="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5" id="headerDate">HỆ THỐNG TRA CỨU</div>
                 <h1 class="text-[26px] font-black text-zinc-900 dark:text-white leading-tight mb-1 tracking-tight">Xin chào, <span id="userEmail" class="text-zinc-900 dark:text-white capitalize">bạn</span>.</h1>
@@ -469,7 +469,7 @@
             </div>
         </header>
 
-        <div id="sysMgrSection" style="display: none;">
+        <div id="sysMgrSection" class="px-4" style="display: none;">
             <header class="flex items-center justify-between mb-8 px-2">
                 <div class="flex items-center gap-4">
                     <button onclick="toggleSysMgrView()" class="w-11 h-11 bg-zinc-100 dark:bg-zinc-800 rounded-xl flex items-center justify-center hover:bg-zinc-200 transition-all">
@@ -570,7 +570,7 @@
         </div>
 
         <!-- NEW HERO CARD -->
-        <div class="px-2 mb-8">
+        <div class="px-4 mb-8">
             <div class="bg-gradient-to-br from-[#3b2d91] to-[#6049cd] rounded-[28px] p-6 shadow-xl shadow-indigo-500/20 text-white relative overflow-hidden">
                 <div class="absolute -right-8 -top-8 w-32 h-32 border-[12px] border-white/10 rounded-full"></div>
                 <div class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-4 border border-white/10">
@@ -590,7 +590,7 @@
         </div>
 
         <!-- NEW FILTERS GRID -->
-        <div class="px-2 mb-8">
+        <div class="px-4 mb-8">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-[17px] font-black text-zinc-900 dark:text-white tracking-tight">Bộ lọc chi tiết</h3>
                 <button onclick="clearFilters()" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full">Xóa bộ lọc</button>
@@ -660,7 +660,7 @@
             <input type="hidden" id="filterType" value="all">
         </div>
 
-        <div class="px-2 mb-32">
+        <div class="px-4 mb-32">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-[17px] font-black text-zinc-900 dark:text-white tracking-tight">Kết quả tra cứu</h3>
                 <span id="statCount" class="text-[11px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">0 kết quả</span>
