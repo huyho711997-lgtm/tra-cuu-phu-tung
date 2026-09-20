@@ -2183,6 +2183,12 @@
             }
         }
 
+        
+        function formatCurrency(num) {
+            if (!num) return '0 VNĐ';
+            return new Intl.NumberFormat('vi-VN').format(num) + ' VNĐ';
+        }
+        
         function renderTable() {
             const tableBody = document.getElementById('resultsTableBody');
             tableBody.innerHTML = '';
