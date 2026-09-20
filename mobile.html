@@ -1891,8 +1891,7 @@
                     const data = docSnap.data();
                     CAY_GIA_PHA = data.cay_gia_pha_xe || {};
                     NAM_ALL = data.nam_sx_all || [];
-                    renderHangList();
-                    fillNamSXDropdown(NAM_ALL);
+                    // Removed old render calls
                 }
             } catch (e) { console.error(e); }
         }
@@ -1902,7 +1901,7 @@
         let currentFilterType = '';
         let selectedHieuList = []; // For multi-select dòng xe
 
-        function openFilterModal(type) {
+        window.openFilterModal = function(type) {
             currentFilterType = type;
             const modal = document.getElementById('modalFilterSelection');
             const title = document.getElementById('filterModalTitle');
@@ -1953,7 +1952,7 @@
             }
         }
 
-        function closeFilterModal() {
+        window.closeFilterModal = function() {
             document.getElementById('modalFilterSelection').style.display = 'none';
             if (currentFilterType === 'hieu') {
                 updateHieuLabel();
@@ -2001,7 +2000,7 @@
             list.innerHTML = html;
         }
 
-        function handleFilterModalSearch() {
+        window.handleFilterModalSearch = function() {
             const query = document.getElementById('filterModalSearch').value;
             if (currentFilterType === 'hang') {
                 renderFilterList(Object.keys(CAY_GIA_PHA).sort(), document.getElementById('filterHang').value, query);
@@ -2013,7 +2012,7 @@
             }
         }
 
-        function selectFilterItem(value) {
+        window.selectFilterItem = function(value) {
             if (currentFilterType === 'hang') {
                 document.getElementById('filterHang').value = value;
                 document.getElementById('labelHang').innerText = value || 'Tất cả';
@@ -2036,7 +2035,7 @@
             if(window.searchData) searchData();
         }
 
-        function toggleMultiSelect(value, isChecked) {
+        window.toggleMultiSelect = function(value, isChecked) {
             if (isChecked) {
                 if (!selectedHieuList.includes(value)) selectedHieuList.push(value);
             } else {
