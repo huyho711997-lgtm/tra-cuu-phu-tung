@@ -28,7 +28,7 @@
         }
     </script>
     <style>
-        :root { --primary: #2563eb; --primary-hover: #1d4ed8; }
+        :root { --primary: #4f46e5; --primary-hover: #4338ca; }
         
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
         .main-container { max-width: 1580px; margin: 0 auto; padding: 1.5rem; padding-bottom: 110px !important; }
@@ -144,7 +144,7 @@
         .search-btn:hover { 
             background-position: right center; 
             transform: translateY(-2px); 
-            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.6); 
+            box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.6); 
         }
         .search-btn:active {
             transform: translateY(1px);
@@ -199,7 +199,7 @@
         html.dark .premium-input { background: #1e293b; border-color: #334155; color: #f8fafc; }
         .premium-input:focus {
             background: #fff; border-color: #2563eb; outline: none;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
         html.dark .premium-input:focus { background: #1e293b; border-color: #2563eb; }
         .input-icon { position: absolute; left: 18px; top: 16px; color: #94a3b8; transition: all 0.2s; }
@@ -210,9 +210,9 @@
             color: white; font-weight: 700;
             padding: 14px; border-radius: 14px;
             transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
         }
-        .btn-executive:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
+        .btn-executive:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3); }
         .btn-executive:active { transform: translateY(0); }
 
         @keyframes fadeIn {
@@ -277,21 +277,21 @@
             background: #334155 !important;
             border-color: #fbbf24 !important;
         }
-        html.dark .bg-slate-50, 
-        html.dark .bg-slate-50\/50, 
+        html.dark .bg-zinc-50, 
+        html.dark .bg-zinc-50\/50, 
         html.dark .data-table thead th, 
-        html.dark .bg-slate-100 { 
+        html.dark .bg-zinc-100 { 
             background: #1e293b !important; 
             color: #cbd5e1 !important;
             border-bottom: 1px solid #334155 !important;
         }
         html.dark .field-icon { color: #cbd5e1 !important; }
-        html.dark .text-slate-900 { color: #f8fafc !important; }
-        html.dark .text-slate-700, html.dark .text-slate-600 { color: #cbd5e1 !important; }
-        html.dark .text-slate-400 { color: #94a3b8 !important; }
-        html.dark .border-slate-100, 
-        html.dark .border-slate-200, 
-        html.dark .border-slate-300 { 
+        html.dark .text-zinc-900 { color: #f8fafc !important; }
+        html.dark .text-zinc-700, html.dark .text-zinc-600 { color: #cbd5e1 !important; }
+        html.dark .text-zinc-400 { color: #94a3b8 !important; }
+        html.dark .border-zinc-100, 
+        html.dark .border-zinc-200, 
+        html.dark .border-zinc-300 { 
             border-color: #1e293b !important; 
         }
         html.dark input, 
@@ -309,11 +309,11 @@
         html.dark .price-text { color: #f8fafc !important; }
         html.dark .dropdown-item:hover { background: #1e293b !important; color: #2563eb !important; }
         html.dark .dropdown-item.active { background: #1e293b !important; color: #2563eb !important; }
-        html.dark .bg-blue-50 { background: rgba(37, 99, 235, 0.1) !important; }
-        html.dark .text-blue-600 { color: #60a5fa !important; }
+        html.dark .bg-indigo-50 { background: rgba(79, 70, 229, 0.1) !important; }
+        html.dark .text-indigo-600 { color: #60a5fa !important; }
         html.dark .badge-genuine { background: rgba(22, 163, 74, 0.2) !important; color: #4ade80 !important; border-color: rgba(34, 197, 94, 0.3) !important; }
         html.dark .badge-aftermarket { background: rgba(217, 119, 6, 0.2) !important; color: #fbbf24 !important; border-color: rgba(180, 83, 9, 0.3) !important; }
-        html.dark .badge-verified { background: rgba(37, 99, 235, 0.2) !important; color: #60a5fa !important; border-color: rgba(37, 99, 235, 0.3) !important; }
+        html.dark .badge-verified { background: rgba(79, 70, 229, 0.2) !important; color: #60a5fa !important; border-color: rgba(79, 70, 229, 0.3) !important; }
         html.dark .badge-unverified { background: #1e293b !important; color: #94a3b8 !important; border-color: #334155 !important; }
         html.dark .field-label { color: #94a3b8 !important; }
         html.dark .bg-red-50 { background: rgba(239, 68, 68, 0.1) !important; }
@@ -401,7 +401,7 @@
         html.dark .result-card { background: #0f172a; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.4); border: 1px solid #1e293b; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen transition-colors duration-300">
+<body class="bg-zinc-50 text-zinc-700 min-h-screen transition-colors duration-300">
     <script>
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -416,45 +416,45 @@
     <div id="loginOverlay">
         <div class="login-card animate-[fadeIn_0.5s_ease-out]">
             <div class="text-center mb-10">
-                <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-500/20">
+                <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-500/20">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
-                <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Hệ thống TASCO INSURANCE</h2>
-                <p class="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Tra cứu phụ tùng chuyên nghiệp</p>
+                <h2 class="text-2xl font-black text-zinc-900 dark:text-white tracking-tight uppercase">Hệ thống TASCO INSURANCE</h2>
+                <p class="text-zinc-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Tra cứu phụ tùng chuyên nghiệp</p>
             </div>
 
             <form id="loginForm" class="space-y-6">
                 <div class="premium-input-group hidden" id="registerNameGroup">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Họ và tên</label>
+                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Họ và tên</label>
                     <input type="text" id="registerName" placeholder="Ví dụ: Nguyễn Văn A" class="premium-input">
                     <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
                 </div>
                 <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Email / Tên đăng nhập</label>
+                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Email / Tên đăng nhập</label>
                     <input type="text" id="loginEmail" required placeholder="ví dụ: user01" class="premium-input">
                     <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
                 </div>
                 <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu truy cập</label>
+                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu truy cập</label>
                     <input type="password" id="loginPass" required placeholder="••••••••" class="premium-input">
                     <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
                 
                 <div class="flex items-center justify-between px-1">
                     <label class="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all">
-                        <span class="text-[11px] font-bold text-slate-500 group-hover:text-slate-700 transition-colors">Ghi nhớ đăng nhập</span>
+                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500 transition-all">
+                        <span class="text-[11px] font-bold text-zinc-500 group-hover:text-zinc-700 transition-colors">Ghi nhớ đăng nhập</span>
                     </label>
-                    <button type="button" onclick="forgotPassword()" class="text-[11px] font-bold text-blue-600 hover:text-blue-700 transition-all">Quên mật khẩu?</button>
+                    <button type="button" onclick="forgotPassword()" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 transition-all">Quên mật khẩu?</button>
                 </div>
 
                 <button type="submit" id="loginBtn" class="w-full btn-executive text-sm uppercase tracking-widest mt-2">
                     Đăng nhập hệ thống
                 </button>
                 <p id="loginError" class="text-red-500 text-[10px] font-bold text-center mt-4 hidden uppercase tracking-widest"></p>
-                <div class="text-center mt-4 text-[11px] font-bold text-slate-500">
+                <div class="text-center mt-4 text-[11px] font-bold text-zinc-500">
                     <span id="registerPromptText">Chưa có tài khoản?</span>
-                    <button type="button" class="text-blue-600 hover:text-blue-700 ml-1 uppercase tracking-wider font-black transition-colors" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký ngay</button>
+                    <button type="button" class="text-indigo-600 hover:text-indigo-700 ml-1 uppercase tracking-wider font-black transition-colors" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký ngay</button>
                 </div>
             </form>
         </div>
@@ -463,43 +463,43 @@
     <div id="mainApp" class="main-container" style="display: none;">
         <header class="flex items-center justify-between mb-8 px-2 mt-4">
             <div class="flex items-center gap-3" onclick="openChangePasswordModal()" style="cursor: pointer;">
-                <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center justify-center bg-indigo-50 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 flex-shrink-0">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
                 </div>
                 <div class="flex flex-col justify-center">
-                    <span class="text-[12px] text-slate-500 font-medium leading-tight mb-0.5">Xin chào</span>
-                    <span id="userEmail" class="text-[16px] font-bold text-slate-900 dark:text-white leading-tight truncate max-w-[180px] tracking-tight capitalize">User</span>
+                    <span class="text-[12px] text-zinc-500 font-medium leading-tight mb-0.5">Xin chào</span>
+                    <span id="userEmail" class="text-[16px] font-bold text-zinc-900 dark:text-white leading-tight truncate max-w-[180px] tracking-tight capitalize">User</span>
                 </div>
             </div>
             
-            <button onclick="toggleTheme()" class="theme-toggle-btn w-12 h-12 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center text-slate-700 dark:text-slate-300" title="Chuyển chế độ sáng/tối">
+            <button onclick="toggleTheme()" class="theme-toggle-btn w-12 h-12 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm flex items-center justify-center text-zinc-700 dark:text-zinc-300" title="Chuyển chế độ sáng/tối">
                 <svg id="sunIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                 <svg id="moonIcon" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </button>
         </header>
 
         <div class="px-2 mb-6">
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter leading-none mb-1">TASCO <span class="text-blue-600">INSURANCE</span></h1>
-            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">Hệ thống tra cứu phụ tùng</p>
+            <h1 class="text-3xl font-black text-zinc-900 dark:text-white tracking-tighter leading-none mb-1">TASCO <span class="text-indigo-600">INSURANCE</span></h1>
+            <p class="text-[11px] font-bold text-zinc-400 uppercase tracking-widest leading-none">Hệ thống tra cứu phụ tùng</p>
         </div>
 
         <div id="sysMgrSection" style="display: none;">
             <header class="flex items-center justify-between mb-8 px-2">
                 <div class="flex items-center gap-4">
-                    <button onclick="toggleSysMgrView()" class="w-11 h-11 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-all">
-                        <svg class="w-6 h-6 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <button onclick="toggleSysMgrView()" class="w-11 h-11 bg-zinc-100 dark:bg-zinc-800 rounded-xl flex items-center justify-center hover:bg-zinc-200 transition-all">
+                        <svg class="w-6 h-6 text-zinc-600 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     </button>
                     <div>
-                        <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tighter">QUẢN LÝ <span class="text-blue-600">NGƯỜI DÙNG</span></h1>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Danh sách tài khoản hệ thống</p>
+                        <h1 class="text-xl font-black text-zinc-900 dark:text-white tracking-tighter">QUẢN LÝ <span class="text-indigo-600">NGƯỜI DÙNG</span></h1>
+                        <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Danh sách tài khoản hệ thống</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button onclick="openAddUserModal()" class="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-blue-500/20 hover:scale-105 transition-all">
+                    <button onclick="openAddUserModal()" class="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/20 hover:scale-105 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                         Thêm người dùng
                     </button>
-                    <button onclick="refreshUserList()" class="p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-blue-600 shadow-sm hover:shadow-md transition-all">
+                    <button onclick="refreshUserList()" class="p-2.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-indigo-600 shadow-sm hover:shadow-md transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     </button>
                 </div>
@@ -517,61 +517,61 @@
                             </tr>
                         </thead>
                         <tbody id="userTableBody">
-                            <tr><td colspan="4" class="px-6 py-20 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>
+                            <tr><td colspan="4" class="px-6 py-20 text-center text-zinc-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <div id="modalAddUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
-                <div class="p-6 border-b border-slate-100 dark:border-slate-800">
-                    <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Thêm người dùng con</h3>
+        <div id="modalAddUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
+            <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
+                <div class="p-6 border-b border-zinc-100 dark:border-zinc-800">
+                    <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Thêm người dùng con</h3>
                 </div>
                 <div class="p-8 space-y-4">
                     <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị (Họ tên)</label>
+                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị (Họ tên)</label>
                         <input type="text" id="addFullName" placeholder="ví dụ: Nguyễn Văn A" class="premium-input">
                     </div>
                     <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên đăng nhập</label>
+                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Tên đăng nhập</label>
                         <input type="text" id="addUserName" placeholder="ví dụ: user01" class="premium-input">
                     </div>
                     <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
+                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
                         <input type="text" id="addUserPass" placeholder="••••••••" class="premium-input">
                     </div>
                 </div>
-                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex gap-3">
-                    <button onclick="closeModal('modalAddUser')" class="flex-1 py-3.5 text-slate-500 font-bold uppercase text-xs">Hủy</button>
-                    <button id="confirmAddUserBtn" class="flex-1 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 uppercase text-xs">Tạo tài khoản</button>
+                <div class="p-6 bg-zinc-50 dark:bg-zinc-800/50 flex gap-3">
+                    <button onclick="closeModal('modalAddUser')" class="flex-1 py-3.5 text-zinc-500 font-bold uppercase text-xs">Hủy</button>
+                    <button id="confirmAddUserBtn" class="flex-1 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 uppercase text-xs">Tạo tài khoản</button>
                 </div>
             </div>
         </div>
 
-        <div id="modalEditUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
-                <div class="p-6 border-b border-slate-100 dark:border-slate-800">
-                    <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Cập nhật thông tin</h3>
+        <div id="modalEditUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
+            <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
+                <div class="p-6 border-b border-zinc-100 dark:border-zinc-800">
+                    <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Cập nhật thông tin</h3>
                 </div>
                 <div class="p-8 space-y-4">
                     <div class="mb-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tài khoản đang sửa</label>
-                        <div id="editUserEmail" class="text-sm font-bold text-slate-700 dark:text-slate-300 px-1"></div>
+                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Tài khoản đang sửa</label>
+                        <div id="editUserEmail" class="text-sm font-bold text-zinc-700 dark:text-zinc-300 px-1"></div>
                     </div>
                     <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị</label>
+                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Tên hiển thị</label>
                         <input type="text" id="editFullName" placeholder="Ví dụ: Nguyễn Văn A" class="premium-input">
                     </div>
                     <div class="premium-input-group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
+                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu</label>
                         <input type="text" id="editUserPass" placeholder="Nhập mật khẩu..." class="premium-input">
                     </div>
                 </div>
-                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex gap-3">
-                    <button onclick="closeModal('modalEditUser')" class="flex-1 py-3.5 text-slate-500 font-bold uppercase text-xs">Hủy</button>
-                    <button id="saveUserEditBtn" class="flex-1 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 uppercase text-xs">Lưu thay đổi</button>
+                <div class="p-6 bg-zinc-50 dark:bg-zinc-800/50 flex gap-3">
+                    <button onclick="closeModal('modalEditUser')" class="flex-1 py-3.5 text-zinc-500 font-bold uppercase text-xs">Hủy</button>
+                    <button id="saveUserEditBtn" class="flex-1 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 uppercase text-xs">Lưu thay đổi</button>
                 </div>
             </div>
         </div>
@@ -598,7 +598,7 @@
                         <button id="btnHang" data-dropdown-toggle="dropdownHang" class="multi-btn">
                             <span id="labelHang" class="truncate">Tất cả hãng</span>
                         </button>
-                        <div id="dropdownHang" class="z-50 hidden bg-white rounded-xl shadow-xl border border-slate-100 w-64 p-2">
+                        <div id="dropdownHang" class="z-50 hidden bg-white rounded-xl shadow-xl border border-zinc-100 w-64 p-2">
                             <input type="text" id="searchHang" oninput="filterDropdown('Hang')" placeholder="Tìm hãng xe..." class="search-inner">
                             <div id="listHang" class="max-h-60 overflow-y-auto space-y-0.5"></div>
                         </div>
@@ -611,10 +611,10 @@
                         <button id="multiHieuBtn" data-dropdown-toggle="dropdownHieu" class="multi-btn">
                             <span id="labelHieu" class="truncate">Chọn dòng xe...</span>
                         </button>
-                        <div id="dropdownHieu" class="z-50 hidden bg-white rounded-xl shadow-xl border border-slate-100 w-72 p-2">
+                        <div id="dropdownHieu" class="z-50 hidden bg-white rounded-xl shadow-xl border border-zinc-100 w-72 p-2">
                             <input type="text" id="searchHieu" oninput="filterDropdown('Hieu')" placeholder="Tìm dòng xe..." class="search-inner">
                             <div id="hieuXeCheckboxes" class="max-h-60 overflow-y-auto space-y-0.5">
-                                <p class="text-[11px] text-slate-400 italic p-3">Chọn hãng xe trước</p>
+                                <p class="text-[11px] text-zinc-400 italic p-3">Chọn hãng xe trước</p>
                             </div>
                         </div>
                     </div>
@@ -627,7 +627,7 @@
                         <button id="btnNam" data-dropdown-toggle="dropdownNam" class="multi-btn">
                             <span id="labelNam" class="truncate">Tất cả năm</span>
                         </button>
-                        <div id="dropdownNam" class="z-50 hidden bg-white rounded-xl shadow-xl border border-slate-100 w-40 p-2">
+                        <div id="dropdownNam" class="z-50 hidden bg-white rounded-xl shadow-xl border border-zinc-100 w-40 p-2">
                             <input type="text" id="searchNam" oninput="filterDropdown('Nam')" placeholder="Tìm năm..." class="search-inner">
                             <div id="listNam" class="max-h-60 overflow-y-auto space-y-0.5"></div>
                         </div>
@@ -640,8 +640,8 @@
                         <button id="btnType" data-dropdown-toggle="dropdownType" class="multi-btn">
                             <span id="labelType" class="truncate">Tất cả loại</span>
                         </button>
-                        <div id="dropdownType" class="z-50 hidden bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 w-56 p-2">
-                            <div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectType('all')">Tất cả loại hàng</div>
+                        <div id="dropdownType" class="z-50 hidden bg-white dark:bg-zinc-900 rounded-xl shadow-xl border border-zinc-100 dark:border-zinc-800 w-56 p-2">
+                            <div class="dropdown-item active border-b border-zinc-100 dark:border-zinc-800 mb-1 pb-2 font-black text-indigo-600" onclick="selectType('all')">Tất cả loại hàng</div>
                             <div class="dropdown-item" onclick="selectType('genuine')">Chính hãng</div>
                             <div class="dropdown-item" onclick="selectType('aftermarket')">Hàng ngoài</div>
                         </div>
@@ -654,7 +654,7 @@
                         TÌM KIẾM
                     </button>
                     <button onclick="clearFilters()" class="btn-trash" title="Xóa bộ lọc">
-                        <svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path class="trash-lid" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7h16M10 7V4a1 1 0 011-1h2a1 1 0 011 1v3" />
                             <path class="trash-body" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 7l.867 12.142A2 2 0 007.862 21h8.276a2 2 0 001.995-1.858L19 7M10 11v6M14 11v6" />
                         </svg>
@@ -664,39 +664,39 @@
         </div>
 
         <div class="data-section">
-            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <div class="px-6 py-4 border-b border-zinc-100 bg-zinc-50/50 flex items-center justify-between">
                 <div class="flex items-center gap-6">
                     <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Hiển thị:</span>
-                        <select id="pageSize" onchange="changePageSize()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-bold rounded-lg p-1 px-3 text-slate-700 dark:text-slate-300">
+                        <span class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Hiển thị:</span>
+                        <select id="pageSize" onchange="changePageSize()" class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[11px] font-bold rounded-lg p-1 px-3 text-zinc-700 dark:text-zinc-300">
                             <option value="10">10 dòng</option>
                             <option value="25">25 dòng</option>
                             <option value="50">50 dòng</option>
                         </select>
                     </div>
-                    <div class="h-4 w-px bg-slate-200 dark:bg-slate-700"></div>
+                    <div class="h-4 w-px bg-zinc-200 dark:bg-zinc-700"></div>
                     <div class="flex flex-col">
-                        <span id="statCount" class="text-xs font-black text-slate-900 dark:text-slate-100">0 kết quả</span>
+                        <span id="statCount" class="text-xs font-black text-zinc-900 dark:text-zinc-100">0 kết quả</span>
                     </div>
                     <div id="searchSummaryHeader" class="hidden md:flex items-center">
-                        <div class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
-                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
-                            <span id="summaryTextHeader" class="text-[10px] font-black text-blue-600 uppercase tracking-tight"></span>
+                        <div class="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800">
+                            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
+                            <span id="summaryTextHeader" class="text-[10px] font-black text-indigo-600 uppercase tracking-tight"></span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="flex items-center gap-4">
-                    <div id="loadingIndicator" class="hidden flex items-center gap-2 text-blue-600">
+                    <div id="loadingIndicator" class="hidden flex items-center gap-2 text-indigo-600">
                         <div class="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
                         <span class="text-[10px] font-black uppercase">Đang tải...</span>
                     </div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase" id="pageInfo">Trang 0 / 0</span>
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase" id="pageInfo">Trang 0 / 0</span>
                     <div class="flex gap-1">
-                        <button id="btnPrev" onclick="changePage(-1)" class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-400 hover:text-blue-600 disabled:opacity-30">
+                        <button id="btnPrev" onclick="changePage(-1)" class="p-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-400 hover:text-indigo-600 disabled:opacity-30">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
-                        <button id="btnNext" onclick="changePage(1)" class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-400 hover:text-blue-600 disabled:opacity-30">
+                        <button id="btnNext" onclick="changePage(1)" class="p-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-400 hover:text-indigo-600 disabled:opacity-30">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
@@ -706,56 +706,56 @@
             <!-- Dạng Card cho Mobile -->
             <div class="overflow-y-auto min-h-[400px] pb-24 px-2" id="resultsContainer">
                 <div id="resultsTableBody" class="flex flex-col">
-                    <div class="py-32 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em] w-full">Sẵn sàng tra cứu</div>
+                    <div class="py-32 text-center text-zinc-300 font-bold uppercase italic text-xs tracking-[0.2em] w-full">Sẵn sàng tra cứu</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modalVerify" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div id="modalVerify" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
             <div class="p-8 text-center pb-0">
                 <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
-                <h3 class="text-xl font-black text-slate-900 mb-2">Xác thực phụ tùng</h3>
-                <p class="text-slate-500 font-medium text-sm leading-relaxed mb-6 px-4">Bạn xác nhận các phụ tùng trong hồ sơ <span id="verifyHSBT" class="font-bold text-green-600"></span> tương thích hoàn toàn với dòng xe này?</p>
+                <h3 class="text-xl font-black text-zinc-900 mb-2">Xác thực phụ tùng</h3>
+                <p class="text-zinc-500 font-medium text-sm leading-relaxed mb-6 px-4">Bạn xác nhận các phụ tùng trong hồ sơ <span id="verifyHSBT" class="font-bold text-green-600"></span> tương thích hoàn toàn với dòng xe này?</p>
             </div>
             
             <div class="px-8 mb-8">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-3">Ghi chú xác thực (tùy chọn)</label>
-                <textarea id="verifyNote" placeholder="Ví dụ: Lắp đặt hoàn hảo, phụ tùng rất tốt cho đời xe này..." class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none min-h-[100px] transition-all"></textarea>
+                <label class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] block mb-3">Ghi chú xác thực (tùy chọn)</label>
+                <textarea id="verifyNote" placeholder="Ví dụ: Lắp đặt hoàn hảo, phụ tùng rất tốt cho đời xe này..." class="w-full bg-zinc-50 border border-zinc-100 rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none min-h-[100px] transition-all"></textarea>
                 
                 <div class="flex flex-wrap gap-2 mt-3">
-                    <button onclick="addTag('Phù hợp')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># PHÙ HỢP</button>
-                    <button onclick="addTag('Đúng đời xe')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># ĐÚNG ĐỜI XE</button>
-                    <button onclick="addTag('Hữu ích')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># HỮU ÍCH</button>
-                    <button onclick="addTag('Cần lưu ý')" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-500 hover:border-green-500 hover:text-green-600 transition-all"># CẦN LƯU Ý</button>
+                    <button onclick="addTag('Phù hợp')" class="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-[10px] font-black text-zinc-500 hover:border-green-500 hover:text-green-600 transition-all"># PHÙ HỢP</button>
+                    <button onclick="addTag('Đúng đời xe')" class="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-[10px] font-black text-zinc-500 hover:border-green-500 hover:text-green-600 transition-all"># ĐÚNG ĐỜI XE</button>
+                    <button onclick="addTag('Hữu ích')" class="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-[10px] font-black text-zinc-500 hover:border-green-500 hover:text-green-600 transition-all"># HỮU ÍCH</button>
+                    <button onclick="addTag('Cần lưu ý')" class="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-[10px] font-black text-zinc-500 hover:border-green-500 hover:text-green-600 transition-all"># CẦN LƯU Ý</button>
                 </div>
             </div>
 
             <div class="p-8 pt-0 flex gap-3">
-                <button onclick="closeModal('modalVerify')" class="flex-1 px-6 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all">HỦY BỎ</button>
+                <button onclick="closeModal('modalVerify')" class="flex-1 px-6 py-4 bg-zinc-100 text-zinc-600 font-bold rounded-2xl hover:bg-zinc-200 transition-all">HỦY BỎ</button>
                 <button id="confirmVerifyBtn" class="flex-1 px-6 py-4 bg-green-500 text-white font-bold rounded-2xl hover:bg-green-600 shadow-lg shadow-green-500/30 transition-all">XÁC NHẬN</button>
             </div>
         </div>
     </div>
 
-    <div id="modalDetail" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div id="modalDetail" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scale_0.2s_ease-out]">
-            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+            <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/50">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Chi tiết phụ tùng</h3>
+                    <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Chi tiết phụ tùng</h3>
                 </div>
-                <button onclick="closeModal('modalDetail')" class="p-2 text-slate-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                <button onclick="closeModal('modalDetail')" class="p-2 text-zinc-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <div class="p-8 grid grid-cols-2 gap-4" id="detailContent">
             </div>
-            <div class="p-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                <button onclick="closeModal('modalDetail')" class="px-8 py-3.5 bg-slate-900 dark:bg-blue-600 text-white font-bold rounded-2xl hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-slate-900/20 dark:shadow-blue-600/20">
+            <div class="p-6 bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
+                <button onclick="closeModal('modalDetail')" class="px-8 py-3.5 bg-zinc-900 dark:bg-indigo-600 text-white font-bold rounded-2xl hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-zinc-900/20 dark:shadow-indigo-600/20">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                     ĐÓNG LẠI
                 </button>
@@ -764,93 +764,93 @@
     </div>
 
     <!-- Modal Đổi Mật Khẩu -->
-    <div id="modalChangePassword" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
-            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+    <div id="modalChangePassword" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
+            <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/50">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-orange-50 dark:bg-orange-900/30 text-orange-500 rounded-xl flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                     </div>
-                    <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Đổi mật khẩu</h3>
+                    <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Đổi mật khẩu</h3>
                 </div>
-                <button onclick="closeModal('modalChangePassword')" class="p-2 text-slate-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                <button onclick="closeModal('modalChangePassword')" class="p-2 text-zinc-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <div class="p-8 space-y-4">
                 <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu hiện tại</label>
+                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu hiện tại</label>
                     <input type="password" id="selfOldPass" placeholder="Nhập mật khẩu cũ..." class="premium-input">
                 </div>
                 <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu mới</label>
+                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu mới</label>
                     <input type="password" id="selfNewPass" placeholder="Mật khẩu mới..." class="premium-input">
                 </div>
                 <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Xác nhận mật khẩu mới</label>
+                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Xác nhận mật khẩu mới</label>
                     <input type="password" id="selfConfirmPass" placeholder="Nhập lại mật khẩu mới..." class="premium-input">
                 </div>
             </div>
-            <div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex gap-3">
-                <button onclick="closeModal('modalChangePassword')" class="flex-1 py-3.5 text-slate-500 font-bold uppercase text-xs">Hủy</button>
+            <div class="p-6 bg-zinc-50 dark:bg-zinc-800/50 flex gap-3">
+                <button onclick="closeModal('modalChangePassword')" class="flex-1 py-3.5 text-zinc-500 font-bold uppercase text-xs">Hủy</button>
                 <button id="btnSaveSelfPassword" class="flex-1 py-3.5 bg-orange-500 text-white font-bold rounded-2xl shadow-lg shadow-orange-500/20 hover:bg-orange-600 uppercase text-xs transition-all">Lưu thay đổi</button>
             </div>
         </div>
     </div>
 
     <!-- Form Custom Alert (Thông báo) -->
-    <div id="modalCustomAlert" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
+    <div id="modalCustomAlert" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
             <div class="p-8 text-center pb-6">
                 <div id="alertIconContainer" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                     <!-- Icon sẽ được JS chèn tự động dựa vào loại thông báo -->
                 </div>
-                <h3 id="alertTitle" class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">Thông báo</h3>
-                <p id="alertMessage" class="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed px-4"></p>
+                <h3 id="alertTitle" class="text-xl font-black text-zinc-900 dark:text-white mb-2 uppercase tracking-tight">Thông báo</h3>
+                <p id="alertMessage" class="text-zinc-500 dark:text-zinc-400 font-medium text-sm leading-relaxed px-4"></p>
             </div>
             <div class="p-6 pt-0 flex">
-                <button onclick="closeModal('modalCustomAlert')" id="alertOkBtn" class="flex-1 px-6 py-3.5 bg-blue-600 text-white font-bold rounded-2xl hover:opacity-90 shadow-lg shadow-blue-500/30 transition-all uppercase text-xs">ĐÓNG LẠI</button>
+                <button onclick="closeModal('modalCustomAlert')" id="alertOkBtn" class="flex-1 px-6 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl hover:opacity-90 shadow-lg shadow-indigo-500/30 transition-all uppercase text-xs">ĐÓNG LẠI</button>
             </div>
         </div>
     </div>
 
     <!-- Form Custom Confirm (Xác nhận) -->
-    <div id="modalCustomConfirm" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
+    <div id="modalCustomConfirm" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
             <div class="p-8 text-center pb-6">
                 <div class="w-20 h-20 bg-orange-50 dark:bg-orange-900/30 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
-                <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">Xác nhận</h3>
-                <p id="confirmMessage" class="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed px-4"></p>
+                <h3 class="text-xl font-black text-zinc-900 dark:text-white mb-2 uppercase tracking-tight">Xác nhận</h3>
+                <p id="confirmMessage" class="text-zinc-500 dark:text-zinc-400 font-medium text-sm leading-relaxed px-4"></p>
             </div>
             <div class="p-6 pt-0 flex gap-3">
-                <button onclick="closeModal('modalCustomConfirm')" class="flex-1 px-6 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all uppercase text-xs">HỦY BỎ</button>
+                <button onclick="closeModal('modalCustomConfirm')" class="flex-1 px-6 py-3.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-bold rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all uppercase text-xs">HỦY BỎ</button>
                 <button id="btnCustomConfirmOk" class="flex-1 px-6 py-3.5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 shadow-lg shadow-orange-500/30 transition-all uppercase text-xs">ĐỒNG Ý</button>
             </div>
         </div>
     </div>
-    <div id="modalLogout" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div id="modalLogout" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
             <div class="p-8 text-center">
                 <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                 </div>
-                <h3 class="text-xl font-black text-slate-900 mb-2">Đăng xuất</h3>
-                <p class="text-slate-500 font-medium text-sm mb-8">Bạn có chắc chắn muốn thoát khỏi hệ thống không?</p>
+                <h3 class="text-xl font-black text-zinc-900 mb-2">Đăng xuất</h3>
+                <p class="text-zinc-500 font-medium text-sm mb-8">Bạn có chắc chắn muốn thoát khỏi hệ thống không?</p>
                 <div class="flex gap-3">
-                    <button onclick="closeModal('modalLogout')" class="flex-1 px-6 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all uppercase text-xs">HỦY</button>
+                    <button onclick="closeModal('modalLogout')" class="flex-1 px-6 py-3.5 bg-zinc-100 text-zinc-600 font-bold rounded-2xl hover:bg-zinc-200 transition-all uppercase text-xs">HỦY</button>
                     <button onclick="confirmLogout()" class="flex-1 px-6 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all uppercase text-xs">ĐĂNG XUẤT</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- Modal Xem Lịch sử User -->
-    <div id="modalHistory" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scale_0.2s_ease-out] flex flex-col max-h-[80vh]">
-            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Lịch sử hoạt động: <span id="historyEmailText" class="text-blue-600"></span></h3>
-                <button onclick="closeModal('modalHistory')" class="p-2 text-slate-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <div id="modalHistory" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scale_0.2s_ease-out] flex flex-col max-h-[80vh]">
+            <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Lịch sử hoạt động: <span id="historyEmailText" class="text-indigo-600"></span></h3>
+                <button onclick="closeModal('modalHistory')" class="p-2 text-zinc-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
-            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 overflow-y-auto flex-1 custom-scrollbar">
+            <div class="p-4 bg-zinc-50 dark:bg-zinc-800/50 overflow-y-auto flex-1 custom-scrollbar">
                 <div class="space-y-3" id="historyListContainer">
                     <!-- Dữ liệu lịch sử sẽ render ở đây -->
                 </div>
@@ -1719,13 +1719,13 @@
 
         window.refreshUserList = async function() {
             const tableBody = document.getElementById('userTableBody');
-            tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-zinc-300 font-bold uppercase italic text-xs tracking-[0.2em]">Đang tải danh sách...</td></tr>';
             
             try {
                 const snap = await getDocs(collection(db, "sub_users"));
                 tableBody.innerHTML = '';
                 if (snap.empty) {
-                    tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-slate-400 font-bold italic text-xs uppercase">Chưa có người dùng nào</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-20 text-center text-zinc-400 font-bold italic text-xs uppercase">Chưa có người dùng nào</td></tr>';
                     return;
                 }
                 snap.forEach(docSnap => {
@@ -1740,16 +1740,16 @@
                     const lockColor = u.status === 'locked' ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20';
 
                     tableBody.innerHTML += `
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all">
                             <td class="px-6 py-4">
-                                <div class="text-[13px] font-black text-slate-900 dark:text-white uppercase">${u.fullName || 'Chưa có tên'}</div>
-                                <div class="text-[10px] font-bold text-slate-400 mt-1">TK: <span class="text-slate-600 dark:text-slate-300">${u.email}</span> • MK: <span class="text-slate-600 dark:text-slate-300">${u.password}</span></div>
+                                <div class="text-[13px] font-black text-zinc-900 dark:text-white uppercase">${u.fullName || 'Chưa có tên'}</div>
+                                <div class="text-[10px] font-bold text-zinc-400 mt-1">TK: <span class="text-zinc-600 dark:text-zinc-300">${u.email}</span> • MK: <span class="text-zinc-600 dark:text-zinc-300">${u.password}</span></div>
                             </td>
                             <td class="px-6 py-4 text-left">${statusBadge}</td>
                             <td class="px-6 py-4">
-                                <div class="text-[10px] font-bold text-slate-500">Đăng nhập: <span class="text-blue-600">${u.loginCount || 0}</span> lần</div>
-                                <div class="text-[10px] font-bold text-slate-500">Tra cứu: <span class="text-blue-600">${u.searchCount || 0}</span> lần</div>
-                                <div class="text-[9px] text-slate-400 mt-1 uppercase">Vào cuối: ${lastLogin}</div>
+                                <div class="text-[10px] font-bold text-zinc-500">Đăng nhập: <span class="text-indigo-600">${u.loginCount || 0}</span> lần</div>
+                                <div class="text-[10px] font-bold text-zinc-500">Tra cứu: <span class="text-indigo-600">${u.searchCount || 0}</span> lần</div>
+                                <div class="text-[9px] text-zinc-400 mt-1 uppercase">Vào cuối: ${lastLogin}</div>
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
@@ -1759,10 +1759,10 @@
                                     <button onclick="toggleUserStatus('${uid}', '${u.status}')" class="p-2 ${lockColor} rounded-lg transition-all" title="${lockTitle}">
                                         ${lockIcon}
                                     </button>
-                                    <button onclick="openEditUser('${uid}', '${u.email}', '${u.password}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all" title="Đổi MK">
+                                    <button onclick="openEditUser('${uid}', '${u.email}', '${u.password}')" class="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all" title="Đổi MK">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </button>
-                                    <button onclick="deleteSubUser('${uid}', '${u.email}')" class="btn-trash p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg" title="Xóa">
+                                    <button onclick="deleteSubUser('${uid}', '${u.email}')" class="btn-trash p-2 text-zinc-400 dark:text-zinc-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg" title="Xóa">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <!-- Nắp thùng rác -->
                                             <path class="trash-lid" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7h16M10 7V4a1 1 0 011-1h2a1 1 0 011 1v3" />
@@ -1797,7 +1797,7 @@
         window.viewUserHistory = async (email) => {
             document.getElementById('historyEmailText').innerText = email;
             const container = document.getElementById('historyListContainer');
-            container.innerHTML = '<p class="text-center text-sm font-bold text-slate-400 py-10">Đang tải dữ liệu...</p>';
+            container.innerHTML = '<p class="text-center text-sm font-bold text-zinc-400 py-10">Đang tải dữ liệu...</p>';
             openModal('modalHistory');
 
             try {
@@ -1807,7 +1807,7 @@
                 snap.forEach(d => logs.push(d.data()));
                 
                 if (logs.length === 0) {
-                    container.innerHTML = '<p class="text-center text-sm font-bold text-slate-400 py-10">Chưa có hoạt động nào</p>';
+                    container.innerHTML = '<p class="text-center text-sm font-bold text-zinc-400 py-10">Chưa có hoạt động nào</p>';
                     return;
                 }
 
@@ -1816,14 +1816,14 @@
 
                 container.innerHTML = logs.map(log => {
                     const time = log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString('vi-VN') : 'N/A';
-                    const actionColor = log.action === 'Đăng nhập' ? 'text-green-600 bg-green-50 border-green-200' : 'text-blue-600 bg-blue-50 border-blue-200';
+                    const actionColor = log.action === 'Đăng nhập' ? 'text-green-600 bg-green-50 border-green-200' : 'text-indigo-600 bg-indigo-50 border-indigo-200';
                     return `
-                        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-sm border border-zinc-100 dark:border-zinc-700">
                             <div class="flex items-center justify-between mb-1.5">
                                 <span class="px-2.5 py-1 text-[9px] font-black rounded-lg border ${actionColor} uppercase tracking-widest">${log.action}</span>
-                                <span class="text-[11px] font-bold text-slate-400">${time}</span>
+                                <span class="text-[11px] font-bold text-zinc-400">${time}</span>
                             </div>
-                            ${log.details ? `<p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2">${log.details}</p>` : ''}
+                            ${log.details ? `<p class="text-xs font-bold text-zinc-600 dark:text-zinc-300 mt-2">${log.details}</p>` : ''}
                         </div>
                     `;
                 }).join('');
@@ -1902,7 +1902,7 @@
         function renderHangList() {
             const list = document.getElementById('listHang');
             const sortedHang = Object.keys(CAY_GIA_PHA).sort();
-            list.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectHang(\'\')">Tất cả hãng</div>';
+            list.innerHTML = '<div class="dropdown-item active border-b border-zinc-100 dark:border-zinc-800 mb-1 pb-2 font-black text-indigo-600" onclick="selectHang(\'\')">Tất cả hãng</div>';
             sortedHang.forEach(hang => {
                 list.innerHTML += `<div class="dropdown-item" onclick="selectHang('${hang}')">${hang}</div>`;
             });
@@ -1926,16 +1926,16 @@
             
             if (hang && CAY_GIA_PHA[hang]) {
                 const allItem = document.createElement('label');
-                allItem.className = 'dropdown-item border-b border-slate-100 dark:border-slate-800 mb-1 pb-2';
-                allItem.innerHTML = `<input type="checkbox" id="selectAllHieu" onchange="toggleSelectAllHieu(this)" class="w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="font-black text-blue-600">Chọn tất cả</span>`;
+                allItem.className = 'dropdown-item border-b border-zinc-100 dark:border-zinc-800 mb-1 pb-2';
+                allItem.innerHTML = `<input type="checkbox" id="selectAllHieu" onchange="toggleSelectAllHieu(this)" class="w-4 h-4 text-indigo-600 rounded border-zinc-300"> <span class="font-black text-indigo-600">Chọn tất cả</span>`;
                 container.appendChild(allItem);
                 Object.keys(CAY_GIA_PHA[hang]).sort().forEach(hieu => {
                     const item = document.createElement('label');
                     item.className = 'dropdown-item';
-                    item.innerHTML = `<input type="checkbox" name="hieu_xe" value="${hieu}" onchange="onHieuXeChange()" class="w-4 h-4 text-blue-600 rounded border-slate-300"> <span>${hieu}</span>`;
+                    item.innerHTML = `<input type="checkbox" name="hieu_xe" value="${hieu}" onchange="onHieuXeChange()" class="w-4 h-4 text-indigo-600 rounded border-zinc-300"> <span>${hieu}</span>`;
                     container.appendChild(item);
                 });
-            } else { container.innerHTML = '<p class="text-[11px] text-slate-400 italic p-3">Chọn hãng xe trước</p>'; }
+            } else { container.innerHTML = '<p class="text-[11px] text-zinc-400 italic p-3">Chọn hãng xe trước</p>'; }
             fillNamSXDropdown(NAM_ALL);
         }
 
@@ -1986,7 +1986,7 @@
 
         function fillNamSXDropdown(list) {
             const container = document.getElementById('listNam');
-            container.innerHTML = '<div class="dropdown-item active border-b border-slate-100 dark:border-slate-800 mb-1 pb-2 font-black text-blue-600" onclick="selectNam(\'\')">Tất cả năm</div>';
+            container.innerHTML = '<div class="dropdown-item active border-b border-zinc-100 dark:border-zinc-800 mb-1 pb-2 font-black text-indigo-600" onclick="selectNam(\'\')">Tất cả năm</div>';
             list.sort((a,b) => b-a).forEach(n => {
                 container.innerHTML += `<div class="dropdown-item" onclick="selectNam('${n}')">${n}</div>`;
             });
@@ -2027,7 +2027,7 @@
             // Clear dữ liệu bảng
             MASTER_DATA = []; SEARCH_PRICE_STATS = null;
             CURRENT_PAGE = 1;
-            document.getElementById('resultsTableBody').innerHTML = '<div class="py-32 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em] w-full">Sẵn sàng tra cứu</div>';
+            document.getElementById('resultsTableBody').innerHTML = '<div class="py-32 text-center text-zinc-300 font-bold uppercase italic text-xs tracking-[0.2em] w-full">Sẵn sàng tra cứu</div>';
             document.getElementById('statCount').innerText = "0 kết quả";
             
             // Ẩn thanh tóm tắt
@@ -2195,7 +2195,7 @@
             } else if (price >= q3) {
                 return `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-200">👆 Cao</span></div>`;
             } else {
-                return `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">➖ Trung bình</span></div>`;
+                return `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">➖ Trung bình</span></div>`;
             }
         }
 
@@ -2207,46 +2207,46 @@
             const itemsToRender = MASTER_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
             if (itemsToRender.length === 0) {
-                tableBody.innerHTML = '<div class="py-20 text-center text-slate-300 font-bold uppercase italic text-xs tracking-[0.2em] w-full">Không tìm thấy kết quả</div>';
+                tableBody.innerHTML = '<div class="py-20 text-center text-zinc-300 font-bold uppercase italic text-xs tracking-[0.2em] w-full">Không tìm thấy kết quả</div>';
             }
 
             itemsToRender.forEach(item => {
                 const isGenuine = (item.chinh_hang || '').toLowerCase().includes("chính hãng");
                 const badge = isGenuine ? '<span class="badge-pro badge-genuine">Chính hãng</span>' : '<span class="badge-pro badge-aftermarket">Hàng ngoài</span>';
                 const ngay = (item.ngay_bao_gia || '').split(' ')[0].split('-').reverse().join('/');
-                const verifiedHtml = item.verified ? '<span class="text-[9px] font-black text-blue-500 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 px-2 py-1 rounded-lg">ĐÃ XÁC THỰC</span>' : `<button onclick="event.stopPropagation(); verifyPart('${item.id}')" class="text-[9px] font-black text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded-lg transition-all">XÁC THỰC</button>`;
+                const verifiedHtml = item.verified ? '<span class="text-[9px] font-black text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 px-2 py-1 rounded-lg">ĐÃ XÁC THỰC</span>' : `<button onclick="event.stopPropagation(); verifyPart('${item.id}')" class="text-[9px] font-black text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 border border-zinc-200 dark:border-zinc-700 px-2 py-1 rounded-lg transition-all">XÁC THỰC</button>`;
 
                 tableBody.innerHTML += `
                     <div class="result-card cursor-pointer" onclick="showDetail('${item.id}')">
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex-1 pr-3">
-                                <h4 class="text-[18px] font-black text-slate-900 dark:text-white uppercase leading-tight mb-1.5 tracking-tight">${item.ten_phu_tung}</h4>
-                                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">HSBT: <span class="text-slate-600 dark:text-slate-300">${item.so_hsbt || 'N/A'}</span></div>
+                                <h4 class="text-[18px] font-black text-zinc-900 dark:text-white uppercase leading-tight mb-1.5 tracking-tight">${item.ten_phu_tung}</h4>
+                                <div class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">HSBT: <span class="text-zinc-600 dark:text-zinc-300">${item.so_hsbt || 'N/A'}</span></div>
                             </div>
                             <div class="flex-shrink-0 flex items-center gap-2">${verifiedHtml} ${badge}</div>
                         </div>
                         
                         <div class="flex gap-2 mb-4">
-                            <div class="flex-1 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-[20px] flex flex-col justify-center">
-                                <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Xe giám định</div>
-                                <div class="text-[12px] font-black text-slate-800 dark:text-white truncate">${item.hang_xe} ${item.hieu_xe}</div>
-                                <div class="text-[11px] font-bold text-slate-500">${item.nam_sx || '0'}</div>
+                            <div class="flex-1 p-3 bg-zinc-50 dark:bg-zinc-800/60 rounded-[20px] flex flex-col justify-center">
+                                <div class="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">Xe giám định</div>
+                                <div class="text-[12px] font-black text-zinc-800 dark:text-white truncate">${item.hang_xe} ${item.hieu_xe}</div>
+                                <div class="text-[11px] font-bold text-zinc-500">${item.nam_sx || '0'}</div>
                             </div>
-                            <div class="flex-1 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-[20px] flex flex-col justify-center text-right">
-                                <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Garage báo giá</div>
-                                <div class="text-[12px] font-black text-slate-800 dark:text-white truncate">${item.ten_gara_viet_tat || item.ten_garage || 'KHÁC'}</div>
-                                <div class="text-[11px] font-bold text-slate-500">${item.tinh_thanh || 'Toàn quốc'}</div>
+                            <div class="flex-1 p-3 bg-zinc-50 dark:bg-zinc-800/60 rounded-[20px] flex flex-col justify-center text-right">
+                                <div class="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">Garage báo giá</div>
+                                <div class="text-[12px] font-black text-zinc-800 dark:text-white truncate">${item.ten_gara_viet_tat || item.ten_garage || 'KHÁC'}</div>
+                                <div class="text-[11px] font-bold text-zinc-500">${item.tinh_thanh || 'Toàn quốc'}</div>
                             </div>
                         </div>
 
                         <div class="flex items-center justify-between pt-1">
                             <div>
-                                <div class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Giá báo duyệt</div>
-                                <div class="text-[20px] font-black tracking-tighter ${item.gia_duyet === 0 ? 'text-slate-400 italic font-medium' : 'text-slate-900 dark:text-white'}">${formatCurrency(item.gia_duyet)}</div>
+                                <div class="text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-1">Giá báo duyệt</div>
+                                <div class="text-[20px] font-black tracking-tighter ${item.gia_duyet === 0 ? 'text-zinc-400 italic font-medium' : 'text-zinc-900 dark:text-white'}">${formatCurrency(item.gia_duyet)}</div>
                             </div>
                             <div class="text-right flex flex-col items-end justify-center">
-                                <div class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Ngày báo giá</div>
-                                <div class="text-[14px] font-black text-blue-600 dark:text-blue-400">${ngay}</div>
+                                <div class="text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-1">Ngày báo giá</div>
+                                <div class="text-[14px] font-black text-indigo-600 dark:text-indigo-400">${ngay}</div>
                             </div>
                         </div>
                     </div>
@@ -2386,7 +2386,7 @@
             const content = document.getElementById('detailContent');
             let typeBadge = item.chinh_hang === 'Chính hãng' ? '<span class="badge-genuine text-[10px]">CHÍNH HÃNG</span>' : '<span class="badge-aftermarket text-[10px]">HÀNG NGOÀI</span>';
             const fields = [
-                { l: "Tên phụ tùng", v: item.ten_phu_tung, c: "col-span-2 font-black text-blue-600 dark:text-blue-400 text-lg uppercase", i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>' },
+                { l: "Tên phụ tùng", v: item.ten_phu_tung, c: "col-span-2 font-black text-indigo-600 dark:text-indigo-400 text-lg uppercase", i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>' },
                 { l: "Số hồ sơ", v: item.so_hsbt, i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>' },
                 { l: "Hãng xe", v: item.hang_xe, i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>' },
                 { l: "Dòng xe", v: item.hieu_xe, i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>' },
@@ -2404,8 +2404,8 @@
 
             content.innerHTML = fields.map(f => `
                 <div class="${f.c || ''}">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">${f.l}</label>
-                    <div class="text-sm font-bold text-slate-700">${f.v || 'N/A'}</div>
+                    <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">${f.l}</label>
+                    <div class="text-sm font-bold text-zinc-700">${f.v || 'N/A'}</div>
                 </div>
             `).join('');
             openModal('modalDetail');
