@@ -1925,31 +1925,38 @@
 
         
         window.selectAllItems = function() {
+            const query = document.getElementById('filterModalSearch').value.toLowerCase();
             if (currentFilterType === 'hieu') {
                 const hang = document.getElementById('filterHang').value;
                 if (hang && CAY_GIA_PHA[hang]) {
                     const allHieus = Object.keys(CAY_GIA_PHA[hang]);
-                    selectedHieuList = [...allHieus];
+                    const visibleHieus = allHieus.filter(i => String(i).toLowerCase().includes(query));
+                    selectedHieuList = [...new Set([...selectedHieuList, ...visibleHieus])];
                     renderFilterMultiList(allHieus.sort(), selectedHieuList, document.getElementById('filterModalSearch').value);
                     updateHieuLabel();
                 }
             } else if (currentFilterType === 'nam') {
-                selectedNamList = [...NAM_ALL];
+                const visibleNams = NAM_ALL.filter(i => String(i).toLowerCase().includes(query));
+                selectedNamList = [...new Set([...selectedNamList, ...visibleNams])];
                 renderFilterMultiList(NAM_ALL, selectedNamList, document.getElementById('filterModalSearch').value);
                 updateNamLabel();
             }
         }
         
         window.deselectAllItems = function() {
+            const query = document.getElementById('filterModalSearch').value.toLowerCase();
             if (currentFilterType === 'hieu') {
-                selectedHieuList = [];
                 const hang = document.getElementById('filterHang').value;
                 if (hang && CAY_GIA_PHA[hang]) {
-                    renderFilterMultiList(Object.keys(CAY_GIA_PHA[hang]).sort(), selectedHieuList, document.getElementById('filterModalSearch').value);
+                    const allHieus = Object.keys(CAY_GIA_PHA[hang]);
+                    const visibleHieus = allHieus.filter(i => String(i).toLowerCase().includes(query));
+                    selectedHieuList = selectedHieuList.filter(i => !visibleHieus.includes(i));
+                    renderFilterMultiList(allHieus.sort(), selectedHieuList, document.getElementById('filterModalSearch').value);
                     updateHieuLabel();
                 }
             } else if (currentFilterType === 'nam') {
-                selectedNamList = [];
+                const visibleNams = NAM_ALL.filter(i => String(i).toLowerCase().includes(query));
+                selectedNamList = selectedNamList.filter(i => !visibleNams.includes(i));
                 renderFilterMultiList(NAM_ALL, selectedNamList, document.getElementById('filterModalSearch').value);
                 updateNamLabel();
             }
