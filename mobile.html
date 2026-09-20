@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1429,7 +1429,8 @@
             }
         }
 
-                let lastLoggedUid = null;
+        let currentUserProfile = null;
+        let lastLoggedUid = null;
         onAuthStateChanged(auth, async (user) => {
             if (window.IS_REGISTERING) return;
             if (user) {
@@ -1884,7 +1885,7 @@
 
 
         let CAY_GIA_PHA = {}; let NAM_ALL = []; 
-        let MASTER_DATA = []; SEARCH_PRICE_STATS = null; let CURRENT_PAGE = 1; let ITEMS_PER_PAGE = 10;
+        let MASTER_DATA = []; let SEARCH_PRICE_STATS = null; let CURRENT_PAGE = 1; let ITEMS_PER_PAGE = 10;
 
         async function loadFilters() {
             try {
@@ -2162,7 +2163,6 @@
         }
 
 
-        let SEARCH_PRICE_STATS = null;
         function getPriceSignalBadge(item) {
             return ''; // Báo giá cao thấp chỉ hoạt động khi dùng tính năng Lọc đúng tên (Desktop)
 
