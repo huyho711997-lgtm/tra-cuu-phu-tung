@@ -582,10 +582,15 @@
                 <div class="relative mb-4">
                     <input type="text" id="searchInput" placeholder="Tìm tên phụ tùng..." class="w-full bg-white/10 border border-white/20 rounded-[20px] py-4 px-5 text-white placeholder-indigo-200 focus:outline-none focus:bg-white/20 focus:border-white/40 transition-all font-bold text-base" onkeydown="if(event.key==='Enter') searchData()">
                 </div>
-                <button onclick="searchData()" class="w-full bg-indigo-500 hover:bg-indigo-400 text-white font-black py-4 rounded-[20px] flex justify-center items-center gap-2 transition-colors shadow-inner border border-white/10">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                    TÌM KIẾM NGAY
-                </button>
+                <div class="flex items-center gap-3">
+                    <button onclick="searchData()" class="flex-1 bg-indigo-500 hover:bg-indigo-400 text-white font-black py-4 rounded-[20px] flex justify-center items-center gap-2 transition-colors shadow-inner border border-white/10">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        TÌM KIẾM NGAY
+                    </button>
+                    <button onclick="clearFilters()" class="w-[56px] h-[56px] shrink-0 bg-white/10 hover:bg-white/20 text-white rounded-[20px] flex justify-center items-center transition-colors border border-white/10" title="Xóa bộ lọc">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -593,7 +598,7 @@
         <div class="px-4 mb-8">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-[17px] font-black text-zinc-900 dark:text-white tracking-tight">Bộ lọc chi tiết</h3>
-                <button onclick="clearFilters()" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full">Xóa bộ lọc</button>
+                
             </div>
             
                         <div class="grid grid-cols-4 gap-3">
