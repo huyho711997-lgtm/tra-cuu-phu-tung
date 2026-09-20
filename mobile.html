@@ -1924,7 +1924,7 @@
                 if (!hang) {
                     list.innerHTML = '<div class="p-6 text-center text-zinc-400 font-bold italic text-xs">Vui lòng chọn Hãng xe trước.</div>';
                 } else {
-                    const hieuArr = CAY_GIA_PHA[hang] || [];
+                    const hieuArr = Object.keys(CAY_GIA_PHA[hang] || {}).sort();
                     renderFilterMultiList(hieuArr, selectedHieuList);
                 }
             } else if (type === 'nam') {
@@ -2006,7 +2006,7 @@
                 renderFilterList(Object.keys(CAY_GIA_PHA).sort(), document.getElementById('filterHang').value, query);
             } else if (currentFilterType === 'hieu') {
                 const hang = document.getElementById('filterHang').value;
-                if (hang) renderFilterMultiList(CAY_GIA_PHA[hang] || [], selectedHieuList, query);
+                if (hang) renderFilterMultiList(Object.keys(CAY_GIA_PHA[hang] || {}).sort(), selectedHieuList, query);
             } else if (currentFilterType === 'nam') {
                 renderFilterList(NAM_ALL, document.getElementById('filterNam').value, query);
             }
