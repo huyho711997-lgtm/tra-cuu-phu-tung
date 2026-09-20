@@ -18,10 +18,8 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: {
-                            DEFAULT: '#2563eb',
-                            hover: '#1d4ed8',
-                        }
+                        navy: { 50: '#e8ebf3', 100: '#c6cee0', 200: '#a4b1cd', 300: '#8294bb', 400: '#6077a9', 500: '#142a5e', 600: '#10224b', 700: '#0c1938', 800: '#081126', 900: '#040813' },
+                        teal: { 50: '#eff9f8', 100: '#d7f0ec', 200: '#aee1d8', 300: '#86d1c5', 400: '#62bfb5', 500: '#4faea3', 600: '#3c8f85', 700: '#2a7068', 800: '#18504a', 900: '#06312d' }
                     }
                 }
             }
@@ -314,8 +312,8 @@
         html.dark .price-text { color: #f8fafc !important; }
         html.dark .dropdown-item:hover { background: #1e293b !important; color: #2563eb !important; }
         html.dark .dropdown-item.active { background: #1e293b !important; color: #2563eb !important; }
-        html.dark .bg-indigo-50 { background: rgba(79, 70, 229, 0.1) !important; }
-        html.dark .text-indigo-600 { color: #60a5fa !important; }
+        html.dark .bg-navy-50 { background: rgba(79, 70, 229, 0.1) !important; }
+        html.dark .text-navy-500 { color: #60a5fa !important; }
         html.dark .badge-genuine { background: rgba(22, 163, 74, 0.2) !important; color: #4ade80 !important; border-color: rgba(34, 197, 94, 0.3) !important; }
         html.dark .badge-aftermarket { background: rgba(217, 119, 6, 0.2) !important; color: #fbbf24 !important; border-color: rgba(180, 83, 9, 0.3) !important; }
         html.dark .badge-verified { background: rgba(79, 70, 229, 0.2) !important; color: #60a5fa !important; border-color: rgba(79, 70, 229, 0.3) !important; }
@@ -412,7 +410,7 @@
     <div id="loginOverlay">
         <div class="login-card animate-[fadeIn_0.5s_ease-out]">
             <div class="text-center mb-10">
-                <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-500/20">
+                <div class="w-16 h-16 bg-navy-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-navy-500/20">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
                 <h2 class="text-2xl font-black text-zinc-900 dark:text-white tracking-tight uppercase">Hệ thống TASCO INSURANCE</h2>
@@ -438,10 +436,10 @@
                 
                 <div class="flex items-center justify-between px-1">
                     <label class="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500 transition-all">
+                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-zinc-300 text-teal-400 focus:ring-teal-400 transition-all">
                         <span class="text-[11px] font-bold text-zinc-500 group-hover:text-zinc-700 transition-colors">Ghi nhớ đăng nhập</span>
                     </label>
-                    <button type="button" onclick="forgotPassword()" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 transition-all">Quên mật khẩu?</button>
+                    <button type="button" onclick="forgotPassword()" class="text-[11px] font-bold text-navy-500 hover:text-navy-600 transition-all">Quên mật khẩu?</button>
                 </div>
 
                 <button type="submit" id="loginBtn" class="w-full btn-executive text-sm uppercase tracking-widest mt-2">
@@ -450,7 +448,7 @@
                 <p id="loginError" class="text-red-500 text-[10px] font-bold text-center mt-4 hidden uppercase tracking-widest"></p>
                 <div class="text-center mt-4 text-[11px] font-bold text-zinc-500">
                     <span id="registerPromptText">Chưa có tài khoản?</span>
-                    <button type="button" class="text-indigo-600 hover:text-indigo-700 ml-1 uppercase tracking-wider font-black transition-colors" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký ngay</button>
+                    <button type="button" class="text-navy-500 hover:text-navy-600 ml-1 uppercase tracking-wider font-black transition-colors" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký ngay</button>
                 </div>
             </form>
         </div>
@@ -464,7 +462,7 @@
                 <h1 class="text-[26px] font-black text-zinc-900 dark:text-white leading-tight mb-1 tracking-tight">Xin chào, <span id="userEmail" class="text-zinc-900 dark:text-white capitalize">bạn</span>.</h1>
                 <div class="text-[11px] font-semibold text-zinc-500"><span style="color: #142a5e; font-weight: 800;">TASCO</span> <span style="color: #62bfb5; font-weight: 800;">INSURANCE</span> - HỆ THỐNG TRA CỨU PHỤ TÙNG</div>
             </div>
-            <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-[15px] flex-shrink-0 cursor-pointer shadow-sm" onclick="toggleSysMgrView()" id="headerAvatar">
+            <div class="w-12 h-12 rounded-full bg-navy-100 dark:bg-navy-900/40 flex items-center justify-center text-navy-500 dark:text-navy-400 font-bold text-[15px] flex-shrink-0 cursor-pointer shadow-sm" onclick="toggleSysMgrView()" id="headerAvatar">
                 HQ
             </div>
         </header>
@@ -476,16 +474,16 @@
                         <svg class="w-6 h-6 text-zinc-600 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     </button>
                     <div>
-                        <h1 class="text-xl font-black text-zinc-900 dark:text-white tracking-tighter">QUẢN LÝ <span class="text-indigo-600">NGƯỜI DÙNG</span></h1>
+                        <h1 class="text-xl font-black text-zinc-900 dark:text-white tracking-tighter">QUẢN LÝ <span class="text-navy-500">NGƯỜI DÙNG</span></h1>
                         <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Danh sách tài khoản hệ thống</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button onclick="openAddUserModal()" class="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/20 hover:scale-105 transition-all">
+                    <button onclick="openAddUserModal()" class="flex items-center gap-2 px-4 py-2.5 bg-navy-500 text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-navy-500/20 hover:scale-105 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                         Thêm người dùng
                     </button>
-                    <button onclick="refreshUserList()" class="p-2.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-indigo-600 shadow-sm hover:shadow-md transition-all">
+                    <button onclick="refreshUserList()" class="p-2.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-navy-500 shadow-sm hover:shadow-md transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     </button>
                 </div>
@@ -531,7 +529,7 @@
                 </div>
                 <div class="p-6 bg-[#fcfcfc] dark:bg-zinc-800/50 flex gap-3">
                     <button onclick="closeModal('modalAddUser')" class="flex-1 py-3.5 text-zinc-500 font-bold uppercase text-xs">Hủy</button>
-                    <button id="confirmAddUserBtn" class="flex-1 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 uppercase text-xs">Tạo tài khoản</button>
+                    <button id="confirmAddUserBtn" class="flex-1 py-3.5 bg-navy-500 text-white font-bold rounded-2xl shadow-lg shadow-navy-500/20 uppercase text-xs">Tạo tài khoản</button>
                 </div>
             </div>
         </div>
@@ -557,7 +555,7 @@
                 </div>
                 <div class="p-6 bg-[#fcfcfc] dark:bg-zinc-800/50 flex gap-3">
                     <button onclick="closeModal('modalEditUser')" class="flex-1 py-3.5 text-zinc-500 font-bold uppercase text-xs">Hủy</button>
-                    <button id="saveUserEditBtn" class="flex-1 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 uppercase text-xs">Lưu thay đổi</button>
+                    <button id="saveUserEditBtn" class="flex-1 py-3.5 bg-navy-500 text-white font-bold rounded-2xl shadow-lg shadow-navy-500/20 uppercase text-xs">Lưu thay đổi</button>
                 </div>
             </div>
         </div>
@@ -571,19 +569,19 @@
 
         <!-- NEW HERO CARD -->
         <div class="px-4 mb-8">
-            <div class="bg-gradient-to-br from-[#3b2d91] to-[#6049cd] rounded-[28px] p-6 shadow-xl shadow-indigo-500/20 text-white relative overflow-hidden">
+            <div class="bg-navy-500 rounded-[28px] p-6 shadow-xl shadow-navy-500/20 text-white relative overflow-hidden">
                 <div class="absolute -right-8 -top-8 w-32 h-32 border-[12px] border-white/10 rounded-full"></div>
                 <div class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-4 border border-white/10">
-                    <svg class="w-3 h-3 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <svg class="w-3 h-3 text-teal-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     TRA CỨU NHANH
                 </div>
                 <h2 class="text-3xl font-black mb-2 tracking-tight text-white">Tra cứu phụ tùng</h2>
-                <p class="text-xs text-indigo-100 mb-6 font-medium leading-relaxed max-w-[80%]">Nhập tên phụ tùng để bắt đầu tìm kiếm</p>
+                <p class="text-xs text-teal-50 mb-6 font-medium leading-relaxed max-w-[80%]">Nhập tên phụ tùng để bắt đầu tìm kiếm</p>
                 <div class="relative mb-4">
                     <input type="text" id="searchInput" placeholder="Tìm tên phụ tùng..." class="w-full bg-white/10 border border-white/20 rounded-[20px] py-4 px-5 text-white placeholder-indigo-200 focus:outline-none focus:bg-white/20 focus:border-white/40 transition-all font-bold text-base" onkeydown="if(event.key==='Enter') searchData()">
                 </div>
                 <div class="flex items-center gap-3">
-                    <button onclick="searchData()" class="flex-1 bg-indigo-500 hover:bg-indigo-400 text-white font-black py-4 rounded-[20px] flex justify-center items-center gap-2 transition-colors shadow-inner border border-white/10">
+                    <button onclick="searchData()" class="flex-1 bg-teal-400 hover:bg-teal-500 text-white font-black py-4 rounded-[20px] flex justify-center items-center gap-2 transition-colors shadow-inner border border-white/10">
                         <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"></path></svg>
                         TÌM KIẾM NGAY
                     </button>
@@ -603,7 +601,7 @@
             
                         <div class="grid grid-cols-4 gap-3">
                 <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnHang" onclick="openFilterModal('hang')">
-                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-active:scale-95 transition-transform">
+                    <div class="w-14 h-14 rounded-2xl bg-navy-50 dark:bg-navy-900/30 flex items-center justify-center text-navy-500 dark:text-navy-400 group-active:scale-95 transition-transform">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     </div>
                     <div class="text-center">
@@ -649,7 +647,7 @@
         <div class="px-4 mb-32">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-[17px] font-black text-zinc-900 dark:text-white tracking-tight">Kết quả tra cứu</h3>
-                <span id="statCount" class="text-[11px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">0 kết quả</span>
+                <span id="statCount" class="text-[11px] font-black text-navy-500 bg-navy-50 px-3 py-1 rounded-full">0 kết quả</span>
             </div>
             
             <div class="flex items-center justify-between mb-4 pb-4 border-b border-zinc-100 dark:border-zinc-800">
@@ -661,15 +659,15 @@
                     </select>
                 </div>
                 <div class="flex items-center gap-3">
-                    <div id="loadingIndicator" class="hidden flex items-center gap-1 text-indigo-600">
+                    <div id="loadingIndicator" class="hidden flex items-center gap-1 text-navy-500">
                         <div class="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
                     </div>
                     <span class="text-[10px] font-bold text-zinc-400 uppercase" id="pageInfo">Trang 0 / 0</span>
                     <div class="flex gap-2">
-                        <button id="btnPrev" onclick="changePage(-1)" class="text-zinc-400 hover:text-indigo-600 disabled:opacity-30">
+                        <button id="btnPrev" onclick="changePage(-1)" class="text-zinc-400 hover:text-navy-500 disabled:opacity-30">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
-                        <button id="btnNext" onclick="changePage(1)" class="text-zinc-400 hover:text-indigo-600 disabled:opacity-30">
+                        <button id="btnNext" onclick="changePage(1)" class="text-zinc-400 hover:text-navy-500 disabled:opacity-30">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
@@ -1572,19 +1570,19 @@
                             </td>
                             <td class="px-6 py-4 text-left">${statusBadge}</td>
                             <td class="px-6 py-4">
-                                <div class="text-[10px] font-bold text-zinc-500">Đăng nhập: <span class="text-indigo-600">${u.loginCount || 0}</span> lần</div>
-                                <div class="text-[10px] font-bold text-zinc-500">Tra cứu: <span class="text-indigo-600">${u.searchCount || 0}</span> lần</div>
+                                <div class="text-[10px] font-bold text-zinc-500">Đăng nhập: <span class="text-navy-500">${u.loginCount || 0}</span> lần</div>
+                                <div class="text-[10px] font-bold text-zinc-500">Tra cứu: <span class="text-navy-500">${u.searchCount || 0}</span> lần</div>
                                 <div class="text-[9px] text-zinc-400 mt-1 uppercase">Vào cuối: ${lastLogin}</div>
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button onclick="viewUserHistory('${u.email}')" class="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all" title="Xem lịch sử">
+                                    <button onclick="viewUserHistory('${u.email}')" class="p-2 text-navy-500 hover:bg-navy-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all" title="Xem lịch sử">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </button>
                                     <button onclick="toggleUserStatus('${uid}', '${u.status}')" class="p-2 ${lockColor} rounded-lg transition-all" title="${lockTitle}">
                                         ${lockIcon}
                                     </button>
-                                    <button onclick="openEditUser('${uid}', '${u.email}', '${u.password}')" class="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all" title="Đổi MK">
+                                    <button onclick="openEditUser('${uid}', '${u.email}', '${u.password}')" class="p-2 text-navy-500 hover:bg-navy-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all" title="Đổi MK">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </button>
                                     <button onclick="deleteSubUser('${uid}', '${u.email}')" class="btn-trash p-2 text-zinc-400 dark:text-zinc-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg" title="Xóa">
@@ -1641,7 +1639,7 @@
 
                 container.innerHTML = logs.map(log => {
                     const time = log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString('vi-VN') : 'N/A';
-                    const actionColor = log.action === 'Đăng nhập' ? 'text-green-600 bg-green-50 border-green-200' : 'text-indigo-600 bg-indigo-50 border-indigo-200';
+                    const actionColor = log.action === 'Đăng nhập' ? 'text-green-600 bg-green-50 border-green-200' : 'text-navy-500 bg-navy-50 border-navy-200';
                     return `
                         <div class="bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-sm border border-zinc-100 dark:border-zinc-700">
                             <div class="flex items-center justify-between mb-1.5">
@@ -1778,17 +1776,17 @@
                 searchContainer.style.display = 'none';
                 const currentType = document.getElementById('filterType').value;
                 list.innerHTML = `
-                    <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${currentType === 'all' ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('all')">
-                        <span class="text-sm font-bold ${currentType === 'all' ? 'text-indigo-600' : 'text-zinc-700'}">Tất cả loại hàng</span>
-                        ${currentType === 'all' ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${currentType === 'all' ? 'bg-navy-50 border border-navy-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('all')">
+                        <span class="text-sm font-bold ${currentType === 'all' ? 'text-navy-500' : 'text-zinc-700'}">Tất cả loại hàng</span>
+                        ${currentType === 'all' ? '<svg class="w-5 h-5 text-navy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
                     </div>
-                    <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${currentType === 'genuine' ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('genuine')">
-                        <span class="text-sm font-bold ${currentType === 'genuine' ? 'text-indigo-600' : 'text-zinc-700'}">Chính hãng</span>
-                        ${currentType === 'genuine' ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${currentType === 'genuine' ? 'bg-navy-50 border border-navy-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('genuine')">
+                        <span class="text-sm font-bold ${currentType === 'genuine' ? 'text-navy-500' : 'text-zinc-700'}">Chính hãng</span>
+                        ${currentType === 'genuine' ? '<svg class="w-5 h-5 text-navy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
                     </div>
-                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-colors ${currentType === 'aftermarket' ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('aftermarket')">
-                        <span class="text-sm font-bold ${currentType === 'aftermarket' ? 'text-indigo-600' : 'text-zinc-700'}">Hàng ngoài</span>
-                        ${currentType === 'aftermarket' ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-colors ${currentType === 'aftermarket' ? 'bg-navy-50 border border-navy-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('aftermarket')">
+                        <span class="text-sm font-bold ${currentType === 'aftermarket' ? 'text-navy-500' : 'text-zinc-700'}">Hàng ngoài</span>
+                        ${currentType === 'aftermarket' ? '<svg class="w-5 h-5 text-navy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
                     </div>
                 `;
             }
@@ -1808,18 +1806,18 @@
             const filtered = items.filter(i => String(i).toLowerCase().includes(query.toLowerCase()));
             
             let html = `
-                <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${!selectedValue ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('')">
-                    <span class="text-sm font-bold ${!selectedValue ? 'text-indigo-600' : 'text-zinc-700'}">Tất cả</span>
-                    ${!selectedValue ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${!selectedValue ? 'bg-navy-50 border border-navy-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('')">
+                    <span class="text-sm font-bold ${!selectedValue ? 'text-navy-500' : 'text-zinc-700'}">Tất cả</span>
+                    ${!selectedValue ? '<svg class="w-5 h-5 text-navy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
                 </div>
             `;
             
             filtered.forEach(item => {
                 const isSelected = item === selectedValue;
                 html += `
-                    <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${isSelected ? 'bg-indigo-50 border border-indigo-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('${item}')">
-                        <span class="text-sm font-bold ${isSelected ? 'text-indigo-600' : 'text-zinc-700'}">${item}</span>
-                        ${isSelected ? '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    <div class="flex items-center justify-between p-4 mb-2 rounded-xl cursor-pointer transition-colors ${isSelected ? 'bg-navy-50 border border-navy-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('${item}')">
+                        <span class="text-sm font-bold ${isSelected ? 'text-navy-500' : 'text-zinc-700'}">${item}</span>
+                        ${isSelected ? '<svg class="w-5 h-5 text-navy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
                     </div>
                 `;
             });
@@ -1836,8 +1834,8 @@
                 const isSelected = selectedArray.includes(item);
                 html += `
                     <label class="flex items-center p-4 mb-2 rounded-xl cursor-pointer transition-colors bg-zinc-50 border border-zinc-100 active:bg-zinc-100">
-                        <div class="flex-1 text-sm font-bold ${isSelected ? 'text-indigo-600' : 'text-zinc-700'}">${item}</div>
-                        <input type="checkbox" value="${item}" class="w-5 h-5 text-indigo-600 rounded-md border-zinc-300 focus:ring-indigo-500" ${isSelected ? 'checked' : ''} onchange="toggleMultiSelect(this.value, this.checked)">
+                        <div class="flex-1 text-sm font-bold ${isSelected ? 'text-navy-500' : 'text-zinc-700'}">${item}</div>
+                        <input type="checkbox" value="${item}" class="w-5 h-5 text-teal-400 rounded-md border-zinc-300 focus:ring-teal-400" ${isSelected ? 'checked' : ''} onchange="toggleMultiSelect(this.value, this.checked)">
                     </label>
                 `;
             });
@@ -2127,7 +2125,7 @@ window.searchData = async function() {
             } else if (price >= q3) {
                 return `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-200">👆 Cao</span></div>`;
             } else {
-                return `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">➖ Trung bình</span></div>`;
+                return `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-navy-100 text-navy-600 border border-navy-200">➖ Trung bình</span></div>`;
             }
         }
 
@@ -2152,7 +2150,7 @@ window.searchData = async function() {
                 const isGenuine = (item.chinh_hang || '').toLowerCase().includes("chính hãng");
                 const badge = isGenuine ? '<span class="badge-pro badge-genuine">Chính hãng</span>' : '<span class="badge-pro badge-aftermarket">Hàng ngoài</span>';
                 const ngay = (item.ngay_bao_gia || '').split(' ')[0].split('-').reverse().join('/');
-                const verifiedHtml = item.verified ? '<span class="text-[9px] font-black text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 px-2 py-1 rounded-lg">ĐÃ XÁC THỰC</span>' : `<button onclick="event.stopPropagation(); verifyPart('${item.id}')" class="text-[9px] font-black text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 border border-zinc-200 dark:border-zinc-700 px-2 py-1 rounded-lg transition-all">XÁC THỰC</button>`;
+                const verifiedHtml = item.verified ? '<span class="text-[9px] font-black text-navy-500 bg-navy-50 dark:bg-navy-900/30 border border-navy-100 dark:border-navy-800 px-2 py-1 rounded-lg">ĐÃ XÁC THỰC</span>' : `<button onclick="event.stopPropagation(); verifyPart('${item.id}')" class="text-[9px] font-black text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 border border-zinc-200 dark:border-zinc-700 px-2 py-1 rounded-lg transition-all">XÁC THỰC</button>`;
 
                 // The Rork app style card
                 const bgColors = ['bg-[#fef9c3]/50', 'bg-[#e0e7ff]/50', 'bg-[#dcfce7]/50', 'bg-[#ffedd5]/50'];
@@ -2314,7 +2312,7 @@ window.searchData = async function() {
             const content = document.getElementById('detailContent');
             let typeBadge = item.chinh_hang === 'Chính hãng' ? '<span class="badge-genuine text-[10px]">CHÍNH HÃNG</span>' : '<span class="badge-aftermarket text-[10px]">HÀNG NGOÀI</span>';
             const fields = [
-                { l: "Tên phụ tùng", v: item.ten_phu_tung, c: "col-span-2 font-black text-indigo-600 dark:text-indigo-400 text-lg uppercase", i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>' },
+                { l: "Tên phụ tùng", v: item.ten_phu_tung, c: "col-span-2 font-black text-navy-500 dark:text-navy-400 text-lg uppercase", i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>' },
                 { l: "Số hồ sơ", v: item.so_hsbt, i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>' },
                 { l: "Hãng xe", v: item.hang_xe, i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>' },
                 { l: "Dòng xe", v: item.hieu_xe, i: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>' },
@@ -2357,11 +2355,11 @@ window.searchData = async function() {
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </div>
-                    <input type="text" id="filterModalSearch" oninput="handleFilterModalSearch()" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-[14px] py-3 pl-10 pr-4 text-base font-bold text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Tìm kiếm...">
+                    <input type="text" id="filterModalSearch" oninput="handleFilterModalSearch()" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-[14px] py-3 pl-10 pr-4 text-base font-bold text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-navy-500 transition-all" placeholder="Tìm kiếm...">
           
                 </div>
                 <div id="filterModalActions" class="hidden gap-2 mt-3">
-                    <button type="button" onclick="selectAllItems()" class="flex-1 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[13px] font-bold rounded-[12px] border border-indigo-100 dark:border-indigo-800 transition-colors active:bg-indigo-100">Chọn tất cả</button>
+                    <button type="button" onclick="selectAllItems()" class="flex-1 py-2.5 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-navy-400 text-[13px] font-bold rounded-[12px] border border-teal-100 dark:border-teal-800 transition-colors active:bg-teal-100">Chọn tất cả</button>
                     <button type="button" onclick="deselectAllItems()" class="flex-1 py-2.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[13px] font-bold rounded-[12px] border border-zinc-200 dark:border-zinc-700 transition-colors active:bg-zinc-100">Bỏ chọn tất cả</button>
                 </div>
             </div>
@@ -2411,7 +2409,7 @@ window.searchData = async function() {
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scale_0.2s_ease-out]">
             <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-[#fcfcfc]/50 dark:bg-zinc-900/50">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-navy-400 rounded-xl flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Chi tiết phụ tùng</h3>
@@ -2421,7 +2419,7 @@ window.searchData = async function() {
             <div class="p-8 grid grid-cols-2 gap-4" id="detailContent">
             </div>
             <div class="p-6 bg-[#fcfcfc] dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
-                <button onclick="closeModal('modalDetail')" class="px-8 py-3.5 bg-zinc-900 dark:bg-indigo-600 text-white font-bold rounded-2xl hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-zinc-900/20 dark:shadow-indigo-600/20">
+                <button onclick="closeModal('modalDetail')" class="px-8 py-3.5 bg-zinc-900 dark:bg-navy-500 text-white font-bold rounded-2xl hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-zinc-900/20 dark:shadow-navy-500/20">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                     ĐÓNG LẠI
                 </button>
@@ -2473,7 +2471,7 @@ window.searchData = async function() {
                 <p id="alertMessage" class="text-zinc-500 dark:text-zinc-400 font-medium text-sm leading-relaxed px-4"></p>
             </div>
             <div class="p-6 pt-0 flex">
-                <button onclick="closeModal('modalCustomAlert')" id="alertOkBtn" class="flex-1 px-6 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl hover:opacity-90 shadow-lg shadow-indigo-500/30 transition-all uppercase text-xs">ĐÓNG LẠI</button>
+                <button onclick="closeModal('modalCustomAlert')" id="alertOkBtn" class="flex-1 px-6 py-3.5 bg-navy-500 text-white font-bold rounded-2xl hover:opacity-90 shadow-lg shadow-navy-500/30 transition-all uppercase text-xs">ĐÓNG LẠI</button>
             </div>
         </div>
     </div>
@@ -2513,7 +2511,7 @@ window.searchData = async function() {
     <div id="modalHistory" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
         <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[scale_0.2s_ease-out] flex flex-col max-h-[80vh]">
             <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-                <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Lịch sử hoạt động: <span id="historyEmailText" class="text-indigo-600"></span></h3>
+                <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Lịch sử hoạt động: <span id="historyEmailText" class="text-navy-500"></span></h3>
                 <button onclick="closeModal('modalHistory')" class="p-2 text-zinc-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <div class="p-4 bg-[#fcfcfc] dark:bg-zinc-800/50 overflow-y-auto flex-1 custom-scrollbar">
