@@ -462,7 +462,7 @@
             <div>
                 <div class="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5" id="headerDate">HỆ THỐNG TRA CỨU</div>
                 <h1 class="text-[26px] font-black text-zinc-900 dark:text-white leading-tight mb-1 tracking-tight">Xin chào, <span id="userEmail" class="text-zinc-900 dark:text-white capitalize">bạn</span>.</h1>
-                <div class="text-[11px] font-semibold text-zinc-500">TASCO INSURANCE</div>
+                <div class="text-[11px] font-semibold text-zinc-500">TASCO INSURANCE - HỆ THỐNG TRA CỨU PHỤ TÙNG</div>
             </div>
             <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-[15px] flex-shrink-0 cursor-pointer shadow-sm" onclick="toggleSysMgrView()" id="headerAvatar">
                 HQ
@@ -578,7 +578,7 @@
                     TRA CỨU NHANH
                 </div>
                 <h2 class="text-3xl font-black mb-2 tracking-tight text-white">Tra cứu phụ tùng</h2>
-                <p class="text-xs text-indigo-100 mb-6 font-medium leading-relaxed max-w-[80%]">Nhập mã nội bộ, mã phụ tùng hoặc tên để kiểm tra.</p>
+                <p class="text-xs text-indigo-100 mb-6 font-medium leading-relaxed max-w-[80%]">Nhập tên phụ tùng để bắt đầu tìm kiếm</p>
                 <div class="relative mb-4">
                     <input type="text" id="searchInput" placeholder="Tìm tên phụ tùng..." class="w-full bg-white/10 border border-white/20 rounded-[20px] py-4 px-5 text-white placeholder-indigo-200 focus:outline-none focus:bg-white/20 focus:border-white/40 transition-all font-bold text-base" onkeydown="if(event.key==='Enter') searchData()">
                 </div>
@@ -2520,6 +2520,14 @@ window.searchData = async function() {
     </div>
 
 
+
+    <script>
+        // Set current date
+        const now = new Date();
+        const dateStr = `Ngày ${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth()+1).padStart(2, '0')}/${now.getFullYear()}`;
+        const headerDateEl = document.getElementById('headerDate');
+        if (headerDateEl) headerDateEl.innerText = dateStr;
+    </script>
 </body>
 </html>
 
