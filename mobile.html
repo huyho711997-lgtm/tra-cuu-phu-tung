@@ -1721,7 +1721,8 @@
         
         // --- NEW FILTER MODAL LOGIC ---
         let currentFilterType = '';
-        let selectedHieuList = []; // For multi-select dòng xe
+        let selectedHieuList = [];
+        let selectedNamList = []; // For multi-select năm sx
 
         window.openFilterModal = function(type) {
             document.body.style.overflow = 'hidden';
@@ -1760,9 +1761,13 @@
                     renderFilterMultiList(hieuArr, selectedHieuList);
                 }
             } else if (type === 'nam') {
+                if(actionsContainer) {
+                    actionsContainer.classList.remove('hidden');
+                    actionsContainer.classList.add('flex');
+                }
                 title.innerText = 'Chọn Năm sản xuất';
                 searchContainer.style.display = 'block';
-                renderFilterList(NAM_ALL, document.getElementById('filterNam').value);
+                renderFilterMultiList(NAM_ALL, selectedNamList);
             } else if (type === 'type') {
                 title.innerText = 'Chọn Loại hàng';
                 searchContainer.style.display = 'none';
@@ -1842,7 +1847,7 @@
                 const hang = document.getElementById('filterHang').value;
                 if (hang) renderFilterMultiList(Object.keys(CAY_GIA_PHA[hang] || {}).sort(), selectedHieuList, query);
             } else if (currentFilterType === 'nam') {
-                renderFilterList(NAM_ALL, document.getElementById('filterNam').value, query);
+                renderFilterMultiList(NAM_ALL, selectedNamList, query);
             }
         }
 
@@ -1854,10 +1859,7 @@
                 // Reset hieu
                 selectedHieuList = [];
                 updateHieuLabel();
-            } else if (currentFilterType === 'nam') {
-                document.getElementById('filterNam').value = value;
-                document.getElementById('labelNam').innerText = value || 'Tất cả';
-            } else if (currentFilterType === 'type') {
+ else if (currentFilterType === 'type') {
                 document.getElementById('filterType').value = value;
                 let text = 'Tất cả';
                 if (value === 'genuine') text = 'Chính hãng';
@@ -1870,10 +1872,30 @@
         }
 
         window.toggleMultiSelect = function(value, isChecked) {
-            if (isChecked) {
-                if (!selectedHieuList.includes(value)) selectedHieuList.push(value);
+            if (currentFilterType === 'hieu') {
+                if (isChecked) {
+                    if (!selectedHieuList.includes(value)) selectedHieuList.push(value);
+                } else {
+                    selectedHieuList = selectedHieuList.filter(v => v !== value);
+                }
+            } else if (currentFilterType === 'nam') {
+                const numVal = parseInt(value);
+                if (isChecked) {
+                    if (!selectedNamList.includes(numVal)) selectedNamList.push(numVal);
+                } else {
+                    selectedNamList = selectedNamList.filter(v => v !== numVal);
+                }
+            }
+        }
+
+        function updateNamLabel() {
+            const label = document.getElementById('labelNam');
+            if (selectedNamList.length === 0) {
+                label.innerText = 'Tất cả';
+            } else if (selectedNamList.length === 1) {
+                label.innerText = selectedNamList[0];
             } else {
-                selectedHieuList = selectedHieuList.filter(v => v !== value);
+                label.innerText = `${selectedNamList.length} năm`;
             }
         }
 
@@ -1894,30 +1916,42 @@
             document.getElementById('labelHang').innerText = 'Tất cả';
             selectedHieuList = [];
             updateHieuLabel();
-            document.getElementById('filterNam').value = '';
-            document.getElementById('labelNam').innerText = 'Tất cả';
+            selectedNamList = [];
+            updateNamLabel();
             document.getElementById('filterType').value = 'all';
             document.getElementById('labelType').innerText = 'Tất cả';
             
         }
 
         
-        window.selectAllHieu = function() {
-            const hang = document.getElementById('filterHang').value;
-            if (hang && CAY_GIA_PHA[hang]) {
-                const allHieus = Object.keys(CAY_GIA_PHA[hang]);
-                selectedHieuList = [...allHieus];
-                renderFilterMultiList(allHieus.sort(), selectedHieuList, document.getElementById('filterModalSearch').value);
-                updateHieuLabel();
+        window.selectAllItems = function() {
+            if (currentFilterType === 'hieu') {
+                const hang = document.getElementById('filterHang').value;
+                if (hang && CAY_GIA_PHA[hang]) {
+                    const allHieus = Object.keys(CAY_GIA_PHA[hang]);
+                    selectedHieuList = [...allHieus];
+                    renderFilterMultiList(allHieus.sort(), selectedHieuList, document.getElementById('filterModalSearch').value);
+                    updateHieuLabel();
+                }
+            } else if (currentFilterType === 'nam') {
+                selectedNamList = [...NAM_ALL];
+                renderFilterMultiList(NAM_ALL, selectedNamList, document.getElementById('filterModalSearch').value);
+                updateNamLabel();
             }
         }
         
-        window.deselectAllHieu = function() {
-            selectedHieuList = [];
-            const hang = document.getElementById('filterHang').value;
-            if (hang && CAY_GIA_PHA[hang]) {
-                renderFilterMultiList(Object.keys(CAY_GIA_PHA[hang]).sort(), selectedHieuList, document.getElementById('filterModalSearch').value);
-                updateHieuLabel();
+        window.deselectAllItems = function() {
+            if (currentFilterType === 'hieu') {
+                selectedHieuList = [];
+                const hang = document.getElementById('filterHang').value;
+                if (hang && CAY_GIA_PHA[hang]) {
+                    renderFilterMultiList(Object.keys(CAY_GIA_PHA[hang]).sort(), selectedHieuList, document.getElementById('filterModalSearch').value);
+                    updateHieuLabel();
+                }
+            } else if (currentFilterType === 'nam') {
+                selectedNamList = [];
+                renderFilterMultiList(NAM_ALL, selectedNamList, document.getElementById('filterModalSearch').value);
+                updateNamLabel();
             }
         }
 
@@ -1946,7 +1980,7 @@
 window.searchData = async function() {
             const hang = document.getElementById('filterHang').value;
             const hieus = selectedHieuList;
-            const nam = document.getElementById('filterNam').value;
+            const nams = selectedNamList;
             const type = document.getElementById('filterType').value;
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
             const loading = document.getElementById('loadingIndicator');
@@ -1956,7 +1990,7 @@ window.searchData = async function() {
             let constraints = [];
             if (hang) constraints.push(where("hang_xe", "==", hang));
             if (hieus.length > 0) constraints.push(where("hieu_xe", "in", hieus.slice(0, 30)));
-            if (nam) constraints.push(where("nam_sx", "==", parseInt(nam)));
+            if (nams.length > 0) constraints.push(where("nam_sx", "in", nams.slice(0, 30)));
             if (type === 'genuine') constraints.push(where("chinh_hang", "==", "Chính hãng"));
             constraints.push(limit(500)); 
 
@@ -2315,8 +2349,8 @@ window.searchData = async function() {
           
                 </div>
                 <div id="filterModalActions" class="hidden gap-2 mt-3">
-                    <button type="button" onclick="selectAllHieu()" class="flex-1 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[13px] font-bold rounded-[12px] border border-indigo-100 dark:border-indigo-800 transition-colors active:bg-indigo-100">Chọn tất cả</button>
-                    <button type="button" onclick="deselectAllHieu()" class="flex-1 py-2.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[13px] font-bold rounded-[12px] border border-zinc-200 dark:border-zinc-700 transition-colors active:bg-zinc-100">Bỏ chọn tất cả</button>
+                    <button type="button" onclick="selectAllItems()" class="flex-1 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[13px] font-bold rounded-[12px] border border-indigo-100 dark:border-indigo-800 transition-colors active:bg-indigo-100">Chọn tất cả</button>
+                    <button type="button" onclick="deselectAllItems()" class="flex-1 py-2.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[13px] font-bold rounded-[12px] border border-zinc-200 dark:border-zinc-700 transition-colors active:bg-zinc-100">Bỏ chọn tất cả</button>
                 </div>
             </div>
             <div class="overflow-y-auto p-4 pb-12 flex-1 min-h-0" style="-webkit-overflow-scrolling: touch; touch-action: pan-y;" id="filterModalList">
