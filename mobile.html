@@ -2296,7 +2296,7 @@ window.searchData = async function() {
 <!-- BOTTOM SHEET FILTER MODAL -->
     <div id="modalFilterSelection" class="fixed inset-0 hidden flex-col justify-end" style="display: none; z-index: 9999;">
         <div class="absolute inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity" onclick="closeFilterModal()"></div>
-        <div class="bg-white dark:bg-zinc-900 w-full rounded-t-3xl max-h-[85vh] flex flex-col relative z-10 animate-[slideUp_0.3s_ease-out]">
+        <div class="bg-white dark:bg-zinc-900 w-full rounded-t-3xl h-[85vh] overflow-hidden flex flex-col relative z-10 animate-[slideUp_0.3s_ease-out]">
             <div class="w-12 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full mx-auto mt-3 mb-2"></div>
             <div class="px-6 py-2 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center shrink-0">
                 <h3 class="text-[17px] font-black text-zinc-900 dark:text-white" id="filterModalTitle">Chọn</h3>
@@ -2317,7 +2317,7 @@ window.searchData = async function() {
                     <button type="button" onclick="deselectAllHieu()" class="flex-1 py-2.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[13px] font-bold rounded-[12px] border border-zinc-200 dark:border-zinc-700 transition-colors active:bg-zinc-100">Bỏ chọn tất cả</button>
 
             </div>
-            <div class="overflow-y-auto p-4 pb-12 flex-1 min-h-0" id="filterModalList">
+            <div class="overflow-y-auto p-4 pb-12 flex-1 min-h-0 overscroll-contain" style="-webkit-overflow-scrolling: touch;" id="filterModalList">
                 <!-- Items injected via JS -->
             </div>
         </div>
