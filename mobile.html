@@ -495,7 +495,7 @@
 
     <div id="mainApp" class="main-container" style="display: none;">
         <!-- NEW HEADER -->
-        <header class="px-4 pt-6 pb-2 flex justify-between items-start">
+        <header id="mainHeader" class="px-4 pt-6 pb-2 flex justify-between items-start">
             <div>
                 <div class="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5" id="headerDate">HỆ THỐNG TRA CỨU</div>
                 <h1 class="text-[26px] font-black text-zinc-900 dark:text-white leading-tight mb-1 tracking-tight">Xin chào, <span id="userEmail" class="text-zinc-900 dark:text-white capitalize">bạn</span>.</h1>
@@ -1369,6 +1369,7 @@
             const sysMgr = document.getElementById('sysMgrSection');
             const bottomNav = document.getElementById('bottomNav');
             const traCuuSection = document.getElementById('traCuuSection');
+            const mainHeader = document.getElementById('mainHeader');
 
             if (view === 'login') {
                 overlay.style.display = 'flex';
@@ -1380,12 +1381,14 @@
                 sysMgr.style.display = 'none'; 
                 if(traCuuSection) traCuuSection.style.display = 'block';
                 if(bottomNav) bottomNav.style.display = 'flex';
+                if(mainHeader) mainHeader.style.display = 'flex';
             } else if (view === 'admin') {
                 overlay.style.display = 'none';
                 main.style.display = 'block'; 
                 sysMgr.style.display = 'block'; 
                 if(traCuuSection) traCuuSection.style.display = 'none';
                 if(bottomNav) bottomNav.style.display = 'flex';
+                if(mainHeader) mainHeader.style.display = 'none';
                 refreshUserList();
             }
         }
