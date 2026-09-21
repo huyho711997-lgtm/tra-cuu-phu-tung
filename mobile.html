@@ -1339,9 +1339,11 @@
                     if (user.uid !== lastLoggedUid) {
                         lastLoggedUid = user.uid;
                         try {
-                            const profileRef = doc(db, "user_profiles", user.uid);
-                            if (profileSnap && profileSnap.exists()) {
-                                const nextLoginCount = Number(profile.loginCount || 0) + 1;
+                            const q = query(collection(db, "user_profiles"), where("email", "==", user.email));
+                            const snap = await getDocs(q);
+                            if (!snap.empty) {
+                                const profileRef = doc(db, "user_profiles", snap.docs[0].id);
+                                const nextLoginCount = Number(snap.docs[0].data().loginCount || 0) + 1;
                                 await updateDoc(profileRef, {
                                     lastLogin: serverTimestamp(),
                                     loginCount: nextLoginCount
@@ -2179,16 +2181,19 @@ window.searchData = async function() {
                 CURRENT_PAGE = 1;
                 renderTable();
 
-                // ĐOẠN MÃ MỚI CHÈN VÀO: Lưu log tìm kiếm cho Sub-user
-                if (currentUserProfile && currentUserProfile.role === 'user') {
-                    const subUserSession = JSON.parse(localStorage.getItem('subUserSession'));
-                    if (subUserSession && subUserSession.id) {
-                        const userRef = doc(db, "sub_users", subUserSession.id);
-                        const userSnap = await getDoc(userRef);
-                        if(userSnap.exists()) {
-                            await updateDoc(userRef, { searchCount: (userSnap.data().searchCount || 0) + 1 });
+                // LƯU LOG TÌM KIẾM
+                if (currentUserProfile && currentUserProfile.role === 'user' && currentUserProfile.email) {
+                    try {
+                        const q = query(collection(db, "user_profiles"), where("email", "==", currentUserProfile.email));
+                        const userSnap = await getDocs(q);
+                        if (!userSnap.empty) {
+                            const userRef = doc(db, "user_profiles", userSnap.docs[0].id);
+                            const newCount = (userSnap.docs[0].data().searchCount || 0) + 1;
+                            await updateDoc(userRef, { searchCount: newCount });
                         }
-                        
+                    } catch(e) { console.warn('Could not update searchCount:', e); }
+                    
+                    try {
                         await addDoc(collection(db, "user_logs"), {
                             email: currentUserProfile.email,
                             action: "Tra cứu",
@@ -2200,47 +2205,8 @@ window.searchData = async function() {
                             hieuXeCount: hieus.length,
                             timestamp: serverTimestamp()
                         });
-                        
-                        // ĐỒNG BỘ LÊN SUPABASE (Admin Dashboard dùng Supabase)
-                        try {
-                            const S_URL = "https://yxwmcpoklxpzlikxojez.supabase.co/rest/v1";
-                            const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4d21jcG9rbHhwemxpa3hvamV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njk0MDEsImV4cCI6MjA5NjE0NTQwMX0.dmyjtDDo_KTlUFyxQgoCGqEt5Bsq2krEEYg2BCyXeFc";
-                            const headers = { "apikey": S_KEY, "Authorization": "Bearer " + S_KEY, "Content-Type": "application/json" };
-                            
-                            // Ghi user_logs
-                            await fetch(`${S_URL}/user_logs`, {
-                                method: 'POST',
-                                headers,
-                                body: JSON.stringify({
-                                    search_keyword: search || '',
-                                    result_count: MASTER_DATA ? MASTER_DATA.length : 0,
-                                    exact_part_name: exactPartName,
-                                    hang_xe: hang || '',
-                                    hieu_xe_count: hieus ? hieus.length : 0,
-                                    exact_source_hsbt: '',
-                                    exact_source_doc_id: '',
-                                    email: currentUserProfile.email,
-                                    action: "Tra cứu",
-                                    details: `Từ khóa: "${search || 'Trống'}" - Chế độ: ${exactPartName ? 'Khớp chính xác' : 'Tìm gần đúng'} - Hãng: ${hang || 'Tất cả'}, Dòng: ${hieus.length ? hieus.length + ' dòng' : 'Tất cả'} - Kết quả: ${MASTER_DATA.length}`,
-                                    created_at: new Date().toISOString()
-                                })
-                            });
-                            
-                            // Tăng search_count trên user_profiles
-                            const profileRes = await fetch(`${S_URL}/user_profiles?email=eq.${encodeURIComponent(currentUserProfile.email)}&select=id,search_count`, { headers });
-                            if (profileRes.ok) {
-                                const profiles = await profileRes.json();
-                                if (profiles && profiles.length > 0) {
-                                    const prof = profiles[0];
-                                    const nextCount = Number(prof.search_count || 0) + 1;
-                                    await fetch(`${S_URL}/user_profiles?id=eq.${prof.id}`, {
-                                        method: 'PATCH',
-                                        headers: { ...headers, "Prefer": "return=minimal" },
-                                        body: JSON.stringify({ search_count: nextCount, updated_at: new Date().toISOString() })
-                                    });
-                                }
-                            }
-                        } catch(e) { console.warn("Lỗi đồng bộ log lên Supabase:", e); }
+                    } catch(e) { console.warn('Could not add user_logs:', e); }
+                }
                     }
                 }
                 
