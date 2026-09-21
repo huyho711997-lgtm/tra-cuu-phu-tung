@@ -462,7 +462,7 @@
                 <h1 class="text-[26px] font-black text-zinc-900 dark:text-white leading-tight mb-1 tracking-tight">Xin chào, <span id="userEmail" class="text-zinc-900 dark:text-white capitalize">bạn</span>.</h1>
                 <div class="text-[11px] font-semibold text-zinc-500"><span style="color: #142a5e; font-weight: 800;">TASCO</span> <span style="color: #62bfb5; font-weight: 800;">INSURANCE</span> - HỆ THỐNG TRA CỨU PHỤ TÙNG</div>
             </div>
-            <div class="w-12 h-12 rounded-full bg-navy-100 dark:bg-navy-900/40 flex items-center justify-center text-navy-500 dark:text-navy-400 font-bold text-[15px] flex-shrink-0 cursor-pointer shadow-sm" onclick="toggleSysMgrView()" id="headerAvatar">
+            <div class="w-12 h-12 rounded-full bg-navy-100 dark:bg-navy-900/40 flex items-center justify-center text-navy-500 dark:text-navy-400 font-bold text-[15px] flex-shrink-0 cursor-pointer shadow-sm" onclick="openUserProfileModal()" id="headerAvatar">
                 HQ
             </div>
         </header>
@@ -1351,6 +1351,36 @@
             }
         }
 
+        window.openUserProfileModal = function() {
+            if (!currentUserProfile) return;
+            
+            // Set basic info
+            document.getElementById('profileModalName').innerText = currentUserProfile.fullName || currentUserProfile.email;
+            document.getElementById('profileModalEmail').innerText = currentUserProfile.email || '';
+            document.getElementById('profileModalRole').innerText = currentUserProfile.role === 'admin' ? 'Quản trị viên' : 'Người dùng';
+            
+            // Generate initials for avatar
+            let initials = "U";
+            let nameForAvatar = currentUserProfile.fullName || currentUserProfile.email || "User";
+            let parts = nameForAvatar.trim().split(" ");
+            if(parts.length >= 2) {
+                initials = (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+            } else if (parts.length === 1 && parts[0].length > 0) {
+                initials = parts[0].substring(0, 2).toUpperCase();
+            }
+            document.getElementById('profileModalAvatar').innerText = initials;
+            
+            // Show admin button if admin
+            const adminBtn = document.getElementById('profileModalAdminBtn');
+            if (currentUserProfile.role === 'admin') {
+                adminBtn.classList.remove('hidden');
+            } else {
+                adminBtn.classList.add('hidden');
+            }
+            
+            openModal('modalUserProfile');
+        }
+
         function showApp(email, role, fullName = '') {
             console.log("Showing App for:", email, "Role:", role);
             updateView('main');
@@ -1358,6 +1388,18 @@
             // Nếu có fullName thì hiển thị, không thì mới lấy email/username
             document.getElementById('userEmail').innerText = fullName || email;
             currentUserProfile = { email, role, fullName };
+
+            // Cập nhật Avatar Initials trên Header
+            let initials = "U";
+            let nameForAvatar = fullName || email || "User";
+            let parts = nameForAvatar.trim().split(" ");
+            if(parts.length >= 2) {
+                initials = (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+            } else if (parts.length === 1 && parts[0].length > 0) {
+                initials = parts[0].substring(0, 2).toUpperCase();
+            }
+            const headerAvatar = document.getElementById('headerAvatar');
+            if (headerAvatar) headerAvatar.innerText = initials;
             
             const mgrBtn = document.getElementById('sysMgrBtn');
             const navAdminBtn = document.getElementById('navAdminBtn');
@@ -2423,6 +2465,48 @@ window.searchData = async function() {
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                     ĐÓNG LẠI
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal User Profile -->
+    <div id="modalUserProfile" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-[scale_0.2s_ease-out]">
+            <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-[#fcfcfc]/50 dark:bg-zinc-900/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-teal-50 dark:bg-teal-900/30 text-teal-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    </div>
+                    <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Thông tin tài khoản</h3>
+                </div>
+                <button onclick="closeModal('modalUserProfile')" class="p-2 text-zinc-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="flex flex-col items-center justify-center mb-6 mt-2">
+                    <div class="w-20 h-20 rounded-full bg-navy-100 dark:bg-navy-900/40 flex items-center justify-center text-navy-500 dark:text-navy-400 font-black text-3xl mb-4 shadow-sm" id="profileModalAvatar">
+                        HQ
+                    </div>
+                    <div class="text-xl font-black text-zinc-900 dark:text-white mb-1" id="profileModalName">Hồ Quang Huy</div>
+                    <div class="text-[11px] font-bold text-zinc-400 uppercase tracking-widest" id="profileModalEmail">user@tasco.vn</div>
+                    <div class="mt-3 px-3 py-1 bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-teal-100 dark:border-teal-800" id="profileModalRole">Người dùng</div>
+                </div>
+
+                <div class="space-y-3">
+                    <button id="profileModalAdminBtn" onclick="closeModal('modalUserProfile'); toggleSysMgrView();" class="hidden w-full py-3.5 bg-navy-50 text-navy-600 dark:bg-navy-900/30 dark:text-navy-400 font-bold rounded-2xl shadow-sm hover:bg-navy-100 dark:hover:bg-navy-900/50 uppercase text-[11px] tracking-widest transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                        Quản lý người dùng
+                    </button>
+
+                    <button onclick="closeModal('modalUserProfile'); openModal('modalChangePassword');" class="w-full py-3.5 bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400 font-bold rounded-2xl shadow-sm hover:bg-orange-100 dark:hover:bg-orange-900/50 uppercase text-[11px] tracking-widest transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                        Đổi mật khẩu
+                    </button>
+                    
+                    <button onclick="closeModal('modalUserProfile'); handleLogout();" class="w-full py-3.5 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 font-bold rounded-2xl shadow-sm hover:bg-red-100 dark:hover:bg-red-900/50 uppercase text-[11px] tracking-widest transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        Đăng xuất
+                    </button>
+                </div>
             </div>
         </div>
     </div>
