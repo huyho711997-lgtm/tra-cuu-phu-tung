@@ -2879,19 +2879,40 @@
                     logsSnap.forEach(d => {
                         const log = d.data();
                         const email = (log.email || '').toLowerCase().trim();
-                        if (!email || !log.action) return;
-                        if (!logCounts[email]) logCounts[email] = { loginCount: 0, searchCount: 0, lastLogin: null };
+                        const uid = log.uid || log.user_id || '';
+                        
+                        const key1 = email || 'NO_EMAIL';
+                        const key2 = uid || 'NO_UID';
+                        
+                        if (!log.action) return;
+                        
+                        if (email && !logCounts[key1]) logCounts[key1] = { loginCount: 0, searchCount: 0, lastLogin: null };
+                        if (uid && !logCounts[key2]) logCounts[key2] = { loginCount: 0, searchCount: 0, lastLogin: null };
                         
                         const action = log.action.toLowerCase();
-                        if (action.includes('ng nhp') || action.includes('đăng nhập')) {
-                            logCounts[email].loginCount++;
-                            if (log.timestamp) {
-                                if (!logCounts[email].lastLogin || (log.timestamp.seconds > logCounts[email].lastLogin.seconds)) {
-                                    logCounts[email].lastLogin = log.timestamp;
+                        const isLogin = action.includes('\u0111\u0103ng nh\u1eadp') || action.includes('ng nhp');
+                        const isSearch = action.includes('tra c\u1ee9u') || action.includes('tra cu');
+                        
+                        if (email) {
+                            if (isLogin) {
+                                logCounts[key1].loginCount++;
+                                if (log.timestamp && (!logCounts[key1].lastLogin || log.timestamp.seconds > logCounts[key1].lastLogin.seconds)) {
+                                    logCounts[key1].lastLogin = log.timestamp;
                                 }
+                            } else if (isSearch) {
+                                logCounts[key1].searchCount++;
                             }
-                        } else if (action.includes('tra cu') || action.includes('tra cứu')) {
-                            logCounts[email].searchCount++;
+                        }
+                        
+                        if (uid && key1 !== key2) {
+                            if (isLogin) {
+                                logCounts[key2].loginCount++;
+                                if (log.timestamp && (!logCounts[key2].lastLogin || log.timestamp.seconds > logCounts[key2].lastLogin.seconds)) {
+                                    logCounts[key2].lastLogin = log.timestamp;
+                                }
+                            } else if (isSearch) {
+                                logCounts[key2].searchCount++;
+                            }
                         }
                     });
                 } catch(e) { console.warn("Lỗi tải log:", e); }
@@ -2900,8 +2921,22 @@
                 ADMIN_USER_CACHE = [];
                 snap.forEach(docSnap => {
                     const u = docSnap.data();
+                    if (String(u.email || '').toLowerCase() === MGR_EMAIL.toLowerCase()) return;
+                    
                     const emailKey = String(u.email || '').toLowerCase().trim();
-                    const dynamicStats = logCounts[emailKey] || { loginCount: 0, searchCount: 0, lastLogin: null };
+                    const uidKey = docSnap.id;
+                    
+                    const statsByEmail = logCounts[emailKey] || { loginCount: 0, searchCount: 0, lastLogin: null };
+                    const statsByUid = logCounts[uidKey] || { loginCount: 0, searchCount: 0, lastLogin: null };
+                    
+                    const dynamicStats = {
+                        loginCount: Math.max(statsByEmail.loginCount, statsByUid.loginCount),
+                        searchCount: Math.max(statsByEmail.searchCount, statsByUid.searchCount),
+                        lastLogin: statsByEmail.lastLogin || statsByUid.lastLogin
+                    };
+                    if (statsByEmail.lastLogin && statsByUid.lastLogin) {
+                        dynamicStats.lastLogin = statsByEmail.lastLogin.seconds > statsByUid.lastLogin.seconds ? statsByEmail.lastLogin : statsByUid.lastLogin;
+                    }
                     
                     if (dynamicStats.loginCount > Number(u.loginCount || 0)) u.loginCount = dynamicStats.loginCount;
                     if (dynamicStats.searchCount > Number(u.searchCount || 0)) u.searchCount = dynamicStats.searchCount;
