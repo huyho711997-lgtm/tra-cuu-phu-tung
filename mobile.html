@@ -99,7 +99,7 @@
         .data-table thead th { background: #f8fafc; padding: 16px 24px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; }
         .data-table td { padding: 16px 24px; vertical-align: middle; border-bottom: 1px solid #f8fafc; }
         
-        .badge-pro { padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-pro { padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0; }
         .badge-genuine { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
         .badge-aftermarket { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-verified { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
@@ -2244,8 +2244,8 @@ window.searchData = async function() {
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1">
-                                <div class="text-[15px] font-black text-zinc-900 dark:text-white truncate">${item.ten_phu_tung}</div>
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <div class="text-[15px] font-black text-zinc-900 dark:text-white truncate flex-1 min-w-0">${item.ten_phu_tung}</div>
                                 ${badge}
                             </div>
                             <div class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 truncate">${item.hang_xe} ${item.hieu_xe} • ${item.nam_sx}</div>
