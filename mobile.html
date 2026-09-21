@@ -179,13 +179,26 @@
         }
         html.dark #loginOverlay { background: linear-gradient(135deg, #020617 0%, #0f172a 100%); }
         
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(30px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .floating-logo { animation: float 4s ease-in-out infinite; }
         .login-card {
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             width: 100%; max-width: 440px;
-            padding: 40px 24px; border-radius: 32px;
-            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.08);
-            border: 1px solid #ffffff;
+            padding: 32px 24px; border-radius: 32px;
+            box-shadow: 0 24px 60px -12px rgba(20, 42, 94, 0.15);
+            border: 1px solid rgba(255, 255, 255, 1);
             position: relative;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         html.dark .login-card {
             background: #0f172a !important;
@@ -409,28 +422,28 @@
     </script>
 
     <div id="loginOverlay">
-        <div class="login-card animate-[fadeIn_0.5s_ease-out]">
-            <div class="text-center mb-10">
-                <div class="w-16 h-16 bg-navy-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-navy-500/20">
+        <div class="login-card">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-navy-500 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-2xl shadow-navy-500/30 floating-logo">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
                 <h2 class="text-2xl font-black text-zinc-900 dark:text-white tracking-tight uppercase">Hệ thống TASCO INSURANCE</h2>
                 <p class="text-zinc-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Tra cứu phụ tùng chuyên nghiệp</p>
             </div>
 
-            <form id="loginForm" class="space-y-6">
+            <form id="loginForm" class="space-y-4">
                 <div class="premium-input-group hidden" id="registerNameGroup">
-                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Họ và tên</label>
+                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-1.5 px-1">Họ và tên</label>
                     <input type="text" id="registerName" placeholder="Ví dụ: Nguyễn Văn A" class="premium-input">
                     <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
                 </div>
                 <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Email / Tên đăng nhập</label>
+                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-1.5 px-1">Email / Tên đăng nhập</label>
                     <input type="text" id="loginEmail" required placeholder="ví dụ: user01" class="premium-input">
                     <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
                 </div>
                 <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu truy cập</label>
+                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-1.5 px-1">Mật khẩu truy cập</label>
                     <input type="password" id="loginPass" required placeholder="••••••••" class="premium-input">
                     <svg class="w-5 h-5 input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
