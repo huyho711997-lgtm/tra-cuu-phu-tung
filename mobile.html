@@ -2234,22 +2234,19 @@ window.searchData = async function() {
                 const ngay = (item.ngay_bao_gia || '').split(' ')[0].split('-').reverse().join('/');
                 const verifiedHtml = item.verified ? '<span class="text-[9px] font-black text-navy-500 bg-navy-50 dark:bg-navy-900/30 border border-navy-100 dark:border-navy-800 px-2 py-1 rounded-lg">ĐÃ XÁC THỰC</span>' : `<button onclick="event.stopPropagation(); verifyPart('${item.id}')" class="text-[9px] font-black text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 border border-zinc-200 dark:border-zinc-700 px-2 py-1 rounded-lg transition-all">XÁC THỰC</button>`;
 
-                // The Rork app style card
-                const bgColors = ['bg-[#fef9c3]/50', 'bg-[#e0e7ff]/50', 'bg-[#dcfce7]/50', 'bg-[#ffedd5]/50'];
-                const iconColors = ['bg-[#fef08a] text-[#a16207]', 'bg-[#c7d2fe] text-[#4338ca]', 'bg-[#bbf7d0] text-[#15803d]', 'bg-[#fed7aa] text-[#c2410c]'];
-                const randIdx = item.id ? item.id.charCodeAt(item.id.length-1) % 4 : 0;
-                const bgColor = bgColors[randIdx];
-                const iconColor = iconColors[randIdx];
+                // Uniform card styling instead of random colors
+                const bgColor = 'bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 shadow-sm';
+                const iconColor = 'bg-zinc-50 dark:bg-zinc-700/50 text-zinc-400 dark:text-zinc-500 border border-zinc-100 dark:border-zinc-700';
                 
                 tableBody.innerHTML += `
-                    <div class="rounded-2xl ${bgColor} dark:bg-zinc-800 p-4 flex items-center gap-4 cursor-pointer hover:scale-[0.98] transition-transform" onclick="showDetail('${item.id}')">
+                    <div class="rounded-2xl ${bgColor} p-4 flex items-center gap-4 cursor-pointer hover:scale-[0.98] transition-transform" onclick="showDetail('${item.id}')">
                         <div class="w-12 h-12 rounded-xl ${iconColor} flex-shrink-0 flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 mb-1">
                                 <div class="text-[15px] font-black text-zinc-900 dark:text-white truncate">${item.ten_phu_tung}</div>
-                                ${isGenuine ? '<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>' : ''}
+                                ${badge}
                             </div>
                             <div class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 truncate">${item.hang_xe} ${item.hieu_xe} • ${item.nam_sx}</div>
                             <div class="text-[12px] font-black mt-1 ${item.gia_duyet === 0 ? 'text-zinc-400 italic' : 'text-zinc-900 dark:text-white'}">${formatCurrency(item.gia_duyet)}</div>
