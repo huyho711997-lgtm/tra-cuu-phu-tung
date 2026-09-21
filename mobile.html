@@ -909,6 +909,14 @@
                 createdAt: 'created_at',
                 updatedAt: 'updated_at'
             },
+            sub_users: {
+                fullName: 'full_name',
+                loginCount: 'login_count',
+                searchCount: 'search_count',
+                lastLogin: 'last_login',
+                createdAt: 'created_at',
+                updatedAt: 'updated_at'
+            },
             user_api_keys: {
                 ocrProvider: 'ocr_provider',
                 geminiApiKey: 'gemini_api_key',
@@ -1049,7 +1057,7 @@
             if (collectionName === 'user_logs' && !payload.user_id && auth.currentUser) {
                 payload.user_id = auth.currentUser.uid;
             }
-            if (collectionName === 'user_profiles') {
+            if (collectionName === 'user_profiles' || collectionName === 'sub_users') {
                 payload.id = refId;
                 if ('email' in data) {
                     payload.email = data.email || '';
@@ -1080,7 +1088,7 @@
             if (!row) return row;
             if (collectionName === 'metadata') return { ...(row.value || {}), updatedAt: dateToFirestoreLike(row.updated_at) };
             const data = { ...row };
-            if (collectionName === 'user_profiles') {
+            if (collectionName === 'user_profiles' || collectionName === 'sub_users') {
                 data.fullName = row.full_name ?? row.fullName ?? '';
                 data.loginCount = row.login_count ?? row.loginCount ?? 0;
                 data.searchCount = row.search_count ?? row.searchCount ?? 0;
