@@ -435,30 +435,30 @@
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     <div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-teal-400 rounded-full"></div>
                 </div>
-                <h2 id="loginTitle" class="text-[24px] font-bold text-zinc-900 dark:text-white tracking-tight mb-1.5">Welcome Back</h2>
-                <p id="loginSubtitle" class="text-zinc-500 font-medium text-[13px]">Log in to your account to continue.</p>
+                <h2 id="loginTitle" class="text-[24px] font-bold text-zinc-900 dark:text-white tracking-tight mb-1.5">Chào mừng trở lại</h2>
+                <p id="loginSubtitle" class="text-zinc-500 font-medium text-[13px]">Đăng nhập tài khoản để tiếp tục.</p>
             </div>
 
             <form id="loginForm" class="space-y-4">
                 <div class="hidden" id="registerNameGroup">
-                    <label class="text-[12px] font-bold text-zinc-800 dark:text-zinc-200 block mb-1.5 px-1">Full Name</label>
-                    <input type="text" id="registerName" placeholder="Enter your name" class="login-input">
+                    <label class="text-[12px] font-bold text-zinc-800 dark:text-zinc-200 block mb-1.5 px-1">Họ và tên</label>
+                    <input type="text" id="registerName" placeholder="Nhập tên của bạn" class="login-input">
                 </div>
                 <div>
-                    <label class="text-[12px] font-bold text-zinc-800 dark:text-zinc-200 block mb-1.5 px-1">Email</label>
-                    <input type="text" id="loginEmail" required placeholder="Enter your email" class="login-input">
+                    <label class="text-[12px] font-bold text-zinc-800 dark:text-zinc-200 block mb-1.5 px-1">Email / Tên đăng nhập</label>
+                    <input type="text" id="loginEmail" required placeholder="Nhập email của bạn" class="login-input">
                 </div>
                 <div>
-                    <label class="text-[12px] font-bold text-zinc-800 dark:text-zinc-200 block mb-1.5 px-1">Password</label>
-                    <input type="password" id="loginPass" required placeholder="Enter your password" class="login-input">
+                    <label class="text-[12px] font-bold text-zinc-800 dark:text-zinc-200 block mb-1.5 px-1">Mật khẩu</label>
+                    <input type="password" id="loginPass" required placeholder="Nhập mật khẩu" class="login-input">
                 </div>
                 
                 <div class="flex items-center justify-between px-1 pt-1 pb-1">
                     <label class="flex items-center gap-2 cursor-pointer group">
                         <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-zinc-300 text-navy-500 focus:ring-navy-500 transition-all">
-                        <span class="text-[12px] font-medium text-zinc-500 group-hover:text-zinc-700 transition-colors">Remember me</span>
+                        <span class="text-[12px] font-medium text-zinc-500 group-hover:text-zinc-700 transition-colors">Ghi nhớ tôi</span>
                     </label>
-                    <button type="button" onclick="forgotPassword()" class="text-[12px] font-bold text-zinc-600 hover:text-navy-500 transition-all">Forgot Password?</button>
+                    <button type="button" onclick="forgotPassword()" class="text-[12px] font-bold text-zinc-600 hover:text-navy-500 transition-all">Quên mật khẩu?</button>
                 </div>
 
                 <button type="submit" id="loginBtn" class="w-full text-white font-medium text-[15px] rounded-full py-3.5 bg-navy-500 hover:bg-navy-600 transition-all shadow-md shadow-navy-500/20">
@@ -469,7 +469,7 @@
                 
                 <div class="flex items-center gap-4 my-6 px-4">
                     <div class="h-[1px] flex-1 bg-zinc-200 dark:bg-zinc-700"></div>
-                    <span class="text-xs font-medium text-zinc-400">Or</span>
+                    <span class="text-xs font-medium text-zinc-400">Hoặc</span>
                     <div class="h-[1px] flex-1 bg-zinc-200 dark:bg-zinc-700"></div>
                 </div>
 
@@ -486,8 +486,8 @@
                 </div>
 
                 <div class="text-center text-[13px] font-medium text-zinc-500">
-                    <span id="registerPromptText">Don't have an account?</span>
-                    <button type="button" class="text-navy-500 hover:text-navy-600 ml-1 font-semibold transition-colors" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Sign Up</button>
+                    <span id="registerPromptText">Chưa có tài khoản?</span>
+                    <button type="button" class="text-navy-500 hover:text-navy-600 ml-1 font-semibold transition-colors" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký</button>
                 </div>
             </form>
         </div>
@@ -1478,20 +1478,31 @@
             const loginBtn = document.getElementById('loginBtn');
             const prompt = document.getElementById('registerPromptText');
             const toggleBtn = document.getElementById('toggleRegisterBtn');
+            const title = document.getElementById('loginTitle');
+            const subtitle = document.getElementById('loginSubtitle');
+            const passInput = document.getElementById('loginPass');
 
             if (isRegisterMode) {
                 nameGroup.classList.remove('hidden');
                 nameInput.required = true;
-                loginBtn.innerText = "Đăng ký tài khoản";
+                loginBtn.innerText = "Tạo tài khoản";
                 prompt.innerText = "Đã có tài khoản?";
                 toggleBtn.innerText = "Đăng nhập";
+                if (title) title.innerText = "Tạo tài khoản";
+                if (subtitle) subtitle.innerText = "Đăng ký tài khoản để bắt đầu tra cứu.";
+                if (passInput) passInput.placeholder = "Tạo mật khẩu";
             } else {
                 nameGroup.classList.add('hidden');
                 nameInput.required = false;
-                loginBtn.innerText = "Đăng nhập hệ thống";
+                loginBtn.innerText = "Đăng nhập";
                 prompt.innerText = "Chưa có tài khoản?";
-                toggleBtn.innerText = "Đăng ký ngay";
+                toggleBtn.innerText = "Đăng ký";
+                if (title) title.innerText = "Chào mừng trở lại";
+                if (subtitle) subtitle.innerText = "Đăng nhập tài khoản để tiếp tục.";
+                if (passInput) passInput.placeholder = "Nhập mật khẩu";
             }
+            const err = document.getElementById('loginError');
+            if (err) err.classList.add('hidden');
         }
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
