@@ -1389,9 +1389,7 @@
             if (typeof loadFilters === 'function') {
                 loadFilters();
             }
-            if (typeof searchData === 'function') {
-                searchData();
-            }
+
             
             // Nếu có fullName thì hiển thị, không thì mới lấy email/username
             document.getElementById('userEmail').innerText = fullName || email;
