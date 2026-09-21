@@ -1974,6 +1974,23 @@
             document.getElementById('filterType').value = 'all';
             document.getElementById('labelType').innerText = 'Tất cả';
             
+            document.getElementById('exactPartName').value = '0';
+            const exactBtn = document.getElementById('btnExactPartName');
+            if (exactBtn) {
+                exactBtn.classList.add('bg-white/10', 'text-white', 'border-white/10');
+                exactBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+            }
+            
+            MASTER_DATA = [];
+            CURRENT_PAGE = 1;
+            const resultsBody = document.getElementById('resultsTableBody');
+            if (resultsBody) {
+                resultsBody.innerHTML = '<div class="py-20 text-center text-zinc-300 font-bold uppercase italic text-[11px] tracking-widest w-full">Sẵn sàng tra cứu</div>';
+            }
+            const statCount = document.getElementById('statCount');
+            if (statCount) statCount.innerText = '0 kết quả';
+            const statPage = document.getElementById('statPage');
+            if (statPage) statPage.innerText = 'TRANG 0 / 0';
         }
 
         
