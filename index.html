@@ -2281,7 +2281,7 @@
                 if (appDataLoaded) return;
                 await loadFilters();
                 // Nếu muốn tự tải luôn bảng dữ liệu ban đầu sau đăng nhập:
-                // await searchData();
+                await searchData();
                 appDataLoaded = true;
             } catch (e) {
                 console.error("Lỗi khởi tạo dữ liệu sau đăng nhập:", e);
