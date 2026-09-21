@@ -555,6 +555,7 @@
             </div>
         </div>
 
+        <div id="traCuuSection">
         <!-- NEW HERO CARD -->
         <div class="px-4 mb-8">
             <div class="bg-navy-500 rounded-[28px] p-6 shadow-xl shadow-navy-500/20 text-white relative overflow-hidden">
@@ -675,6 +676,7 @@
             <div id="resultsTableBody" class="flex flex-col gap-3">
                 <div class="py-20 text-center text-zinc-300 font-bold uppercase italic text-[11px] tracking-widest w-full">Sẵn sàng tra cứu</div>
             </div>
+        </div>
         </div>
     </div>
 
@@ -1327,7 +1329,7 @@
             const main = document.getElementById('mainApp');
             const sysMgr = document.getElementById('sysMgrSection');
             const bottomNav = document.getElementById('bottomNav');
-            const traCuuElements = document.querySelectorAll('#mainApp > .control-panel, #mainApp > .data-section');
+            const traCuuSection = document.getElementById('traCuuSection');
 
             if (view === 'login') {
                 overlay.style.display = 'flex';
@@ -1337,13 +1339,13 @@
                 overlay.style.display = 'none';
                 main.style.display = 'block'; 
                 sysMgr.style.display = 'none'; 
-                traCuuElements.forEach(el => el.style.display = 'block');
+                if(traCuuSection) traCuuSection.style.display = 'block';
                 if(bottomNav) bottomNav.style.display = 'flex';
             } else if (view === 'admin') {
                 overlay.style.display = 'none';
                 main.style.display = 'block'; 
                 sysMgr.style.display = 'block'; 
-                traCuuElements.forEach(el => el.style.display = 'none');
+                if(traCuuSection) traCuuSection.style.display = 'none';
                 if(bottomNav) bottomNav.style.display = 'flex';
                 refreshUserList();
             }
