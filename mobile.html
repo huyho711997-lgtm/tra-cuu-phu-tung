@@ -2455,9 +2455,15 @@ window.searchData = async function() {
                     <input type="text" id="filterModalSearch" oninput="handleFilterModalSearch()" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-[14px] py-3 pl-10 pr-4 text-base font-bold text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-navy-500 transition-all" placeholder="Tìm kiếm...">
           
                 </div>
-                <div id="filterModalActions" class="hidden gap-2 mt-3">
-                    <button type="button" onclick="selectAllItems()" class="flex-1 py-2.5 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-navy-400 text-[13px] font-bold rounded-[12px] border border-teal-100 dark:border-teal-800 transition-colors active:bg-teal-100">Chọn tất cả</button>
-                    <button type="button" onclick="deselectAllItems()" class="flex-1 py-2.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[13px] font-bold rounded-[12px] border border-zinc-200 dark:border-zinc-700 transition-colors active:bg-zinc-100">Bỏ chọn tất cả</button>
+                <div id="filterModalActions" class="hidden flex-col gap-2.5 mt-3">
+                    <div class="flex gap-2">
+                        <button type="button" onclick="selectAllItems()" class="flex-1 py-2.5 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-navy-400 text-[13px] font-bold rounded-[12px] border border-teal-100 dark:border-teal-800 transition-colors active:bg-teal-100">Chọn tất cả</button>
+                        <button type="button" onclick="deselectAllItems()" class="flex-1 py-2.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[13px] font-bold rounded-[12px] border border-zinc-200 dark:border-zinc-700 transition-colors active:bg-zinc-100">Bỏ chọn tất cả</button>
+                    </div>
+                    <button type="button" onclick="closeFilterModal()" class="w-full py-3.5 bg-navy-600 hover:bg-navy-700 active:bg-navy-800 text-white text-[14px] font-black rounded-[14px] shadow-lg shadow-navy-900/20 transition-all uppercase tracking-wide flex justify-center items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        Xác nhận áp dụng
+                    </button>
                 </div>
             </div>
             <div class="overflow-y-auto p-4 pb-12 flex-1 min-h-0" style="-webkit-overflow-scrolling: touch; touch-action: pan-y;" id="filterModalList">
