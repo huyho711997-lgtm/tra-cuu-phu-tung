@@ -3192,7 +3192,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v8-frame-orientation" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v9-auto-oriented-ratios" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
@@ -3235,7 +3235,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
       </nav>
       <div class="camera-settings-body">
         <section id="cameraSettingsCapture" role="tabpanel" aria-labelledby="cameraTabCapture" data-camera-settings-page="capture">
-          <div class="camera-ratio-section"><div class="camera-section-heading"><h3>Tỷ lệ ảnh</h3><span id="cameraRatioBadge">Gốc</span></div><div class="camera-ratio-options" role="radiogroup" aria-label="Tỷ lệ ảnh"><button type="button" role="radio" data-camera-ratio="native" aria-checked="true" tabindex="0"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.0" y="4.5" width="20" height="15" rx="2"/></svg><strong>Gốc</strong><small>Theo camera</small></button><button type="button" role="radio" data-camera-ratio="3:4" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.0" y="4.0" width="12" height="16" rx="2"/></svg><strong>3:4</strong><small>Dọc</small></button><button type="button" role="radio" data-camera-ratio="4:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="6.0" width="16" height="12" rx="2"/></svg><strong>4:3</strong><small>Ngang</small></button><button type="button" role="radio" data-camera-ratio="1:1" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.0" y="5.0" width="14" height="14" rx="2"/></svg><strong>1:1</strong><small>Vuông</small></button><button type="button" role="radio" data-camera-ratio="9:16" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.5" y="4.0" width="9" height="16" rx="2"/></svg><strong>9:16</strong><small>Dọc rộng</small></button><button type="button" role="radio" data-camera-ratio="16:9" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="7.5" width="16" height="9" rx="2"/></svg><strong>16:9</strong><small>Ngang rộng</small></button><button type="button" role="radio" data-camera-ratio="2:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.0" y="4.5" width="10" height="15" rx="2"/></svg><strong>2:3</strong><small>Dọc</small></button><button type="button" role="radio" data-camera-ratio="3:2" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="7.0" width="15" height="10" rx="2"/></svg><strong>3:2</strong><small>Ngang</small></button></div><p class="camera-settings-note">Tỷ lệ là chiều rộng : chiều cao. Khung xem và ảnh lưu cùng tỷ lệ; ảnh được cắt giữa, không kéo giãn.</p></div>
+          <div class="camera-ratio-section"><div class="camera-section-heading"><h3>Tỷ lệ ảnh</h3><span id="cameraRatioBadge">Gốc</span></div><div class="camera-ratio-options" role="radiogroup" aria-label="Tỷ lệ ảnh"><button type="button" role="radio" data-camera-ratio="native" aria-checked="true" tabindex="0"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.0" y="4.5" width="20" height="15" rx="2"/></svg><strong>Gốc</strong><small>Theo camera</small></button><button type="button" role="radio" data-camera-ratio="3:4" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.0" y="4.0" width="12" height="16" rx="2"/></svg><strong>3:4</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="4:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="6.0" width="16" height="12" rx="2"/></svg><strong>4:3</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="1:1" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.0" y="5.0" width="14" height="14" rx="2"/></svg><strong>1:1</strong><small>Vuông</small></button><button type="button" role="radio" data-camera-ratio="9:16" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.5" y="4.0" width="9" height="16" rx="2"/></svg><strong>9:16</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="16:9" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="7.5" width="16" height="9" rx="2"/></svg><strong>16:9</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="2:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.0" y="4.5" width="10" height="15" rx="2"/></svg><strong>2:3</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="3:2" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="7.0" width="15" height="10" rx="2"/></svg><strong>3:2</strong><small>Tự xoay</small></button></div><p class="camera-settings-note">Tỷ lệ tự đổi theo hướng cầm máy: dựng dọc là khung dọc, xoay ngang là khung ngang. 1:1 luôn vuông. Khung xem và ảnh lưu cùng tỷ lệ, cắt giữa để vừa khung.</p></div>
           <div class="camera-section-heading"><h3>Chất lượng ảnh</h3><span id="cameraQualityBadge">Cân bằng</span></div>
           <div class="camera-quality-options" role="radiogroup" aria-label="Chất lượng ảnh">
             <button type="button" role="radio" data-camera-quality="economy" aria-checked="false"><span>Tiết kiệm</span><small>1280 px · nhẹ máy</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
@@ -4038,7 +4038,10 @@ function renderCameraAppearanceControls(){
     output.value=key==='textSize'?Math.round(value*100)+'%':key==='lineHeight'?value.toFixed(2)+'×':value+'%';
   }
   for(const button of panel.querySelectorAll('[data-camera-ratio]')){const selected=button.dataset.cameraRatio===cameraAppearance.aspectRatio;button.setAttribute('aria-checked',String(selected));button.tabIndex=selected?0:-1;button.disabled=cameraUiState.captureBusy;}
-  const badge=document.getElementById('cameraRatioBadge');if(badge)badge.textContent=cameraAppearance.aspectRatio==='native'?'Gốc':cameraAppearance.aspectRatio;
+  const badge=document.getElementById('cameraRatioBadge');if(badge){
+    const frame=cameraFrameOrientation(document.getElementById('customCameraVideo')),parts=cameraRatioParts(frame.aspectRatio),direction=parts&&parts[0]===parts[1]?'Vuông':frame.orientation==='landscape'?'Ngang':'Dọc';
+    badge.textContent=(cameraAppearance.aspectRatio==='native'?'Gốc':frame.aspectRatio)+' · '+direction;
+  }
   cameraRenderStyleButtons();renderCameraStampSample();
 }
 function cameraStampLayout(ctx,lines,width,height,settings){
@@ -4122,12 +4125,14 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
     try{
       const appearance=metadata.appearance||cameraAppearanceSnapshot(),location=await metadata.locationPromise;
       image=await cameraLoadImage(file);
-      canvas=cameraCanvasFromSource(image.source,{rotation:0,mirror:false,digitalZoom:1,aspectRatio:appearance.aspectRatio},metadata.quality||cameraQuality());
+      const imageWidth=image.source.naturalWidth||image.source.width,imageHeight=image.source.naturalHeight||image.source.height,orientation=imageWidth>imageHeight?'landscape':'portrait';
+      const aspectRatio=cameraOrientedRatio(appearance.aspectRatio,orientation,imageWidth,imageHeight);
+      canvas=cameraCanvasFromSource(image.source,{rotation:0,mirror:false,digitalZoom:1,aspectRatio},metadata.quality||cameraQuality());
       const ctx=canvas.getContext('2d',{alpha:false});image.release();image=null;
       try{await document.fonts?.load((appearance.bold?'700':'400')+' 20px '+cameraStampFonts[appearance.font]);}catch(_){}
       drawCameraStamp(ctx,cameraWatermarkLines(location,metadata.capturedAt,metadata.source,appearance),canvas.width,canvas.height,appearance);
       const blob=await cameraCanvasBlob(canvas,'image/jpeg',metadata.quality?.jpeg||.92);
-      metadata.thumbnailBlob=await cameraThumbnail(canvas);metadata.frame={...metadata.frame,width:canvas.width,height:canvas.height};
+      metadata.thumbnailBlob=await cameraThumbnail(canvas);metadata.frame={...metadata.frame,aspectRatio,orientation,width:canvas.width,height:canvas.height};
       const stamped=new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg',lastModified:metadata.capturedAt});
       metadata.stampedFile=stamped;metadata.locationPromise=Promise.resolve(location);cameraPhotoMetadata.set(stamped,metadata);return stamped;
     }catch(_){return file;}finally{image?.release();cameraReleaseCanvas(canvas);}
@@ -4389,13 +4394,27 @@ document.addEventListener('visibilitychange',()=>{
   else if(cameraRuntime.suspended&&!cameraRuntime.nativeOpen){cameraRuntime.suspended=false;startCameraLocationTracking();cameraControlsState.clock=setInterval(updateCameraLiveStamp,1000);startCustomCameraStream();}
 });
 
+function cameraRatioParts(ratio){
+  return Array.isArray(ratio)?ratio:cameraAspectRatios[ratio];
+}
+function cameraOrientedRatio(ratio,orientation,width=0,height=0){
+  // A chosen ratio is a shape family; the device pose chooses its long edge.
+  // Never rotate the scene to make the crop tall/wide: only change the crop.
+  const parts=cameraAspectRatios[ratio],landscape=orientation==='landscape';
+  if(parts){const short=Math.min(...parts),long=Math.max(...parts);return (landscape?[long,short]:[short,long]).join(':');}
+  if(!width||!height)return 'native';
+  const short=Math.min(width,height),long=Math.max(width,height);
+  // Native ratios may be arbitrary. Keep their proportions without forcing
+  // pixel dimensions to integer multiples of a large ratio numerator.
+  return landscape?[long,short]:[short,long];
+}
 function cameraCropFrame(width,height,ratio='native'){
-  const parts=cameraAspectRatios[ratio];if(!parts)return {width,height};
+  const parts=cameraRatioParts(ratio);if(!parts)return {width,height};
   const target=parts[0]/parts[1];return width/height>target?{width:height*target,height}:{width,height:width/target};
 }
 function cameraOutputSize(width,height,ratio,quality){
-  const crop=cameraCropFrame(width,height,ratio),parts=cameraAspectRatios[ratio],scale=Math.min(1,(quality.maxSide||Math.max(crop.width,crop.height))/Math.max(crop.width,crop.height));
-  if(parts){const unit=Math.max(1,Math.floor(Math.min(crop.width*scale/parts[0],crop.height*scale/parts[1])));return {width:unit*parts[0],height:unit*parts[1],crop};}
+  const crop=cameraCropFrame(width,height,ratio),parts=cameraRatioParts(ratio),scale=Math.min(1,(quality.maxSide||Math.max(crop.width,crop.height))/Math.max(crop.width,crop.height));
+  if(parts&&!Array.isArray(ratio)){const unit=Math.max(1,Math.floor(Math.min(crop.width*scale/parts[0],crop.height*scale/parts[1])));return {width:unit*parts[0],height:unit*parts[1],crop};}
   return {width:Math.max(1,Math.round(crop.width*scale)),height:Math.max(1,Math.round(crop.height*scale)),crop};
 }
 function selectCameraRatio(ratio){
@@ -4562,7 +4581,8 @@ function cameraFrameOrientation(video,usePhysical=true) {
   const swapped=Math.abs(rotation)%180===90;
   // Front-camera mirroring is a separate horizontal transform applied AFTER
   // rotation in both CSS and canvas. It must not reverse the orientation angle.
-  return {aspectRatio:cameraAppearance.aspectRatio,orientation:pose.orientation,angle:pose.angle,sourceAngle:screenAngle,uiRotation,rotation,manualRotation,mirror:customCameraFacingMode==='user'&&cameraAppearance.mirrorFront,digitalZoom:cameraControlsState.digitalZoom,width:swapped?video.videoHeight:video.videoWidth,height:swapped?video.videoWidth:video.videoHeight};
+  const aspectRatio=cameraOrientedRatio(cameraAppearance.aspectRatio,pose.orientation,video.videoWidth,video.videoHeight);
+  return {aspectRatio,selectedAspectRatio:cameraAppearance.aspectRatio,orientation:pose.orientation,angle:pose.angle,sourceAngle:screenAngle,uiRotation,rotation,manualRotation,mirror:customCameraFacingMode==='user'&&cameraAppearance.mirrorFront,digitalZoom:cameraControlsState.digitalZoom,width:swapped?video.videoHeight:video.videoWidth,height:swapped?video.videoWidth:video.videoHeight};
 }
 function syncCameraFramePreview(video) {
   if(!video)return;
