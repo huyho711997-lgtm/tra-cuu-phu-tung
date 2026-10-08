@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>TASCO INSURANCE - Hệ Thống Tra Cứu Phụ Tùng Cao Cấp</title>
+    <title>TASCO DLK · Không gian làm việc</title>
     
     <!-- Icon hiển thị trên tab trình duyệt (Favicon) -->
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/2965/2965279.png" />
@@ -873,8 +873,53 @@
 <style>
 .camera-settings-v2 .camera-preference-save{display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;gap:5px}.camera-settings-v2 .camera-preference-save>span{font-size:10px;line-height:1.45;overflow-wrap:anywhere;white-space:normal}.custom-camera-modal .camera-settings-v2 footer #cameraPreferenceRetry{display:inline-flex;align-items:center;gap:4px;width:auto;min-width:0;min-height:26px;padding:3px 7px;border:1px solid var(--settings-line);border-radius:7px;background:transparent;color:#bde6de;font-size:10px}.camera-settings-v2 #cameraPreferenceRetry[hidden]{display:none!important}.camera-settings-v2 #cameraPreferenceRetry svg{width:12px;height:12px}.camera-settings-v2 #cameraPreferenceRetry span{color:inherit;font-size:inherit}.camera-settings-v2 #cameraPreferenceStatus[data-state=error],.camera-settings-v2 #cameraPreferenceStatus[data-state=setup]{color:#ffd19b}.camera-settings-v2 #cameraPreferenceStatus[data-state=saved]{color:#9ed2c2}
 </style>
+<style id="tascoPremiumStyles">
+:root{--ws-bg:#f4f6f3;--ws-surface:#fff;--ws-soft:#eef2ee;--ws-text:#192b29;--ws-muted:#778582;--ws-line:#e2e9e3;--ws-accent:#c6e5d3;--ws-accent-text:#285843;--ws-shadow:0 6px 28px rgba(23,44,34,.035)}
+html.dark{--ws-bg:#101918;--ws-surface:#192422;--ws-soft:#21302b;--ws-text:#edf3ee;--ws-muted:#91a39a;--ws-line:#2d3d35;--ws-accent:#bfe5cf;--ws-accent-text:#bce1c9;--ws-shadow:0 6px 28px #0001}
+body.tasco-workspace,html.dark body.tasco-workspace{background:var(--ws-bg)!important;color:var(--ws-text)!important;margin:0;overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
+.tasco-workspace .hidden{display:none!important}.tasco-workspace #mainApp [hidden],.tasco-workspace [data-admin-only][hidden]{display:none!important}
+#mainApp[data-shell]{max-width:1120px;padding:0 24px calc(120px + env(safe-area-inset-bottom,0px))!important;min-height:100vh;min-height:100dvh}
+#mainApp[data-shell] *{box-sizing:border-box}#mainApp[data-shell] button,#bottomNav button{font-family:inherit;cursor:pointer;touch-action:manipulation}#mainApp[data-shell] button:disabled{cursor:default}
+.ws-icon{display:block;width:22px;height:22px;flex-shrink:0;stroke-width:1.7}.ws-mark{display:grid;place-items:center;width:35px;height:35px;border-radius:11px;background:#1b3b32;color:#c6e5d3;box-shadow:inset 0 0 0 1px #fff1}.ws-mark svg{width:20px;height:20px}
+#mainHeader.ws-topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:calc(22px + env(safe-area-inset-top,0px)) 0 24px}
+.ws-brand{display:flex;align-items:center;gap:10px;border:0;padding:0;background:transparent;color:var(--ws-text);text-align:left}.ws-brand strong{display:block;font-size:15px;letter-spacing:.13em;line-height:1.2;font-weight:800}.ws-brand small{display:block;margin-top:4px;color:var(--ws-muted);font-size:8px;letter-spacing:.14em;font-weight:650;text-transform:uppercase}
+.ws-top-actions{display:flex;align-items:center;gap:12px}.ws-date{font-size:11px;color:var(--ws-muted);font-weight:500}.ws-avatar{display:grid;place-items:center;width:40px;height:40px;flex-shrink:0;border:1px solid var(--ws-line);border-radius:50%;background:var(--ws-surface);color:var(--ws-text);font-size:12px;font-weight:700;box-shadow:var(--ws-shadow)}
+.ws-greeting{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:5px 0 24px}.ws-greeting p{margin:0 0 7px;color:var(--ws-muted);font-size:12px;line-height:1.5}.ws-greeting h1{margin:0;color:var(--ws-text);font-size:30px;line-height:1.25;font-weight:650;letter-spacing:-1.3px;overflow-wrap:anywhere}.ws-greeting .ws-day{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--ws-line);border-radius:50%;color:var(--ws-accent-text);background:var(--ws-surface)}
+.ws-home-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:20px}.ws-feature{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;min-height:294px;padding:28px;border-radius:27px;background:#203d35;color:#fff;box-shadow:0 14px 30px #203d3514}
+.ws-feature:after{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 88% 35%,#41705b50,transparent 65%);pointer-events:none}.ws-feature .ws-eyebrow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;color:#bdd1c5;font-size:9px;font-weight:650;letter-spacing:.16em;line-height:1.5}.ws-feature .ws-eyebrow i{width:5px;height:5px;border-radius:50%;background:#c6e5d3}.ws-feature h2{position:relative;z-index:1;margin:20px 0 12px;font-size:37px;line-height:1.12;font-weight:600;letter-spacing:-1.9px;max-width:68%}.ws-feature p{position:relative;z-index:1;margin:0;max-width:60%;font-size:11px;color:#b9cdc0;line-height:1.7}.ws-feature .ws-primary{position:relative;z-index:1;margin-top:25px;background:#d4eddc;color:#1b3b2d;border-color:#d4eddc;min-height:42px;box-shadow:none}
+.ws-mechanical{position:absolute;width:218px;height:218px;right:-50px;top:39px;transform:rotate(-17deg);z-index:0;filter:drop-shadow(0 12px 18px #071e1660);pointer-events:none}.ws-feature-foot{position:absolute;right:22px;bottom:24px;display:flex;align-items:center;gap:7px;font-size:8px;letter-spacing:.16em;color:#bed4c3}.ws-feature-foot:before{content:'';width:20px;height:1px;background:#6a8b7a}
+.ws-primary,.ws-secondary{display:inline-flex;justify-content:center;align-items:center;gap:10px;min-height:46px;padding:12px 18px;border:1px solid transparent;border-radius:13px;font-size:12px;font-weight:650;line-height:1.4;background:#203d35;color:#fff}.ws-primary svg,.ws-secondary svg{width:17px;height:17px}.ws-primary:active,.ws-secondary:active{transform:scale(.98)}.ws-secondary{background:var(--ws-surface);border-color:var(--ws-line);color:var(--ws-text)}
+.ws-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:12px;height:100%;min-height:294px}.ws-shortcut{position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:12px;min-width:0;min-height:142px;padding:20px;border:1px solid var(--ws-line);border-radius:22px;background:var(--ws-surface);box-shadow:var(--ws-shadow);text-align:left;color:var(--ws-text)}.ws-shortcut--camera{background:#e6eee3;border-color:#dde6d9}.dark .ws-shortcut--camera{background:#273b2e;border-color:#3a4c3e}.ws-shortcut>.ws-icon{width:24px;height:24px;color:#567861}.dark .ws-shortcut>.ws-icon{color:#b0d2bc}.ws-shortcut .ws-arrow{position:absolute;right:17px;top:20px;width:14px;height:14px;color:var(--ws-muted)}.ws-shortcut strong{display:block;font-size:14px;font-weight:650;line-height:1.4;letter-spacing:-.3px}.ws-shortcut small{display:block;margin-top:5px;font-size:10px;color:var(--ws-muted);line-height:1.45;font-weight:450}.ws-shortcut:disabled{opacity:.6}.ws-shortcut--wide{grid-column:1/-1;min-height:120px;flex-direction:row;align-items:center}.ws-shortcut--wide .ws-icon{width:28px;height:28px}.ws-shortcut--wide .ws-arrow{top:50%;transform:translateY(-50%)}
+.ws-section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:30px 0 14px}.ws-section-heading h2,.ws-section-heading h3{font-size:17px;font-weight:650;letter-spacing:-.5px;line-height:1.4;margin:0;color:var(--ws-text)}.ws-text-button{display:inline-flex;align-items:center;gap:7px;background:transparent;border:0;padding:8px 0;font-size:10px;font-weight:600;color:var(--ws-muted)}.ws-text-button svg{width:13px;height:13px}
+.ws-recent-empty{display:flex;align-items:center;gap:15px;padding:21px;border:1px solid var(--ws-line);border-radius:20px;background:var(--ws-surface);color:var(--ws-text);min-height:104px}.ws-recent-empty .ws-empty-icon{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;background:var(--ws-soft);border-radius:14px;color:#567861}.ws-recent-empty strong{display:block;font-size:12px;font-weight:650}.ws-recent-empty p{margin:6px 0 0;font-size:10px;color:var(--ws-muted);line-height:1.7}.ws-recent-empty>div:nth-child(2){flex:1}.ws-recent-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.ws-recent-photo{display:block;min-width:0;border:0;border-radius:17px;padding:0;background:var(--ws-surface);overflow:hidden;text-align:left;color:var(--ws-text)}.ws-recent-photo img{display:block;width:100%;aspect-ratio:1.25;object-fit:cover}.ws-recent-photo span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:550;padding:10px 11px 5px}.ws-recent-photo small{display:block;color:var(--ws-muted);font-size:9px;padding:0 11px 11px}
+.ws-bottom-note{display:flex;align-items:center;gap:8px;justify-content:center;margin:26px 0 0;padding:9px;font-size:9px;line-height:1.5;color:var(--ws-muted)}.ws-bottom-note svg{width:13px;height:13px}.ws-admin-card{display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;margin-top:18px;padding:18px 20px;background:var(--ws-soft);border:1px solid var(--ws-line);border-radius:17px;color:var(--ws-text);text-align:left}.ws-admin-card strong{display:block;font-size:12px;font-weight:650}.ws-admin-card small{display:block;margin-top:5px;font-size:10px;color:var(--ws-muted)}
+.ws-childbar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 0 16px;background:var(--ws-bg)}.ws-childbar button{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-surface);color:var(--ws-text);flex-shrink:0}.ws-childbar>div{flex:1;min-width:0}.ws-childbar small{display:block;color:var(--ws-muted);font-size:9px;font-weight:550;letter-spacing:.12em;text-transform:uppercase}.ws-childbar h1{margin:4px 0 0;font-size:19px;font-weight:650;line-height:1.25;letter-spacing:-.6px;color:var(--ws-text)}.ws-childbar .ws-home-return{width:auto;gap:6px;padding:0 10px;font-size:10px;font-weight:600;background:transparent;border-color:transparent}.ws-childbar .ws-home-return svg{width:16px;height:16px}
+#bottomNav.ws-bottom-nav{position:fixed;left:50%;right:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;justify-content:space-around;align-items:center;width:min(460px,calc(100% - 36px));min-height:70px;padding:8px 10px;border:1px solid #fff9;border-radius:25px;background:rgba(249,251,247,.89);backdrop-filter:blur(22px) saturate(1.35);-webkit-backdrop-filter:blur(22px) saturate(1.35);box-shadow:0 8px 28px #24433216;z-index:90}.dark #bottomNav.ws-bottom-nav{background:#203029e8;border-color:#344e4077;box-shadow:0 8px 28px #0003}.ws-bottom-nav .ws-nav-button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:50px;min-width:0;padding:5px;border:0;border-radius:17px;background:transparent;color:#839289;line-height:1.3}.ws-bottom-nav .ws-nav-button .ws-icon{width:20px;height:20px}.ws-bottom-nav .ws-nav-button span{font-size:9px;font-weight:550;white-space:nowrap}.ws-bottom-nav .ws-nav-button[aria-current=page]{color:#244d3b;background:#dfeee2}.dark .ws-bottom-nav .ws-nav-button[aria-current=page]{background:#42604b;color:#e2f2e4}.ws-nav-button[data-shell-nav=home][aria-current=page] svg{fill:currentColor;stroke-width:1}
+#traCuuSection.ws-lookup{padding-top:7px}.ws-page-intro{margin:10px 0 23px}.ws-page-intro .ws-kicker{display:inline-flex;align-items:center;gap:8px;font-size:9px;font-weight:650;color:var(--ws-muted);letter-spacing:.15em;text-transform:uppercase}.ws-page-intro h2{margin:13px 0 10px;font-size:32px;line-height:1.2;font-weight:650;letter-spacing:-1.3px;color:var(--ws-text)}.ws-page-intro p{margin:0;color:var(--ws-muted);font-size:12px;line-height:1.8;max-width:430px}
+.ws-search-panel{padding:22px;border:1px solid var(--ws-line);border-radius:23px;background:var(--ws-surface);box-shadow:var(--ws-shadow)}.ws-search-label{display:block;margin-bottom:11px;font-size:10px;color:var(--ws-muted);font-weight:600}.ws-search-field{display:flex;align-items:center;gap:11px;min-height:52px;padding:0 14px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-soft);color:var(--ws-muted)}.ws-search-field input{min-width:0;flex:1;border:0!important;background:transparent!important;box-shadow:none!important;padding:12px 0!important;color:var(--ws-text)!important;font-family:inherit;font-size:16px!important;font-weight:450!important;outline:none!important}.ws-search-field input::placeholder{color:#93a198}.ws-search-field>button{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:8px;background:transparent;color:var(--ws-muted)}.ws-search-field>button[aria-pressed=true]{background:#cee5d3;color:#235339}.ws-filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:17px 0 19px}.ws-filter-grid>button{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:12px 11px;min-width:0;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-surface);text-align:left;color:var(--ws-muted)}.ws-filter-grid>button .ws-icon{width:18px;height:18px}.ws-filter-grid strong{display:block;font-size:10px;font-weight:650;color:var(--ws-text);white-space:nowrap}.ws-filter-grid small{display:block;font-size:9px;font-weight:450;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ws-search-actions{display:flex;gap:10px}.ws-search-actions .ws-primary{flex:1}.ws-search-actions .ws-secondary{padding:10px 13px}.ws-search-actions .ws-secondary svg{width:18px;height:18px}
+.ws-results-top{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:27px 0 14px}.ws-results-top h2{margin:0;font-size:17px;font-weight:650;letter-spacing:-.5px}.ws-results-top #statCount{padding:6px 10px;border-radius:9px;background:var(--ws-soft);color:var(--ws-accent-text);font-size:10px;font-weight:600}.ws-pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 18px;font-size:10px;color:var(--ws-muted)}.ws-pagination>div{display:flex;align-items:center;gap:8px}.ws-pagination button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:35px;padding:8px 10px;border:1px solid var(--ws-line);border-radius:10px;background:var(--ws-surface);color:var(--ws-muted);font-size:10px;font-weight:550}.ws-pagination button:disabled{opacity:.35}.ws-pagination svg{width:14px;height:14px}.ws-pagination #customPageSizeContainer{position:relative}.ws-pagination #pageSizeMenu{position:absolute;left:0;top:100%;z-index:95;padding:6px;background:var(--ws-surface);border:1px solid var(--ws-line);border-radius:13px;min-width:155px;box-shadow:0 8px 20px #192b2915}.ws-pagination #pageSizeMenu button{width:100%;justify-content:flex-start;border:0}.ws-lookup-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:180px;gap:13px;border:1px dashed var(--ws-line);border-radius:22px;padding:25px;text-align:center;color:var(--ws-muted)}.ws-lookup-empty .ws-icon{width:28px;height:28px;color:#91af9d}.ws-lookup-empty strong{color:var(--ws-text);font-size:13px;font-weight:600}.ws-lookup-empty p{margin:0;font-size:11px;line-height:1.7}
+#resultsTableBody>div[onclick]{background:var(--ws-surface)!important;border:1px solid var(--ws-line)!important;border-radius:18px!important;box-shadow:none!important;padding:17px!important;gap:12px!important}#resultsTableBody>div[onclick] .font-black{font-weight:650}#resultsTableBody .badge-pro{font-size:9px;padding:4px 8px;font-weight:600}.ws-lookup #resultsTableBody{display:flex;flex-direction:column;gap:10px}
+#personalCloudSection .personal-cloud[data-cloud-theme=mobile]{--cl-bg:var(--ws-surface);--cl-text:var(--ws-text);--cl-muted:var(--ws-muted);--cl-line:var(--ws-line);--cl-soft:var(--ws-soft);--cl-gold:#65836c;padding:5px 0 20px}.dark #personalCloudSection .personal-cloud[data-cloud-theme=mobile]{--cl-bg:var(--ws-surface);--cl-text:var(--ws-text);--cl-muted:var(--ws-muted);--cl-line:var(--ws-line);--cl-soft:var(--ws-soft)}
+#personalCloudSection .cloud-hero{background:transparent;box-shadow:none;border:0;border-radius:0;padding:15px 0 23px;align-items:flex-start;gap:15px}#personalCloudSection .cloud-hero-icon{display:none}#personalCloudSection .cloud-hero-copy h1{font-size:30px;font-weight:650;letter-spacing:-1.2px;line-height:1.15;margin:10px 0}#personalCloudSection .cloud-eyebrow{color:var(--ws-muted);font-size:8px;letter-spacing:.13em}#personalCloudSection .cloud-hero-copy p{color:var(--ws-muted);font-size:11px;line-height:1.8}#personalCloudSection .cloud-hero-actions{margin:18px 0 0}#personalCloudSection .cloud-primary{background:#203d35!important;color:#e6f0e8!important;border-color:#203d35!important;border-radius:12px;font-weight:600;min-height:43px}#personalCloudSection .cloud-control-panel{padding:18px;border:1px solid var(--ws-line);border-radius:20px;background:var(--ws-surface);box-shadow:none}#personalCloudSection .cloud-search{border-radius:12px;background:var(--ws-soft)!important}#personalCloudSection .cloud-toolbar>[data-action=refresh]{background:var(--ws-soft)!important;border-color:var(--ws-line)!important;color:var(--ws-text)!important;border-radius:12px}#personalCloudSection .cloud-date-trigger,#personalCloudSection .cloud-title-field input{min-height:43px;background:var(--ws-soft)!important;border-color:var(--ws-line)!important;border-radius:12px;color:var(--ws-text)!important}#personalCloudSection .cloud-gallery-heading{margin:26px 0 17px}#personalCloudSection .cloud-gallery-heading h2{font-size:18px;font-weight:650;letter-spacing:-.6px}#personalCloudSection .cloud-account-line{font-size:9px;padding-bottom:14px;gap:8px;flex-wrap:wrap;color:var(--ws-muted)}#personalCloudSection [data-cloud-target]{display:none}#personalCloudSection .cloud-day-grid{gap:9px}#personalCloudSection .cloud-photo-tile{border-radius:15px}#personalCloudSection .cloud-day-heading h3{font-weight:650;font-size:14px}#personalCloudSection .cloud-button{font-family:inherit;font-weight:600}#personalCloudSection .cloud-empty{border:1px dashed var(--ws-line);border-radius:20px;background:transparent}
+.ws-account-card{display:flex;align-items:center;gap:17px;padding:25px;border:1px solid var(--ws-line);border-radius:23px;background:var(--ws-surface);box-shadow:var(--ws-shadow);margin:14px 0 25px}.ws-account-card .ws-avatar{width:62px;height:62px;border:0;border-radius:21px;background:#deeadf;color:#2e5940;font-size:21px;font-weight:600;box-shadow:none}.ws-account-card>div{min-width:0}.ws-account-card h2{font-size:19px;font-weight:650;letter-spacing:-.6px;margin:0 0 6px;overflow-wrap:anywhere;color:var(--ws-text)}.ws-account-card p{font-size:11px;margin:0;color:var(--ws-muted);overflow-wrap:anywhere}.ws-role{display:inline-block;margin-top:10px;padding:5px 9px;border-radius:7px;background:var(--ws-soft);color:var(--ws-accent-text);font-size:9px;font-weight:600}.ws-settings-label{display:block;margin:25px 0 11px;padding-left:3px;color:var(--ws-muted);font-size:9px;font-weight:650;letter-spacing:.14em;text-transform:uppercase}.ws-settings-list{overflow:hidden;border:1px solid var(--ws-line);border-radius:20px;background:var(--ws-surface)}.ws-setting-row{display:flex;align-items:center;gap:13px;width:100%;min-height:73px;padding:15px 18px;border:0;border-bottom:1px solid var(--ws-line);background:transparent;text-align:left;color:var(--ws-text)}.ws-setting-row:last-child{border-bottom:0}.ws-setting-row>span:nth-child(2){flex:1;min-width:0}.ws-setting-row strong{display:block;font-size:12px;font-weight:600;line-height:1.5}.ws-setting-row small{display:block;margin-top:4px;color:var(--ws-muted);font-size:10px;line-height:1.5}.ws-setting-row>.ws-icon:last-child{width:15px;height:15px;color:var(--ws-muted)}.ws-setting-row[data-danger]{color:#9e4b48}.ws-setting-row .ws-switch{width:34px;height:20px;border-radius:20px;padding:3px;background:#d6dfd7;flex-shrink:0}.ws-switch:before{content:'';display:block;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:0 2px 4px #0002;transition:transform .2s}.dark .ws-setting-row .ws-switch{background:#629075}.dark .ws-switch:before{transform:translateX(14px)}.ws-account-note{margin:23px 6px;color:var(--ws-muted);font-size:10px;line-height:1.8;text-align:center}
+#sysMgrSection{padding:14px 0 0!important}#sysMgrSection>header>div:first-child>div>button{display:none}#sysMgrSection>header h1{font-size:18px;letter-spacing:-.5px;text-transform:none;font-weight:650}#sysMgrSection>header .text-navy-500{color:var(--ws-accent-text)!important}#sysMgrSection>header>button{background:#203d35!important;border-radius:15px;box-shadow:none!important;text-transform:none;letter-spacing:0;min-height:48px;font-weight:600}#userTableBody>div{background:var(--ws-surface)!important;border-color:var(--ws-line)!important;border-radius:20px!important;box-shadow:none!important}#sysMgrSection .data-section{padding-bottom:15px!important}
+.tasco-workspace #loginOverlay{background:var(--ws-bg)!important}.tasco-workspace #loginOverlay .login-card{background:var(--ws-surface);border:1px solid var(--ws-line);border-radius:29px;box-shadow:0 20px 70px #203d3510;max-width:390px}.tasco-workspace #loginOverlay .floating-logo{background:#203d35!important;box-shadow:none;animation:none}.tasco-workspace #loginBtn{background:#203d35!important;box-shadow:none;border-radius:14px}.tasco-workspace .login-input{background:var(--ws-soft)!important;border-color:var(--ws-line)!important;color:var(--ws-text)!important;border-radius:13px}.tasco-workspace #loginTitle{color:var(--ws-text)!important;font-weight:650;letter-spacing:-.8px}
+.tasco-workspace #modalFilterSelection>div:last-child,.tasco-workspace #modalDetail>div,.tasco-workspace #modalChangePassword>div,.tasco-workspace #modalAddUser>div,.tasco-workspace #modalEditUser>div{background:var(--ws-surface)!important;color:var(--ws-text);border:1px solid var(--ws-line);border-radius:25px}.tasco-workspace #modalFilterSelection input[type=text],.tasco-workspace .premium-input{border-color:var(--ws-line)!important;border-radius:13px!important;background:var(--ws-soft)!important;color:var(--ws-text)!important}.tasco-workspace #filterModalList .bg-navy-50{background:#e0eee2!important;border-color:#c0d6c6}.tasco-workspace #filterModalList .text-navy-500{color:#285843!important}
+.ws-focus:focus-visible,#mainApp[data-shell] button:focus-visible,#bottomNav button:focus-visible{outline:2px solid #599575;outline-offset:3px}#wsPageTitle:focus{outline:0}
+@media(min-width:768px){#mainHeader.ws-topbar{padding-top:35px;padding-bottom:34px}.ws-greeting{margin-bottom:30px}.ws-greeting h1{font-size:37px}.ws-home-grid{gap:22px}.ws-feature{min-height:324px;padding:33px}.ws-feature h2{font-size:46px;max-width:65%}.ws-feature p{font-size:12px}.ws-mechanical{width:260px;height:260px;right:-30px;top:36px}.ws-shortcuts{min-height:324px}.ws-shortcut{padding:25px}.ws-shortcut strong{font-size:16px}.ws-shortcut small{font-size:11px}.ws-recent-photo img{aspect-ratio:1.65}.ws-childbar{padding-top:28px;padding-bottom:20px}.ws-childbar h1{font-size:24px}.ws-lookup-layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:32px;align-items:start}.ws-lookup-layout>.ws-search-panel{position:sticky;top:104px}.ws-lookup-layout>.ws-results .ws-results-top{margin-top:0}.ws-search-panel .ws-filter-grid{grid-template-columns:1fr 1fr}.ws-filter-grid strong{font-size:12px}.ws-filter-grid small{font-size:10px}.ws-filter-grid>button{gap:10px;padding:15px}.ws-account-layout{display:grid;grid-template-columns:.85fr 1.3fr;gap:28px;align-items:start}.ws-account-card{margin-top:14px}.ws-recent-empty{min-height:120px}.ws-page-intro h2{font-size:37px}}
+@media(max-width:767px){#mainApp[data-shell]{padding-left:21px!important;padding-right:21px!important;max-width:600px}.ws-date{display:none}.ws-greeting{margin-top:2px}.ws-home-grid{grid-template-columns:1fr;gap:16px}.ws-feature{min-height:273px;padding:25px}.ws-feature h2{font-size:37px;margin-top:18px;margin-bottom:10px}.ws-mechanical{width:210px;height:210px;top:30px;right:-55px}.ws-shortcuts{grid-template-columns:1fr 1fr;min-height:0;gap:11px}.ws-shortcut{min-height:142px;padding:19px}.ws-shortcut--wide{grid-column:1/-1;min-height:95px}.ws-section-heading{margin-top:25px}.ws-recent-grid{gap:8px}.ws-recent-photo span{font-size:10px;padding:8px 8px 4px}.ws-recent-photo small{font-size:8px;padding:0 8px 9px}.ws-bottom-note{font-size:8px}.ws-search-panel{padding:18px}.ws-filter-grid{gap:6px}.ws-filter-grid>button{padding:11px 8px}.ws-childbar{gap:9px}.ws-childbar .ws-home-return span{display:none}.ws-childbar .ws-home-return{width:34px;padding:0}#personalCloudSection .cloud-hero{flex-wrap:wrap}#personalCloudSection .cloud-hero-copy{width:100%;flex:1 0 100%}#personalCloudSection .cloud-hero-actions{width:100%;margin-top:0}#personalCloudSection .cloud-hero-actions .cloud-primary{width:100%}#personalCloudSection .cloud-title-field{min-width:0}#personalCloudSection .cloud-control-panel{padding:15px}#personalCloudSection .cloud-details-row{gap:10px}#personalCloudSection .cloud-gallery-actions{gap:6px}.ws-pagination #pageInfo{font-size:9px}.ws-account-card{padding:22px}.ws-greeting h1{font-size:28px}.ws-topbar{min-height:80px}}
+@media(max-width:360px){#mainApp[data-shell]{padding-left:16px!important;padding-right:16px!important}.ws-feature{padding:23px;min-height:267px}.ws-feature h2{font-size:34px}.ws-mechanical{right:-77px;opacity:.85}.ws-feature p{max-width:65%}.ws-shortcut{padding:16px;min-height:135px}.ws-shortcut strong{font-size:13px}.ws-filter-grid{grid-template-columns:1fr 1fr}.ws-search-panel{padding:16px}.ws-greeting h1{font-size:26px}.ws-pagination{gap:6px}.ws-pagination>div{gap:4px}.ws-pagination button{padding:7px 8px}#bottomNav.ws-bottom-nav{width:calc(100% - 24px);bottom:calc(8px + env(safe-area-inset-bottom,0px))}.ws-brand small{font-size:7px}.ws-recent-empty{padding:17px;gap:11px}}
+.ws-shortcut--wide>span{flex:1}.ws-shortcut--wide .ws-arrow{position:static;transform:none;width:15px;height:15px}
+#personalCloudSection .cloud-hero:after{display:none}#personalCloudSection .cloud-hero h1{color:var(--ws-text)!important}#personalCloudSection .cloud-search,#personalCloudSection .cloud-account-line span:first-child,#personalCloudSection .cloud-date,#personalCloudSection .cloud-title-field{color:var(--ws-muted)!important}#personalCloudSection .cloud-empty>svg{color:#6d967e!important}#personalCloudSection [data-cloud-total]{background:var(--ws-soft)!important;color:var(--ws-accent-text)!important}
+#mainApp:not([data-page=lookup]) #indexErrorBanner{display:none!important}
+.tasco-workspace #loginOverlay{padding:24px 20px;overflow-y:auto;justify-content:center}.tasco-workspace #loginOverlay .ws-login-card{height:auto;max-height:none;max-width:390px;padding:30px 26px!important;background:var(--ws-surface)!important;border:1px solid var(--ws-line)!important;animation:none;flex-shrink:0}.ws-login-heading .ws-mark{width:44px;height:44px;border-radius:14px;margin-bottom:18px}.ws-login-heading .ws-mark svg{width:24px;height:24px}.ws-login-brand{display:block;margin-bottom:14px;color:var(--ws-muted);font-size:9px;font-weight:650;letter-spacing:.16em}.ws-login-heading h2{margin:0 0 10px;font-size:26px;letter-spacing:-1px;font-weight:650;line-height:1.25}.ws-login-heading p{font-size:12px;line-height:1.8;color:var(--ws-muted);margin:0 0 26px}.ws-login-form{display:flex;flex-direction:column;gap:18px}.ws-login-form label{display:block;font-size:11px;font-weight:550;margin:0 0 8px;color:var(--ws-text)}.ws-login-form .login-input{font-size:16px;font-weight:450}.ws-login-options{display:flex;align-items:center;justify-content:space-between;gap:10px}.ws-login-options>label{display:flex;align-items:center;gap:7px;margin:0;color:var(--ws-muted);font-size:10px}.ws-login-options input{width:16px;height:16px;accent-color:#365e46}.ws-login-options button,.ws-login-register button{border:0;background:transparent;padding:3px 0;font-size:10px;color:var(--ws-accent-text);font-weight:600}.ws-login-form #loginBtn{width:100%;font-size:13px;min-height:48px}.ws-login-register{display:flex;align-items:center;justify-content:center;gap:7px;padding-top:7px;color:var(--ws-muted);font-size:11px}.ws-login-register button{font-size:11px}.ws-login-form #loginError{color:#b85e59;font-size:11px;line-height:1.6}.ws-login-foot{margin:28px 0 0;padding-top:19px;border-top:1px solid var(--ws-line);font-size:8px;line-height:1.8;letter-spacing:.03em;color:var(--ws-muted);text-align:center}
+.tasco-workspace :is(#modalDetail,#modalChangePassword,#modalAddUser,#modalEditUser,#modalLogout,#modalHistory,#modalVerify,#modalCustomAlert,#modalCustomConfirm){z-index:160;position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#101c1873;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:20px}.tasco-workspace :is(#modalCustomAlert,#modalCustomConfirm){z-index:200}.tasco-workspace :is(#modalDetail,#modalChangePassword,#modalAddUser,#modalEditUser,#modalLogout,#modalHistory,#modalVerify,#modalCustomAlert,#modalCustomConfirm)>div{background:var(--ws-surface)!important;border:1px solid var(--ws-line);border-radius:24px;box-shadow:0 24px 100px #15281f26;max-height:calc(100dvh - 40px);overflow:auto}.tasco-workspace :is(#modalDetail,#modalChangePassword,#modalAddUser,#modalEditUser,#modalLogout,#modalHistory,#modalVerify,#modalCustomAlert,#modalCustomConfirm) h3{color:var(--ws-text)!important;font-weight:650;text-transform:none;letter-spacing:-.5px}.tasco-workspace #modalChangePassword>div>div:first-child,.tasco-workspace #modalChangePassword>div>div:last-child{background:var(--ws-soft)!important;border-color:var(--ws-line)}.tasco-workspace #modalChangePassword .premium-input-group{margin-bottom:16px}.tasco-workspace #modalChangePassword .premium-input-group:last-child{margin-bottom:0}.tasco-workspace #modalChangePassword .premium-input-group label{font-size:10px;font-weight:550;letter-spacing:0;text-transform:none;color:var(--ws-muted)}.tasco-workspace #modalChangePassword .premium-input{height:50px;padding-left:14px;font-weight:450}.tasco-workspace #modalChangePassword .bg-orange-50{background:var(--ws-accent)!important;color:#285843!important}.tasco-workspace #btnSaveSelfPassword,.tasco-workspace #modalFilterSelection button[onclick="closeFilterModal()"].bg-navy-600{background:#203d35!important;color:#fff!important;box-shadow:none!important;font-weight:600;text-transform:none;letter-spacing:0;border-radius:13px;min-height:44px}.tasco-workspace #modalLogout button[onclick="confirmLogout()"]{background:#a65550;color:#fff;box-shadow:none;min-height:44px}.tasco-workspace #modalDetail #detailContent>div>div{color:var(--ws-text)!important;font-weight:550}.tasco-workspace #modalFilterSelection h3{color:var(--ws-text)!important;font-weight:650}.tasco-workspace #modalFilterSelection>div:last-child{border-bottom-left-radius:0;border-bottom-right-radius:0}.tasco-workspace #modalFilterSelection #filterModalSearch{font-weight:450}.tasco-workspace #sysMgrSection .bg-white,.tasco-workspace #sysMgrSection .bg-zinc-50{background:var(--ws-surface)!important}.tasco-workspace #sysMgrSection .text-zinc-900,.tasco-workspace #sysMgrSection .text-zinc-700{color:var(--ws-text)!important}
+@media(max-height:640px){.tasco-workspace #loginOverlay{justify-content:flex-start;padding-top:20px;padding-bottom:20px}}
+@media(prefers-reduced-motion:reduce){#mainApp[data-shell] *,#bottomNav *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style>
 </head>
-<body class="bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
+<body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
     <script>
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -887,86 +932,59 @@
     </script>
 
     <div id="loginOverlay">
-        <div class="login-card" style="padding-bottom: 32px;">
-            <div class="text-center mb-6">
-                <div class="w-[56px] h-[56px] bg-navy-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-navy-500/30 floating-logo relative">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    <div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-teal-400 rounded-full"></div>
-                </div>
-                <h2 id="loginTitle" class="text-[24px] font-bold text-zinc-900 dark:text-white tracking-tight mb-1.5">Chào mừng trở lại</h2>
-                <p id="loginSubtitle" class="text-zinc-500 font-medium text-[13px]">Đăng nhập tài khoản để tiếp tục.</p>
-            </div>
-
-            <form id="loginForm" class="space-y-4">
-                <div class="hidden" id="registerNameGroup">
-                    <label class="text-[12px] font-bold text-zinc-800 dark:text-zinc-200 block mb-1.5 px-1">Họ và tên</label>
-                    <input type="text" id="registerName" placeholder="Nhập tên của bạn" class="login-input">
-                </div>
-                <div>
-                    <label class="text-[12px] font-bold text-zinc-800 dark:text-zinc-200 block mb-1.5 px-1">Email / Tên đăng nhập</label>
-                    <input type="text" id="loginEmail" required placeholder="Nhập email của bạn" class="login-input">
-                </div>
-                <div>
-                    <label class="text-[12px] font-bold text-zinc-800 dark:text-zinc-200 block mb-1.5 px-1">Mật khẩu</label>
-                    <input type="password" id="loginPass" required placeholder="Nhập mật khẩu" class="login-input">
-                </div>
-                
-                <div class="flex items-center justify-between px-1 pt-1 pb-1">
-                    <label class="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-zinc-300 text-navy-500 focus:ring-navy-500 transition-all">
-                        <span class="text-[12px] font-medium text-zinc-500 group-hover:text-zinc-700 transition-colors">Ghi nhớ tôi</span>
-                    </label>
-                    <button type="button" onclick="forgotPassword()" class="text-[12px] font-bold text-zinc-600 hover:text-navy-500 transition-all">Quên mật khẩu?</button>
-                </div>
-
-                <button type="submit" id="loginBtn" class="w-full text-white font-medium text-[15px] rounded-full py-3.5 bg-navy-500 hover:bg-navy-600 transition-all shadow-md shadow-navy-500/20">
-                    Sign In
-                </button>
-                
-                <p id="loginError" class="text-red-500 text-[11px] font-bold text-center mt-2 hidden"></p>
-                
-                <div class="flex items-center gap-4 my-6 px-4">
-                    <div class="h-[1px] flex-1 bg-zinc-200 dark:bg-zinc-700"></div>
-                    <span class="text-xs font-medium text-zinc-400">Hoặc</span>
-                    <div class="h-[1px] flex-1 bg-zinc-200 dark:bg-zinc-700"></div>
-                </div>
-
-                <div class="flex items-center justify-center gap-5 mb-8">
-                    <button type="button" class="w-11 h-11 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors shadow-sm">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" class="w-5 h-5" alt="Google">
-                    </button>
-                    <button type="button" class="w-11 h-11 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors shadow-sm">
-                        <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" class="w-5 h-5 dark:invert" alt="Apple">
-                    </button>
-                    <button type="button" class="w-11 h-11 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors shadow-sm">
-                        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" class="w-5 h-5" alt="Facebook">
-                    </button>
-                </div>
-
-                <div class="text-center text-[13px] font-medium text-zinc-500">
-                    <span id="registerPromptText">Chưa có tài khoản?</span>
-                    <button type="button" class="text-navy-500 hover:text-navy-600 ml-1 font-semibold transition-colors" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký</button>
-                </div>
-            </form>
-        </div>
+      <div class="login-card ws-login-card">
+        <div class="ws-login-heading"><span class="ws-mark"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M12 5v14M4 13v6h6m10-6v6h-6"/></svg></span><span class="ws-login-brand">TASCO DLK</span><h2 id="loginTitle">Chào mừng trở lại.</h2><p id="loginSubtitle">Đăng nhập để tra cứu phụ tùng và lưu ảnh hồ sơ.</p></div>
+        <form id="loginForm" class="ws-login-form">
+          <div id="registerNameGroup" class="hidden"><label for="registerName">Họ và tên</label><input type="text" id="registerName" autocomplete="name" placeholder="Tên của bạn" class="login-input"></div>
+          <div><label for="loginEmail">Email / Tên đăng nhập</label><input type="text" id="loginEmail" autocomplete="username" required placeholder="Nhập email của bạn" class="login-input"></div>
+          <div><label for="loginPass">Mật khẩu</label><input type="password" id="loginPass" autocomplete="current-password" required placeholder="Nhập mật khẩu" class="login-input"></div>
+          <div class="ws-login-options"><label><input type="checkbox" id="rememberMe">Ghi nhớ tôi</label><button type="button" onclick="forgotPassword()">Quên mật khẩu?</button></div>
+          <button type="submit" id="loginBtn" class="ws-primary">Đăng nhập <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+          <p id="loginError" class="hidden" role="alert"></p>
+          <div class="ws-login-register"><span id="registerPromptText">Chưa có tài khoản?</span><button type="button" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký</button></div>
+        </form>
+        <p class="ws-login-foot">TASCO INSURANCE · Không gian làm việc của bạn</p>
+      </div>
     </div>
 
-    <div id="mainApp" class="main-container" style="display: none;">
+    <div id="mainApp" class="main-container" data-shell="premium-v6" data-page="login" style="display: none;">
         <!-- NEW HEADER -->
-        <header id="mainHeader" class="px-4 pt-6 pb-2 flex justify-between items-start">
-            <div>
-                <div class="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5" id="headerDate">HỆ THỐNG TRA CỨU</div>
-                <h1 class="text-[26px] font-black text-zinc-900 dark:text-white leading-tight mb-1 tracking-tight">Xin chào, <span id="userEmail" class="text-zinc-900 dark:text-white capitalize">bạn</span>.</h1>
-                <div class="text-[11px] font-semibold text-zinc-500"><span style="color: #142a5e; font-weight: 800;">TASCO</span> <span style="color: #62bfb5; font-weight: 800;">INSURANCE</span> - HỆ THỐNG TRA CỨU PHỤ TÙNG</div>
-            </div>
-            <div class="w-12 h-12 rounded-full bg-navy-100 dark:bg-navy-900/40 flex items-center justify-center text-navy-500 dark:text-navy-400 font-bold text-[15px] flex-shrink-0 cursor-pointer shadow-sm" onclick="openUserProfileModal()" id="headerAvatar">
-                HQ
-            </div>
-        </header>
-<section id="personalCloudSection" style="display:none"></section>
+<header id="mainHeader" class="ws-topbar">
+  <button type="button" class="ws-brand ws-focus" onclick="updateView('home')" aria-label="TASCO DLK · Trang chủ"><span class="ws-mark"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M12 5v14M4 13v6h6m10-6v6h-6"/></svg></span><span><strong>TASCO DLK</strong><small>Insurance workspace</small></span></button>
+  <div class="ws-top-actions"><span id="headerDate" data-shell-date class="ws-date"></span><button type="button" id="headerAvatar" data-shell-avatar class="ws-avatar" onclick="openUserProfileModal()" aria-label="Mở tài khoản">HQ</button></div>
+</header>
+<header id="wsChildbar" class="ws-childbar" hidden><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><small>TASCO DLK</small><h1 id="wsPageTitle" tabindex="-1"></h1></div><button type="button" class="ws-home-return" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button></header>
+<section id="homeSection" data-shell-page="home" hidden aria-label="Trang chủ">
+  <div class="ws-greeting"><div><p data-home-greeting>Không gian làm việc của bạn</p><h1>Chào <span id="userEmail">bạn</span>.</h1></div><span class="ws-day"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></span></div>
+  <div class="ws-home-grid">
+    <article class="ws-feature"><span class="ws-eyebrow"><i></i>TRA CỨU PHỤ TÙNG</span><h2>Tìm đúng.<br>Làm tốt.</h2><p>Thông tin phụ tùng theo hãng xe, dòng xe và năm sản xuất.</p><button type="button" class="ws-primary" onclick="updateView('lookup')">Tra cứu ngay <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><svg class="ws-mechanical" viewBox="0 0 280 280" fill="none" aria-hidden="true"><defs><linearGradient id="rotorMetal" x1="42" y1="10" x2="230" y2="242" gradientUnits="userSpaceOnUse"><stop stop-color="#e1e8cf"/><stop offset=".26" stop-color="#789c7f"/><stop offset=".51" stop-color="#c2d7b6"/><stop offset=".76" stop-color="#51765e"/><stop offset="1" stop-color="#a8c3a0"/></linearGradient><linearGradient id="rotorRim" x1="45" y1="50" x2="230" y2="250"><stop stop-color="#ddedd0"/><stop offset="1" stop-color="#39664c"/></linearGradient></defs><ellipse cx="141" cy="166" rx="108" ry="104" fill="#0c241b" opacity=".45"/><g transform="translate(16 0) rotate(12 140 140) scale(.9 1)"><circle cx="140" cy="151" r="113" fill="#244936" stroke="#6d9471" stroke-width="4"/><circle cx="140" cy="140" r="113" fill="url(#rotorMetal)" stroke="url(#rotorRim)" stroke-width="5"/><circle cx="140" cy="140" r="106" stroke="#ecf3da" stroke-opacity=".4"/><circle cx="140" cy="140" r="92" stroke="#214936" stroke-opacity=".5"/><circle cx="140" cy="140" r="67" fill="#365a43" stroke="#bdd1ac" stroke-width="2"/><circle cx="140" cy="140" r="48" fill="url(#rotorMetal)" stroke="#d2e3bd" stroke-width="2"/><circle cx="140" cy="140" r="20" fill="#162e23" stroke="#dae7c1" stroke-width="4"/><circle cx="220.0" cy="140.0" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="216.8" cy="162.5" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="207.3" cy="183.3" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="192.4" cy="200.5" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="173.2" cy="212.8" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="151.4" cy="219.2" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="128.6" cy="219.2" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="106.8" cy="212.8" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="87.6" cy="200.5" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="72.7" cy="183.3" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="63.2" cy="162.5" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="60.0" cy="140.0" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="63.2" cy="117.5" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="72.7" cy="96.7" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="87.6" cy="79.5" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="106.8" cy="67.2" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="128.6" cy="60.8" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="151.4" cy="60.8" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="173.2" cy="67.2" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="192.4" cy="79.5" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="207.3" cy="96.7" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="216.8" cy="117.5" r="3.2" fill="#1a412d" opacity=".85"/><circle cx="140.0" cy="106.0" r="4.2" fill="#183626" stroke="#d3e2bd" stroke-width="1.3"/><circle cx="172.3" cy="129.5" r="4.2" fill="#183626" stroke="#d3e2bd" stroke-width="1.3"/><circle cx="160.0" cy="167.5" r="4.2" fill="#183626" stroke="#d3e2bd" stroke-width="1.3"/><circle cx="120.0" cy="167.5" r="4.2" fill="#183626" stroke="#d3e2bd" stroke-width="1.3"/><circle cx="107.7" cy="129.5" r="4.2" fill="#183626" stroke="#d3e2bd" stroke-width="1.3"/></g></svg><span class="ws-feature-foot">TASCO INSURANCE</span></article>
+    <div class="ws-shortcuts">
+      <button type="button" class="ws-shortcut ws-shortcut--camera" data-home-camera onclick="TascoAppShell.camera()" disabled><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4z"/><circle cx="12" cy="13" r="3.5"/></svg><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg><span><strong>Chụp ảnh hồ sơ</strong><small>Ngày giờ &amp; địa điểm</small></span></button>
+      <button type="button" class="ws-shortcut" onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg><span><strong>Cloud của tôi</strong><small data-cloud-caption>Thư viện ảnh cá nhân</small></span></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="updateView('account')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span><strong>Tài khoản &amp; thiết lập</strong><small>Không gian riêng, theo cách của bạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
+    </div>
+  </div>
+  <div class="ws-section-heading"><h2 data-recent-title>Ảnh gần đây</h2><button type="button" class="ws-text-button" onclick="updateView('cloud')">Xem thư viện <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div>
+  <div id="homeRecentPhotos" class="ws-recent-grid" hidden></div>
+  <div id="homeRecentEmpty" class="ws-recent-empty"><span class="ws-empty-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 6"/></svg></span><div><strong data-empty-title>Đang kết nối thư viện</strong><p data-empty-copy>Ảnh của tài khoản này sẽ hiển thị khi kết nối hoàn tất.</p></div></div>
+  <button type="button" class="ws-admin-card" data-admin-only hidden onclick="updateView('admin')"><span><strong>Quản lý hệ thống</strong><small>Tài khoản và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+  <p class="ws-bottom-note"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span data-cloud-connection>Đang kết nối thư viện…</span><span>·</span><span>TASCO INSURANCE</span></p>
+</section>
+<section id="accountSection" data-shell-page="account" hidden aria-label="Tài khoản và thiết lập">
+  <div class="ws-account-layout"><div><article class="ws-account-card"><span class="ws-avatar" data-shell-avatar>HQ</span><div><h2 data-account-name>Tài khoản</h2><p data-account-email></p><span class="ws-role" data-account-role>Thành viên</span></div></article><p class="ws-account-note">Tài khoản của bạn kết nối tra cứu phụ tùng<br>và thư viện ảnh hồ sơ trong cùng một nơi.</p></div>
+  <div><span class="ws-settings-label">Thiết lập cá nhân</span><div class="ws-settings-list">
+    <button type="button" class="ws-setting-row" onclick="toggleTheme()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span><strong>Giao diện sáng / tối</strong><small>Chọn giao diện phù hợp với bạn</small></span><span class="ws-switch" aria-hidden="true"></span></button>
+    <button type="button" class="ws-setting-row" onclick="openChangePasswordModal()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span><strong>Đổi mật khẩu</strong><small>Cập nhật mật khẩu tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+    <button type="button" class="ws-setting-row" data-admin-only hidden onclick="updateView('admin')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span><strong>Quản lý hệ thống</strong><small>Người dùng và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+  </div><span class="ws-settings-label">Không gian làm việc</span><div class="ws-settings-list">
+    <button type="button" class="ws-setting-row" onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><span><strong>Cloud của tôi</strong><small>Quản lý ảnh theo tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+    <button type="button" class="ws-setting-row" data-danger onclick="handleLogout()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4m5-15 7 7-7 7M8 12h13"/></svg><span><strong>Đăng xuất</strong><small>Kết thúc phiên trên thiết bị này</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+  </div></div></div>
+</section>
+<section id="personalCloudSection" data-shell-page="cloud" hidden style="display:none"></section>
 
 
-        <div id="sysMgrSection" class="px-4 pt-6" style="display: none;">
+        <div id="sysMgrSection" data-shell-page="admin" hidden class="px-4 pt-6" style="display: none;">
             <header class="flex flex-col gap-4 mb-6">
                 <div class="flex items-start justify-between gap-2">
                     <div class="flex items-center gap-3">
@@ -1054,154 +1072,88 @@
             </div>
         </div>
 
-        <div id="traCuuSection">
-        <!-- NEW HERO CARD -->
-        <div class="px-4 mb-8">
-            <div class="bg-navy-500 rounded-[28px] p-6 shadow-xl shadow-navy-500/20 text-white relative overflow-hidden">
-                <div class="absolute -right-8 -top-8 w-32 h-32 border-[12px] border-white/10 rounded-full"></div>
-                <div class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-4 border border-white/10">
-                    <svg class="w-3 h-3 text-teal-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    TRA CỨU NHANH
-                </div>
-                <h2 class="text-3xl font-black mb-2 tracking-tight text-white">Tra cứu phụ tùng</h2>
-                <p class="text-xs text-teal-50 mb-6 font-medium leading-relaxed max-w-[80%]">Nhập tên phụ tùng để bắt đầu tìm kiếm</p>
-                <div class="relative mb-4 flex gap-2">
-                    <input type="text" id="searchInput" placeholder="Tìm tên phụ tùng..." class="w-full bg-white/10 border border-white/20 rounded-[16px] h-[48px] px-5 text-white placeholder-indigo-200 focus:outline-none focus:bg-white/20 focus:border-white/40 transition-all font-bold text-base" onkeydown="if(event.key==='Enter') searchData()">
-                    <button class="w-[48px] h-[48px] shrink-0 bg-white/10 hover:bg-white/20 text-white rounded-[16px] flex justify-center items-center transition-colors border border-white/10" id="btnExactPartName" onclick="toggleExactPartName()" title="Bật/tắt khớp chính xác tên phụ tùng" type="button">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                            <path d="M9 12l2 2 4-4M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
-                        </svg>
-                    </button>
-                    <input id="exactPartName" type="hidden" value="0"/>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="searchData()" class="flex-1 bg-teal-400 hover:bg-teal-500 text-white font-black h-[48px] rounded-[16px] flex justify-center items-center gap-2 transition-colors shadow-inner border border-white/10 text-sm">
-                        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"></path></svg>
-                        TÌM KIẾM NGAY
-                    </button>
-                    <button onclick="clearFilters()" class="w-[48px] h-[48px] shrink-0 bg-white/10 hover:bg-white/20 text-white rounded-[16px] flex justify-center items-center transition-colors border border-white/10" title="Xóa bộ lọc">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- NEW FILTERS GRID -->
-        <div class="px-4 mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-[17px] font-black text-zinc-900 dark:text-white tracking-tight">Bộ lọc chi tiết</h3>
-                
-            </div>
-            
-                        <div class="grid grid-cols-4 gap-3">
-                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnHang" onclick="openFilterModal('hang')">
-                    <div class="w-14 h-14 rounded-2xl bg-navy-50 dark:bg-navy-900/30 flex items-center justify-center text-navy-500 dark:text-navy-400 group-active:scale-95 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-[11px] font-black text-zinc-900 dark:text-zinc-100">Hãng xe</div>
-                        <div class="text-[9px] font-medium text-zinc-500 w-16 truncate" id="labelHang">Tất cả</div>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="multiHieuBtn" onclick="openFilterModal('hieu')">
-                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-active:scale-95 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-[11px] font-black text-zinc-900 dark:text-zinc-100">Dòng xe</div>
-                        <div class="text-[9px] font-medium text-zinc-500 w-16 truncate" id="labelHieu">Tất cả</div>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnNam" onclick="openFilterModal('nam')">
-                    <div class="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400 group-active:scale-95 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-[11px] font-black text-zinc-900 dark:text-zinc-100">Năm SX</div>
-                        <div class="text-[9px] font-medium text-zinc-500 w-16 truncate" id="labelNam">Tất cả</div>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center gap-2 cursor-pointer group" id="btnType" onclick="openFilterModal('type')">
-                    <div class="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 group-active:scale-95 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-[11px] font-black text-zinc-900 dark:text-zinc-100">Loại hàng</div>
-                        <div class="text-[9px] font-medium text-zinc-500 w-16 truncate" id="labelType">Tất cả</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- End Control Panel -->
-        <input type="hidden" id="filterHang" value="">
-        <input type="hidden" id="filterNam" value="">
-        <input type="hidden" id="filterType" value="all">
-
-        <div class="px-4 mb-32">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-[17px] font-black text-zinc-900 dark:text-white tracking-tight">Kết quả tra cứu</h3>
-                <span id="statCount" class="text-[11px] font-black text-navy-500 bg-navy-50 px-3 py-1 rounded-full">0 kết quả</span>
-            </div>
-            
-            <div class="flex items-center justify-between mb-4 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-                <div class="relative flex items-center gap-2" id="customPageSizeContainer">
-                    <button type="button" onclick="togglePageSizeMenu(event)" class="flex items-center justify-between gap-1.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 px-3 py-1.5 rounded-[10px] text-[11px] font-bold border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 transition-colors shadow-sm">
-                        <span id="customPageSizeLabel">10 dòng / trang</span>
-                        <svg class="w-3 h-3 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="pageSizeMenu" class="hidden absolute left-0 top-full mt-1.5 w-36 rounded-xl shadow-xl bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 z-[100] overflow-hidden py-1 transform origin-top-left transition-all animate-[scale_0.2s_ease-out]">
-                        <button onclick="selectPageSize(10)" class="block w-full text-left px-4 py-2.5 text-[11px] font-bold text-zinc-700 dark:text-zinc-300 hover:bg-navy-50 hover:text-navy-600 dark:hover:bg-zinc-700 transition-colors">10 dòng / trang</button>
-                        <button onclick="selectPageSize(25)" class="block w-full text-left px-4 py-2.5 text-[11px] font-bold text-zinc-700 dark:text-zinc-300 hover:bg-navy-50 hover:text-navy-600 dark:hover:bg-zinc-700 transition-colors">25 dòng / trang</button>
-                        <button onclick="selectPageSize(50)" class="block w-full text-left px-4 py-2.5 text-[11px] font-bold text-zinc-700 dark:text-zinc-300 hover:bg-navy-50 hover:text-navy-600 dark:hover:bg-zinc-700 transition-colors">50 dòng / trang</button>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div id="loadingIndicator" class="hidden flex items-center gap-1 text-navy-500">
-                        <div class="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
-                    </div>
-                    <span class="text-[10px] font-bold text-zinc-400 uppercase" id="pageInfo">Trang 0 / 0</span>
-                    <div class="flex gap-2">
-                        <button id="btnPrev" onclick="changePage(-1)" class="text-zinc-400 hover:text-navy-500 disabled:opacity-30">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
-                        </button>
-                        <button id="btnNext" onclick="changePage(1)" class="text-zinc-400 hover:text-navy-500 disabled:opacity-30">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="resultsTableBody" class="flex flex-col gap-3">
-                <div class="py-20 text-center text-zinc-300 font-bold uppercase italic text-[11px] tracking-widest w-full">Sẵn sàng tra cứu</div>
-            </div>
-        </div>
-        </div>
+<section id="traCuuSection" data-shell-page="lookup" class="ws-lookup" hidden>
+  <div class="ws-page-intro"><span class="ws-kicker"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M8 6V3h8v3M3 12h18m-11 0v3h4v-3"/></svg>Dữ liệu phụ tùng</span><h2>Thông tin đúng.<br>Quyết định rõ ràng.</h2><p>Tra cứu giá và thông tin phụ tùng theo dòng xe. Dùng bộ lọc để tìm kết quả phù hợp.</p></div>
+  <div class="ws-lookup-layout"><div class="ws-search-panel"><label for="searchInput" class="ws-search-label">Tên phụ tùng cần tìm</label><div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" id="searchInput" placeholder="VD: Đèn pha, cản trước…" onkeydown="if(event.key==='Enter') searchData()"><button type="button" id="btnExactPartName" onclick="toggleExactPartName()" title="Khớp chính xác tên phụ tùng" aria-label="Khớp chính xác tên phụ tùng" aria-pressed="false"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="m8 12 3 3 5-6"/></svg></button></div><input id="exactPartName" type="hidden" value="0"><div class="ws-filter-grid"><button type="button" id="btnHang" onclick="openFilterModal('hang')" aria-label="Chọn hãng xe"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg><strong>Hãng xe</strong><small id="labelHang">Tất cả</small></button><button type="button" id="multiHieuBtn" onclick="openFilterModal('hieu')" aria-label="Chọn dòng xe"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg><strong>Dòng xe</strong><small id="labelHieu">Tất cả</small></button><button type="button" id="btnNam" onclick="openFilterModal('nam')" aria-label="Chọn năm sx"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg><strong>Năm SX</strong><small id="labelNam">Tất cả</small></button><button type="button" id="btnType" onclick="openFilterModal('type')" aria-label="Chọn loại hàng"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M8 6V3h8v3M3 12h18m-11 0v3h4v-3"/></svg><strong>Loại hàng</strong><small id="labelType">Tất cả</small></button></div><input type="hidden" id="filterHang" value=""><input type="hidden" id="filterNam" value=""><input type="hidden" id="filterType" value="all"><div class="ws-search-actions"><button type="button" class="ws-primary" onclick="searchData()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>Tìm phụ tùng</button><button type="button" class="ws-secondary" onclick="clearFilters()" aria-label="Xóa bộ lọc" title="Xóa bộ lọc"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/></svg></button></div></div>
+  <div class="ws-results"><div class="ws-results-top"><h2>Kết quả tra cứu</h2><span id="statCount">0 kết quả</span></div><div class="ws-pagination"><div id="customPageSizeContainer"><button type="button" onclick="togglePageSizeMenu(event)"><span id="customPageSizeLabel">10 dòng / trang</span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg></button><div id="pageSizeMenu" class="hidden"><button type="button" onclick="selectPageSize(10)">10 dòng / trang</button><button type="button" onclick="selectPageSize(25)">25 dòng / trang</button><button type="button" onclick="selectPageSize(50)">50 dòng / trang</button></div></div><div><span id="loadingIndicator" class="hidden" role="status" aria-label="Đang tra cứu">Đang tải…</span><span id="pageInfo">Trang 0 / 0</span><button type="button" id="btnPrev" onclick="changePage(-1)" aria-label="Trang kết quả trước" disabled><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><button type="button" id="btnNext" onclick="changePage(1)" aria-label="Trang kết quả tiếp theo" disabled><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div></div><div id="resultsTableBody"><div class="ws-lookup-empty"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><strong>Sẵn sàng cho lần tra cứu mới</strong><p>Nhập tên phụ tùng hoặc chọn bộ lọc để bắt đầu.</p></div></div></div></div>
+</section>
     </div>
 
-    
         <!-- Thanh điều hướng dưới cùng (Bottom Nav) -->
-    <nav class="mobile-bottom-nav" id="bottomNav" style="display: none;">
-        <a href="javascript:void(0)" class="nav-item active" onclick="updateView('main'); document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active')); this.classList.add('active');">
-            <div class="nav-icon-box flex justify-center items-center">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </div>
-            <span>Tra cứu</span>
-        </a>
-        <a href="javascript:void(0)" class="nav-item" id="navMyCloudBtn" onclick="updateView('cloud')"><div class="nav-icon-box flex justify-center items-center"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg></div><span>Cloud của tôi</span></a>
-        <a href="javascript:void(0)" class="nav-item" id="navAdminBtn" onclick="toggleSysMgrView(); document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active')); this.classList.add('active');">
-            <div class="nav-icon-box flex justify-center items-center">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            </div>
-            <span>Hệ thống</span>
-        </a>
-        <a href="javascript:void(0)" class="nav-item" onclick="handleLogout()">
-            <div class="nav-icon-box flex justify-center items-center">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-            </div>
-            <span>Thoát</span>
-        </a>
-    </nav>
+<nav id="bottomNav" class="ws-bottom-nav" aria-label="Điều hướng chính" style="display:none"><button type="button" id="navHomeBtn" class="ws-nav-button" data-shell-nav="home" onclick="updateView('home')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button><button type="button" id="navLookupBtn" class="ws-nav-button" data-shell-nav="lookup" onclick="updateView('lookup')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Tra cứu</span></button><button type="button" id="navMyCloudBtn" class="ws-nav-button" data-shell-nav="cloud" onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><span>Cloud</span></button><button type="button" id="navAccountBtn" class="ws-nav-button" data-shell-nav="account" onclick="updateView('account')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span>Tài khoản</span></button></nav>
+<script id="tascoPremiumShell">
+window.TascoAppShell=(()=>{
+  const pages={home:'Trang chủ',lookup:'Tra cứu phụ tùng',cloud:'Cloud của tôi',account:'Tài khoản',admin:'Quản lý hệ thống'};
+  const ids={home:'homeSection',lookup:'traCuuSection',cloud:'personalCloudSection',account:'accountSection',admin:'sysMgrSection'};
+  let user=null,current='login',mountedOwner='',lastCloud=null;
+  const scrolls={};
+  const setText=(selector,text)=>document.querySelectorAll(selector).forEach(node=>node.textContent=text);
+  function greeting(){
+    const name=user?.fullName||user?.email||'bạn';const short=user?.fullName&&!name.includes('@')?name.trim().split(/\s+/).at(-1):name.split('@')[0];
+    const hour=new Date().getHours();setText('[data-home-greeting]',hour<11?'Một buổi sáng tốt lành':hour<17?'Chúc bạn một buổi chiều hiệu quả':'Chúc bạn một buổi tối tốt lành');
+    setText('#userEmail',short);const now=new Date();setText('[data-shell-date]',now.toLocaleDateString('vi-VN',{weekday:'short',day:'2-digit',month:'2-digit'}));
+  }
+  function setUser(profile){
+    const changed=user?.email!==profile?.email;user=profile?{...profile}:null;
+    if(changed){mountedOwner='';lastCloud=null;Object.keys(scrolls).forEach(key=>delete scrolls[key]);paintCloud(null);}
+    const name=user?.fullName||user?.email||'Tài khoản';const words=name.trim().split(/\s+/);const initials=(words.length>1?words[0][0]+words.at(-1)[0]:name.slice(0,2)).toUpperCase();
+    setText('[data-account-name]',name);setText('[data-account-email]',user?.email||'');setText('[data-account-role]',user?.role==='admin'?'Quản trị viên':'Thành viên');setText('[data-shell-avatar]',initials);
+    document.querySelectorAll('[data-admin-only]').forEach(node=>node.hidden=user?.role!=='admin');greeting();
+    if(user)connectCloud();
+  }
+  function connectCloud(){
+    const root=document.getElementById('personalCloudSection');
+    if(!user||!window.TascoCloud||mountedOwner===user.email)return;
+    mountedOwner=user.email;try{TascoCloud.mount(root);}catch(_){mountedOwner='';paintCloud({email:user.email,error:'Chưa kết nối được thư viện',photos:[]});}
+  }
+  function navigate(view,options={}){
+    view=view==='main'?'lookup':view;if(view!=='login'&&!pages[view])view='home';
+    if(view!=='login'&&!user)view='login';if(view==='admin'&&user?.role!=='admin')view='home';
+    const previous=current;scrolls[previous]=window.scrollY;current=view;
+    const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
+    login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
+    Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id);node.hidden=page!==view;node.style.display=page===view?'block':'none';});
+    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=view==='home'||view==='login';
+    setText('#wsPageTitle',pages[view]||'');
+    document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===view;node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
+    if(view==='login'){window.TascoPhotoViewer?.close();window.TascoDatePicker?.close();window.TascoPhotoExport?.close();document.title='TASCO DLK · Đăng nhập';return;}
+    document.title=pages[view]+' · TASCO DLK';
+    if(options.history!==false){const hash='#'+view;if(location.hash!==hash||options.replace)history[options.replace?'replaceState':'pushState']({tascoPage:view},'',location.pathname+location.search+hash);}
+    if(view==='cloud')connectCloud();if(view==='home'){greeting();paintCloud(lastCloud);connectCloud();}
+    if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
+    window.scrollTo(0,options.restore?scrolls[view]||0:0);
+    if(previous!==view&&view!=='home')document.getElementById('wsPageTitle').focus({preventScroll:true});
+  }
+  function paintCloud(summary){
+    const relevant=Boolean(user&&summary?.email?.toLowerCase()===user.email.toLowerCase());
+    if(relevant)lastCloud=summary;else if(summary)return;
+    const connected=relevant&&summary.ready!==false&&!summary.error,photos=connected?summary.photos||[]:[],container=document.getElementById('homeRecentPhotos'),empty=document.getElementById('homeRecentEmpty'),capture=document.querySelector('[data-home-camera]');
+    if(!container)return;container.replaceChildren();
+    photos.forEach(row=>{
+      const card=document.createElement('button');card.type='button';card.className='ws-recent-photo';card.setAttribute('aria-label','Mở thư viện để xem '+row.title);card.onclick=()=>window.updateView('cloud');
+      const image=document.createElement('img');image.src=row.url;image.alt=row.title||'Ảnh hồ sơ';image.loading='lazy';image.decoding='async';image.onerror=()=>{image.remove();};const title=document.createElement('span');title.textContent=row.title||'Ảnh hồ sơ';const date=document.createElement('small');date.textContent=new Date(row.capturedAt).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'});card.append(image,title,date);container.append(card);
+    });
+    container.hidden=!photos.length;empty.hidden=Boolean(photos.length);
+    setText('[data-recent-title]',summary?.filtered?'Ảnh trong bộ lọc':'Ảnh gần đây');
+    setText('[data-cloud-caption]',connected?summary.busy?'Đang tải thư viện…':summary.filtered?summary.count+' ảnh đang lọc':summary.count+' ảnh đã lưu':'Thư viện ảnh cá nhân');
+    setText('[data-cloud-connection]',connected?'Đã kết nối Cloud':summary?.error?'Chưa kết nối Cloud':'Đang kết nối thư viện…');
+    setText('[data-empty-title]',connected&&!summary.busy?'Bắt đầu lưu ảnh hồ sơ':summary?.error?'Thư viện đang tạm gián đoạn':'Đang kết nối thư viện');
+    setText('[data-empty-copy]',connected&&!summary.busy?'Chụp ảnh có ngày giờ và địa điểm. Ảnh sẽ xuất hiện tại đây.':summary?.error?'Mở Cloud của tôi để kiểm tra kết nối và thử lại.':'Ảnh của tài khoản này sẽ hiển thị khi kết nối hoàn tất.');
+    if(capture){capture.disabled=!connected||summary.busy;capture.setAttribute('aria-label',capture.disabled?'Camera đang chờ kết nối Cloud':'Chụp ảnh hồ sơ');}
+  }
+  function camera(){
+    if(!user)return;if(!window.TascoCloud?.isReady()){window.updateView('cloud');return;}
+    window.updateView('cloud');window.openMobileCamera('Ảnh của tôi');
+  }
+  async function cameraHome(){await window.closeCustomCameraModal(false);if(document.getElementById('customCameraModal').style.display==='none')window.updateView('home');}
+  window.addEventListener('tasco:cloud-summary',event=>paintCloud(event.detail));
+  window.addEventListener('popstate',()=>{if(user)navigate(location.hash.slice(1)||'home',{history:false,restore:true});});
+  window.addEventListener('pageshow',()=>{if(user)greeting();});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&user)greeting();});
+  return {setUser,navigate,camera,cameraHome,get page(){return current;}};
+})();
+
+</script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script type="module">
@@ -1827,39 +1779,9 @@
             }
         });
 
-        window.updateView = function(view) {
-            const cloudSection=document.getElementById('personalCloudSection');
-            if(cloudSection)cloudSection.style.display='none';
-            if(view==='cloud'){updateView('main');document.getElementById('traCuuSection').style.display='none';cloudSection.style.display='block';document.querySelectorAll('.nav-item').forEach(node=>node.classList.toggle('active',node.id==='navMyCloudBtn'));TascoCloud.mount(cloudSection);return;}
-            if(view==='main')document.querySelectorAll('.nav-item').forEach(node=>node.classList.toggle('active',node.textContent.trim()==='Tra cứu'));
-            console.log("Updating View to:", view);
-            const overlay = document.getElementById('loginOverlay');
-            const main = document.getElementById('mainApp');
-            const sysMgr = document.getElementById('sysMgrSection');
-            const bottomNav = document.getElementById('bottomNav');
-            const traCuuSection = document.getElementById('traCuuSection');
-            const mainHeader = document.getElementById('mainHeader');
-
-            if (view === 'login') {
-                overlay.style.display = 'flex';
-                main.style.display = 'none';
-                if(bottomNav) bottomNav.style.display = 'none';
-            } else if (view === 'main') {
-                overlay.style.display = 'none';
-                main.style.display = 'block'; 
-                sysMgr.style.display = 'none'; 
-                if(traCuuSection) traCuuSection.style.display = 'block';
-                if(bottomNav) bottomNav.style.display = 'flex';
-                if(mainHeader) mainHeader.style.display = 'flex';
-            } else if (view === 'admin') {
-                overlay.style.display = 'none';
-                main.style.display = 'block'; 
-                sysMgr.style.display = 'block'; 
-                if(traCuuSection) traCuuSection.style.display = 'none';
-                if(bottomNav) bottomNav.style.display = 'flex';
-                if(mainHeader) mainHeader.style.display = 'none';
-                refreshUserList();
-            }
+        window.updateView = function(view,options={}) {
+            if(view==='admin'&&currentUserProfile?.role!=='admin')view='home';
+            window.TascoAppShell.navigate(view,options);
         }
 
         window.openUserProfileModal = function() {
@@ -1889,13 +1811,12 @@
                 adminBtn.classList.add('hidden');
             }
             
-            openModal('modalUserProfile');
+            updateView('account');
         }
 
         window.showApp = function(email, role, fullName = '') {
+            const nextView=currentUserProfile?.email===email&&window.TascoAppShell.page!=='login'?window.TascoAppShell.page:'home';
             console.log("Showing App for:", email, "Role:", role);
-            updateView('main');
-            
             // Đảm bảo dữ liệu bộ lọc (Hãng, Dòng, Năm) được tải sau khi đăng nhập thành công
             if (typeof loadFilters === 'function') {
                 loadFilters();
@@ -1934,12 +1855,15 @@
                 }
                 if(navAdminBtn) navAdminBtn.style.display = 'none';
             }
+            window.TascoAppShell.setUser(currentUserProfile);
+            updateView(nextView,{replace:true});
         }
 
         window.hideApp = function() {
             console.log("Hiding App (Returning to Login)");
             updateView('login');
             currentUserProfile = null;
+            window.TascoAppShell.setUser(null);
             window.TascoCameraPreferences?.setIdentity('');
         }
 
@@ -2071,12 +1995,8 @@
         }
 
         window.toggleSysMgrView = function() {
-            const sysMgr = document.getElementById('sysMgrSection');
-            if (sysMgr.style.display === 'none') {
-                updateView('admin');
-            } else {
-                updateView('main');
-            }
+            if(currentUserProfile?.role!=='admin')return;
+            updateView('admin');
         }
 
         window.openAddUserModal = () => {
@@ -2486,36 +2406,16 @@
         }
 
         window.clearFilters = function() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterHang').value = '';
-            document.getElementById('labelHang').innerText = 'Tất cả';
-            selectedHieuList = [];
-            updateHieuLabel();
-            selectedNamList = [];
-            updateNamLabel();
-            document.getElementById('filterType').value = 'all';
-            document.getElementById('labelType').innerText = 'Tất cả';
-            
-            document.getElementById('exactPartName').value = '0';
-            const exactBtn = document.getElementById('btnExactPartName');
-            if (exactBtn) {
-                exactBtn.classList.add('bg-white/10', 'text-white', 'border-white/10');
-                exactBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-            }
-            
-            MASTER_DATA = [];
-            CURRENT_PAGE = 1;
-            const resultsBody = document.getElementById('resultsTableBody');
-            if (resultsBody) {
-                resultsBody.innerHTML = '<div class="py-20 text-center text-zinc-300 font-bold uppercase italic text-[11px] tracking-widest w-full">Sẵn sàng tra cứu</div>';
-            }
-            const statCount = document.getElementById('statCount');
-            if (statCount) statCount.innerText = '0 kết quả';
-            const statPage = document.getElementById('statPage');
-            if (statPage) statPage.innerText = 'TRANG 0 / 0';
+            document.getElementById('searchInput').value='';
+            document.getElementById('filterHang').value='';document.getElementById('labelHang').innerText='Tất cả';
+            selectedHieuList=[];updateHieuLabel();selectedNamList=[];updateNamLabel();
+            document.getElementById('filterType').value='all';document.getElementById('labelType').innerText='Tất cả';
+            document.getElementById('exactPartName').value='0';document.getElementById('btnExactPartName').setAttribute('aria-pressed','false');
+            MASTER_DATA=[];CURRENT_PAGE=1;SEARCH_PRICE_STATS=null;
+            document.getElementById('resultsTableBody').innerHTML='<div class="ws-lookup-empty"><strong>Sẵn sàng cho lần tra cứu mới</strong><p>Nhập tên phụ tùng hoặc chọn bộ lọc để bắt đầu.</p></div>';
+            document.getElementById('statCount').innerText='0 kết quả';updatePaginationUI(0);
         }
 
-        
         window.selectAllItems = function() {
             const query = document.getElementById('filterModalSearch').value.toLowerCase();
             if (currentFilterType === 'hieu') {
@@ -2577,20 +2477,9 @@
         }
 
         window.toggleExactPartName = function() {
-            const input = document.getElementById('exactPartName');
-            const btn = document.getElementById('btnExactPartName');
-            if (input.value === '0') {
-                input.value = '1';
-                btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-                btn.classList.remove('bg-white/10', 'text-white', 'border-white/10');
-            } else {
-                input.value = '0';
-                btn.classList.add('bg-white/10', 'text-white', 'border-white/10');
-                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-            }
-            if (document.getElementById('searchInput').value.trim()) {
-                searchData();
-            }
+            const input=document.getElementById('exactPartName'),button=document.getElementById('btnExactPartName');
+            input.value=input.value==='0'?'1':'0';button.setAttribute('aria-pressed',String(input.value==='1'));
+            if(document.getElementById('searchInput').value.trim())searchData();
         }
 
 window.searchData = async function() {
@@ -3201,7 +3090,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v11-ios-photo-save" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v12-premium-home" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
@@ -3213,7 +3102,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
 </div>
       <div class="camera-grid-overlay" aria-hidden="true"><div class="grid-line vertical"></div><div class="grid-line vertical"></div><div class="grid-line horizontal"></div><div class="grid-line horizontal"></div></div>
       <div class="camera-overlay-header">
-        <button type="button" class="camera-action-btn btn-close-cam" onclick="closeCustomCameraModal(false)" aria-label="Đóng camera" title="Đóng camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+        <button type="button" class="camera-action-btn btn-close-cam" onclick="TascoAppShell.cameraHome()" aria-label="Đóng camera và về trang chủ" title="Về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
         <div class="camera-heading"><span>TASCO DLK · ẢNH HỒ SƠ</span><div class="camera-current-category" id="cameraActiveCategoryText">Chụp ảnh hồ sơ</div></div>
         <div class="camera-header-actions">
           <button type="button" class="camera-action-btn btn-settings-cam" id="btnCameraSettings" onclick="toggleCameraSettings()" aria-label="Cài đặt camera" aria-expanded="false" title="Cài đặt camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#121a25"/><circle cx="15" cy="17" r="3" fill="#121a25"/></svg></button>
@@ -3773,6 +3662,7 @@ window.TascoCloud = (() => {
     const pending=root.querySelector('.cloud-pending');pending.hidden=!state.pending.length;pending.innerHTML=state.pending.length?`<div class="cloud-pending-heading"><div><h2>${state.pending.length} ảnh chờ đồng bộ</h2><p>Bản ảnh được giữ trên thiết bị này cho đến khi lưu thành công.</p></div><button class="cloud-button" type="button" data-action="retry" ${state.uploading?'disabled':''}>${icon('refresh')}${state.uploading?'Đang lưu…':'Thử đồng bộ lại'}</button></div><div class="cloud-grid">${state.pending.map(row=>card(row,true)).join('')}</div>`:'';
     root.querySelector('[data-action="more"]').hidden=state.rows.length>=state.count||!state.user||Boolean(state.error);
     paintSelection();
+    window.dispatchEvent(new CustomEvent('tasco:cloud-summary',{detail:{email:state.user?.email||state.config.expectedEmail?.()||'',ready:Boolean(state.user),count:state.count,pending:state.pending.length,busy:state.busy,error:state.error||(!state.user&&!state.busy?'Chưa kết nối tài khoản Cloud':''),filtered:Boolean(state.query||state.date),photos:state.rows.slice(0,3).map(row=>({id:row.id,title:row.title,url:previewURL(thumbnail(row),280),capturedAt:row.captured_at}))}}));
   }
   async function refresh(append=false) {
     if(!visible())return;const revision=++state.revision;state.busy=true;state.error='';if(!append){state.rows=[];state.page=0;state.selected.clear();}
