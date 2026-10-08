@@ -605,6 +605,85 @@
 }
 @media(prefers-reduced-motion:reduce){.personal-cloud[data-cloud-theme=mobile] .cloud-button{transition:none}}
 
+/* Photo-first mobile library, grouped by the local capture date. */
+.personal-cloud[data-cloud-theme=mobile]>.cloud-grid{display:block}
+.personal-cloud[data-cloud-theme=mobile] .cloud-day-group{margin:0 0 22px}
+.personal-cloud[data-cloud-theme=mobile] .cloud-day-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 10px}
+.personal-cloud[data-cloud-theme=mobile] .cloud-day-heading h3{margin:0;color:var(--cl-text);font-size:12px;line-height:1.5;font-weight:750;letter-spacing:-.15px}
+.personal-cloud[data-cloud-theme=mobile] .cloud-day-heading time{display:block;margin-top:2px;color:var(--cl-muted);font-size:10px}
+.personal-cloud[data-cloud-theme=mobile] .cloud-day-heading>span{color:var(--cl-muted);font-size:10px;font-weight:600;white-space:nowrap}
+.personal-cloud[data-cloud-theme=mobile] .cloud-day-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.personal-cloud[data-cloud-theme=mobile] .cloud-photo-card.cloud-photo-tile{display:block;min-width:0;margin:0;padding:0;border:0;border-radius:8px;background:#142339;box-shadow:none;overflow:hidden}
+.personal-cloud[data-cloud-theme=mobile] .cloud-photo-tile .cloud-photo-image{display:block;width:100%;height:auto;aspect-ratio:1;border:0;border-radius:8px;overflow:hidden;transition:opacity .15s}
+.personal-cloud[data-cloud-theme=mobile] .cloud-photo-tile .cloud-photo-image:active{opacity:.78}
+.personal-cloud[data-cloud-theme=mobile] .cloud-photo-tile .cloud-photo-image>img{display:block;width:100%;height:100%;object-fit:cover}
+.personal-cloud[data-cloud-theme=mobile] .cloud-photo-tile .cloud-photo-image::after{content:'';position:absolute;inset:55% 0 0;background:linear-gradient(transparent,rgba(5,14,28,.45));pointer-events:none}
+.personal-cloud[data-cloud-theme=mobile] .cloud-tile-time{position:absolute;bottom:7px;left:8px;z-index:1;color:#fff;font-size:9px;font-weight:650;font-variant-numeric:tabular-nums;text-shadow:0 1px 4px rgba(0,0,0,.5);pointer-events:none}
+@media(min-width:600px){.personal-cloud[data-cloud-theme=mobile] .cloud-day-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}}
+@media(min-width:1000px){.personal-cloud[data-cloud-theme=mobile] .cloud-day-grid{grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}}
+
+/* The viewer owns its viewport and touch gestures; page scrolling stays behind it. */
+.cloud-photo-viewer{--viewer-accent:#8ad6cc;position:fixed;inset:0 0 auto;z-index:100070;width:100%;height:var(--viewer-height,100dvh);min-height:0;display:grid;grid-template-areas:'head' 'stage' 'film' 'tools';grid-template-rows:auto minmax(0,1fr) 68px auto;grid-template-columns:minmax(0,1fr);overflow:hidden;background:#070d18;color:#f0f4fa;font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.5;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+.cloud-photo-viewer *{box-sizing:border-box}
+.cloud-photo-viewer [hidden]{display:none!important}
+.cloud-photo-viewer button{appearance:none;-webkit-appearance:none;font:inherit;cursor:pointer;touch-action:manipulation;text-decoration:none}
+.cloud-photo-viewer button:disabled{opacity:.3;cursor:default}
+.cloud-photo-viewer button:focus-visible,.cloud-photo-viewer [tabindex]:focus-visible{outline:2px solid var(--viewer-accent);outline-offset:-3px}
+.cloud-photo-viewer svg{display:block;width:22px;height:22px;flex-shrink:0}
+.viewer-header{grid-area:head;display:flex;align-items:center;gap:12px;min-width:0;padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));background:linear-gradient(#101929,#0b1321);border-bottom:1px solid rgba(255,255,255,.055)}
+.viewer-icon-button{display:grid;place-items:center;width:42px;height:42px;padding:0;flex-shrink:0;border:1px solid rgba(255,255,255,.1);border-radius:50%;background:rgba(255,255,255,.045);color:#e2eaf7}
+.viewer-heading{flex:1;min-width:0}
+.viewer-heading strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:#f1f5fb}
+.viewer-heading time{display:block;font-size:10px;margin-top:3px;color:#8e9db5;font-variant-numeric:tabular-nums}
+.viewer-counter{flex-shrink:0;padding:5px 9px;border:1px solid rgba(255,255,255,.08);border-radius:20px;color:#bfd0e6;background:rgba(255,255,255,.025);font-size:10px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.viewer-stage{grid-area:stage;position:relative;min-width:0;min-height:0;width:100%;height:100%;overflow:hidden;touch-action:none;overscroll-behavior:none;user-select:none;-webkit-user-select:none;background:radial-gradient(ellipse at center,#101b2c,#070d18 78%)}
+.viewer-stage.is-zoomed{cursor:grab}.viewer-stage.is-gesturing{cursor:grabbing}
+.viewer-image{position:absolute;left:50%;top:50%;display:block;max-width:none!important;max-height:none!important;object-fit:contain;transform-origin:center;transition:transform .18s cubic-bezier(.2,.65,.3,1);user-select:none;-webkit-user-select:none;-webkit-user-drag:none;pointer-events:none;will-change:transform}
+.viewer-stage.is-gesturing .viewer-image{transition:none}
+.viewer-loading,.viewer-error{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;color:#9fb0c8;font-size:12px}
+.viewer-loading>span{width:25px;height:25px;border:2px solid rgba(138,214,204,.15);border-top-color:var(--viewer-accent);border-radius:50%;animation:viewer-spin .75s linear infinite}
+.viewer-error>svg{width:36px;height:36px;color:#758ba9}.viewer-error p{max-width:260px;margin:0}.viewer-error button{border:1px solid #33465f;border-radius:12px;padding:10px 18px;background:#17263d;color:#c5e9e4;font-size:12px;font-weight:650}
+.viewer-nav{position:absolute;z-index:4;top:50%;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.14);border-radius:50%;background:rgba(12,22,38,.65);color:#fff;transform:translateY(-50%);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.viewer-prev{left:max(16px,env(safe-area-inset-left,0px))}.viewer-next{right:max(16px,env(safe-area-inset-right,0px))}
+.viewer-gesture-hint{position:absolute;bottom:16px;left:16px;color:#b1bfd1;background:rgba(9,16,28,.65);border:1px solid rgba(255,255,255,.05);border-radius:20px;padding:5px 10px;font-size:9px;pointer-events:none;transition:opacity .15s}
+.viewer-fit{position:absolute;z-index:4;bottom:12px;right:16px;min-width:48px;min-height:34px;padding:5px 9px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(12,22,38,.8);color:#c2d2e7;font-size:10px!important;font-variant-numeric:tabular-nums;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.viewer-stage.is-zoomed .viewer-gesture-hint{opacity:0}
+.viewer-filmstrip{grid-area:film;position:relative;display:flex;align-items:center;gap:6px;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));background:#0a1322;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x}
+.viewer-filmstrip::-webkit-scrollbar{display:none}
+.viewer-film-thumb{display:block;flex:0 0 48px;width:48px;height:48px;padding:2px;border:2px solid transparent;border-radius:9px;overflow:hidden;background:transparent;opacity:.55;transition:opacity .15s,border-color .15s}
+.viewer-film-thumb img{display:block;width:100%;height:100%;object-fit:cover;border-radius:5px;pointer-events:none}
+.viewer-film-thumb.is-current{border-color:var(--viewer-accent);opacity:1}
+.viewer-film-more{flex:0 0 48px;width:48px;height:48px;display:grid;place-items:center;padding:0;border:1px dashed #3d506b;border-radius:9px;background:#17243a;color:#9fb5d1}
+.viewer-tools{grid-area:tools;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:8px max(12px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));background:#111c2e;border-top:1px solid rgba(255,255,255,.06)}
+.viewer-tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:56px;min-width:0;padding:5px 0;border:0;border-radius:12px;background:transparent;color:#adbed4}
+.viewer-tool span{font-size:9px;font-weight:650;white-space:nowrap}.viewer-tool[data-viewer-action=download]{color:var(--viewer-accent)}
+.viewer-tool[aria-expanded=true]{background:rgba(138,214,204,.09);color:var(--viewer-accent)}
+@media(hover:hover){.viewer-tool:hover,.viewer-icon-button:hover{background:rgba(255,255,255,.08);color:#fff}.viewer-film-thumb:hover{opacity:1}}
+.viewer-info-backdrop{position:absolute;inset:0;z-index:7;background:rgba(1,6,14,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.viewer-info{position:absolute;z-index:8;right:0;bottom:0;width:100%;max-height:72%;display:flex;flex-direction:column;min-height:0;padding:22px 22px calc(20px + env(safe-area-inset-bottom,0px));border:1px solid #2d3b51;border-bottom:0;border-radius:24px 24px 0 0;background:linear-gradient(140deg,#18273e,#101b2d);color:#d4e0f0;box-shadow:0 -12px 50px rgba(0,0,0,.3)}
+.viewer-info>header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-shrink:0}.viewer-info>header span{display:block;color:#8ad6cc;font-size:9px;font-weight:700;letter-spacing:.13em}.viewer-info h2{margin:4px 0 0;font-size:19px;font-weight:750;letter-spacing:-.4px;color:#f2f6fb}
+.viewer-info-content{overflow-y:auto;min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.viewer-info-title{display:flex;align-items:center;gap:10px;padding:13px 14px;border:1px solid rgba(164,195,226,.1);border-radius:13px;background:rgba(7,15,29,.3);font-size:12px}.viewer-info-title svg{color:#8ad6cc;width:19px;height:19px}.viewer-info-title strong{overflow-wrap:anywhere;font-weight:650}
+.viewer-info dl{margin:14px 0 0}.viewer-info dl>div{display:grid;grid-template-columns:100px minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:11px;line-height:1.7}.viewer-info dt{color:#879bb7}.viewer-info dd{margin:0;color:#dbe5f4;font-weight:550;overflow-wrap:anywhere}
+.viewer-rotation-note{flex-shrink:0;margin:16px 0 0;color:#8598b2;font-size:10px;line-height:1.8}
+.viewer-message{position:absolute;z-index:10;top:calc(84px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);max-width:calc(100% - 40px);width:max-content;padding:10px 15px;border:1px solid #345057;border-radius:12px;background:#142a34;color:#ccece6;font-size:11px;box-shadow:0 5px 25px rgba(0,0,0,.2)}
+.cloud-photo-viewer.is-immersive{grid-template-rows:0 minmax(0,1fr) 0 0}
+.cloud-photo-viewer.is-immersive .viewer-header,.cloud-photo-viewer.is-immersive .viewer-filmstrip,.cloud-photo-viewer.is-immersive .viewer-tools{visibility:hidden;overflow:hidden;padding:0;border:0;pointer-events:none}
+.cloud-photo-viewer.is-immersive .viewer-fit,.cloud-photo-viewer.is-immersive .viewer-nav,.cloud-photo-viewer.is-immersive .viewer-gesture-hint{visibility:hidden}
+@media(pointer:coarse) and (max-width:700px){.viewer-nav{display:none}}
+@media(min-width:701px){.viewer-header{padding-left:24px;padding-right:24px}.viewer-heading strong{font-size:15px}.viewer-heading time{font-size:11px}.viewer-counter{font-size:12px}.viewer-filmstrip{justify-content:flex-start;padding-left:calc(max(24px,(100% - 500px)/2))}.viewer-tools{padding-left:max(20px,calc((100% - 520px)/2));padding-right:max(20px,calc((100% - 520px)/2))}.viewer-tool span{font-size:10px}.viewer-info{top:86px;bottom:16px;right:16px;width:360px;max-height:none;border:1px solid #2d3b51;border-radius:22px;padding-bottom:22px}}
+@media(orientation:landscape) and (max-height:540px) and (min-width:600px){
+  .cloud-photo-viewer{grid-template-areas:'head tools' 'stage tools' 'film tools';grid-template-columns:minmax(0,1fr) calc(76px + env(safe-area-inset-right,0px));grid-template-rows:auto minmax(0,1fr) 56px}
+  .viewer-header{padding:8px 14px 8px max(14px,env(safe-area-inset-left,0px))}.viewer-icon-button{width:36px;height:36px}.viewer-heading strong{font-size:12px}.viewer-heading time{font-size:9px}
+  .viewer-tools{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:8px calc(8px + env(safe-area-inset-right,0px)) 8px 8px;border-top:0;border-left:1px solid rgba(255,255,255,.06)}.viewer-tool{min-height:48px;flex:1;max-height:64px}.viewer-tool span{font-size:8px}.viewer-tool svg{width:20px;height:20px}
+  .viewer-filmstrip{padding:6px 14px 6px max(14px,env(safe-area-inset-left,0px));gap:5px}.viewer-film-thumb{width:42px;height:42px;flex-basis:42px}.viewer-gesture-hint{bottom:12px;font-size:8px}.viewer-fit{bottom:8px;right:12px}
+  .viewer-info{top:10px;right:86px;bottom:10px;max-height:none;width:min(360px,65%);padding:16px;border:1px solid #2d3b51;border-radius:18px}.viewer-info>header{margin-bottom:12px}.viewer-info h2{font-size:17px}.viewer-info dl>div{padding:9px 0}.viewer-rotation-note{margin-top:10px}
+  .cloud-photo-viewer.is-immersive{grid-template-columns:minmax(0,1fr) 0;grid-template-rows:0 minmax(0,1fr) 0}
+}
+@media(max-width:360px){.viewer-header{gap:9px;padding-left:12px;padding-right:12px}.viewer-heading strong{font-size:12px}.viewer-counter{padding:4px 7px;font-size:9px}.viewer-gesture-hint{font-size:8px;left:10px;padding:5px 7px}.viewer-fit{right:10px;min-width:42px}.viewer-info{padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}}
+@keyframes viewer-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.cloud-photo-viewer *{transition:none!important;scroll-behavior:auto!important}.viewer-loading>span{animation:none}}
+
 </style>
 </head>
 <body class="bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
@@ -2947,6 +3026,181 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
   </div>
 
 <script>
+/* Full-screen photo viewer. Transforms are local; rotated downloads contain rotated pixels. */
+window.TascoPhotoViewer=(()=>{
+  let active=null;
+  const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const glyph=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({
+    close:'<path d="m6 6 12 12M18 6 6 18"/>',left:'<path d="m14 6-6 6 6 6"/>',right:'<path d="m10 6 6 6-6 6"/>',minus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m1 5 6 6"/>',plus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m-4-4v8m5 1 6 6"/>',rotate:'<path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/><path d="M9 11h6v6H9z"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1"/><path d="m3 16 5-5 4 4 3-3 6 6"/>'
+  }[name]||'')+'</svg>';
+  const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
+  const date=value=>new Date(value).toLocaleString('vi-VN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
+  const size=value=>!value?'Chưa có thông tin':value<1024*1024?(value/1024).toFixed(0)+' KB':(value/(1024*1024)).toFixed(2)+' MB';
+  function open(options){
+    active?.close();
+    let items=options.items.filter(item=>item.url),index=items.findIndex(item=>item.id===options.id);
+    if(index<0)return;
+    const overlay=document.createElement('div');overlay.id='cloudLightbox';overlay.className='cloud-photo-viewer';overlay.dataset.cloudTheme=options.theme;overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Trình xem ảnh');
+    const tool=(action,icon,label)=>`<button type="button" class="viewer-tool" data-viewer-action="${action}" aria-label="${label}">${glyph(icon)}<span>${label}</span></button>`;
+    overlay.innerHTML=`<header class="viewer-header"><button type="button" class="viewer-icon-button" data-viewer-action="close" aria-label="Đóng trình xem ảnh">${glyph('close')}</button><div class="viewer-heading"><strong data-viewer-title></strong><time data-viewer-date></time></div><span class="viewer-counter" data-viewer-counter aria-live="polite"></span></header>
+      <div class="viewer-stage" tabindex="0" aria-label="Ảnh. Vuốt trái hoặc phải để chuyển ảnh, chụm hai ngón hoặc chạm hai lần để phóng to."><img class="viewer-image" draggable="false" alt=""><div class="viewer-loading" role="status"><span></span>Đang tải ảnh…</div><div class="viewer-error" hidden>${glyph('image')}<p>Chưa tải được ảnh. Kiểm tra kết nối rồi thử lại.</p><button type="button" data-viewer-action="reload">Tải lại ảnh</button></div><button type="button" class="viewer-nav viewer-prev" data-viewer-action="previous" aria-label="Ảnh trước">${glyph('left')}</button><button type="button" class="viewer-nav viewer-next" data-viewer-action="next" aria-label="Ảnh tiếp theo">${glyph('right')}</button><span class="viewer-gesture-hint">Vuốt chuyển ảnh · Chạm hai lần để zoom</span><button type="button" class="viewer-fit" data-viewer-action="fit" aria-label="Đưa ảnh về kích thước vừa màn hình">100%</button></div>
+      <div class="viewer-filmstrip" aria-label="Ảnh trong thư viện"></div>
+      <nav class="viewer-tools" aria-label="Công cụ xem ảnh">${tool('zoom-out','minus','Thu nhỏ')}${tool('zoom-in','plus','Phóng to')}${tool('rotate','rotate','Xoay')}${tool('info','info','Thông tin')}${tool('download','download','Tải ảnh')}</nav>
+      <div class="viewer-info-backdrop" hidden></div><aside class="viewer-info" hidden aria-label="Thông tin ảnh"><header><div><span>CHI TIẾT ẢNH</span><h2>Thông tin ảnh</h2></div><button type="button" class="viewer-icon-button" data-viewer-action="close-info" aria-label="Đóng thông tin ảnh">${glyph('close')}</button></header><div class="viewer-info-content"></div><p class="viewer-rotation-note">Xoay áp dụng khi xem ảnh. Tải ảnh để lưu bản đã xoay vào thiết bị.</p></aside><div class="viewer-message" role="status" aria-live="polite" hidden></div>`;
+    const stage=overlay.querySelector('.viewer-stage'),image=overlay.querySelector('.viewer-image'),film=overlay.querySelector('.viewer-filmstrip'),info=overlay.querySelector('.viewer-info'),backdrop=overlay.querySelector('.viewer-info-backdrop'),controller=new AbortController(),signal=controller.signal;
+    const focus=document.activeElement,scrollX=window.scrollX,scrollY=window.scrollY;
+    const savedStyle=Object.fromEntries(['overflow','position','top','left','right','width'].map(key=>[key,document.body.style[key]])),htmlOverflow=document.documentElement.style.overflow;
+    Object.assign(document.body.style,{overflow:'hidden',position:'fixed',top:-scrollY+'px',left:'0',right:'0',width:'100%'});document.documentElement.style.overflow='hidden';
+    let zoom=1,x=0,y=0,rotation=0,naturalWidth=0,naturalHeight=0,baseWidth=0,baseHeight=0,ready=false,closed=false,downloading=false,loadingMore=false,loadToken=0,raf=0,tapTimer=0,noticeTimer=0,lastTap=null,lastTouchAt=-Infinity,gesture=null;
+    const pointers=new Map(),rotations=new Map(),dimensions=new Map();
+    const current=()=>items[index];
+    const actionButton=name=>overlay.querySelector(`[data-viewer-action="${name}"]`);
+    function notice(text){const node=overlay.querySelector('.viewer-message');node.textContent=text;node.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>node.hidden=true,3500);}
+    function updateViewport(){overlay.style.setProperty('--viewer-height',(window.visualViewport?.height||innerHeight)+'px');overlay.style.top=(window.visualViewport?.offsetTop||0)+'px';}
+    function bounds(){const turned=rotation%180!==0;return {x:Math.max(0,((turned?baseHeight:baseWidth)*zoom-stage.clientWidth)/2),y:Math.max(0,((turned?baseWidth:baseHeight)*zoom-stage.clientHeight)/2)};}
+    function constrain(){const limit=bounds();x=clamp(x,-limit.x,limit.x);y=clamp(y,-limit.y,limit.y);if(zoom<=1.001){x=0;y=0;}}
+    function render(){
+      image.style.transform=`translate3d(${x}px,${y}px,0) rotate(${rotation}deg) scale(${zoom})`;
+      overlay.dataset.zoom=zoom.toFixed(3);overlay.dataset.rotation=String(rotation);overlay.dataset.photoId=current().id;overlay.dataset.index=String(index);
+      actionButton('fit').textContent=Math.round(zoom*100)+'%';actionButton('fit').title='Vừa màn hình · Chạm để đặt lại';
+      actionButton('zoom-out').disabled=!ready||zoom<=1.001;actionButton('zoom-in').disabled=!ready||zoom>=5.999;actionButton('rotate').disabled=!ready;actionButton('download').disabled=downloading||!ready;
+      stage.classList.toggle('is-zoomed',zoom>1.01);
+    }
+    function requestRender(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(!closed)render();});}
+    function fit(){
+      if(!naturalWidth||!naturalHeight)return;
+      const turned=rotation%180!==0,ratio=Math.min(Math.max(1,stage.clientWidth-16)/(turned?naturalHeight:naturalWidth),Math.max(1,stage.clientHeight-16)/(turned?naturalWidth:naturalHeight));
+      baseWidth=naturalWidth*ratio;baseHeight=naturalHeight*ratio;
+      Object.assign(image.style,{width:baseWidth+'px',height:baseHeight+'px',marginLeft:-baseWidth/2+'px',marginTop:-baseHeight/2+'px'});
+      constrain();render();
+    }
+    function zoomAt(value,clientX,clientY){
+      if(!ready)return;const rect=stage.getBoundingClientRect(),px=(clientX??rect.left+rect.width/2)-rect.left-rect.width/2,py=(clientY??rect.top+rect.height/2)-rect.top-rect.height/2,next=clamp(value,1,6);
+      x=px-(px-x)*next/zoom;y=py-(py-y)*next/zoom;zoom=next;constrain();render();
+    }
+    function reset(){zoom=1;x=0;y=0;render();}
+    function rotate(){if(!ready)return;rotation=(rotation+90)%360;rotations.set(current().id,rotation);zoom=1;x=0;y=0;fit();paintInfo();}
+    function paintInfo(){
+      const row=current(),dim=dimensions.get(row.id)||{width:row.width||0,height:row.height||0},turned=rotation%180!==0,width=turned?dim.height:dim.width,height=turned?dim.width:dim.height;
+      const format=row.blob?.type?.split('/')[1]?.toUpperCase()||(/\.(jpe?g|png|webp)(?:\?|$)/i.exec(row.url)?.[1]||'Ảnh').toUpperCase();
+      const pairs=[['Ngày giờ chụp',date(row.captured_at)],['Địa điểm',row.address||'Chưa xác định địa điểm'],['Kích thước',width&&height?`${width.toLocaleString('vi-VN')} × ${height.toLocaleString('vi-VN')} px`:'Đang đọc ảnh…'],['Dung lượng',size(row.bytes||row.upload?.bytes||row.blob?.size)],['Định dạng',format.replace('JPG','JPEG')],['Trạng thái',row.pending?'Chờ đồng bộ':'Đã lưu trên Cloud'],['Tài khoản',options.email],['Lưu trữ',row.cloud_name||row.cloud?.cloudName||'Cloudinary']];
+      overlay.querySelector('.viewer-info-content').innerHTML=`<div class="viewer-info-title">${glyph('image')}<strong>${escape(row.title||'Ảnh của tôi')}</strong></div><dl>${pairs.filter(([,value])=>value).map(([label,value])=>`<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>`;
+    }
+    function setInfo(show){
+      info.hidden=!show;backdrop.hidden=!show;actionButton('info').setAttribute('aria-expanded',String(show));
+      if(show){overlay.classList.remove('is-immersive');paintInfo();actionButton('close-info').focus();}else actionButton('info').focus();
+    }
+    function paintFilm(){
+      film.innerHTML=items.map((row,i)=>`<button type="button" class="viewer-film-thumb${i===index?' is-current':''}" data-viewer-index="${i}" aria-label="Xem ảnh ${i+1}: ${escape(row.title||'Ảnh của tôi')}" aria-current="${i===index?'true':'false'}"><img src="${escape(row.preview||row.url)}" data-original="${escape(row.url)}" alt="" loading="lazy" decoding="async"></button>`).join('')+(options.hasMore?.()?'<button type="button" class="viewer-film-more" data-viewer-action="load-more" aria-label="Tải thêm ảnh">'+glyph('plus')+'</button>':'');
+    }
+    function controls(){
+      const row=current();overlay.querySelector('[data-viewer-title]').textContent=row.title||'Ảnh của tôi';overlay.querySelector('[data-viewer-date]').textContent=date(row.captured_at);
+      overlay.querySelector('[data-viewer-counter]').textContent=(index+1)+' / '+Math.max(items.length,options.total||0);
+      actionButton('previous').disabled=index===0;actionButton('next').disabled=loadingMore||(index===items.length-1&&!options.hasMore?.());
+      for(const node of film.querySelectorAll('[data-viewer-index]')){const selected=Number(node.dataset.viewerIndex)===index;node.classList.toggle('is-current',selected);node.setAttribute('aria-current',String(selected));}
+      const selected=film.children[index];if(selected)film.scrollTo({left:Math.max(0,selected.offsetLeft-film.clientWidth/2+selected.clientWidth/2),behavior:'smooth'});
+      paintInfo();render();
+    }
+    function show(next){
+      index=next;loadToken++;clearTimeout(tapTimer);lastTap=null;pointers.clear();gesture=null;stage.classList.remove('is-gesturing');zoom=1;x=0;y=0;rotation=rotations.get(current().id)||0;ready=false;naturalWidth=0;naturalHeight=0;image.style.visibility='hidden';
+      overlay.dataset.loading='true';overlay.querySelector('.viewer-loading').hidden=false;overlay.querySelector('.viewer-error').hidden=true;controls();
+      const token=loadToken;image.onload=()=>{
+        if(token!==loadToken||closed)return;naturalWidth=image.naturalWidth;naturalHeight=image.naturalHeight;ready=naturalWidth>0;dimensions.set(current().id,{width:naturalWidth,height:naturalHeight});overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;image.style.visibility='visible';fit();paintInfo();
+        for(const neighbor of [items[index-1],items[index+1]])if(neighbor){const preload=new Image();preload.src=neighbor.url;}
+      };
+      image.onerror=()=>{if(token!==loadToken||closed)return;ready=false;overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;overlay.querySelector('.viewer-error').hidden=false;render();};
+      image.alt=current().title||'Ảnh của tôi';image.src=current().url;
+    }
+    async function additional(){
+      if(loadingMore||closed||!options.hasMore?.())return;loadingMore=true;controls();const more=actionButton('load-more');if(more)more.disabled=true;
+      try{const loaded=await options.loadMore();if(closed)return;const id=current().id;items=[...new Map([...items,...loaded.filter(item=>item.url)].map(item=>[item.id,item])).values()];index=items.findIndex(item=>item.id===id);paintFilm();}
+      catch(_){notice('Chưa tải thêm được ảnh. Hãy thử lại.');}
+      finally{loadingMore=false;if(!closed){controls();const button=actionButton('load-more');if(button)button.disabled=false;}}
+    }
+    async function move(delta){
+      if(loadingMore||closed)return;let next=index+delta;
+      if(next>=items.length&&options.hasMore?.()){const token=loadToken;notice('Đang tải thêm ảnh…');await additional();if(closed||token!==loadToken)return;next=index+delta;}
+      if(next<0||next>=items.length){x=0;y=0;constrain();render();return;}show(next);
+    }
+    async function rotatedBlob(blob,degrees){
+      const url=URL.createObjectURL(blob);
+      try{
+        const source=await new Promise((resolve,reject)=>{const picture=new Image();picture.onload=()=>resolve(picture);picture.onerror=()=>reject(new Error('Không đọc được ảnh để xoay.'));picture.src=url;});
+        const canvas=document.createElement('canvas'),turned=degrees%180!==0;canvas.width=turned?source.naturalHeight:source.naturalWidth;canvas.height=turned?source.naturalWidth:source.naturalHeight;
+        const ctx=canvas.getContext('2d');ctx.translate(canvas.width/2,canvas.height/2);ctx.rotate(degrees*Math.PI/180);ctx.drawImage(source,-source.naturalWidth/2,-source.naturalHeight/2);
+        return await new Promise((resolve,reject)=>canvas.toBlob(result=>result?resolve(result):reject(new Error('Không tạo được bản ảnh đã xoay.')),'image/jpeg',.95));
+      }finally{URL.revokeObjectURL(url);}
+    }
+    async function download(){
+      if(downloading||!ready)return;const row=current(),degrees=rotation;downloading=true;render();
+      try{
+        const original=row.blob||await fetch(row.url).then(response=>{if(!response.ok)throw new Error('Chưa tải được ảnh.');return response.blob();});
+        const blob=degrees?await rotatedBlob(original,degrees):original;
+        const name=row.file_name||'tasco_'+new Date(row.captured_at).getTime()+'.jpg';options.download(blob,degrees?name.replace(/\.[^.]+$/,'')+'_xoay'+degrees+'.jpg':name);if(!closed)notice(degrees?'Đã chuẩn bị bản ảnh đã xoay.':'Đã chuẩn bị ảnh để tải về.');
+      }catch(error){if(!closed)notice(error.message||'Chưa tải được ảnh. Hãy thử lại.');}
+      finally{downloading=false;if(!closed)render();}
+    }
+    function close(){
+      if(closed)return;closed=true;controller.abort();observer.disconnect();cancelAnimationFrame(raf);clearTimeout(tapTimer);clearTimeout(noticeTimer);image.onload=image.onerror=null;overlay.remove();Object.assign(document.body.style,savedStyle);document.documentElement.style.overflow=htmlOverflow;window.scrollTo(scrollX,scrollY);if(focus?.isConnected)focus.focus({preventScroll:true});else options.restoreFocus?.();if(active?.close===close)active=null;
+    }
+    function midpoint(){const [a,b]=[...pointers.values()];return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,distance:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y))};}
+    function beginPinch(){const mid=midpoint(),rect=stage.getBoundingClientRect();gesture={type:'pinch',distance:mid.distance,zoom,anchorX:(mid.x-rect.left-rect.width/2-x)/zoom,anchorY:(mid.y-rect.top-rect.height/2-y)/zoom};clearTimeout(tapTimer);lastTap=null;}
+    stage.addEventListener('pointerdown',event=>{
+      if(!ready||event.target.closest('button')||event.button>0||pointers.size>=2)return;clearTimeout(tapTimer);if(event.pointerType!=='mouse')lastTouchAt=performance.now();event.preventDefault();stage.setPointerCapture(event.pointerId);pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});stage.classList.add('is-gesturing');
+      if(pointers.size===2)beginPinch();else gesture={type:zoom>1.01?'pan':'swipe',startX:event.clientX,startY:event.clientY,x,y,time:performance.now(),moved:false,suppressTap:false};
+    },{signal});
+    stage.addEventListener('pointermove',event=>{
+      if(!pointers.has(event.pointerId)||!gesture)return;event.preventDefault();pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+      if(pointers.size===2){const mid=midpoint(),rect=stage.getBoundingClientRect();zoom=clamp(gesture.zoom*mid.distance/gesture.distance,1,6);x=mid.x-rect.left-rect.width/2-gesture.anchorX*zoom;y=mid.y-rect.top-rect.height/2-gesture.anchorY*zoom;constrain();}
+      else{const dx=event.clientX-gesture.startX,dy=event.clientY-gesture.startY;gesture.moved=gesture.moved||Math.hypot(dx,dy)>8;if(gesture.moved)lastTap=null;if(gesture.type==='pan'){x=gesture.x+dx;y=gesture.y+dy;constrain();}else{x=dx*.65;y=dy*.15;}}
+      requestRender();
+    },{signal});
+    function endPointer(event,cancelled=false){
+      if(!pointers.has(event.pointerId))return;const ended=gesture;pointers.delete(event.pointerId);
+      if(pointers.size){const point=[...pointers.values()][0];gesture={type:zoom>1.01?'pan':'swipe',startX:point.x,startY:point.y,x,y,time:performance.now(),moved:true,suppressTap:true};return;}
+      gesture=null;stage.classList.remove('is-gesturing');cancelAnimationFrame(raf);raf=0;
+      if(!ended||cancelled){constrain();render();return;}
+      if(ended.type==='swipe'){
+        const dx=event.clientX-ended.startX,dy=event.clientY-ended.startY,duration=Math.max(1,performance.now()-ended.time),threshold=Math.max(44,stage.clientWidth*.14);
+        if(!ended.suppressTap&&Math.abs(dx)>Math.abs(dy)*1.3&&(Math.abs(dx)>threshold||Math.abs(dx)>26&&Math.abs(dx)/duration>.5)){move(dx<0?1:-1);return;}
+        if(!ended.suppressTap&&dy>110&&dy>Math.abs(dx)*1.6){close();return;}
+      }
+      if(!ended.moved&&!ended.suppressTap&&event.pointerType!=='mouse'){
+        const point={x:event.clientX,y:event.clientY,time:performance.now()};
+        if(lastTap&&point.time-lastTap.time<320&&Math.hypot(point.x-lastTap.x,point.y-lastTap.y)<30){clearTimeout(tapTimer);lastTap=null;zoomAt(zoom>1.01?1:2.5,point.x,point.y);}
+        else{lastTap=point;clearTimeout(tapTimer);tapTimer=setTimeout(()=>{if(!closed&&info.hidden)overlay.classList.toggle('is-immersive');lastTap=null;},320);}
+      }
+      constrain();render();
+    }
+    stage.addEventListener('pointerup',event=>endPointer(event),{signal});stage.addEventListener('pointercancel',event=>endPointer(event,true),{signal});
+    stage.addEventListener('dblclick',event=>{if(event.target.closest('button')||performance.now()-lastTouchAt<650)return;event.preventDefault();zoomAt(zoom>1.01?1:2.5,event.clientX,event.clientY);},{signal});
+    stage.addEventListener('wheel',event=>{event.preventDefault();zoomAt(zoom*Math.exp(-event.deltaY*.002),event.clientX,event.clientY);},{passive:false,signal});
+    overlay.addEventListener('click',event=>{
+      const thumb=event.target.closest('[data-viewer-index]');if(thumb){show(Number(thumb.dataset.viewerIndex));return;}
+      const button=event.target.closest('[data-viewer-action]');if(!button||button.disabled)return;
+      const action=button.dataset.viewerAction;
+      if(action==='close')close();if(action==='previous')move(-1);if(action==='next')move(1);if(action==='zoom-out')zoomAt(zoom/1.5);if(action==='zoom-in')zoomAt(zoom*1.5);if(action==='fit')reset();if(action==='rotate')rotate();if(action==='info')setInfo(info.hidden);if(action==='close-info')setInfo(false);if(action==='download')download();if(action==='reload')show(index);if(action==='load-more')additional();
+    },{signal});
+    overlay.addEventListener('error',event=>{const node=event.target;if(node.matches?.('.viewer-film-thumb img')&&node.dataset.original&&!node.dataset.fallback){node.dataset.fallback='true';node.src=node.dataset.original;}},{capture:true,signal});
+    backdrop.addEventListener('click',()=>setInfo(false),{signal});
+    document.addEventListener('keydown',event=>{
+      if(closed)return;
+      if(event.key==='Tab'){
+        const scope=info.hidden?overlay:info,buttons=[...scope.querySelectorAll('button,[tabindex="0"]')].filter(node=>!node.disabled&&node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden');if(!buttons.length)return;
+        const first=buttons[0],last=buttons[buttons.length-1];if(event.shiftKey&&(document.activeElement===first||!scope.contains(document.activeElement))){event.preventDefault();last.focus();}else if(!event.shiftKey&&(document.activeElement===last||!scope.contains(document.activeElement))){event.preventDefault();first.focus();}return;
+      }
+      if(event.key==='Escape'){event.preventDefault();if(!info.hidden)setInfo(false);else close();return;}
+      if(!info.hidden)return;
+      if(['ArrowLeft','ArrowRight','+','=','-','0','r','R','i','I'].includes(event.key))event.preventDefault();
+      if(event.key==='ArrowLeft')move(-1);if(event.key==='ArrowRight')move(1);if(event.key==='+'||event.key==='=')zoomAt(zoom*1.5);if(event.key==='-')zoomAt(zoom/1.5);if(event.key==='0')reset();if(event.key.toLowerCase()==='r')rotate();if(event.key.toLowerCase()==='i')setInfo(true);
+    },{signal});
+    const observer=new ResizeObserver(()=>{if(!closed)fit();});
+    window.addEventListener('resize',updateViewport,{signal});window.visualViewport?.addEventListener('resize',updateViewport,{signal});window.visualViewport?.addEventListener('scroll',updateViewport,{signal});
+    document.body.append(overlay);updateViewport();observer.observe(stage);paintFilm();show(index);actionButton('close').focus();active={close};
+  }
+  return {open,close:()=>active?.close()};
+})();
+
 /* Cloudinary holds the image; Supabase RLS holds the account-owned manifest. */
 window.TascoCloud = (() => {
   const table = 'tasco_personal_photos';
@@ -3007,8 +3261,10 @@ window.TascoCloud = (() => {
     const cloud=imageURL(row.secure_url||row.upload?.secure_url);if(cloud)return cloud;
     if(!row.blob)return '';if(!state.urls.has(row.id))state.urls.set(row.id,URL.createObjectURL(row.blob));return state.urls.get(row.id);
   }
+  function previewURL(url,size=360){return url.replace(/\/image\/upload\/(?!s--)/,'/image/upload/c_fill,w_'+size+',h_'+size+',q_auto,f_auto/');}
   function configure(options) {state.config=options;}
   function mount(root) {
+    window.TascoPhotoViewer?.close();
     clearURLs();state.root=root;state.page=0;state.query='';state.date='';state.rows=[];state.pending=[];
     const searchField=`<label class="cloud-search">${icon('search')}<input type="search" data-cloud-search placeholder="${state.config.mode==='mobile'?'Tìm nội dung, địa điểm…':'Tìm theo nội dung hoặc địa điểm…'}" aria-label="Tìm ảnh"></label>`;
     const dateField='<label class="cloud-date"><span>Ngày chụp</span><input type="date" data-cloud-date aria-label="Ngày chụp"></label>';
@@ -3026,7 +3282,7 @@ window.TascoCloud = (() => {
       const button=event.target.closest('[data-action]');if(!button||!root.contains(button))return;
       const action=button.dataset.action;
       if(action==='capture'&&state.user)state.config.capture(root.querySelector('[data-cloud-title]')?.value.trim()||'Ảnh của tôi');
-      if(action==='refresh')refresh();if(action==='retry')processQueue();if(action==='more'){state.page++;refresh(true);}
+      if(action==='refresh')refresh();if(action==='retry')processQueue();if(action==='more'){state.page=Math.floor(state.rows.length/48);refresh(true);}
       if(action==='open'){const row=[...state.pending,...state.rows].find(item=>item.id===button.dataset.id);if(row)openPhoto(row);}
       if(action==='download-pending'){const row=state.pending.find(item=>item.id===button.dataset.id);if(row?.blob)downloadBlob(row.blob,row.file_name);}
     };
@@ -3045,7 +3301,21 @@ window.TascoCloud = (() => {
     };
   }
   function card(row,pending=false) {
+    if(state.config.mode==='mobile'&&!pending){
+      const url=thumbnail(row),time=new Date(row.captured_at).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
+      return `<article class="cloud-photo-card cloud-photo-tile"><button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${esc(row.title)}, ${esc(stamp(row.captured_at))}, ${esc(row.address||'Chưa xác định địa điểm')}">${url?`<img src="${esc(previewURL(url))}" data-original="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.original" loading="lazy" decoding="async" alt="${esc(row.title)}">`:icon('camera')}<time class="cloud-tile-time" datetime="${esc(row.captured_at)}">${esc(time)}</time></button></article>`;
+    }
     const url=thumbnail(row);return `<article class="cloud-photo-card"><button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(row.error||'Đã giữ bản ảnh trên thiết bị này')}</span><button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">Tải bản ảnh về máy</button>`:''}</div></article>`;
+  }
+  function gallery(rows){
+    if(state.config.mode!=='mobile')return rows.map(row=>card(row)).join('');
+    const groups=new Map(),today=new Date(),yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+    const dayKey=date=>[date.getFullYear(),date.getMonth(),date.getDate()].join('-');
+    for(const row of rows){const date=new Date(row.captured_at),key=dayKey(date);if(!groups.has(key))groups.set(key,{date,rows:[]});groups.get(key).rows.push(row);}
+    return [...groups.entries()].map(([key,group])=>{
+      const label=key===dayKey(today)?'Hôm nay':key===dayKey(yesterday)?'Hôm qua':group.date.toLocaleDateString('vi-VN',{day:'numeric',month:'long',year:'numeric'});
+      return `<section class="cloud-day-group" aria-label="${esc(label)}"><header class="cloud-day-heading"><div><h3>${esc(label)}</h3>${key===dayKey(today)||key===dayKey(yesterday)?`<time>${esc(group.date.toLocaleDateString('vi-VN',{day:'numeric',month:'long',year:'numeric'}))}</time>`:''}</div><span>${group.rows.length} ảnh</span></header><div class="cloud-day-grid">${group.rows.map(row=>card(row)).join('')}</div></section>`;
+    }).join('');
   }
   function paint() {
     const root=state.root;if(!visible())return;
@@ -3054,7 +3324,7 @@ window.TascoCloud = (() => {
     const total=root.querySelector('[data-cloud-total]');if(total)total.textContent=state.count+' ảnh';
     const feedback=root.querySelector('.cloud-feedback');feedback.textContent=state.error||(state.busy?'Đang tải thư viện…':'');feedback.dataset.error=Boolean(state.error);
     const capture=root.querySelector('[data-action="capture"]');if(capture)capture.disabled=!state.user;
-    const grid=root.querySelector('.cloud-grid');grid.innerHTML=state.rows.map(row=>card(row)).join('');
+    const grid=root.querySelector('.personal-cloud>.cloud-grid');grid.innerHTML=gallery(state.rows);
     if(!state.rows.length&&!state.busy&&!state.error&&state.user)grid.innerHTML=`<div class="cloud-empty">${icon('cloud')}<h2>${state.query||state.date?'Không có ảnh phù hợp':'Thư viện sẵn sàng đón ảnh mới'}</h2><p>${state.config.mode==='mobile'?'Chạm “Chụp ảnh” để lưu ảnh có ngày giờ.':'Chụp ảnh trong file mobile bằng cùng tài khoản để xem tại đây.'}</p></div>`;
     const pending=root.querySelector('.cloud-pending');pending.hidden=!state.pending.length;pending.innerHTML=state.pending.length?`<div class="cloud-pending-heading"><div><h2>${state.pending.length} ảnh chờ đồng bộ</h2><p>Bản ảnh được giữ trên thiết bị này cho đến khi lưu thành công.</p></div><button class="cloud-button" type="button" data-action="retry" ${state.uploading?'disabled':''}>${icon('refresh')}${state.uploading?'Đang lưu…':'Thử đồng bộ lại'}</button></div><div class="cloud-grid">${state.pending.map(row=>card(row,true)).join('')}</div>`:'';
     root.querySelector('[data-action="more"]').hidden=state.rows.length>=state.count||!state.user||Boolean(state.error);
@@ -3063,14 +3333,14 @@ window.TascoCloud = (() => {
     if(!visible())return;const revision=++state.revision;state.busy=true;state.error='';if(!append){state.rows=[];state.page=0;}
     try {
       const owner=await account();if(revision!==state.revision||!visible())return;
-      if(state.user?.id!==owner.id){clearURLs();state.rows=[];}state.user=owner;state.root.querySelector('.cloud-login').hidden=true;
+      if(state.user?.id!==owner.id){window.TascoPhotoViewer?.close();clearURLs();state.rows=[];}state.user=owner;state.root.querySelector('.cloud-login').hidden=true;
       state.pending=await pendingFor(owner.id);if(revision!==state.revision||!visible())return;paint();
       const api=await client();let query=api.from(table).select('*',{count:'exact'}).eq('owner_id',owner.id).order('captured_at',{ascending:false}).order('id',{ascending:false});
       const term=state.query.replace(/[,%()\\]/g,' ').trim().slice(0,160);if(term)query=query.or('title.ilike.%'+term+'%,address.ilike.%'+term+'%');
       if(state.date){const from=new Date(state.date+'T00:00:00'),to=new Date(from);to.setDate(to.getDate()+1);query=query.gte('captured_at',from.toISOString()).lt('captured_at',to.toISOString());}
       const result=await query.range(state.page*48,state.page*48+47);if(result.error)throw result.error;
       if(revision!==state.revision)return;state.rows=append?[...state.rows,...result.data]:result.data||[];state.count=result.count??state.rows.length;
-    }catch(error){if(revision!==state.revision)return;if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)){clearURLs();state.user=null;state.rows=[];state.pending=[];state.count=0;loginPanel(error.message);}else state.error=message(error);}
+    }catch(error){if(revision!==state.revision)return;if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)){window.TascoPhotoViewer?.close();clearURLs();state.user=null;state.rows=[];state.pending=[];state.count=0;loginPanel(error.message);}else state.error=message(error);}
     finally{if(revision===state.revision){state.busy=false;paint();}}
   }
   async function upload(record) {
@@ -3108,18 +3378,15 @@ window.TascoCloud = (() => {
   }
   function downloadBlob(blob,name) {const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name||'tasco-photo.jpg';link.click();setTimeout(()=>URL.revokeObjectURL(url),10000);}
   function openPhoto(row) {
-    const url=thumbnail(row);if(!url)return;
-    document.getElementById('cloudLightbox')?.remove();const overlay=document.createElement('div');overlay.id='cloudLightbox';overlay.className='cloud-lightbox';overlay.dataset.cloudTheme=state.config.mode;overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Chi tiết ảnh');
-    overlay.innerHTML=`<div class="cloud-lightbox-panel"><div class="cloud-lightbox-head"><div><strong>${esc(row.title)}</strong><time>${esc(stamp(row.captured_at))}</time></div><button class="cloud-button" type="button" data-close aria-label="Đóng ảnh">${icon('close')}</button></div><img src="${esc(url)}" alt="${esc(row.title)}"><div class="cloud-lightbox-foot"><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p><button class="cloud-button cloud-primary" type="button" data-download>${icon('download')}Tải ảnh</button></div></div>`;
-    const focus=document.activeElement,overflow=document.body.style.overflow;document.body.style.overflow='hidden';
-    function close(){overlay.remove();document.body.style.overflow=overflow;document.removeEventListener('keydown',key);focus?.focus();}
-    function key(event){if(event.key==='Escape')close();if(event.key==='Tab'){const items=overlay.querySelectorAll('button');if(event.shiftKey&&document.activeElement===items[0]){event.preventDefault();items[items.length-1].focus();}else if(!event.shiftKey&&document.activeElement===items[items.length-1]){event.preventDefault();items[0].focus();}}}
-    overlay.querySelector('[data-close]').onclick=close;overlay.onclick=event=>{if(event.target===overlay)close();};document.addEventListener('keydown',key);
-    overlay.querySelector('[data-download]').onclick=async event=>{event.currentTarget.disabled=true;try{const blob=row.blob||await fetch(url).then(response=>{if(!response.ok)throw new Error('Chưa tải được ảnh.');return response.blob();});downloadBlob(blob,row.file_name||'tasco_'+new Date(row.captured_at).getTime()+'.jpg');}catch(error){notify(message(error));}finally{event.target.closest('button').disabled=false;}};
-    document.body.append(overlay);overlay.querySelector('[data-close]').focus();
+    const owner=state.user?.id,root=state.root;
+    const items=()=>[...new Map([...state.pending.map(item=>({...item,pending:true})),...state.rows].map(item=>{const url=thumbnail(item);return [item.id,{...item,url,preview:previewURL(url,144)}];})).values()];
+    window.TascoPhotoViewer.open({items:items(),id:row.id,total:state.count+state.pending.length,theme:state.config.mode,email:state.user?.email||'',download:downloadBlob,restoreFocus:()=>root.querySelector('[data-action="open"][data-id="'+CSS.escape(row.id)+'"]')?.focus({preventScroll:true}),
+      hasMore:()=>state.user?.id===owner&&state.root===root&&state.rows.length<state.count,
+      loadMore:async()=>{if(state.user?.id!==owner||state.root!==root)return [];if(state.busy)return items();state.page=Math.floor(state.rows.length/48);await refresh(true);if(state.error)throw new Error(state.error);return state.user?.id===owner&&state.root===root?items():[];}
+    });
   }
   window.addEventListener('online',()=>{if(state.pending.length)processQueue();});
-  window.addEventListener('pagehide',clearURLs);
+  window.addEventListener('pagehide',()=>{window.TascoPhotoViewer?.close();clearURLs();});
   return {configure,mount,refresh,queuePhotos,processQueue,notify,isReady:()=>Boolean(state.user),account,icon};
 })();
 
