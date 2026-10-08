@@ -3192,7 +3192,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v7-iphone-orientation-permission" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v8-frame-orientation" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
@@ -4437,7 +4437,6 @@ async function openMobileCamera(title){
 }
 async function startCustomCameraStream(){
   stopCustomCameraStream();const revision=++mobileCameraStreamRevision,session=cameraUiState.session,video=document.getElementById('customCameraVideo');
-  resetCameraFrameBaseline();
   // Let the platform choose its native aspect ratio; a forced landscape constraint breaks some front cameras.
   const options=cameraVideoConstraints();
   let stream,error;
@@ -4486,7 +4485,7 @@ async function closeCustomCameraModal(savePhotos=false){
 document.getElementById('customCameraModal').addEventListener('keydown',event=>{if(event.key==='Escape')closeCustomCameraModal(false);if(event.key==='Tab'){const buttons=[...event.currentTarget.querySelectorAll('button:not(:disabled)')];if(event.shiftKey&&document.activeElement===buttons[0]){event.preventDefault();buttons[buttons.length-1].focus();}else if(!event.shiftKey&&document.activeElement===buttons[buttons.length-1]){event.preventDefault();buttons[0].focus();}}});
 window.addEventListener('pagehide',()=>{stopCustomCameraStream();onCustomCameraClose();});
 
-const cameraUiState={session:0,captureBusy:false,previousOverflow:null,previousFocus:null,photoUrls:new Map(),sensorPermission:null,sensorPermissionState:null,sensorFallbackTimer:null,physicalOrientation:null,frameBaseline:null};
+const cameraUiState={session:0,captureBusy:false,previousOverflow:null,previousFocus:null,photoUrls:new Map(),sensorPermission:null,sensorPermissionState:null,sensorFallbackTimer:null,physicalOrientation:null};
 const cameraAngle=value=>((Math.round(value/90)*90)%360+360)%360;
 const cameraAngleDifference=(a,b)=>((a-b+540)%360)-180;
 function cameraIsMobile(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>0&&matchMedia('(pointer:coarse)').matches);}
@@ -4495,7 +4494,6 @@ function cameraScreenAngle(){
   return Number.isFinite(native)&&(cameraAngle(native)%180===90)===landscape?cameraAngle(native):landscape?90:0;
 }
 function cameraDevicePose(){const angle=cameraUiState.physicalOrientation?.angle??cameraScreenAngle();return {angle,orientation:angle%180===90?'landscape':'portrait'};}
-function resetCameraFrameBaseline(){cameraUiState.frameBaseline=null;}
 function cameraHandleDeviceOrientation(event) {
   if(!Number.isFinite(event.beta)||!Number.isFinite(event.gamma))return;
   const beta=event.beta*Math.PI/180,gamma=event.gamma*Math.PI/180;
@@ -4552,31 +4550,24 @@ function rotateCameraInterface(){
   syncCameraViewport();
 }
 function cameraFrameOrientation(video,usePhysical=true) {
-  const screenAngle=cameraScreenAngle(),pose=usePhysical&&cameraIsMobile()?cameraDevicePose():{angle:screenAngle,orientation:screenAngle%180===90?'landscape':'portrait'},nativeLandscape=video.videoWidth>video.videoHeight;
-  let baseline=cameraUiState.frameBaseline;
-  if(!baseline&&video.videoWidth&&video.videoHeight){
-    baseline={angle:screenAngle,landscape:nativeLandscape,width:video.videoWidth,height:video.videoHeight};cameraUiState.frameBaseline=baseline;
-  }
-  let rotation=0;
-  if(cameraIsMobile()&&baseline&&video.videoWidth!==video.videoHeight){
-    const desiredLandscape=pose.orientation==='landscape';
-    // Browsers rotate normal frames themselves. Correct only a frame frozen in a previous screen orientation.
-    // A wide front-camera frame in an upright viewport is not evidence that its content needs a 90-degree turn.
-    if(desiredLandscape!==nativeLandscape&&pose.angle!==baseline.angle){
-      rotation=cameraAngleDifference(baseline.angle,pose.angle);
-      // On iOS, the front sensor's frozen portrait buffer turns in the opposite direction to the rear sensor.
-      if(customCameraFacingMode==='user'&&(/iPhone|iPad|iPod/.test(navigator.userAgent)||/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1)&&Math.abs(rotation)===90&&pose.angle!==screenAngle)rotation=-rotation;
-    }
-    else if(desiredLandscape===nativeLandscape){baseline.angle=pose.angle;baseline.landscape=nativeLandscape;}
-  }
-  const manualRotation=cameraControlsState.manualRotation[customCameraFacingMode]||0;rotation=cameraAngleDifference(rotation+manualRotation,0);
+  const screenAngle=cameraScreenAngle(),pose=usePhysical&&cameraIsMobile()?cameraDevicePose():{angle:screenAngle,orientation:screenAngle%180===90?'landscape':'portrait'};
+  const manualRotation=cameraControlsState.manualRotation[customCameraFacingMode]||0;
+  // The video is expressed in the browser's screen coordinates. The camera dialog
+  // is rotated into physical-device coordinates, even when iOS locks the screen.
+  // Undo that UI turn inside the video; width/height describe buffer geometry,
+  // not which edge of its CONTENT is up. This also works with wide and square
+  // buffers, opening directly in landscape, and a complete 180-degree turn.
+  const uiRotation=cameraAngleDifference(pose.angle,screenAngle);
+  const rotation=cameraAngleDifference(manualRotation-uiRotation,0);
   const swapped=Math.abs(rotation)%180===90;
-  return {aspectRatio:cameraAppearance.aspectRatio,orientation:pose.orientation,angle:pose.angle,rotation,manualRotation,mirror:customCameraFacingMode==='user'&&cameraAppearance.mirrorFront,digitalZoom:cameraControlsState.digitalZoom,width:swapped?video.videoHeight:video.videoWidth,height:swapped?video.videoWidth:video.videoHeight};
+  // Front-camera mirroring is a separate horizontal transform applied AFTER
+  // rotation in both CSS and canvas. It must not reverse the orientation angle.
+  return {aspectRatio:cameraAppearance.aspectRatio,orientation:pose.orientation,angle:pose.angle,sourceAngle:screenAngle,uiRotation,rotation,manualRotation,mirror:customCameraFacingMode==='user'&&cameraAppearance.mirrorFront,digitalZoom:cameraControlsState.digitalZoom,width:swapped?video.videoHeight:video.videoWidth,height:swapped?video.videoWidth:video.videoHeight};
 }
 function syncCameraFramePreview(video) {
   if(!video)return;
   const frame=cameraFrameOrientation(video),container=video.closest('.camera-stream-container'),plane=document.getElementById('cameraImagePlane');if(!container||!plane||!frame.width||!frame.height)return;
-  video.dataset.rotation=String(frame.rotation);
+  video.dataset.rotation=String(frame.rotation);video.dataset.sourceAngle=String(frame.sourceAngle);
   const crop=cameraCropFrame(frame.width,frame.height,frame.aspectRatio),fit=Math.min(container.clientWidth/crop.width,container.clientHeight/crop.height),width=crop.width*fit,height=crop.height*fit,swapped=Math.abs(frame.rotation)%180===90;
   plane.style.width=width+'px';plane.style.height=height+'px';plane.style.setProperty('--camera-stamp-size',Math.max(10,Math.min(18,width/56))+'px');
   video.style.position='absolute';video.style.left='50%';video.style.top='50%';video.style.width=((swapped?frame.height:frame.width)*fit)+'px';video.style.height=((swapped?frame.width:frame.height)*fit)+'px';
@@ -4613,14 +4604,14 @@ function syncCameraPhotoTray() {
 function onCustomCameraOpen() {
   cameraUiState.session++;cameraUiState.captureBusy=false;
   cameraUiState.previousOverflow=document.body.style.overflow;cameraUiState.previousFocus=document.activeElement;
-  cameraRuntime.suspended=false;cameraRuntime.nativeOpen=false;cameraRuntime.focusBlocked=false;cameraRuntime.recoveryCount=0;cameraRuntime.lastRecovery=0;cameraRuntime.lastFrameSignature='';cameraRuntime.settingsTab='capture';cameraUiState.physicalOrientation=null;resetCameraFrameBaseline();cameraControlsOpen();startCameraOrientationSensor();startCameraLocationTracking();
+  cameraRuntime.suspended=false;cameraRuntime.nativeOpen=false;cameraRuntime.focusBlocked=false;cameraRuntime.recoveryCount=0;cameraRuntime.lastRecovery=0;cameraRuntime.lastFrameSignature='';cameraRuntime.settingsTab='capture';cameraUiState.physicalOrientation=null;cameraControlsOpen();startCameraOrientationSensor();startCameraLocationTracking();
   document.body.style.overflow='hidden';
   updateCameraLocationUI(null,true);syncCameraPhotoTray();syncCameraViewport();
   document.querySelector('#customCameraModal .btn-close-cam')?.focus({preventScroll:true});
 }
 function onCustomCameraClose() {
   cameraUiState.session++;cameraUiState.captureBusy=false;
-  window.removeEventListener('deviceorientation',cameraHandleDeviceOrientation);clearTimeout(cameraUiState.sensorFallbackTimer);cameraUiState.sensorFallbackTimer=null;cameraUiState.physicalOrientation=null;resetCameraFrameBaseline();stopCameraLocationTracking();cameraControlsClose();
+  window.removeEventListener('deviceorientation',cameraHandleDeviceOrientation);clearTimeout(cameraUiState.sensorFallbackTimer);cameraUiState.sensorFallbackTimer=null;cameraUiState.physicalOrientation=null;stopCameraLocationTracking();cameraControlsClose();
   if(cameraUiState.previousOverflow!==null)document.body.style.overflow=cameraUiState.previousOverflow;
   cameraUiState.previousOverflow=null;
   cameraUiState.previousFocus?.focus?.({preventScroll:true});cameraUiState.previousFocus=null;
@@ -4668,7 +4659,7 @@ window.addEventListener('orientationchange',()=>{syncCameraViewport();setTimeout
 window.visualViewport?.addEventListener('resize',syncCameraViewport);
 screen.orientation?.addEventListener?.('change',syncCameraViewport);
 document.getElementById('customCameraVideo')?.addEventListener('resize',syncCameraViewport);
-document.getElementById('customCameraVideo')?.addEventListener('loadedmetadata',()=>{resetCameraFrameBaseline();syncCameraViewport();});
+document.getElementById('customCameraVideo')?.addEventListener('loadedmetadata',syncCameraViewport);
 document.fonts?.ready.then(()=>{updateCameraLiveStamp();renderCameraStampSample();});
 
 /* Account camera preferences. The database is authoritative; pending local edits
