@@ -618,15 +618,15 @@
 .custom-camera-modal .camera-image-plane{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);overflow:hidden;background:#05070a}
 .custom-camera-modal .camera-live-stamp{position:absolute;right:2.22%;bottom:2.22%;left:auto;width:auto;max-width:90%;display:flex;flex-direction:column;align-items:flex-end;gap:3px;padding:0!important;margin:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:white;z-index:2;pointer-events:none;text-align:right}
 .camera-live-stamp-lines{font:700 var(--camera-stamp-size,12px)/1.35 Arial,sans-serif;white-space:normal;overflow-wrap:break-word;text-shadow:1px 1px 3px #000,0 0 6px rgba(0,0,0,.6)}
-.camera-live-stamp .camera-live-brand{font-size:1.04em}.camera-live-stamp .camera-live-time{font-variant-numeric:tabular-nums}
+.camera-live-stamp .camera-live-brand{font-size:1em}.camera-live-stamp .camera-live-time{font-variant-numeric:tabular-nums}
 .camera-live-stamp .camera-location-copy{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0;border:0}
 .custom-camera-modal .camera-live-stamp .camera-location-retry{position:absolute;right:0;bottom:calc(100% + 8px);width:30px;height:30px;min-height:30px;flex-basis:auto;background:rgba(8,17,29,.6);border:1px solid rgba(255,255,255,.3);border-radius:10px;color:white;pointer-events:auto}
 .custom-camera-modal .camera-live-stamp .camera-location-attribution{position:static;display:block;font-size:7px;line-height:1.3;color:rgba(255,255,255,.74);text-decoration:none;pointer-events:auto;text-shadow:0 1px 3px #000}
-.camera-lens-selector{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}.camera-lens-bar{display:flex;align-items:center;justify-content:center;gap:8px;max-width:100%;min-height:42px}
-.custom-camera-modal .camera-lens-bar button{display:grid;place-items:center;min-width:38px;height:38px;padding:0 8px;flex:0 1 auto;border:1px solid rgba(255,255,255,.16);border-radius:50%;background:rgba(255,255,255,.04);color:#d4dce7;font-size:12px;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
+.camera-lens-selector{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}.camera-lens-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;max-width:100%;min-height:42px}
+.custom-camera-modal .camera-lens-bar button{display:grid;place-items:center;width:38px;min-width:38px;max-width:38px;height:38px;min-height:38px;max-height:38px;aspect-ratio:1;padding:0;flex:0 0 38px;border:1px solid rgba(255,255,255,.16);border-radius:50%;background:rgba(255,255,255,.04);color:#d4dce7;font-size:12px;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
 .custom-camera-modal .camera-lens-bar button[aria-pressed=true]{background:var(--cam-gold);border-color:var(--cam-gold);color:#11282d;box-shadow:0 0 0 3px rgba(112,198,184,.09)}
 .custom-camera-modal .camera-lens-bar button:disabled{opacity:.3;cursor:default}.camera-lens-selector>span{min-height:0;font-size:8px;color:var(--cam-muted)}.camera-lens-selector>span:empty{display:none}
-.custom-camera-modal[data-orientation=landscape] .camera-footer{justify-content:center;gap:15px}.custom-camera-modal[data-orientation=landscape] .camera-controls{flex:0 1 auto;order:1;gap:12px}.custom-camera-modal[data-orientation=landscape] .camera-lens-selector{order:0;width:100%}.custom-camera-modal[data-orientation=landscape] .camera-lens-bar{width:100%;gap:4px}.custom-camera-modal[data-orientation=landscape] .camera-lens-bar button{min-width:0;flex:1;height:34px;padding:0 3px;font-size:11px}
+.custom-camera-modal[data-orientation=landscape] .camera-footer{justify-content:center;gap:15px}.custom-camera-modal[data-orientation=landscape] .camera-controls{flex:0 1 auto;order:1;gap:12px}.custom-camera-modal[data-orientation=landscape] .camera-lens-selector{order:0;width:100%}.custom-camera-modal[data-orientation=landscape] .camera-lens-bar{width:100%;gap:4px}.custom-camera-modal[data-orientation=landscape] .camera-lens-bar button{width:34px;min-width:34px;max-width:34px;height:34px;min-height:34px;max-height:34px;flex:0 0 34px;padding:0;font-size:11px}
 .custom-camera-modal[data-orientation=landscape] .camera-preview-container{order:2;max-height:68px;flex-shrink:0}
 .camera-settings-panel{position:absolute;right:14px;bottom:14px;z-index:10;width:min(400px,calc(100% - 28px));max-height:calc(100% - 28px);display:flex;flex-direction:column;overflow:hidden;border:1px solid #34465b;border-radius:22px;background:rgba(14,24,39,.98);color:#e6edf7;box-shadow:0 18px 80px rgba(0,0,0,.5);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px)}
 .camera-settings-panel[hidden]{display:none!important}.camera-settings-panel *{box-sizing:border-box}.camera-settings-panel header{display:flex;align-items:center;gap:10px;padding:19px 20px;border-bottom:1px solid #293b51;flex-shrink:0}.camera-settings-panel header>div{flex:1}.camera-settings-panel header span{display:block;color:var(--cam-gold);font-size:8px;font-weight:750;letter-spacing:.09em}.camera-settings-panel h2{font-size:18px;font-weight:750;letter-spacing:-.4px;margin:4px 0 0}.camera-settings-panel header button{width:34px;height:34px;padding:0;border:1px solid #34465b;border-radius:11px;background:#192a40;color:#cbd8e8;font-size:24px;line-height:1}
@@ -637,6 +637,31 @@
 @media(max-width:400px){.custom-camera-modal .camera-overlay-header{gap:7px;padding-left:10px;padding-right:10px}.custom-camera-modal .camera-header-actions{gap:6px}.custom-camera-modal .camera-action-btn{width:34px;height:36px;flex-basis:34px;border-radius:11px}.camera-heading>span{font-size:8px}.custom-camera-modal .camera-current-category{font-size:11px}}
 .custom-camera-modal[data-orientation=landscape][data-compact=true] .camera-footer{gap:8px}.custom-camera-modal[data-orientation=landscape][data-compact=true] .camera-controls{gap:7px}.custom-camera-modal[data-orientation=landscape] .camera-settings-panel{right:calc(190px + var(--camera-safe-right,0px));bottom:12px;max-height:calc(100% - 24px);width:min(360px,calc(100% - 215px))}.custom-camera-modal[data-orientation=landscape] .camera-settings-panel header{padding:12px 17px}.custom-camera-modal[data-orientation=landscape] .camera-settings-body{padding:13px 17px}
 @media(prefers-reduced-motion:reduce){.camera-settings-panel *{transition:none!important}}
+
+
+/* Camera preferences are scoped to the camera and persist on this device. */
+.custom-camera-modal .camera-live-stamp{gap:3px;max-width:none}
+.custom-camera-modal .camera-live-stamp-lines{position:relative;white-space:pre;overflow-wrap:normal}
+.custom-camera-modal .camera-location-retry[data-stamp-top=true]{bottom:auto;top:calc(100% + 8px)}
+.camera-settings-intro{font-size:10px;line-height:1.6;color:#91a5bf;margin:0 0 12px}
+.camera-settings-preview{width:100%;display:block;border:1px solid #34465b;border-radius:12px;background:#132938}
+.camera-settings-group{margin-top:12px;border:1px solid #2d4058;border-radius:13px;background:#111f31;overflow:hidden}
+.camera-settings-group summary{padding:13px 14px;font-size:12px;font-weight:750;color:#dce9f2;cursor:pointer;list-style-position:inside}
+.camera-settings-fields{display:grid;gap:12px;padding:0 14px 15px}
+.camera-setting-field{display:grid;gap:7px;min-width:0;color:#c2d0e1;font-size:11px;line-height:1.5}
+.camera-setting-field>span{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.camera-setting-field output{color:var(--cam-gold);font-variant-numeric:tabular-nums}
+.custom-camera-modal .camera-setting-field input[type=text],.custom-camera-modal .camera-setting-field select{width:100%;height:40px;padding:8px 10px;border:1px solid #344b63;border-radius:9px;background:#17283e;color:#e6edf7;font:inherit;font-size:16px;min-width:0;color-scheme:dark}
+.custom-camera-modal .camera-setting-field input[type=range]{width:100%;height:24px;padding:0;background:transparent;accent-color:var(--cam-gold);cursor:pointer}
+.custom-camera-modal .camera-setting-field input[type=color]{width:100%;height:36px;padding:3px 5px;border:1px solid #344b63;border-radius:9px;background:#17283e;cursor:pointer}
+.camera-setting-check{display:flex;align-items:center;gap:10px;min-height:32px;font-size:11px;line-height:1.6;color:#c2d0e1;cursor:pointer}
+.custom-camera-modal .camera-setting-check input{flex:0 0 18px;width:18px;height:18px;margin:0;accent-color:var(--cam-gold)}
+.camera-settings-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:0}
+.custom-camera-modal .camera-settings-reset{width:100%;margin-top:14px;min-height:40px;padding:9px 12px;border:1px solid #34465b;border-radius:10px;background:#17283e;color:#bddfd9;font-size:11px;font-weight:650}
+.camera-settings-panel :is(input,select,summary):focus-visible{outline:2px solid var(--cam-gold);outline-offset:3px}
+.custom-camera-modal[data-orientation=landscape] .camera-settings-panel{right:calc(var(--camera-footer-width,184px) + 12px);width:min(400px,calc(100% - var(--camera-footer-width,184px) - 36px))}
+.custom-camera-modal[data-orientation=landscape][data-compact=true]{--camera-footer-width:164px}
+@media(min-width:1100px) and (min-height:600px){.custom-camera-modal[data-orientation=landscape]{--camera-footer-width:240px}}
 
 /* Photo-first mobile library, grouped by the local capture date. */
 .personal-cloud[data-cloud-theme=mobile]>.cloud-grid{display:block}
@@ -3055,7 +3080,7 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-optics-quality-live-stamp" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-mirror-round-lenses-stamp-settings" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
@@ -3091,6 +3116,38 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
     <section id="cameraSettingsPanel" class="camera-settings-panel" role="dialog" aria-modal="true" aria-label="Cài đặt camera" hidden>
       <header><div><span>THIẾT LẬP CHỤP ẢNH</span><h2>Cài đặt camera</h2></div><button type="button" data-camera-settings-close aria-label="Đóng cài đặt">×</button></header>
       <div class="camera-settings-body">
+        <p class="camera-settings-intro">Tự lưu trên thiết bị · áp dụng cho ảnh chụp mới. Mẫu chữ bên dưới được phóng to để dễ xem.</p>
+        <canvas id="cameraStampSample" class="camera-settings-preview" width="640" height="360" aria-label="Mẫu chữ sẽ ghi lên ảnh"></canvas>
+        <details class="camera-settings-group" open><summary>Chữ trên ảnh</summary><div class="camera-settings-fields">
+          <label class="camera-setting-field"><span>Nội dung tiêu đề</span><input type="text" data-camera-pref="title" maxlength="64" autocomplete="off" value="TASCO DLK"></label>
+          <div class="camera-settings-columns">
+            <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showTitle" checked>Hiện tiêu đề</label>
+            <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showDate" checked>Hiện ngày giờ</label>
+            <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showLocation" checked>Hiện địa điểm</label>
+            <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showCoordinates">Hiện tọa độ GPS</label>
+          </div>
+          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showSeconds" checked>Hiện giây trong thời gian</label>
+          <label class="camera-setting-field"><span>Cách hiển thị</span><select aria-label="Cách hiển thị" data-camera-pref="layout"><option value="lines">Mỗi thông tin một dòng</option><option value="compact">Gọn · nối các thông tin</option></select></label>
+          <label class="camera-setting-field"><span>Vị trí chữ</span><select aria-label="Vị trí chữ" data-camera-pref="position"><option value="bottom-right">Góc dưới bên phải</option><option value="bottom-left">Góc dưới bên trái</option><option value="bottom-center">Giữa phía dưới</option><option value="top-right">Góc trên bên phải</option><option value="top-left">Góc trên bên trái</option><option value="top-center">Giữa phía trên</option></select></label>
+        </div></details>
+        <details class="camera-settings-group"><summary>Cỡ chữ, font và màu sắc</summary><div class="camera-settings-fields">
+          <label class="camera-setting-field"><span>Cỡ chữ <output data-camera-output="textSize">100%</output></span><input type="range" aria-label="Cỡ chữ" data-camera-pref="textSize" min="0.7" max="1.8" step="0.05" value="1"></label>
+          <label class="camera-setting-field"><span>Font chữ</span><select aria-label="Font chữ" data-camera-pref="font"><option value="sans">Arial · rõ ràng</option><option value="jakarta">Plus Jakarta Sans · hiện đại</option><option value="serif">Georgia · có chân</option><option value="mono">Courier New · đều nét</option><option value="tahoma">Tahoma · gọn</option></select></label>
+          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="bold" checked>Chữ đậm</label>
+          <label class="camera-setting-field"><span>Màu chữ</span><input type="color" data-camera-pref="color" value="#ffffff"></label>
+          <label class="camera-setting-field"><span>Độ rõ của chữ <output data-camera-output="opacity">100%</output></span><input type="range" aria-label="Độ rõ của chữ" data-camera-pref="opacity" min="50" max="100" step="5" value="100"></label>
+          <label class="camera-setting-field"><span>Kiểu nền chữ</span><select aria-label="Kiểu nền chữ" data-camera-pref="style"><option value="shadow">Chữ có bóng</option><option value="panel">Nền tối phía sau chữ</option><option value="plain">Chữ đơn giản</option></select></label>
+          <label class="camera-setting-field"><span>Giãn dòng <output data-camera-output="lineHeight">1.35×</output></span><input type="range" aria-label="Giãn dòng" data-camera-pref="lineHeight" min="1.1" max="1.8" step="0.05" value="1.35"></label>
+          <label class="camera-setting-field"><span>Chiều rộng vùng chữ <output data-camera-output="textWidth">90%</output></span><input type="range" aria-label="Chiều rộng vùng chữ" data-camera-pref="textWidth" min="50" max="94" step="2" value="90"></label>
+          <label class="camera-setting-field"><span>Khoảng cách từ mép ảnh <output data-camera-output="margin">2.5%</output></span><input type="range" aria-label="Khoảng cách từ mép ảnh" data-camera-pref="margin" min="1" max="8" step="0.5" value="2.5"></label>
+        </div></details>
+        <details class="camera-settings-group"><summary>Hiển thị và thao tác camera</summary><div class="camera-settings-fields">
+          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="mirrorFront" checked>Soi gương camera trước · xem và lưu cùng chiều</label>
+          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showGrid" checked>Hiện lưới căn bố cục</label>
+          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showCrosshair" checked>Hiện dấu căn giữa</label>
+          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="shutterFlash" checked>Nháy sáng màn hình khi chụp</label>
+        </div></details>
+        <button type="button" class="camera-settings-reset" data-camera-preferences-reset>Khôi phục cài đặt chữ và hiển thị</button>
         <div class="camera-resolution-card"><span id="cameraQualityBadge">Tối đa</span><strong id="cameraActualResolution">Camera đang khởi động…</strong><small>Độ phân giải khung hình đang nhận. Ảnh chụp có thể cao hơn nếu camera hỗ trợ.</small></div>
         <h3>Chất lượng ảnh</h3><div class="camera-quality-options" role="radiogroup" aria-label="Chất lượng ảnh">
           <button type="button" role="radio" data-camera-quality="economy" aria-checked="false"><span>Tiết kiệm</span><small>1280 px · dung lượng nhẹ</small><i></i></button>
@@ -3722,20 +3779,104 @@ async function ensureRealtimeGpsCoordinates(options={}) {
 }
 function prefetchGpsCoordinates() {return ensureRealtimeGpsCoordinates({background:true}).catch(()=>cameraLocationError('unavailable'));}
 function retryCameraLocation() {return ensureRealtimeGpsCoordinates({forceAddress:true}).catch(()=>{const result=cameraLocationError('unavailable');updateCameraLocationUI(result);return result;});}
-function createCameraPhotoMetadata(capturedAt=Date.now()) {
-  return {capturedAt,source:'camera',locationPromise:ensureRealtimeGpsCoordinates().catch(()=>cameraLocationError('unavailable'))};
+
+/* The same immutable preferences drive the live preview and captured pixels. */
+const cameraAppearanceDefaults={title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true};
+const cameraStampFonts={sans:'Arial, sans-serif',jakarta:'"Plus Jakarta Sans", Arial, sans-serif',serif:'Georgia, serif',mono:'"Courier New", monospace',tahoma:'Tahoma, sans-serif'};
+function sanitizeCameraAppearance(value={}){
+  const result={...cameraAppearanceDefaults};
+  if(!value||typeof value!=='object')return result;
+  for(const key of Object.keys(result))if(typeof result[key]==='boolean'&&typeof value[key]==='boolean')result[key]=value[key];
+  if(typeof value.title==='string')result.title=value.title.replace(/[\r\n\t]/g,' ').slice(0,64);
+  const enums={layout:['lines','compact'],position:['bottom-right','bottom-left','bottom-center','top-right','top-left','top-center'],font:Object.keys(cameraStampFonts),style:['shadow','panel','plain']};
+  for(const [key,allowed] of Object.entries(enums))if(allowed.includes(value[key]))result[key]=value[key];
+  for(const [key,min,max] of [['textSize',.7,1.8],['opacity',50,100],['lineHeight',1.1,1.8],['textWidth',50,94],['margin',1,8]])if(Number.isFinite(value[key]))result[key]=Math.min(max,Math.max(min,value[key]));
+  if(typeof value.color==='string'&&/^#[0-9a-f]{6}$/i.test(value.color))result.color=value.color;
+  return result;
 }
-function cameraWatermarkLines(location,time,source) {
-  const when=new Date(time),pad=value=>String(value).padStart(2,'0');
-  const lines=['TASCO DLK',pad(when.getDate())+'/'+pad(when.getMonth()+1)+'/'+when.getFullYear()+' '+pad(when.getHours())+':'+pad(when.getMinutes())+':'+pad(when.getSeconds())];
-  if(location?.address)lines.push((source==='gallery'?'Vị trí tải ảnh: ':'')+location.address);
-  else if(location?.coords)lines.push('Chưa tra được tên địa điểm');
-  if(location?.address&&location.hasWard===false)lines.push('Chưa xác định phường/xã');
-  if(!location?.coords){
-    const labels={denied:'Chưa cấp quyền vị trí',timeout:'Định vị quá thời gian',insecure:'Trang chưa hỗ trợ quyền định vị',unsupported:'Thiết bị không hỗ trợ định vị',invalid:'Vị trí không hợp lệ',unavailable:'Chưa lấy được vị trí'};
-    lines.push(labels[location?.status]||labels.unavailable);
+let cameraAppearance={...cameraAppearanceDefaults};
+try{cameraAppearance=sanitizeCameraAppearance(JSON.parse(localStorage.getItem('tasco-camera-appearance-v1')||'{}'));}catch(_){}
+function cameraAppearanceSnapshot(){return Object.freeze({...cameraAppearance});}
+function saveCameraAppearance(){try{localStorage.setItem('tasco-camera-appearance-v1',JSON.stringify(cameraAppearance));}catch(_){} }
+function changeCameraAppearance(input){
+  const key=input.dataset.cameraPref;if(!(key in cameraAppearanceDefaults))return;
+  const value=input.type==='checkbox'?input.checked:input.type==='range'?Number(input.value):input.value;
+  cameraAppearance=sanitizeCameraAppearance({...cameraAppearance,[key]:value});saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();
+  if(key==='font')document.fonts?.load((cameraAppearance.bold?'700':'400')+' 20px '+cameraStampFonts[cameraAppearance.font]).then(()=>{updateCameraLiveStamp();renderCameraStampSample();}).catch(()=>{});
+}
+function renderCameraAppearanceControls(){
+  const panel=document.getElementById('cameraSettingsPanel');if(!panel)return;
+  for(const input of panel.querySelectorAll('[data-camera-pref]')){
+    const value=cameraAppearance[input.dataset.cameraPref];
+    if(input.type==='checkbox')input.checked=value;else if(document.activeElement!==input)input.value=String(value);
   }
-  return lines;
+  for(const output of panel.querySelectorAll('[data-camera-output]')){
+    const key=output.dataset.cameraOutput,value=cameraAppearance[key];
+    output.value=key==='textSize'?Math.round(value*100)+'%':key==='lineHeight'?value.toFixed(2)+'×':value+'%';
+  }
+  renderCameraStampSample();
+}
+function cameraStampLayout(ctx,lines,width,height,settings){
+  const shortSide=Math.min(width,height),inset=shortSide*settings.margin/100,boxPadding=settings.style==='panel'?shortSide*.012:0;
+  const maxWidth=Math.max(1,Math.min(width*settings.textWidth/100,width-2*(inset+boxPadding)));
+  let fontSize=shortSide/42*settings.textSize,wrapped=[],lineHeight=0;
+  // Keep even long addresses inside a short landscape frame.
+  for(let attempt=0;attempt<5;attempt++){
+    ctx.font=(settings.bold?'700':'400')+' '+fontSize+'px '+cameraStampFonts[settings.font];
+    wrapped=lines.flatMap(line=>wrapCameraWatermarkText(ctx,line,maxWidth));lineHeight=fontSize*settings.lineHeight;
+    const available=Math.max(1,height-2*(inset+boxPadding));
+    if(wrapped.length*lineHeight<=available)break;
+    fontSize*=Math.min(.9,available/(wrapped.length*lineHeight));
+  }
+  const textHeight=wrapped.length*lineHeight,textWidth=wrapped.length?Math.min(maxWidth,Math.max(...wrapped.map(line=>ctx.measureText(line).width))):0;
+  const align=settings.position.endsWith('left')?'left':settings.position.endsWith('center')?'center':'right';
+  const x=align==='left'?inset+boxPadding:align==='center'?width/2:width-inset-boxPadding;
+  const y=settings.position.startsWith('top')?inset+boxPadding:height-inset-boxPadding-textHeight;
+  const left=align==='left'?x:align==='center'?x-textWidth/2:x-textWidth;
+  return {lines:wrapped,font:ctx.font,fontSize,lineHeight,textWidth,textHeight,align,x,y,left,boxPadding};
+}
+function drawCameraStamp(ctx,lines,width,height,settings){
+  if(!lines.length)return;
+  ctx.save();ctx.globalAlpha=settings.opacity/100;const stamp=cameraStampLayout(ctx,lines,width,height,settings);
+  if(settings.style==='panel'){
+    ctx.fillStyle='rgba(0,0,0,.58)';const pad=stamp.boxPadding;
+    ctx.beginPath();if(ctx.roundRect)ctx.roundRect(stamp.left-pad,stamp.y-pad,stamp.textWidth+pad*2,stamp.textHeight+pad*2,pad*.7);else ctx.rect(stamp.left-pad,stamp.y-pad,stamp.textWidth+pad*2,stamp.textHeight+pad*2);ctx.fill();
+  }
+  ctx.globalAlpha=settings.opacity/100;ctx.font=stamp.font;ctx.fillStyle=settings.color;ctx.textBaseline='top';ctx.textAlign=stamp.align;
+  if(settings.style==='shadow'){ctx.shadowColor='rgba(0,0,0,.9)';ctx.shadowBlur=stamp.fontSize*.23;ctx.shadowOffsetX=stamp.fontSize*.07;ctx.shadowOffsetY=stamp.fontSize*.07;}
+  stamp.lines.forEach((line,index)=>ctx.fillText(line,stamp.x,stamp.y+index*stamp.lineHeight));ctx.restore();
+}
+function renderCameraStampSample(){
+  const canvas=document.getElementById('cameraStampSample'),ctx=canvas?.getContext('2d');if(!ctx)return;
+  const w=canvas.width,h=canvas.height,background=ctx.createLinearGradient(0,0,w,h);background.addColorStop(0,'#345970');background.addColorStop(1,'#112633');ctx.fillStyle=background;ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='rgba(255,255,255,.18)';ctx.font='400 16px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('ẢNH MINH HỌA',w/2,h/2);ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  const location={address:'Phường Tân Lập, Đắk Lắk',hasWard:true,coords:{latitude:12.67,longitude:108.04}};
+  const sampleSettings={...cameraAppearance,textSize:cameraAppearance.textSize*2.2};
+  drawCameraStamp(ctx,cameraWatermarkLines(location,Date.now(),'camera',sampleSettings),w,h,sampleSettings);
+}
+function applyCameraDisplayPreferences(){
+  const modal=document.getElementById('customCameraModal');if(!modal)return;
+  for(const [selector,visible] of [['.camera-grid-overlay',cameraAppearance.showGrid],['.camera-target-crosshair',cameraAppearance.showCrosshair]]){const node=modal.querySelector(selector);if(node)node.style.display=visible?'':'none';}
+}
+
+function createCameraPhotoMetadata(capturedAt=Date.now()) {
+  return {capturedAt,source:'camera',appearance:cameraAppearanceSnapshot(),locationPromise:ensureRealtimeGpsCoordinates().catch(()=>cameraLocationError('unavailable'))};
+}
+function cameraWatermarkLines(location,time,source,settings=cameraAppearance) {
+  const when=new Date(time),pad=value=>String(value).padStart(2,'0'),lines=[];
+  if(settings.showTitle&&settings.title.trim())lines.push(settings.title.trim());
+  if(settings.showDate)lines.push(pad(when.getDate())+'/'+pad(when.getMonth()+1)+'/'+when.getFullYear()+' '+pad(when.getHours())+':'+pad(when.getMinutes())+(settings.showSeconds?':'+pad(when.getSeconds()):''));
+  if(settings.showLocation){
+    if(location?.address)lines.push((source==='gallery'?'Vị trí tải ảnh: ':'')+location.address);
+    else if(location?.coords)lines.push('Chưa tra được tên địa điểm');
+    if(location?.address&&location.hasWard===false)lines.push('Chưa xác định phường/xã');
+    if(!location?.coords){
+      const labels={pending:'Đang xác định địa điểm…',denied:'Chưa cấp quyền vị trí',timeout:'Định vị quá thời gian',insecure:'Trang chưa hỗ trợ quyền định vị',unsupported:'Thiết bị không hỗ trợ định vị',invalid:'Vị trí không hợp lệ',unavailable:'Chưa lấy được vị trí'};
+      lines.push(labels[location?.status]||labels.unavailable);
+    }
+  }
+  if(settings.showCoordinates&&Number.isFinite(location?.coords?.latitude)&&Number.isFinite(location?.coords?.longitude))lines.push('GPS '+location.coords.latitude.toFixed(6)+', '+location.coords.longitude.toFixed(6));
+  return settings.layout==='compact'&&lines.length?[lines.join(' · ')]:lines;
 }
 function wrapCameraWatermarkText(ctx,text,maxWidth) {
   const lines=[];let line='';
@@ -3751,7 +3892,8 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
   const metadata=cameraPhotoMetadata.get(file)||{capturedAt:Date.now(),source:options.isCameraSource?'camera':'gallery',locationPromise:ensureRealtimeGpsCoordinates().catch(()=>cameraLocationError('unavailable'))};
   if(metadata.stampedFile)return metadata.stampedFile;
   if(metadata.stampPromise)return metadata.stampPromise;
-  const location=await metadata.locationPromise;
+  const appearance=metadata.appearance||cameraAppearanceSnapshot(),location=await metadata.locationPromise;
+  try{await document.fonts?.load((appearance.bold?'700':'400')+' 20px '+cameraStampFonts[appearance.font]);}catch(_){}
   return new Promise(resolve=>{
     const reader=new FileReader();reader.onerror=()=>resolve(file);
     reader.onload=event=>{
@@ -3760,12 +3902,7 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
         try {
           const canvas=document.createElement('canvas');canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
           const ctx=canvas.getContext('2d');if(!ctx){resolve(file);return;}ctx.drawImage(img,0,0);
-          const w=canvas.width,h=canvas.height,padding=Math.max(8,Math.round(w/45)),fontSize=Math.max(10,Math.round(w/56)),lineHeight=fontSize*1.35;
-          ctx.font='bold '+fontSize+'px sans-serif';ctx.fillStyle='#fff';ctx.textBaseline='bottom';ctx.textAlign='right';
-          ctx.shadowColor='rgba(0,0,0,.9)';ctx.shadowBlur=Math.max(3,Math.round(w/350));ctx.shadowOffsetX=Math.max(1,Math.round(w/600));ctx.shadowOffsetY=ctx.shadowOffsetX;
-          const lines=cameraWatermarkLines(location,metadata.capturedAt,metadata.source).flatMap(line=>wrapCameraWatermarkText(ctx,line,Math.max(20,w-padding*2)));
-          let y=h-padding;
-          for(let index=lines.length-1;index>=0;index--){ctx.fillText(lines[index],w-padding,y);y-=lineHeight;}
+          drawCameraStamp(ctx,cameraWatermarkLines(location,metadata.capturedAt,metadata.source,appearance),canvas.width,canvas.height,appearance);
           canvas.toBlob(blob=>{if(!blob){resolve(file);return;}const stamped=new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg',lastModified:metadata.capturedAt});metadata.stampedFile=stamped;cameraPhotoMetadata.set(stamped,metadata);resolve(stamped);},'image/jpeg',metadata.quality?.jpeg||.94);
         }catch(_){resolve(file);}
       };img.src=event.target.result;
@@ -3860,6 +3997,7 @@ function renderCameraSettings(){
   const note=document.getElementById('cameraLensNote');note.textContent=cameraHasUltra()?'0.5× dùng camera siêu rộng. Khi cần zoom số, ứng dụng sẽ hiển thị rõ dưới nút chọn góc.':'0.5× chỉ khả dụng khi thiết bị cho phép truy cập camera siêu rộng. 2× dùng zoom camera nếu có, hoặc zoom số.';
   const rotation=document.getElementById('cameraImageRotation');if(rotation)rotation.textContent='Hiệu chỉnh '+(cameraControlsState.manualRotation[customCameraFacingMode]||0)+'°';
   const quality=document.getElementById('cameraQualityBadge');if(quality)quality.textContent=cameraQuality().label;
+  renderCameraAppearanceControls();
 }
 function toggleCameraSettings(force){
   const panel=document.getElementById('cameraSettingsPanel');if(!panel)return;const open=typeof force==='boolean'?force:panel.hidden;cameraControlsState.settingsOpen=open;panel.hidden=!open;
@@ -3869,15 +4007,26 @@ function toggleCameraSettings(force){
 }
 function cameraControlsOpen(){cameraControlsState.deviceId='';cameraControlsState.zoom=1;cameraControlsState.digitalZoom=1;cameraControlsState.location=null;cameraControlsState.busy=false;cameraControlsState.settingsOpen=false;document.getElementById('cameraSettingsPanel').hidden=true;const plane=document.getElementById('cameraImagePlane');for(const selector of ['.camera-grid-overlay','.camera-target-crosshair']){const node=document.querySelector('#customCameraModal '+selector);if(node)plane.append(node);}renderCameraLensChoices();renderCameraSettings();clearInterval(cameraControlsState.clock);cameraControlsState.clock=setInterval(updateCameraLiveStamp,1000);updateCameraLiveStamp();}
 function cameraControlsClose(){clearInterval(cameraControlsState.clock);cameraControlsState.clock=null;cameraControlsState.settingsOpen=false;document.getElementById('cameraSettingsPanel').hidden=true;}
+let cameraStampMeasureCanvas;
 function updateCameraLiveStamp(location){
-  if(location!==undefined)cameraControlsState.location=location;const box=document.getElementById('cameraLiveStampLines');if(!box)return;
-  const lines=cameraWatermarkLines(cameraControlsState.location,Date.now(),'camera');if(!cameraControlsState.location)lines[2]='Đang xác định địa điểm…';box.replaceChildren();
-  lines.forEach((text,index)=>{const line=document.createElement('div');line.textContent=text;line.className=index===0?'camera-live-brand':index===1?'camera-live-time':'camera-live-address';box.append(line);});
+  if(location!==undefined)cameraControlsState.location=location;
+  const box=document.getElementById('cameraLiveStampLines'),plane=document.getElementById('cameraImagePlane'),status=document.getElementById('cameraLocationStatus');if(!box||!plane||!status)return;
+  const width=parseFloat(plane.style.width)||plane.clientWidth,height=parseFloat(plane.style.height)||plane.clientHeight;
+  if(!width||!height)return;
+  cameraStampMeasureCanvas||=document.createElement('canvas');const ctx=cameraStampMeasureCanvas.getContext('2d');if(!ctx)return;
+  const settings=cameraAppearance,lines=cameraWatermarkLines(cameraControlsState.location||{status:'pending'},Date.now(),'camera',settings),stamp=cameraStampLayout(ctx,lines,width,height,settings);
+  box.replaceChildren();stamp.lines.forEach(text=>{const line=document.createElement('div');line.textContent=text;box.append(line);});
+  box.style.font=stamp.font;box.style.lineHeight=stamp.lineHeight+'px';box.style.height=stamp.textHeight+'px';box.style.width=stamp.textWidth+'px';box.style.color=settings.color;box.style.textAlign=stamp.align;box.style.opacity=String(settings.opacity/100);
+  box.style.textShadow=settings.style==='shadow'?`${stamp.fontSize*.07}px ${stamp.fontSize*.07}px ${stamp.fontSize*.23}px rgba(0,0,0,.9)`:'none';
+  status.style.left=stamp.left+'px';status.style.top=stamp.y+'px';status.style.right='auto';status.style.bottom='auto';status.style.alignItems=stamp.align==='left'?'flex-start':stamp.align==='center'?'center':'flex-end';
+  box.style.background=settings.style==='panel'&&lines.length?'rgba(0,0,0,.58)':'transparent';box.style.boxShadow=settings.style==='panel'&&lines.length?'0 0 0 '+stamp.boxPadding+'px rgba(0,0,0,.58)':'none';box.style.borderRadius=stamp.boxPadding*.7+'px';
+  const retry=status.querySelector('.camera-location-retry');if(retry){retry.dataset.stampTop=String(settings.position.startsWith('top'));retry.style.left=stamp.align==='left'?'0':stamp.align==='center'?'calc(50% - 15px)':'auto';retry.style.right=stamp.align==='right'?'0':'auto';}
+  applyCameraDisplayPreferences();
 }
 function cameraCanvasFromSource(source,frame,quality){
   const width=source.videoWidth||source.width,height=source.videoHeight||source.height,swapped=Math.abs(frame.rotation)%180===90,orientedWidth=swapped?height:width,orientedHeight=swapped?width:height;
   const scale=quality.maxSide?Math.min(1,quality.maxSide/Math.max(orientedWidth,orientedHeight)):1,canvas=document.createElement('canvas');canvas.width=Math.round(orientedWidth*scale);canvas.height=Math.round(orientedHeight*scale);
-  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.translate(canvas.width/2,canvas.height/2);ctx.rotate(frame.rotation*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);return canvas;
+  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate(frame.rotation*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);return canvas;
 }
 async function cameraStillCanvas(track,frame,quality,fallback){
   if(typeof window.ImageCapture!=='function')return fallback;
@@ -3891,11 +4040,13 @@ async function cameraStillCanvas(track,frame,quality,fallback){
   try{return await Promise.race([take,new Promise(resolve=>{timer=setTimeout(()=>resolve(fallback),2500);})]);}finally{clearTimeout(timer);}
 }
 const cameraSettingsPanel=document.getElementById('cameraSettingsPanel');
-cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close'))toggleCameraSettings(false);if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);});
+cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close'))toggleCameraSettings(false);if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
+cameraSettingsPanel?.addEventListener('input',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
+cameraSettingsPanel?.addEventListener('change',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
 document.getElementById('customCameraModal')?.addEventListener('keydown',event=>{
   if(!cameraControlsState.settingsOpen)return;
   if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();toggleCameraSettings(false);}
-  if(event.key==='Tab'){const buttons=[...cameraSettingsPanel.querySelectorAll('button:not(:disabled)')].filter(button=>button.getClientRects().length);if(event.shiftKey&&document.activeElement===buttons[0]){event.preventDefault();buttons.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===buttons.at(-1)){event.preventDefault();buttons[0].focus();}}
+  if(event.key==='Tab'){const buttons=[...cameraSettingsPanel.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),summary,a[href]')].filter(button=>button.getClientRects().length);if(event.shiftKey&&document.activeElement===buttons[0]){event.preventDefault();buttons.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===buttons.at(-1)){event.preventDefault();buttons[0].focus();}}
 },{capture:true});
 
 let customCameraStream=null,customCameraPhotos=[],customCameraFacingMode='environment',customCameraTorchActive=false;
@@ -4003,7 +4154,7 @@ function cameraFrameOrientation(video,usePhysical=true) {
   }
   const manualRotation=cameraControlsState.manualRotation[customCameraFacingMode]||0;rotation=cameraAngleDifference(rotation+manualRotation,0);
   const swapped=Math.abs(rotation)%180===90;
-  return {orientation:pose.orientation,angle:pose.angle,rotation,manualRotation,digitalZoom:cameraControlsState.digitalZoom,width:swapped?video.videoHeight:video.videoWidth,height:swapped?video.videoWidth:video.videoHeight};
+  return {orientation:pose.orientation,angle:pose.angle,rotation,manualRotation,mirror:customCameraFacingMode==='user'&&cameraAppearance.mirrorFront,digitalZoom:cameraControlsState.digitalZoom,width:swapped?video.videoHeight:video.videoWidth,height:swapped?video.videoWidth:video.videoHeight};
 }
 function syncCameraFramePreview(video) {
   if(!video)return;
@@ -4012,7 +4163,10 @@ function syncCameraFramePreview(video) {
   const fit=Math.min(container.clientWidth/frame.width,container.clientHeight/frame.height),width=frame.width*fit,height=frame.height*fit,swapped=Math.abs(frame.rotation)%180===90;
   plane.style.width=width+'px';plane.style.height=height+'px';plane.style.setProperty('--camera-stamp-size',Math.max(10,Math.min(18,width/56))+'px');
   video.style.position='absolute';video.style.left='50%';video.style.top='50%';video.style.width=(swapped?height:width)+'px';video.style.height=(swapped?width:height)+'px';
-  video.style.transform='translate(-50%,-50%) rotate('+frame.rotation+'deg) scale('+frame.digitalZoom+')';
+  // Mirror in the displayed image's horizontal axis, including quarter-turn rotations.
+  video.dataset.mirrored=String(frame.mirror);
+  video.style.transform='translate(-50%,-50%) scaleX('+(frame.mirror?-1:1)+') rotate('+frame.rotation+'deg) scale('+frame.digitalZoom+')';
+  updateCameraLiveStamp();
   renderCameraSettings();
 }
 function syncCameraViewport() {
@@ -4075,7 +4229,7 @@ async function triggerCustomCameraCapture() {
   const session=cameraUiState.session,frame=cameraFrameOrientation(video),photoMetadata=createCameraPhotoMetadata(),quality=cameraQuality();
   photoMetadata.frame={...frame,nativeWidth:video.videoWidth,nativeHeight:video.videoHeight};photoMetadata.quality=quality;
   cameraUiState.captureBusy=true;syncCameraViewport();
-  const flash=document.getElementById('cameraFlashEffect');if(flash){flash.classList.add('flash-active');setTimeout(()=>flash.classList.remove('flash-active'),90);}
+  const flash=document.getElementById('cameraFlashEffect');if(flash&&cameraAppearance.shutterFlash){flash.classList.add('flash-active');setTimeout(()=>flash.classList.remove('flash-active'),90);}
   try {
     const fallback=cameraCanvasFromSource(video,frame,quality),canvas=await cameraStillCanvas(customCameraStream.getVideoTracks()[0],frame,quality,fallback);
     if(session!==cameraUiState.session)return;photoMetadata.frame.width=canvas.width;photoMetadata.frame.height=canvas.height;
@@ -4099,6 +4253,7 @@ window.visualViewport?.addEventListener('resize',syncCameraViewport);
 screen.orientation?.addEventListener?.('change',syncCameraViewport);
 document.getElementById('customCameraVideo')?.addEventListener('resize',syncCameraViewport);
 document.getElementById('customCameraVideo')?.addEventListener('loadedmetadata',()=>{resetCameraFrameBaseline();syncCameraViewport();});
+document.fonts?.ready.then(()=>{updateCameraLiveStamp();renderCameraStampSample();});
 
 </script>
 </body>
