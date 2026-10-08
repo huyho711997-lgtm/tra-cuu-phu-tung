@@ -441,7 +441,7 @@
 .custom-camera-modal .camera-overlay-header{padding-top:calc(12px + var(--camera-safe-top,env(safe-area-inset-top,0px)))}
 .custom-camera-modal .camera-footer{padding-bottom:calc(12px + var(--camera-safe-bottom,env(safe-area-inset-bottom,0px)))}
 .custom-camera-modal .camera-stream-container { flex:1 1 0; min-width:0; min-height:0; background:#05070a; }
-.custom-camera-modal #customCameraVideo { display:block; width:100%; height:100%; object-fit:contain; transition:none !important; }
+.custom-camera-modal #customCameraVideo { display:block; width:100%; height:100%; max-width:none !important; max-height:none !important; object-fit:contain; transform-origin:center center; transition:none !important; }
 .custom-camera-modal .camera-overlay-header { position:absolute; inset:0 0 auto; display:flex; align-items:center; gap:10px; width:auto; padding:calc(12px + var(--camera-safe-top,env(safe-area-inset-top,0px))) 14px 18px; background:linear-gradient(rgba(5,7,10,.78),rgba(5,7,10,.45) 65%,transparent); z-index:4; }
 .camera-heading { flex:1; min-width:0; }
 .camera-heading > span { display:block; margin-bottom:4px; color:var(--cam-gold); font-size:9px; line-height:1.4; letter-spacing:.1em; font-weight:750; }
@@ -3192,7 +3192,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v9-auto-oriented-ratios" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v10-preview-css-crop" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
