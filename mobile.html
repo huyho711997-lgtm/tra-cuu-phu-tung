@@ -842,6 +842,25 @@
 @media(prefers-reduced-motion:reduce){.cloud-date-modal *{transition:none!important}}
 
 </style>
+<style>
+/* SVG settings controls, explicit output ratios, and photo library actions. */
+.camera-settings-v2 svg{display:block;flex:none;width:18px;height:18px}
+.camera-settings-v2 header button{display:grid;place-items:center}.camera-settings-v2 header button svg{width:20px;height:20px}
+.custom-camera-modal .camera-settings-tabs button{display:flex;align-items:center;justify-content:center;gap:5px}.camera-settings-tabs svg{width:15px;height:15px}
+.camera-settings-v2 .camera-settings-group summary{display:flex;align-items:center;justify-content:space-between;gap:10px;list-style:none}.camera-settings-group summary::-webkit-details-marker{display:none}.camera-settings-group summary::marker{content:''}.camera-settings-group[open] summary svg{transform:rotate(180deg)}
+.camera-settings-v2 .camera-radio-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#71869d}.camera-quality-options .camera-radio-dot{display:none}.camera-quality-options [aria-checked=true] .camera-radio-icon{color:#9ed2c2}.camera-quality-options [aria-checked=true] .camera-radio-dot{display:block}
+.custom-camera-modal .camera-settings-v2 select{appearance:none;-webkit-appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ed2c2' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m8 10 4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px}
+.camera-settings-v2 :is(.camera-rotation-controls button,.camera-settings-reset,[data-camera-native]){display:inline-flex;align-items:center;justify-content:center;gap:7px}.camera-settings-v2 .camera-custom-color{position:relative;display:grid;place-items:center;background:#273e3d}.camera-custom-color svg{pointer-events:none;color:#dcf1eb}.camera-settings-v2 .camera-custom-color input[type=color]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.camera-ratio-section{margin-bottom:23px}.camera-ratio-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.custom-camera-modal .camera-ratio-options button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:78px;padding:10px 3px;border:1px solid var(--settings-line);border-radius:12px;background:#18232c;color:#9fb0bb}.camera-ratio-options svg{width:23px;height:23px}.camera-ratio-options strong{font-size:12px;color:#e0e9ed}.camera-ratio-options small{font-size:9px}.custom-camera-modal .camera-ratio-options button[aria-checked=true]{border-color:#9ed2c2;background:#1c3230;color:#9ed2c2}.camera-settings-v2 button:focus-visible{outline:2px solid #9ed2c2;outline-offset:2px}
+.cloud-gallery-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.cloud-gallery-heading h2{margin:0;font-size:16px;font-weight:800}.cloud-gallery-actions{display:flex;align-items:center;gap:9px}.cloud-gallery-actions>span{font-size:11px;color:var(--cl-muted)}.cloud-gallery-actions .cloud-button{min-height:40px;padding:8px 11px;white-space:nowrap}
+.personal-cloud .cloud-selection-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:13px;margin:0 0 16px;border:1px solid var(--cl-line);border-radius:14px;background:var(--cl-bg)}.cloud-selection-bar[hidden]{display:none!important}.cloud-selection-bar strong{font-size:12px;color:var(--cl-text)}.cloud-selection-bar>div{display:flex;flex-wrap:wrap;gap:7px}.cloud-selection-bar .cloud-button{min-height:40px;padding:8px 11px;font-size:11px}.personal-cloud .cloud-delete-selected{color:#b42336;border-color:#f4c4cc;background:#fff1f3}.personal-cloud .cloud-delete-selected:disabled{opacity:.45;cursor:default}
+.cloud-photo-card{position:relative}.personal-cloud .cloud-photo-delete,.personal-cloud .cloud-photo-select{position:absolute;top:5px;z-index:2;width:36px;height:36px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.55);border-radius:10px;background:rgba(9,20,34,.76);color:white;cursor:pointer}.cloud-photo-delete{right:5px}.cloud-photo-select{left:5px}.cloud-photo-delete svg,.cloud-photo-select svg{width:18px;height:18px}.cloud-photo-delete[hidden],.cloud-photo-select[hidden]{display:none!important}.cloud-photo-delete:disabled{opacity:.45}.cloud-photo-select[aria-checked=false] svg{opacity:0}.personal-cloud .cloud-photo-select[aria-checked=true]{background:#142a5e;border-color:#86d1c5;color:#bdece3}.personal-cloud .cloud-photo-card.is-selected{outline:3px solid #4faea3;outline-offset:-3px}.personal-cloud .cloud-photo-card.is-selected .cloud-photo-image{opacity:.78}.cloud-photo-card.is-selected .cloud-photo-select{opacity:1}
+.cloud-delete-overlay{position:fixed;inset:0;z-index:100100;display:grid;place-items:center;padding:22px;background:rgba(4,12,24,.72);font-family:inherit}.cloud-delete-dialog{width:min(390px,100%);padding:25px;border:1px solid #e1e7ef;border-radius:24px;background:#fff;color:#142a5e;box-shadow:0 20px 80px rgba(0,0,0,.3)}.cloud-delete-symbol{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:#fff1f3;color:#bc3148}.cloud-delete-symbol svg{width:25px;height:25px}.cloud-delete-dialog h2{font-size:20px;font-weight:800;margin:17px 0 10px}.cloud-delete-dialog p{font-size:13px;line-height:1.7;margin:0;color:#66758a}.cloud-delete-dialog .cloud-delete-error{color:#b42336;margin-top:14px}.cloud-delete-dialog footer{display:flex;gap:10px;margin-top:24px}.cloud-delete-dialog button{flex:1;min-height:46px;border:1px solid #dce4ee;border-radius:12px;padding:10px;background:#f2f5f9;color:#142a5e;font-size:13px;font-weight:750;cursor:pointer}.cloud-delete-dialog [data-delete-confirm]{background:#b42336;border-color:#b42336;color:white}.cloud-delete-dialog button:disabled{opacity:.55;cursor:wait}.cloud-delete-dialog button:focus-visible{outline:3px solid #4faea3;outline-offset:3px}.dark .cloud-delete-dialog{background:#142237;border-color:#2b3c55;color:#e3edf9}.dark .cloud-delete-dialog p{color:#aebed1}.dark .cloud-delete-dialog .cloud-delete-error{color:#ffacb9}
+.viewer-tools:has([data-viewer-action=delete]){grid-template-columns:repeat(6,minmax(0,1fr))}.viewer-tool[data-viewer-action=delete]{color:#ffacb9}
+@media(max-width:360px){.camera-settings-v2 .camera-settings-tabs{margin-left:16px;margin-right:16px}.camera-settings-v2 .camera-settings-body{padding-left:16px;padding-right:16px}.camera-settings-tabs svg{width:13px;height:13px}.custom-camera-modal .camera-settings-tabs button{font-size:11px;gap:3px}.cloud-gallery-actions{gap:5px}.cloud-gallery-actions .cloud-button{font-size:10px;padding:7px}.cloud-photo-delete,.cloud-photo-select{width:34px!important;height:34px!important}}
+.cloud-delete-dialog{max-height:calc(100dvh - 44px);overflow-y:auto}.cloud-gallery-actions>[data-cloud-total]{padding:4px 9px;border-radius:7px;background:#eaf0f7;color:#627494;font-size:10px;font-weight:700}.dark .cloud-gallery-actions>[data-cloud-total]{background:#1c2c43;color:#a9bdd9}
+
+</style>
 </head>
 <body class="bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
     <script>
@@ -2904,7 +2923,22 @@ window.searchData = async function() {
     
 const mobileBaseCloud={"cloudName":"ug4spdjp","preset":"giam_dinh_xe_unsigned","folder":"giam_dinh_xe"};function mobileExistingCloudinary(){return {cloudName:localStorage.getItem('claimvision-cloudinary-cloud')||mobileBaseCloud.cloudName,preset:localStorage.getItem('claimvision-cloudinary-preset')||mobileBaseCloud.preset,folder:localStorage.getItem('claimvision-cloudinary-folder')||mobileBaseCloud.folder};}
 window.mobileCloudEmail=()=>currentUserProfile?.email||'';
-TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,capture:openMobileCamera});
+// Set true only after deploying supabase/functions/delete-personal-photos/index.ts.
+const TASCO_DELETE_CLOUD_ASSETS = false;
+async function deletePersonalCloudPhotos(ids,owner){
+  const result={deleted:[],failed:[]};
+  for(let start=0;start<ids.length;start+=10){
+    const batch=ids.slice(start,start+10);
+    try{
+      const user=await supabase.auth.getUser();if(user.error||user.data?.user?.id!==owner)throw new Error('Tài khoản đã thay đổi.');
+      const response=await supabase.functions.invoke('delete-personal-photos',{body:{ids:batch}});
+      if(response.error||!Array.isArray(response.data?.deleted))throw new Error('Chưa kết nối được dịch vụ xoá ảnh Cloud. Vui lòng thử lại hoặc liên hệ quản trị viên.');
+      result.deleted.push(...response.data.deleted);result.failed.push(...(response.data.failed||[]));
+    }catch(error){for(const id of ids.slice(start))result.failed.push({id,message:error.message});break;}
+  }
+  return result;
+}
+TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
 </script>
 <!-- BOTTOM SHEET FILTER MODAL -->
     <div id="modalFilterSelection" class="fixed inset-0 hidden flex-col justify-end" style="display: none; z-index: 9999;">
@@ -3152,7 +3186,7 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v2-serial-jpeg-focus-premium" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v3-svg-ratios-delete" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
@@ -3187,32 +3221,33 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
       </div>
     </div>
     <section id="cameraSettingsPanel" class="camera-settings-panel camera-settings-v2" role="dialog" aria-modal="true" aria-labelledby="cameraSettingsTitle" hidden>
-      <header><div><span>THIẾT LẬP CÁ NHÂN</span><h2 id="cameraSettingsTitle">Camera &amp; dấu ảnh</h2></div><button type="button" data-camera-settings-close aria-label="Đóng cài đặt">×</button></header>
+      <header><div><span>THIẾT LẬP CÁ NHÂN</span><h2 id="cameraSettingsTitle">Camera &amp; dấu ảnh</h2></div><button type="button" data-camera-settings-close aria-label="Đóng cài đặt"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header>
       <nav class="camera-settings-tabs" role="tablist" aria-label="Nhóm cài đặt">
-        <button type="button" id="cameraTabCapture" role="tab" data-camera-settings-tab="capture" aria-selected="true" aria-controls="cameraSettingsCapture">Camera</button>
-        <button type="button" id="cameraTabStamp" role="tab" data-camera-settings-tab="stamp" aria-selected="false" aria-controls="cameraSettingsStamp" tabindex="-1">Nội dung</button>
-        <button type="button" id="cameraTabStyle" role="tab" data-camera-settings-tab="style" aria-selected="false" aria-controls="cameraSettingsStyle" tabindex="-1">Kiểu chữ</button>
+        <button type="button" id="cameraTabCapture" role="tab" data-camera-settings-tab="capture" aria-selected="true" aria-controls="cameraSettingsCapture"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/></svg><span>Camera</span></button>
+        <button type="button" id="cameraTabStamp" role="tab" data-camera-settings-tab="stamp" aria-selected="false" aria-controls="cameraSettingsStamp" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h4"/></svg><span>Nội dung</span></button>
+        <button type="button" id="cameraTabStyle" role="tab" data-camera-settings-tab="style" aria-selected="false" aria-controls="cameraSettingsStyle" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19 10 5l6 14M6 15h8M16 9h6m-3 0v10"/></svg><span>Kiểu chữ</span></button>
       </nav>
       <div class="camera-settings-body">
         <section id="cameraSettingsCapture" role="tabpanel" aria-labelledby="cameraTabCapture" data-camera-settings-page="capture">
+          <div class="camera-ratio-section"><div class="camera-section-heading"><h3>Tỷ lệ ảnh</h3><span id="cameraRatioBadge">Gốc</span></div><div class="camera-ratio-options" role="radiogroup" aria-label="Tỷ lệ ảnh"><button type="button" role="radio" data-camera-ratio="native" aria-checked="true" tabindex="0"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.0" y="4.5" width="20" height="15" rx="2"/></svg><strong>Gốc</strong><small>Theo camera</small></button><button type="button" role="radio" data-camera-ratio="3:4" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.0" y="4.0" width="12" height="16" rx="2"/></svg><strong>3:4</strong><small>Dọc</small></button><button type="button" role="radio" data-camera-ratio="4:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="6.0" width="16" height="12" rx="2"/></svg><strong>4:3</strong><small>Ngang</small></button><button type="button" role="radio" data-camera-ratio="1:1" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.0" y="5.0" width="14" height="14" rx="2"/></svg><strong>1:1</strong><small>Vuông</small></button><button type="button" role="radio" data-camera-ratio="9:16" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.5" y="4.0" width="9" height="16" rx="2"/></svg><strong>9:16</strong><small>Dọc rộng</small></button><button type="button" role="radio" data-camera-ratio="16:9" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="7.5" width="16" height="9" rx="2"/></svg><strong>16:9</strong><small>Ngang rộng</small></button><button type="button" role="radio" data-camera-ratio="2:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.0" y="4.5" width="10" height="15" rx="2"/></svg><strong>2:3</strong><small>Dọc</small></button><button type="button" role="radio" data-camera-ratio="3:2" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="7.0" width="15" height="10" rx="2"/></svg><strong>3:2</strong><small>Ngang</small></button></div><p class="camera-settings-note">Tỷ lệ là chiều rộng : chiều cao. Khung xem và ảnh lưu cùng tỷ lệ; ảnh được cắt giữa, không kéo giãn.</p></div>
           <div class="camera-section-heading"><h3>Chất lượng ảnh</h3><span id="cameraQualityBadge">Cân bằng</span></div>
           <div class="camera-quality-options" role="radiogroup" aria-label="Chất lượng ảnh">
-            <button type="button" role="radio" data-camera-quality="economy" aria-checked="false"><span>Tiết kiệm</span><small>1280 px · nhẹ máy</small><i></i></button>
-            <button type="button" role="radio" data-camera-quality="high" aria-checked="true"><span>Cân bằng <b>ĐỀ XUẤT</b></span><small>1920 px · rõ nét, vừa đủ</small><i></i></button>
-            <button type="button" role="radio" data-camera-quality="maximum" aria-checked="false"><span>Chi tiết</span><small>2560 px · ảnh lớn hơn</small><i></i></button>
+            <button type="button" role="radio" data-camera-quality="economy" aria-checked="false"><span>Tiết kiệm</span><small>1280 px · nhẹ máy</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" role="radio" data-camera-quality="high" aria-checked="true"><span>Cân bằng <b>ĐỀ XUẤT</b></span><small>1920 px · rõ nét, vừa đủ</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" role="radio" data-camera-quality="maximum" aria-checked="false"><span>Chi tiết</span><small>2560 px · ảnh lớn hơn</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
           </div>
           <p id="cameraActualResolution" class="camera-settings-note">Camera đang khởi động…</p>
           <label class="camera-setting-field camera-field-spaced"><span>Camera đang dùng</span><select id="cameraDeviceSelect" aria-label="Camera đang dùng"></select></label>
           <p id="cameraLensNote" class="camera-settings-note"></p>
-          <div class="camera-focus-card"><div><strong>Lấy nét theo điểm</strong><p id="cameraFocusSupport">Chạm vào chủ thể trong khung hình.</p></div><button type="button" data-camera-native>Mở camera hệ thống</button></div>
+          <div class="camera-focus-card"><div><strong>Lấy nét theo điểm</strong><p id="cameraFocusSupport">Chạm vào chủ thể trong khung hình.</p></div><button type="button" data-camera-native><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/></svg><span>Mở camera hệ thống</span></button></div>
           <div class="camera-toggle-list">
             <label class="camera-setting-check"><span>Soi gương camera trước<small>Ảnh lưu cùng chiều bản xem</small></span><input type="checkbox" data-camera-pref="mirrorFront" checked></label>
             <label class="camera-setting-check"><span>Lưới bố cục<small>Căn thẳng và chia khung hình</small></span><input type="checkbox" data-camera-pref="showGrid" checked></label>
           </div>
-          <details class="camera-settings-group"><summary>Tùy chọn khác</summary><div class="camera-settings-fields">
+          <details class="camera-settings-group"><summary><span>Tùy chọn khác</span><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></summary><div class="camera-settings-fields">
             <label class="camera-setting-check"><span>Dấu căn giữa</span><input type="checkbox" data-camera-pref="showCrosshair" checked></label>
             <label class="camera-setting-check"><span>Nháy sáng khi chụp</span><input type="checkbox" data-camera-pref="shutterFlash" checked></label>
-            <div class="camera-setting-field"><span>Hiệu chỉnh hướng ảnh</span><div class="camera-rotation-controls"><button type="button" data-camera-image-rotate>Xoay 90°</button><button type="button" data-camera-image-reset>Đặt lại</button><span id="cameraImageRotation">0°</span></div></div>
+            <div class="camera-setting-field"><span>Hiệu chỉnh hướng ảnh</span><div class="camera-rotation-controls"><button type="button" data-camera-image-rotate><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/></svg><span>Xoay 90°</span></button><button type="button" data-camera-image-reset><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5M12 8v4l3 2"/></svg><span>Đặt lại</span></button><span id="cameraImageRotation">0°</span></div></div>
           </div></details>
         </section>
         <section id="cameraSettingsStamp" role="tabpanel" aria-labelledby="cameraTabStamp" data-camera-settings-page="stamp" hidden>
@@ -3236,15 +3271,15 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
           <div class="camera-style-presets" role="group" aria-label="Kiểu chữ nhanh"><button type="button" data-camera-preset="standard" aria-pressed="true">Tiêu chuẩn</button><button type="button" data-camera-preset="contrast" aria-pressed="false">Nền tối</button><button type="button" data-camera-preset="minimal" aria-pressed="false">Tối giản</button></div>
           <label class="camera-setting-field camera-field-spaced"><span>Cỡ chữ <output data-camera-output="textSize">100%</output></span><input type="range" aria-label="Cỡ chữ" data-camera-pref="textSize" min="0.7" max="1.8" step="0.05" value="1"></label>
           <label class="camera-setting-field camera-field-spaced"><span>Font chữ</span><select aria-label="Font chữ" data-camera-pref="font"><option value="sans">Arial</option><option value="jakarta">Plus Jakarta Sans</option><option value="serif">Georgia</option><option value="mono">Courier New</option><option value="tahoma">Tahoma</option></select></label>
-          <div class="camera-color-row"><span>Màu chữ</span><div class="camera-color-options"><button type="button" data-camera-color="#ffffff" style="--swatch:#ffffff" aria-label="Chữ trắng"></button><button type="button" data-camera-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Chữ xanh ngọc"></button><button type="button" data-camera-color="#e8c582" style="--swatch:#e8c582" aria-label="Chữ vàng"></button><button type="button" data-camera-color="#ff927a" style="--swatch:#ff927a" aria-label="Chữ cam"></button><label class="camera-custom-color" title="Chọn màu khác"><input type="color" data-camera-pref="color" value="#ffffff" aria-label="Màu chữ tùy chọn"></label></div></div>
-          <details class="camera-settings-group"><summary>Tinh chỉnh kiểu chữ</summary><div class="camera-settings-fields">
+          <div class="camera-color-row"><span>Màu chữ</span><div class="camera-color-options"><button type="button" data-camera-color="#ffffff" style="--swatch:#ffffff" aria-label="Chữ trắng"></button><button type="button" data-camera-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Chữ xanh ngọc"></button><button type="button" data-camera-color="#e8c582" style="--swatch:#e8c582" aria-label="Chữ vàng"></button><button type="button" data-camera-color="#ff927a" style="--swatch:#ff927a" aria-label="Chữ cam"></button><label class="camera-custom-color" title="Chọn màu khác"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M16 3l5 5-3 3-1-1-9 9H4v-4l9-9-1-1Z"/></svg><input type="color" data-camera-pref="color" value="#ffffff" aria-label="Màu chữ tùy chọn"></label></div></div>
+          <details class="camera-settings-group"><summary><span>Tinh chỉnh kiểu chữ</span><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></summary><div class="camera-settings-fields">
             <label class="camera-setting-check"><span>Chữ đậm</span><input type="checkbox" data-camera-pref="bold" checked></label>
             <label class="camera-setting-field"><span>Nền chữ</span><select aria-label="Kiểu nền chữ" data-camera-pref="style"><option value="shadow">Bóng nhẹ</option><option value="panel">Nền tối</option><option value="plain">Không nền</option></select></label>
             <label class="camera-setting-field"><span>Độ rõ <output data-camera-output="opacity">100%</output></span><input type="range" aria-label="Độ rõ của chữ" data-camera-pref="opacity" min="50" max="100" step="5" value="100"></label>
             <label class="camera-setting-field"><span>Giãn dòng <output data-camera-output="lineHeight">1.35×</output></span><input type="range" aria-label="Giãn dòng" data-camera-pref="lineHeight" min="1.1" max="1.8" step="0.05" value="1.35"></label>
             <label class="camera-setting-field"><span>Vùng chữ <output data-camera-output="textWidth">90%</output></span><input type="range" aria-label="Chiều rộng vùng chữ" data-camera-pref="textWidth" min="50" max="94" step="2" value="90"></label>
             <label class="camera-setting-field"><span>Cách mép ảnh <output data-camera-output="margin">2.5%</output></span><input type="range" aria-label="Khoảng cách từ mép ảnh" data-camera-pref="margin" min="1" max="8" step="0.5" value="2.5"></label>
-            <button type="button" class="camera-settings-reset" data-camera-preferences-reset>Khôi phục cài đặt chữ và hiển thị</button>
+            <button type="button" class="camera-settings-reset" data-camera-preferences-reset><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5M12 8v4l3 2"/></svg><span>Khôi phục cài đặt chữ và hiển thị</span></button>
           </div></details>
         </section>
       </div><footer><span>Tự lưu trên thiết bị</span><button type="button" data-camera-settings-close>Xong</button></footer>
@@ -3259,7 +3294,7 @@ window.TascoPhotoViewer=(()=>{
   let active=null;
   const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const glyph=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({
-    close:'<path d="m6 6 12 12M18 6 6 18"/>',left:'<path d="m14 6-6 6 6 6"/>',right:'<path d="m10 6 6 6-6 6"/>',minus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m1 5 6 6"/>',plus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m-4-4v8m5 1 6 6"/>',rotate:'<path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/><path d="M9 11h6v6H9z"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1"/><path d="m3 16 5-5 4 4 3-3 6 6"/>'
+    trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',left:'<path d="m14 6-6 6 6 6"/>',right:'<path d="m10 6 6 6-6 6"/>',minus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m1 5 6 6"/>',plus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m-4-4v8m5 1 6 6"/>',rotate:'<path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/><path d="M9 11h6v6H9z"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1"/><path d="m3 16 5-5 4 4 3-3 6 6"/>'
   }[name]||'')+'</svg>';
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
   const date=value=>new Date(value).toLocaleString('vi-VN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
@@ -3273,7 +3308,7 @@ window.TascoPhotoViewer=(()=>{
     overlay.innerHTML=`<header class="viewer-header"><button type="button" class="viewer-icon-button" data-viewer-action="close" aria-label="Đóng trình xem ảnh">${glyph('close')}</button><div class="viewer-heading"><strong data-viewer-title></strong><time data-viewer-date></time></div><span class="viewer-counter" data-viewer-counter aria-live="polite"></span></header>
       <div class="viewer-stage" tabindex="0" aria-label="Ảnh. Vuốt trái hoặc phải để chuyển ảnh, chụm hai ngón hoặc chạm hai lần để phóng to."><img class="viewer-image" draggable="false" alt=""><div class="viewer-loading" role="status"><span></span>Đang tải ảnh…</div><div class="viewer-error" hidden>${glyph('image')}<p>Chưa tải được ảnh. Kiểm tra kết nối rồi thử lại.</p><button type="button" data-viewer-action="reload">Tải lại ảnh</button></div><button type="button" class="viewer-nav viewer-prev" data-viewer-action="previous" aria-label="Ảnh trước">${glyph('left')}</button><button type="button" class="viewer-nav viewer-next" data-viewer-action="next" aria-label="Ảnh tiếp theo">${glyph('right')}</button><span class="viewer-gesture-hint">Vuốt chuyển ảnh · Chạm hai lần để zoom</span><button type="button" class="viewer-fit" data-viewer-action="fit" aria-label="Đưa ảnh về kích thước vừa màn hình">100%</button></div>
       <div class="viewer-filmstrip" aria-label="Ảnh trong thư viện"></div>
-      <nav class="viewer-tools" aria-label="Công cụ xem ảnh">${tool('zoom-out','minus','Thu nhỏ')}${tool('zoom-in','plus','Phóng to')}${tool('rotate','rotate','Xoay')}${tool('info','info','Thông tin')}${tool('download','download','Tải ảnh')}</nav>
+      <nav class="viewer-tools" aria-label="Công cụ xem ảnh">${tool('zoom-out','minus','Thu nhỏ')}${tool('zoom-in','plus','Phóng to')}${tool('rotate','rotate','Xoay')}${tool('info','info','Thông tin')}${tool('download','download','Tải ảnh')}${options.remove?tool('delete','trash','Xoá ảnh'):''}</nav>
       <div class="viewer-info-backdrop" hidden></div><aside class="viewer-info" hidden aria-label="Thông tin ảnh"><header><div><span>CHI TIẾT ẢNH</span><h2>Thông tin ảnh</h2></div><button type="button" class="viewer-icon-button" data-viewer-action="close-info" aria-label="Đóng thông tin ảnh">${glyph('close')}</button></header><div class="viewer-info-content"></div><p class="viewer-rotation-note">Xoay áp dụng khi xem ảnh. Tải ảnh để lưu bản đã xoay vào thiết bị.</p></aside><div class="viewer-message" role="status" aria-live="polite" hidden></div>`;
     const stage=overlay.querySelector('.viewer-stage'),image=overlay.querySelector('.viewer-image'),film=overlay.querySelector('.viewer-filmstrip'),info=overlay.querySelector('.viewer-info'),backdrop=overlay.querySelector('.viewer-info-backdrop'),controller=new AbortController(),signal=controller.signal;
     const focus=document.activeElement,scrollX=window.scrollX,scrollY=window.scrollY;
@@ -3407,12 +3442,12 @@ window.TascoPhotoViewer=(()=>{
       const thumb=event.target.closest('[data-viewer-index]');if(thumb){show(Number(thumb.dataset.viewerIndex));return;}
       const button=event.target.closest('[data-viewer-action]');if(!button||button.disabled)return;
       const action=button.dataset.viewerAction;
-      if(action==='close')close();if(action==='previous')move(-1);if(action==='next')move(1);if(action==='zoom-out')zoomAt(zoom/1.5);if(action==='zoom-in')zoomAt(zoom*1.5);if(action==='fit')reset();if(action==='rotate')rotate();if(action==='info')setInfo(info.hidden);if(action==='close-info')setInfo(false);if(action==='download')download();if(action==='reload')show(index);if(action==='load-more')additional();
+      if(action==='close')close();if(action==='previous')move(-1);if(action==='next')move(1);if(action==='zoom-out')zoomAt(zoom/1.5);if(action==='zoom-in')zoomAt(zoom*1.5);if(action==='fit')reset();if(action==='rotate')rotate();if(action==='info')setInfo(info.hidden);if(action==='close-info')setInfo(false);if(action==='download')download();if(action==='delete')options.remove?.(current().id);if(action==='reload')show(index);if(action==='load-more')additional();
     },{signal});
     overlay.addEventListener('error',event=>{const node=event.target;if(node.matches?.('.viewer-film-thumb img')&&node.dataset.original&&!node.dataset.fallback){node.dataset.fallback='true';node.src=node.dataset.original;}},{capture:true,signal});
     backdrop.addEventListener('click',()=>setInfo(false),{signal});
     document.addEventListener('keydown',event=>{
-      if(closed)return;
+      if(closed||document.querySelector('.cloud-delete-overlay'))return;
       if(event.key==='Tab'){
         const scope=info.hidden?overlay:info,buttons=[...scope.querySelectorAll('button,[tabindex="0"]')].filter(node=>!node.disabled&&node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden');if(!buttons.length)return;
         const first=buttons[0],last=buttons[buttons.length-1];if(event.shiftKey&&(document.activeElement===first||!scope.contains(document.activeElement))){event.preventDefault();last.focus();}else if(!event.shiftKey&&(document.activeElement===last||!scope.contains(document.activeElement))){event.preventDefault();first.focus();}return;
@@ -3433,7 +3468,7 @@ window.TascoPhotoViewer=(()=>{
 window.TascoDatePicker=(()=>{
   let active=null;
   const pad=value=>String(value).padStart(2,'0'),key=date=>date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate()),parse=value=>new Date(value+'T12:00:00');
-  const icon=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({close:'<path d="m6 6 12 12M18 6 6 18"/>',left:'<path d="m14 6-6 6 6 6"/>',right:'<path d="m10 6 6 6-6 6"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-11 4h.01m4 0h.01"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'}[name]||'')+'</svg>';
+  const icon=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',left:'<path d="m14 6-6 6 6 6"/>',right:'<path d="m10 6 6 6-6 6"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-11 4h.01m4 0h.01"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'}[name]||'')+'</svg>';
   function label(value){if(!value.date)return 'Tất cả ngày';const [y,m,d]=value.date.split('-');return d+'/'+m+'/'+y;}
   function open(options){
     active?.close();const today=new Date(),initial=options.value||{};let selected=initial.date||'',month=selected?parse(selected):new Date(today.getFullYear(),today.getMonth(),1),view='days',years=Math.floor(month.getFullYear()/12)*12,timed=Boolean(initial.startTime||initial.endTime),from=initial.startTime||'00:00',to=initial.endTime||'23:59',editingTime=null;
@@ -3498,9 +3533,9 @@ window.TascoDatePicker=(()=>{
 /* Cloudinary holds the image; Supabase RLS holds the account-owned manifest. */
 window.TascoCloud = (() => {
   const table = 'tasco_personal_photos';
-  const state = {config:null,client:null,user:null,root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map()};
+  const state = {config:null,client:null,user:null,root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map(),selecting:false,selected:new Set(),deleting:false,deleteDialog:null};
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const icon = name => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({cloud:'<path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/>',camera:'<path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/>',refresh:'<path d="M20 4v6h-6M4 20v-6h6M4.5 9a8 8 0 0 1 13-5l2.5 3M4 17l2.5 3a8 8 0 0 0 13-5"/>',search:'<circle cx="10" cy="10" r="7"/><path d="m16 16 5 5"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',check:'<path d="m5 12 4 4L19 6"/>'}[name] || '')+'</svg>';
+  const icon = name => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({cloud:'<path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/>',camera:'<path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/>',refresh:'<path d="M20 4v6h-6M4 20v-6h6M4.5 9a8 8 0 0 1 13-5l2.5 3M4 17l2.5 3a8 8 0 0 0 13-5"/>',search:'<circle cx="10" cy="10" r="7"/><path d="m16 16 5 5"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',check:'<path d="m5 12 4 4L19 6"/>'}[name] || '')+'</svg>';
   const stamp = value => new Date(value).toLocaleString('vi-VN',{hour12:false});
   function notify(message) {
     let node=document.getElementById('cloudNotice');if(!node){node=document.createElement('div');node.id='cloudNotice';node.className='cloud-notice';node.setAttribute('role','status');document.body.append(node);}
@@ -3558,6 +3593,7 @@ window.TascoCloud = (() => {
   function previewURL(url,size=360){return url.replace(/\/image\/upload\/(?!s--)/,'/image/upload/c_fill,w_'+size+',h_'+size+',q_auto,f_auto/');}
   function configure(options) {state.config=options;}
   function mount(root) {
+    state.deleteDialog?.cancel();state.selecting=false;state.selected.clear();
     window.TascoPhotoViewer?.close();
     window.TascoDatePicker?.close();
     clearURLs();state.root=root;state.page=0;state.query='';state.date='';state.startTime='';state.endTime='';state.rows=[];state.pending=[];
@@ -3571,14 +3607,22 @@ window.TascoCloud = (() => {
       <div class="cloud-login" hidden></div>
       ${state.config.mode==='mobile'?`<div class="cloud-control-panel"><div class="cloud-toolbar">${searchField}${reloadButton}</div><div class="cloud-details-row">${dateField}${titleField}</div></div>`:`<div class="cloud-toolbar">${searchField}${dateField}${reloadButton}</div>`}
       <div class="cloud-feedback" role="status" aria-live="polite"></div>
-      <div class="cloud-pending" hidden></div>${state.config.mode==='mobile'?'<div class="cloud-gallery-heading"><h2>Thư viện ảnh</h2><span data-cloud-total>0 ảnh</span></div>':''}<div class="cloud-grid"></div><button class="cloud-button cloud-more" type="button" data-action="more" hidden>Xem thêm ảnh</button>
+      <div class="cloud-pending" hidden></div><div class="cloud-gallery-heading"><h2>Thư viện ảnh</h2><div class="cloud-gallery-actions"><span data-cloud-total>0 ảnh</span><button class="cloud-button" type="button" data-action="selection">${icon('check')}<span data-selection-label>Chọn ảnh</span></button></div></div><div class="cloud-selection-bar" data-cloud-selection hidden><strong data-selected-count role="status" aria-live="polite">Đã chọn 0 ảnh</strong><div><button type="button" class="cloud-button" data-action="select-all">Chọn ảnh đã tải</button><button type="button" class="cloud-button" data-action="deselect-all">Bỏ chọn</button><button type="button" class="cloud-button cloud-delete-selected" data-action="delete-selected" disabled>${icon('trash')}<span>Xoá (0)</span></button></div></div><div class="cloud-grid"></div><button class="cloud-button cloud-more" type="button" data-action="more" hidden>Xem thêm ảnh</button>
     </section>`;
     root.onclick=event=>{
       const button=event.target.closest('[data-action]');if(!button||!root.contains(button))return;
       const action=button.dataset.action;
+      if(button.disabled||state.deleting)return;
+      if(action==='selection'){state.selecting=!state.selecting;state.selected.clear();paintSelection();}
+      if(action==='select')toggleSelection(button.dataset.id);
+      if(action==='select-all'){for(const row of [...state.rows,...state.pending])state.selected.add(row.id);paintSelection();}
+      if(action==='deselect-all'){state.selected.clear();paintSelection();}
+      if(action==='delete-selected')requestDelete([...state.selected]);
+      if(action==='delete')requestDelete([button.dataset.id]);
       if(action==='capture'&&state.user)state.config.capture(root.querySelector('[data-cloud-title]')?.value.trim()||'Ảnh của tôi');
       if(action==='date')TascoDatePicker.open({theme:state.config.mode,value:{date:state.date,startTime:state.startTime,endTime:state.endTime},onChange:value=>{if(state.root!==root||!root.isConnected)return;Object.assign(state,value);state.page=0;const label=root.querySelector('[data-cloud-date-label]');label.textContent=TascoDatePicker.label(value);if(value.startTime){const time=document.createElement('small');time.textContent=value.startTime+' – '+value.endTime;label.append(time);}root.querySelector('[data-cloud-date]').dataset.value=value.date;refresh();}});
       if(action==='refresh')refresh();if(action==='retry')processQueue();if(action==='more'){state.page=Math.floor(state.rows.length/48);refresh(true);}
+      if(action==='open'&&state.selecting){toggleSelection(button.dataset.id);return;}
       if(action==='open'){const row=[...state.pending,...state.rows].find(item=>item.id===button.dataset.id);if(row)openPhoto(row);}
       if(action==='download-pending'){const row=state.pending.find(item=>item.id===button.dataset.id);if(row?.blob)downloadBlob(row.blob,row.file_name);}
     };
@@ -3595,12 +3639,24 @@ window.TascoCloud = (() => {
       try{const api=await client();const result=await api.auth.signInWithPassword({email:expected,password:form.elements.password.value});if(result.error)throw result.error;form.elements.password.value='';await refresh();}catch(error){errorNode.textContent=message(error);}finally{button.disabled=false;}
     };
   }
+  function photoActions(row){return `<button type="button" class="cloud-photo-select" data-action="select" data-id="${esc(row.id)}" role="checkbox" aria-checked="false" aria-label="Chọn ảnh ${esc(row.title)}" hidden>${icon('check')}</button><button type="button" class="cloud-photo-delete" data-action="delete" data-id="${esc(row.id)}" aria-label="Xoá ảnh ${esc(row.title)}" title="Xoá ảnh">${icon('trash')}</button>`;}
+  function toggleSelection(id){if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);paintSelection();}
+  function paintSelection(){
+    const root=state.root;if(!visible())return;root.querySelector('.personal-cloud').dataset.selecting=String(state.selecting);
+    const bar=root.querySelector('[data-cloud-selection]');bar.hidden=!state.selecting;
+    root.querySelector('[data-selected-count]').textContent='Đã chọn '+state.selected.size+' ảnh';
+    root.querySelector('[data-selection-label]').textContent=state.selecting?'Xong':'Chọn ảnh';
+    root.querySelector('[data-action="selection"]').disabled=state.deleting||!state.user;
+    const remove=root.querySelector('[data-action="delete-selected"]');remove.disabled=!state.selected.size||state.deleting||state.uploading;remove.querySelector('span').textContent='Xoá ('+state.selected.size+')';
+    for(const card of root.querySelectorAll('[data-photo-id]')){const selected=state.selected.has(card.dataset.photoId);card.classList.toggle('is-selected',selected);const check=card.querySelector('.cloud-photo-select');check.hidden=!state.selecting;check.setAttribute('aria-checked',String(selected));card.querySelector('.cloud-photo-delete').hidden=state.selecting;card.querySelector('.cloud-photo-delete').disabled=state.uploading||state.deleting;}
+    for(const button of bar.querySelectorAll('button:not([data-action="delete-selected"])'))button.disabled=state.deleting;
+  }
   function card(row,pending=false) {
     if(state.config.mode==='mobile'&&!pending){
       const url=thumbnail(row),time=new Date(row.captured_at).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
-      return `<article class="cloud-photo-card cloud-photo-tile"><button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${esc(row.title)}, ${esc(stamp(row.captured_at))}, ${esc(row.address||'Chưa xác định địa điểm')}">${url?`<img src="${esc(previewURL(url))}" data-original="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.original" loading="lazy" decoding="async" alt="${esc(row.title)}">`:icon('camera')}<time class="cloud-tile-time" datetime="${esc(row.captured_at)}">${esc(time)}</time></button></article>`;
+      return `<article class="cloud-photo-card cloud-photo-tile" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${esc(row.title)}, ${esc(stamp(row.captured_at))}, ${esc(row.address||'Chưa xác định địa điểm')}">${url?`<img src="${esc(previewURL(url))}" data-original="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.original" loading="lazy" decoding="async" alt="${esc(row.title)}">`:icon('camera')}<time class="cloud-tile-time" datetime="${esc(row.captured_at)}">${esc(time)}</time></button></article>`;
     }
-    const url=thumbnail(row);return `<article class="cloud-photo-card"><button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(row.error||'Đã giữ bản ảnh trên thiết bị này')}</span><button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">Tải bản ảnh về máy</button>`:''}</div></article>`;
+    const url=thumbnail(row);return `<article class="cloud-photo-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(row.error||'Đã giữ bản ảnh trên thiết bị này')}</span><button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">Tải bản ảnh về máy</button>`:''}</div></article>`;
   }
   function gallery(rows){
     if(state.config.mode!=='mobile')return rows.map(row=>card(row)).join('');
@@ -3623,20 +3679,73 @@ window.TascoCloud = (() => {
     if(!state.rows.length&&!state.busy&&!state.error&&state.user)grid.innerHTML=`<div class="cloud-empty">${icon('cloud')}<h2>${state.query||state.date?'Không có ảnh phù hợp':'Thư viện sẵn sàng đón ảnh mới'}</h2><p>${state.config.mode==='mobile'?'Chạm “Chụp ảnh” để lưu ảnh có ngày giờ.':'Chụp ảnh trong file mobile bằng cùng tài khoản để xem tại đây.'}</p></div>`;
     const pending=root.querySelector('.cloud-pending');pending.hidden=!state.pending.length;pending.innerHTML=state.pending.length?`<div class="cloud-pending-heading"><div><h2>${state.pending.length} ảnh chờ đồng bộ</h2><p>Bản ảnh được giữ trên thiết bị này cho đến khi lưu thành công.</p></div><button class="cloud-button" type="button" data-action="retry" ${state.uploading?'disabled':''}>${icon('refresh')}${state.uploading?'Đang lưu…':'Thử đồng bộ lại'}</button></div><div class="cloud-grid">${state.pending.map(row=>card(row,true)).join('')}</div>`:'';
     root.querySelector('[data-action="more"]').hidden=state.rows.length>=state.count||!state.user||Boolean(state.error);
+    paintSelection();
   }
   async function refresh(append=false) {
-    if(!visible())return;const revision=++state.revision;state.busy=true;state.error='';if(!append){state.rows=[];state.page=0;}
+    if(!visible())return;const revision=++state.revision;state.busy=true;state.error='';if(!append){state.rows=[];state.page=0;state.selected.clear();}
     try {
       const owner=await account();if(revision!==state.revision||!visible())return;
-      if(state.user?.id!==owner.id){window.TascoPhotoViewer?.close();clearURLs();state.rows=[];}state.user=owner;state.root.querySelector('.cloud-login').hidden=true;
+      if(state.user?.id!==owner.id){state.deleteDialog?.cancel();state.selected.clear();state.selecting=false;window.TascoPhotoViewer?.close();clearURLs();state.rows=[];}state.user=owner;state.root.querySelector('.cloud-login').hidden=true;
       state.pending=await pendingFor(owner.id);if(revision!==state.revision||!visible())return;paint();
       const api=await client();let query=api.from(table).select('*',{count:'exact'}).eq('owner_id',owner.id).order('captured_at',{ascending:false}).order('id',{ascending:false});
       const term=state.query.replace(/[,%()\\]/g,' ').trim().slice(0,160);if(term)query=query.or('title.ilike.%'+term+'%,address.ilike.%'+term+'%');
       if(state.date){const from=new Date(state.date+'T'+(state.startTime||'00:00')+':00'),to=state.endTime?new Date(state.date+'T'+state.endTime+':00'):new Date(from);if(state.endTime)to.setTime(to.getTime()+60000);else to.setDate(to.getDate()+1);query=query.gte('captured_at',from.toISOString()).lt('captured_at',to.toISOString());}
       const result=await query.range(state.page*48,state.page*48+47);if(result.error)throw result.error;
       if(revision!==state.revision)return;state.rows=append?[...state.rows,...result.data]:result.data||[];state.count=result.count??state.rows.length;
-    }catch(error){if(revision!==state.revision)return;if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)){window.TascoPhotoViewer?.close();clearURLs();state.user=null;state.rows=[];state.pending=[];state.count=0;loginPanel(error.message);}else state.error=message(error);}
+    }catch(error){if(revision!==state.revision)return;if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)){window.TascoPhotoViewer?.close();clearURLs();state.deleteDialog?.cancel();state.selected.clear();state.selecting=false;state.user=null;state.rows=[];state.pending=[];state.count=0;loginPanel(error.message);}else state.error=message(error);}
     finally{if(revision===state.revision){state.busy=false;paint();}}
+  }
+  async function deleteLocalPhotos(ids,owner){
+    const db=await database();return new Promise((resolve,reject)=>{
+      const tx=db.transaction('photos','readwrite'),store=tx.objectStore('photos'),removed=[];
+      for(const id of ids){const request=store.get(id);request.onsuccess=()=>{if(request.result?.owner_id===owner){store.delete(id);removed.push(id);}};}
+      tx.oncomplete=()=>resolve(removed);tx.onerror=()=>reject(tx.error||new Error('Chưa xoá được ảnh trên thiết bị.'));tx.onabort=()=>reject(tx.error||new Error('Chưa xoá được ảnh trên thiết bị.'));
+    });
+  }
+  function requestDelete(ids){
+    if(state.deleting||state.deleteDialog)return;
+    if(state.uploading){notify('Đợi đồng bộ ảnh hoàn tất rồi thử xoá lại.');return;}
+    const records=new Map([...state.rows,...state.pending].map(row=>[row.id,row])),chosen=[...new Set(ids)].filter(id=>records.has(id));if(!chosen.length||!state.user)return;
+    window.TascoPhotoViewer?.close();
+    const owner=state.user.id,root=state.root,pendingIds=new Set(state.pending.map(row=>row.id)),focus=document.activeElement,overlay=document.createElement('div');
+    overlay.className='cloud-delete-overlay';overlay.innerHTML=`<section class="cloud-delete-dialog" role="alertdialog" aria-modal="true" aria-labelledby="cloudDeleteTitle" aria-describedby="cloudDeleteDescription"><div class="cloud-delete-symbol">${icon('trash')}</div><h2 id="cloudDeleteTitle">Xoá ${chosen.length===1?'ảnh này':chosen.length+' ảnh đã chọn'}?</h2><p id="cloudDeleteDescription">Ảnh sẽ được xoá khỏi thư viện của bạn${chosen.some(id=>pendingIds.has(id))?' và hàng đợi trên thiết bị này':''}. Thao tác này không thể hoàn tác.</p><p class="cloud-delete-error" role="alert" hidden></p><footer><button type="button" data-delete-cancel>Giữ lại</button><button type="button" data-delete-confirm>Xoá ${chosen.length} ảnh</button></footer></section>`;
+    const cancelButton=overlay.querySelector('[data-delete-cancel]'),confirmButton=overlay.querySelector('[data-delete-confirm]'),errorNode=overlay.querySelector('[role="alert"]'),controller=new AbortController(),bodyOverflow=document.body.style.overflow;
+    function close(force=false){if(state.deleting&&!force)return;controller.abort();overlay.remove();document.body.style.overflow=bodyOverflow;state.deleteDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
+    state.deleteDialog={cancel:()=>close(true)};document.body.style.overflow='hidden';document.body.append(overlay);cancelButton.focus();
+    cancelButton.onclick=()=>close();overlay.onclick=event=>{if(event.target===overlay)close();};
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();close();}
+      if(event.key==='Tab'){const buttons=[cancelButton,confirmButton].filter(button=>!button.disabled);if(!buttons.length){event.preventDefault();return;}const first=buttons[0],last=buttons[buttons.length-1];if(event.shiftKey&&(document.activeElement===first||!overlay.contains(document.activeElement))){event.preventDefault();last.focus();}else if(!event.shiftKey&&(document.activeElement===last||!overlay.contains(document.activeElement))){event.preventDefault();first.focus();}}
+    },{capture:true,signal:controller.signal});
+    confirmButton.onclick=async()=>{
+      if(state.deleting)return;state.deleting=true;state.revision++;state.busy=false;errorNode.hidden=true;confirmButton.disabled=cancelButton.disabled=true;confirmButton.textContent='Đang xoá…';paintSelection();
+      const removed=new Set();let failure='',physical=false;
+      try{
+        if((await account()).id!==owner||state.root!==root)throw new Error('Tài khoản đã thay đổi. Hãy mở lại thư viện.');
+        const remote=chosen.filter(id=>!pendingIds.has(id));
+        if(remote.length){
+          const api=await client();
+          if(state.config.deletePhotos){const result=await state.config.deletePhotos(remote,owner);for(const id of result.deleted||[])if(remote.includes(id))removed.add(id);physical=true;if(result.failed?.length)failure=[...new Set(result.failed.map(row=>row.message||'Chưa xoá được ảnh.'))].slice(0,3).join(' ');}
+          else{for(let start=0;start<remote.length;start+=100){if((await account()).id!==owner)throw new Error('Tài khoản đã thay đổi.');const batch=remote.slice(start,start+100),result=await api.from(table).delete().eq('owner_id',owner).in('id',batch).select('id');if(result.error)throw result.error;for(const row of result.data||[])if(batch.includes(row.id))removed.add(row.id);}}
+        }
+        if((await account()).id!==owner||state.root!==root)throw new Error('Tài khoản đã thay đổi.');
+        for(const id of await deleteLocalPhotos(chosen.filter(id=>pendingIds.has(id)),owner))removed.add(id);
+        if(removed.size<chosen.length&&!failure)failure='Một số ảnh chưa xoá được. Kiểm tra kết nối hoặc quyền xoá của tài khoản rồi thử lại.';
+      }catch(error){failure=['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)?'Phiên đăng nhập đã thay đổi. Hãy đăng nhập lại đúng tài khoản để xoá ảnh.':error.code==='42501'?'Tài khoản chưa có quyền xoá ảnh. Vui lòng liên hệ quản trị viên.':message(error);}
+      finally{
+        state.deleting=false;
+        if(state.root===root&&state.user?.id===owner){
+          for(const id of removed){state.selected.delete(id);const url=state.urls.get(id);if(url){URL.revokeObjectURL(url);state.urls.delete(id);}}
+          state.rows=state.rows.filter(row=>!removed.has(row.id));state.pending=state.pending.filter(row=>!removed.has(row.id));
+          state.count=Math.max(0,state.count-[...removed].filter(id=>!pendingIds.has(id)).length);
+          if(removed.size)window.TascoPhotoViewer?.close();
+          if(!failure){state.selecting=false;state.selected.clear();close(true);notify('Đã xoá '+removed.size+' ảnh'+(physical?' khỏi Cloud.':' khỏi thư viện.'));}
+          else{errorNode.textContent=(removed.size?'Đã xoá '+removed.size+' ảnh. ':'')+failure;errorNode.hidden=false;const remaining=chosen.filter(id=>!removed.has(id));chosen.splice(0,chosen.length,...remaining);confirmButton.disabled=!chosen.length;cancelButton.disabled=false;confirmButton.textContent='Thử xoá lại ('+chosen.length+')';if(!chosen.length)cancelButton.textContent='Đóng';}
+          paint();
+          if(!failure)await refresh();
+        }else{close(true);if(failure)notify(failure);await refresh();}
+      }
+    };
   }
   async function upload(record) {
     const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),90000);
@@ -3648,7 +3757,7 @@ window.TascoCloud = (() => {
     }finally{clearTimeout(timeout);}
   }
   async function processQueue() {
-    if(state.uploading)return;state.uploading=true;
+    if(state.uploading||state.deleting||state.deleteDialog)return;state.uploading=true;
     try {
       const owner=await account();state.user=owner;
       for(const record of await pendingFor(owner.id)){
@@ -3675,7 +3784,7 @@ window.TascoCloud = (() => {
   function openPhoto(row) {
     const owner=state.user?.id,root=state.root;
     const items=()=>[...new Map([...state.pending.map(item=>({...item,pending:true})),...state.rows].map(item=>{const url=thumbnail(item);return [item.id,{...item,url,preview:previewURL(url,144)}];})).values()];
-    window.TascoPhotoViewer.open({items:items(),id:row.id,total:state.count+state.pending.length,theme:state.config.mode,email:state.user?.email||'',download:downloadBlob,restoreFocus:()=>root.querySelector('[data-action="open"][data-id="'+CSS.escape(row.id)+'"]')?.focus({preventScroll:true}),
+    window.TascoPhotoViewer.open({items:items(),id:row.id,total:state.count+state.pending.length,theme:state.config.mode,email:state.user?.email||'',download:downloadBlob,remove:id=>requestDelete([id]),restoreFocus:()=>root.querySelector('[data-action="open"][data-id="'+CSS.escape(row.id)+'"]')?.focus({preventScroll:true}),
       hasMore:()=>state.user?.id===owner&&state.root===root&&state.rows.length<state.count,
       loadMore:async()=>{if(state.user?.id!==owner||state.root!==root)return [];if(state.busy)return items();state.page=Math.floor(state.rows.length/48);await refresh(true);if(state.error)throw new Error(state.error);return state.user?.id===owner&&state.root===root?items():[];}
     });
@@ -3874,14 +3983,15 @@ function prefetchGpsCoordinates() {return ensureRealtimeGpsCoordinates({backgrou
 function retryCameraLocation() {return ensureRealtimeGpsCoordinates({forceAddress:true}).catch(()=>{const result=cameraLocationError('unavailable');updateCameraLocationUI(result);return result;});}
 
 /* The same immutable preferences drive the live preview and captured pixels. */
-const cameraAppearanceDefaults={title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true};
+const cameraAspectRatios={native:null,'3:4':[3,4],'4:3':[4,3],'1:1':[1,1],'9:16':[9,16],'16:9':[16,9],'2:3':[2,3],'3:2':[3,2]};
+const cameraAppearanceDefaults={aspectRatio:'native',title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true};
 const cameraStampFonts={sans:'Arial, sans-serif',jakarta:'"Plus Jakarta Sans", Arial, sans-serif',serif:'Georgia, serif',mono:'"Courier New", monospace',tahoma:'Tahoma, sans-serif'};
 function sanitizeCameraAppearance(value={}){
   const result={...cameraAppearanceDefaults};
   if(!value||typeof value!=='object')return result;
   for(const key of Object.keys(result))if(typeof result[key]==='boolean'&&typeof value[key]==='boolean')result[key]=value[key];
   if(typeof value.title==='string')result.title=value.title.replace(/[\r\n\t]/g,' ').slice(0,64);
-  const enums={layout:['lines','compact'],position:['bottom-right','bottom-left','bottom-center','top-right','top-left','top-center'],font:Object.keys(cameraStampFonts),style:['shadow','panel','plain']};
+  const enums={aspectRatio:Object.keys(cameraAspectRatios),layout:['lines','compact'],position:['bottom-right','bottom-left','bottom-center','top-right','top-left','top-center'],font:Object.keys(cameraStampFonts),style:['shadow','panel','plain']};
   for(const [key,allowed] of Object.entries(enums))if(allowed.includes(value[key]))result[key]=value[key];
   for(const [key,min,max] of [['textSize',.7,1.8],['opacity',50,100],['lineHeight',1.1,1.8],['textWidth',50,94],['margin',1,8]])if(Number.isFinite(value[key]))result[key]=Math.min(max,Math.max(min,value[key]));
   if(typeof value.color==='string'&&/^#[0-9a-f]{6}$/i.test(value.color))result.color=value.color;
@@ -3907,6 +4017,8 @@ function renderCameraAppearanceControls(){
     const key=output.dataset.cameraOutput,value=cameraAppearance[key];
     output.value=key==='textSize'?Math.round(value*100)+'%':key==='lineHeight'?value.toFixed(2)+'×':value+'%';
   }
+  for(const button of panel.querySelectorAll('[data-camera-ratio]')){const selected=button.dataset.cameraRatio===cameraAppearance.aspectRatio;button.setAttribute('aria-checked',String(selected));button.tabIndex=selected?0:-1;button.disabled=cameraUiState.captureBusy;}
+  const badge=document.getElementById('cameraRatioBadge');if(badge)badge.textContent=cameraAppearance.aspectRatio==='native'?'Gốc':cameraAppearance.aspectRatio;
   cameraRenderStyleButtons();renderCameraStampSample();
 }
 function cameraStampLayout(ctx,lines,width,height,settings){
@@ -3989,9 +4101,9 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
     let image,canvas;
     try{
       const appearance=metadata.appearance||cameraAppearanceSnapshot(),location=await metadata.locationPromise;
-      image=await cameraLoadImage(file);const maxSide=metadata.quality?.maxSide||1920,scale=Math.min(1,maxSide/Math.max(image.width,image.height));
-      canvas=document.createElement('canvas');canvas.width=Math.round(image.width*scale);canvas.height=Math.round(image.height*scale);
-      const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(image.source,0,0,canvas.width,canvas.height);image.release();image=null;
+      image=await cameraLoadImage(file);
+      canvas=cameraCanvasFromSource(image.source,{rotation:0,mirror:false,digitalZoom:1,aspectRatio:appearance.aspectRatio},metadata.quality||cameraQuality());
+      const ctx=canvas.getContext('2d',{alpha:false});image.release();image=null;
       try{await document.fonts?.load((appearance.bold?'700':'400')+' 20px '+cameraStampFonts[appearance.font]);}catch(_){}
       drawCameraStamp(ctx,cameraWatermarkLines(location,metadata.capturedAt,metadata.source,appearance),canvas.width,canvas.height,appearance);
       const blob=await cameraCanvasBlob(canvas,'image/jpeg',metadata.quality?.jpeg||.92);
@@ -4080,7 +4192,7 @@ function cameraRotateImage(reset=false){
 function renderCameraSettings(){
   const panel=document.getElementById('cameraSettingsPanel');if(!panel||panel.hidden)return;
   const video=document.getElementById('customCameraVideo'),resolution=document.getElementById('cameraActualResolution');
-  if(resolution)resolution.textContent=video?.videoWidth?'Đang dùng '+video.videoWidth+' × '+video.videoHeight+' px':'Camera đang khởi động…';
+  if(resolution){if(video?.videoWidth){const frame=cameraFrameOrientation(video),size=cameraOutputSize(frame.width,frame.height,frame.aspectRatio,cameraQuality());resolution.textContent='Ảnh lưu '+size.width+' × '+size.height+' px · Camera '+video.videoWidth+' × '+video.videoHeight+' px';}else resolution.textContent='Camera đang khởi động…';}
   for(const button of panel.querySelectorAll('[data-camera-quality]')){button.setAttribute('aria-checked',String(button.dataset.cameraQuality===cameraControlsState.quality));button.disabled=cameraControlsState.busy;}
   const list=document.getElementById('cameraDeviceSelect'),active=customCameraStream?.getVideoTracks()[0]?.getSettings?.().deviceId||cameraControlsState.deviceId;
   const signature=cameraControlsState.devices.map(device=>device.id+'|'+device.label).join(';');
@@ -4149,9 +4261,10 @@ function cameraRenderFocusSupport(){
 }
 function cameraPointFromPlane(point,width,height,frame){
   if(!width||!height||point.x<0||point.y<0||point.x>width||point.y>height)return null;
-  let x=point.x-width/2,y=point.y-height/2;if(frame.mirror)x=-x;
-  const angle=frame.rotation*Math.PI/180,swapped=Math.abs(frame.rotation)%180===90,videoWidth=swapped?height:width,videoHeight=swapped?width:height,zoom=frame.digitalZoom||1;
-  const sx=(x*Math.cos(angle)+y*Math.sin(angle))/(videoWidth*zoom)+.5,sy=(-x*Math.sin(angle)+y*Math.cos(angle))/(videoHeight*zoom)+.5;
+  const crop=cameraCropFrame(frame.width,frame.height,frame.aspectRatio),zoom=frame.digitalZoom||1;
+  let x=(point.x/width-.5)*crop.width/zoom,y=(point.y/height-.5)*crop.height/zoom;if(frame.mirror)x=-x;
+  const angle=frame.rotation*Math.PI/180,swapped=Math.abs(frame.rotation)%180===90,videoWidth=swapped?frame.height:frame.width,videoHeight=swapped?frame.width:frame.height;
+  const sx=(x*Math.cos(angle)+y*Math.sin(angle))/videoWidth+.5,sy=(-x*Math.sin(angle)+y*Math.cos(angle))/videoHeight+.5;
   return {x:Math.max(0,Math.min(1,sx)),y:Math.max(0,Math.min(1,sy))};
 }
 async function cameraApplyPointFocus(track,point){
@@ -4254,16 +4367,29 @@ document.addEventListener('visibilitychange',()=>{
   else if(cameraRuntime.suspended&&!cameraRuntime.nativeOpen){cameraRuntime.suspended=false;startCameraLocationTracking();cameraControlsState.clock=setInterval(updateCameraLiveStamp,1000);startCustomCameraStream();}
 });
 
+function cameraCropFrame(width,height,ratio='native'){
+  const parts=cameraAspectRatios[ratio];if(!parts)return {width,height};
+  const target=parts[0]/parts[1];return width/height>target?{width:height*target,height}:{width,height:width/target};
+}
+function cameraOutputSize(width,height,ratio,quality){
+  const crop=cameraCropFrame(width,height,ratio),parts=cameraAspectRatios[ratio],scale=Math.min(1,(quality.maxSide||Math.max(crop.width,crop.height))/Math.max(crop.width,crop.height));
+  if(parts){const unit=Math.max(1,Math.floor(Math.min(crop.width*scale/parts[0],crop.height*scale/parts[1])));return {width:unit*parts[0],height:unit*parts[1],crop};}
+  return {width:Math.max(1,Math.round(crop.width*scale)),height:Math.max(1,Math.round(crop.height*scale)),crop};
+}
+function selectCameraRatio(ratio){
+  if(!(ratio in cameraAspectRatios)||cameraUiState.captureBusy)return;
+  cameraAppearance=sanitizeCameraAppearance({...cameraAppearance,aspectRatio:ratio});saveCameraAppearance();syncCameraViewport();renderCameraAppearanceControls();renderCameraSettings();
+}
 function cameraCanvasFromSource(source,frame,quality){
-  const width=source.videoWidth||source.width,height=source.videoHeight||source.height,swapped=Math.abs(frame.rotation)%180===90,orientedWidth=swapped?height:width,orientedHeight=swapped?width:height;
-  const scale=quality.maxSide?Math.min(1,quality.maxSide/Math.max(orientedWidth,orientedHeight)):1,canvas=document.createElement('canvas');canvas.width=Math.round(orientedWidth*scale);canvas.height=Math.round(orientedHeight*scale);
-  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate(frame.rotation*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);ctx.setTransform(1,0,0,1,0,0);return canvas;
+  const width=source.videoWidth||source.naturalWidth||source.width,height=source.videoHeight||source.naturalHeight||source.height,swapped=Math.abs(frame.rotation)%180===90,orientedWidth=swapped?height:width,orientedHeight=swapped?width:height;
+  const output=cameraOutputSize(orientedWidth,orientedHeight,frame.aspectRatio||'native',quality),canvas=document.createElement('canvas');canvas.width=output.width;canvas.height=output.height;
+  const scale=canvas.width/output.crop.width,ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate((frame.rotation||0)*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);ctx.setTransform(1,0,0,1,0,0);return canvas;
 }
 
 const cameraSettingsPanel=document.getElementById('cameraSettingsPanel');
-cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close'))toggleCameraSettings(false);if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.dataset.cameraSettingsTab)cameraSetSettingsTab(button.dataset.cameraSettingsTab);if(button.dataset.cameraPreset)cameraApplyPreset(button.dataset.cameraPreset);if(button.dataset.cameraColor){cameraAppearance={...cameraAppearance,color:button.dataset.cameraColor};saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}if(button.hasAttribute('data-camera-native'))openCameraNative();if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
+cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close'))toggleCameraSettings(false);if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.dataset.cameraRatio)selectCameraRatio(button.dataset.cameraRatio);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.dataset.cameraSettingsTab)cameraSetSettingsTab(button.dataset.cameraSettingsTab);if(button.dataset.cameraPreset)cameraApplyPreset(button.dataset.cameraPreset);if(button.dataset.cameraColor){cameraAppearance={...cameraAppearance,color:button.dataset.cameraColor};saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}if(button.hasAttribute('data-camera-native'))openCameraNative();if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
 document.getElementById('cameraDeviceSelect')?.addEventListener('change',event=>selectCameraDevice(event.target.value));
-cameraSettingsPanel?.addEventListener('keydown',event=>{const tab=event.target.closest('[data-camera-settings-tab]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const pages=['capture','stamp','style'],index=pages.indexOf(tab.dataset.cameraSettingsTab),next=event.key==='Home'?0:event.key==='End'?2:(index+(event.key==='ArrowRight'?1:2))%3;cameraSetSettingsTab(pages[next],true);});
+cameraSettingsPanel?.addEventListener('keydown',event=>{const ratio=event.target.closest('[data-camera-ratio]');if(ratio&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key)){event.preventDefault();const buttons=[...cameraSettingsPanel.querySelectorAll('[data-camera-ratio]')],index=buttons.indexOf(ratio),next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(['ArrowRight','ArrowDown'].includes(event.key)?1:buttons.length-1))%buttons.length;selectCameraRatio(buttons[next].dataset.cameraRatio);buttons[next].focus();return;}const tab=event.target.closest('[data-camera-settings-tab]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const pages=['capture','stamp','style'],index=pages.indexOf(tab.dataset.cameraSettingsTab),next=event.key==='Home'?0:event.key==='End'?2:(index+(event.key==='ArrowRight'?1:2))%3;cameraSetSettingsTab(pages[next],true);});
 cameraSettingsPanel?.addEventListener('input',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
 cameraSettingsPanel?.addEventListener('change',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
 document.getElementById('customCameraModal')?.addEventListener('keydown',event=>{
@@ -4386,15 +4512,15 @@ function cameraFrameOrientation(video,usePhysical=true) {
   }
   const manualRotation=cameraControlsState.manualRotation[customCameraFacingMode]||0;rotation=cameraAngleDifference(rotation+manualRotation,0);
   const swapped=Math.abs(rotation)%180===90;
-  return {orientation:pose.orientation,angle:pose.angle,rotation,manualRotation,mirror:customCameraFacingMode==='user'&&cameraAppearance.mirrorFront,digitalZoom:cameraControlsState.digitalZoom,width:swapped?video.videoHeight:video.videoWidth,height:swapped?video.videoWidth:video.videoHeight};
+  return {aspectRatio:cameraAppearance.aspectRatio,orientation:pose.orientation,angle:pose.angle,rotation,manualRotation,mirror:customCameraFacingMode==='user'&&cameraAppearance.mirrorFront,digitalZoom:cameraControlsState.digitalZoom,width:swapped?video.videoHeight:video.videoWidth,height:swapped?video.videoWidth:video.videoHeight};
 }
 function syncCameraFramePreview(video) {
   if(!video)return;
   const frame=cameraFrameOrientation(video),container=video.closest('.camera-stream-container'),plane=document.getElementById('cameraImagePlane');if(!container||!plane||!frame.width||!frame.height)return;
   video.dataset.rotation=String(frame.rotation);
-  const fit=Math.min(container.clientWidth/frame.width,container.clientHeight/frame.height),width=frame.width*fit,height=frame.height*fit,swapped=Math.abs(frame.rotation)%180===90;
+  const crop=cameraCropFrame(frame.width,frame.height,frame.aspectRatio),fit=Math.min(container.clientWidth/crop.width,container.clientHeight/crop.height),width=crop.width*fit,height=crop.height*fit,swapped=Math.abs(frame.rotation)%180===90;
   plane.style.width=width+'px';plane.style.height=height+'px';plane.style.setProperty('--camera-stamp-size',Math.max(10,Math.min(18,width/56))+'px');
-  video.style.position='absolute';video.style.left='50%';video.style.top='50%';video.style.width=(swapped?height:width)+'px';video.style.height=(swapped?width:height)+'px';
+  video.style.position='absolute';video.style.left='50%';video.style.top='50%';video.style.width=((swapped?frame.height:frame.width)*fit)+'px';video.style.height=((swapped?frame.width:frame.height)*fit)+'px';
   // Mirror in the displayed image's horizontal axis, including quarter-turn rotations.
   video.dataset.mirrored=String(frame.mirror);
   video.style.transform='translate(-50%,-50%) scaleX('+(frame.mirror?-1:1)+') rotate('+frame.rotation+'deg) scale('+frame.digitalZoom+')';
