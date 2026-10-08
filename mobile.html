@@ -786,6 +786,15 @@
 .viewer-film-more{flex:0 0 48px;width:48px;height:48px;display:grid;place-items:center;padding:0;border:1px dashed #3d506b;border-radius:9px;background:#17243a;color:#9fb5d1}
 .viewer-tools{grid-area:tools;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:8px max(12px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));background:#111c2e;border-top:1px solid rgba(255,255,255,.06)}
 .viewer-tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:56px;min-width:0;padding:5px 0;border:0;border-radius:12px;background:transparent;color:#adbed4}
+
+/* A real image fallback keeps iOS long-press saving available. */
+.photo-save-overlay{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:rgba(3,9,18,.92);color:#e5edf8;overscroll-behavior:contain}
+.photo-save-panel{display:flex;flex-direction:column;width:100%;max-width:520px;max-height:100%;min-height:0;overflow:hidden;padding:18px;border:1px solid #2c4058;border-radius:22px;background:#101d30;box-shadow:0 16px 60px #0008}
+.photo-save-panel header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}.photo-save-panel h2{margin:0;font-size:19px;font-weight:700;line-height:1.4}.photo-save-panel header button{width:40px;height:40px;flex-shrink:0;border:1px solid #405269;border-radius:50%;font-size:26px;line-height:1;background:#17283e;color:#e5edf8}
+.photo-save-panel p{margin:12px 0 16px;font-size:13px;line-height:1.6;color:#b9cadf;flex-shrink:0}.photo-save-preview{display:flex;align-items:center;justify-content:center;min-height:0;overflow:auto;flex:1;background:#07111e;border-radius:12px;-webkit-overflow-scrolling:touch}
+.photo-save-preview img{display:block;width:auto!important;height:auto!important;max-width:100%!important;max-height:55vh!important;max-height:55dvh!important;object-fit:contain;pointer-events:auto!important;touch-action:auto!important;user-select:auto!important;-webkit-user-select:auto!important;-webkit-touch-callout:default!important;-webkit-user-drag:auto!important}
+.photo-save-panel footer{display:flex;flex-direction:column;gap:9px;padding-top:16px;flex-shrink:0}.photo-save-panel footer button{min-height:44px;padding:10px 16px;border:1px solid #31565a;border-radius:12px;background:#8ad6cc;color:#09252b;font-size:14px;font-weight:650}.photo-save-panel footer [data-photo-save=file]{background:transparent;color:#a9bcd5;border-color:#34465d}.photo-save-panel button:disabled{opacity:.55}.photo-save-panel button[hidden]{display:none!important}.photo-save-panel button:focus-visible{outline:2px solid #a7ede2;outline-offset:3px}
+
 .viewer-tool span{font-size:9px;font-weight:650;white-space:nowrap}.viewer-tool[data-viewer-action=download]{color:var(--viewer-accent)}
 .viewer-tool[aria-expanded=true]{background:rgba(138,214,204,.09);color:var(--viewer-accent)}
 @media(hover:hover){.viewer-tool:hover,.viewer-icon-button:hover{background:rgba(255,255,255,.08);color:#fff}.viewer-film-thumb:hover{opacity:1}}
@@ -3192,7 +3201,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v10-preview-css-crop" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v11-ios-photo-save" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
@@ -3295,7 +3304,59 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
   </div>
 
 <script>
-/* Full-screen photo viewer. Transforms are local; rotated downloads contain rotated pixels. */
+/* iPhone saves images through the native share sheet, rather than a file download. */
+window.TascoPhotoExport=(()=>{
+  const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  let active=null;
+  function file(blob,name='tasco-photo.jpg'){
+    if(!blob?.size)throw new Error('Tệp ảnh trống. Hãy tải lại ảnh.');
+    const types={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',gif:'image/gif',heic:'image/heic',heif:'image/heif'};
+    const extension=/\.([a-z0-9]+)$/i.exec(name)?.[1]?.toLowerCase();
+    const type=blob.type.startsWith('image/')?blob.type:types[extension]||'image/jpeg';
+    const suffix=Object.entries(types).find(([,mime])=>mime===type)?.[0]||extension||'jpg';
+    const cleanName=String(name).split(/[\\/]/).pop()||'tasco-photo.jpg';
+    const filename=types[extension]===type?cleanName:cleanName.replace(/\.[^.]+$/,'')+'.'+suffix;
+    return new File([blob],filename,{type,lastModified:Date.now()});
+  }
+  function canShare(file){try{return Boolean(navigator.share&&navigator.canShare?.({files:[file]}));}catch(_){return false;}}
+  function download(file){
+    const url=URL.createObjectURL(file),link=document.createElement('a');link.href=url;link.download=file.name;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
+  }
+  function present(file){
+    active?.close();const focus=document.activeElement,url=URL.createObjectURL(file),overlay=document.createElement('div'),controller=new AbortController(),signal=controller.signal;
+    overlay.className='photo-save-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','photoSaveTitle');
+    overlay.innerHTML='<section class="photo-save-panel"><header><h2 id="photoSaveTitle">Lưu vào thư viện Ảnh</h2><button type="button" data-photo-save="close" aria-label="Đóng màn hình lưu ảnh">×</button></header><p data-photo-save-message role="status">Nhấn giữ ảnh bên dưới, rồi chọn “Lưu hình ảnh” hoặc “Thêm vào Ảnh”.</p><div class="photo-save-preview"><img alt="Ảnh cần lưu vào thư viện"></div><footer><button type="button" data-photo-save="share">Mở bảng lưu ảnh</button><button type="button" data-photo-save="file">Tải tệp ảnh</button></footer></section>';
+    const image=overlay.querySelector('img'),share=overlay.querySelector('[data-photo-save="share"]'),message=overlay.querySelector('[data-photo-save-message]');image.src=url;share.hidden=!canShare(file);
+    const oldOverflow=document.body.style.overflow;document.body.style.overflow='hidden';let closed=false,busy=false;
+    function close(){if(closed)return;closed=true;controller.abort();overlay.remove();URL.revokeObjectURL(url);document.body.style.overflow=oldOverflow;if(focus?.isConnected)focus.focus({preventScroll:true});if(active?.close===close)active=null;}
+    overlay.addEventListener('click',async event=>{
+      const action=event.target.closest('[data-photo-save]')?.dataset.photoSave;if(action==='close'){close();return;}if(action==='file'){download(file);return;}if(action!=='share'||busy)return;
+      busy=true;share.disabled=true;message.textContent='Trong bảng của iPhone, chọn “Lưu hình ảnh” để thêm ảnh vào thư viện.';
+      // The file is ready before this click. Do not await a fetch before share().
+      try{await navigator.share({files:[file]});if(!closed)close();}
+      catch(error){if(!closed)message.textContent=error.name==='AbortError'?'Bạn chưa chọn nơi lưu. Có thể mở lại bảng lưu ảnh hoặc nhấn giữ ảnh bên dưới.':'Chưa mở được bảng lưu ảnh. Nhấn giữ ảnh bên dưới rồi chọn “Lưu hình ảnh”.';}
+      finally{busy=false;if(!closed)share.disabled=false;}
+    },{signal});
+    document.addEventListener('keydown',event=>{
+      if(closed)return;if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();close();}
+      if(event.key==='Tab'){event.stopImmediatePropagation();const buttons=[...overlay.querySelectorAll('button')].filter(node=>!node.hidden&&!node.disabled);const first=buttons[0],last=buttons.at(-1);if(event.shiftKey&&(document.activeElement===first||!overlay.contains(document.activeElement))){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}
+    },{capture:true,signal});
+    document.body.append(overlay);overlay.querySelector('[data-photo-save="close"]').focus({preventScroll:true});active={close};return 'preview';
+  }
+  async function save(file,{gesture=true}={}){
+    if(!isIOS){download(file);return 'download';}
+    if(gesture&&canShare(file)){
+      // share() must run synchronously in the tap, with an actual image File.
+      try{await navigator.share({files:[file]});return 'shared';}
+      catch(error){if(error.name==='AbortError')return 'cancelled';}
+    }
+    return present(file);
+  }
+  window.addEventListener('pagehide',()=>active?.close());
+  return {isIOS,label:isIOS?'Lưu vào Ảnh':'Tải ảnh',file,save,close:()=>active?.close()};
+})();
+
+/* Full-screen photo viewer. Transforms are local; exported rotations contain rotated pixels. */
 window.TascoPhotoViewer=(()=>{
   let active=null;
   const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -3314,14 +3375,15 @@ window.TascoPhotoViewer=(()=>{
     overlay.innerHTML=`<header class="viewer-header"><button type="button" class="viewer-icon-button" data-viewer-action="close" aria-label="Đóng trình xem ảnh">${glyph('close')}</button><div class="viewer-heading"><strong data-viewer-title></strong><time data-viewer-date></time></div><span class="viewer-counter" data-viewer-counter aria-live="polite"></span></header>
       <div class="viewer-stage" tabindex="0" aria-label="Ảnh. Vuốt trái hoặc phải để chuyển ảnh, chụm hai ngón hoặc chạm hai lần để phóng to."><img class="viewer-image" draggable="false" alt=""><div class="viewer-loading" role="status"><span></span>Đang tải ảnh…</div><div class="viewer-error" hidden>${glyph('image')}<p>Chưa tải được ảnh. Kiểm tra kết nối rồi thử lại.</p><button type="button" data-viewer-action="reload">Tải lại ảnh</button></div><button type="button" class="viewer-nav viewer-prev" data-viewer-action="previous" aria-label="Ảnh trước">${glyph('left')}</button><button type="button" class="viewer-nav viewer-next" data-viewer-action="next" aria-label="Ảnh tiếp theo">${glyph('right')}</button><span class="viewer-gesture-hint">Vuốt chuyển ảnh · Chạm hai lần để zoom</span><button type="button" class="viewer-fit" data-viewer-action="fit" aria-label="Đưa ảnh về kích thước vừa màn hình">100%</button></div>
       <div class="viewer-filmstrip" aria-label="Ảnh trong thư viện"></div>
-      <nav class="viewer-tools" aria-label="Công cụ xem ảnh">${tool('zoom-out','minus','Thu nhỏ')}${tool('zoom-in','plus','Phóng to')}${tool('rotate','rotate','Xoay')}${tool('info','info','Thông tin')}${tool('download','download','Tải ảnh')}${options.remove?tool('delete','trash','Xoá ảnh'):''}</nav>
-      <div class="viewer-info-backdrop" hidden></div><aside class="viewer-info" hidden aria-label="Thông tin ảnh"><header><div><span>CHI TIẾT ẢNH</span><h2>Thông tin ảnh</h2></div><button type="button" class="viewer-icon-button" data-viewer-action="close-info" aria-label="Đóng thông tin ảnh">${glyph('close')}</button></header><div class="viewer-info-content"></div><p class="viewer-rotation-note">Xoay áp dụng khi xem ảnh. Tải ảnh để lưu bản đã xoay vào thiết bị.</p></aside><div class="viewer-message" role="status" aria-live="polite" hidden></div>`;
+      <nav class="viewer-tools" aria-label="Công cụ xem ảnh">${tool('zoom-out','minus','Thu nhỏ')}${tool('zoom-in','plus','Phóng to')}${tool('rotate','rotate','Xoay')}${tool('info','info','Thông tin')}${tool('download','download',TascoPhotoExport.label)}${options.remove?tool('delete','trash','Xoá ảnh'):''}</nav>
+      <div class="viewer-info-backdrop" hidden></div><aside class="viewer-info" hidden aria-label="Thông tin ảnh"><header><div><span>CHI TIẾT ẢNH</span><h2>Thông tin ảnh</h2></div><button type="button" class="viewer-icon-button" data-viewer-action="close-info" aria-label="Đóng thông tin ảnh">${glyph('close')}</button></header><div class="viewer-info-content"></div><p class="viewer-rotation-note">Xoay áp dụng khi xem ảnh. Lưu ảnh để giữ bản đã xoay vào thiết bị.</p></aside><div class="viewer-message" role="status" aria-live="polite" hidden></div>`;
     const stage=overlay.querySelector('.viewer-stage'),image=overlay.querySelector('.viewer-image'),film=overlay.querySelector('.viewer-filmstrip'),info=overlay.querySelector('.viewer-info'),backdrop=overlay.querySelector('.viewer-info-backdrop'),controller=new AbortController(),signal=controller.signal;
     const focus=document.activeElement,scrollX=window.scrollX,scrollY=window.scrollY;
     const savedStyle=Object.fromEntries(['overflow','position','top','left','right','width'].map(key=>[key,document.body.style[key]])),htmlOverflow=document.documentElement.style.overflow;
     Object.assign(document.body.style,{overflow:'hidden',position:'fixed',top:-scrollY+'px',left:'0',right:'0',width:'100%'});document.documentElement.style.overflow='hidden';
     let zoom=1,x=0,y=0,rotation=0,naturalWidth=0,naturalHeight=0,baseWidth=0,baseHeight=0,ready=false,closed=false,downloading=false,loadingMore=false,loadToken=0,raf=0,tapTimer=0,noticeTimer=0,lastTap=null,lastTouchAt=-Infinity,gesture=null;
     const pointers=new Map(),rotations=new Map(),dimensions=new Map();
+    let exportRevision=0,exportTask=null,preparedExport=null,originalExport=null,exportAbort=null;
     const current=()=>items[index];
     const actionButton=name=>overlay.querySelector(`[data-viewer-action="${name}"]`);
     function notice(text){const node=overlay.querySelector('.viewer-message');node.textContent=text;node.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>node.hidden=true,3500);}
@@ -3333,6 +3395,7 @@ window.TascoPhotoViewer=(()=>{
       overlay.dataset.zoom=zoom.toFixed(3);overlay.dataset.rotation=String(rotation);overlay.dataset.photoId=current().id;overlay.dataset.index=String(index);
       actionButton('fit').textContent=Math.round(zoom*100)+'%';actionButton('fit').title='Vừa màn hình · Chạm để đặt lại';
       actionButton('zoom-out').disabled=!ready||zoom<=1.001;actionButton('zoom-in').disabled=!ready||zoom>=5.999;actionButton('rotate').disabled=!ready;actionButton('download').disabled=downloading||!ready;
+      actionButton('download').querySelector('span').textContent=downloading?'Đang chuẩn bị…':TascoPhotoExport.label;
       stage.classList.toggle('is-zoomed',zoom>1.01);
     }
     function requestRender(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(!closed)render();});}
@@ -3348,7 +3411,7 @@ window.TascoPhotoViewer=(()=>{
       x=px-(px-x)*next/zoom;y=py-(py-y)*next/zoom;zoom=next;constrain();render();
     }
     function reset(){zoom=1;x=0;y=0;render();}
-    function rotate(){if(!ready)return;rotation=(rotation+90)%360;rotations.set(current().id,rotation);zoom=1;x=0;y=0;fit();paintInfo();}
+    function rotate(){if(!ready)return;rotation=(rotation+90)%360;rotations.set(current().id,rotation);invalidateExport();zoom=1;x=0;y=0;fit();paintInfo();if(TascoPhotoExport.isIOS)prepareExport().catch(()=>{});}
     function paintInfo(){
       const row=current(),dim=dimensions.get(row.id)||{width:row.width||0,height:row.height||0},turned=rotation%180!==0,width=turned?dim.height:dim.width,height=turned?dim.width:dim.height;
       const format=row.blob?.type?.split('/')[1]?.toUpperCase()||(/\.(jpe?g|png|webp)(?:\?|$)/i.exec(row.url)?.[1]||'Ảnh').toUpperCase();
@@ -3371,10 +3434,10 @@ window.TascoPhotoViewer=(()=>{
       paintInfo();render();
     }
     function show(next){
-      index=next;loadToken++;clearTimeout(tapTimer);lastTap=null;pointers.clear();gesture=null;stage.classList.remove('is-gesturing');zoom=1;x=0;y=0;rotation=rotations.get(current().id)||0;ready=false;naturalWidth=0;naturalHeight=0;image.style.visibility='hidden';
+      invalidateExport(true);index=next;loadToken++;clearTimeout(tapTimer);lastTap=null;pointers.clear();gesture=null;stage.classList.remove('is-gesturing');zoom=1;x=0;y=0;rotation=rotations.get(current().id)||0;ready=false;naturalWidth=0;naturalHeight=0;image.style.visibility='hidden';
       overlay.dataset.loading='true';overlay.querySelector('.viewer-loading').hidden=false;overlay.querySelector('.viewer-error').hidden=true;controls();
       const token=loadToken;image.onload=()=>{
-        if(token!==loadToken||closed)return;naturalWidth=image.naturalWidth;naturalHeight=image.naturalHeight;ready=naturalWidth>0;dimensions.set(current().id,{width:naturalWidth,height:naturalHeight});overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;image.style.visibility='visible';fit();paintInfo();
+        if(token!==loadToken||closed)return;naturalWidth=image.naturalWidth;naturalHeight=image.naturalHeight;ready=naturalWidth>0;dimensions.set(current().id,{width:naturalWidth,height:naturalHeight});overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;image.style.visibility='visible';fit();paintInfo();if(TascoPhotoExport.isIOS)prepareExport().catch(()=>{});
         for(const neighbor of [items[index-1],items[index+1]])if(neighbor){const preload=new Image();preload.src=neighbor.url;}
       };
       image.onerror=()=>{if(token!==loadToken||closed)return;ready=false;overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;overlay.querySelector('.viewer-error').hidden=false;render();};
@@ -3400,17 +3463,41 @@ window.TascoPhotoViewer=(()=>{
         return await new Promise((resolve,reject)=>canvas.toBlob(result=>result?resolve(result):reject(new Error('Không tạo được bản ảnh đã xoay.')),'image/jpeg',.95));
       }finally{URL.revokeObjectURL(url);}
     }
+    function invalidateExport(clearOriginal=false){
+      exportRevision++;exportAbort?.abort();exportAbort=null;exportTask=null;preparedExport=null;if(clearOriginal)originalExport=null;
+    }
+    function prepareExport(){
+      if(preparedExport)return Promise.resolve(preparedExport);
+      if(exportTask)return exportTask;
+      const row=current(),degrees=rotation,revision=exportRevision,request=new AbortController();exportAbort=request;
+      const timer=setTimeout(()=>request.abort(),20000);
+      const task=(async()=>{
+        try{
+          const original=originalExport||row.blob||await fetch(row.url,{signal:request.signal}).then(response=>{if(!response.ok)throw new Error('Chưa tải được ảnh.');return response.blob();});
+          if(closed||revision!==exportRevision||request.signal.aborted)return null;originalExport=original;
+          const blob=degrees?await rotatedBlob(original,degrees):original;
+          if(closed||revision!==exportRevision||request.signal.aborted)return null;
+          const name=row.file_name||'tasco_'+new Date(row.captured_at).getTime()+'.jpg';
+          preparedExport=TascoPhotoExport.file(blob,degrees?name.replace(/\.[^.]+$/,'')+'_xoay'+degrees+'.jpg':name);return preparedExport;
+        }finally{clearTimeout(timer);if(revision===exportRevision){exportTask=null;exportAbort=null;}}
+      })();exportTask=task;return task;
+    }
     async function download(){
-      if(downloading||!ready)return;const row=current(),degrees=rotation;downloading=true;render();
+      if(downloading||!ready)return;const revision=exportRevision,cached=preparedExport;downloading=true;render();
       try{
-        const original=row.blob||await fetch(row.url).then(response=>{if(!response.ok)throw new Error('Chưa tải được ảnh.');return response.blob();});
-        const blob=degrees?await rotatedBlob(original,degrees):original;
-        const name=row.file_name||'tasco_'+new Date(row.captured_at).getTime()+'.jpg';options.download(blob,degrees?name.replace(/\.[^.]+$/,'')+'_xoay'+degrees+'.jpg':name);if(!closed)notice(degrees?'Đã chuẩn bị bản ảnh đã xoay.':'Đã chuẩn bị ảnh để tải về.');
-      }catch(error){if(!closed)notice(error.message||'Chưa tải được ảnh. Hãy thử lại.');}
+        if(TascoPhotoExport.isIOS)notice('Trong bảng của iPhone, chọn “Lưu hình ảnh” để thêm ảnh vào thư viện.');
+        // A cached file keeps share() inside the tap. A slow fetch uses a fresh
+        // "Mở bảng lưu ảnh" click in the preview instead of losing activation.
+        const result=cached?await TascoPhotoExport.save(cached):await (async()=>{
+          const file=await prepareExport();if(!file||closed||revision!==exportRevision)return;
+          return TascoPhotoExport.save(file,{gesture:false});
+        })();
+        if(!closed&&revision===exportRevision){if(result==='download')notice('Đã chuẩn bị tệp ảnh để tải về.');if(result==='cancelled')notice('Đã hủy mở bảng lưu ảnh.');}
+      }catch(error){if(!closed&&revision===exportRevision)notice(error.name==='AbortError'?'Tải ảnh quá lâu. Kiểm tra kết nối rồi thử lại.':error.message||'Chưa chuẩn bị được ảnh. Hãy thử lại.');}
       finally{downloading=false;if(!closed)render();}
     }
     function close(){
-      if(closed)return;closed=true;controller.abort();observer.disconnect();cancelAnimationFrame(raf);clearTimeout(tapTimer);clearTimeout(noticeTimer);image.onload=image.onerror=null;overlay.remove();Object.assign(document.body.style,savedStyle);document.documentElement.style.overflow=htmlOverflow;window.scrollTo(scrollX,scrollY);if(focus?.isConnected)focus.focus({preventScroll:true});else options.restoreFocus?.();if(active?.close===close)active=null;
+      if(closed)return;closed=true;invalidateExport(true);TascoPhotoExport.close();controller.abort();observer.disconnect();cancelAnimationFrame(raf);clearTimeout(tapTimer);clearTimeout(noticeTimer);image.onload=image.onerror=null;overlay.remove();Object.assign(document.body.style,savedStyle);document.documentElement.style.overflow=htmlOverflow;window.scrollTo(scrollX,scrollY);if(focus?.isConnected)focus.focus({preventScroll:true});else options.restoreFocus?.();if(active?.close===close)active=null;
     }
     function midpoint(){const [a,b]=[...pointers.values()];return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,distance:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y))};}
     function beginPinch(){const mid=midpoint(),rect=stage.getBoundingClientRect();gesture={type:'pinch',distance:mid.distance,zoom,anchorX:(mid.x-rect.left-rect.width/2-x)/zoom,anchorY:(mid.y-rect.top-rect.height/2-y)/zoom};clearTimeout(tapTimer);lastTap=null;}
@@ -3453,7 +3540,7 @@ window.TascoPhotoViewer=(()=>{
     overlay.addEventListener('error',event=>{const node=event.target;if(node.matches?.('.viewer-film-thumb img')&&node.dataset.original&&!node.dataset.fallback){node.dataset.fallback='true';node.src=node.dataset.original;}},{capture:true,signal});
     backdrop.addEventListener('click',()=>setInfo(false),{signal});
     document.addEventListener('keydown',event=>{
-      if(closed||document.querySelector('.cloud-delete-overlay'))return;
+      if(closed||document.querySelector('.cloud-delete-overlay')||document.querySelector('.photo-save-overlay'))return;
       if(event.key==='Tab'){
         const scope=info.hidden?overlay:info,buttons=[...scope.querySelectorAll('button,[tabindex="0"]')].filter(node=>!node.disabled&&node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden');if(!buttons.length)return;
         const first=buttons[0],last=buttons[buttons.length-1];if(event.shiftKey&&(document.activeElement===first||!scope.contains(document.activeElement))){event.preventDefault();last.focus();}else if(!event.shiftKey&&(document.activeElement===last||!scope.contains(document.activeElement))){event.preventDefault();first.focus();}return;
@@ -3662,7 +3749,7 @@ window.TascoCloud = (() => {
       const url=thumbnail(row),time=new Date(row.captured_at).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
       return `<article class="cloud-photo-card cloud-photo-tile" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${esc(row.title)}, ${esc(stamp(row.captured_at))}, ${esc(row.address||'Chưa xác định địa điểm')}">${url?`<img src="${esc(previewURL(url))}" data-original="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.original" loading="lazy" decoding="async" alt="${esc(row.title)}">`:icon('camera')}<time class="cloud-tile-time" datetime="${esc(row.captured_at)}">${esc(time)}</time></button></article>`;
     }
-    const url=thumbnail(row);return `<article class="cloud-photo-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(row.error||'Đã giữ bản ảnh trên thiết bị này')}</span><button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">Tải bản ảnh về máy</button>`:''}</div></article>`;
+    const url=thumbnail(row);return `<article class="cloud-photo-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(row.error||'Đã giữ bản ảnh trên thiết bị này')}</span><button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}</button>`:''}</div></article>`;
   }
   function gallery(rows){
     if(state.config.mode!=='mobile')return rows.map(row=>card(row)).join('');
@@ -3800,7 +3887,10 @@ window.TascoCloud = (() => {
     if((await account()).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Hãy đăng nhập lại trước khi lưu ảnh.');await storeBatch(records);
     notify('Đã giữ '+files.length+' ảnh trên thiết bị, đang đưa lên Cloud.');await refresh();processQueue();
   }
-  function downloadBlob(blob,name) {const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name||'tasco-photo.jpg';link.click();setTimeout(()=>URL.revokeObjectURL(url),10000);}
+  function downloadBlob(blob,name) {
+    try{TascoPhotoExport.save(TascoPhotoExport.file(blob,name)).catch(()=>notify('Chưa mở được màn hình lưu ảnh. Hãy thử lại.'));}
+    catch(error){notify(error.message||'Chưa chuẩn bị được ảnh.');}
+  }
   function openPhoto(row) {
     const owner=state.user?.id,root=state.root;
     const items=()=>[...new Map([...state.pending.map(item=>({...item,pending:true})),...state.rows].map(item=>{const url=thumbnail(item);return [item.id,{...item,url,preview:previewURL(url,144)}];})).values()];
