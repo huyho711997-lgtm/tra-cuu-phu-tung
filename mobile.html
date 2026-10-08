@@ -852,14 +852,17 @@
 .custom-camera-modal .camera-settings-v2 select{appearance:none;-webkit-appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ed2c2' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m8 10 4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px}
 .camera-settings-v2 :is(.camera-rotation-controls button,.camera-settings-reset,[data-camera-native]){display:inline-flex;align-items:center;justify-content:center;gap:7px}.camera-settings-v2 .camera-custom-color{position:relative;display:grid;place-items:center;background:#273e3d}.camera-custom-color svg{pointer-events:none;color:#dcf1eb}.camera-settings-v2 .camera-custom-color input[type=color]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
 .camera-ratio-section{margin-bottom:23px}.camera-ratio-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.custom-camera-modal .camera-ratio-options button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:78px;padding:10px 3px;border:1px solid var(--settings-line);border-radius:12px;background:#18232c;color:#9fb0bb}.camera-ratio-options svg{width:23px;height:23px}.camera-ratio-options strong{font-size:12px;color:#e0e9ed}.camera-ratio-options small{font-size:9px}.custom-camera-modal .camera-ratio-options button[aria-checked=true]{border-color:#9ed2c2;background:#1c3230;color:#9ed2c2}.camera-settings-v2 button:focus-visible{outline:2px solid #9ed2c2;outline-offset:2px}
-.cloud-gallery-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.cloud-gallery-heading h2{margin:0;font-size:16px;font-weight:800}.cloud-gallery-actions{display:flex;align-items:center;gap:9px}.cloud-gallery-actions>span{font-size:11px;color:var(--cl-muted)}.cloud-gallery-actions .cloud-button{min-height:40px;padding:8px 11px;white-space:nowrap}
-.personal-cloud .cloud-selection-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:13px;margin:0 0 16px;border:1px solid var(--cl-line);border-radius:14px;background:var(--cl-bg)}.cloud-selection-bar[hidden]{display:none!important}.cloud-selection-bar strong{font-size:12px;color:var(--cl-text)}.cloud-selection-bar>div{display:flex;flex-wrap:wrap;gap:7px}.cloud-selection-bar .cloud-button{min-height:40px;padding:8px 11px;font-size:11px}.personal-cloud .cloud-delete-selected{color:#b42336;border-color:#f4c4cc;background:#fff1f3}.personal-cloud .cloud-delete-selected:disabled{opacity:.45;cursor:default}
-.cloud-photo-card{position:relative}.personal-cloud .cloud-photo-delete,.personal-cloud .cloud-photo-select{position:absolute;top:5px;z-index:2;width:36px;height:36px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.55);border-radius:10px;background:rgba(9,20,34,.76);color:white;cursor:pointer}.cloud-photo-delete{right:5px}.cloud-photo-select{left:5px}.cloud-photo-delete svg,.cloud-photo-select svg{width:18px;height:18px}.cloud-photo-delete[hidden],.cloud-photo-select[hidden]{display:none!important}.cloud-photo-delete:disabled{opacity:.45}.cloud-photo-select[aria-checked=false] svg{opacity:0}.personal-cloud .cloud-photo-select[aria-checked=true]{background:#142a5e;border-color:#86d1c5;color:#bdece3}.personal-cloud .cloud-photo-card.is-selected{outline:3px solid #4faea3;outline-offset:-3px}.personal-cloud .cloud-photo-card.is-selected .cloud-photo-image{opacity:.78}.cloud-photo-card.is-selected .cloud-photo-select{opacity:1}
+.cloud-gallery-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.cloud-gallery-heading h2{margin:0;font-size:16px;font-weight:800}.cloud-gallery-actions{display:flex;align-items:center;gap:6px}.cloud-gallery-actions>span{font-size:11px;color:var(--cl-muted)}.personal-cloud .cloud-gallery-actions .cloud-button{min-height:32px;padding:5px 9px;border-radius:9px;font-size:11px;line-height:1.2;gap:5px;white-space:nowrap}.personal-cloud .cloud-gallery-actions .cloud-button svg{width:14px;height:14px}
+.personal-cloud .cloud-selection-bar{display:flex;align-items:flex-start;flex-direction:column;gap:8px;padding:10px;margin:0 0 14px;border:1px solid var(--cl-line);border-radius:12px;background:var(--cl-bg)}.cloud-selection-bar[hidden]{display:none!important}.cloud-selection-bar strong{font-size:11px;color:var(--cl-text)}.cloud-selection-bar>div{display:flex;flex-wrap:wrap;gap:6px}.personal-cloud .cloud-selection-bar .cloud-button{min-height:32px;padding:5px 9px;border-radius:9px;font-size:11px;line-height:1.2;gap:5px}.personal-cloud .cloud-selection-bar .cloud-button svg{width:14px;height:14px}.personal-cloud .cloud-selection-bar .cloud-delete-selected{color:#b42336;border-color:#f4c4cc;background:#fff1f3}.personal-cloud .cloud-delete-selected:disabled{opacity:.45;cursor:default}
+.cloud-photo-card{position:relative}.personal-cloud .cloud-photo-select{position:absolute;top:5px;left:5px;z-index:2;width:24px;height:24px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.65);border-radius:7px;background:rgba(9,20,34,.76);color:white;cursor:pointer}.cloud-photo-select input[type=checkbox]{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;opacity:0;cursor:pointer}.cloud-photo-select svg{width:13px;height:13px;pointer-events:none}.cloud-photo-select[hidden]{display:none!important}.cloud-photo-select[data-checked=false] svg{opacity:0}.personal-cloud .cloud-photo-select[data-checked=true]{background:#142a5e;border-color:#86d1c5;color:#bdece3}.cloud-photo-select:focus-within{outline:2px solid #86d1c5;outline-offset:2px}.personal-cloud .cloud-photo-card.is-selected{outline:2px solid #4faea3;outline-offset:-2px}.personal-cloud .cloud-photo-card.is-selected .cloud-photo-image{opacity:.78}
 .cloud-delete-overlay{position:fixed;inset:0;z-index:100100;display:grid;place-items:center;padding:22px;background:rgba(4,12,24,.72);font-family:inherit}.cloud-delete-dialog{width:min(390px,100%);padding:25px;border:1px solid #e1e7ef;border-radius:24px;background:#fff;color:#142a5e;box-shadow:0 20px 80px rgba(0,0,0,.3)}.cloud-delete-symbol{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:#fff1f3;color:#bc3148}.cloud-delete-symbol svg{width:25px;height:25px}.cloud-delete-dialog h2{font-size:20px;font-weight:800;margin:17px 0 10px}.cloud-delete-dialog p{font-size:13px;line-height:1.7;margin:0;color:#66758a}.cloud-delete-dialog .cloud-delete-error{color:#b42336;margin-top:14px}.cloud-delete-dialog footer{display:flex;gap:10px;margin-top:24px}.cloud-delete-dialog button{flex:1;min-height:46px;border:1px solid #dce4ee;border-radius:12px;padding:10px;background:#f2f5f9;color:#142a5e;font-size:13px;font-weight:750;cursor:pointer}.cloud-delete-dialog [data-delete-confirm]{background:#b42336;border-color:#b42336;color:white}.cloud-delete-dialog button:disabled{opacity:.55;cursor:wait}.cloud-delete-dialog button:focus-visible{outline:3px solid #4faea3;outline-offset:3px}.dark .cloud-delete-dialog{background:#142237;border-color:#2b3c55;color:#e3edf9}.dark .cloud-delete-dialog p{color:#aebed1}.dark .cloud-delete-dialog .cloud-delete-error{color:#ffacb9}
 .viewer-tools:has([data-viewer-action=delete]){grid-template-columns:repeat(6,minmax(0,1fr))}.viewer-tool[data-viewer-action=delete]{color:#ffacb9}
-@media(max-width:360px){.camera-settings-v2 .camera-settings-tabs{margin-left:16px;margin-right:16px}.camera-settings-v2 .camera-settings-body{padding-left:16px;padding-right:16px}.camera-settings-tabs svg{width:13px;height:13px}.custom-camera-modal .camera-settings-tabs button{font-size:11px;gap:3px}.cloud-gallery-actions{gap:5px}.cloud-gallery-actions .cloud-button{font-size:10px;padding:7px}.cloud-photo-delete,.cloud-photo-select{width:34px!important;height:34px!important}}
+@media(max-width:360px){.camera-settings-v2 .camera-settings-tabs{margin-left:16px;margin-right:16px}.camera-settings-v2 .camera-settings-body{padding-left:16px;padding-right:16px}.camera-settings-tabs svg{width:13px;height:13px}.custom-camera-modal .camera-settings-tabs button{font-size:11px;gap:3px}.cloud-gallery-actions{gap:5px}.personal-cloud .cloud-gallery-actions .cloud-button,.personal-cloud .cloud-selection-bar .cloud-button{min-height:30px;font-size:10.5px;padding:4px 8px}}
 .cloud-delete-dialog{max-height:calc(100dvh - 44px);overflow-y:auto}.cloud-gallery-actions>[data-cloud-total]{padding:4px 9px;border-radius:7px;background:#eaf0f7;color:#627494;font-size:10px;font-weight:700}.dark .cloud-gallery-actions>[data-cloud-total]{background:#1c2c43;color:#a9bdd9}
 
+</style>
+<style>
+.camera-settings-v2 .camera-preference-save{display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;gap:5px}.camera-settings-v2 .camera-preference-save>span{font-size:10px;line-height:1.45;overflow-wrap:anywhere;white-space:normal}.custom-camera-modal .camera-settings-v2 footer #cameraPreferenceRetry{display:inline-flex;align-items:center;gap:4px;width:auto;min-width:0;min-height:26px;padding:3px 7px;border:1px solid var(--settings-line);border-radius:7px;background:transparent;color:#bde6de;font-size:10px}.camera-settings-v2 #cameraPreferenceRetry[hidden]{display:none!important}.camera-settings-v2 #cameraPreferenceRetry svg{width:12px;height:12px}.camera-settings-v2 #cameraPreferenceRetry span{color:inherit;font-size:inherit}.camera-settings-v2 #cameraPreferenceStatus[data-state=error],.camera-settings-v2 #cameraPreferenceStatus[data-state=setup]{color:#ffd19b}.camera-settings-v2 #cameraPreferenceStatus[data-state=saved]{color:#9ed2c2}
 </style>
 </head>
 <body class="bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
@@ -1893,6 +1896,7 @@
             // Nếu có fullName thì hiển thị, không thì mới lấy email/username
             document.getElementById('userEmail').innerText = fullName || email;
             currentUserProfile = { email, role, fullName };
+            window.TascoCameraPreferences?.setIdentity(email);
 
             // Cập nhật Avatar Initials trên Header
             let initials = "U";
@@ -1927,6 +1931,7 @@
             console.log("Hiding App (Returning to Login)");
             updateView('login');
             currentUserProfile = null;
+            window.TascoCameraPreferences?.setIdentity('');
         }
 
         
@@ -2939,6 +2944,7 @@ async function deletePersonalCloudPhotos(ids,owner){
   return result;
 }
 TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
+window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mobileCloudEmail});
 </script>
 <!-- BOTTOM SHEET FILTER MODAL -->
     <div id="modalFilterSelection" class="fixed inset-0 hidden flex-col justify-end" style="display: none; z-index: 9999;">
@@ -3186,7 +3192,7 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v3-svg-ratios-delete" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v6-account-camera-settings" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
@@ -3282,7 +3288,7 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
             <button type="button" class="camera-settings-reset" data-camera-preferences-reset><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5M12 8v4l3 2"/></svg><span>Khôi phục cài đặt chữ và hiển thị</span></button>
           </div></details>
         </section>
-      </div><footer><span>Tự lưu trên thiết bị</span><button type="button" data-camera-settings-close>Xong</button></footer>
+      </div><footer><div class="camera-preference-save"><span id="cameraPreferenceStatus" role="status" aria-live="polite">Đang tải thiết lập…</span><button type="button" id="cameraPreferenceRetry" hidden aria-label="Thử lưu thiết lập camera lại"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5M12 8v4l3 2"/></svg><span>Thử lại</span></button></div><button type="button" data-camera-settings-close>Xong</button></footer>
     </section>
     <input id="cameraNativeInput" type="file" accept="image/*" capture="environment" hidden>
 
@@ -3614,11 +3620,11 @@ window.TascoCloud = (() => {
       const action=button.dataset.action;
       if(button.disabled||state.deleting)return;
       if(action==='selection'){state.selecting=!state.selecting;state.selected.clear();paintSelection();}
-      if(action==='select')toggleSelection(button.dataset.id);
+      if(action==='select'&&state.selecting)toggleSelection(button.dataset.id);
       if(action==='select-all'){for(const row of [...state.rows,...state.pending])state.selected.add(row.id);paintSelection();}
       if(action==='deselect-all'){state.selected.clear();paintSelection();}
       if(action==='delete-selected')requestDelete([...state.selected]);
-      if(action==='delete')requestDelete([button.dataset.id]);
+      
       if(action==='capture'&&state.user)state.config.capture(root.querySelector('[data-cloud-title]')?.value.trim()||'Ảnh của tôi');
       if(action==='date')TascoDatePicker.open({theme:state.config.mode,value:{date:state.date,startTime:state.startTime,endTime:state.endTime},onChange:value=>{if(state.root!==root||!root.isConnected)return;Object.assign(state,value);state.page=0;const label=root.querySelector('[data-cloud-date-label]');label.textContent=TascoDatePicker.label(value);if(value.startTime){const time=document.createElement('small');time.textContent=value.startTime+' – '+value.endTime;label.append(time);}root.querySelector('[data-cloud-date]').dataset.value=value.date;refresh();}});
       if(action==='refresh')refresh();if(action==='retry')processQueue();if(action==='more'){state.page=Math.floor(state.rows.length/48);refresh(true);}
@@ -3639,7 +3645,7 @@ window.TascoCloud = (() => {
       try{const api=await client();const result=await api.auth.signInWithPassword({email:expected,password:form.elements.password.value});if(result.error)throw result.error;form.elements.password.value='';await refresh();}catch(error){errorNode.textContent=message(error);}finally{button.disabled=false;}
     };
   }
-  function photoActions(row){return `<button type="button" class="cloud-photo-select" data-action="select" data-id="${esc(row.id)}" role="checkbox" aria-checked="false" aria-label="Chọn ảnh ${esc(row.title)}" hidden>${icon('check')}</button><button type="button" class="cloud-photo-delete" data-action="delete" data-id="${esc(row.id)}" aria-label="Xoá ảnh ${esc(row.title)}" title="Xoá ảnh">${icon('trash')}</button>`;}
+  function photoActions(row){return `<label class="cloud-photo-select" data-checked="false" hidden><input type="checkbox" data-action="select" data-id="${esc(row.id)}" data-photo-title="${esc(row.title||'Ảnh của tôi')}" aria-label="Chọn ảnh ${esc(row.title||'Ảnh của tôi')}">${icon('check')}</label>`;}
   function toggleSelection(id){if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);paintSelection();}
   function paintSelection(){
     const root=state.root;if(!visible())return;root.querySelector('.personal-cloud').dataset.selecting=String(state.selecting);
@@ -3648,7 +3654,7 @@ window.TascoCloud = (() => {
     root.querySelector('[data-selection-label]').textContent=state.selecting?'Xong':'Chọn ảnh';
     root.querySelector('[data-action="selection"]').disabled=state.deleting||!state.user;
     const remove=root.querySelector('[data-action="delete-selected"]');remove.disabled=!state.selected.size||state.deleting||state.uploading;remove.querySelector('span').textContent='Xoá ('+state.selected.size+')';
-    for(const card of root.querySelectorAll('[data-photo-id]')){const selected=state.selected.has(card.dataset.photoId);card.classList.toggle('is-selected',selected);const check=card.querySelector('.cloud-photo-select');check.hidden=!state.selecting;check.setAttribute('aria-checked',String(selected));card.querySelector('.cloud-photo-delete').hidden=state.selecting;card.querySelector('.cloud-photo-delete').disabled=state.uploading||state.deleting;}
+    for(const card of root.querySelectorAll('[data-photo-id]')){const selected=state.selected.has(card.dataset.photoId);card.classList.toggle('is-selected',selected);const check=card.querySelector('.cloud-photo-select'),input=check.querySelector('input');check.hidden=!state.selecting;check.dataset.checked=String(selected);input.checked=selected;input.disabled=state.deleting;const image=card.querySelector('.cloud-photo-image');image.dataset.viewLabel||=image.getAttribute('aria-label');if(state.selecting){image.setAttribute('aria-label',(selected?'Bỏ chọn ảnh ':'Chọn ảnh ')+input.dataset.photoTitle);image.setAttribute('aria-pressed',String(selected));}else{image.setAttribute('aria-label',image.dataset.viewLabel);image.removeAttribute('aria-pressed');}}
     for(const button of bar.querySelectorAll('button:not([data-action="delete-selected"])'))button.disabled=state.deleting;
   }
   function card(row,pending=false) {
@@ -3695,6 +3701,20 @@ window.TascoCloud = (() => {
     }catch(error){if(revision!==state.revision)return;if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)){window.TascoPhotoViewer?.close();clearURLs();state.deleteDialog?.cancel();state.selected.clear();state.selecting=false;state.user=null;state.rows=[];state.pending=[];state.count=0;loginPanel(error.message);}else state.error=message(error);}
     finally{if(revision===state.revision){state.busy=false;paint();}}
   }
+  async function deleteLibraryBatch(api,ids,owner){
+    if((await account()).id!==owner)throw new Error('Tài khoản đã thay đổi.');
+    const result=await api.rpc('tasco_delete_personal_photos',{p_photo_ids:ids});
+    if(!result.error){
+      if(!result.data||!Array.isArray(result.data.deleted)||!Array.isArray(result.data.absent)||!Array.isArray(result.data.denied))throw new Error('Máy chủ trả về kết quả xoá không hợp lệ.');
+      return {deleted:[...new Set([...result.data.deleted,...result.data.absent])].filter(id=>ids.includes(id)),denied:result.data.denied.filter(id=>ids.includes(id)),legacy:false};
+    }
+    if(!['PGRST202','42883'].includes(result.error.code))throw result.error;
+    // Keep compatibility with a project that has the older owner DELETE policy.
+    // Only confirmed RETURNING IDs count as deleted; zero rows is never success.
+    const fallback=await api.from(table).delete().eq('owner_id',owner).in('id',ids).select('id');if(fallback.error)throw fallback.error;
+    const deleted=(fallback.data||[]).map(row=>row.id).filter(id=>ids.includes(id));
+    return {deleted,denied:ids.filter(id=>!deleted.includes(id)),legacy:true};
+  }
   async function deleteLocalPhotos(ids,owner){
     const db=await database();return new Promise((resolve,reject)=>{
       const tx=db.transaction('photos','readwrite'),store=tx.objectStore('photos'),removed=[];
@@ -3706,10 +3726,9 @@ window.TascoCloud = (() => {
     if(state.deleting||state.deleteDialog)return;
     if(state.uploading){notify('Đợi đồng bộ ảnh hoàn tất rồi thử xoá lại.');return;}
     const records=new Map([...state.rows,...state.pending].map(row=>[row.id,row])),chosen=[...new Set(ids)].filter(id=>records.has(id));if(!chosen.length||!state.user)return;
-    window.TascoPhotoViewer?.close();
     const owner=state.user.id,root=state.root,pendingIds=new Set(state.pending.map(row=>row.id)),focus=document.activeElement,overlay=document.createElement('div');
     overlay.className='cloud-delete-overlay';overlay.innerHTML=`<section class="cloud-delete-dialog" role="alertdialog" aria-modal="true" aria-labelledby="cloudDeleteTitle" aria-describedby="cloudDeleteDescription"><div class="cloud-delete-symbol">${icon('trash')}</div><h2 id="cloudDeleteTitle">Xoá ${chosen.length===1?'ảnh này':chosen.length+' ảnh đã chọn'}?</h2><p id="cloudDeleteDescription">Ảnh sẽ được xoá khỏi thư viện của bạn${chosen.some(id=>pendingIds.has(id))?' và hàng đợi trên thiết bị này':''}. Thao tác này không thể hoàn tác.</p><p class="cloud-delete-error" role="alert" hidden></p><footer><button type="button" data-delete-cancel>Giữ lại</button><button type="button" data-delete-confirm>Xoá ${chosen.length} ảnh</button></footer></section>`;
-    const cancelButton=overlay.querySelector('[data-delete-cancel]'),confirmButton=overlay.querySelector('[data-delete-confirm]'),errorNode=overlay.querySelector('[role="alert"]'),controller=new AbortController(),bodyOverflow=document.body.style.overflow;
+    const cancelButton=overlay.querySelector('[data-delete-cancel]'),confirmButton=overlay.querySelector('[data-delete-confirm]'),errorNode=overlay.querySelector('[role="alert"]'),controller=new AbortController();let bodyOverflow=document.body.style.overflow;
     function close(force=false){if(state.deleting&&!force)return;controller.abort();overlay.remove();document.body.style.overflow=bodyOverflow;state.deleteDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
     state.deleteDialog={cancel:()=>close(true)};document.body.style.overflow='hidden';document.body.append(overlay);cancelButton.focus();
     cancelButton.onclick=()=>close();overlay.onclick=event=>{if(event.target===overlay)close();};
@@ -3719,28 +3738,29 @@ window.TascoCloud = (() => {
     },{capture:true,signal:controller.signal});
     confirmButton.onclick=async()=>{
       if(state.deleting)return;state.deleting=true;state.revision++;state.busy=false;errorNode.hidden=true;confirmButton.disabled=cancelButton.disabled=true;confirmButton.textContent='Đang xoá…';paintSelection();
-      const removed=new Set();let failure='',physical=false;
+      const removed=new Set();let failure='',physical=false,setupRequired=false,denied=false;
       try{
         if((await account()).id!==owner||state.root!==root)throw new Error('Tài khoản đã thay đổi. Hãy mở lại thư viện.');
         const remote=chosen.filter(id=>!pendingIds.has(id));
         if(remote.length){
           const api=await client();
           if(state.config.deletePhotos){const result=await state.config.deletePhotos(remote,owner);for(const id of result.deleted||[])if(remote.includes(id))removed.add(id);physical=true;if(result.failed?.length)failure=[...new Set(result.failed.map(row=>row.message||'Chưa xoá được ảnh.'))].slice(0,3).join(' ');}
-          else{for(let start=0;start<remote.length;start+=100){if((await account()).id!==owner)throw new Error('Tài khoản đã thay đổi.');const batch=remote.slice(start,start+100),result=await api.from(table).delete().eq('owner_id',owner).in('id',batch).select('id');if(result.error)throw result.error;for(const row of result.data||[])if(batch.includes(row.id))removed.add(row.id);}}
+          else{for(let start=0;start<remote.length;start+=100){const result=await deleteLibraryBatch(api,remote.slice(start,start+100),owner);for(const id of result.deleted)removed.add(id);if(result.denied.length){setupRequired=result.legacy&&!result.deleted.length;denied=!result.legacy;break;}}}
         }
         if((await account()).id!==owner||state.root!==root)throw new Error('Tài khoản đã thay đổi.');
         for(const id of await deleteLocalPhotos(chosen.filter(id=>pendingIds.has(id)),owner))removed.add(id);
-        if(removed.size<chosen.length&&!failure)failure='Một số ảnh chưa xoá được. Kiểm tra kết nối hoặc quyền xoá của tài khoản rồi thử lại.';
-      }catch(error){failure=['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)?'Phiên đăng nhập đã thay đổi. Hãy đăng nhập lại đúng tài khoản để xoá ảnh.':error.code==='42501'?'Tài khoản chưa có quyền xoá ảnh. Vui lòng liên hệ quản trị viên.':message(error);}
+        if(setupRequired)failure='Quyền xoá ảnh trên máy chủ chưa được cấu hình. Liên hệ quản trị viên để bật quyền xoá.';
+        else if(denied)failure='Bạn không có quyền xoá các ảnh này. Hãy tải lại thư viện bằng đúng tài khoản.';
+        else if(removed.size<chosen.length&&!failure)failure='Một số ảnh chưa xoá được. Kiểm tra kết nối rồi thử lại.';
+      }catch(error){setupRequired=error.code==='42501';failure=['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)?'Phiên đăng nhập đã thay đổi. Hãy đăng nhập lại đúng tài khoản để xoá ảnh.':setupRequired?'Quyền xoá ảnh trên máy chủ chưa được cấu hình. Liên hệ quản trị viên để bật quyền xoá.':message(error);}
       finally{
         state.deleting=false;
         if(state.root===root&&state.user?.id===owner){
           for(const id of removed){state.selected.delete(id);const url=state.urls.get(id);if(url){URL.revokeObjectURL(url);state.urls.delete(id);}}
           state.rows=state.rows.filter(row=>!removed.has(row.id));state.pending=state.pending.filter(row=>!removed.has(row.id));
           state.count=Math.max(0,state.count-[...removed].filter(id=>!pendingIds.has(id)).length);
-          if(removed.size)window.TascoPhotoViewer?.close();
-          if(!failure){state.selecting=false;state.selected.clear();close(true);notify('Đã xoá '+removed.size+' ảnh'+(physical?' khỏi Cloud.':' khỏi thư viện.'));}
-          else{errorNode.textContent=(removed.size?'Đã xoá '+removed.size+' ảnh. ':'')+failure;errorNode.hidden=false;const remaining=chosen.filter(id=>!removed.has(id));chosen.splice(0,chosen.length,...remaining);confirmButton.disabled=!chosen.length;cancelButton.disabled=false;confirmButton.textContent='Thử xoá lại ('+chosen.length+')';if(!chosen.length)cancelButton.textContent='Đóng';}
+          if(!failure){state.selecting=false;state.selected.clear();close(true);window.TascoPhotoViewer?.close();notify('Đã xoá '+removed.size+' ảnh'+(physical?' khỏi Cloud.':' khỏi thư viện.'));}
+          else{if(removed.size&&document.querySelector('#cloudLightbox')){window.TascoPhotoViewer?.close();bodyOverflow=document.body.style.overflow;document.body.style.overflow='hidden';}errorNode.textContent=(removed.size?'Đã xoá '+removed.size+' ảnh. ':'')+failure;errorNode.hidden=false;const remaining=chosen.filter(id=>!removed.has(id));chosen.splice(0,chosen.length,...remaining);confirmButton.disabled=!chosen.length||setupRequired||denied;cancelButton.disabled=false;confirmButton.textContent=setupRequired||denied?'Chưa có quyền xoá':'Thử xoá lại ('+chosen.length+')';if(!chosen.length||setupRequired||denied)cancelButton.textContent='Đóng';}
           paint();
           if(!failure)await refresh();
         }else{close(true);if(failure)notify(failure);await refresh();}
@@ -3998,9 +4018,9 @@ function sanitizeCameraAppearance(value={}){
   return result;
 }
 let cameraAppearance={...cameraAppearanceDefaults};
-try{cameraAppearance=sanitizeCameraAppearance(JSON.parse(localStorage.getItem('tasco-camera-appearance-v1')||'{}'));}catch(_){}
+// Preferences are restored for the authenticated user by TascoCameraPreferences.
 function cameraAppearanceSnapshot(){return Object.freeze({...cameraAppearance});}
-function saveCameraAppearance(){try{localStorage.setItem('tasco-camera-appearance-v1',JSON.stringify(cameraAppearance));}catch(_){} }
+function saveCameraAppearance(){window.TascoCameraPreferences?.changed();}
 function changeCameraAppearance(input){
   const key=input.dataset.cameraPref;if(!(key in cameraAppearanceDefaults))return;
   const value=input.type==='checkbox'?input.checked:input.type==='range'?Number(input.value):input.value;
@@ -4121,7 +4141,7 @@ const cameraQualityProfiles={
   maximum:{id:'maximum',label:'Chi tiết',detail:'2560 px · ảnh lớn hơn',request:2560,maxSide:2560,fps:24,jpeg:.95}
 };
 const cameraControlsState={quality:'high',deviceId:'',devices:[],baseFactor:1,zoom:1,digitalZoom:1,capabilities:{},busy:false,settingsOpen:false,location:null,clock:null,manualRotation:{environment:0,user:0},settingsFocus:null};
-try{const saved=localStorage.getItem('tasco-camera-quality-v2');if(cameraQualityProfiles[saved])cameraControlsState.quality=saved;const rotations=JSON.parse(localStorage.getItem('tasco-camera-rotation')||'{}');for(const facing of ['environment','user'])if([0,90,180,270].includes(rotations[facing]))cameraControlsState.manualRotation[facing]=rotations[facing];}catch(_){}
+// Quality and rotation are restored with the user's other preferences.
 function cameraQuality(){return {...cameraQualityProfiles[cameraControlsState.quality]};}
 function cameraVideoConstraints(){
   const quality=cameraQuality(),device=cameraControlsState.deviceId?{deviceId:{exact:cameraControlsState.deviceId}}:{facingMode:{ideal:customCameraFacingMode}};
@@ -4179,15 +4199,17 @@ async function selectCameraDevice(id){
 }
 async function selectCameraQuality(id){
   if(!cameraQualityProfiles[id]||cameraControlsState.busy||cameraUiState.captureBusy)return;
+  const preferenceToken=window.TascoCameraPreferences?.identityToken();
   const previous=cameraControlsState.quality,zoom=cameraControlsState.zoom;cameraControlsState.quality=id;
   cameraControlsState.busy=true;renderCameraSettings();syncCameraViewport();
-  try{await startCustomCameraStream();await cameraApplyZoom(zoom);try{localStorage.setItem('tasco-camera-quality-v2',id);}catch(_){}}
-  catch(_){cameraControlsState.quality=previous;try{await startCustomCameraStream();await cameraApplyZoom(zoom);}catch(_){}triggerToast('Chưa đổi được chất lượng camera. Đã giữ thiết lập trước đó.','warning');}
+  try{await startCustomCameraStream();if(!window.TascoCameraPreferences?.isCurrent(preferenceToken))return;await cameraApplyZoom(zoom);if(window.TascoCameraPreferences?.isCurrent(preferenceToken))window.TascoCameraPreferences.changed();}
+  catch(_){if(!window.TascoCameraPreferences?.isCurrent(preferenceToken))return;cameraControlsState.quality=previous;try{await startCustomCameraStream();await cameraApplyZoom(zoom);}catch(_){}triggerToast('Chưa đổi được chất lượng camera. Đã giữ thiết lập trước đó.','warning');}
   finally{cameraControlsState.busy=false;renderCameraSettings();syncCameraViewport();}
 }
+
 function cameraRotateImage(reset=false){
   if(cameraUiState.captureBusy)return;const facing=customCameraFacingMode;cameraControlsState.manualRotation[facing]=reset?0:(cameraControlsState.manualRotation[facing]+90)%360;
-  try{localStorage.setItem('tasco-camera-rotation',JSON.stringify(cameraControlsState.manualRotation));}catch(_){}syncCameraViewport();renderCameraSettings();
+  window.TascoCameraPreferences?.changed();syncCameraViewport();renderCameraSettings();
 }
 function renderCameraSettings(){
   const panel=document.getElementById('cameraSettingsPanel');if(!panel||panel.hidden)return;
@@ -4387,7 +4409,7 @@ function cameraCanvasFromSource(source,frame,quality){
 }
 
 const cameraSettingsPanel=document.getElementById('cameraSettingsPanel');
-cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close'))toggleCameraSettings(false);if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.dataset.cameraRatio)selectCameraRatio(button.dataset.cameraRatio);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.dataset.cameraSettingsTab)cameraSetSettingsTab(button.dataset.cameraSettingsTab);if(button.dataset.cameraPreset)cameraApplyPreset(button.dataset.cameraPreset);if(button.dataset.cameraColor){cameraAppearance={...cameraAppearance,color:button.dataset.cameraColor};saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}if(button.hasAttribute('data-camera-native'))openCameraNative();if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
+cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close')){window.TascoCameraPreferences?.flush();toggleCameraSettings(false);}if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.dataset.cameraRatio)selectCameraRatio(button.dataset.cameraRatio);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.dataset.cameraSettingsTab)cameraSetSettingsTab(button.dataset.cameraSettingsTab);if(button.dataset.cameraPreset)cameraApplyPreset(button.dataset.cameraPreset);if(button.dataset.cameraColor){cameraAppearance={...cameraAppearance,color:button.dataset.cameraColor};saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}if(button.hasAttribute('data-camera-native'))openCameraNative();if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
 document.getElementById('cameraDeviceSelect')?.addEventListener('change',event=>selectCameraDevice(event.target.value));
 cameraSettingsPanel?.addEventListener('keydown',event=>{const ratio=event.target.closest('[data-camera-ratio]');if(ratio&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key)){event.preventDefault();const buttons=[...cameraSettingsPanel.querySelectorAll('[data-camera-ratio]')],index=buttons.indexOf(ratio),next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(['ArrowRight','ArrowDown'].includes(event.key)?1:buttons.length-1))%buttons.length;selectCameraRatio(buttons[next].dataset.cameraRatio);buttons[next].focus();return;}const tab=event.target.closest('[data-camera-settings-tab]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const pages=['capture','stamp','style'],index=pages.indexOf(tab.dataset.cameraSettingsTab),next=event.key==='Home'?0:event.key==='End'?2:(index+(event.key==='ArrowRight'?1:2))%3;cameraSetSettingsTab(pages[next],true);});
 cameraSettingsPanel?.addEventListener('input',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
@@ -4402,9 +4424,10 @@ let customCameraStream=null,customCameraPhotos=[],customCameraFacingMode='enviro
 let mobileCameraTitle='Ảnh của tôi',mobileCameraOwner=null,mobileCameraSaving=false,mobileCameraStreamRevision=0;
 const SVGS={CLOSE:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg>'};
 function triggerToast(message){TascoCloud.notify(message);}
-function openMobileCamera(title){
+async function openMobileCamera(title){
   if(!TascoCloud.isReady()){TascoCloud.notify('Kết nối tài khoản Cloud trước khi chụp ảnh.');return;}
   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){TascoCloud.notify('Camera cần mở trang bằng HTTPS và được cấp quyền truy cập.');return;}
+  const preferenceEmail=window.mobileCloudEmail?.();if(!await window.TascoCameraPreferences.ready()||preferenceEmail!==window.mobileCloudEmail?.()){TascoCloud.notify('Đăng nhập đúng tài khoản để tải thiết lập camera.');return;}
   mobileCameraTitle=title||'Ảnh của tôi';mobileCameraOwner=window.mobileCloudEmail?.();customCameraPhotos=[];
   document.getElementById('cameraActiveCategoryText').textContent=mobileCameraTitle;
   document.getElementById('customCameraModal').style.display='flex';
@@ -4611,6 +4634,143 @@ screen.orientation?.addEventListener?.('change',syncCameraViewport);
 document.getElementById('customCameraVideo')?.addEventListener('resize',syncCameraViewport);
 document.getElementById('customCameraVideo')?.addEventListener('loadedmetadata',()=>{resetCameraFrameBaseline();syncCameraViewport();});
 document.fonts?.ready.then(()=>{updateCameraLiveStamp();renderCameraStampSample();});
+
+/* Account camera preferences. The database is authoritative; pending local edits
+   are stored per user and sent as an atomic field patch when connectivity returns. */
+window.TascoCameraPreferences=(()=>{
+  const table='tasco_user_camera_settings',prefix='tasco-camera-settings-v1:',legacyOwnerKey='tasco-camera-legacy-owner-v1';
+  const state={api:null,email:'',owner:null,epoch:0,settings:null,shown:null,pending:{},initial:null,loaded:false,load:null,save:null,activation:null,timer:null,retry:null,retries:0,status:'signedout',cacheSaved:true,blocked:false};
+  const clone=value=>JSON.parse(JSON.stringify(value));
+  const defaults=()=>({...cameraAppearanceDefaults,quality:'high',rotationRear:0,rotationFront:0});
+  function normalize(value={}){
+    if(!value||typeof value!=='object'||Array.isArray(value))value={};
+    return {...sanitizeCameraAppearance(value),quality:Object.hasOwn(cameraQualityProfiles,value.quality)?value.quality:'high',rotationRear:[0,90,180,270].includes(value.rotationRear)?value.rotationRear:0,rotationFront:[0,90,180,270].includes(value.rotationFront)?value.rotationFront:0};
+  }
+  function cleanPatch(value){
+    if(!value||typeof value!=='object'||Array.isArray(value))return {};
+    const normal=normalize(value),patch={};for(const key of Object.keys(normal))if(Object.hasOwn(value,key)&&JSON.stringify(value[key])===JSON.stringify(normal[key]))patch[key]=normal[key];return patch;
+  }
+  function snapshot(){return normalize({...cameraAppearance,quality:cameraControlsState.quality,rotationRear:cameraControlsState.manualRotation.environment,rotationFront:cameraControlsState.manualRotation.user});}
+  function cameraOpen(){return document.getElementById('customCameraModal')?.style.display==='flex';}
+  function hasWork(){return Boolean(state.initial)||Object.keys(state.pending).length>0;}
+  function apply(value){
+    state.settings=normalize(value);cameraAppearance=sanitizeCameraAppearance(state.settings);cameraControlsState.quality=state.settings.quality;
+    cameraControlsState.manualRotation={environment:state.settings.rotationRear,user:state.settings.rotationFront};state.shown=snapshot();
+    renderCameraAppearanceControls();renderCameraSettings();syncCameraViewport();updateCameraLiveStamp();
+    document.fonts?.load((cameraAppearance.bold?'700':'400')+' 20px '+cameraStampFonts[cameraAppearance.font]).then(()=>{updateCameraLiveStamp();renderCameraStampSample();}).catch(()=>{});
+  }
+  function render(){
+    const node=document.getElementById('cameraPreferenceStatus'),retry=document.getElementById('cameraPreferenceRetry');
+    const local=state.cacheSaved?'Đã lưu trên máy':'Chưa lưu được';
+    const labels={signedout:'Đăng nhập để lưu vào tài khoản',loading:'Đang tải thiết lập…',saving:'Đang lưu vào tài khoản…',saved:'Đã lưu vào tài khoản',pending:local+' · Chờ đồng bộ',error:local+' · Chưa đồng bộ',setup:local+' · Chưa bật lưu tài khoản'};
+    if(node){node.textContent=labels[state.status]||labels.error;node.dataset.state=state.status;}
+    if(retry){retry.hidden=!['error','setup','pending'].includes(state.status);retry.disabled=Boolean(state.load||state.save);}
+  }
+  function cache(){
+    if(!state.owner)return;try{localStorage.setItem(prefix+state.owner,JSON.stringify({settings:state.settings,pending:state.pending}));state.cacheSaved=true;}catch(_){state.cacheSaved=false;}
+  }
+  function readCache(owner){try{const value=JSON.parse(localStorage.getItem(prefix+owner)||'null');return value&&typeof value.settings==='object'?{settings:normalize(value.settings),pending:cleanPatch(value.pending)}:null;}catch(_){return null;}}
+  function legacy(owner){
+    try{
+      if(localStorage.getItem(legacyOwnerKey))return null;
+      const appearance=localStorage.getItem('tasco-camera-appearance-v1'),quality=localStorage.getItem('tasco-camera-quality-v2'),rawRotation=localStorage.getItem('tasco-camera-rotation');
+      if(!appearance&&!quality&&!rawRotation)return null;
+      const rotation=JSON.parse(rawRotation||'{}'),value=normalize({...JSON.parse(appearance||'{}'),quality,rotationRear:rotation.environment,rotationFront:rotation.user});
+      // Claim shared legacy keys once. A second account never inherits them.
+      localStorage.setItem(legacyOwnerKey,owner);return value;
+    }catch(_){return null;}
+  }
+  function clearOwner(){
+    cache();state.epoch++;clearTimeout(state.timer);clearTimeout(state.retry);state.timer=state.retry=null;
+    state.owner=null;state.pending={};state.initial=null;state.loaded=false;state.load=state.save=null;state.blocked=false;state.retries=0;state.status='signedout';state.cacheSaved=true;apply(defaults());render();
+  }
+  function matches(user){return Boolean(state.email&&user?.id&&user.email?.trim().toLowerCase()===state.email);}
+  async function sessionUser(){if(!state.api||!state.email)return null;const result=await state.api.auth.getSession();if(result.error)throw result.error;return matches(result.data?.session?.user)?result.data.session.user:null;}
+  async function timed(query){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),10000);try{return await query.abortSignal(controller.signal);}finally{clearTimeout(timeout);}}
+  function failure(error){
+    state.blocked=['42P01','PGRST205','PGRST202','42883','42501'].includes(error?.code);state.status=state.blocked?'setup':'error';render();
+    if(!state.blocked&&state.owner&&state.retries<4){clearTimeout(state.retry);state.retry=setTimeout(()=>{state.retry=null;retry();},[5000,15000,30000,60000][state.retries++]);}
+  }
+  async function load(){
+    if(state.load)return state.load;if(!state.owner)return;const owner=state.owner,epoch=state.epoch;state.status='loading';render();
+    const task=(async()=>{
+      try{
+        const user=await sessionUser();if(state.epoch!==epoch)return;if(user?.id!==owner){clearOwner();return;}
+        const result=await timed(state.api.from(table).select('user_id,settings,updated_at').eq('user_id',owner).maybeSingle());
+        if(state.epoch!==epoch)return;if(result.error)throw result.error;
+        if(result.data&&(result.data.user_id!==owner||!result.data.settings||typeof result.data.settings!=='object'||Array.isArray(result.data.settings)))throw new Error('Kết quả thiết lập không hợp lệ.');
+        if(result.data){state.initial=null;state.settings=normalize({...result.data.settings,...state.pending});}
+        else{state.initial=clone(state.settings);state.settings=normalize({...state.settings,...state.pending});}
+        state.loaded=true;state.blocked=false;if(!hasWork())state.retries=0;clearTimeout(state.retry);
+        if(!cameraOpen())apply(state.settings);cache();state.status=hasWork()?'pending':'saved';
+      }catch(error){if(state.epoch===epoch)failure(error);}
+      finally{if(state.epoch===epoch){state.load=null;render();if(state.loaded&&hasWork()&&!state.blocked)schedule();}}
+    })();state.load=task;return task;
+  }
+  async function activate(){
+    if(!state.api||!state.email)return null;const epoch=state.epoch;
+    try{
+      const user=await sessionUser();if(state.epoch!==epoch)return null;
+      if(!user){if(state.owner)clearOwner();return null;}
+      if(state.owner!==user.id){
+        clearOwner();state.owner=user.id;const saved=readCache(user.id);state.pending=saved?.pending||{};apply(saved?.settings||legacy(user.id)||defaults());cache();
+      }
+      if(!state.loaded)await load();return state.owner;
+    }catch(error){if(state.epoch===epoch)failure(error);return null;}
+  }
+  function schedule(){clearTimeout(state.timer);state.timer=setTimeout(()=>{state.timer=null;flush();},600);}
+  function changed(){
+    if(!state.owner){render();return;}
+    const current=snapshot(),patch={};for(const key of Object.keys(current))if(current[key]!==state.shown?.[key])patch[key]=current[key];
+    if(!Object.keys(patch).length)return;
+    state.shown=current;state.settings=normalize({...state.settings,...patch});Object.assign(state.pending,patch);cache();state.status=state.blocked?'setup':'pending';render();if(!state.blocked)schedule();
+  }
+  async function flush(){
+    clearTimeout(state.timer);state.timer=null;if(state.save)return state.save;if(!state.owner||!hasWork())return;
+    if(!state.loaded){await load();if(!state.loaded)return;}if(state.save)return state.save;if(state.blocked||!state.owner||!hasWork())return;
+    const owner=state.owner,epoch=state.epoch,patch=clone(state.pending),initial=state.initial?clone(state.initial):null;state.status='saving';render();
+    const task=(async()=>{
+      try{
+        const user=await sessionUser();if(state.epoch!==epoch)return;if(user?.id!==owner){clearOwner();return;}
+        // The server compares this expected ID with auth.uid(), including a
+        // session switch between the check above and HTTP request dispatch.
+        const result=await timed(state.api.rpc('tasco_save_camera_settings',{p_expected_user:owner,p_patch:patch,p_initial_settings:initial}));
+        if(state.epoch!==epoch)return;if(result.error)throw result.error;
+        if(!result.data||result.data.user_id!==owner||!result.data.settings||typeof result.data.settings!=='object'||Array.isArray(result.data.settings))throw new Error('Máy chủ chưa xác nhận lưu thiết lập.');
+        state.initial=null;for(const [key,value] of Object.entries(patch))if(state.pending[key]===value)delete state.pending[key];
+        state.settings=normalize({...result.data.settings,...state.pending});if(!cameraOpen())apply(state.settings);cache();state.retries=0;clearTimeout(state.retry);state.status=Object.keys(state.pending).length?'pending':'saved';
+      }catch(error){if(state.epoch===epoch)failure(error);}
+      finally{if(state.epoch===epoch){state.save=null;render();if(state.status==='pending')schedule();}}
+    })();state.save=task;return task;
+  }
+  async function retry(){
+    clearTimeout(state.retry);state.retry=null;state.blocked=false;const owner=await activate();if(!owner)return;await load();if(state.owner===owner&&state.loaded)await flush();
+  }
+  function setIdentity(email){
+    email=String(email||'').trim().toLowerCase();if(state.email!==email){clearOwner();state.email=email;}
+    state.activation=activate();return state.activation;
+  }
+  function configure({client,expectedEmail}){
+    state.api=client;
+    client.auth.onAuthStateChange((_event,session)=>{
+      // Reset immediately, but leave all asynchronous Supabase calls outside
+      // the auth callback to avoid holding the SDK's authentication lock.
+      if(state.owner&&(!matches(session?.user)||session.user.id!==state.owner))clearOwner();
+      setTimeout(()=>{state.activation=activate();},0);
+    });
+    setIdentity(expectedEmail?.()||'');
+  }
+  async function ready(){await state.activation;const owner=await activate();if(owner&&state.loaded&&!cameraOpen())await load();return state.owner;}
+  function identityToken(){return state.epoch;}
+  function isCurrent(token){return state.epoch===token&&Boolean(state.owner);}
+  window.addEventListener('online',()=>{retry();});
+  window.addEventListener('focus',()=>{if(!cameraOpen())retry();else if(hasWork())flush();});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){cache();flush();}else if(!cameraOpen())retry();});
+  window.addEventListener('pagehide',()=>{cache();flush();});
+  document.getElementById('cameraPreferenceRetry')?.addEventListener('click',()=>retry());
+  return {configure,setIdentity,ready,changed,flush,retry,identityToken,isCurrent};
+})();
+
 
 </script>
 </body>
