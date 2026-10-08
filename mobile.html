@@ -3192,7 +3192,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v6-account-camera-settings" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v7-iphone-orientation-permission" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
@@ -3208,7 +3208,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
         <div class="camera-heading"><span>TASCO DLK · ẢNH HỒ SƠ</span><div class="camera-current-category" id="cameraActiveCategoryText">Chụp ảnh hồ sơ</div></div>
         <div class="camera-header-actions">
           <button type="button" class="camera-action-btn btn-settings-cam" id="btnCameraSettings" onclick="toggleCameraSettings()" aria-label="Cài đặt camera" aria-expanded="false" title="Cài đặt camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#121a25"/><circle cx="15" cy="17" r="3" fill="#121a25"/></svg></button>
-          <button type="button" class="camera-action-btn" id="btnCameraOrientation" onclick="rotateCameraInterface()" aria-label="Xoay giao diện camera khi chưa cấp quyền cảm biến" title="Xoay giao diện camera" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M2 11a10 10 0 0 1 4-7M2 5v6h5M22 13a10 10 0 0 1-4 7m4-1v-6h-5"/></svg></button>
+          <button type="button" class="camera-action-btn" id="btnCameraOrientation" onclick="rotateCameraInterface()" aria-label="Bật tự xoay hoặc xoay camera 90 độ" title="Bật tự xoay / Xoay camera 90°" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M2 11a10 10 0 0 1 4-7M2 5v6h5M22 13a10 10 0 0 1-4 7m4-1v-6h-5"/></svg></button>
           <button type="button" class="camera-action-btn btn-flash-cam" id="btnToggleCameraFlash" onclick="toggleCustomCameraTorch()" aria-label="Bật hoặc tắt đèn flash" title="Bật/Tắt Flash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m13 2-9 12h7l-1 8 10-12h-7l1-8Z"/></svg></button>
           <button type="button" class="camera-action-btn btn-switch-cam" onclick="switchCustomCamera()" aria-label="Đổi camera trước hoặc sau" title="Đổi camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7v5h-5M4 17v-5h5M19.5 12a7.5 7.5 0 0 0-12.8-5.3L4 9M4.5 12a7.5 7.5 0 0 0 12.8 5.3L20 15"/></svg></button>
         </div>
@@ -4427,6 +4427,8 @@ function triggerToast(message){TascoCloud.notify(message);}
 async function openMobileCamera(title){
   if(!TascoCloud.isReady()){TascoCloud.notify('Kết nối tài khoản Cloud trước khi chụp ảnh.');return;}
   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){TascoCloud.notify('Camera cần mở trang bằng HTTPS và được cấp quyền truy cập.');return;}
+  // Request sensor access in the opening click, before account/network awaits consume Safari's user activation.
+  requestCameraOrientationPermission(true);
   const preferenceEmail=window.mobileCloudEmail?.();if(!await window.TascoCameraPreferences.ready()||preferenceEmail!==window.mobileCloudEmail?.()){TascoCloud.notify('Đăng nhập đúng tài khoản để tải thiết lập camera.');return;}
   mobileCameraTitle=title||'Ảnh của tôi';mobileCameraOwner=window.mobileCloudEmail?.();customCameraPhotos=[];
   document.getElementById('cameraActiveCategoryText').textContent=mobileCameraTitle;
@@ -4484,7 +4486,7 @@ async function closeCustomCameraModal(savePhotos=false){
 document.getElementById('customCameraModal').addEventListener('keydown',event=>{if(event.key==='Escape')closeCustomCameraModal(false);if(event.key==='Tab'){const buttons=[...event.currentTarget.querySelectorAll('button:not(:disabled)')];if(event.shiftKey&&document.activeElement===buttons[0]){event.preventDefault();buttons[buttons.length-1].focus();}else if(!event.shiftKey&&document.activeElement===buttons[buttons.length-1]){event.preventDefault();buttons[0].focus();}}});
 window.addEventListener('pagehide',()=>{stopCustomCameraStream();onCustomCameraClose();});
 
-const cameraUiState={session:0,captureBusy:false,previousOverflow:null,previousFocus:null,photoUrls:new Map(),sensorPermission:null,physicalOrientation:null,frameBaseline:null};
+const cameraUiState={session:0,captureBusy:false,previousOverflow:null,previousFocus:null,photoUrls:new Map(),sensorPermission:null,sensorPermissionState:null,sensorFallbackTimer:null,physicalOrientation:null,frameBaseline:null};
 const cameraAngle=value=>((Math.round(value/90)*90)%360+360)%360;
 const cameraAngleDifference=(a,b)=>((a-b+540)%360)-180;
 function cameraIsMobile(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>0&&matchMedia('(pointer:coarse)').matches);}
@@ -4502,19 +4504,53 @@ function cameraHandleDeviceOrientation(event) {
   if(Math.hypot(upX,upY)<.55)return; // Keep the last reliable direction while the phone lies flat.
   const rawAngle=Math.atan2(upX,upY)*180/Math.PI,old=cameraUiState.physicalOrientation,angle=old&&Math.abs(cameraAngleDifference(rawAngle,old.angle))<55?old.angle:cameraAngle(rawAngle);
   cameraUiState.physicalOrientation={angle,orientation:angle%180===90?'landscape':'portrait',at:Date.now()};
+  clearTimeout(cameraUiState.sensorFallbackTimer);cameraUiState.sensorFallbackTimer=null;
+  const manual=document.getElementById('btnCameraOrientation');if(manual)manual.hidden=true;
   if(!old||old.angle!==angle)syncCameraViewport();
 }
-function startCameraOrientationSensor() {
-  const Sensor=window.DeviceOrientationEvent,manual=document.getElementById('btnCameraOrientation');if(manual)manual.hidden=true;
-  if(!Sensor){if(manual&&cameraIsMobile())manual.hidden=false;return;}
-  const session=cameraUiState.session;
-  const listen=()=>{if(session===cameraUiState.session&&document.getElementById('customCameraModal')?.style.display!=='none')window.addEventListener('deviceorientation',cameraHandleDeviceOrientation);};
-  if(typeof Sensor.requestPermission!=='function'){listen();return;}
-  // Called synchronously from the camera-opening tap, as Safari requires a user gesture.
-  if(!cameraUiState.sensorPermission){try{cameraUiState.sensorPermission=Sensor.requestPermission().catch(()=>'denied');}catch(_){if(manual)manual.hidden=false;return;}}
-  cameraUiState.sensorPermission.then(permission=>{if(permission==='granted')listen();else if(session===cameraUiState.session&&manual)manual.hidden=false;});
+function requestCameraOrientationPermission(retry=false) {
+  const Sensor=window.DeviceOrientationEvent;
+  if(!Sensor)return Promise.resolve('unavailable');
+  if(typeof Sensor.requestPermission!=='function')return Promise.resolve('granted');
+  if(cameraUiState.sensorPermission&&(!retry||['granted','prompting'].includes(cameraUiState.sensorPermissionState)))return cameraUiState.sensorPermission;
+  // Invoke synchronously from a tap. Never defer this call until after an await.
+  try{
+    cameraUiState.sensorPermissionState='prompting';
+    cameraUiState.sensorPermission=Promise.resolve(Sensor.requestPermission()).then(permission=>{
+      cameraUiState.sensorPermissionState=permission;return permission;
+    },()=>{cameraUiState.sensorPermissionState='denied';cameraUiState.sensorPermission=null;return 'denied';});
+    return cameraUiState.sensorPermission;
+  }catch(_){cameraUiState.sensorPermissionState='denied';cameraUiState.sensorPermission=null;return Promise.resolve('denied');}
 }
-function rotateCameraInterface(){const angle=cameraAngle(cameraDevicePose().angle+90);cameraUiState.physicalOrientation={angle,orientation:angle%180===90?'landscape':'portrait',at:Date.now()};syncCameraViewport();}
+function startCameraOrientationSensor() {
+  const Sensor=window.DeviceOrientationEvent,manual=document.getElementById('btnCameraOrientation'),session=cameraUiState.session;
+  clearTimeout(cameraUiState.sensorFallbackTimer);cameraUiState.sensorFallbackTimer=null;
+  const current=()=>session===cameraUiState.session&&document.getElementById('customCameraModal')?.style.display!=='none';
+  const fallback=()=>{if(current()&&manual&&cameraIsMobile())manual.hidden=false;};
+  if(manual)manual.hidden=true;
+  if(!Sensor){fallback();return;}
+  const listen=()=>{
+    if(!current())return;
+    window.addEventListener('deviceorientation',cameraHandleDeviceOrientation);
+    // Some browsers expose the API but never send usable sensor data.
+    // Keep a manual way to turn the camera instead of silently leaving it locked.
+    cameraUiState.sensorFallbackTimer=setTimeout(()=>{
+      cameraUiState.sensorFallbackTimer=null;
+      if(!cameraUiState.physicalOrientation||Date.now()-cameraUiState.physicalOrientation.at>1500)fallback();
+    },1800);
+  };
+  if(typeof Sensor.requestPermission!=='function'){listen();return;}
+  // The permission request was started in openMobileCamera's original click.
+  if(!cameraUiState.sensorPermission){fallback();return;}
+  cameraUiState.sensorPermission.then(permission=>{if(permission==='granted')listen();else fallback();});
+}
+function rotateCameraInterface(){
+  // This button also lets an iPhone retry permission from a fresh user gesture.
+  requestCameraOrientationPermission(true);startCameraOrientationSensor();
+  const angle=cameraAngle(cameraDevicePose().angle+90);
+  cameraUiState.physicalOrientation={angle,orientation:angle%180===90?'landscape':'portrait',at:Date.now()};
+  syncCameraViewport();
+}
 function cameraFrameOrientation(video,usePhysical=true) {
   const screenAngle=cameraScreenAngle(),pose=usePhysical&&cameraIsMobile()?cameraDevicePose():{angle:screenAngle,orientation:screenAngle%180===90?'landscape':'portrait'},nativeLandscape=video.videoWidth>video.videoHeight;
   let baseline=cameraUiState.frameBaseline;
@@ -4584,7 +4620,7 @@ function onCustomCameraOpen() {
 }
 function onCustomCameraClose() {
   cameraUiState.session++;cameraUiState.captureBusy=false;
-  window.removeEventListener('deviceorientation',cameraHandleDeviceOrientation);cameraUiState.physicalOrientation=null;resetCameraFrameBaseline();stopCameraLocationTracking();cameraControlsClose();
+  window.removeEventListener('deviceorientation',cameraHandleDeviceOrientation);clearTimeout(cameraUiState.sensorFallbackTimer);cameraUiState.sensorFallbackTimer=null;cameraUiState.physicalOrientation=null;resetCameraFrameBaseline();stopCameraLocationTracking();cameraControlsClose();
   if(cameraUiState.previousOverflow!==null)document.body.style.overflow=cameraUiState.previousOverflow;
   cameraUiState.previousOverflow=null;
   cameraUiState.previousFocus?.focus?.({preventScroll:true});cameraUiState.previousFocus=null;
