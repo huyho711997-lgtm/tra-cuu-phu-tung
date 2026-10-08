@@ -663,6 +663,78 @@
 .custom-camera-modal[data-orientation=landscape][data-compact=true]{--camera-footer-width:164px}
 @media(min-width:1100px) and (min-height:600px){.custom-camera-modal[data-orientation=landscape]{--camera-footer-width:240px}}
 
+/* Three short settings pages keep the camera controls within reach. */
+.custom-camera-modal .camera-action-btn,.custom-camera-modal .camera-settings-panel{backdrop-filter:none;-webkit-backdrop-filter:none}
+.custom-camera-modal .camera-settings-v2{--settings-line:rgba(255,255,255,.09);width:min(440px,calc(100% - 24px));right:12px;bottom:calc(12px + var(--camera-safe-bottom,0px));max-height:calc(100% - 24px - var(--camera-safe-top,0px) - var(--camera-safe-bottom,0px));border:1px solid rgba(164,205,199,.19);border-radius:25px;background:#111820;box-shadow:0 24px 70px rgba(0,0,0,.5);overflow:hidden}
+.camera-settings-v2 header{padding:21px 22px 18px;align-items:center;border-bottom:0}
+.camera-settings-v2 header span{font-size:9px;letter-spacing:.13em;color:#88b7ae}
+.camera-settings-v2 h2{font-size:22px;letter-spacing:-.7px;font-weight:750;color:#f1f5f7;margin:5px 0 0}
+.camera-settings-v2 header button{width:36px;height:36px;border-radius:50%;border:1px solid var(--settings-line);background:#202b34;color:#bdcbd0;font-size:25px}
+.camera-settings-tabs{display:flex;flex:0 0 auto;gap:4px;padding:4px;margin:0 22px 16px;border:1px solid var(--settings-line);border-radius:13px;background:#0a1118}
+.custom-camera-modal .camera-settings-tabs button{flex:1;min-width:0;min-height:39px;padding:6px 5px;border:0;border-radius:9px;background:transparent;color:#8999a6;font-size:12px;font-weight:700}
+.custom-camera-modal .camera-settings-tabs button[aria-selected=true]{color:#dcf1eb;background:#273e3d;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.camera-settings-v2 .camera-settings-body{padding:0 22px 22px;scrollbar-width:thin;scrollbar-color:#3d5359 transparent}
+.camera-settings-v2 [hidden]{display:none!important}
+.camera-section-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:3px 0 13px}
+.camera-settings-v2 .camera-section-heading h3{font-size:13px;font-weight:700;color:#e0e9ed;margin:0}
+.camera-section-heading>span{font-size:9px;font-weight:600;color:#82969f;text-align:right}
+.camera-settings-v2 .camera-quality-options{gap:8px}
+.custom-camera-modal .camera-settings-v2 .camera-quality-options button{min-height:60px;padding:12px 40px 12px 14px;border:1px solid var(--settings-line);border-radius:13px;background:#18232c;gap:3px}
+.camera-settings-v2 .camera-quality-options button span{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:650}
+.camera-settings-v2 .camera-quality-options button b{font-size:7px;letter-spacing:.06em;font-weight:750;padding:3px 5px;border-radius:4px;background:#273f3b;color:#9dd5c6}
+.camera-settings-v2 .camera-quality-options button small{font-size:10px;color:#8b9ea9}
+.custom-camera-modal .camera-settings-v2 .camera-quality-options button[aria-checked=true]{border-color:#689b8e;background:#1c3230}
+.camera-settings-v2 .camera-quality-options button i{width:15px;height:15px;border-color:#61717e}
+.camera-settings-v2 .camera-quality-options button[aria-checked=true] i{border:4px solid #9ed2c2;background:#1c3230}
+.camera-settings-v2 .camera-settings-note{font-size:10px;line-height:1.6;color:#81959f;margin:10px 0 0}
+.camera-field-spaced{margin-top:18px}
+.camera-settings-v2 .camera-setting-field{gap:8px;font-size:12px;color:#b9c7cf}
+.camera-settings-v2 .camera-setting-field>span{font-weight:600}
+.camera-settings-v2 .camera-setting-field output{font-size:11px;color:#9ed2c2}
+.custom-camera-modal .camera-settings-v2 .camera-setting-field :is(input[type=text],select){height:44px;border:1px solid var(--settings-line);border-radius:11px;background:#19252e;color:#e1eaf0;padding:10px 12px;font-size:16px}
+.custom-camera-modal .camera-settings-v2 .camera-setting-field input[type=range]{height:28px;accent-color:#9ed2c2}
+.camera-toggle-list{margin-top:19px;border-top:1px solid var(--settings-line)}
+.camera-settings-v2 .camera-setting-check{justify-content:space-between;gap:14px;min-height:48px;font-size:12px;color:#c9d5dc;margin:0;border-bottom:1px solid var(--settings-line)}
+.camera-settings-v2 .camera-setting-check>span{display:block;flex:1;font-weight:500;line-height:1.5}
+.camera-settings-v2 .camera-setting-check small{display:block;font-size:9px;line-height:1.7;color:#81949f;font-weight:400}
+.custom-camera-modal .camera-settings-v2 .camera-setting-check input{appearance:none;-webkit-appearance:none;position:relative;flex:0 0 36px;width:36px;height:22px;border:1px solid rgba(255,255,255,.08);border-radius:99px;background:#34424d;cursor:pointer}
+.custom-camera-modal .camera-settings-v2 .camera-setting-check input:before{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#a4b1b9}
+.custom-camera-modal .camera-settings-v2 .camera-setting-check input:checked{background:#84bbaa;border-color:#84bbaa}
+.custom-camera-modal .camera-settings-v2 .camera-setting-check input:checked:before{left:17px;background:#10271f}
+.camera-settings-v2 .camera-settings-group{margin-top:18px;border:1px solid var(--settings-line);border-radius:12px;background:transparent}
+.camera-settings-v2 .camera-settings-group summary{padding:14px;font-size:11px;font-weight:600;color:#99aeb8}
+.camera-settings-v2 .camera-settings-fields{gap:15px;padding:0 14px 15px}
+.camera-settings-v2 .camera-settings-preview{border:1px solid var(--settings-line);border-radius:15px}
+.camera-style-presets{display:flex;gap:6px;margin-top:11px}
+.custom-camera-modal .camera-style-presets button{flex:1;padding:9px 3px;min-height:35px;border:1px solid var(--settings-line);border-radius:9px;background:#19252e;color:#92a7b3;font-size:10px;font-weight:600}
+.custom-camera-modal .camera-style-presets button[aria-pressed=true]{border-color:#689b8e;color:#bce7d9;background:#203b35}
+.camera-color-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;color:#b9c7cf;font-size:12px;font-weight:600}
+.camera-color-options{display:flex;align-items:center;gap:8px}
+.custom-camera-modal .camera-color-options button{width:26px;height:26px;padding:0;border:4px solid #111820;border-radius:50%;background:var(--swatch);outline:1px solid var(--settings-line)}
+.custom-camera-modal .camera-color-options button[aria-pressed=true]{outline:2px solid #9ed2c2;outline-offset:2px}
+.camera-custom-color{width:27px;height:27px;overflow:hidden;border:1px solid #52666e;border-radius:8px;background:#26353f}
+.camera-custom-color input{width:30px;height:30px;cursor:pointer;padding:0;border:0;opacity:.9}
+.camera-focus-card{margin-top:17px;padding:13px 14px;border:1px solid var(--settings-line);border-radius:13px;background:#18232c}
+.camera-focus-card strong{font-size:11px;font-weight:650;color:#cbd9df}
+.camera-focus-card p{font-size:10px;line-height:1.7;color:#849ca5;margin:6px 0 0}
+.custom-camera-modal .camera-focus-card button{margin-top:11px;min-height:35px;padding:8px 11px;border:1px solid #486c60;border-radius:9px;background:#233b32;color:#bbd9c7;font-size:10px;font-weight:650}
+.camera-settings-v2 footer{display:flex;align-items:center;gap:12px;padding:15px 22px;border-top:1px solid var(--settings-line);background:#111820}
+.camera-settings-v2 footer span{flex:1;color:#79909a;font-size:10px;white-space:nowrap}
+.camera-settings-v2 footer button{width:106px;min-height:43px;border-radius:12px;background:#9ed2c2;border-color:#9ed2c2;color:#102c22;font-size:12px}
+.custom-camera-modal .camera-settings-v2 .camera-settings-reset{margin-top:0;font-size:10px;background:transparent;border-color:var(--settings-line);color:#89a2ad}
+.camera-feedback{position:absolute;left:50%;top:78px;transform:translateX(-50%);max-width:calc(100% - 36px);padding:9px 12px;border:1px solid rgba(255,255,255,.13);border-radius:11px;background:rgba(12,19,25,.94);color:#dce8ea;text-align:center;font-size:11px;line-height:1.5;z-index:5;pointer-events:none}
+.camera-feedback[hidden]{display:none!important}
+.custom-camera-modal .camera-focus-ring{width:56px;height:56px;border:1.5px solid #d6b36d;border-radius:12px;z-index:4}
+.custom-camera-modal .camera-focus-ring[data-state=selected]{border-color:#9ed2c2}
+.custom-camera-modal .camera-focus-ring[data-state=auto]{border-color:#b5c2cc}
+.custom-camera-modal[data-orientation=landscape] .camera-settings-v2{right:calc(var(--camera-footer-width,184px) + 12px);width:min(440px,calc(100% - var(--camera-footer-width,184px) - 30px));max-height:calc(100% - 24px)}
+.custom-camera-modal[data-orientation=landscape] .camera-settings-v2 header{padding:15px 19px 12px}
+.custom-camera-modal[data-orientation=landscape] .camera-settings-v2 h2{font-size:19px}
+.custom-camera-modal[data-orientation=landscape] .camera-settings-tabs{margin:0 19px 13px}
+.custom-camera-modal[data-orientation=landscape] .camera-settings-v2 .camera-settings-body{padding:0 19px 17px}
+.custom-camera-modal[data-orientation=landscape] .camera-settings-v2 footer{padding:11px 19px}
+@media(max-width:360px){.camera-settings-v2 header{padding:17px}.camera-settings-v2 h2{font-size:20px}.camera-settings-tabs{margin-left:17px;margin-right:17px}.camera-settings-v2 .camera-settings-body{padding-left:17px;padding-right:17px}.camera-color-options{gap:6px}}
+
 /* Photo-first mobile library, grouped by the local capture date. */
 .personal-cloud[data-cloud-theme=mobile]>.cloud-grid{display:block}
 .personal-cloud[data-cloud-theme=mobile] .cloud-day-group{margin:0 0 22px}
@@ -3080,7 +3152,7 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-mirror-round-lenses-stamp-settings" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v2-serial-jpeg-focus-premium" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
@@ -3101,6 +3173,7 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
           <button type="button" class="camera-action-btn btn-switch-cam" onclick="switchCustomCamera()" aria-label="Đổi camera trước hoặc sau" title="Đổi camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7v5h-5M4 17v-5h5M19.5 12a7.5 7.5 0 0 0-12.8-5.3L4 9M4.5 12a7.5 7.5 0 0 0 12.8 5.3L20 15"/></svg></button>
         </div>
       </div>
+      <div class="camera-feedback" id="cameraFeedback" role="status" aria-live="polite" hidden></div>
       <div class="camera-flash-effect" id="cameraFlashEffect"></div>
       <div class="camera-target-crosshair" aria-hidden="true"></div><div id="cameraFocusRing" class="camera-focus-ring" aria-hidden="true"></div>
     </div>
@@ -3113,51 +3186,71 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
         <button type="button" class="camera-save-btn" id="btnSaveCustomCameraPhotos" onclick="closeCustomCameraModal(true)" disabled>Xong (0)</button>
       </div>
     </div>
-    <section id="cameraSettingsPanel" class="camera-settings-panel" role="dialog" aria-modal="true" aria-label="Cài đặt camera" hidden>
-      <header><div><span>THIẾT LẬP CHỤP ẢNH</span><h2>Cài đặt camera</h2></div><button type="button" data-camera-settings-close aria-label="Đóng cài đặt">×</button></header>
+    <section id="cameraSettingsPanel" class="camera-settings-panel camera-settings-v2" role="dialog" aria-modal="true" aria-labelledby="cameraSettingsTitle" hidden>
+      <header><div><span>THIẾT LẬP CÁ NHÂN</span><h2 id="cameraSettingsTitle">Camera &amp; dấu ảnh</h2></div><button type="button" data-camera-settings-close aria-label="Đóng cài đặt">×</button></header>
+      <nav class="camera-settings-tabs" role="tablist" aria-label="Nhóm cài đặt">
+        <button type="button" id="cameraTabCapture" role="tab" data-camera-settings-tab="capture" aria-selected="true" aria-controls="cameraSettingsCapture">Camera</button>
+        <button type="button" id="cameraTabStamp" role="tab" data-camera-settings-tab="stamp" aria-selected="false" aria-controls="cameraSettingsStamp" tabindex="-1">Nội dung</button>
+        <button type="button" id="cameraTabStyle" role="tab" data-camera-settings-tab="style" aria-selected="false" aria-controls="cameraSettingsStyle" tabindex="-1">Kiểu chữ</button>
+      </nav>
       <div class="camera-settings-body">
-        <p class="camera-settings-intro">Tự lưu trên thiết bị · áp dụng cho ảnh chụp mới. Mẫu chữ bên dưới được phóng to để dễ xem.</p>
-        <canvas id="cameraStampSample" class="camera-settings-preview" width="640" height="360" aria-label="Mẫu chữ sẽ ghi lên ảnh"></canvas>
-        <details class="camera-settings-group" open><summary>Chữ trên ảnh</summary><div class="camera-settings-fields">
-          <label class="camera-setting-field"><span>Nội dung tiêu đề</span><input type="text" data-camera-pref="title" maxlength="64" autocomplete="off" value="TASCO DLK"></label>
-          <div class="camera-settings-columns">
-            <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showTitle" checked>Hiện tiêu đề</label>
-            <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showDate" checked>Hiện ngày giờ</label>
-            <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showLocation" checked>Hiện địa điểm</label>
-            <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showCoordinates">Hiện tọa độ GPS</label>
+        <section id="cameraSettingsCapture" role="tabpanel" aria-labelledby="cameraTabCapture" data-camera-settings-page="capture">
+          <div class="camera-section-heading"><h3>Chất lượng ảnh</h3><span id="cameraQualityBadge">Cân bằng</span></div>
+          <div class="camera-quality-options" role="radiogroup" aria-label="Chất lượng ảnh">
+            <button type="button" role="radio" data-camera-quality="economy" aria-checked="false"><span>Tiết kiệm</span><small>1280 px · nhẹ máy</small><i></i></button>
+            <button type="button" role="radio" data-camera-quality="high" aria-checked="true"><span>Cân bằng <b>ĐỀ XUẤT</b></span><small>1920 px · rõ nét, vừa đủ</small><i></i></button>
+            <button type="button" role="radio" data-camera-quality="maximum" aria-checked="false"><span>Chi tiết</span><small>2560 px · ảnh lớn hơn</small><i></i></button>
           </div>
-          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showSeconds" checked>Hiện giây trong thời gian</label>
-          <label class="camera-setting-field"><span>Cách hiển thị</span><select aria-label="Cách hiển thị" data-camera-pref="layout"><option value="lines">Mỗi thông tin một dòng</option><option value="compact">Gọn · nối các thông tin</option></select></label>
-          <label class="camera-setting-field"><span>Vị trí chữ</span><select aria-label="Vị trí chữ" data-camera-pref="position"><option value="bottom-right">Góc dưới bên phải</option><option value="bottom-left">Góc dưới bên trái</option><option value="bottom-center">Giữa phía dưới</option><option value="top-right">Góc trên bên phải</option><option value="top-left">Góc trên bên trái</option><option value="top-center">Giữa phía trên</option></select></label>
-        </div></details>
-        <details class="camera-settings-group"><summary>Cỡ chữ, font và màu sắc</summary><div class="camera-settings-fields">
-          <label class="camera-setting-field"><span>Cỡ chữ <output data-camera-output="textSize">100%</output></span><input type="range" aria-label="Cỡ chữ" data-camera-pref="textSize" min="0.7" max="1.8" step="0.05" value="1"></label>
-          <label class="camera-setting-field"><span>Font chữ</span><select aria-label="Font chữ" data-camera-pref="font"><option value="sans">Arial · rõ ràng</option><option value="jakarta">Plus Jakarta Sans · hiện đại</option><option value="serif">Georgia · có chân</option><option value="mono">Courier New · đều nét</option><option value="tahoma">Tahoma · gọn</option></select></label>
-          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="bold" checked>Chữ đậm</label>
-          <label class="camera-setting-field"><span>Màu chữ</span><input type="color" data-camera-pref="color" value="#ffffff"></label>
-          <label class="camera-setting-field"><span>Độ rõ của chữ <output data-camera-output="opacity">100%</output></span><input type="range" aria-label="Độ rõ của chữ" data-camera-pref="opacity" min="50" max="100" step="5" value="100"></label>
-          <label class="camera-setting-field"><span>Kiểu nền chữ</span><select aria-label="Kiểu nền chữ" data-camera-pref="style"><option value="shadow">Chữ có bóng</option><option value="panel">Nền tối phía sau chữ</option><option value="plain">Chữ đơn giản</option></select></label>
-          <label class="camera-setting-field"><span>Giãn dòng <output data-camera-output="lineHeight">1.35×</output></span><input type="range" aria-label="Giãn dòng" data-camera-pref="lineHeight" min="1.1" max="1.8" step="0.05" value="1.35"></label>
-          <label class="camera-setting-field"><span>Chiều rộng vùng chữ <output data-camera-output="textWidth">90%</output></span><input type="range" aria-label="Chiều rộng vùng chữ" data-camera-pref="textWidth" min="50" max="94" step="2" value="90"></label>
-          <label class="camera-setting-field"><span>Khoảng cách từ mép ảnh <output data-camera-output="margin">2.5%</output></span><input type="range" aria-label="Khoảng cách từ mép ảnh" data-camera-pref="margin" min="1" max="8" step="0.5" value="2.5"></label>
-        </div></details>
-        <details class="camera-settings-group"><summary>Hiển thị và thao tác camera</summary><div class="camera-settings-fields">
-          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="mirrorFront" checked>Soi gương camera trước · xem và lưu cùng chiều</label>
-          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showGrid" checked>Hiện lưới căn bố cục</label>
-          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="showCrosshair" checked>Hiện dấu căn giữa</label>
-          <label class="camera-setting-check"><input type="checkbox" data-camera-pref="shutterFlash" checked>Nháy sáng màn hình khi chụp</label>
-        </div></details>
-        <button type="button" class="camera-settings-reset" data-camera-preferences-reset>Khôi phục cài đặt chữ và hiển thị</button>
-        <div class="camera-resolution-card"><span id="cameraQualityBadge">Tối đa</span><strong id="cameraActualResolution">Camera đang khởi động…</strong><small>Độ phân giải khung hình đang nhận. Ảnh chụp có thể cao hơn nếu camera hỗ trợ.</small></div>
-        <h3>Chất lượng ảnh</h3><div class="camera-quality-options" role="radiogroup" aria-label="Chất lượng ảnh">
-          <button type="button" role="radio" data-camera-quality="economy" aria-checked="false"><span>Tiết kiệm</span><small>1280 px · dung lượng nhẹ</small><i></i></button>
-          <button type="button" role="radio" data-camera-quality="high" aria-checked="false"><span>Chất lượng cao</span><small>2560 px · cân bằng dung lượng</small><i></i></button>
-          <button type="button" role="radio" data-camera-quality="maximum" aria-checked="true"><span>Tối đa</span><small>Giữ độ phân giải camera · ưu tiên chi tiết</small><i></i></button>
-        </div>
-        <h3>Camera trên thiết bị</h3><div id="cameraDeviceList" class="camera-device-list"></div><p id="cameraLensNote" class="camera-settings-note"></p>
-        <h3>Hướng ảnh</h3><p class="camera-settings-note">Nếu camera của thiết bị trả ảnh sai hướng, xoay bản xem cho đúng trước khi chụp. Ảnh lưu sẽ theo hướng này.</p><div class="camera-rotation-controls"><button type="button" data-camera-image-rotate>Xoay ảnh 90°</button><button type="button" data-camera-image-reset>Đặt lại</button><span id="cameraImageRotation">Hiệu chỉnh 0°</span></div>
-      </div><footer><button type="button" data-camera-settings-close>Hoàn tất</button></footer>
+          <p id="cameraActualResolution" class="camera-settings-note">Camera đang khởi động…</p>
+          <label class="camera-setting-field camera-field-spaced"><span>Camera đang dùng</span><select id="cameraDeviceSelect" aria-label="Camera đang dùng"></select></label>
+          <p id="cameraLensNote" class="camera-settings-note"></p>
+          <div class="camera-focus-card"><div><strong>Lấy nét theo điểm</strong><p id="cameraFocusSupport">Chạm vào chủ thể trong khung hình.</p></div><button type="button" data-camera-native>Mở camera hệ thống</button></div>
+          <div class="camera-toggle-list">
+            <label class="camera-setting-check"><span>Soi gương camera trước<small>Ảnh lưu cùng chiều bản xem</small></span><input type="checkbox" data-camera-pref="mirrorFront" checked></label>
+            <label class="camera-setting-check"><span>Lưới bố cục<small>Căn thẳng và chia khung hình</small></span><input type="checkbox" data-camera-pref="showGrid" checked></label>
+          </div>
+          <details class="camera-settings-group"><summary>Tùy chọn khác</summary><div class="camera-settings-fields">
+            <label class="camera-setting-check"><span>Dấu căn giữa</span><input type="checkbox" data-camera-pref="showCrosshair" checked></label>
+            <label class="camera-setting-check"><span>Nháy sáng khi chụp</span><input type="checkbox" data-camera-pref="shutterFlash" checked></label>
+            <div class="camera-setting-field"><span>Hiệu chỉnh hướng ảnh</span><div class="camera-rotation-controls"><button type="button" data-camera-image-rotate>Xoay 90°</button><button type="button" data-camera-image-reset>Đặt lại</button><span id="cameraImageRotation">0°</span></div></div>
+          </div></details>
+        </section>
+        <section id="cameraSettingsStamp" role="tabpanel" aria-labelledby="cameraTabStamp" data-camera-settings-page="stamp" hidden>
+          <div class="camera-section-heading"><h3>Thông tin trên ảnh</h3><span>Áp dụng khi chụp</span></div>
+          <label class="camera-setting-field"><span>Tiêu đề</span><input type="text" data-camera-pref="title" aria-label="Nội dung tiêu đề" maxlength="64" autocomplete="off" value="TASCO DLK" placeholder="Nhập tiêu đề của bạn"></label>
+          <div class="camera-toggle-list">
+            <label class="camera-setting-check"><span>Tiêu đề</span><input type="checkbox" data-camera-pref="showTitle" checked></label>
+            <label class="camera-setting-check"><span>Ngày và giờ</span><input type="checkbox" data-camera-pref="showDate" checked></label>
+            <label class="camera-setting-check"><span>Địa điểm</span><input type="checkbox" data-camera-pref="showLocation" checked></label>
+            <label class="camera-setting-check"><span>Tọa độ GPS</span><input type="checkbox" data-camera-pref="showCoordinates"></label>
+          </div>
+          <div class="camera-settings-columns camera-field-spaced">
+            <label class="camera-setting-field"><span>Vị trí chữ</span><select aria-label="Vị trí chữ" data-camera-pref="position"><option value="bottom-right">Dưới · phải</option><option value="bottom-left">Dưới · trái</option><option value="bottom-center">Dưới · giữa</option><option value="top-right">Trên · phải</option><option value="top-left">Trên · trái</option><option value="top-center">Trên · giữa</option></select></label>
+            <label class="camera-setting-field"><span>Bố cục</span><select aria-label="Cách hiển thị" data-camera-pref="layout"><option value="lines">Từng dòng</option><option value="compact">Gọn một đoạn</option></select></label>
+          </div>
+          <label class="camera-setting-check camera-field-spaced"><span>Hiện giây trong thời gian</span><input type="checkbox" data-camera-pref="showSeconds" checked></label>
+        </section>
+        <section id="cameraSettingsStyle" role="tabpanel" aria-labelledby="cameraTabStyle" data-camera-settings-page="style" hidden>
+          <div class="camera-section-heading"><h3>Xem trước kiểu chữ</h3><span>Mẫu phóng to</span></div>
+          <canvas id="cameraStampSample" class="camera-settings-preview" width="640" height="320" aria-label="Mẫu chữ sẽ ghi lên ảnh"></canvas>
+          <div class="camera-style-presets" role="group" aria-label="Kiểu chữ nhanh"><button type="button" data-camera-preset="standard" aria-pressed="true">Tiêu chuẩn</button><button type="button" data-camera-preset="contrast" aria-pressed="false">Nền tối</button><button type="button" data-camera-preset="minimal" aria-pressed="false">Tối giản</button></div>
+          <label class="camera-setting-field camera-field-spaced"><span>Cỡ chữ <output data-camera-output="textSize">100%</output></span><input type="range" aria-label="Cỡ chữ" data-camera-pref="textSize" min="0.7" max="1.8" step="0.05" value="1"></label>
+          <label class="camera-setting-field camera-field-spaced"><span>Font chữ</span><select aria-label="Font chữ" data-camera-pref="font"><option value="sans">Arial</option><option value="jakarta">Plus Jakarta Sans</option><option value="serif">Georgia</option><option value="mono">Courier New</option><option value="tahoma">Tahoma</option></select></label>
+          <div class="camera-color-row"><span>Màu chữ</span><div class="camera-color-options"><button type="button" data-camera-color="#ffffff" style="--swatch:#ffffff" aria-label="Chữ trắng"></button><button type="button" data-camera-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Chữ xanh ngọc"></button><button type="button" data-camera-color="#e8c582" style="--swatch:#e8c582" aria-label="Chữ vàng"></button><button type="button" data-camera-color="#ff927a" style="--swatch:#ff927a" aria-label="Chữ cam"></button><label class="camera-custom-color" title="Chọn màu khác"><input type="color" data-camera-pref="color" value="#ffffff" aria-label="Màu chữ tùy chọn"></label></div></div>
+          <details class="camera-settings-group"><summary>Tinh chỉnh kiểu chữ</summary><div class="camera-settings-fields">
+            <label class="camera-setting-check"><span>Chữ đậm</span><input type="checkbox" data-camera-pref="bold" checked></label>
+            <label class="camera-setting-field"><span>Nền chữ</span><select aria-label="Kiểu nền chữ" data-camera-pref="style"><option value="shadow">Bóng nhẹ</option><option value="panel">Nền tối</option><option value="plain">Không nền</option></select></label>
+            <label class="camera-setting-field"><span>Độ rõ <output data-camera-output="opacity">100%</output></span><input type="range" aria-label="Độ rõ của chữ" data-camera-pref="opacity" min="50" max="100" step="5" value="100"></label>
+            <label class="camera-setting-field"><span>Giãn dòng <output data-camera-output="lineHeight">1.35×</output></span><input type="range" aria-label="Giãn dòng" data-camera-pref="lineHeight" min="1.1" max="1.8" step="0.05" value="1.35"></label>
+            <label class="camera-setting-field"><span>Vùng chữ <output data-camera-output="textWidth">90%</output></span><input type="range" aria-label="Chiều rộng vùng chữ" data-camera-pref="textWidth" min="50" max="94" step="2" value="90"></label>
+            <label class="camera-setting-field"><span>Cách mép ảnh <output data-camera-output="margin">2.5%</output></span><input type="range" aria-label="Khoảng cách từ mép ảnh" data-camera-pref="margin" min="1" max="8" step="0.5" value="2.5"></label>
+            <button type="button" class="camera-settings-reset" data-camera-preferences-reset>Khôi phục cài đặt chữ và hiển thị</button>
+          </div></details>
+        </section>
+      </div><footer><span>Tự lưu trên thiết bị</span><button type="button" data-camera-settings-close>Xong</button></footer>
     </section>
+    <input id="cameraNativeInput" type="file" accept="image/*" capture="environment" hidden>
+
   </div>
 
 <script>
@@ -3814,7 +3907,7 @@ function renderCameraAppearanceControls(){
     const key=output.dataset.cameraOutput,value=cameraAppearance[key];
     output.value=key==='textSize'?Math.round(value*100)+'%':key==='lineHeight'?value.toFixed(2)+'×':value+'%';
   }
-  renderCameraStampSample();
+  cameraRenderStyleButtons();renderCameraStampSample();
 }
 function cameraStampLayout(ctx,lines,width,height,settings){
   const shortSide=Math.min(width,height),inset=shortSide*settings.margin/100,boxPadding=settings.style==='panel'?shortSide*.012:0;
@@ -3847,7 +3940,7 @@ function drawCameraStamp(ctx,lines,width,height,settings){
   stamp.lines.forEach((line,index)=>ctx.fillText(line,stamp.x,stamp.y+index*stamp.lineHeight));ctx.restore();
 }
 function renderCameraStampSample(){
-  const canvas=document.getElementById('cameraStampSample'),ctx=canvas?.getContext('2d');if(!ctx)return;
+  const canvas=document.getElementById('cameraStampSample');if(!canvas||document.getElementById('cameraSettingsPanel')?.hidden||canvas.closest('[data-camera-settings-page]')?.hidden)return;const ctx=canvas.getContext('2d');if(!ctx)return;
   const w=canvas.width,h=canvas.height,background=ctx.createLinearGradient(0,0,w,h);background.addColorStop(0,'#345970');background.addColorStop(1,'#112633');ctx.fillStyle=background;ctx.fillRect(0,0,w,h);
   ctx.fillStyle='rgba(255,255,255,.18)';ctx.font='400 16px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('ẢNH MINH HỌA',w/2,h/2);ctx.textAlign='left';ctx.textBaseline='alphabetic';
   const location={address:'Phường Tân Lập, Đắk Lắk',hasWard:true,coords:{latitude:12.67,longitude:108.04}};
@@ -3860,7 +3953,7 @@ function applyCameraDisplayPreferences(){
 }
 
 function createCameraPhotoMetadata(capturedAt=Date.now()) {
-  return {capturedAt,source:'camera',appearance:cameraAppearanceSnapshot(),locationPromise:ensureRealtimeGpsCoordinates().catch(()=>cameraLocationError('unavailable'))};
+  return {capturedAt,source:'camera',appearance:cameraAppearanceSnapshot(),locationPromise:cameraCaptureLocation()};
 }
 function cameraWatermarkLines(location,time,source,settings=cameraAppearance) {
   const when=new Date(time),pad=value=>String(value).padStart(2,'0'),lines=[];
@@ -3875,7 +3968,7 @@ function cameraWatermarkLines(location,time,source,settings=cameraAppearance) {
       lines.push(labels[location?.status]||labels.unavailable);
     }
   }
-  if(settings.showCoordinates&&Number.isFinite(location?.coords?.latitude)&&Number.isFinite(location?.coords?.longitude))lines.push('GPS '+location.coords.latitude.toFixed(6)+', '+location.coords.longitude.toFixed(6));
+  if(settings.showCoordinates&&location?.coords){const lat=Number(location.coords.latitude),lon=Number(location.coords.longitude);if(Number.isFinite(lat)&&Number.isFinite(lon))lines.push('GPS '+lat.toFixed(6)+', '+lon.toFixed(6));}
   return settings.layout==='compact'&&lines.length?[lines.join(' · ')]:lines;
 }
 function wrapCameraWatermarkText(ctx,text,maxWidth) {
@@ -3889,40 +3982,38 @@ function wrapCameraWatermarkText(ctx,text,maxWidth) {
   if(line)lines.push(line);return lines;
 }
 async function addWatermarkToImageFile(file,categoryName,options={}) {
-  const metadata=cameraPhotoMetadata.get(file)||{capturedAt:Date.now(),source:options.isCameraSource?'camera':'gallery',locationPromise:ensureRealtimeGpsCoordinates().catch(()=>cameraLocationError('unavailable'))};
+  const metadata=cameraPhotoMetadata.get(file)||{capturedAt:Date.now(),source:options.isCameraSource?'camera':'gallery',appearance:cameraAppearanceSnapshot(),quality:cameraQuality(),locationPromise:cameraCaptureLocation()};
   if(metadata.stampedFile)return metadata.stampedFile;
   if(metadata.stampPromise)return metadata.stampPromise;
-  const appearance=metadata.appearance||cameraAppearanceSnapshot(),location=await metadata.locationPromise;
-  try{await document.fonts?.load((appearance.bold?'700':'400')+' 20px '+cameraStampFonts[appearance.font]);}catch(_){}
-  return new Promise(resolve=>{
-    const reader=new FileReader();reader.onerror=()=>resolve(file);
-    reader.onload=event=>{
-      const img=new Image();img.onerror=()=>resolve(file);
-      img.onload=()=>{
-        try {
-          const canvas=document.createElement('canvas');canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
-          const ctx=canvas.getContext('2d');if(!ctx){resolve(file);return;}ctx.drawImage(img,0,0);
-          drawCameraStamp(ctx,cameraWatermarkLines(location,metadata.capturedAt,metadata.source,appearance),canvas.width,canvas.height,appearance);
-          canvas.toBlob(blob=>{if(!blob){resolve(file);return;}const stamped=new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg',lastModified:metadata.capturedAt});metadata.stampedFile=stamped;cameraPhotoMetadata.set(stamped,metadata);resolve(stamped);},'image/jpeg',metadata.quality?.jpeg||.94);
-        }catch(_){resolve(file);}
-      };img.src=event.target.result;
-    };reader.readAsDataURL(file);
-  });
+  const task=(async()=>{
+    let image,canvas;
+    try{
+      const appearance=metadata.appearance||cameraAppearanceSnapshot(),location=await metadata.locationPromise;
+      image=await cameraLoadImage(file);const maxSide=metadata.quality?.maxSide||1920,scale=Math.min(1,maxSide/Math.max(image.width,image.height));
+      canvas=document.createElement('canvas');canvas.width=Math.round(image.width*scale);canvas.height=Math.round(image.height*scale);
+      const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(image.source,0,0,canvas.width,canvas.height);image.release();image=null;
+      try{await document.fonts?.load((appearance.bold?'700':'400')+' 20px '+cameraStampFonts[appearance.font]);}catch(_){}
+      drawCameraStamp(ctx,cameraWatermarkLines(location,metadata.capturedAt,metadata.source,appearance),canvas.width,canvas.height,appearance);
+      const blob=await cameraCanvasBlob(canvas,'image/jpeg',metadata.quality?.jpeg||.92);
+      metadata.thumbnailBlob=await cameraThumbnail(canvas);metadata.frame={...metadata.frame,width:canvas.width,height:canvas.height};
+      const stamped=new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg',lastModified:metadata.capturedAt});
+      metadata.stampedFile=stamped;metadata.locationPromise=Promise.resolve(location);cameraPhotoMetadata.set(stamped,metadata);return stamped;
+    }catch(_){return file;}finally{image?.release();cameraReleaseCanvas(canvas);}
+  })();metadata.stampPromise=task;cameraPhotoMetadata.set(file,metadata);
+  const stamped=await task;if(stamped===file)metadata.stampPromise=null;return stamped;
 }
-
 /* Shared camera quality, device selection and capability-based zoom. */
 const cameraQualityProfiles={
-  economy:{id:'economy',label:'Tiết kiệm',detail:'Cạnh dài tối đa 1280 px · tải nhanh',request:1280,maxSide:1280,jpeg:.84},
-  high:{id:'high',label:'Chất lượng cao',detail:'Cạnh dài tối đa 2560 px · cân bằng dung lượng',request:2560,maxSide:2560,jpeg:.94},
-  maximum:{id:'maximum',label:'Tối đa',detail:'Giữ độ phân giải camera · ưu tiên chi tiết',request:4096,maxSide:0,jpeg:.98}
+  economy:{id:'economy',label:'Tiết kiệm',detail:'1280 px · nhẹ máy',request:1280,maxSide:1280,fps:15,jpeg:.85},
+  high:{id:'high',label:'Cân bằng',detail:'1920 px · rõ nét, vừa đủ',request:1920,maxSide:1920,fps:20,jpeg:.92},
+  maximum:{id:'maximum',label:'Chi tiết',detail:'2560 px · ảnh lớn hơn',request:2560,maxSide:2560,fps:24,jpeg:.95}
 };
-const cameraControlsState={quality:'maximum',deviceId:'',devices:[],baseFactor:1,zoom:1,digitalZoom:1,capabilities:{},busy:false,settingsOpen:false,location:null,clock:null,manualRotation:{environment:0,user:0},settingsFocus:null};
-try{const saved=localStorage.getItem('tasco-camera-quality');if(cameraQualityProfiles[saved])cameraControlsState.quality=saved;const rotations=JSON.parse(localStorage.getItem('tasco-camera-rotation')||'{}');for(const facing of ['environment','user'])if([0,90,180,270].includes(rotations[facing]))cameraControlsState.manualRotation[facing]=rotations[facing];}catch(_){}
+const cameraControlsState={quality:'high',deviceId:'',devices:[],baseFactor:1,zoom:1,digitalZoom:1,capabilities:{},busy:false,settingsOpen:false,location:null,clock:null,manualRotation:{environment:0,user:0},settingsFocus:null};
+try{const saved=localStorage.getItem('tasco-camera-quality-v2');if(cameraQualityProfiles[saved])cameraControlsState.quality=saved;const rotations=JSON.parse(localStorage.getItem('tasco-camera-rotation')||'{}');for(const facing of ['environment','user'])if([0,90,180,270].includes(rotations[facing]))cameraControlsState.manualRotation[facing]=rotations[facing];}catch(_){}
 function cameraQuality(){return {...cameraQualityProfiles[cameraControlsState.quality]};}
 function cameraVideoConstraints(){
   const quality=cameraQuality(),device=cameraControlsState.deviceId?{deviceId:{exact:cameraControlsState.deviceId}}:{facingMode:{ideal:customCameraFacingMode}};
-  // Equal ideals request detail without prescribing portrait/landscape or cropping an aspect ratio.
-  return [{video:{...device,width:{ideal:quality.request},height:{ideal:quality.request},frameRate:{ideal:30,max:30}},audio:false},{video:{...device},audio:false}];
+  return [{video:{...device,width:{ideal:quality.request,max:quality.request},height:{ideal:quality.request,max:quality.request},frameRate:{ideal:quality.fps,max:quality.fps}},audio:false},{video:{...device,width:{ideal:1280,max:1920},height:{ideal:1280,max:1920},frameRate:{ideal:15,max:24}},audio:false}];
 }
 function cameraDeviceKind(label){
   const value=String(label).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
@@ -3978,7 +4069,7 @@ async function selectCameraQuality(id){
   if(!cameraQualityProfiles[id]||cameraControlsState.busy||cameraUiState.captureBusy)return;
   const previous=cameraControlsState.quality,zoom=cameraControlsState.zoom;cameraControlsState.quality=id;
   cameraControlsState.busy=true;renderCameraSettings();syncCameraViewport();
-  try{await startCustomCameraStream();await cameraApplyZoom(zoom);try{localStorage.setItem('tasco-camera-quality',id);}catch(_){}}
+  try{await startCustomCameraStream();await cameraApplyZoom(zoom);try{localStorage.setItem('tasco-camera-quality-v2',id);}catch(_){}}
   catch(_){cameraControlsState.quality=previous;try{await startCustomCameraStream();await cameraApplyZoom(zoom);}catch(_){}triggerToast('Chưa đổi được chất lượng camera. Đã giữ thiết lập trước đó.','warning');}
   finally{cameraControlsState.busy=false;renderCameraSettings();syncCameraViewport();}
 }
@@ -3987,26 +4078,28 @@ function cameraRotateImage(reset=false){
   try{localStorage.setItem('tasco-camera-rotation',JSON.stringify(cameraControlsState.manualRotation));}catch(_){}syncCameraViewport();renderCameraSettings();
 }
 function renderCameraSettings(){
-  const panel=document.getElementById('cameraSettingsPanel');if(!panel)return;
-  const video=document.getElementById('customCameraVideo'),resolution=document.getElementById('cameraActualResolution');if(resolution)resolution.textContent=video?.videoWidth?video.videoWidth+' × '+video.videoHeight+' px · '+((video.videoWidth*video.videoHeight)/1e6).toFixed(1)+' MP':'Camera đang khởi động…';
+  const panel=document.getElementById('cameraSettingsPanel');if(!panel||panel.hidden)return;
+  const video=document.getElementById('customCameraVideo'),resolution=document.getElementById('cameraActualResolution');
+  if(resolution)resolution.textContent=video?.videoWidth?'Đang dùng '+video.videoWidth+' × '+video.videoHeight+' px':'Camera đang khởi động…';
   for(const button of panel.querySelectorAll('[data-camera-quality]')){button.setAttribute('aria-checked',String(button.dataset.cameraQuality===cameraControlsState.quality));button.disabled=cameraControlsState.busy;}
-  const list=document.getElementById('cameraDeviceList');list.replaceChildren();
-  const active=customCameraStream?.getVideoTracks()[0]?.getSettings?.().deviceId||cameraControlsState.deviceId;
-  for(const device of cameraControlsState.devices){const button=document.createElement('button');button.type='button';button.textContent=device.label;button.dataset.cameraDevice=device.id;button.setAttribute('aria-pressed',String(active===device.id));button.disabled=cameraControlsState.busy;button.onclick=()=>selectCameraDevice(device.id);list.append(button);}
-  if(!list.childNodes.length){const text=document.createElement('p');text.textContent='Danh sách camera xuất hiện sau khi cấp quyền.';list.append(text);}
-  const note=document.getElementById('cameraLensNote');note.textContent=cameraHasUltra()?'0.5× dùng camera siêu rộng. Khi cần zoom số, ứng dụng sẽ hiển thị rõ dưới nút chọn góc.':'0.5× chỉ khả dụng khi thiết bị cho phép truy cập camera siêu rộng. 2× dùng zoom camera nếu có, hoặc zoom số.';
-  const rotation=document.getElementById('cameraImageRotation');if(rotation)rotation.textContent='Hiệu chỉnh '+(cameraControlsState.manualRotation[customCameraFacingMode]||0)+'°';
-  const quality=document.getElementById('cameraQualityBadge');if(quality)quality.textContent=cameraQuality().label;
-  renderCameraAppearanceControls();
+  const list=document.getElementById('cameraDeviceSelect'),active=customCameraStream?.getVideoTracks()[0]?.getSettings?.().deviceId||cameraControlsState.deviceId;
+  const signature=cameraControlsState.devices.map(device=>device.id+'|'+device.label).join(';');
+  if(list.dataset.devices!==signature||!list.options.length){list.replaceChildren();for(const device of cameraControlsState.devices){const option=document.createElement('option');option.value=device.id;option.textContent=device.label;list.append(option);}if(!list.options.length){const option=document.createElement('option');option.textContent='Cấp quyền camera để chọn';option.value='';list.append(option);}list.dataset.devices=signature;}
+  const selected=[...list.options].some(option=>option.value===active)?active:cameraControlsState.devices.find(device=>device.facing===customCameraFacingMode)?.id||list.options[0]?.value;
+  if(selected)list.value=selected;list.disabled=cameraControlsState.busy||!cameraControlsState.devices.length;
+  document.getElementById('cameraLensNote').textContent=cameraHasUltra()?'Góc 0.5× dùng camera siêu rộng của thiết bị.':'Các góc camera khả dụng tùy thiết bị và trình duyệt.';
+  document.getElementById('cameraImageRotation').textContent=(cameraControlsState.manualRotation[customCameraFacingMode]||0)+'°';
+  document.getElementById('cameraQualityBadge').textContent=cameraQuality().label;
+  cameraRenderFocusSupport();renderCameraAppearanceControls();
 }
 function toggleCameraSettings(force){
   const panel=document.getElementById('cameraSettingsPanel');if(!panel)return;const open=typeof force==='boolean'?force:panel.hidden;cameraControlsState.settingsOpen=open;panel.hidden=!open;
   document.getElementById('btnCameraSettings')?.setAttribute('aria-expanded',String(open));
-  if(open){cameraControlsState.settingsFocus=document.activeElement;renderCameraSettings();panel.querySelector('[data-camera-settings-close]')?.focus({preventScroll:true});}
+  if(open){cameraControlsState.settingsFocus=document.activeElement;cameraSetSettingsTab(cameraRuntime.settingsTab);renderCameraSettings();panel.querySelector('[data-camera-settings-close]')?.focus({preventScroll:true});}
   else cameraControlsState.settingsFocus?.focus?.({preventScroll:true});syncCameraViewport();
 }
 function cameraControlsOpen(){cameraControlsState.deviceId='';cameraControlsState.zoom=1;cameraControlsState.digitalZoom=1;cameraControlsState.location=null;cameraControlsState.busy=false;cameraControlsState.settingsOpen=false;document.getElementById('cameraSettingsPanel').hidden=true;const plane=document.getElementById('cameraImagePlane');for(const selector of ['.camera-grid-overlay','.camera-target-crosshair']){const node=document.querySelector('#customCameraModal '+selector);if(node)plane.append(node);}renderCameraLensChoices();renderCameraSettings();clearInterval(cameraControlsState.clock);cameraControlsState.clock=setInterval(updateCameraLiveStamp,1000);updateCameraLiveStamp();}
-function cameraControlsClose(){clearInterval(cameraControlsState.clock);cameraControlsState.clock=null;cameraControlsState.settingsOpen=false;document.getElementById('cameraSettingsPanel').hidden=true;}
+function cameraControlsClose(){cameraStopHealthWatch();clearTimeout(cameraRuntime.feedbackTimer);clearTimeout(cameraRuntime.nativeTimer);cameraRuntime.nativeOpen=false;cameraRuntime.focusBusy=false;cameraFeedback();clearInterval(cameraControlsState.clock);cameraControlsState.clock=null;cameraControlsState.settingsOpen=false;document.getElementById('cameraSettingsPanel').hidden=true;}
 let cameraStampMeasureCanvas;
 function updateCameraLiveStamp(location){
   if(location!==undefined)cameraControlsState.location=location;
@@ -4014,8 +4107,10 @@ function updateCameraLiveStamp(location){
   const width=parseFloat(plane.style.width)||plane.clientWidth,height=parseFloat(plane.style.height)||plane.clientHeight;
   if(!width||!height)return;
   cameraStampMeasureCanvas||=document.createElement('canvas');const ctx=cameraStampMeasureCanvas.getContext('2d');if(!ctx)return;
-  const settings=cameraAppearance,lines=cameraWatermarkLines(cameraControlsState.location||{status:'pending'},Date.now(),'camera',settings),stamp=cameraStampLayout(ctx,lines,width,height,settings);
-  box.replaceChildren();stamp.lines.forEach(text=>{const line=document.createElement('div');line.textContent=text;box.append(line);});
+  const settings=cameraAppearance,lines=cameraWatermarkLines(cameraControlsState.location||{status:'pending'},Date.now(),'camera',settings),signature=JSON.stringify([lines,settings,width,height]);
+  if(cameraRuntime.lastFrameSignature===signature)return;cameraRuntime.lastFrameSignature=signature;
+  const stamp=cameraStampLayout(ctx,lines,width,height,settings);
+  while(box.children.length>stamp.lines.length)box.lastElementChild.remove();stamp.lines.forEach((text,index)=>{let line=box.children[index];if(!line){line=document.createElement('div');box.append(line);}if(line.textContent!==text)line.textContent=text;});
   box.style.font=stamp.font;box.style.lineHeight=stamp.lineHeight+'px';box.style.height=stamp.textHeight+'px';box.style.width=stamp.textWidth+'px';box.style.color=settings.color;box.style.textAlign=stamp.align;box.style.opacity=String(settings.opacity/100);
   box.style.textShadow=settings.style==='shadow'?`${stamp.fontSize*.07}px ${stamp.fontSize*.07}px ${stamp.fontSize*.23}px rgba(0,0,0,.9)`:'none';
   status.style.left=stamp.left+'px';status.style.top=stamp.y+'px';status.style.right='auto';status.style.bottom='auto';status.style.alignItems=stamp.align==='left'?'flex-start':stamp.align==='center'?'center':'flex-end';
@@ -4023,30 +4118,158 @@ function updateCameraLiveStamp(location){
   const retry=status.querySelector('.camera-location-retry');if(retry){retry.dataset.stampTop=String(settings.position.startsWith('top'));retry.style.left=stamp.align==='left'?'0':stamp.align==='center'?'calc(50% - 15px)':'auto';retry.style.right=stamp.align==='right'?'0':'auto';}
   applyCameraDisplayPreferences();
 }
+/* One bounded frame -> one JPEG. No still-camera reconfiguration or PNG copies. */
+const cameraRuntime={watch:null,frameToken:null,video:null,lastFrameAt:0,recovering:null,lastRecovery:0,recoveryWindow:0,recoveryCount:0,focusBusy:false,focusBlocked:false,feedbackTimer:null,nativeTimer:null,nativeOpen:false,suspended:false,lastFrameSignature:'',settingsTab:'capture'};
+function cameraFeedback(message='',duration=2400){
+  const node=document.getElementById('cameraFeedback');if(!node)return;
+  clearTimeout(cameraRuntime.feedbackTimer);node.textContent=message;node.hidden=!message;
+  if(message&&duration)cameraRuntime.feedbackTimer=setTimeout(()=>{node.hidden=true;},duration);
+}
+function cameraSetSettingsTab(name,focus=false){
+  const panel=document.getElementById('cameraSettingsPanel');if(!panel)return;
+  if(!['capture','stamp','style'].includes(name))name='capture';cameraRuntime.settingsTab=name;
+  for(const tab of panel.querySelectorAll('[data-camera-settings-tab]')){const selected=tab.dataset.cameraSettingsTab===name;tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;if(selected&&focus)tab.focus();}
+  for(const page of panel.querySelectorAll('[data-camera-settings-page]'))page.hidden=page.dataset.cameraSettingsPage!==name;
+  panel.querySelector('.camera-settings-body').scrollTop=0;if(name==='style')renderCameraStampSample();
+}
+const cameraStylePresets={standard:{font:'sans',textSize:1,bold:true,style:'shadow',lineHeight:1.35,opacity:100},contrast:{font:'sans',textSize:1.15,bold:true,style:'panel',lineHeight:1.4,opacity:100},minimal:{font:'jakarta',textSize:.9,bold:false,style:'shadow',lineHeight:1.3,opacity:100}};
+function cameraApplyPreset(name){if(!cameraStylePresets[name])return;cameraAppearance=sanitizeCameraAppearance({...cameraAppearance,...cameraStylePresets[name]});saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}
+function cameraRenderStyleButtons(){
+  for(const button of document.querySelectorAll('[data-camera-preset]'))button.setAttribute('aria-pressed',String(Object.entries(cameraStylePresets[button.dataset.cameraPreset]).every(([key,value])=>cameraAppearance[key]===value)));
+  for(const button of document.querySelectorAll('[data-camera-color]'))button.setAttribute('aria-pressed',String(button.dataset.cameraColor===cameraAppearance.color.toLowerCase()));
+}
+function cameraSupportsPointFocus(track=customCameraStream?.getVideoTracks()[0]){
+  const supported=navigator.mediaDevices?.getSupportedConstraints?.()||{},caps=track?.getCapabilities?.()||{};
+  return Boolean(track?.applyConstraints&&supported.pointsOfInterest&&caps.focusMode?.some(mode=>['continuous','single-shot'].includes(mode))&&!cameraRuntime.focusBlocked);
+}
+function cameraRenderFocusSupport(){
+  const supported=cameraSupportsPointFocus(),text=document.getElementById('cameraFocusSupport');
+  if(text)text.textContent=supported?'Chạm vào chủ thể để chọn điểm lấy nét.':'Camera lấy nét tự động. Trình duyệt này chưa cung cấp lấy nét theo điểm; dùng camera hệ thống khi cần chạm lấy nét.';
+  const button=document.querySelector('[data-camera-native]');if(button)button.hidden=supported;
+}
+function cameraPointFromPlane(point,width,height,frame){
+  if(!width||!height||point.x<0||point.y<0||point.x>width||point.y>height)return null;
+  let x=point.x-width/2,y=point.y-height/2;if(frame.mirror)x=-x;
+  const angle=frame.rotation*Math.PI/180,swapped=Math.abs(frame.rotation)%180===90,videoWidth=swapped?height:width,videoHeight=swapped?width:height,zoom=frame.digitalZoom||1;
+  const sx=(x*Math.cos(angle)+y*Math.sin(angle))/(videoWidth*zoom)+.5,sy=(-x*Math.sin(angle)+y*Math.cos(angle))/(videoHeight*zoom)+.5;
+  return {x:Math.max(0,Math.min(1,sx)),y:Math.max(0,Math.min(1,sy))};
+}
+async function cameraApplyPointFocus(track,point){
+  if(!cameraSupportsPointFocus(track))return 'auto';
+  const caps=track.getCapabilities(),mode=caps.focusMode.includes('single-shot')?'single-shot':'continuous';
+  try{
+    await track.applyConstraints({...track.getConstraints?.(),focusMode:{exact:mode},pointsOfInterest:{exact:[point]}});
+    const selected=track.getSettings?.().pointsOfInterest;
+    if(Array.isArray(selected)&&(!selected.length||!selected.some(p=>Math.abs(p.x-point.x)<.05&&Math.abs(p.y-point.y)<.05))){cameraRuntime.focusBlocked=true;return 'auto';}
+    return Array.isArray(selected)?'selected':'requested';
+  }catch(_){cameraRuntime.focusBlocked=true;return 'auto';}
+}
+function cameraCanvasBlob(canvas,type='image/jpeg',quality=.92){
+  return new Promise((resolve,reject)=>{
+    let done=false;const timer=setTimeout(()=>finish(null),8000);
+    function finish(blob){if(done)return;done=true;clearTimeout(timer);blob?resolve(blob):reject(new Error('Chưa xử lý được ảnh. Vui lòng thử lại.'));}
+    try{canvas.toBlob(finish,type,quality);}catch(error){clearTimeout(timer);done=true;reject(error);}
+  });
+}
+function cameraReleaseCanvas(canvas){if(canvas){canvas.width=1;canvas.height=1;}}
+function cameraFrameHasPixels(canvas){
+  const sample=document.createElement('canvas');sample.width=24;sample.height=24;
+  try{const ctx=sample.getContext('2d',{willReadFrequently:true});ctx.drawImage(canvas,0,0,24,24);const data=ctx.getImageData(0,0,24,24).data;for(let i=0;i<data.length;i+=4)if(data[i]>3||data[i+1]>3||data[i+2]>3)return true;return false;}finally{cameraReleaseCanvas(sample);}
+}
+async function cameraThumbnail(canvas){
+  const thumb=document.createElement('canvas'),scale=Math.min(1,160/Math.max(canvas.width,canvas.height));thumb.width=Math.max(1,Math.round(canvas.width*scale));thumb.height=Math.max(1,Math.round(canvas.height*scale));
+  try{thumb.getContext('2d').drawImage(canvas,0,0,thumb.width,thumb.height);return await cameraCanvasBlob(thumb,'image/jpeg',.72);}finally{cameraReleaseCanvas(thumb);}
+}
+async function cameraWaitForFrame(video){
+  if(video.paused)try{await video.play();}catch(_){return false;}
+  if(!video.videoWidth||!video.videoHeight)return false;
+  if(typeof video.requestVideoFrameCallback!=='function')return video.readyState>=2;
+  return new Promise(resolve=>{
+    let token,done=false;const timer=setTimeout(()=>finish(false),1500);
+    function finish(value){if(done)return;done=true;clearTimeout(timer);if(token!==undefined)video.cancelVideoFrameCallback?.(token);resolve(value);}
+    token=video.requestVideoFrameCallback(()=>finish(video.readyState>=2));
+  });
+}
+function cameraStopHealthWatch(){
+  clearInterval(cameraRuntime.watch);cameraRuntime.watch=null;
+  if(cameraRuntime.frameToken!==null)cameraRuntime.video?.cancelVideoFrameCallback?.(cameraRuntime.frameToken);
+  cameraRuntime.frameToken=null;cameraRuntime.video=null;
+}
+function cameraStartHealthWatch(video){
+  cameraStopHealthWatch();cameraRuntime.video=video;cameraRuntime.lastFrameAt=Date.now();
+  const observe=()=>{if(cameraRuntime.video!==video||!customCameraStream)return;cameraRuntime.lastFrameAt=Date.now();cameraRuntime.frameToken=video.requestVideoFrameCallback(observe);};
+  if(video.requestVideoFrameCallback)cameraRuntime.frameToken=video.requestVideoFrameCallback(observe);
+  cameraRuntime.watch=setInterval(()=>{
+    if(document.hidden||cameraRuntime.suspended||cameraRuntime.nativeOpen||cameraUiState.captureBusy||cameraControlsState.busy)return;
+    const track=customCameraStream?.getVideoTracks()[0];if(!track)return;
+    if(video.paused)video.play().catch(()=>{});
+    if(track.readyState==='ended'||track.muted&&Date.now()-cameraRuntime.lastFrameAt>4000||video.requestVideoFrameCallback&&Date.now()-cameraRuntime.lastFrameAt>6000)cameraRecoverPreview();
+  },2000);
+}
+async function cameraRecoverPreview(){
+  if(cameraRuntime.recovering)return cameraRuntime.recovering;
+  if(document.hidden||cameraRuntime.nativeOpen||cameraRuntime.suspended||cameraControlsState.busy||cameraUiState.captureBusy||document.getElementById('customCameraModal').style.display==='none')return;
+  const now=Date.now();if(now-cameraRuntime.lastRecovery<8000)return;
+  if(now-cameraRuntime.recoveryWindow>60000){cameraRuntime.recoveryWindow=now;cameraRuntime.recoveryCount=0;}
+  if(cameraRuntime.recoveryCount>=2){cameraFeedback('Camera chưa ổn định. Mở camera hệ thống trong Cài đặt để tiếp tục.',0);return;}
+  cameraRuntime.lastRecovery=now;cameraRuntime.recoveryCount++;cameraFeedback('Đang khôi phục camera…',0);
+  const session=cameraUiState.session,zoom=cameraControlsState.zoom;
+  const task=(async()=>{try{const stream=await startCustomCameraStream();if(session!==cameraUiState.session)return;if(stream){await cameraApplyZoom(zoom);syncCameraViewport();cameraFeedback('Camera đã sẵn sàng.');}}catch(_){cameraFeedback('Chưa mở lại được camera. Thử camera hệ thống trong Cài đặt.',0);}finally{cameraRuntime.recovering=null;}})();
+  cameraRuntime.recovering=task;return task;
+}
+function cameraCaptureLocation(){
+  const latest=cameraLocationState.latest||cameraControlsState.location;
+  if(latest?.coords&&Date.now()-latest.timestamp<15000)return Promise.resolve({...latest,coords:{...latest.coords}});
+  return ensureRealtimeGpsCoordinates().catch(()=>cameraLocationError('unavailable'));
+}
+async function cameraLoadImage(file){
+  if(typeof createImageBitmap==='function'){try{const bitmap=await createImageBitmap(file);return {source:bitmap,width:bitmap.width,height:bitmap.height,release:()=>bitmap.close()};}catch(_){} }
+  const url=URL.createObjectURL(file),image=new Image();
+  try{await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=url;});return {source:image,width:image.naturalWidth,height:image.naturalHeight,release:()=>{image.src='';URL.revokeObjectURL(url);}};}catch(error){URL.revokeObjectURL(url);throw error;}
+}
+async function openCameraNative(){
+  if(cameraUiState.captureBusy||mobileCameraSaving||cameraControlsState.busy)return;
+  cameraRuntime.nativeOpen=true;stopCustomCameraStream();const input=document.getElementById('cameraNativeInput');input.value='';input.setAttribute('capture',customCameraFacingMode);input.click();
+}
+async function cameraReturnFromNative(){
+  cameraRuntime.nativeOpen=false;clearTimeout(cameraRuntime.nativeTimer);
+  if(document.getElementById('customCameraModal').style.display!=='none'&&!document.hidden){cameraRuntime.suspended=false;startCameraLocationTracking();if(!cameraControlsState.clock)cameraControlsState.clock=setInterval(updateCameraLiveStamp,1000);await startCustomCameraStream();}
+}
+document.getElementById('cameraNativeInput')?.addEventListener('cancel',cameraReturnFromNative);
+document.getElementById('cameraNativeInput')?.addEventListener('change',async event=>{
+  const file=event.target.files?.[0],session=cameraUiState.session;if(!file){await cameraReturnFromNative();return;}
+  cameraUiState.captureBusy=true;cameraFeedback('Đang chuẩn bị ảnh…',0);syncCameraViewport();
+  try{
+    const metadata=createCameraPhotoMetadata();metadata.quality=cameraQuality();metadata.source='camera';cameraPhotoMetadata.set(file,metadata);
+    const stamped=await addWatermarkToImageFile(file,'',{isCameraSource:true});
+    if(session!==cameraUiState.session)return;if(stamped===file)throw new Error('Chưa xử lý được ảnh từ camera hệ thống.');
+    customCameraPhotos.push(stamped);renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();cameraFeedback('Đã thêm ảnh.');
+  }catch(error){if(session===cameraUiState.session)cameraFeedback(error.message);}
+  finally{if(session===cameraUiState.session){cameraUiState.captureBusy=false;event.target.value='';await cameraReturnFromNative();syncCameraViewport();}}
+});
+window.addEventListener('focus',()=>{if(cameraRuntime.nativeOpen){clearTimeout(cameraRuntime.nativeTimer);cameraRuntime.nativeTimer=setTimeout(()=>{if(cameraRuntime.nativeOpen&&!document.getElementById('cameraNativeInput').files.length&&!cameraUiState.captureBusy)cameraReturnFromNative();},800);}});
+document.addEventListener('visibilitychange',()=>{
+  if(document.getElementById('customCameraModal').style.display==='none')return;
+  if(document.hidden){cameraRuntime.suspended=true;stopCustomCameraStream();stopCameraLocationTracking();clearInterval(cameraControlsState.clock);cameraControlsState.clock=null;}
+  else if(cameraRuntime.suspended&&!cameraRuntime.nativeOpen){cameraRuntime.suspended=false;startCameraLocationTracking();cameraControlsState.clock=setInterval(updateCameraLiveStamp,1000);startCustomCameraStream();}
+});
+
 function cameraCanvasFromSource(source,frame,quality){
   const width=source.videoWidth||source.width,height=source.videoHeight||source.height,swapped=Math.abs(frame.rotation)%180===90,orientedWidth=swapped?height:width,orientedHeight=swapped?width:height;
   const scale=quality.maxSide?Math.min(1,quality.maxSide/Math.max(orientedWidth,orientedHeight)):1,canvas=document.createElement('canvas');canvas.width=Math.round(orientedWidth*scale);canvas.height=Math.round(orientedHeight*scale);
-  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate(frame.rotation*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);return canvas;
+  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate(frame.rotation*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);ctx.setTransform(1,0,0,1,0,0);return canvas;
 }
-async function cameraStillCanvas(track,frame,quality,fallback){
-  if(typeof window.ImageCapture!=='function')return fallback;
-  let timer;
-  const take=(async()=>{try{const capture=new ImageCapture(track);let caps;try{caps=await capture.getPhotoCapabilities();}catch(_){}
-    const settings=caps?.imageWidth?.max?{imageWidth:quality.maxSide?Math.min(quality.maxSide,caps.imageWidth.max):caps.imageWidth.max}:{};
-    let blob;try{blob=await capture.takePhoto(settings);}catch(_){blob=await capture.takePhoto();}
-    const bitmap=await createImageBitmap(blob);
-    try{const desiredLandscape=frame.orientation==='landscape',alreadyOriented=(bitmap.width>bitmap.height)===desiredLandscape,stillFrame={...frame,rotation:alreadyOriented?(frame.manualRotation||0):frame.rotation};return cameraCanvasFromSource(bitmap,stillFrame,quality);}finally{bitmap.close();}
-  }catch(_){return fallback;}})();
-  try{return await Promise.race([take,new Promise(resolve=>{timer=setTimeout(()=>resolve(fallback),2500);})]);}finally{clearTimeout(timer);}
-}
+
 const cameraSettingsPanel=document.getElementById('cameraSettingsPanel');
-cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close'))toggleCameraSettings(false);if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
+cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close'))toggleCameraSettings(false);if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.dataset.cameraSettingsTab)cameraSetSettingsTab(button.dataset.cameraSettingsTab);if(button.dataset.cameraPreset)cameraApplyPreset(button.dataset.cameraPreset);if(button.dataset.cameraColor){cameraAppearance={...cameraAppearance,color:button.dataset.cameraColor};saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}if(button.hasAttribute('data-camera-native'))openCameraNative();if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
+document.getElementById('cameraDeviceSelect')?.addEventListener('change',event=>selectCameraDevice(event.target.value));
+cameraSettingsPanel?.addEventListener('keydown',event=>{const tab=event.target.closest('[data-camera-settings-tab]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const pages=['capture','stamp','style'],index=pages.indexOf(tab.dataset.cameraSettingsTab),next=event.key==='Home'?0:event.key==='End'?2:(index+(event.key==='ArrowRight'?1:2))%3;cameraSetSettingsTab(pages[next],true);});
 cameraSettingsPanel?.addEventListener('input',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
 cameraSettingsPanel?.addEventListener('change',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
 document.getElementById('customCameraModal')?.addEventListener('keydown',event=>{
   if(!cameraControlsState.settingsOpen)return;
   if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();toggleCameraSettings(false);}
-  if(event.key==='Tab'){const buttons=[...cameraSettingsPanel.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),summary,a[href]')].filter(button=>button.getClientRects().length);if(event.shiftKey&&document.activeElement===buttons[0]){event.preventDefault();buttons.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===buttons.at(-1)){event.preventDefault();buttons[0].focus();}}
+  if(event.key==='Tab'){const buttons=[...cameraSettingsPanel.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),summary,a[href]')].filter(button=>button.getClientRects().length&&button.tabIndex>=0);if(event.shiftKey&&document.activeElement===buttons[0]){event.preventDefault();buttons.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===buttons.at(-1)){event.preventDefault();buttons[0].focus();}}
 },{capture:true});
 
 let customCameraStream=null,customCameraPhotos=[],customCameraFacingMode='environment',customCameraTorchActive=false;
@@ -4069,23 +4292,32 @@ async function startCustomCameraStream(){
   let stream,error;
   for(const constraints of options){try{stream=await navigator.mediaDevices.getUserMedia(constraints);break;}catch(cause){error=cause;if(['NotAllowedError','SecurityError'].includes(cause.name))break;}}
   if(revision!==mobileCameraStreamRevision||session!==cameraUiState.session||document.getElementById('customCameraModal').style.display==='none'){stream?.getTracks().forEach(track=>track.stop());return;}
-  if(!stream){if(cameraControlsState.busy)throw error||new Error('Không mở được camera đã chọn.');TascoCloud.notify(error?.name==='NotAllowedError'?'Chưa cấp quyền camera. Bật quyền camera cho trang rồi mở lại.':'Chưa mở được camera. Đóng ứng dụng đang dùng camera rồi thử lại.');await closeCustomCameraModal(false);return;}
+  if(!stream){if(cameraControlsState.busy)throw error||new Error('Không mở được camera đã chọn.');cameraFeedback(error?.name==='NotAllowedError'?'Chưa cấp quyền camera. Bật quyền camera cho trang rồi mở lại.':'Chưa mở được camera. Thử camera hệ thống trong Cài đặt.',0);return null;}
   customCameraStream=stream;video.srcObject=stream;
   const track=stream.getVideoTracks()[0],flash=document.getElementById('btnToggleCameraFlash');flash.disabled=!track?.getCapabilities?.().torch;
-  try{await video.play();}catch(_){TascoCloud.notify('Chạm vào khung hình để bắt đầu camera.');}await cameraConnectHardware(stream);syncCameraViewport();
+  try{await video.play();}catch(_){TascoCloud.notify('Chạm vào khung hình để bắt đầu camera.');}await cameraConnectHardware(stream);cameraRuntime.focusBlocked=false;cameraStartHealthWatch(video);syncCameraViewport();return stream;
 }
-function stopCustomCameraStream(){mobileCameraStreamRevision++;customCameraStream?.getTracks().forEach(track=>track.stop());customCameraStream=null;document.getElementById('customCameraVideo').srcObject=null;customCameraTorchActive=false;document.getElementById('btnToggleCameraFlash').classList.remove('active');syncCameraViewport();}
+function stopCustomCameraStream(){cameraStopHealthWatch();mobileCameraStreamRevision++;customCameraStream?.getTracks().forEach(track=>track.stop());customCameraStream=null;document.getElementById('customCameraVideo').srcObject=null;customCameraTorchActive=false;document.getElementById('btnToggleCameraFlash').classList.remove('active');syncCameraViewport();}
 async function switchCustomCamera(){if(mobileCameraSaving||cameraControlsState.busy||cameraUiState.captureBusy)return;customCameraFacingMode=customCameraFacingMode==='environment'?'user':'environment';cameraControlsState.deviceId='';await startCustomCameraStream();}
 async function toggleCustomCameraTorch(){const track=customCameraStream?.getVideoTracks()[0];if(!track?.getCapabilities?.().torch)return;try{await track.applyConstraints({advanced:[{torch:!customCameraTorchActive}]});customCameraTorchActive=!customCameraTorchActive;document.getElementById('btnToggleCameraFlash').classList.toggle('active',customCameraTorchActive);}catch(_){TascoCloud.notify('Camera này chưa bật được đèn flash.');}}
 async function triggerCustomCameraFocus(event){
-  const video=document.getElementById('customCameraVideo');if(video.paused)video.play().catch(()=>{});
-  const ring=document.getElementById('cameraFocusRing'),point=cameraLocalPoint(video.closest('.camera-stream-container'),event.clientX,event.clientY);ring.style.left=point.x+'px';ring.style.top=point.y+'px';ring.classList.add('active');clearTimeout(ring._timer);ring._timer=setTimeout(()=>ring.classList.remove('active'),1000);
-  const track=customCameraStream?.getVideoTracks()[0];if(track?.getCapabilities?.().focusMode?.includes('continuous'))try{await track.applyConstraints({advanced:[{focusMode:'continuous'}]});}catch(_){}
+  if(cameraUiState.captureBusy||cameraControlsState.busy||cameraRuntime.focusBusy||cameraControlsState.settingsOpen)return;
+  const video=document.getElementById('customCameraVideo'),plane=document.getElementById('cameraImagePlane'),track=customCameraStream?.getVideoTracks()[0];if(!track||!video.videoWidth)return;
+  const point=cameraPointFromPlane(cameraLocalPoint(plane,event.clientX,event.clientY),plane.clientWidth,plane.clientHeight,cameraFrameOrientation(video));if(!point)return;
+  if(video.paused)video.play().catch(()=>{});
+  const ring=document.getElementById('cameraFocusRing'),local=cameraLocalPoint(video.closest('.camera-stream-container'),event.clientX,event.clientY),session=cameraUiState.session;
+  ring.style.left=local.x+'px';ring.style.top=local.y+'px';ring.dataset.state='pending';ring.classList.add('active');clearTimeout(ring._timer);cameraRuntime.focusBusy=true;
+  try{
+    const state=await cameraApplyPointFocus(track,point);if(session!==cameraUiState.session||track!==customCameraStream?.getVideoTracks()[0])return;
+    ring.dataset.state=state==='selected'?'selected':'auto';cameraRenderFocusSupport();
+    cameraFeedback(state==='selected'?'Đã chọn điểm lấy nét.':state==='requested'?'Đã gửi yêu cầu lấy nét tại điểm chạm.':'Camera lấy nét tự động. Chọn Camera hệ thống trong Cài đặt để chạm lấy nét.',state==='auto'?3800:1600);
+  }finally{cameraRuntime.focusBusy=false;ring._timer=setTimeout(()=>ring.classList.remove('active'),1400);}
 }
 function deleteCapturedPhotoFromCamera(index){if(mobileCameraSaving)return;customCameraPhotos.splice(index,1);renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();}
 function updateCustomCameraDoneBtn(){const button=document.getElementById('btnSaveCustomCameraPhotos');button.textContent=mobileCameraSaving?'Đang lưu…':'Lưu Cloud ('+customCameraPhotos.length+')';button.disabled=mobileCameraSaving||!customCameraPhotos.length;}
 async function closeCustomCameraModal(savePhotos=false){
   if(mobileCameraSaving)return;
+  if(savePhotos&&cameraUiState.captureBusy){cameraFeedback('Đợi ảnh đang xử lý xong rồi lưu Cloud.');return;}
   if(!savePhotos&&customCameraPhotos.length&&!confirm('Đóng camera và bỏ '+customCameraPhotos.length+' ảnh vừa chụp?'))return;
   if(savePhotos){
     if(!customCameraPhotos.length)return;
@@ -4196,7 +4428,7 @@ function syncCameraPhotoTray() {
 function onCustomCameraOpen() {
   cameraUiState.session++;cameraUiState.captureBusy=false;
   cameraUiState.previousOverflow=document.body.style.overflow;cameraUiState.previousFocus=document.activeElement;
-  cameraUiState.physicalOrientation=null;resetCameraFrameBaseline();cameraControlsOpen();startCameraOrientationSensor();startCameraLocationTracking();
+  cameraRuntime.suspended=false;cameraRuntime.nativeOpen=false;cameraRuntime.focusBlocked=false;cameraRuntime.recoveryCount=0;cameraRuntime.lastRecovery=0;cameraRuntime.lastFrameSignature='';cameraRuntime.settingsTab='capture';cameraUiState.physicalOrientation=null;resetCameraFrameBaseline();cameraControlsOpen();startCameraOrientationSensor();startCameraLocationTracking();
   document.body.style.overflow='hidden';
   updateCameraLocationUI(null,true);syncCameraPhotoTray();syncCameraViewport();
   document.querySelector('#customCameraModal .btn-close-cam')?.focus({preventScroll:true});
@@ -4214,7 +4446,7 @@ function renderCustomCameraPreviewStrip() {
   for(const [file,url] of cameraUiState.photoUrls){if(!customCameraPhotos.includes(file)){URL.revokeObjectURL(url);cameraUiState.photoUrls.delete(file);}}
   strip.replaceChildren();
   customCameraPhotos.forEach((file,index)=>{
-    let url=cameraUiState.photoUrls.get(file);if(!url){url=URL.createObjectURL(file);cameraUiState.photoUrls.set(file,url);}
+    let url=cameraUiState.photoUrls.get(file);if(!url){url=URL.createObjectURL(cameraPhotoMetadata.get(file)?.thumbnailBlob||file);cameraUiState.photoUrls.set(file,url);}
     const wrapper=document.createElement('div');wrapper.className='camera-preview-wrapper';
     const image=document.createElement('img');image.className='camera-preview-thumbnail';image.src=url;image.alt='Ảnh đã chụp '+(index+1);
     const badge=document.createElement('span');badge.className='camera-thumb-badge';badge.textContent=String(index+1);
@@ -4224,28 +4456,27 @@ function renderCustomCameraPreviewStrip() {
   strip.scrollLeft=strip.scrollWidth;
 }
 async function triggerCustomCameraCapture() {
-  const video=document.getElementById('customCameraVideo');if(!video||!customCameraStream||cameraUiState.captureBusy||cameraControlsState.busy||cameraControlsState.settingsOpen)return;
-  if(!video.videoWidth||!video.videoHeight){triggerToast('Camera đang khởi động, vui lòng thử lại sau giây lát!','warning');video.play().catch(()=>{});return;}
-  const session=cameraUiState.session,frame=cameraFrameOrientation(video),photoMetadata=createCameraPhotoMetadata(),quality=cameraQuality();
-  photoMetadata.frame={...frame,nativeWidth:video.videoWidth,nativeHeight:video.videoHeight};photoMetadata.quality=quality;
-  cameraUiState.captureBusy=true;syncCameraViewport();
-  const flash=document.getElementById('cameraFlashEffect');if(flash&&cameraAppearance.shutterFlash){flash.classList.add('flash-active');setTimeout(()=>flash.classList.remove('flash-active'),90);}
-  try {
-    const fallback=cameraCanvasFromSource(video,frame,quality),canvas=await cameraStillCanvas(customCameraStream.getVideoTracks()[0],frame,quality,fallback);
-    if(session!==cameraUiState.session)return;photoMetadata.frame.width=canvas.width;photoMetadata.frame.height=canvas.height;
-    canvas.toBlob(blob=>{
-      if(session!==cameraUiState.session)return;
-      cameraUiState.captureBusy=false;syncCameraViewport();
-      if(!blob){triggerToast('Chưa tạo được ảnh, vui lòng chụp lại.','warning');return;}
-      const file=new File([blob],'capture_'+photoMetadata.capturedAt+'.png',{type:'image/png',lastModified:photoMetadata.capturedAt});cameraPhotoMetadata.set(file,photoMetadata);
-      customCameraPhotos.push(file);renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();
-      // Store the final JPEG promptly instead of accumulating full-resolution PNGs during a shooting session.
-      photoMetadata.stampPromise=addWatermarkToImageFile(file,'',{isCameraSource:true}).then(stamped=>{
-        const index=customCameraPhotos.indexOf(file);if(stamped===file)photoMetadata.stampPromise=null;
-        if(session===cameraUiState.session&&index>=0&&stamped!==file){customCameraPhotos[index]=stamped;renderCustomCameraPreviewStrip();}return stamped;
-      }).catch(()=>{photoMetadata.stampPromise=null;return file;});
-    },'image/png');
-  }catch(_){cameraUiState.captureBusy=false;syncCameraViewport();triggerToast('Chưa tạo được ảnh, vui lòng chụp lại.','warning');}
+  const video=document.getElementById('customCameraVideo'),track=customCameraStream?.getVideoTracks()[0];
+  if(!video||!track||cameraUiState.captureBusy||cameraControlsState.busy||cameraControlsState.settingsOpen||cameraRuntime.suspended||cameraRuntime.nativeOpen)return;
+  const session=cameraUiState.session,quality=cameraQuality(),metadata=createCameraPhotoMetadata();let canvas,recover=false;
+  cameraUiState.captureBusy=true;cameraFeedback('Đang chuẩn bị ảnh…',0);syncCameraViewport();
+  try{
+    if(track.readyState==='ended'||track.muted||!await cameraWaitForFrame(video)){recover=true;throw new Error('Khung hình chưa sẵn sàng.');}
+    if(session!==cameraUiState.session||track!==customCameraStream?.getVideoTracks()[0])return;
+    const frame=cameraFrameOrientation(video);canvas=cameraCanvasFromSource(video,frame,quality);
+    if(!cameraFrameHasPixels(canvas)){recover=true;throw new Error('Camera vừa mất khung hình. Đang thử kết nối lại.');}
+    metadata.frame={...frame,width:canvas.width,height:canvas.height,nativeWidth:video.videoWidth,nativeHeight:video.videoHeight};metadata.quality=quality;
+    const location=await metadata.locationPromise;if(session!==cameraUiState.session)return;
+    try{await document.fonts?.load((metadata.appearance.bold?'700':'400')+' 20px '+cameraStampFonts[metadata.appearance.font]);}catch(_){}
+    const flash=document.getElementById('cameraFlashEffect');if(cameraAppearance.shutterFlash){flash.classList.add('flash-active');setTimeout(()=>flash.classList.remove('flash-active'),80);}
+    drawCameraStamp(canvas.getContext('2d'),cameraWatermarkLines(location,metadata.capturedAt,'camera',metadata.appearance),canvas.width,canvas.height,metadata.appearance);
+    const blob=await cameraCanvasBlob(canvas,'image/jpeg',quality.jpeg);metadata.thumbnailBlob=await cameraThumbnail(canvas);
+    if(session!==cameraUiState.session)return;
+    const file=new File([blob],'capture_'+metadata.capturedAt+'_'+customCameraPhotos.length+'.jpg',{type:'image/jpeg',lastModified:metadata.capturedAt});
+    metadata.stampedFile=file;metadata.locationPromise=Promise.resolve(location);cameraPhotoMetadata.set(file,metadata);customCameraPhotos.push(file);
+    renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();cameraFeedback('Đã chụp '+customCameraPhotos.length+' ảnh.',1100);return file;
+  }catch(error){if(session===cameraUiState.session){recover=recover||track.readyState==='ended'||track.muted||video.readyState<2;cameraFeedback(error.message||'Chưa tạo được ảnh. Vui lòng chụp lại.');}}
+  finally{cameraReleaseCanvas(canvas);if(session===cameraUiState.session){cameraUiState.captureBusy=false;syncCameraViewport();if(recover)cameraRecoverPreview();}}
 }
 window.addEventListener('resize',syncCameraViewport);
 window.addEventListener('orientationchange',()=>{syncCameraViewport();setTimeout(syncCameraViewport,250);});
