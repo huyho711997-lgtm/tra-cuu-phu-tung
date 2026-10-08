@@ -437,9 +437,12 @@
 
 .custom-camera-modal { --cam-gold:#dfbd78; --cam-muted:#98a2b2; --cam-line:rgba(224,193,135,.16); width:var(--camera-viewport-width,100vw); height:var(--camera-viewport-height,100dvh); max-width:none; max-height:none; flex-direction:column; overflow:hidden; background:#090c11; color:#f5f6f8; font-family:inherit; touch-action:manipulation; }
 .custom-camera-modal,.custom-camera-modal .camera-stream-container,.custom-camera-modal .camera-footer { transition:none !important; }
+.custom-camera-modal{transform-origin:center;overscroll-behavior:none}
+.custom-camera-modal .camera-overlay-header{padding-top:calc(12px + var(--camera-safe-top,env(safe-area-inset-top,0px)))}
+.custom-camera-modal .camera-footer{padding-bottom:calc(12px + var(--camera-safe-bottom,env(safe-area-inset-bottom,0px)))}
 .custom-camera-modal .camera-stream-container { flex:1 1 0; min-width:0; min-height:0; background:#05070a; }
 .custom-camera-modal #customCameraVideo { display:block; width:100%; height:100%; object-fit:contain; transition:none !important; }
-.custom-camera-modal .camera-overlay-header { position:absolute; inset:0 0 auto; display:flex; align-items:center; gap:10px; width:auto; padding:calc(12px + env(safe-area-inset-top,0px)) 14px 18px; background:linear-gradient(rgba(5,7,10,.78),rgba(5,7,10,.45) 65%,transparent); z-index:4; }
+.custom-camera-modal .camera-overlay-header { position:absolute; inset:0 0 auto; display:flex; align-items:center; gap:10px; width:auto; padding:calc(12px + var(--camera-safe-top,env(safe-area-inset-top,0px))) 14px 18px; background:linear-gradient(rgba(5,7,10,.78),rgba(5,7,10,.45) 65%,transparent); z-index:4; }
 .camera-heading { flex:1; min-width:0; }
 .camera-heading > span { display:block; margin-bottom:4px; color:var(--cam-gold); font-size:9px; line-height:1.4; letter-spacing:.1em; font-weight:750; }
 .custom-camera-modal .camera-current-category { position:static; transform:none; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; max-width:100%; width:auto; margin:0; padding:0; border:0; border-radius:0; background:none; box-shadow:none; color:#f5f6f8; font-size:12px; line-height:1.5; font-weight:650; letter-spacing:0; text-transform:none; white-space:normal; text-align:left; }
@@ -452,7 +455,7 @@
 .custom-camera-modal .camera-target-crosshair::before { inset:5px; border-color:var(--cam-gold); }
 .custom-camera-modal .camera-target-crosshair::after { background:var(--cam-gold); width:3px; height:3px; }
 .custom-camera-modal .camera-grid-overlay .grid-line { border-color:rgba(255,255,255,.1); }
-.custom-camera-modal .camera-footer { display:flex; flex-direction:column; flex:0 0 auto; gap:10px; min-width:0; padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--cam-line); background:linear-gradient(145deg,#11161f,#090c11); }
+.custom-camera-modal .camera-footer { display:flex; flex-direction:column; flex:0 0 auto; gap:10px; min-width:0; padding:10px 14px calc(12px + var(--camera-safe-bottom,env(safe-area-inset-bottom,0px))); border-top:1px solid var(--cam-line); background:linear-gradient(145deg,#11161f,#090c11); }
 .camera-location-status { position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0; min-width:0; padding:8px 10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; background:rgba(255,255,255,.025); color:#d9e0e9; }
 .camera-location-copy { display:flex; flex:1; flex-direction:column; gap:3px; min-width:0; }
 .camera-location-copy strong { display:flex; align-items:center; gap:6px; color:var(--cam-gold); font-size:9px; line-height:1.4; font-weight:700; }
@@ -464,7 +467,7 @@
 .camera-location-retry svg { width:16px; height:16px; }
 .camera-location-attribution { position:absolute; left:10px; bottom:4px; color:var(--cam-muted); font-size:7px; line-height:1.3; font-weight:400; }
 .camera-location-status:has(.camera-location-attribution:not([hidden])) { padding-bottom:15px; }
-.camera-location-attribution[hidden],.custom-camera-modal .camera-preview-container[hidden] { display:none !important; }
+.camera-location-attribution[hidden],.custom-camera-modal .camera-preview-container[hidden],.custom-camera-modal button[hidden] { display:none !important; }
 .custom-camera-modal .camera-preview-container { padding:4px 6px; border:1px solid rgba(255,255,255,.06); border-radius:11px; background:rgba(255,255,255,.015); }
 .custom-camera-modal .camera-preview-strip { height:58px; gap:9px; padding:0 2px; }
 .custom-camera-modal .camera-preview-wrapper { width:64px; height:48px; }
@@ -484,7 +487,7 @@
 .custom-camera-modal .camera-save-btn:disabled { border-color:rgba(255,255,255,.1); background:rgba(255,255,255,.035); color:#667182; opacity:1; box-shadow:none; }
 .custom-camera-modal button:focus-visible { outline:2px solid var(--cam-gold); outline-offset:3px; }
 .custom-camera-modal[data-orientation="landscape"] { flex-direction:row; }
-.custom-camera-modal[data-orientation="landscape"] .camera-footer { width:184px; flex:0 0 184px; justify-content:space-between; gap:8px; padding:12px calc(12px + env(safe-area-inset-right,0px)) 12px 12px; border-top:0; border-left:1px solid var(--cam-line); }
+.custom-camera-modal[data-orientation="landscape"] .camera-footer { width:184px; flex:0 0 184px; justify-content:space-between; gap:8px; padding:12px calc(12px + var(--camera-safe-right,env(safe-area-inset-right,0px))) 12px 12px; border-top:0; border-left:1px solid var(--cam-line); }
 .custom-camera-modal[data-orientation="landscape"] .camera-controls { display:flex; flex:1; flex-direction:column; justify-content:center; gap:10px; order:1; }
 .custom-camera-modal[data-orientation="landscape"] .camera-control-left { justify-content:center; padding:0; }
 .custom-camera-modal[data-orientation="landscape"] .camera-save-btn { width:100%; height:40px; }
@@ -492,10 +495,17 @@
 .custom-camera-modal[data-orientation="landscape"] .camera-location-status { order:0; gap:6px; padding-left:8px; padding-right:6px; }
 .custom-camera-modal[data-orientation="landscape"] .camera-location-copy span { -webkit-line-clamp:3; font-size:9px; }
 .custom-camera-modal[data-orientation="landscape"] .camera-location-status .camera-location-retry { width:28px; min-height:32px; height:32px; flex-basis:28px; }
-.custom-camera-modal[data-orientation="landscape"] .camera-overlay-header { padding-left:calc(12px + env(safe-area-inset-left,0px)); }
+.custom-camera-modal[data-orientation="landscape"] .camera-overlay-header { padding-top:12px;padding-left:calc(12px + var(--camera-safe-left,env(safe-area-inset-left,0px))); }
 @media(max-height:380px) { .custom-camera-modal[data-orientation="landscape"] .camera-footer { width:164px; flex-basis:164px; gap:6px; padding-top:8px; padding-bottom:8px; } .custom-camera-modal[data-orientation="landscape"] .camera-controls { gap:7px; } .custom-camera-modal[data-orientation="landscape"] .camera-capture-outer { width:60px; height:60px; } .custom-camera-modal[data-orientation="landscape"] .camera-save-btn { height:36px; } .custom-camera-modal[data-orientation="landscape"] .camera-preview-strip { height:48px; } .custom-camera-modal[data-orientation="landscape"] .camera-preview-wrapper { width:56px; height:40px; } }
 @media(min-width:1100px) and (min-height:600px) { .custom-camera-modal[data-orientation="landscape"] .camera-footer { width:240px; flex-basis:240px; justify-content:center; gap:24px; padding:24px 20px; } .custom-camera-modal[data-orientation="landscape"] .camera-location-copy span { font-size:11px; } .custom-camera-modal[data-orientation="landscape"] .camera-controls { gap:16px; } .custom-camera-modal[data-orientation="landscape"] .camera-location-status .camera-location-retry { width:34px; flex-basis:34px; } }
 @media(prefers-reduced-motion:reduce) { .custom-camera-modal * { animation:none !important; transition:none !important; } }
+.custom-camera-modal[data-orientation="landscape"][data-compact="true"] .camera-footer{width:164px;flex-basis:164px;gap:6px;padding-top:8px;padding-bottom:8px}
+.custom-camera-modal[data-orientation="landscape"][data-compact="true"] .camera-controls{gap:7px}
+.custom-camera-modal[data-orientation="landscape"][data-compact="true"] .camera-capture-outer{width:60px;height:60px}
+.custom-camera-modal[data-orientation="landscape"][data-compact="true"] .camera-capture-inner{width:46px;height:46px}
+.custom-camera-modal[data-orientation="landscape"][data-compact="true"] .camera-save-btn{height:36px}
+.custom-camera-modal[data-orientation="landscape"][data-compact="true"] .camera-preview-strip{height:48px}
+.custom-camera-modal[data-orientation="landscape"][data-compact="true"] .camera-preview-wrapper{width:56px;height:40px}
 @media(max-height:380px) { .custom-camera-modal[data-orientation="landscape"] .camera-capture-inner { width:46px; height:46px; } }
 
 /* The personal library follows the mobile app's navy / teal palette. */
@@ -683,6 +693,33 @@
 @media(max-width:360px){.viewer-header{gap:9px;padding-left:12px;padding-right:12px}.viewer-heading strong{font-size:12px}.viewer-counter{padding:4px 7px;font-size:9px}.viewer-gesture-hint{font-size:8px;left:10px;padding:5px 7px}.viewer-fit{right:10px;min-width:42px}.viewer-info{padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}}
 @keyframes viewer-spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.cloud-photo-viewer *{transition:none!important;scroll-behavior:auto!important}.viewer-loading>span{animation:none}}
+
+.personal-cloud .cloud-date-trigger{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:43px;padding:9px 11px;border:1px solid var(--cl-line);border-radius:11px;background:var(--cl-soft);color:var(--cl-text);font:inherit;font-size:11px;text-align:left;cursor:pointer}
+.personal-cloud .cloud-date-trigger>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.personal-cloud .cloud-date-trigger svg{width:16px;height:16px;color:var(--cl-muted)}
+.personal-cloud .cloud-date-trigger small{display:block;margin-top:1px;font-size:9px;color:var(--cl-muted)}
+.dark .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger{background:var(--cl-soft)!important;border-color:var(--cl-line)!important;color:var(--cl-text)!important}
+.cloud-date-modal{--date-accent:#62bfb5;--date-accent-text:#113e43;--date-bg:#fff;--date-soft:#f4f7fb;--date-text:#142a5e;--date-muted:#7b8aa1;--date-line:#e4eaf2;position:fixed;inset:0;z-index:100090;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(7,17,34,.5);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--date-text);line-height:1.5;overscroll-behavior:none}
+.cloud-date-modal[data-cloud-theme=index]{--date-accent:#d3ac5c;--date-accent-text:#332512}
+.cloud-date-modal *{box-sizing:border-box}.cloud-date-modal [hidden]{display:none!important}.cloud-date-modal button{font:inherit;cursor:pointer;appearance:none;-webkit-appearance:none;touch-action:manipulation}.cloud-date-modal svg{display:block;width:20px;height:20px;flex-shrink:0}.cloud-date-modal button:focus-visible{outline:2px solid var(--date-accent);outline-offset:2px}
+.cloud-calendar{width:100%;max-width:420px;max-height:calc(100dvh - 48px);display:flex;flex-direction:column;min-height:0;overflow:hidden;border:1px solid var(--date-line);border-radius:25px;background:var(--date-bg);box-shadow:0 24px 85px rgba(4,15,34,.28)}
+.cloud-calendar-header{display:flex;align-items:center;gap:12px;padding:22px 22px 17px;border-bottom:1px solid var(--date-line);flex-shrink:0}.cloud-calendar-header>div:nth-child(2){flex:1;min-width:0}.cloud-calendar-icon{display:grid;place-items:center;width:43px;height:43px;border:1px solid #d6e9e6;border-radius:14px;background:#edf8f5;color:#379c90}.cloud-calendar-header span{display:block;color:#4f9f96;font-size:8px;font-weight:750;letter-spacing:.1em}.cloud-calendar-header h2{margin:3px 0 0;font-size:18px;font-weight:800;letter-spacing:-.45px}
+.calendar-icon-button{display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;padding:0;border:1px solid var(--date-line);border-radius:11px;background:var(--date-bg);color:var(--date-text)}
+.cloud-calendar-body{padding:18px 22px 20px;overflow-y:auto;min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.calendar-summary{display:flex;flex-direction:column;gap:4px;margin-bottom:18px;padding:13px 15px;border:1px solid var(--date-line);border-radius:14px;background:var(--date-soft)}.calendar-summary>span{color:var(--date-muted);font-size:8px;font-weight:750;letter-spacing:.07em}.calendar-summary strong{font-size:12px;font-weight:750;text-transform:capitalize}.calendar-summary small{color:var(--date-muted);font-size:10px}
+.calendar-navigation{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}.calendar-month-heading{padding:9px 12px;border:0;border-radius:10px;background:transparent;color:var(--date-text);font-size:13px!important;font-weight:750!important}
+.calendar-weekdays,.calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.calendar-weekdays{margin-bottom:8px;text-align:center;font-size:10px;font-weight:650;color:var(--date-muted)}
+.calendar-day{display:grid;place-items:center;height:39px;min-width:0;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--date-text);font-size:12px!important;font-weight:600!important}.calendar-day.is-outside{color:#b2bdcd}.calendar-day.is-today{border-color:var(--date-accent);color:#389d91}.calendar-day.is-selected,.calendar-choice-grid button.is-selected{border-color:#142a5e;background:#142a5e;color:#fff;box-shadow:0 4px 12px rgba(20,42,94,.16)}
+.calendar-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding:9px 0 13px}.calendar-choice-grid button{min-height:46px;padding:8px;border:1px solid var(--date-line);border-radius:12px;background:var(--date-soft);color:var(--date-text);font-size:12px;font-weight:650}
+.calendar-shortcuts{display:flex;gap:6px;margin-top:16px}.calendar-shortcuts button{flex:1;min-height:34px;padding:5px 6px;border:1px solid var(--date-line);border-radius:10px;background:var(--date-soft);color:var(--date-text);font-size:10px;font-weight:650;white-space:nowrap}
+.calendar-time-settings{margin-top:18px;padding-top:14px;border-top:1px solid var(--date-line)}.calendar-time-toggle{display:flex;align-items:center;gap:8px;width:100%;min-height:36px;padding:0;border:0;background:transparent;color:var(--date-muted);font-size:11px!important;font-weight:650!important;text-align:left}.calendar-time-toggle>span{flex:1}.calendar-time-toggle>svg{width:16px;height:16px}.calendar-time-toggle i{position:relative;width:34px;height:20px;border-radius:20px;background:#dbe3ee;flex-shrink:0}.calendar-time-toggle i::after{content:'';position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:white;box-shadow:0 1px 4px rgba(20,42,94,.2);transition:transform .15s}.calendar-time-toggle[aria-checked=true] i{background:var(--date-accent)}.calendar-time-toggle[aria-checked=true] i::after{transform:translateX(14px)}
+.calendar-time-range{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.calendar-time-range>button{display:flex;align-items:center;gap:8px;min-height:44px;padding:9px 11px;border:1px solid var(--date-line);border-radius:11px;background:var(--date-soft);color:var(--date-text)}.calendar-time-range span{color:var(--date-muted);font-size:10px}.calendar-time-range strong{flex:1;font-size:12px;font-variant-numeric:tabular-nums}.calendar-time-range svg{width:14px;height:14px;color:var(--date-muted)}
+.calendar-time-editor{margin-top:12px;padding:12px;border:1px solid var(--date-line);border-radius:13px;background:var(--date-soft)}.calendar-time-editor>header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.calendar-time-editor header strong{font-size:11px}.calendar-time-editor header button{border:0;background:transparent;color:#379c90;font-size:11px;font-weight:750;padding:5px 8px}.calendar-time-columns{display:grid;grid-template-columns:1fr 18px 1fr;gap:8px;text-align:center}.calendar-time-columns>div>span{display:block;margin-bottom:6px;color:var(--date-muted);font-size:10px}.calendar-time-columns>b{align-self:center;color:var(--date-muted)}.calendar-time-columns [role=listbox]{position:relative;max-height:132px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}.calendar-time-columns button{display:block;width:100%;min-height:36px;border:0;border-radius:8px;background:transparent;color:var(--date-muted);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}.calendar-time-columns button.is-selected{background:#142a5e;color:#fff}
+.calendar-error{margin:13px 0 0;color:#ba4855;font-size:11px}.cloud-calendar-footer{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;padding:16px 22px;border-top:1px solid var(--date-line);background:var(--date-bg);flex-shrink:0}.cloud-calendar-footer button{min-height:44px;border-radius:12px;font-size:12px;font-weight:750}.calendar-cancel{border:1px solid var(--date-line);background:var(--date-bg);color:var(--date-muted)}.calendar-apply{border:1px solid var(--date-accent);background:linear-gradient(115deg,#8ad6cc,var(--date-accent));color:var(--date-accent-text);box-shadow:0 4px 14px rgba(35,141,129,.14)}
+.dark .cloud-date-modal{--date-bg:#101b2d;--date-soft:#16253c;--date-text:#e0e9f8;--date-muted:#91a3bd;--date-line:#2b3a52}.dark .cloud-date-modal .cloud-calendar-icon{background:#173438;border-color:#294c4c;color:#8ad6cc}.dark .cloud-date-modal .calendar-day.is-outside{color:#435570}.dark .cloud-date-modal .calendar-day.is-selected,.dark .cloud-date-modal .calendar-choice-grid button.is-selected,.dark .cloud-date-modal .calendar-time-columns button.is-selected{background:#83ccc2;border-color:#83ccc2;color:#153b40}.dark .cloud-date-modal .calendar-time-toggle i{background:#34465f}.dark .cloud-date-modal .calendar-time-toggle[aria-checked=true] i{background:var(--date-accent)}
+@media(max-width:600px){.cloud-date-modal{align-items:flex-end;padding:12px 12px max(12px,env(safe-area-inset-bottom,0px))}.cloud-calendar{max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px));border-radius:23px}.cloud-calendar-header{padding:19px 18px 15px}.cloud-calendar-body{padding:16px 18px 18px}.cloud-calendar-footer{padding:14px 18px}.calendar-day{height:38px}}
+@media(max-width:360px){.cloud-date-modal{padding-left:8px;padding-right:8px}.cloud-calendar-body{padding-left:14px;padding-right:14px}.cloud-calendar-header h2{font-size:17px}.calendar-days{gap:3px}.calendar-day{height:35px}.calendar-month-heading{font-size:12px!important}}
+@media(orientation:landscape) and (max-height:540px){.cloud-date-modal{align-items:center;padding:12px}.cloud-calendar{max-height:calc(100dvh - 24px);max-width:660px}.cloud-calendar-header{padding:9px 18px}.cloud-calendar-icon{width:32px;height:32px;border-radius:10px}.cloud-calendar-header h2{font-size:16px}.cloud-calendar-body{display:grid;grid-template-columns:1fr 1.25fr;column-gap:22px;padding:10px 18px}.calendar-summary{grid-column:1;grid-row:1;margin-bottom:10px;align-self:start;padding:10px 12px}.calendar-date-panel{grid-column:2;grid-row:1/4;min-width:0}.calendar-navigation{margin-bottom:6px}.calendar-navigation .calendar-icon-button{width:30px;height:30px}.calendar-month-heading{padding:5px 8px}.calendar-weekdays{margin-bottom:6px}.calendar-days{gap:3px}.calendar-shortcuts{grid-column:1;grid-row:2;margin-top:0;flex-wrap:wrap;align-self:start}.calendar-time-settings{grid-column:1;grid-row:3;margin-top:10px;padding-top:9px;align-self:start}.calendar-time-range{margin-top:8px}.calendar-error{grid-column:1/-1}.calendar-day{height:26px}.cloud-calendar-footer{padding:8px 18px}.cloud-calendar-footer button{min-height:40px}}
+@media(prefers-reduced-motion:reduce){.cloud-date-modal *{transition:none!important}}
 
 </style>
 </head>
@@ -2995,7 +3032,7 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
         const headerDateEl = document.getElementById('headerDate');
         if (headerDateEl) headerDateEl.innerText = dateStr;
     </script>
-  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-07-orientation-boundaries" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
+  <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-native-frame-physical-ui" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
       <div class="camera-grid-overlay" aria-hidden="true"><div class="grid-line vertical"></div><div class="grid-line vertical"></div><div class="grid-line horizontal"></div><div class="grid-line horizontal"></div></div>
@@ -3003,6 +3040,7 @@ TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expecte
         <button type="button" class="camera-action-btn btn-close-cam" onclick="closeCustomCameraModal(false)" aria-label="Đóng camera" title="Đóng camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
         <div class="camera-heading"><span>TASCO DLK · ẢNH HỒ SƠ</span><div class="camera-current-category" id="cameraActiveCategoryText">Chụp ảnh hồ sơ</div></div>
         <div class="camera-header-actions">
+          <button type="button" class="camera-action-btn" id="btnCameraOrientation" onclick="rotateCameraInterface()" aria-label="Xoay giao diện camera khi chưa cấp quyền cảm biến" title="Xoay giao diện camera" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M2 11a10 10 0 0 1 4-7M2 5v6h5M22 13a10 10 0 0 1-4 7m4-1v-6h-5"/></svg></button>
           <button type="button" class="camera-action-btn btn-flash-cam" id="btnToggleCameraFlash" onclick="toggleCustomCameraTorch()" aria-label="Bật hoặc tắt đèn flash" title="Bật/Tắt Flash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m13 2-9 12h7l-1 8 10-12h-7l1-8Z"/></svg></button>
           <button type="button" class="camera-action-btn btn-switch-cam" onclick="switchCustomCamera()" aria-label="Đổi camera trước hoặc sau" title="Đổi camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7v5h-5M4 17v-5h5M19.5 12a7.5 7.5 0 0 0-12.8-5.3L4 9M4.5 12a7.5 7.5 0 0 0 12.8 5.3L20 15"/></svg></button>
         </div>
@@ -3201,10 +3239,76 @@ window.TascoPhotoViewer=(()=>{
   return {open,close:()=>active?.close()};
 })();
 
+/* App-owned date/time filter; capture timestamps remain generated at the shutter. */
+window.TascoDatePicker=(()=>{
+  let active=null;
+  const pad=value=>String(value).padStart(2,'0'),key=date=>date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate()),parse=value=>new Date(value+'T12:00:00');
+  const icon=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({close:'<path d="m6 6 12 12M18 6 6 18"/>',left:'<path d="m14 6-6 6 6 6"/>',right:'<path d="m10 6 6 6-6 6"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-11 4h.01m4 0h.01"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'}[name]||'')+'</svg>';
+  function label(value){if(!value.date)return 'Tất cả ngày';const [y,m,d]=value.date.split('-');return d+'/'+m+'/'+y;}
+  function open(options){
+    active?.close();const today=new Date(),initial=options.value||{};let selected=initial.date||'',month=selected?parse(selected):new Date(today.getFullYear(),today.getMonth(),1),view='days',years=Math.floor(month.getFullYear()/12)*12,timed=Boolean(initial.startTime||initial.endTime),from=initial.startTime||'00:00',to=initial.endTime||'23:59',editingTime=null;
+    const overlay=document.createElement('div');overlay.className='cloud-date-modal';overlay.dataset.cloudTheme=options.theme||'mobile';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Lọc ngày và giờ chụp');
+    overlay.innerHTML=`<section class="cloud-calendar"><header class="cloud-calendar-header"><div class="cloud-calendar-icon">${icon('calendar')}</div><div><span>THƯ VIỆN CÁ NHÂN</span><h2>Lọc ngày chụp</h2></div><button type="button" data-calendar-action="close" class="calendar-icon-button" aria-label="Đóng bộ chọn ngày">${icon('close')}</button></header><div class="cloud-calendar-body"><div class="calendar-summary"><span>NGÀY ĐÃ CHỌN</span><strong data-calendar-selection></strong><small data-calendar-time-summary></small></div><div class="calendar-navigation"><button type="button" data-calendar-action="previous" class="calendar-icon-button" aria-label="Tháng trước">${icon('left')}</button><button type="button" data-calendar-action="heading" class="calendar-month-heading"></button><button type="button" data-calendar-action="next" class="calendar-icon-button" aria-label="Tháng tiếp theo">${icon('right')}</button></div><div class="calendar-content"></div><div class="calendar-shortcuts"><button type="button" data-calendar-action="today">Hôm nay</button><button type="button" data-calendar-action="yesterday">Hôm qua</button><button type="button" data-calendar-action="clear">Tất cả ngày</button></div><div class="calendar-time-settings"><button type="button" class="calendar-time-toggle" data-calendar-action="timed" role="switch" aria-checked="false">${icon('clock')}<span>Lọc thêm theo giờ</span><i aria-hidden="true"></i></button><div class="calendar-time-range" hidden><button type="button" data-calendar-action="from"><span>Từ</span><strong data-calendar-from></strong>${icon('clock')}</button><button type="button" data-calendar-action="to"><span>Đến</span><strong data-calendar-to></strong>${icon('clock')}</button></div><div class="calendar-time-editor" hidden></div></div><p class="calendar-error" role="alert" hidden></p></div><footer class="cloud-calendar-footer"><button type="button" data-calendar-action="close" class="calendar-cancel">Hủy</button><button type="button" data-calendar-action="apply" class="calendar-apply">Áp dụng bộ lọc</button></footer></section>`;
+    const navigation=overlay.querySelector('.calendar-navigation'),datePanel=document.createElement('div');datePanel.className='calendar-date-panel';navigation.before(datePanel);datePanel.append(navigation,overlay.querySelector('.calendar-content'));
+    const panel=overlay.querySelector('.cloud-calendar'),content=overlay.querySelector('.calendar-content'),timeEditor=overlay.querySelector('.calendar-time-editor'),controller=new AbortController(),signal=controller.signal,focus=document.activeElement,oldOverflow=document.body.style.overflow;
+    const scroll=window.scrollY,oldStyles={position:document.body.style.position,top:document.body.style.top,width:document.body.style.width};
+    Object.assign(document.body.style,{overflow:'hidden',position:'fixed',top:-scroll+'px',width:'100%'});let closed=false;
+    function close(){if(closed)return;closed=true;controller.abort();overlay.remove();Object.assign(document.body.style,oldStyles,{overflow:oldOverflow});window.scrollTo(0,scroll);if(focus?.isConnected)focus.focus({preventScroll:true});if(active?.close===close)active=null;}
+    function paint(){
+      overlay.querySelector('[data-calendar-selection]').textContent=selected?parse(selected).toLocaleDateString('vi-VN',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}):'Tất cả ngày chụp';
+      overlay.querySelector('[data-calendar-time-summary]').textContent=timed?from+' – '+to:'Toàn bộ thời gian trong ngày';
+      overlay.querySelector('.calendar-month-heading').textContent=view==='days'?'Tháng '+(month.getMonth()+1)+' · '+month.getFullYear():view==='months'?'Chọn tháng · '+month.getFullYear():'Chọn năm · '+years+' – '+(years+11);
+      overlay.querySelector('[data-calendar-action=previous]').setAttribute('aria-label',view==='days'?'Tháng trước':view==='months'?'Năm trước':'12 năm trước');overlay.querySelector('[data-calendar-action=next]').setAttribute('aria-label',view==='days'?'Tháng tiếp theo':view==='months'?'Năm tiếp theo':'12 năm tiếp theo');
+      if(view==='days'){
+        const first=new Date(month.getFullYear(),month.getMonth(),1),offset=(first.getDay()+6)%7,start=new Date(first);start.setDate(1-offset);
+        content.innerHTML='<div class="calendar-weekdays" aria-hidden="true">'+['T2','T3','T4','T5','T6','T7','CN'].map(day=>'<span>'+day+'</span>').join('')+'</div><div class="calendar-days" role="grid" aria-label="Ngày trong tháng">'+Array.from({length:42},(_,index)=>{const day=new Date(start);day.setDate(start.getDate()+index);const value=key(day),chosen=value===selected,current=value===key(today),outside=day.getMonth()!==month.getMonth();return `<button type="button" class="calendar-day${chosen?' is-selected':''}${current?' is-today':''}${outside?' is-outside':''}" data-calendar-day="${value}" role="gridcell" aria-selected="${chosen}" ${current?'aria-current="date"':''} aria-label="${day.toLocaleDateString('vi-VN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}" tabindex="${chosen||!selected&&current?0:-1}">${day.getDate()}</button>`;}).join('')+'</div>';
+        if(!content.querySelector('[tabindex="0"]'))content.querySelector('.calendar-day:not(.is-outside)').tabIndex=0;
+      }else if(view==='months')content.innerHTML='<div class="calendar-choice-grid">'+Array.from({length:12},(_,index)=>`<button type="button" data-calendar-month="${index}" class="${index===month.getMonth()?'is-selected':''}">Tháng ${index+1}</button>`).join('')+'</div>';
+      else content.innerHTML='<div class="calendar-choice-grid">'+Array.from({length:12},(_,index)=>`<button type="button" data-calendar-year="${years+index}" class="${years+index===month.getFullYear()?'is-selected':''}">${years+index}</button>`).join('')+'</div>';
+      const toggle=overlay.querySelector('.calendar-time-toggle');toggle.setAttribute('aria-checked',String(timed));overlay.querySelector('.calendar-time-range').hidden=!timed;overlay.querySelector('[data-calendar-from]').textContent=from;overlay.querySelector('[data-calendar-to]').textContent=to;overlay.querySelector('.calendar-error').hidden=true;
+    }
+    function paintTime(){
+      if(!editingTime){timeEditor.hidden=true;return;}timeEditor.hidden=false;const value=editingTime==='from'?from:to,[hour,minute]=value.split(':').map(Number);
+      timeEditor.innerHTML=`<header><strong>${editingTime==='from'?'Giờ bắt đầu':'Giờ kết thúc'}</strong><button type="button" data-calendar-action="done-time">Xong</button></header><div class="calendar-time-columns"><div><span>Giờ</span><div role="listbox" aria-label="Chọn giờ">${Array.from({length:24},(_,index)=>`<button type="button" role="option" aria-selected="${index===hour}" data-calendar-hour="${index}" class="${index===hour?'is-selected':''}">${pad(index)}</button>`).join('')}</div></div><b>:</b><div><span>Phút</span><div role="listbox" aria-label="Chọn phút">${Array.from({length:60},(_,index)=>`<button type="button" role="option" aria-selected="${index===minute}" data-calendar-minute="${index}" class="${index===minute?'is-selected':''}">${pad(index)}</button>`).join('')}</div></div></div>`;
+      for(const list of timeEditor.querySelectorAll('[role=listbox]')){const selected=list.querySelector('.is-selected');list.scrollTop=Math.max(0,selected.offsetTop-list.offsetTop-list.clientHeight/2+selected.clientHeight/2);}
+    }
+    function selectDate(value,focusDay=false){selected=value;month=parse(value);view='days';paint();if(focusDay)content.querySelector('[data-calendar-day="'+value+'"]')?.focus({preventScroll:true});}
+    overlay.addEventListener('click',event=>{
+      if(event.target===overlay){close();return;}const button=event.target.closest('button');if(!button)return;
+      if(button.dataset.calendarDay){selectDate(button.dataset.calendarDay,true);return;}
+      if(button.dataset.calendarMonth){month=new Date(month.getFullYear(),Number(button.dataset.calendarMonth),1);view='days';paint();overlay.querySelector('.calendar-month-heading').focus();return;}
+      if(button.dataset.calendarYear){month=new Date(Number(button.dataset.calendarYear),month.getMonth(),1);view='months';paint();overlay.querySelector('.calendar-month-heading').focus();return;}
+      if(button.dataset.calendarHour!==undefined||button.dataset.calendarMinute!==undefined){const field=button.dataset.calendarHour!==undefined?'hour':'minute',value=button.dataset[field==='hour'?'calendarHour':'calendarMinute'];let [hour,minute]=(editingTime==='from'?from:to).split(':').map(Number);if(field==='hour')hour=Number(value);else minute=Number(value);if(editingTime==='from')from=pad(hour)+':'+pad(minute);else to=pad(hour)+':'+pad(minute);paint();paintTime();timeEditor.querySelector('[data-calendar-'+field+'="'+value+'"]')?.focus({preventScroll:true});return;}
+      const action=button.dataset.calendarAction;
+      if(action==='close')close();if(action==='heading'){view=view==='days'?'months':view==='months'?'years':'days';years=Math.floor(month.getFullYear()/12)*12;paint();}
+      if(action==='previous'||action==='next'){const amount=action==='next'?1:-1;if(view==='days')month=new Date(month.getFullYear(),month.getMonth()+amount,1);else if(view==='months')month=new Date(month.getFullYear()+amount,month.getMonth(),1);else years+=12*amount;paint();}
+      if(action==='today')selectDate(key(today));if(action==='yesterday'){const value=new Date(today);value.setDate(value.getDate()-1);selectDate(key(value));}
+      if(action==='clear'){selected='';timed=false;editingTime=null;paint();paintTime();}
+      if(action==='timed'){timed=!timed;if(timed&&!selected)selected=key(today);editingTime=null;paint();paintTime();}
+      if(action==='from'||action==='to'){editingTime=action;paintTime();timeEditor.querySelector('[aria-selected=true]')?.focus({preventScroll:true});}
+      if(action==='done-time'){editingTime=null;paintTime();overlay.querySelector('[data-calendar-action=from]').focus();}
+      if(action==='apply'){
+        if(timed&&from>to){const error=overlay.querySelector('.calendar-error');error.textContent='Giờ kết thúc phải bằng hoặc sau giờ bắt đầu.';error.hidden=false;return;}
+        const value={date:selected,startTime:timed&&selected?from:'',endTime:timed&&selected?to:''};close();options.onChange(value);
+      }
+    },{signal});
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){event.preventDefault();if(editingTime){editingTime=null;paintTime();}else close();return;}
+      const target=event.target.closest('[data-calendar-day]');
+      if(target&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].includes(event.key)){
+        event.preventDefault();const day=parse(target.dataset.calendarDay);if(event.key==='PageUp'||event.key==='PageDown'){day.setDate(1);day.setMonth(day.getMonth()+(event.key==='PageUp'?-1:1));}else day.setDate(day.getDate()+({ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7,Home:-((day.getDay()+6)%7),End:6-((day.getDay()+6)%7)}[event.key]));selectDate(key(day),true);return;
+      }
+      if(event.key==='Tab'){const nodes=[...panel.querySelectorAll('button:not([tabindex="-1"])')].filter(node=>node.getClientRects().length&&!node.disabled);if(event.shiftKey&&document.activeElement===nodes[0]){event.preventDefault();nodes.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0].focus();}}
+    },{signal});
+    document.body.append(overlay);paint();overlay.querySelector('[data-calendar-action=close]').focus({preventScroll:true});active={close};
+  }
+  return {open,close:()=>active?.close(),label};
+})();
+
 /* Cloudinary holds the image; Supabase RLS holds the account-owned manifest. */
 window.TascoCloud = (() => {
   const table = 'tasco_personal_photos';
-  const state = {config:null,client:null,user:null,root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',revision:0,busy:false,error:'',uploading:false,urls:new Map()};
+  const state = {config:null,client:null,user:null,root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map()};
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const icon = name => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({cloud:'<path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/>',camera:'<path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/>',refresh:'<path d="M20 4v6h-6M4 20v-6h6M4.5 9a8 8 0 0 1 13-5l2.5 3M4 17l2.5 3a8 8 0 0 0 13-5"/>',search:'<circle cx="10" cy="10" r="7"/><path d="m16 16 5 5"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',check:'<path d="m5 12 4 4L19 6"/>'}[name] || '')+'</svg>';
   const stamp = value => new Date(value).toLocaleString('vi-VN',{hour12:false});
@@ -3265,9 +3369,10 @@ window.TascoCloud = (() => {
   function configure(options) {state.config=options;}
   function mount(root) {
     window.TascoPhotoViewer?.close();
-    clearURLs();state.root=root;state.page=0;state.query='';state.date='';state.rows=[];state.pending=[];
+    window.TascoDatePicker?.close();
+    clearURLs();state.root=root;state.page=0;state.query='';state.date='';state.startTime='';state.endTime='';state.rows=[];state.pending=[];
     const searchField=`<label class="cloud-search">${icon('search')}<input type="search" data-cloud-search placeholder="${state.config.mode==='mobile'?'Tìm nội dung, địa điểm…':'Tìm theo nội dung hoặc địa điểm…'}" aria-label="Tìm ảnh"></label>`;
-    const dateField='<label class="cloud-date"><span>Ngày chụp</span><input type="date" data-cloud-date aria-label="Ngày chụp"></label>';
+    const dateField='<div class="cloud-date"><span>Ngày chụp</span><button type="button" data-cloud-date data-action="date" class="cloud-date-trigger" aria-label="Chọn ngày và giờ chụp"><span data-cloud-date-label>Tất cả ngày</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></button></div>';
     const reloadButton=`<button class="cloud-button" type="button" data-action="refresh" aria-label="Tải lại thư viện" title="Tải lại thư viện">${icon('refresh')}Tải lại</button>`;
     const titleField='<label class="cloud-title-field"><span>Nội dung ảnh</span><input data-cloud-title maxlength="160" placeholder="Nhập tên ảnh…"></label>';
     root.innerHTML=`<section class="personal-cloud" data-cloud-theme="${state.config.mode}">
@@ -3282,12 +3387,12 @@ window.TascoCloud = (() => {
       const button=event.target.closest('[data-action]');if(!button||!root.contains(button))return;
       const action=button.dataset.action;
       if(action==='capture'&&state.user)state.config.capture(root.querySelector('[data-cloud-title]')?.value.trim()||'Ảnh của tôi');
+      if(action==='date')TascoDatePicker.open({theme:state.config.mode,value:{date:state.date,startTime:state.startTime,endTime:state.endTime},onChange:value=>{if(state.root!==root||!root.isConnected)return;Object.assign(state,value);state.page=0;const label=root.querySelector('[data-cloud-date-label]');label.textContent=TascoDatePicker.label(value);if(value.startTime){const time=document.createElement('small');time.textContent=value.startTime+' – '+value.endTime;label.append(time);}root.querySelector('[data-cloud-date]').dataset.value=value.date;refresh();}});
       if(action==='refresh')refresh();if(action==='retry')processQueue();if(action==='more'){state.page=Math.floor(state.rows.length/48);refresh(true);}
       if(action==='open'){const row=[...state.pending,...state.rows].find(item=>item.id===button.dataset.id);if(row)openPhoto(row);}
       if(action==='download-pending'){const row=state.pending.find(item=>item.id===button.dataset.id);if(row?.blob)downloadBlob(row.blob,row.file_name);}
     };
     let timer;root.querySelector('[data-cloud-search]').oninput=event=>{clearTimeout(timer);timer=setTimeout(()=>{state.query=event.target.value;state.page=0;refresh();},300);};
-    root.querySelector('[data-cloud-date]').onchange=event=>{state.date=event.target.value;state.page=0;refresh();};
     refresh();
   }
   function loginPanel(kind) {
@@ -3337,7 +3442,7 @@ window.TascoCloud = (() => {
       state.pending=await pendingFor(owner.id);if(revision!==state.revision||!visible())return;paint();
       const api=await client();let query=api.from(table).select('*',{count:'exact'}).eq('owner_id',owner.id).order('captured_at',{ascending:false}).order('id',{ascending:false});
       const term=state.query.replace(/[,%()\\]/g,' ').trim().slice(0,160);if(term)query=query.or('title.ilike.%'+term+'%,address.ilike.%'+term+'%');
-      if(state.date){const from=new Date(state.date+'T00:00:00'),to=new Date(from);to.setDate(to.getDate()+1);query=query.gte('captured_at',from.toISOString()).lt('captured_at',to.toISOString());}
+      if(state.date){const from=new Date(state.date+'T'+(state.startTime||'00:00')+':00'),to=state.endTime?new Date(state.date+'T'+state.endTime+':00'):new Date(from);if(state.endTime)to.setTime(to.getTime()+60000);else to.setDate(to.getDate()+1);query=query.gte('captured_at',from.toISOString()).lt('captured_at',to.toISOString());}
       const result=await query.range(state.page*48,state.page*48+47);if(result.error)throw result.error;
       if(revision!==state.revision)return;state.rows=append?[...state.rows,...result.data]:result.data||[];state.count=result.count??state.rows.length;
     }catch(error){if(revision!==state.revision)return;if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)){window.TascoPhotoViewer?.close();clearURLs();state.user=null;state.rows=[];state.pending=[];state.count=0;loginPanel(error.message);}else state.error=message(error);}
@@ -3391,7 +3496,7 @@ window.TascoCloud = (() => {
 })();
 
 let lastFetchedGpsCoords=null,lastFetchedAddress=null,gpsPermissionDenied=false;
-const cameraLocationState={positionRequest:null,latest:null,addressCache:[],addressRequests:new Map(),addressQueue:Promise.resolve(),lastAddressRequestAt:0,uiRevision:0};
+const cameraLocationState={positionRequest:null,latest:null,latestPosition:null,addressCache:[],addressRequests:new Map(),nominatimQueue:Promise.resolve(),lastNominatimAt:0,uiRevision:0,watchId:null,positionWaiters:new Set(),lastTrackingLookupAt:0};
 const cameraPhotoMetadata=new WeakMap();
 
 function cameraLocationError(status) {
@@ -3401,7 +3506,7 @@ function cameraLocationMessage(location) {
   const messages={denied:'Chưa cấp quyền vị trí. Bật quyền vị trí cho trang rồi thử lại.',timeout:'Lấy vị trí quá thời gian. Bật định vị trên thiết bị rồi thử lại.',unavailable:'Chưa lấy được vị trí. Kiểm tra định vị trên thiết bị.',unsupported:'Thiết bị không hỗ trợ định vị.',insecure:'Định vị cần mở trang qua HTTPS.',invalid:'Thiết bị trả về vị trí không hợp lệ.'};
   if(!location?.coords)return messages[location?.status]||messages.unavailable;
   const accuracy=location.coords.accuracy;
-  return location.address?(location.hasWard===false?location.address+' · Chưa xác định phường/xã':location.address):`Đã có GPS${Number.isFinite(accuracy)?' · ±'+Math.ceil(accuracy)+' m':''} · Chưa tra được tên địa điểm`;
+  return location.address?(location.hasWard===false?location.address+' · Chưa xác định phường/xã':location.address):`Đã có GPS${Number.isFinite(accuracy)?' · ±'+Math.ceil(accuracy)+' m':''} · ${location.addressStatus==='resolving'?'Đang tra tên địa điểm…':'Chưa tra được tên địa điểm'}`;
 }
 function updateCameraLocationUI(location,pending=false) {
   const status=document.getElementById('cameraLocationStatus'),detail=document.getElementById('cameraLocationDetail');
@@ -3482,8 +3587,9 @@ function cameraBoundaryAddress(data) {
 function cameraAddressScore(result) {return result?(result.hasWard?100:0)+(result.fields?.province?20:0)+(result.fields?.district?5:0)+(result.fields?.city?3:0)+(result.fields?.street?1:0):0;}
 async function requestCameraAddress(url,timeout=5000,options={}) {
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);
+  const abort=()=>controller.abort();if(options.signal?.aborted)abort();else options.signal?.addEventListener('abort',abort,{once:true});
   try {const response=await fetch(url,{...options,signal:controller.signal,mode:'cors',credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});if(!response.ok)throw new Error('HTTP '+response.status);return await response.json();}
-  finally {clearTimeout(timer);}
+  finally {clearTimeout(timer);options.signal?.removeEventListener('abort',abort);}
 }
 async function reverseGeocodeAddress(lat,lon,options={}) {
   lat=Number(lat);lon=Number(lon);
@@ -3492,48 +3598,62 @@ async function reverseGeocodeAddress(lat,lon,options={}) {
   const findCache=()=>!options.force&&cameraLocationState.addressCache.find(entry=>Date.now()-entry.at<(entry.result.complete?180000:15000)&&cameraPositionDistance(coords,entry.coords)<=8);
   const cached=findCache();if(cached)return cached.result;
   const key=lat.toFixed(6)+','+lon.toFixed(6);
-  if(cameraLocationState.addressRequests.has(key))return cameraLocationState.addressRequests.get(key);
-  const task=cameraLocationState.addressQueue.catch(()=>{}).then(async()=>{
-    const cache=findCache();if(cache)return cache.result;
-    const delay=Math.max(0,1100-(Date.now()-cameraLocationState.lastAddressRequestAt));
-    if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
-    cameraLocationState.lastAddressRequestAt=Date.now();
-    let result=null;
-    const consider=candidate=>{if(cameraAddressScore(candidate)>cameraAddressScore(result))result=candidate;};
-    // This client endpoint receives only fresh coordinates from the device's Geolocation API.
-    try {const query=new URLSearchParams({latitude:String(lat),longitude:String(lon),localityLanguage:'vi'});consider(cameraLocalityAddress(await requestCameraAddress('https://api.bigdatacloud.net/data/reverse-geocode-client?'+query),coords));}catch(_){}
-    if(!result?.complete){
-      try {
-        const query='[out:json][timeout:8];is_in('+lat.toFixed(6)+','+lon.toFixed(6)+')->.areas;area.areas[boundary=administrative][admin_level~"^(4|6|8)$"];out tags;';
-        consider(cameraBoundaryAddress(await requestCameraAddress('https://overpass-api.de/api/interpreter',10000,{method:'POST',body:new URLSearchParams({data:query})})));
-      }catch(_){}
-    }
-    if(!result?.complete){
-      try {const query=new URLSearchParams({lat:String(lat),lon:String(lon),format:'jsonv2','accept-language':'vi',addressdetails:'1',zoom:'18',layer:'address'});consider(cameraNominatimAddress(await requestCameraAddress('https://nominatim.openstreetmap.org/reverse?'+query,6000)));}catch(_){}
-    }
-    if(result){cameraLocationState.addressCache.unshift({coords,result,at:Date.now()});cameraLocationState.addressCache=cameraLocationState.addressCache.slice(0,30);}
-    return result;
+  const shared=[...cameraLocationState.addressRequests.values()].find(entry=>cameraPositionDistance(coords,entry.coords)<=8);if(shared)return shared.promise;
+  const task=new Promise(resolve=>{
+    const controller=new AbortController();let result=null,settled=false,startedFallback=false,remaining=1,fallbackTimer;
+    const finish=()=>{if(settled)return;settled=true;clearTimeout(fallbackTimer);clearTimeout(deadline);controller.abort();if(result){cameraLocationState.addressCache.unshift({coords,result,at:Date.now()});cameraLocationState.addressCache=cameraLocationState.addressCache.slice(0,30);}resolve(result);};
+    const consider=candidate=>{if(settled)return;if(cameraAddressScore(candidate)>cameraAddressScore(result)){result=candidate;options.onProgress?.(candidate);}if(result?.complete)finish();};
+    const done=()=>{remaining--;if(!settled&&remaining===0&&startedFallback)finish();};
+    const fallback=()=>{
+      if(startedFallback||settled)return;startedFallback=true;remaining+=2;clearTimeout(fallbackTimer);
+      const nominatim=cameraLocationState.nominatimQueue.catch(()=>{}).then(async()=>{
+        if(settled)return null;const delay=Math.max(0,1100-(Date.now()-cameraLocationState.lastNominatimAt));if(delay)await new Promise(r=>setTimeout(r,delay));if(settled)return null;cameraLocationState.lastNominatimAt=Date.now();
+        const query=new URLSearchParams({lat:String(lat),lon:String(lon),format:'jsonv2','accept-language':'vi',addressdetails:'1',zoom:'18',layer:'address'});return cameraNominatimAddress(await requestCameraAddress('https://nominatim.openstreetmap.org/reverse?'+query,3000,{signal:controller.signal}));
+      });
+      cameraLocationState.nominatimQueue=nominatim.then(()=>{},()=>{});nominatim.then(consider).catch(()=>{}).finally(done);
+      const query='[out:json][timeout:4];is_in('+lat.toFixed(6)+','+lon.toFixed(6)+')->.areas;area.areas[boundary=administrative][admin_level~"^(4|6|8)$"];out tags;';
+      requestCameraAddress('https://overpass-api.de/api/interpreter',4500,{method:'POST',body:new URLSearchParams({data:query}),signal:controller.signal}).then(data=>consider(cameraBoundaryAddress(data))).catch(()=>{}).finally(done);
+    };
+    const deadline=setTimeout(finish,5200);fallbackTimer=setTimeout(fallback,350);
+    const query=new URLSearchParams({latitude:String(lat),longitude:String(lon),localityLanguage:'vi'});
+    requestCameraAddress('https://api.bigdatacloud.net/data/reverse-geocode-client?'+query,2500,{signal:controller.signal}).then(data=>{consider(cameraLocalityAddress(data,coords));if(!settled)fallback();}).catch(fallback).finally(done);
   });
-  cameraLocationState.addressRequests.set(key,task);
-  cameraLocationState.addressQueue=task.then(()=>{},()=>{});
-  try{return await task;}finally{if(cameraLocationState.addressRequests.get(key)===task)cameraLocationState.addressRequests.delete(key);}
+  cameraLocationState.addressRequests.set(key,{coords,promise:task});
+  try{return await task;}finally{if(cameraLocationState.addressRequests.get(key)?.promise===task)cameraLocationState.addressRequests.delete(key);}
 }
-async function acquireCameraPosition() {
+function cameraValidatedPosition(position){
+  const lat=position?.coords?.latitude,lon=position?.coords?.longitude,accuracy=position?.coords?.accuracy,timestamp=Number(position?.timestamp);
+  if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180||!Number.isFinite(timestamp)||Date.now()-timestamp>15000||timestamp>Date.now()+5000)return cameraLocationError('invalid');
+  return {coords:{latitude:lat.toFixed(6),longitude:lon.toFixed(6),accuracy:Number.isFinite(accuracy)&&accuracy>=0?accuracy:null},timestamp,address:null,status:'ready'};
+}
+function cameraRememberPosition(result){if(result.coords&&(!cameraLocationState.latestPosition||result.timestamp>=cameraLocationState.latestPosition.timestamp)){cameraLocationState.latestPosition=result;gpsPermissionDenied=false;for(const finish of [...cameraLocationState.positionWaiters])finish(result);}return result;}
+function cameraInvalidateLocationPermission(){const result=cameraLocationError('denied');gpsPermissionDenied=true;cameraLocationState.latestPosition=null;cameraLocationState.latest=result;lastFetchedGpsCoords=null;lastFetchedAddress=null;cameraLocationState.uiRevision++;updateCameraLocationUI(result);return result;}
+function startCameraLocationTracking(){
+  if(cameraLocationState.watchId!==null||!window.isSecureContext||!navigator.geolocation?.watchPosition)return;
+  cameraLocationState.lastTrackingLookupAt=0;
+  try{cameraLocationState.watchId=navigator.geolocation.watchPosition(position=>{
+    const result=cameraRememberPosition(cameraValidatedPosition(position));if(!result.coords)return;
+    const latest=cameraLocationState.latest;
+    if(latest?.address&&Date.now()-latest.timestamp<180000&&cameraPositionDistance(result.coords,latest.coords)<=8){cameraLocationState.latest={...latest,...result,address:latest.address};updateCameraLocationUI(cameraLocationState.latest);return;}
+    if(Date.now()-cameraLocationState.lastTrackingLookupAt<3500)return;cameraLocationState.lastTrackingLookupAt=Date.now();ensureRealtimeGpsCoordinates({position:result,background:true}).catch(()=>{});
+  },error=>{if(error?.code===1){const result=cameraInvalidateLocationPermission();for(const finish of [...cameraLocationState.positionWaiters])finish(result);}},{enableHighAccuracy:true,timeout:10000,maximumAge:5000});}catch(_){}
+}
+function stopCameraLocationTracking(){if(cameraLocationState.watchId!==null)navigator.geolocation?.clearWatch?.(cameraLocationState.watchId);cameraLocationState.watchId=null;cameraLocationState.uiRevision++;}
+async function acquireCameraPosition(options={}) {
+  const latest=cameraLocationState.latestPosition;if(!options.force&&latest?.coords&&Date.now()-latest.timestamp<6000)return {...latest,coords:{...latest.coords}};
   if(cameraLocationState.positionRequest)return cameraLocationState.positionRequest;
   if(!window.isSecureContext)return cameraLocationError('insecure');
   if(!navigator.geolocation)return cameraLocationError('unsupported');
   const request=new Promise(resolve=>{
     let settled=false;
-    const timer=setTimeout(()=>finish(cameraLocationError('timeout')),16000);
-    function finish(result){if(settled)return;settled=true;clearTimeout(timer);resolve(result);}
+    const timer=setTimeout(()=>finish(cameraLocationError('timeout')),7000);
+    function finish(result){if(settled)return;settled=true;clearTimeout(timer);cameraLocationState.positionWaiters.delete(finish);resolve(result);}
+    cameraLocationState.positionWaiters.add(finish);
     try {
       navigator.geolocation.getCurrentPosition(position=>{
         if(settled)return;
-        const lat=position?.coords?.latitude,lon=position?.coords?.longitude,accuracy=position?.coords?.accuracy,timestamp=Number(position?.timestamp);
-        if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180||!Number.isFinite(timestamp)||Date.now()-timestamp>15000||timestamp>Date.now()+5000){finish(cameraLocationError('invalid'));return;}
-        gpsPermissionDenied=false;
-        finish({coords:{latitude:lat.toFixed(6),longitude:lon.toFixed(6),accuracy:Number.isFinite(accuracy)&&accuracy>=0?accuracy:null},timestamp,address:null,status:'ready'});
-      },error=>{if(settled)return;gpsPermissionDenied=error?.code===1;finish(cameraLocationError(error?.code===1?'denied':error?.code===3?'timeout':'unavailable'));},{enableHighAccuracy:true,timeout:12000,maximumAge:0});
+        const result=cameraValidatedPosition(position);cameraRememberPosition(result);finish(result);
+      },error=>{if(settled)return;finish(error?.code===1?cameraInvalidateLocationPermission():cameraLocationError(error?.code===3?'timeout':'unavailable'));},{enableHighAccuracy:true,timeout:6000,maximumAge:10000});
     }catch(_){finish(cameraLocationError('unavailable'));}
   });
   cameraLocationState.positionRequest=request;
@@ -3541,17 +3661,18 @@ async function acquireCameraPosition() {
 }
 async function ensureRealtimeGpsCoordinates(options={}) {
   const revision=++cameraLocationState.uiRevision;
-  updateCameraLocationUI(null,true);
-  const position=options.background&&cameraLocationState.latest&&Date.now()-cameraLocationState.latest.timestamp<10000?cameraLocationState.latest:await acquireCameraPosition();
-  const snapshot={...position,coords:position.coords?{...position.coords}:null,address:null};
+  const recent=cameraLocationState.latest;if(recent?.address&&Date.now()-recent.timestamp<6000&&!options.forceAddress)updateCameraLocationUI(recent);else updateCameraLocationUI(null,true);
+  const position=options.position||await acquireCameraPosition({force:options.forceAddress});
+  const snapshot={...position,coords:position.coords?{...position.coords}:null,address:null,addressStatus:'resolving'};
   if(snapshot.coords){
-    const resolved=await reverseGeocodeAddress(snapshot.coords.latitude,snapshot.coords.longitude,{force:options.forceAddress});
+    if(revision===cameraLocationState.uiRevision)updateCameraLocationUI(snapshot);
+    const resolved=await reverseGeocodeAddress(snapshot.coords.latitude,snapshot.coords.longitude,{force:options.forceAddress,onProgress:candidate=>{if(revision===cameraLocationState.uiRevision)updateCameraLocationUI({...snapshot,...candidate});}});
     snapshot.address=typeof resolved==='string'?resolved:resolved?.address||null;snapshot.provider=resolved?.provider||null;
     snapshot.hasWard=typeof resolved==='string'?true:Boolean(resolved?.hasWard);
     snapshot.addressStatus=snapshot.address?(snapshot.hasWard?'ready':'partial'):'unavailable';
   }
   // Keep one immutable coordinate/address pair. An older response cannot overwrite a newer fix.
-  if(!cameraLocationState.latest||snapshot.timestamp>=cameraLocationState.latest.timestamp){
+  if((!gpsPermissionDenied||!snapshot.coords)&&(!cameraLocationState.latest||snapshot.timestamp>=cameraLocationState.latest.timestamp)){
     cameraLocationState.latest=snapshot;
     lastFetchedGpsCoords=snapshot.coords?{...snapshot.coords}:null;lastFetchedAddress=snapshot.address||null;
   }
@@ -3610,7 +3731,7 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
 }
 
 let customCameraStream=null,customCameraPhotos=[],customCameraFacingMode='environment',customCameraTorchActive=false;
-let mobileCameraTitle='Ảnh của tôi',mobileCameraOwner=null,mobileCameraSaving=false;
+let mobileCameraTitle='Ảnh của tôi',mobileCameraOwner=null,mobileCameraSaving=false,mobileCameraStreamRevision=0;
 const SVGS={CLOSE:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg>'};
 function triggerToast(message){TascoCloud.notify(message);}
 function openMobileCamera(title){
@@ -3622,22 +3743,24 @@ function openMobileCamera(title){
   onCustomCameraOpen();renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();startCustomCameraStream();prefetchGpsCoordinates();
 }
 async function startCustomCameraStream(){
-  stopCustomCameraStream();const session=cameraUiState.session,video=document.getElementById('customCameraVideo');
-  const options=[{video:{facingMode:{ideal:customCameraFacingMode},width:{ideal:1920},height:{ideal:1080}},audio:false},{video:{facingMode:{ideal:customCameraFacingMode}},audio:false}];
+  stopCustomCameraStream();const revision=++mobileCameraStreamRevision,session=cameraUiState.session,video=document.getElementById('customCameraVideo');
+  resetCameraFrameBaseline();
+  // Let the platform choose its native aspect ratio; a forced landscape constraint breaks some front cameras.
+  const options=[{video:{facingMode:{ideal:customCameraFacingMode},frameRate:{ideal:30,max:30}},audio:false},{video:{facingMode:{ideal:customCameraFacingMode}},audio:false}];
   let stream,error;
   for(const constraints of options){try{stream=await navigator.mediaDevices.getUserMedia(constraints);break;}catch(cause){error=cause;if(['NotAllowedError','SecurityError'].includes(cause.name))break;}}
-  if(session!==cameraUiState.session||document.getElementById('customCameraModal').style.display==='none'){stream?.getTracks().forEach(track=>track.stop());return;}
+  if(revision!==mobileCameraStreamRevision||session!==cameraUiState.session||document.getElementById('customCameraModal').style.display==='none'){stream?.getTracks().forEach(track=>track.stop());return;}
   if(!stream){TascoCloud.notify(error?.name==='NotAllowedError'?'Chưa cấp quyền camera. Bật quyền camera cho trang rồi mở lại.':'Chưa mở được camera. Đóng ứng dụng đang dùng camera rồi thử lại.');await closeCustomCameraModal(false);return;}
   customCameraStream=stream;video.srcObject=stream;
   const track=stream.getVideoTracks()[0],flash=document.getElementById('btnToggleCameraFlash');flash.disabled=!track?.getCapabilities?.().torch;
   try{await video.play();}catch(_){TascoCloud.notify('Chạm vào khung hình để bắt đầu camera.');}syncCameraViewport();
 }
-function stopCustomCameraStream(){customCameraStream?.getTracks().forEach(track=>track.stop());customCameraStream=null;document.getElementById('customCameraVideo').srcObject=null;customCameraTorchActive=false;document.getElementById('btnToggleCameraFlash').classList.remove('active');}
+function stopCustomCameraStream(){mobileCameraStreamRevision++;customCameraStream?.getTracks().forEach(track=>track.stop());customCameraStream=null;document.getElementById('customCameraVideo').srcObject=null;customCameraTorchActive=false;document.getElementById('btnToggleCameraFlash').classList.remove('active');syncCameraViewport();}
 async function switchCustomCamera(){if(mobileCameraSaving)return;customCameraFacingMode=customCameraFacingMode==='environment'?'user':'environment';await startCustomCameraStream();}
 async function toggleCustomCameraTorch(){const track=customCameraStream?.getVideoTracks()[0];if(!track?.getCapabilities?.().torch)return;try{await track.applyConstraints({advanced:[{torch:!customCameraTorchActive}]});customCameraTorchActive=!customCameraTorchActive;document.getElementById('btnToggleCameraFlash').classList.toggle('active',customCameraTorchActive);}catch(_){TascoCloud.notify('Camera này chưa bật được đèn flash.');}}
 async function triggerCustomCameraFocus(event){
   const video=document.getElementById('customCameraVideo');if(video.paused)video.play().catch(()=>{});
-  const ring=document.getElementById('cameraFocusRing'),rect=video.parentElement.getBoundingClientRect();ring.style.left=(event.clientX-rect.left)+'px';ring.style.top=(event.clientY-rect.top)+'px';ring.classList.add('active');clearTimeout(ring._timer);ring._timer=setTimeout(()=>ring.classList.remove('active'),1000);
+  const ring=document.getElementById('cameraFocusRing'),point=cameraLocalPoint(video.parentElement,event.clientX,event.clientY);ring.style.left=point.x+'px';ring.style.top=point.y+'px';ring.classList.add('active');clearTimeout(ring._timer);ring._timer=setTimeout(()=>ring.classList.remove('active'),1000);
   const track=customCameraStream?.getVideoTracks()[0];if(track?.getCapabilities?.().focusMode?.includes('continuous'))try{await track.applyConstraints({advanced:[{focusMode:'continuous'}]});}catch(_){}
 }
 function deleteCapturedPhotoFromCamera(index){if(mobileCameraSaving)return;customCameraPhotos.splice(index,1);renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();}
@@ -3661,56 +3784,82 @@ async function closeCustomCameraModal(savePhotos=false){
 document.getElementById('customCameraModal').addEventListener('keydown',event=>{if(event.key==='Escape')closeCustomCameraModal(false);if(event.key==='Tab'){const buttons=[...event.currentTarget.querySelectorAll('button:not(:disabled)')];if(event.shiftKey&&document.activeElement===buttons[0]){event.preventDefault();buttons[buttons.length-1].focus();}else if(!event.shiftKey&&document.activeElement===buttons[buttons.length-1]){event.preventDefault();buttons[0].focus();}}});
 window.addEventListener('pagehide',()=>{stopCustomCameraStream();onCustomCameraClose();});
 
-const cameraUiState={session:0,captureBusy:false,previousOverflow:null,previousFocus:null,photoUrls:new Map(),sensorPermission:null,physicalOrientation:null};
+const cameraUiState={session:0,captureBusy:false,previousOverflow:null,previousFocus:null,photoUrls:new Map(),sensorPermission:null,physicalOrientation:null,frameBaseline:null};
+const cameraAngle=value=>((Math.round(value/90)*90)%360+360)%360;
+const cameraAngleDifference=(a,b)=>((a-b+540)%360)-180;
+function cameraIsMobile(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>0&&matchMedia('(pointer:coarse)').matches);}
+function cameraScreenAngle(){
+  const landscape=(window.visualViewport?.width||innerWidth)>(window.visualViewport?.height||innerHeight),legacy=typeof window.orientation==='number'?window.orientation:null,native=legacy??screen.orientation?.angle;
+  return Number.isFinite(native)&&(cameraAngle(native)%180===90)===landscape?cameraAngle(native):landscape?90:0;
+}
+function cameraDevicePose(){const angle=cameraUiState.physicalOrientation?.angle??cameraScreenAngle();return {angle,orientation:angle%180===90?'landscape':'portrait'};}
+function resetCameraFrameBaseline(){cameraUiState.frameBaseline=null;}
 function cameraHandleDeviceOrientation(event) {
   if(!Number.isFinite(event.beta)||!Number.isFinite(event.gamma))return;
   const beta=event.beta*Math.PI/180,gamma=event.gamma*Math.PI/180;
-  const x=Math.sin(gamma)*Math.cos(beta),y=Math.sin(beta);
-  let physical=null;
-  if(Math.abs(x)>.45&&Math.abs(x)>Math.abs(y)*1.25)physical={orientation:'landscape',angle:x>0?270:90,at:Date.now()};
-  else if(Math.abs(y)>.45&&Math.abs(y)>Math.abs(x)*1.25)physical={orientation:'portrait',angle:y>0?0:180,at:Date.now()};
-  if(physical)cameraUiState.physicalOrientation=physical;
+  // The earth-up vector in device coordinates, independent of front/rear camera selection.
+  const upX=-Math.sin(gamma)*Math.cos(beta),upY=Math.sin(beta);
+  if(Math.hypot(upX,upY)<.55)return; // Keep the last reliable direction while the phone lies flat.
+  const rawAngle=Math.atan2(upX,upY)*180/Math.PI,old=cameraUiState.physicalOrientation,angle=old&&Math.abs(cameraAngleDifference(rawAngle,old.angle))<55?old.angle:cameraAngle(rawAngle);
+  cameraUiState.physicalOrientation={angle,orientation:angle%180===90?'landscape':'portrait',at:Date.now()};
+  if(!old||old.angle!==angle)syncCameraViewport();
 }
 function startCameraOrientationSensor() {
-  const Sensor=window.DeviceOrientationEvent;if(!Sensor)return;
+  const Sensor=window.DeviceOrientationEvent,manual=document.getElementById('btnCameraOrientation');if(manual)manual.hidden=true;
+  if(!Sensor){if(manual&&cameraIsMobile())manual.hidden=false;return;}
   const session=cameraUiState.session;
   const listen=()=>{if(session===cameraUiState.session&&document.getElementById('customCameraModal')?.style.display!=='none')window.addEventListener('deviceorientation',cameraHandleDeviceOrientation);};
   if(typeof Sensor.requestPermission!=='function'){listen();return;}
   // Called synchronously from the camera-opening tap, as Safari requires a user gesture.
-  if(!cameraUiState.sensorPermission){try{cameraUiState.sensorPermission=Sensor.requestPermission().catch(()=>'denied');}catch(_){return;}}
-  cameraUiState.sensorPermission.then(permission=>{if(permission==='granted')listen();});
+  if(!cameraUiState.sensorPermission){try{cameraUiState.sensorPermission=Sensor.requestPermission().catch(()=>'denied');}catch(_){if(manual)manual.hidden=false;return;}}
+  cameraUiState.sensorPermission.then(permission=>{if(permission==='granted')listen();else if(session===cameraUiState.session&&manual)manual.hidden=false;});
 }
+function rotateCameraInterface(){const angle=cameraAngle(cameraDevicePose().angle+90);cameraUiState.physicalOrientation={angle,orientation:angle%180===90?'landscape':'portrait',at:Date.now()};syncCameraViewport();}
 function cameraFrameOrientation(video,usePhysical=true) {
-  const viewport=window.visualViewport,width=viewport?.width||innerWidth,height=viewport?.height||innerHeight;
-  const mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>0&&matchMedia('(pointer:coarse)').matches);
-  const legacyAngle=typeof window.orientation==='number'?window.orientation:null;
-  const physical=usePhysical&&mobile&&cameraUiState.physicalOrientation&&Date.now()-cameraUiState.physicalOrientation.at<2500?cameraUiState.physicalOrientation:null;
-  const angle=((physical?.angle??legacyAngle??screen.orientation?.angle??0)%360+360)%360;
-  const landscape=physical?physical.orientation==='landscape':width>height,nativeLandscape=video.videoWidth>video.videoHeight;
-  // Rotate pixels only when a mobile browser keeps the previous orientation's frame size.
-  // Matching frames already include the browser's rotation and must pass through unchanged.
-  const rotation=!mobile||landscape===nativeLandscape||video.videoWidth===video.videoHeight?0:landscape?(angle===270?90:-90):(angle===180?-90:90);
-  return {orientation:landscape?'landscape':'portrait',angle,rotation,width:rotation?video.videoHeight:video.videoWidth,height:rotation?video.videoWidth:video.videoHeight};
+  const screenAngle=cameraScreenAngle(),pose=usePhysical&&cameraIsMobile()?cameraDevicePose():{angle:screenAngle,orientation:screenAngle%180===90?'landscape':'portrait'},nativeLandscape=video.videoWidth>video.videoHeight;
+  let baseline=cameraUiState.frameBaseline;
+  if(!baseline&&video.videoWidth&&video.videoHeight){
+    baseline={angle:screenAngle,landscape:nativeLandscape,width:video.videoWidth,height:video.videoHeight};cameraUiState.frameBaseline=baseline;
+  }
+  let rotation=0;
+  if(cameraIsMobile()&&baseline&&video.videoWidth!==video.videoHeight){
+    const desiredLandscape=pose.orientation==='landscape';
+    // Browsers rotate normal frames themselves. Correct only a frame frozen in a previous screen orientation.
+    // A wide front-camera frame in an upright viewport is not evidence that its content needs a 90-degree turn.
+    if(desiredLandscape!==nativeLandscape&&pose.angle!==baseline.angle)rotation=cameraAngleDifference(baseline.angle,pose.angle);
+    else if(desiredLandscape===nativeLandscape){baseline.angle=pose.angle;baseline.landscape=nativeLandscape;}
+  }
+  const swapped=Math.abs(rotation)%180===90;
+  return {orientation:pose.orientation,angle:pose.angle,rotation,width:swapped?video.videoHeight:video.videoWidth,height:swapped?video.videoWidth:video.videoHeight};
 }
 function syncCameraFramePreview(video) {
   if(!video)return;
-  // A screen locked in portrait keeps its visual coordinates; the saved photo can still be landscape.
-  const frame=cameraFrameOrientation(video,false),container=video.parentElement;
+  const frame=cameraFrameOrientation(video),container=video.parentElement;
   video.dataset.rotation=String(frame.rotation);
   if(frame.rotation&&container){
     video.style.position='absolute';video.style.left='50%';video.style.top='50%';
-    video.style.width=container.clientHeight+'px';video.style.height=container.clientWidth+'px';
+    const swapped=Math.abs(frame.rotation)%180===90;
+    video.style.width=(swapped?container.clientHeight:container.clientWidth)+'px';video.style.height=(swapped?container.clientWidth:container.clientHeight)+'px';
     video.style.transform='translate(-50%,-50%) rotate('+frame.rotation+'deg)';
   }else{for(const property of ['position','left','top','width','height','transform'])video.style.removeProperty(property);}
 }
 function syncCameraViewport() {
   const modal=document.getElementById('customCameraModal');if(!modal||modal.style.display==='none')return;
   const viewport=window.visualViewport,width=viewport?.width||innerWidth,height=viewport?.height||innerHeight;
-  modal.style.setProperty('--camera-viewport-width',width+'px');modal.style.setProperty('--camera-viewport-height',height+'px');
-  modal.dataset.orientation=width>height?'landscape':'portrait';
+  const pose=cameraIsMobile()?cameraDevicePose():{angle:cameraScreenAngle(),orientation:width>height?'landscape':'portrait'},turn=cameraAngleDifference(pose.angle,cameraScreenAngle()),swapped=Math.abs(turn)%180===90;
+  modal.style.setProperty('--camera-viewport-width',(swapped?height:width)+'px');modal.style.setProperty('--camera-viewport-height',(swapped?width:height)+'px');
+  modal.dataset.orientation=pose.orientation;modal.dataset.uiRotation=String(turn);modal.dataset.compact=String((swapped?width:height)<=380);
+  if(turn){modal.style.left=width/2+'px';modal.style.top=((viewport?.offsetTop||0)+height/2)+'px';modal.style.transform='translate(-50%,-50%) rotate('+turn+'deg)';}
+  else{modal.style.left='0px';modal.style.top=(viewport?.offsetTop||0)+'px';modal.style.transform='none';}
+  const sides=['top','right','bottom','left'],offset=cameraAngle(turn)/90;
+  sides.forEach((side,index)=>modal.style.setProperty('--camera-safe-'+side,'env(safe-area-inset-'+sides[(index+offset)%4]+',0px)'));
   const video=document.getElementById('customCameraVideo'),shutter=document.getElementById('cameraCaptureButton');
   syncCameraFramePreview(video);
   if(shutter)shutter.disabled=cameraUiState.captureBusy||!customCameraStream||!video?.videoWidth||!video?.videoHeight;
+}
+function cameraLocalPoint(element,clientX,clientY){
+  const rect=element.getBoundingClientRect(),turn=Number(document.getElementById('customCameraModal')?.dataset.uiRotation||0)*Math.PI/180,dx=clientX-rect.left-rect.width/2,dy=clientY-rect.top-rect.height/2;
+  return {x:dx*Math.cos(turn)+dy*Math.sin(turn)+element.clientWidth/2,y:-dx*Math.sin(turn)+dy*Math.cos(turn)+element.clientHeight/2};
 }
 function syncCameraPhotoTray() {
   const tray=document.querySelector('#customCameraModal .camera-preview-container'),count=document.getElementById('cameraPhotoCount');
@@ -3721,14 +3870,14 @@ function syncCameraPhotoTray() {
 function onCustomCameraOpen() {
   cameraUiState.session++;cameraUiState.captureBusy=false;
   cameraUiState.previousOverflow=document.body.style.overflow;cameraUiState.previousFocus=document.activeElement;
-  cameraUiState.physicalOrientation=null;startCameraOrientationSensor();
+  cameraUiState.physicalOrientation=null;resetCameraFrameBaseline();startCameraOrientationSensor();startCameraLocationTracking();
   document.body.style.overflow='hidden';
   updateCameraLocationUI(null,true);syncCameraPhotoTray();syncCameraViewport();
   document.querySelector('#customCameraModal .btn-close-cam')?.focus({preventScroll:true});
 }
 function onCustomCameraClose() {
   cameraUiState.session++;cameraUiState.captureBusy=false;
-  window.removeEventListener('deviceorientation',cameraHandleDeviceOrientation);cameraUiState.physicalOrientation=null;
+  window.removeEventListener('deviceorientation',cameraHandleDeviceOrientation);cameraUiState.physicalOrientation=null;resetCameraFrameBaseline();stopCameraLocationTracking();
   if(cameraUiState.previousOverflow!==null)document.body.style.overflow=cameraUiState.previousOverflow;
   cameraUiState.previousOverflow=null;
   cameraUiState.previousFocus?.focus?.({preventScroll:true});cameraUiState.previousFocus=null;
@@ -3774,7 +3923,7 @@ window.addEventListener('orientationchange',()=>{syncCameraViewport();setTimeout
 window.visualViewport?.addEventListener('resize',syncCameraViewport);
 screen.orientation?.addEventListener?.('change',syncCameraViewport);
 document.getElementById('customCameraVideo')?.addEventListener('resize',syncCameraViewport);
-document.getElementById('customCameraVideo')?.addEventListener('loadedmetadata',syncCameraViewport);
+document.getElementById('customCameraVideo')?.addEventListener('loadedmetadata',()=>{resetCameraFrameBaseline();syncCameraViewport();});
 
 </script>
 </body>
