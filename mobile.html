@@ -1521,6 +1521,212 @@ html.dark .tasco-workspace #personalCloudSection .cloud-delete-selected { backgr
 @media(prefers-reduced-motion:reduce) { .cloud-loading-spinner, .cloud-details-row > [data-action=refresh][aria-busy=true] svg { animation: none; } .cloud-name-chevron { transition: none; } }
 
 </style>
+<style id="tascoCloudAlbumsStyles">
+/* Album capture shares the Cloud control and typography scale. */
+.tasco-workspace #personalCloudSection .cloud-hero-copy h1 { overflow-wrap: anywhere; }
+.tasco-workspace #personalCloudSection .cloud-album-current { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 62px; margin-top: 13px; padding: 11px 13px; border: 1px solid #daecf02e; border-radius: 16px; background: #ffffff08; color: #daecf0; text-align: left; }
+.cloud-album-current > svg { width: 24px; height: 24px; color: #84bfc7; flex-shrink: 0; }
+.cloud-album-current > span:first-of-type { flex: 1; min-width: 0; }
+.cloud-album-current small { display: block; font-size: 8px; font-weight: 600; letter-spacing: .08em; color: #84bfc7; }
+.cloud-album-current strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; font-size: 12px; font-weight: 500; }
+.cloud-album-current [data-album-change-label] { font-size: 10px; font-weight: 500; white-space: nowrap; }
+.cloud-album-current > svg:last-child { width: 13px; height: 13px; }
+.cloud-album-current:disabled { opacity: .55; }
+.tasco-workspace #personalCloudSection .cloud-albums-panel { margin: 24px 22px 0; scroll-margin-top: calc(20px + env(safe-area-inset-top,0px)); }
+.cloud-album-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 13px; }
+.cloud-album-heading h2 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.4; letter-spacing: -.4px; color: var(--ws-text); }
+.cloud-album-heading h2:focus { outline: none; }
+.tasco-workspace #personalCloudSection .cloud-album-heading .cloud-button { min-height: 40px; padding: 9px 12px; border-radius: 99px; color: var(--ws-accent-text); background: var(--ws-surface); font-size: 12px; font-weight: 500; }
+.cloud-album-heading .cloud-button svg { width: 15px; height: 15px; }
+[data-album-list] { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.tasco-workspace #personalCloudSection .cloud-album-card { display: block; min-width: 0; min-height: 135px; padding: 16px; border: 1px solid var(--ws-line); border-radius: 21px; background: var(--ws-surface); color: var(--ws-text); text-align: left; }
+.cloud-album-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.cloud-album-symbol { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--ws-accent); color: var(--ws-accent-text); }
+.cloud-album-symbol svg { width: 21px; height: 21px; }
+.cloud-album-card-top > svg { width: 14px; height: 14px; color: var(--ws-muted); }
+.cloud-album-card > strong { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; font-size: 13px; font-weight: 600; line-height: 1.5; }
+.cloud-album-card > span:last-child { display: block; margin-top: 7px; font-size: 11px; font-weight: 400; line-height: 1.5; color: var(--ws-muted); }
+.cloud-albums-empty { grid-column: 1/-1; display: flex; align-items: center; gap: 13px; min-height: 107px; padding: 20px 17px; border: 1px solid var(--ws-line); border-radius: 21px; background: var(--ws-surface); }
+.cloud-albums-empty > span { display: grid; place-items: center; flex-shrink: 0; width: 43px; height: 43px; border-radius: 14px; background: var(--ws-accent); color: var(--ws-accent-text); }
+.cloud-albums-empty strong { display: block; color: var(--ws-text); font-size: 13px; font-weight: 600; line-height: 1.5; }
+.cloud-albums-empty p { margin: 5px 0 0; color: var(--ws-muted); font-size: 11px; line-height: 1.7; }
+.tasco-workspace #personalCloudSection :is([data-album-note],[data-album-status]) { margin: 12px 2px 13px; color: var(--ws-muted); font-size: 10px; line-height: 1.7; }
+.tasco-workspace #personalCloudSection [data-album-status] { margin: 12px 23px 0; }
+.cloud-album-overlay { position: fixed; inset: 0; z-index: 100075; display: flex; align-items: center; justify-content: center; padding: max(20px,env(safe-area-inset-top,0px)) 20px max(20px,env(safe-area-inset-bottom,0px)); background: #0b1b3080; backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); font-family: 'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+.cloud-album-overlay * { box-sizing: border-box; }
+.cloud-album-overlay [hidden] { display: none !important; }
+.cloud-album-dialog { width: min(440px,100%); max-height: calc(100dvh - 40px); overflow-y: auto; padding: 24px; border: 1px solid var(--ws-line); border-radius: 26px; background: var(--ws-surface); color: var(--ws-text); box-shadow: 0 25px 80px #0b1b3033; }
+.cloud-album-dialog header { display: flex; align-items: center; justify-content: space-between; }
+.cloud-album-dialog-icon { display: grid; place-items: center; width: 47px; height: 47px; border: 1px solid var(--ws-line); border-radius: 15px; background: var(--ws-accent); color: var(--ws-accent-text); }
+.cloud-album-dialog-icon svg { width: 24px; height: 24px; }
+.cloud-album-dialog button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--ws-line); border-radius: 14px; background: var(--ws-soft); color: var(--ws-text); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; }
+.cloud-album-dialog header button { width: 40px; height: 40px; min-height: 40px; padding: 0; border-radius: 12px; background: transparent; }
+.cloud-album-dialog button svg { width: 18px; height: 18px; }
+.cloud-album-dialog h2 { margin: 19px 0 10px; font-size: 23px; font-weight: 600; line-height: 1.3; letter-spacing: -.6px; }
+.cloud-album-dialog > p { margin: 0 0 22px; color: var(--ws-muted); font-size: 12px; line-height: 1.8; }
+.cloud-album-dialog label { display: block; margin-bottom: 9px; font-size: 12px; font-weight: 500; }
+.cloud-album-dialog input { width: 100%; min-height: 50px; padding: 12px 14px; border: 1px solid var(--ws-line); border-radius: 14px; background: var(--ws-soft); color: var(--ws-text); font-family: inherit; font-size: 16px; font-weight: 400; line-height: 1.5; }
+.cloud-album-dialog input::placeholder { font-size: 13px; color: var(--ws-muted); }
+.cloud-album-dialog footer { display: grid; grid-template-columns: auto 1fr; gap: 9px; margin-top: 23px; }
+.cloud-album-dialog [data-album-submit] { min-height: 48px; border-color: var(--app-teal); background: var(--app-teal); color: var(--app-navy); font-weight: 600; }
+.cloud-album-dialog [data-album-error] { margin: 10px 0 0; color: #a65550; font-size: 11px; line-height: 1.7; }
+.cloud-album-dialog button:disabled { opacity: .55; cursor: default; }
+.cloud-album-dialog :is(button,input):focus-visible { outline: 2px solid var(--app-teal); outline-offset: 3px; }
+@media(min-width:768px) { .tasco-workspace #personalCloudSection .cloud-album-current { max-width: 360px; } .tasco-workspace #personalCloudSection .cloud-albums-panel { margin-left: 38px; margin-right: 38px; } [data-album-list] { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media(max-width:360px) { .tasco-workspace #personalCloudSection .cloud-albums-panel { margin-left: 17px; margin-right: 17px; } .cloud-album-card { padding: 13px; } .cloud-album-dialog { padding: 20px; } .cloud-album-dialog footer { grid-template-columns: 1fr; } }
+
+</style>
+<style id="tascoLoginPremiumStyles">
+.tasco-workspace #loginOverlay {
+  box-sizing: border-box;
+  padding: max(24px, env(safe-area-inset-top, 0px)) 20px max(24px, env(safe-area-inset-bottom, 0px));
+  justify-content: flex-start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: radial-gradient(ellipse at 85% 8%, #daecf0 0, transparent 52%), var(--ws-bg) !important;
+}
+html.dark .tasco-workspace #loginOverlay {
+  background: radial-gradient(ellipse at 85% 8%, #203f61 0, transparent 52%), var(--ws-bg) !important;
+}
+.tasco-workspace #loginOverlay *, .tasco-workspace #loginOverlay *::before, .tasco-workspace #loginOverlay *::after { box-sizing: border-box; }
+.tasco-workspace #loginOverlay :is(input, button) { font-family: inherit; letter-spacing: 0; }
+.tasco-workspace #loginOverlay :is([hidden], .hidden) { display: none !important; }
+.tasco-workspace #loginOverlay .login-card.ws-login-card {
+  width: 100%;
+  max-width: 430px;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  margin: auto 0;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid var(--ws-line) !important;
+  border-radius: 30px;
+  background: var(--ws-surface) !important;
+  box-shadow: 0 20px 60px #18305614;
+  animation: none;
+}
+.tasco-workspace #loginOverlay .ws-login-heading {
+  position: relative;
+  isolation: isolate;
+  padding: 28px 26px 48px;
+  background: var(--app-navy);
+  color: #fff;
+}
+.tasco-workspace #loginOverlay .ws-login-heading::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 40% 0 0 28%;
+  opacity: .22;
+  background-image: radial-gradient(circle, #84bfc7 1px, transparent 1.2px);
+  background-size: 9px 9px;
+  mask-image: linear-gradient(130deg, transparent, #000);
+  -webkit-mask-image: linear-gradient(130deg, transparent, #000);
+  pointer-events: none;
+}
+.tasco-workspace #loginOverlay .ws-login-brand-row { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+.tasco-workspace #loginOverlay .ws-login-brand-row .ws-mark {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  margin: 0;
+  border: 1px solid #84bfc742;
+  border-radius: 14px;
+  background: #ffffff08;
+  box-shadow: none;
+}
+.tasco-workspace #loginOverlay .ws-login-brand-row .ws-brand-emblem { width: 29px; height: 29px; }
+.tasco-workspace #loginOverlay .ws-login-brand { display: block; margin: 0; color: #edf5f7; font-size: 12px; font-weight: 700; line-height: 1.6; letter-spacing: .11em; }
+.tasco-workspace #loginOverlay .ws-login-brand-row small { display: block; margin-top: 2px; color: #a7c3d0; font-size: 10px; font-weight: 450; line-height: 1.5; }
+.tasco-workspace #loginOverlay #loginTitle { margin: 0 0 10px; color: #fff !important; font-size: clamp(26px, 7.2vw, 30px); font-weight: 650; line-height: 1.25; letter-spacing: -1px; }
+.tasco-workspace #loginOverlay #loginSubtitle { max-width: 310px; margin: 0; color: #c7dde3; font-size: 12px; font-weight: 400; line-height: 1.8; }
+.tasco-workspace #loginOverlay .ws-login-body { position: relative; margin-top: -24px; padding: 27px 26px 21px; border-radius: 26px 26px 0 0; background: var(--ws-surface); }
+.tasco-workspace #loginOverlay .ws-login-form { gap: 18px; margin: 0; }
+.tasco-workspace #loginOverlay .ws-login-form label { margin: 0 0 9px; color: var(--ws-text); font-size: 12px; font-weight: 550; line-height: 1.5; }
+.tasco-workspace #loginOverlay .ws-login-field { position: relative; }
+.tasco-workspace #loginOverlay .ws-login-field > .ws-icon { position: absolute; top: 50%; left: 15px; width: 18px; height: 18px; transform: translateY(-50%); color: var(--ws-accent-text); pointer-events: none; }
+.tasco-workspace #loginOverlay .ws-login-field .login-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 15px 0 43px;
+  border: 1px solid var(--ws-line) !important;
+  border-radius: 14px;
+  background: var(--ws-soft) !important;
+  color: var(--ws-text) !important;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  outline: none;
+  box-shadow: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.tasco-workspace #loginOverlay .login-input::placeholder { color: var(--ws-muted); opacity: .72; font-size: 14px; }
+.tasco-workspace #loginOverlay .ws-login-field .login-input:focus { border-color: var(--app-teal-ink) !important; box-shadow: 0 0 0 3px #63adb61f !important; }
+.tasco-workspace #loginOverlay .ws-login-field--password .login-input { padding-right: 50px; }
+.tasco-workspace #loginOverlay [data-login-password-toggle] { position: absolute; top: 4px; right: 4px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 11px; background: transparent; color: var(--ws-muted); cursor: pointer; }
+.tasco-workspace #loginOverlay [data-login-password-toggle] .ws-icon { width: 19px; height: 19px; }
+.tasco-workspace #loginOverlay [data-login-password-toggle]:hover { background: var(--ws-accent); color: var(--ws-accent-text); }
+.tasco-workspace #loginOverlay .ws-login-options { margin: -5px 0 -6px; gap: 12px; }
+.tasco-workspace #loginOverlay .ws-login-options > label { display: flex; align-items: center; gap: 8px; min-height: 44px; margin: 0; color: var(--ws-muted); font-size: 11px; font-weight: 450; cursor: pointer; }
+.tasco-workspace #loginOverlay #rememberMe { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; margin: 0; flex-shrink: 0; border: 1px solid var(--ws-line); border-radius: 5px; background: var(--ws-surface); cursor: pointer; }
+.tasco-workspace #loginOverlay #rememberMe:checked { border-color: var(--app-teal-ink); background: var(--app-teal-ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='m4 9 3 3 7-7' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
+.tasco-workspace #loginOverlay .ws-login-options button, .tasco-workspace #loginOverlay .ws-login-register button { min-height: 44px; padding: 8px 0; color: var(--ws-accent-text); font-size: 11px; font-weight: 600; cursor: pointer; }
+.tasco-workspace #loginOverlay :is(.ws-login-options, .ws-login-register) button:hover { text-decoration: underline; text-underline-offset: 3px; }
+.tasco-workspace #loginOverlay #loginBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 18px;
+  border: 1px solid var(--app-teal);
+  border-radius: 16px;
+  background: var(--app-teal) !important;
+  color: var(--app-navy) !important;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.5;
+  box-shadow: 0 6px 16px #1830560b;
+  cursor: pointer;
+  transition: background .18s, transform .18s;
+}
+.tasco-workspace #loginOverlay #loginBtn > .ws-icon { width: 18px; height: 18px; }
+.tasco-workspace #loginOverlay #loginBtn:hover { background: var(--app-teal-hover) !important; }
+.tasco-workspace #loginOverlay #loginBtn:active { transform: translateY(1px); }
+.tasco-workspace #loginOverlay #loginBtn:disabled { cursor: wait; opacity: .8; }
+.tasco-workspace #loginOverlay #loginBtn[aria-busy="true"] > .ws-icon { display: none; }
+.tasco-workspace #loginOverlay #loginBtn[aria-busy="true"]::after { content: ''; width: 17px; height: 17px; flex-shrink: 0; border: 1.5px solid #18305640; border-top-color: var(--app-navy); border-radius: 50%; animation: ws-login-spin .7s linear infinite; }
+.tasco-workspace #loginOverlay .ws-login-register { gap: 6px; padding: 0; margin-top: -7px; color: var(--ws-muted); font-size: 12px; font-weight: 400; }
+.tasco-workspace #loginOverlay .ws-login-register button { font-size: 12px; }
+.tasco-workspace #loginOverlay #toggleRegisterBtn:disabled { opacity: .5; cursor: wait; }
+.tasco-workspace #loginOverlay #loginError { margin: 0; padding: 12px 14px; border: 1px solid #b85e5930; border-radius: 12px; background: #b85e5908; color: #b85e59; font-size: 12px; font-weight: 400; line-height: 1.7; overflow-wrap: anywhere; }
+.tasco-workspace #loginOverlay #loginError.text-emerald-500 { border-color: #63adb650; background: #63adb60d; color: var(--ws-accent-text); }
+.tasco-workspace #loginOverlay .ws-login-foot { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 14px 0 0; padding-top: 17px; border-top: 1px solid var(--ws-line); color: var(--ws-muted); font-size: 10px; font-weight: 400; line-height: 1.7; letter-spacing: 0; }
+.tasco-workspace #loginOverlay .ws-login-foot .ws-icon { width: 14px; height: 14px; color: var(--ws-accent-text); flex-shrink: 0; }
+.tasco-workspace #loginOverlay :is(button, #rememberMe):focus-visible { outline: 2px solid var(--app-teal-ink); outline-offset: 3px; }
+@keyframes ws-login-spin { to { transform: rotate(360deg); } }
+@media (max-width: 360px) {
+  .tasco-workspace #loginOverlay { padding-left: 14px; padding-right: 14px; }
+  .tasco-workspace #loginOverlay .ws-login-heading { padding-left: 22px; padding-right: 22px; }
+  .tasco-workspace #loginOverlay .ws-login-body { padding-left: 22px; padding-right: 22px; }
+}
+@media (max-height: 680px) {
+  .tasco-workspace #loginOverlay .ws-login-heading { padding-top: 22px; padding-bottom: 43px; }
+  .tasco-workspace #loginOverlay .ws-login-brand-row { margin-bottom: 21px; }
+  .tasco-workspace #loginOverlay .ws-login-body { padding-top: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tasco-workspace #loginOverlay * { transition: none !important; }
+  .tasco-workspace #loginOverlay #loginBtn[aria-busy="true"]::after { animation: none; }
+}
+
+</style>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
     <script>
@@ -1553,17 +1759,42 @@ html.dark .tasco-workspace #personalCloudSection .cloud-delete-selected { backgr
 
     <div id="loginOverlay">
       <div class="login-card ws-login-card">
-        <div class="ws-login-heading"><span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="m10 15 1.5-4h9l1.5 4M9 15h14v6H9v-6ZM11 21v2m10-2v2m-9-5h1m6 0h1"/></g></svg></span><span class="ws-login-brand">TASCO DLK</span><h2 id="loginTitle">Chào mừng trở lại.</h2><p id="loginSubtitle">Đăng nhập để tra cứu phụ tùng và lưu ảnh hồ sơ.</p></div>
-        <form id="loginForm" class="ws-login-form">
-          <div id="registerNameGroup" class="hidden"><label for="registerName">Họ và tên</label><input type="text" id="registerName" autocomplete="name" placeholder="Tên của bạn" class="login-input"></div>
-          <div><label for="loginEmail">Email / Tên đăng nhập</label><input type="text" id="loginEmail" autocomplete="username" required placeholder="Nhập email của bạn" class="login-input"></div>
-          <div><label for="loginPass">Mật khẩu</label><input type="password" id="loginPass" autocomplete="current-password" required placeholder="Nhập mật khẩu" class="login-input"></div>
-          <div class="ws-login-options"><label><input type="checkbox" id="rememberMe">Ghi nhớ tôi</label><button type="button" onclick="forgotPassword()">Quên mật khẩu?</button></div>
-          <button type="submit" id="loginBtn" class="ws-primary">Đăng nhập <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
-          <p id="loginError" class="hidden" role="alert"></p>
-          <div class="ws-login-register"><span id="registerPromptText">Chưa có tài khoản?</span><button type="button" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký</button></div>
-        </form>
-        <p class="ws-login-foot">TASCO INSURANCE · Không gian làm việc của bạn</p>
+        <div class="ws-login-heading">
+          <div class="ws-login-brand-row">
+            <span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="m10 15 1.5-4h9l1.5 4M9 15h14v6H9v-6ZM11 21v2m10-2v2m-9-5h1m6 0h1"/></g></svg></span>
+            <div><span class="ws-login-brand">TASCO DLK</span><small>Insurance workspace</small></div>
+          </div>
+          <h2 id="loginTitle">Chào mừng trở lại.</h2>
+          <p id="loginSubtitle">Đăng nhập để tra cứu phụ tùng và lưu ảnh hồ sơ.</p>
+        </div>
+        <div class="ws-login-body">
+          <form id="loginForm" class="ws-login-form">
+            <div id="registerNameGroup" class="hidden">
+              <label for="registerName">Họ và tên</label>
+              <div class="ws-login-field"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><input type="text" id="registerName" autocomplete="name" placeholder="Tên của bạn" class="login-input"></div>
+            </div>
+            <div>
+              <label for="loginEmail">Email / Tên đăng nhập</label>
+              <div class="ws-login-field"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 7 9 6 9-6"/></svg><input type="text" id="loginEmail" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required placeholder="Nhập email của bạn" class="login-input"></div>
+            </div>
+            <div>
+              <label for="loginPass">Mật khẩu</label>
+              <div class="ws-login-field ws-login-field--password">
+                <svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg>
+                <input type="password" id="loginPass" autocomplete="current-password" required placeholder="Nhập mật khẩu" class="login-input">
+                <button type="button" data-login-password-toggle aria-controls="loginPass" aria-label="Hiện mật khẩu" aria-pressed="false">
+                  <svg class="ws-icon" data-login-eye-open viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="ws-icon" data-login-eye-closed hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 18 18M10.6 5.1 12 5c6.5 0 10 7 10 7a21 21 0 0 1-3 4M6 6.5A20 20 0 0 0 2 12s3.5 7 10 7a12 12 0 0 0 5-1m-7-8a3 3 0 0 0 4 4"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="ws-login-options"><label for="rememberMe"><input type="checkbox" id="rememberMe">Ghi nhớ tôi</label><button type="button" onclick="forgotPassword()">Quên mật khẩu?</button></div>
+            <button type="submit" id="loginBtn" class="ws-primary" aria-busy="false"><span data-login-button-label>Đăng nhập</span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+            <p id="loginError" class="hidden" role="alert"></p>
+            <div class="ws-login-register"><span id="registerPromptText">Chưa có tài khoản?</span><button type="button" id="toggleRegisterBtn" onclick="toggleRegisterMode()">Đăng ký</button></div>
+          </form>
+          <p class="ws-login-foot"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg>TASCO INSURANCE · Không gian làm việc của bạn</p>
+        </div>
       </div>
     </div>
 
@@ -1809,7 +2040,7 @@ window.TascoAppShell=(()=>{
       const image=document.createElement('img');image.src=row.url;image.alt=row.title||'Ảnh hồ sơ';image.loading='lazy';image.decoding='async';image.onerror=()=>{image.remove();};const title=document.createElement('span');title.textContent=row.title||'Ảnh hồ sơ';const date=document.createElement('small');date.textContent=new Date(row.capturedAt).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'});card.append(image,title,date);container.append(card);
     });
     container.hidden=!photos.length;empty.hidden=Boolean(photos.length);
-    setText('[data-recent-title]',summary?.filtered?'Ảnh trong bộ lọc':'Ảnh gần đây');
+    setText('[data-recent-title]',summary?.albumName?'Ảnh trong album':summary?.filtered?'Ảnh trong bộ lọc':'Ảnh gần đây');
     setText('[data-cloud-caption]',connected?summary.busy?'Đang tải thư viện…':summary.filtered?summary.count+' ảnh đang lọc':summary.count+' ảnh đã lưu':'Thư viện ảnh cá nhân');
     setText('[data-cloud-connection]',connected?'Đã kết nối Cloud':summary?.error?'Chưa kết nối Cloud':'Đang kết nối thư viện…');
     setText('[data-empty-title]',connected&&!summary.busy?'Bắt đầu lưu ảnh hồ sơ':summary?.error?'Thư viện đang tạm gián đoạn':'Đang kết nối thư viện');
@@ -1818,7 +2049,7 @@ window.TascoAppShell=(()=>{
   }
   function camera(){
     if(!user)return;if(!window.TascoCloud?.isReady()){window.updateView('cloud');return;}
-    window.updateView('cloud');window.openMobileCamera('Ảnh của tôi');
+    window.updateView('cloud');window.TascoCloud.capture();
   }
   async function cameraHome(){await window.closeCustomCameraModal(false);if(document.getElementById('customCameraModal').style.display==='none')window.updateView('home');}
   window.addEventListener('tasco:cloud-summary',event=>paintCloud(event.detail));
@@ -1902,25 +2133,17 @@ window.TascoAppShell=(()=>{
             return { user: authRef.currentUser };
         }
         function onAuthStateChanged(authRef, callback) {
-            let initialHandled = false;
-            authRef._client.auth.getUser().then(({ data, error }) => {
-                if (error && !String(error.message || '').toLowerCase().includes('auth session missing')) {
-                    console.warn('Không lấy được phiên Supabase hiện tại:', error);
-                }
-                authRef._setCurrentUser(data?.user || null);
-                initialHandled = true;
-                callback(authRef.currentUser);
-            }).catch(() => {
-                initialHandled = true;
-                authRef._setCurrentUser(null);
-                callback(null);
-            });
+            let disposed = false, revision = 0;
             const { data } = authRef._client.auth.onAuthStateChange((event, session) => {
-                if (!initialHandled && event === 'INITIAL_SESSION') return;
                 authRef._setCurrentUser(session?.user || null);
-                callback(authRef.currentUser);
+                const user = authRef.currentUser, current = ++revision;
+                // SDK auth events run under its session lock. Start API work after it releases.
+                setTimeout(() => {
+                    if (disposed || current !== revision) return;
+                    Promise.resolve().then(() => callback(user)).catch(error => console.error('Không cập nhật được phiên đăng nhập:', error));
+                }, 0);
             });
-            return () => data?.subscription?.unsubscribe?.();
+            return () => { disposed = true; revision++; data?.subscription?.unsubscribe?.(); };
         }
         async function signOut(authRef) {
             const { error } = await authRef._client.auth.signOut();
@@ -2543,12 +2766,20 @@ window.TascoAppShell=(()=>{
         }
 
         
+        function setLoginButton(label, busy = false) {
+            const button = document.getElementById('loginBtn');
+            button.disabled = busy;
+            button.setAttribute('aria-busy', String(busy));
+            button.querySelector('[data-login-button-label]').textContent = label;
+            document.getElementById('toggleRegisterBtn').disabled = busy;
+        }
+
         let isRegisterMode = false;
         window.toggleRegisterMode = function() {
+            if (document.getElementById('loginBtn').disabled) return;
             isRegisterMode = !isRegisterMode;
             const nameGroup = document.getElementById('registerNameGroup');
             const nameInput = document.getElementById('registerName');
-            const loginBtn = document.getElementById('loginBtn');
             const prompt = document.getElementById('registerPromptText');
             const toggleBtn = document.getElementById('toggleRegisterBtn');
             const title = document.getElementById('loginTitle');
@@ -2558,24 +2789,25 @@ window.TascoAppShell=(()=>{
             if (isRegisterMode) {
                 nameGroup.classList.remove('hidden');
                 nameInput.required = true;
-                loginBtn.innerText = "Tạo tài khoản";
+                setLoginButton("Tạo tài khoản");
                 prompt.innerText = "Đã có tài khoản?";
                 toggleBtn.innerText = "Đăng nhập";
-                if (title) title.innerText = "Tạo tài khoản";
-                if (subtitle) subtitle.innerText = "Đăng ký tài khoản để bắt đầu tra cứu.";
-                if (passInput) passInput.placeholder = "Tạo mật khẩu";
+                if (title) title.innerText = "Tạo tài khoản.";
+                if (subtitle) subtitle.innerText = "Đăng ký để tra cứu phụ tùng và lưu ảnh hồ sơ.";
+                if (passInput) { passInput.placeholder = 'Tạo mật khẩu'; passInput.autocomplete = 'new-password'; }
             } else {
                 nameGroup.classList.add('hidden');
                 nameInput.required = false;
-                loginBtn.innerText = "Đăng nhập";
+                setLoginButton("Đăng nhập");
                 prompt.innerText = "Chưa có tài khoản?";
                 toggleBtn.innerText = "Đăng ký";
-                if (title) title.innerText = "Chào mừng trở lại";
-                if (subtitle) subtitle.innerText = "Đăng nhập tài khoản để tiếp tục.";
-                if (passInput) passInput.placeholder = "Nhập mật khẩu";
+                if (title) title.innerText = "Chào mừng trở lại.";
+                if (subtitle) subtitle.innerText = "Đăng nhập để tra cứu phụ tùng và lưu ảnh hồ sơ.";
+                if (passInput) { passInput.placeholder = 'Nhập mật khẩu'; passInput.autocomplete = 'current-password'; }
             }
             const err = document.getElementById('loginError');
-            if (err) err.classList.add('hidden');
+            document.querySelector('#loginOverlay .ws-login-options').hidden = isRegisterMode;
+            if (err) { err.classList.add('hidden'); err.classList.remove('text-emerald-500'); }
         }
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -2586,12 +2818,14 @@ window.TascoAppShell=(()=>{
             const remember = document.getElementById('rememberMe').checked;
             const err = document.getElementById('loginError');
             const btn = document.getElementById('loginBtn');
+            if (btn.disabled) return;
+            err.classList.remove('text-emerald-500');
             
             
             if (isRegisterMode) {
                 window.IS_REGISTERING = true;
                 const fullName = document.getElementById('registerName').value.trim();
-                btn.disabled = true; btn.innerText = "ĐANG ĐĂNG KÝ...";
+                setLoginButton("Đang tạo tài khoản…", true);
                 err.classList.add('hidden');
                 try {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
@@ -2614,29 +2848,29 @@ window.TascoAppShell=(()=>{
                     window.IS_REGISTERING = false;
                     await signOut(auth); // Sign out immediately so they can't enter
                     
-                    err.innerText = "ĐĂNG KÝ THÀNH CÔNG! VUI LÒNG CHỜ QUẢN TRỊ VIÊN PHÊ DUYỆT.";
+                    err.innerText = "Đăng ký thành công. Vui lòng chờ quản trị viên phê duyệt tài khoản.";
                     err.classList.remove('hidden');
                     err.classList.remove('text-red-500');
                     err.classList.add('text-emerald-500');
-                    btn.disabled = false; btn.innerText = "ĐĂNG KÝ TÀI KHOẢN";
+                    setLoginButton("Tạo tài khoản");
                     
                     return;
                 } catch (error) {
                     window.IS_REGISTERING = false;
-                    let msg = "LỖI ĐĂNG KÝ: " + error.message;
+                    let msg = "Không thể đăng ký: " + error.message;
                     if (error.message.includes('User already registered') || error.message.includes('already_registered')) {
-                        msg = "EMAIL ĐÃ ĐƯỢC ĐĂNG KÝ!";
+                        msg = "Email này đã được đăng ký.";
                     } else if (error.message.includes('Password should be at least 6 characters') || error.message.includes('weak_password')) {
-                        msg = "MẬT KHẨU TỐI THIỂU 6 KÝ TỰ!";
+                        msg = "Mật khẩu cần có ít nhất 6 ký tự.";
                     }
                     err.innerText = msg;
                     err.classList.remove('hidden');
-                    btn.disabled = false; btn.innerText = "ĐĂNG KÝ TÀI KHOẢN";
+                    setLoginButton("Tạo tài khoản");
                     return;
                 }
             }
 
-            btn.disabled = true; btn.innerText = "ĐANG XÁC THỰC...";
+            setLoginButton("Đang đăng nhập…", true);
 
             err.classList.add('hidden');
             
@@ -2648,15 +2882,15 @@ window.TascoAppShell=(()=>{
                 console.log("Login successful!");
             } catch (error) {
                 console.error("Login error:", error);
-                let msg = "SAI TÀI KHOẢN HOẶC MẬT KHẨU!";
-                if (error.code === 'auth/network-request-failed') msg = "LỖI KẾT NỐI MẠNG!";
-                else if (error.code === 'auth/too-many-requests') msg = "QUÁ NHIỀU LẦN THỬ, HÃY ĐỢI GIÂY LÁT!";
+                let msg = "Tài khoản hoặc mật khẩu chưa đúng.";
+                if (error.code === 'auth/network-request-failed') msg = "Không thể kết nối. Kiểm tra mạng rồi thử lại.";
+                else if (error.code === 'auth/too-many-requests') msg = "Bạn đã thử quá nhiều lần. Vui lòng đợi một lát.";
                 else if (error.message) msg = error.message;
                 
                 err.innerText = msg;
                 err.classList.remove('hidden');
             } finally {
-                btn.disabled = false; btn.innerText = "ĐĂNG NHẬP HỆ THỐNG";
+                setLoginButton("Đăng nhập");
             }
         });
 
@@ -3533,7 +3767,7 @@ async function deletePersonalCloudPhotos(ids,owner){
   }
   return result;
 }
-TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
+TascoCloud.configure({mode:'mobile',client:()=>Promise.resolve(supabase),sessionUser:()=>auth.currentUser?{id:auth.currentUser.uid,email:auth.currentUser.email}:null,expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
 window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mobileCloudEmail});
 </script>
 <!-- BOTTOM SHEET FILTER MODAL -->
@@ -4182,7 +4416,7 @@ window.TascoDatePicker=(()=>{
 /* Cloudinary holds the image; Supabase RLS holds the account-owned manifest. */
 window.TascoCloud = (() => {
   const table = 'tasco_personal_photos';
-  const state = {config:null,client:null,user:null,root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map(),selecting:false,selected:new Set(),deleting:false,deleteDialog:null};
+  const state = {config:null,client:null,clientInit:null,authUser:null,authRevision:0,user:null,localReady:false,libraryReady:false,storageStatus:'unknown',storageWarning:'',stage:'',root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map(),selecting:false,selected:new Set(),deleting:false,deleteDialog:null,albums:[],activeAlbumId:null,albumMode:'local',albumNote:'',albumDialog:null};
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const icon = name => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({cloud:'<path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/>',camera:'<path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/>',refresh:'<path d="M20 4v6h-6M4 20v-6h6M4.5 9a8 8 0 0 1 13-5l2.5 3M4 17l2.5 3a8 8 0 0 0 13-5"/>',search:'<circle cx="10" cy="10" r="7"/><path d="m16 16 5 5"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',check:'<path d="m5 12 4 4L19 6"/>'}[name] || '')+'</svg>';
   const stamp = value => new Date(value).toLocaleString('vi-VN',{hour12:false});
@@ -4191,43 +4425,258 @@ window.TascoCloud = (() => {
     node.dataset.cloudTheme=state.config?.mode||'index';node.textContent=message;node.hidden=false;clearTimeout(node._timer);node._timer=setTimeout(()=>node.hidden=true,5000);
   }
   function message(error) {
+    if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error?.message))return 'Phiên đăng nhập đã thay đổi. Kết nối đúng tài khoản Cloud rồi thử lại.';
     if(['42P01','PGRST205'].includes(error?.code)||/tasco_personal_photos.*(schema cache|does not exist)/i.test(error?.message||''))return 'Chưa tạo thư viện ảnh. Chạy file cloud-cua-toi.sql trong Supabase SQL Editor một lần, rồi tải lại.';
     if(error?.code==='42501')return 'Tài khoản chưa có quyền lưu ảnh. Kiểm tra cấu hình cloud-cua-toi.sql trên Supabase.';
     return error?.message || 'Chưa kết nối được Cloud. Kiểm tra mạng rồi thử lại.';
   }
+  function waitFor(work,ms,text,onTimeout) {
+    let timer;
+    const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>{const error=new Error(text);error.code='CLOUD_TIMEOUT';reject(error);onTimeout?.();},ms);});
+    return Promise.race([Promise.resolve().then(work),timeout]).finally(()=>clearTimeout(timer));
+  }
+  function cloudRequest(query,label='tải dữ liệu Cloud') {
+    const controller=new AbortController();
+    return waitFor(()=>typeof query.abortSignal==='function'?query.abortSignal(controller.signal):query,12000,'Quá thời gian '+label+'. Kiểm tra mạng rồi nhấn Thử lại.',()=>controller.abort());
+  }
   let databasePromise;
   function database() {
-    if(!databasePromise)databasePromise=new Promise((resolve,reject)=>{
-      const request=indexedDB.open('tasco-personal-photo-queue',1);
-      request.onupgradeneeded=()=>request.result.createObjectStore('photos',{keyPath:'id'});
-      request.onsuccess=()=>resolve(request.result);request.onerror=()=>{databasePromise=null;reject(new Error('Không lưu được bản ảnh trên thiết bị. Kiểm tra dung lượng và quyền lưu trữ.'));};
-    });return databasePromise;
+    if(databasePromise)return databasePromise;
+    const pending=new Promise((resolve,reject)=>{
+      let request,finished=false;
+      const timer=setTimeout(()=>fail(new Error('Bộ nhớ ảnh trên thiết bị chưa phản hồi. Đóng các tab Cloud cũ rồi nhấn Thử lại.')),8000);
+      function fail(error){if(finished)return;finished=true;clearTimeout(timer);reject(error);}
+      try{request=indexedDB.open('tasco-personal-photo-queue',2);}catch(error){fail(new Error('Không mở được bộ nhớ ảnh. Kiểm tra quyền lưu trữ của trình duyệt rồi thử lại.'));return;}
+      request.onupgradeneeded=()=>{if(finished){request.transaction?.abort();return;}for(const name of ['photos','albums'])if(!request.result.objectStoreNames.contains(name))request.result.createObjectStore(name,{keyPath:'id'});};
+      request.onblocked=()=>fail(new Error('Đóng các tab Cloud cũ rồi nhấn Thử lại để bật album.'));
+      request.onsuccess=()=>{if(finished){request.result.close();return;}finished=true;clearTimeout(timer);request.result.onversionchange=()=>{request.result.close();databasePromise=null;};resolve(request.result);};
+      request.onerror=()=>fail(new Error('Không lưu được bản ảnh trên thiết bị. Kiểm tra dung lượng và quyền lưu trữ.'));
+    });
+    databasePromise=pending;pending.catch(()=>{if(databasePromise===pending)databasePromise=null;});return pending;
   }
-  async function localStore(action,value) {
-    const db=await database();return new Promise((resolve,reject)=>{
-      const tx=db.transaction('photos',action==='getAll'?'readonly':'readwrite'),store=tx.objectStore('photos');
-      const request=action==='getAll'?store.getAll():store[action](value);let result;
-      request.onsuccess=()=>result=request.result;
-      tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error||new Error('Không lưu được ảnh trên thiết bị.'));tx.onabort=()=>reject(tx.error||new Error('Không lưu được ảnh trên thiết bị.'));
+  function transactionResult(tx,result,errorText) {
+    return new Promise((resolve,reject)=>{
+      let finished=false;
+      const finish=(error)=>{if(finished)return;finished=true;clearTimeout(timer);if(error)reject(error);else resolve(result());};
+      const timer=setTimeout(()=>{finish(new Error('Bộ nhớ ảnh phản hồi quá lâu. Đóng các tab Cloud cũ rồi thử lại.'));try{tx.abort?.();}catch(_){}},8000);
+      tx.oncomplete=()=>finish();tx.onerror=()=>finish(tx.error||new Error(errorText));tx.onabort=()=>finish(tx.error||new Error(errorText));
     });
   }
-  async function storeBatch(records){
-    const db=await database();return new Promise((resolve,reject)=>{const tx=db.transaction('photos','readwrite'),store=tx.objectStore('photos');for(const row of records)store.put(row);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('Không đủ dung lượng lưu ảnh. Tải bản ảnh về máy rồi thử lại.'));tx.onabort=()=>reject(tx.error||new Error('Không lưu được ảnh trên thiết bị.'));});
+  async function localStore(action,value,storeName='photos') {
+    const db=await database(),tx=db.transaction(storeName,action==='getAll'?'readonly':'readwrite'),store=tx.objectStore(storeName);
+    const request=action==='getAll'?store.getAll():store[action](value);let result;
+    request.onsuccess=()=>result=request.result;
+    return transactionResult(tx,()=>result,'Không lưu được ảnh trên thiết bị.');
+  }
+  async function storeBatch(records,album=null){
+    const db=await database(),tx=db.transaction(album?['photos','albums']:['photos'],'readwrite'),store=tx.objectStore('photos');for(const row of records)store.put(row);
+    if(album){const albums=tx.objectStore('albums'),request=albums.get(album.id);request.onsuccess=()=>{const current=request.result;if(!current||current.owner_id!==album.owner_id){tx.abort();return;}albums.put({...current,photo_ids:[...new Set([...current.photo_ids,...records.map(row=>row.id)])],updated_at:new Date().toISOString(),needs_sync:true});};}
+    return transactionResult(tx,()=>undefined,'Không đủ dung lượng lưu ảnh. Tải bản ảnh về máy rồi thử lại.');
   }
   function visible(){return state.root?.isConnected&&state.root.querySelector('.personal-cloud');}
-  async function client() {
-    if(!state.client){state.client=await state.config.client();state.client.auth.onAuthStateChange(()=>setTimeout(()=>{if(visible())refresh();},0));}return state.client;
+  function clearAccount() {
+    state.deleteDialog?.cancel();state.albumDialog?.cancel();state.selected.clear();state.selecting=false;state.activeAlbumId=null;state.albums=[];state.pending=[];state.rows=[];state.count=0;state.user=null;state.localReady=false;state.libraryReady=false;state.albumNote='';
+    window.TascoPhotoViewer?.close();clearURLs();
   }
-  async function account() {
-    const api=await client(),result=await api.auth.getUser();
-    if(result.error||!result.data?.user){state.user=null;throw new Error('CLOUD_LOGIN');}
-    const user=result.data.user,expected=String(state.config.expectedEmail?.()||'').trim().toLowerCase();
-    if(!expected||user.email?.toLowerCase()!==expected){state.user=null;throw new Error('CLOUD_ACCOUNT');}
+  async function client() {
+    if(state.client)return state.client;
+    if(!state.clientInit){
+      const init=waitFor(()=>state.config.client(),10000,'Khởi tạo Cloud quá thời gian. Tải lại trang rồi thử kết nối lại.').then(api=>{
+        state.client=api;
+        api.auth.onAuthStateChange((event,session)=>{
+          const previous=state.authUser,next=session?.user||null;
+          state.authUser=next;
+          const changed=previous?.id!==next?.id||previous?.email!==next?.email;
+          if(!changed&&event!=='SIGNED_OUT')return;
+          const authRevision=++state.authRevision;
+          // Do not return a promise or call another SDK method from this callback.
+          setTimeout(()=>{
+            if(authRevision!==state.authRevision)return;
+            if(event==='INITIAL_SESSION'&&state.busy)return;
+            state.revision++;state.busy=false;state.error='';clearAccount();
+            if(visible()){if(next)refresh();else{state.stage='';loginPanel('CLOUD_LOGIN');paint();}}
+          },0);
+        });
+        return api;
+      });
+      state.clientInit=init;init.catch(()=>{if(state.clientInit===init)state.clientInit=null;});
+    }
+    return state.clientInit;
+  }
+  async function account({verify=true}={}) {
+    const api=await client(),authRevision=state.authRevision;
+    let user=verify?null:(state.config.sessionUser?.()||state.authUser);
+    if(!user){
+      const result=await waitFor(()=>api.auth.getUser(),10000,'Phiên Cloud chưa phản hồi. Tải lại trang rồi nhấn Thử kết nối lại.');
+      if(result.error){if(result.error.name==='AuthSessionMissingError'||['session_not_found','refresh_token_not_found'].includes(result.error.code))throw new Error('CLOUD_LOGIN');throw result.error;}
+      user=result.data?.user;
+    }
+    if(authRevision!==state.authRevision&&state.authUser?.id!==user?.id)throw new Error('CLOUD_ACCOUNT');
+    if(!user?.id)throw new Error('CLOUD_LOGIN');
+    const expected=String(state.config.expectedEmail?.()||'').trim().toLowerCase();
+    if(!expected||user.email?.toLowerCase()!==expected)throw new Error('CLOUD_ACCOUNT');
     return user;
   }
   async function pendingFor(owner) {
     return (await localStore('getAll')).filter(row=>row.owner_id===owner).sort((a,b)=>b.captured_at.localeCompare(a.captured_at));
   }
+  function cloudReady(){return Boolean(state.user&&(state.localReady||(state.libraryReady&&state.albumMode==='cloud')));}
+  function deviceUnavailable(error) {
+    state.localReady=false;state.storageStatus='unavailable';
+    state.storageWarning='Bộ nhớ thiết bị chưa sẵn sàng. Cloud vẫn dùng được; giữ màn hình chụp đến khi ảnh mới lưu thành công qua mạng. Ảnh chờ trên máy sẽ hiện lại khi bộ nhớ phục hồi.';
+    console.warn('Bộ nhớ ảnh cục bộ không sẵn sàng:',message(error));
+  }
+  async function readDevice(owner,current) {
+    if(state.storageStatus==='unavailable')return null;
+    try{const pending=await pendingFor(owner);if(!current())return null;state.localReady=true;state.storageStatus='ready';state.storageWarning='';return pending;}
+    catch(error){if(current())deviceUnavailable(error);return null;}
+  }
+  const albumTable='tasco_personal_photo_albums';
+  const albumIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M3 10h18"/></svg>';
+  const plusIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+  const arrowIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
+  const activeAlbum=()=>state.albums.find(row=>row.id===state.activeAlbumId&&row.owner_id===state.user?.id)||null;
+  const visiblePending=()=>state.activeAlbumId?state.pending.filter(row=>row.album_id===state.activeAlbumId):state.pending;
+  const captureContext=()=>{const album=activeAlbum();return album?Object.freeze({albumId:album.id,albumName:album.name,ownerId:album.owner_id}):null;};
+  function missingAlbumSchema(error){return ['42P01','42703','PGRST204','PGRST205'].includes(error?.code);}
+  async function loadAlbums(owner,pending=[],current=()=>true){
+    const check=()=>{if(!current())throw new Error('CLOUD_STALE');};
+    let local=[];
+    if(state.localReady){
+      try{
+        local=(await localStore('getAll',undefined,'albums')).filter(row=>row.owner_id===owner);check();
+        const byId=new Map(local.map(row=>[row.id,row]));
+        for(const photo of pending){
+          if(!photo.album_id)continue;check();
+          let album=byId.get(photo.album_id);
+          if(!album){album={id:photo.album_id,owner_id:owner,name:photo.album_name||photo.title||'Album ảnh',created_at:photo.captured_at,updated_at:photo.captured_at,photo_ids:[],needs_sync:true};byId.set(album.id,album);}
+          if(!album.photo_ids.includes(photo.id)){album.photo_ids.push(photo.id);album.needs_sync=true;await localStore('put',album,'albums');}
+        }
+        local=[...byId.values()];
+      }catch(error){if(error.message==='CLOUD_STALE')throw error;check();deviceUnavailable(error);}
+    }
+    try{
+      const api=await client();
+      check();const listed=await cloudRequest(api.from(albumTable).select('*').eq('owner_id',owner).order('created_at',{ascending:false}),'tải danh sách album');check();if(listed.error)throw listed.error;
+      const members=[];
+      for(let offset=0;;offset+=1000){check();const result=await cloudRequest(api.from(table).select('id,album_id').eq('owner_id',owner).order('id',{ascending:true}).range(offset,offset+999),'tải ảnh trong album');check();if(result.error)throw result.error;members.push(...(result.data||[]));if((result.data||[]).length<1000)break;}
+      const remote=new Map((listed.data||[]).filter(row=>row.owner_id===owner).map(row=>[row.id,row]));
+      const memberMap=new Map(members.map(row=>[row.id,row]));
+      for(const album of local.filter(row=>row.needs_sync)){
+        check();if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
+        const payload={id:album.id,owner_id:owner,name:album.name,created_at:album.created_at,updated_at:album.updated_at};
+        check();const saved=await cloudRequest(api.from(albumTable).upsert(payload,{onConflict:'id'}),'đồng bộ album');check();if(saved.error)throw saved.error;remote.set(album.id,payload);
+        const unassigned=album.photo_ids.filter(id=>memberMap.has(id)&&!memberMap.get(id).album_id);
+        for(let start=0;start<unassigned.length;start+=100){
+          const ids=unassigned.slice(start,start+100);
+          check();const linked=await cloudRequest(api.from(table).update({album_id:album.id}).eq('owner_id',owner).in('id',ids).is('album_id',null).select('id'),'đồng bộ ảnh vào album');check();if(linked.error)throw linked.error;
+          const confirmed=new Set((linked.data||[]).map(row=>row.id));if(ids.some(id=>!confirmed.has(id)))throw new Error('Chưa đồng bộ được album. Album vẫn được giữ trên thiết bị.');
+          for(const id of ids)memberMap.get(id).album_id=album.id;
+        }
+      }
+      const albums=[...remote.values()].map(row=>({...row,photo_ids:[...new Set([...members.filter(photo=>photo.album_id===row.id).map(photo=>photo.id),...pending.filter(photo=>photo.album_id===row.id).map(photo=>photo.id)])],needs_sync:false}));
+      if(state.localReady){
+        try{for(const album of albums){check();await localStore('put',album,'albums');}for(const album of local)if(!remote.has(album.id)&&!album.needs_sync){check();await localStore('delete',album.id,'albums');}}
+        catch(error){if(error.message==='CLOUD_STALE')throw error;check();deviceUnavailable(error);}
+      }
+      return {albums:albums.sort((a,b)=>b.created_at.localeCompare(a.created_at)),mode:'cloud',note:''};
+    }catch(error){
+      if(['CLOUD_LOGIN','CLOUD_ACCOUNT','CLOUD_STALE'].includes(error?.message))throw error;check();
+      if(!state.localReady){if(missingAlbumSchema(error))throw new Error('Chưa tải được bảng album trên Cloud. Kiểm tra dự án Supabase đang cấu hình trong app và quyền truy cập album.');throw error;}
+      return {albums:local.sort((a,b)=>b.created_at.localeCompare(a.created_at)),mode:'local',note:missingAlbumSchema(error)?'Album được lưu trên thiết bị này. Đồng bộ album Cloud chưa được bật.':'Album đang được giữ trên thiết bị để chờ đồng bộ. '+message(error)};
+    }
+  }
+  function resetAlbumFilters(){
+    state.query='';state.date='';state.startTime='';state.endTime='';state.page=0;state.rows=[];state.count=0;state.selecting=false;state.selected.clear();
+    const root=state.root;if(!root)return;
+    root.querySelector('[data-cloud-search]').value='';root.querySelector('[data-cloud-date-label]').textContent='Tất cả ngày';root.querySelector('[data-cloud-date]').dataset.value='';
+  }
+  async function openAlbum(id){
+    if(id&&!state.albums.some(row=>row.id===id&&row.owner_id===state.user?.id)){notify('Album này chưa sẵn sàng. Tải lại rồi thử mở.');return;}
+    state.activeAlbumId=id||null;resetAlbumFilters();paintAlbums();window.scrollTo?.({top:0,behavior:'instant'});await refresh();
+    if(visible())state.root.querySelector('#cloudPageTitle')?.focus({preventScroll:true});
+  }
+  function chooseAlbum(){
+    if(state.activeAlbumId){openAlbum(null).then(scrollToAlbums);return;}
+    if(!state.albums.length){showAlbumCreator();return;}scrollToAlbums();
+  }
+  function scrollToAlbums(){const panel=state.root?.querySelector('.cloud-albums-panel');panel?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});panel?.querySelector('h2')?.focus({preventScroll:true});}
+  function captureAlbum(){if(!cloudReady()){if(!state.busy)refresh();return;}const context=captureContext();if(context)state.config.capture(context.albumName,context);else chooseAlbum();}
+  const albumAttempts=new Map();
+  async function createAlbum(name){
+    name=String(name||'').trim();if(!name||name.length>100)throw new Error('Nhập tên album từ 1 đến 100 ký tự.');
+    const owner=await account();if(owner.id!==state.user?.id)throw new Error('Tài khoản đã thay đổi. Mở lại Cloud trước khi tạo album.');
+    if(state.albums.some(row=>row.owner_id===owner.id&&row.name.toLocaleLowerCase('vi-VN')===name.toLocaleLowerCase('vi-VN')))throw new Error('Tên album này đã có. Chọn tên khác hoặc mở album đã tạo.');
+    const attemptKey=owner.id+':'+name.toLocaleLowerCase('vi-VN');
+    const retry=albumAttempts.get(attemptKey);
+    const now=new Date().toISOString(),album=retry||{id:crypto.randomUUID(),owner_id:owner.id,name,created_at:now,updated_at:now,photo_ids:[],needs_sync:true};
+    if(state.localReady&&!retry)await localStore('put',album,'albums');
+    else{
+      if(!state.libraryReady||state.albumMode!=='cloud')throw new Error('Kết nối album Cloud trước khi tạo album.');
+      albumAttempts.set(attemptKey,album);
+      const api=await client(),payload={id:album.id,owner_id:owner.id,name:album.name,created_at:album.created_at,updated_at:album.updated_at};
+      const result=await cloudRequest(api.from(albumTable).upsert(payload,{onConflict:'id'}).select('*'),'tạo album trên Cloud');if(result.error)throw result.error;
+      if(!Array.isArray(result.data)||!result.data.some(saved=>saved.id===album.id&&saved.owner_id===owner.id))throw new Error('Cloud chưa xác nhận album mới. Tải lại thư viện rồi kiểm tra album.');album.needs_sync=false;
+    }
+    if((await account()).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Mở lại Cloud trước khi tạo album.');state.albums.unshift(album);albumAttempts.delete(attemptKey);await openAlbum(album.id);return album;
+  }
+  function showAlbumCreator(){
+    if(!state.user){notify('Kết nối tài khoản Cloud trước khi tạo album.');return;}
+    if(state.albumDialog)return;
+    const owner=state.user.id,focus=document.activeElement,overlay=document.createElement('div'),controller=new AbortController();let saving=false;
+    overlay.className='cloud-album-overlay';overlay.innerHTML=`<section class="cloud-album-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudAlbumDialogTitle" aria-describedby="cloudAlbumDialogCopy"><header><span class="cloud-album-dialog-icon">${albumIcon}</span><button type="button" data-album-close aria-label="Đóng">${icon('close')}</button></header><h2 id="cloudAlbumDialogTitle">Tạo album mới</h2><p id="cloudAlbumDialogCopy">Mở album rồi chụp. Tất cả ảnh trong phiên chụp sẽ tự lưu vào album đó.</p><form><label for="cloudAlbumName">Tên album</label><input id="cloudAlbumName" name="albumName" maxlength="100" required autocomplete="off" placeholder="VD: Hồ sơ xe 51A · Nguyễn Văn A"><p data-album-error role="alert" hidden></p><footer><button type="button" data-album-close>Hủy</button><button type="submit" data-album-submit>${plusIcon}Tạo và mở album</button></footer></form></section>`;
+    const form=overlay.querySelector('form'),input=overlay.querySelector('input'),submit=overlay.querySelector('[data-album-submit]'),errorNode=overlay.querySelector('[data-album-error]');
+    const oldOverflow=document.body.style.overflow;
+    function close(force=false){if(saving&&!force)return;controller.abort();overlay.remove();document.body.style.overflow=oldOverflow;state.albumDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
+    state.albumDialog={cancel:()=>close(true)};
+    overlay.addEventListener('click',event=>{if(event.target===overlay||event.target.closest('[data-album-close]'))close();},{signal:controller.signal});
+    overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();}if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button:not(:disabled),input:not(:disabled)')];if(event.shiftKey&&document.activeElement===nodes[0]){event.preventDefault();nodes.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0].focus();}}},{signal:controller.signal});
+    form.onsubmit=async event=>{
+      event.preventDefault();if(saving)return;if(state.user?.id!==owner){close(true);notify('Tài khoản đã thay đổi. Hãy mở lại Cloud.');return;}
+      saving=true;submit.disabled=true;input.disabled=true;errorNode.hidden=true;submit.textContent='Đang tạo album…';
+      try{const album=await createAlbum(input.value);close(true);state.root?.querySelector('#cloudPageTitle')?.focus({preventScroll:true});notify('Đã mở album “'+album.name+'”.');}
+      catch(error){errorNode.textContent=message(error);errorNode.hidden=false;}
+      finally{saving=false;submit.disabled=false;input.disabled=false;submit.innerHTML=plusIcon+'Tạo và mở album';}
+    };
+    document.body.style.overflow='hidden';document.body.append(overlay);input.focus();
+  }
+  function paintAlbums(){
+    const root=state.root;if(!visible()||state.config.mode!=='mobile')return;const album=activeAlbum(),context=root.querySelector('[data-cloud-album-current]');
+    context.hidden=Boolean(album);
+    root.querySelector('[data-action="album-back"]').setAttribute('aria-label',album?'Quay lại Cloud của tôi':'Quay về trang chủ');
+    root.querySelector('#cloudPageTitle').textContent=album?album.name:'Cloud của tôi';
+    root.querySelector('[data-cloud-eyebrow]').textContent=album?'ALBUM ẢNH HỒ SƠ':'KHÔNG GIAN LƯU TRỮ CỦA BẠN';
+    root.querySelector('[data-cloud-intro]').textContent=album?'Ảnh mới tự động lưu vào album đang mở.':'Tạo album theo hồ sơ, mở album rồi bắt đầu chụp.';
+    context.querySelector('small').textContent=album?'ĐANG CHỤP VÀO ALBUM':'CHỤP VÀ LƯU THEO ALBUM';
+    context.querySelector('strong').textContent=album?album.name:'Chọn hoặc tạo album';
+    context.querySelector('[data-album-change-label]').textContent=album?'Đổi album':'Chọn album';context.disabled=!cloudReady();
+    const panel=root.querySelector('.cloud-albums-panel');panel.hidden=Boolean(album);
+    const note=root.querySelector('[data-album-note]');note.textContent=state.albumNote;note.hidden=!state.albumNote;
+    root.querySelector('[data-action="new-album"]').disabled=!cloudReady()||state.busy;
+    const list=root.querySelector('[data-album-list]');
+    list.innerHTML=state.albums.length?state.albums.map(row=>`<button type="button" class="cloud-album-card" data-action="open-album" data-id="${esc(row.id)}" aria-label="Mở album ${esc(row.name)}, ${row.photo_ids.length} ảnh"><span class="cloud-album-card-top"><span class="cloud-album-symbol">${albumIcon}</span>${arrowIcon}</span><strong>${esc(row.name)}</strong><span>${row.photo_ids.length} ảnh <span aria-hidden="true">·</span> ${esc(new Date(row.created_at).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'}))}</span></button>`).join(''):`<div class="cloud-albums-empty"><span>${albumIcon}</span><div><strong>${state.busy?'Đang tải album…':'Mỗi hồ sơ, một album'}</strong><p>${state.busy?'Album của bạn sẽ xuất hiện tại đây.':'Tạo album để giữ ảnh cùng hồ sơ trong một nơi.'}</p></div></div>`;
+    root.querySelector('[data-cloud-library-heading]').textContent=album?'Ảnh trong album':'Tất cả ảnh';
+    const search=root.querySelector('[data-cloud-search]');search.placeholder=album?'Tìm ảnh trong album…':'Tìm nội dung, địa điểm…';search.setAttribute('aria-label',album?'Tìm ảnh trong album '+album.name:'Tìm ảnh');
+    const label=root.querySelector('[data-cloud-capture-label]');label.textContent=cloudReady()?(album?'Chụp vào album':'Chọn album để chụp'):state.busy?'Đang kết nối…':state.error?'Thử kết nối lại':'Kết nối để chụp';
+    root.querySelector('[data-album-status]').textContent=album?(state.albumMode==='cloud'?'Album đã đồng bộ Cloud':state.albumNote):'';
+    root.querySelector('[data-album-status]').hidden=!album;
+  }
+  async function localAlbumPhotos(api,owner,album,current=()=>true){
+    const rows=[];const pendingIds=new Set(state.pending.map(row=>row.id)),ids=album.photo_ids.filter(id=>!pendingIds.has(id));
+    for(let start=0;start<ids.length;start+=100){
+      let query=api.from(table).select('*').eq('owner_id',owner).in('id',ids.slice(start,start+100));
+      if(!current())throw new Error('CLOUD_STALE');query=filterPhotoQuery(query);const result=await cloudRequest(query,'tải ảnh trong album');if(result.error)throw result.error;rows.push(...(result.data||[]));
+    }
+    rows.sort((a,b)=>b.captured_at.localeCompare(a.captured_at)||b.id.localeCompare(a.id));return {data:rows.slice(state.page*48,state.page*48+48),count:rows.length};
+  }
+  function filterPhotoQuery(query){
+    const term=state.query.replace(/[,%()\\]/g,' ').trim().slice(0,160);if(term)query=query.or('title.ilike.%'+term+'%,address.ilike.%'+term+'%');
+    if(state.date){const from=new Date(state.date+'T'+(state.startTime||'00:00')+':00'),to=state.endTime?new Date(state.date+'T'+state.endTime+':00'):new Date(from);if(state.endTime)to.setTime(to.getTime()+60000);else to.setDate(to.getDate()+1);query=query.gte('captured_at',from.toISOString()).lt('captured_at',to.toISOString());}return query;
+  }
+  async function removeAlbumPhotoIds(ids,owner){
+    if(!ids.size)return;for(const album of (await localStore('getAll',undefined,'albums')).filter(row=>row.owner_id===owner)){const kept=album.photo_ids.filter(id=>!ids.has(id));if(kept.length!==album.photo_ids.length)await localStore('put',{...album,photo_ids:kept},'albums');}
+  }
+
   function config() {
     const value=state.config.cloudinary();
     if(!/^[a-z0-9_-]+$/i.test(value.cloudName||'')||!value.preset)throw new Error('Chưa có cấu hình Cloudinary. Mở Quản trị System → Cloudinary trong app gốc để kiểm tra.');
@@ -4242,28 +4691,28 @@ window.TascoCloud = (() => {
   function previewURL(url,size=360){return url.replace(/\/image\/upload\/(?!s--)/,'/image/upload/c_fill,w_'+size+',h_'+size+',q_auto,f_auto/');}
   function configure(options) {state.config=options;}
   function mount(root) {
-    state.deleteDialog?.cancel();state.selecting=false;state.selected.clear();
+    state.deleteDialog?.cancel();state.albumDialog?.cancel();state.selecting=false;state.selected.clear();
     window.TascoPhotoViewer?.close();
     window.TascoDatePicker?.close();
-    clearURLs();state.root=root;state.page=0;state.query='';state.date='';state.startTime='';state.endTime='';state.rows=[];state.pending=[];
+    clearURLs();state.root=root;state.page=0;state.query='';state.date='';state.startTime='';state.endTime='';state.rows=[];state.pending=[];state.albums=[];state.activeAlbumId=null;state.albumMode='local';state.albumNote='';state.localReady=false;state.libraryReady=false;
     const searchField=`<label class="cloud-search">${icon('search')}<input type="search" data-cloud-search placeholder="${state.config.mode==='mobile'?'Tìm nội dung, địa điểm…':'Tìm theo nội dung hoặc địa điểm…'}" aria-label="Tìm ảnh"></label>`;
     const dateField='<div class="cloud-date"><span>Ngày chụp</span><button type="button" data-cloud-date data-action="date" class="cloud-date-trigger" aria-label="Chọn ngày và giờ chụp"><span data-cloud-date-label>Tất cả ngày</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></button></div>';
     const reloadButton=`<button class="cloud-button" type="button" data-action="refresh" aria-label="Tải lại thư viện" title="Tải lại thư viện">${icon('refresh')}</button>`;
-    const titleField='<label class="cloud-title-field"><span>Tên ảnh mới</span><input data-cloud-title maxlength="160" placeholder="VD: Hồ sơ xe 51A…" aria-label="Tên ảnh mới trước khi chụp"></label>';
     const mobileHeader=`<header class="cloud-hero" aria-labelledby="cloudPageTitle">
-  <div class="cloud-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · THƯ VIỆN CÁ NHÂN</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div>
-  <div class="cloud-hero-copy"><span class="cloud-eyebrow">KHÔNG GIAN LƯU TRỮ CỦA BẠN</span><h1 id="cloudPageTitle" tabindex="-1">Cloud của tôi</h1><p>Ảnh hồ sơ, lưu theo ngày và địa điểm.</p></div>
+  <div class="cloud-journey-top"><button type="button" data-action="album-back" aria-label="Quay lại Cloud hoặc trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · THƯ VIỆN CÁ NHÂN</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div>
+  <div class="cloud-hero-copy"><span class="cloud-eyebrow" data-cloud-eyebrow>KHÔNG GIAN LƯU TRỮ CỦA BẠN</span><h1 id="cloudPageTitle" tabindex="-1">Cloud của tôi</h1><p data-cloud-intro>Tạo album theo hồ sơ, mở album rồi bắt đầu chụp.</p></div>
   <div class="cloud-hero-icon" aria-hidden="true">${icon('cloud')}</div>
   <div class="cloud-hero-actions"><button type="button" class="cloud-button cloud-primary" data-action="capture" disabled>${icon('camera')}<span data-cloud-capture-label>Đang kết nối…</span><svg class="cloud-capture-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div>
-  <details class="cloud-capture-name"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 5 5L9 20H4v-5L16 3ZM13 6l5 5"/></svg><span>Đặt tên ảnh mới</span><svg class="cloud-name-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="cloud-capture-name-field">${titleField}<small>Bỏ trống để dùng tên “Ảnh của tôi”.</small></div></details>
+  <button type="button" class="cloud-album-current" data-cloud-album-current data-action="choose-album" disabled>${albumIcon}<span><small>CHỤP VÀ LƯU THEO ALBUM</small><strong>Chọn hoặc tạo album</strong></span><span data-album-change-label>Chọn album</span>${arrowIcon}</button>
 </header>`;
     root.innerHTML=`<section class="personal-cloud" data-cloud-theme="${state.config.mode}">
       ${state.config.mode==='mobile'?mobileHeader:`<header class="cloud-hero"><div class="cloud-hero-icon">${icon('cloud')}</div><div class="cloud-hero-copy"><span class="cloud-eyebrow">TASCO DLK · THƯ VIỆN CÁ NHÂN</span><h1>Cloud của tôi</h1><p>${state.config.mode==='mobile'?'Lưu ảnh có ngày giờ và địa điểm. Quản lý mọi ảnh trong một nơi.':'Ảnh chụp có ngày giờ và địa điểm, lưu trên Cloudinary của bạn.'}</p></div><div class="cloud-hero-actions">${state.config.mode==='mobile'?`<button type="button" class="cloud-button cloud-primary" data-action="capture" disabled>${icon('camera')}Chụp ảnh</button>`:`<a class="cloud-button cloud-primary" href="mobile.html" target="_blank" rel="noopener">${icon('camera')}Mở camera mobile</a>`}</div></header>`}
       ${state.config.mode==='mobile'?`<div class="cloud-control-panel"><div class="cloud-panel-heading"><h2>Tìm ảnh đã lưu</h2><button type="button" class="cloud-clear-filters" data-action="clear-filters" hidden>${icon('close')}Xóa lọc</button></div><div class="cloud-toolbar">${searchField}</div><div class="cloud-details-row">${dateField}${reloadButton}</div></div>`:`<div class="cloud-toolbar">${searchField}${dateField}${reloadButton}</div>`}
-      <div class="cloud-account-line"><span data-cloud-account>Đang kết nối tài khoản…</span><span data-cloud-target></span></div>
+      <div class="cloud-account-line"${state.config.mode==='mobile'?' hidden':''}><span data-cloud-account>Đang kết nối tài khoản…</span><span data-cloud-target></span></div>
       <div class="cloud-login" hidden></div>
       <div class="cloud-feedback" role="status" aria-live="polite" hidden></div>
-      <div class="cloud-pending" hidden></div><div class="cloud-gallery-heading"><h2>Thư viện ảnh</h2><div class="cloud-gallery-actions"><span data-cloud-total>0 ảnh</span><button class="cloud-button" type="button" data-action="selection" disabled>${icon('check')}<span data-selection-label>Chọn ảnh</span></button></div></div><div class="cloud-selection-bar" data-cloud-selection hidden><strong data-selected-count role="status" aria-live="polite">Đã chọn 0 ảnh</strong><div><button type="button" class="cloud-button" data-action="select-all">Chọn ảnh đã tải</button><button type="button" class="cloud-button" data-action="deselect-all">Bỏ chọn</button><button type="button" class="cloud-button cloud-delete-selected" data-action="delete-selected" disabled>${icon('trash')}<span>Xoá (0)</span></button></div></div><div class="cloud-grid"><div class="cloud-empty cloud-loading" role="status"><span class="cloud-loading-spinner" aria-hidden="true"></span><h2>Đang tải thư viện</h2><p>Đang tìm ảnh đã lưu trong tài khoản của bạn…</p></div></div><button class="cloud-button cloud-more" type="button" data-action="more" hidden>Xem thêm ảnh</button>
+      <p data-album-status hidden></p><section class="cloud-albums-panel"><div class="cloud-album-heading"><h2 id="cloudAlbumsTitle" tabindex="-1">Album của bạn</h2><button class="cloud-button" type="button" data-action="new-album" disabled>${plusIcon}Tạo album</button></div><p data-album-note hidden></p><div data-album-list></div></section>
+      <div class="cloud-pending" hidden></div><div class="cloud-gallery-heading"><h2 data-cloud-library-heading>Tất cả ảnh</h2><div class="cloud-gallery-actions"><span data-cloud-total>0 ảnh</span><button class="cloud-button" type="button" data-action="selection" disabled>${icon('check')}<span data-selection-label>Chọn ảnh</span></button></div></div><div class="cloud-selection-bar" data-cloud-selection hidden><strong data-selected-count role="status" aria-live="polite">Đã chọn 0 ảnh</strong><div><button type="button" class="cloud-button" data-action="select-all">Chọn ảnh đã tải</button><button type="button" class="cloud-button" data-action="deselect-all">Bỏ chọn</button><button type="button" class="cloud-button cloud-delete-selected" data-action="delete-selected" disabled>${icon('trash')}<span>Xoá (0)</span></button></div></div><div class="cloud-grid"><div class="cloud-empty cloud-loading" role="status"><span class="cloud-loading-spinner" aria-hidden="true"></span><h2>Đang tải thư viện</h2><p>Đang tìm ảnh đã lưu trong tài khoản của bạn…</p></div></div><button class="cloud-button cloud-more" type="button" data-action="more" hidden>Xem thêm ảnh</button>
     </section>`;
     root.onclick=event=>{
       const button=event.target.closest('[data-action]');if(!button||!root.contains(button))return;
@@ -4271,14 +4720,18 @@ window.TascoCloud = (() => {
       if(button.disabled||state.deleting)return;
       if(action==='selection'){state.selecting=!state.selecting;state.selected.clear();paintSelection();}
       if(action==='select'&&state.selecting)toggleSelection(button.dataset.id);
-      if(action==='select-all'){for(const row of [...state.rows,...state.pending])state.selected.add(row.id);paintSelection();}
+      if(action==='select-all'){for(const row of [...state.rows,...visiblePending()])state.selected.add(row.id);paintSelection();}
       if(action==='deselect-all'){state.selected.clear();paintSelection();}
       if(action==='delete-selected')requestDelete([...state.selected]);
       
-      if(action==='capture'&&state.user)state.config.capture(root.querySelector('[data-cloud-title]')?.value.trim()||'Ảnh của tôi');
+      if(action==='capture')captureAlbum();
+      if(action==='new-album')showAlbumCreator();
+      if(action==='choose-album')chooseAlbum();
+      if(action==='open-album'){clearTimeout(timer);openAlbum(button.dataset.id);}
+      if(action==='album-back'){clearTimeout(timer);if(state.activeAlbumId)openAlbum(null);else window.updateView('home');}
       if(action==='date')TascoDatePicker.open({theme:state.config.mode,value:{date:state.date,startTime:state.startTime,endTime:state.endTime},onChange:value=>{if(state.root!==root||!root.isConnected)return;Object.assign(state,value);state.page=0;const label=root.querySelector('[data-cloud-date-label]');label.textContent=TascoDatePicker.label(value);if(value.startTime){const time=document.createElement('small');time.textContent=value.startTime+' – '+value.endTime;label.append(time);}root.querySelector('[data-cloud-date]').dataset.value=value.date;refresh();}});
-      if(action==='clear-filters'){clearTimeout(timer);state.query='';state.date='';state.startTime='';state.endTime='';state.page=0;root.querySelector('[data-cloud-search]').value='';root.querySelector('[data-cloud-date-label]').textContent='Tất cả ngày';root.querySelector('[data-cloud-date]').dataset.value='';refresh();}
-      if(action==='refresh')refresh();if(action==='retry')processQueue();if(action==='more'){state.page=Math.floor(state.rows.length/48);refresh(true);}
+      if(action==='clear-filters'){clearTimeout(timer);resetAlbumFilters();refresh();}
+      if(action==='refresh'){state.storageStatus='unknown';refresh();}if(action==='retry')processQueue();if(action==='more'){state.page=Math.floor(state.rows.length/48);refresh(true);}
       if(action==='open'&&state.selecting){toggleSelection(button.dataset.id);return;}
       if(action==='open'){const row=[...state.pending,...state.rows].find(item=>item.id===button.dataset.id);if(row)openPhoto(row);}
       if(action==='download-pending'){const row=state.pending.find(item=>item.id===button.dataset.id);if(row?.blob)downloadBlob(row.blob,row.file_name);}
@@ -4293,17 +4746,17 @@ window.TascoCloud = (() => {
     panel.innerHTML=`<h2>Kết nối tài khoản Cloud</h2><p>${kind==='CLOUD_ACCOUNT'?'Phiên Cloud hiện tại thuộc tài khoản khác. ':' '}Đăng nhập bằng tài khoản của bạn để lưu và đồng bộ ảnh.</p><form><label>Email<input name="email" type="email" required autocomplete="username" value="${esc(expected)}" readonly></label><label>Mật khẩu<input name="password" type="password" required autocomplete="current-password"></label><button class="cloud-button cloud-primary" type="submit">Kết nối Cloud</button><span class="cloud-login-error" role="alert"></span></form>`;
     panel.querySelector('form').onsubmit=async event=>{
       event.preventDefault();const form=event.currentTarget,button=form.querySelector('button'),errorNode=panel.querySelector('[role="alert"]');button.disabled=true;errorNode.textContent='';
-      try{const api=await client();const result=await api.auth.signInWithPassword({email:expected,password:form.elements.password.value});if(result.error)throw result.error;form.elements.password.value='';await refresh();}catch(error){errorNode.textContent=message(error);}finally{button.disabled=false;}
+      try{const api=await client();const result=await waitFor(()=>api.auth.signInWithPassword({email:expected,password:form.elements.password.value}),15000,'Kết nối tài khoản quá thời gian. Kiểm tra mạng rồi thử lại.');if(result.error)throw result.error;form.elements.password.value='';await refresh();}catch(error){errorNode.textContent=message(error);}finally{button.disabled=false;}
     };
   }
   function photoActions(row){return `<label class="cloud-photo-select" data-checked="false" hidden><input type="checkbox" data-action="select" data-id="${esc(row.id)}" data-photo-title="${esc(row.title||'Ảnh của tôi')}" aria-label="Chọn ảnh ${esc(row.title||'Ảnh của tôi')}">${icon('check')}</label>`;}
-  function toggleSelection(id){if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);paintSelection();}
+  function toggleSelection(id){if(![...state.rows,...visiblePending()].some(row=>row.id===id))return;if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);paintSelection();}
   function paintSelection(){
     const root=state.root;if(!visible())return;root.querySelector('.personal-cloud').dataset.selecting=String(state.selecting);
     const bar=root.querySelector('[data-cloud-selection]');bar.hidden=!state.selecting;
     root.querySelector('[data-selected-count]').textContent='Đã chọn '+state.selected.size+' ảnh';
     root.querySelector('[data-selection-label]').textContent=state.selecting?'Xong':'Chọn ảnh';
-    const selectionButton=root.querySelector('[data-action="selection"]');selectionButton.disabled=state.deleting||(!state.selecting&&(state.busy||!state.user||(!state.rows.length&&!state.pending.length)));selectionButton.setAttribute('aria-pressed',String(state.selecting));
+    const selectionButton=root.querySelector('[data-action="selection"]');selectionButton.disabled=state.deleting||(!state.selecting&&(state.busy||!state.user||(!state.rows.length&&!visiblePending().length)));selectionButton.setAttribute('aria-pressed',String(state.selecting));
     const remove=root.querySelector('[data-action="delete-selected"]');remove.disabled=!state.selected.size||state.deleting||state.uploading;remove.querySelector('span').textContent='Xoá ('+state.selected.size+')';
     for(const card of root.querySelectorAll('[data-photo-id]')){const selected=state.selected.has(card.dataset.photoId);card.classList.toggle('is-selected',selected);const check=card.querySelector('.cloud-photo-select'),input=check.querySelector('input');check.hidden=!state.selecting;check.dataset.checked=String(selected);input.checked=selected;input.disabled=state.deleting;const image=card.querySelector('.cloud-photo-image');image.dataset.viewLabel||=image.getAttribute('aria-label');if(state.selecting){image.setAttribute('aria-label',(selected?'Bỏ chọn ảnh ':'Chọn ảnh ')+input.dataset.photoTitle);image.setAttribute('aria-pressed',String(selected));}else{image.setAttribute('aria-label',image.dataset.viewLabel);image.removeAttribute('aria-pressed');}}
     for(const button of bar.querySelectorAll('button:not([data-action="delete-selected"])'))button.disabled=state.deleting;
@@ -4327,38 +4780,54 @@ window.TascoCloud = (() => {
   }
   function paint() {
     const root=state.root;if(!visible())return;
-    root.querySelector('[data-cloud-account]').textContent=state.user?state.user.email+' · '+state.count+' ảnh'+(state.pending.length?' · '+state.pending.length+' chờ đồng bộ':''):'Chưa kết nối Cloud';
-    root.querySelector('[data-cloud-target]').textContent='Cloudinary · '+config().cloudName;
+    root.querySelector('[data-cloud-account]').textContent=state.user?state.user.email+' · '+state.count+' ảnh'+(state.pending.length?' · '+state.pending.length+' chờ đồng bộ':''):state.busy?state.stage:'Chưa kết nối Cloud';
+    const target=root.querySelector('[data-cloud-target]');if(target){try{target.textContent='Cloudinary · '+config().cloudName;}catch(_){target.textContent='';}}
     const total=root.querySelector('[data-cloud-total]');if(total)total.textContent=state.count+' ảnh';
-    const feedback=root.querySelector('.cloud-feedback');feedback.textContent=state.error||(state.busy&&state.rows.length?'Đang tải thêm ảnh…':'');feedback.hidden=!feedback.textContent;feedback.dataset.error=Boolean(state.error);
+    const feedback=root.querySelector('.cloud-feedback');feedback.textContent=state.error||(state.busy?state.stage:state.config.mode==='mobile'?'':state.storageWarning);feedback.hidden=!feedback.textContent;feedback.dataset.error=Boolean(state.error);
     const clear=root.querySelector('[data-action="clear-filters"]');if(clear)clear.hidden=!Boolean(state.query.trim()||state.date);
     const reload=root.querySelector('[data-action="refresh"]');reload.disabled=state.busy;reload.setAttribute('aria-busy',String(state.busy));
-    const capture=root.querySelector('[data-action="capture"]');if(capture){capture.disabled=!state.user;const label=capture.querySelector('[data-cloud-capture-label]');if(label)label.textContent=state.user?'Chụp ảnh hồ sơ':state.busy?'Đang kết nối…':'Kết nối để chụp';}
+    const capture=root.querySelector('[data-action="capture"]');if(capture){capture.disabled=!cloudReady()&&(state.busy||!state.error);const label=capture.querySelector('[data-cloud-capture-label]');if(label)label.textContent=cloudReady()?(activeAlbum()?'Chụp vào album':'Chọn album để chụp'):state.busy?'Đang kết nối…':state.error?'Thử kết nối lại':'Kết nối để chụp';}
     const grid=root.querySelector('.personal-cloud>.cloud-grid');grid.innerHTML=gallery(state.rows);
-    if(!state.rows.length&&state.busy)grid.innerHTML='<div class="cloud-empty cloud-loading" role="status"><span class="cloud-loading-spinner" aria-hidden="true"></span><h2>Đang tải thư viện</h2><p>Đang tìm ảnh đã lưu trong tài khoản của bạn…</p></div>';
+    if(!state.rows.length&&state.busy)grid.innerHTML='<div class="cloud-empty cloud-loading" role="status"><span class="cloud-loading-spinner" aria-hidden="true"></span><h2>Đang tải thư viện</h2><p>'+esc(state.stage)+'</p></div>';
     if(!state.rows.length&&!state.busy&&!state.error&&state.user){
-      const filtered=Boolean(state.query.trim()||state.date);
-      grid.innerHTML=`<div class="cloud-empty"><span class="cloud-empty-symbol" aria-hidden="true">${icon(filtered?'search':'cloud')}</span><h2>${filtered?'Không tìm thấy ảnh phù hợp':'Lưu lại hồ sơ đầu tiên'}</h2><p>${filtered?'Thử từ khóa khác hoặc xóa bộ lọc để xem toàn bộ thư viện.':'Chụp ảnh có ngày giờ và địa điểm. Mọi ảnh sẽ được lưu trong tài khoản của bạn.'}</p><button class="cloud-button" type="button" data-action="${filtered?'clear-filters':'capture'}">${icon(filtered?'close':'camera')}${filtered?'Xóa bộ lọc':'Chụp ảnh đầu tiên'}</button></div>`;
+      const filtered=Boolean(state.query.trim()||state.date),album=activeAlbum();
+      grid.innerHTML=`<div class="cloud-empty"><span class="cloud-empty-symbol" aria-hidden="true">${icon(filtered?'search':'cloud')}</span><h2>${filtered?'Không tìm thấy ảnh phù hợp':album?'Album chưa có ảnh':'Lưu ảnh theo từng album'}</h2><p>${filtered?'Thử từ khóa khác hoặc xóa bộ lọc để xem các ảnh.':album?'Chụp ảnh ngay tại đây. Cả loạt ảnh sẽ tự vào album đang mở.':'Tạo album theo từng hồ sơ để lưu và tìm lại ảnh dễ hơn.'}</p><button class="cloud-button" type="button" data-action="${filtered?'clear-filters':album?'capture':state.albums.length?'choose-album':'new-album'}">${filtered?icon('close'):album?icon('camera'):albumIcon}${filtered?'Xóa bộ lọc':album?'Chụp ảnh đầu tiên':state.albums.length?'Chọn album để chụp':'Tạo album đầu tiên'}</button></div>`;
     }
-    if(!state.rows.length&&!state.busy&&state.error)grid.innerHTML=`<div class="cloud-empty"><span class="cloud-empty-symbol" aria-hidden="true">${icon('cloud')}</span><h2>Chưa thể tải ảnh</h2><p>Kiểm tra kết nối rồi tải lại thư viện.</p><button class="cloud-button" type="button" data-action="refresh">${icon('refresh')}Thử lại</button></div>`;
-    const pending=root.querySelector('.cloud-pending');pending.hidden=!state.pending.length;pending.innerHTML=state.pending.length?`<div class="cloud-pending-heading"><div><h2>${state.pending.length} ảnh chờ đồng bộ</h2><p>Bản ảnh được giữ trên thiết bị này cho đến khi lưu thành công.</p></div><button class="cloud-button" type="button" data-action="retry" ${state.uploading?'disabled':''}>${icon('refresh')}${state.uploading?'Đang lưu…':'Thử đồng bộ lại'}</button></div><div class="cloud-grid">${state.pending.map(row=>card(row,true)).join('')}</div>`:'';
+    if(!state.rows.length&&!state.busy&&state.error)grid.innerHTML=`<div class="cloud-empty"><span class="cloud-empty-symbol" aria-hidden="true">${icon('cloud')}</span><h2>Chưa thể tải ảnh</h2><p>${esc(state.error)}</p><button class="cloud-button" type="button" data-action="refresh">${icon('refresh')}Thử lại</button></div>`;
+    const scopedPending=visiblePending(),pending=root.querySelector('.cloud-pending');pending.hidden=!scopedPending.length;pending.innerHTML=scopedPending.length?`<div class="cloud-pending-heading"><div><h2>${scopedPending.length} ảnh chờ đồng bộ</h2><p>Bản ảnh được giữ trên thiết bị này cho đến khi lưu thành công.</p></div><button class="cloud-button" type="button" data-action="retry" ${state.uploading?'disabled':''}>${icon('refresh')}${state.uploading?'Đang lưu…':'Thử đồng bộ lại'}</button></div><div class="cloud-grid">${scopedPending.map(row=>card(row,true)).join('')}</div>`:'';
     root.querySelector('[data-action="more"]').hidden=state.rows.length>=state.count||!state.user||Boolean(state.error);
-    paintSelection();
-    window.dispatchEvent(new CustomEvent('tasco:cloud-summary',{detail:{email:state.user?.email||state.config.expectedEmail?.()||'',ready:Boolean(state.user),count:state.count,pending:state.pending.length,busy:state.busy,error:state.error||(!state.user&&!state.busy?'Chưa kết nối tài khoản Cloud':''),filtered:Boolean(state.query||state.date),photos:state.rows.slice(0,3).map(row=>({id:row.id,title:row.title,url:previewURL(thumbnail(row),280),capturedAt:row.captured_at}))}}));
+    paintSelection();paintAlbums();
+    window.dispatchEvent(new CustomEvent('tasco:cloud-summary',{detail:{email:state.user?.email||state.config.expectedEmail?.()||'',ready:cloudReady(),count:state.count,pending:state.pending.length,busy:state.busy,error:state.error||(!state.user&&!state.busy?'Chưa kết nối tài khoản Cloud':''),filtered:Boolean(state.query||state.date||state.activeAlbumId),albumName:activeAlbum()?.name||'',photos:state.rows.slice(0,3).map(row=>({id:row.id,title:row.title,url:previewURL(thumbnail(row),280),capturedAt:row.captured_at}))}}));
   }
   async function refresh(append=false) {
-    if(!visible())return;const revision=++state.revision;state.busy=true;state.error='';if(!append){state.rows=[];state.page=0;state.selected.clear();}
+    if(!visible())return;
+    const revision=++state.revision;state.busy=true;state.error='';state.localReady=false;state.libraryReady=false;state.stage='Đang kiểm tra phiên Cloud…';
+    if(!append){state.rows=[];state.page=0;state.selected.clear();state.count=0;}
+    const current=()=>revision===state.revision&&visible();
+    const advance=label=>{if(!current())throw new Error('CLOUD_STALE');state.stage=label;paint();};
+    const watchdog=setTimeout(()=>{if(!current())return;state.revision++;state.busy=false;state.error='Cloud chưa phản hồi ở bước: '+state.stage.replace(/…$/,'')+'. Nhấn Thử lại để kết nối lại.';state.stage='';paint();},35000);
     try {
-      const owner=await account();if(revision!==state.revision||!visible())return;
-      if(state.user?.id!==owner.id){state.deleteDialog?.cancel();state.selected.clear();state.selecting=false;window.TascoPhotoViewer?.close();clearURLs();state.rows=[];}state.user=owner;state.root.querySelector('.cloud-login').hidden=true;
-      state.pending=await pendingFor(owner.id);if(revision!==state.revision||!visible())return;paint();
-      const api=await client();let query=api.from(table).select('*',{count:'exact'}).eq('owner_id',owner.id).order('captured_at',{ascending:false}).order('id',{ascending:false});
-      const term=state.query.replace(/[,%()\\]/g,' ').trim().slice(0,160);if(term)query=query.or('title.ilike.%'+term+'%,address.ilike.%'+term+'%');
-      if(state.date){const from=new Date(state.date+'T'+(state.startTime||'00:00')+':00'),to=state.endTime?new Date(state.date+'T'+state.endTime+':00'):new Date(from);if(state.endTime)to.setTime(to.getTime()+60000);else to.setDate(to.getDate()+1);query=query.gte('captured_at',from.toISOString()).lt('captured_at',to.toISOString());}
-      const result=await query.range(state.page*48,state.page*48+47);if(result.error)throw result.error;
-      if(revision!==state.revision)return;state.rows=append?[...state.rows,...result.data]:result.data||[];state.count=result.count??state.rows.length;
-    }catch(error){if(revision!==state.revision)return;if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)){window.TascoPhotoViewer?.close();clearURLs();state.deleteDialog?.cancel();state.selected.clear();state.selecting=false;state.user=null;state.rows=[];state.pending=[];state.count=0;loginPanel(error.message);}else state.error=message(error);}
-    finally{if(revision===state.revision){state.busy=false;paint();}}
+      paint();
+      const owner=await account({verify:false});if(!current())return;
+      if(state.user?.id!==owner.id)clearAccount();state.user=owner;state.root.querySelector('.cloud-login').hidden=true;
+      advance('Đang mở bộ nhớ ảnh trên thiết bị…');
+      const pending=await readDevice(owner.id,current);if(!current())return;state.pending=pending||state.pending.filter(row=>row.owner_id===owner.id);
+      advance('Đang tải album của bạn…');
+      const catalog=await loadAlbums(owner.id,state.pending,current);if(!current())return;Object.assign(state,{albums:catalog.albums,albumMode:catalog.mode,albumNote:catalog.note});
+      if(state.activeAlbumId&&!activeAlbum())state.activeAlbumId=null;
+      advance('Đang tải ảnh đã lưu…');
+      const api=await client(),album=activeAlbum();let result;
+      if(album&&state.albumMode==='local')result=await localAlbumPhotos(api,owner.id,album,current);
+      else{
+        let query=api.from(table).select('*',{count:'exact'}).eq('owner_id',owner.id).order('captured_at',{ascending:false}).order('id',{ascending:false});if(album)query=query.eq('album_id',album.id);
+        result=await cloudRequest(filterPhotoQuery(query).range(state.page*48,state.page*48+47),'tải thư viện ảnh');if(result.error)throw result.error;
+      }
+      if(!current())return;state.libraryReady=true;state.rows=append?[...state.rows,...(result.data||[])]:result.data||[];state.count=result.count??state.rows.length;
+    }catch(error){
+      if(!current())return;
+      if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)){clearAccount();loginPanel(error.message);}
+      else if(error.message!=='CLOUD_STALE')state.error=message(error);
+    }finally{clearTimeout(watchdog);if(revision===state.revision){state.busy=false;state.stage='';paint();}}
   }
   async function deleteLibraryBatch(api,ids,owner){
     if((await account()).id!==owner)throw new Error('Tài khoản đã thay đổi.');
@@ -4418,6 +4887,7 @@ window.TascoCloud = (() => {
           for(const id of removed){state.selected.delete(id);const url=state.urls.get(id);if(url){URL.revokeObjectURL(url);state.urls.delete(id);}}
           state.rows=state.rows.filter(row=>!removed.has(row.id));state.pending=state.pending.filter(row=>!removed.has(row.id));
           state.count=Math.max(0,state.count-[...removed].filter(id=>!pendingIds.has(id)).length);
+          try{await removeAlbumPhotoIds(removed,owner);}catch(_){notify('Ảnh đã xoá; số ảnh trong album sẽ cập nhật khi tải lại.');}
           if(!failure){state.selecting=false;state.selected.clear();close(true);window.TascoPhotoViewer?.close();notify('Đã xoá '+removed.size+' ảnh'+(physical?' khỏi Cloud.':' khỏi thư viện.'));}
           else{if(removed.size&&document.querySelector('#cloudLightbox')){window.TascoPhotoViewer?.close();bodyOverflow=document.body.style.overflow;document.body.style.overflow='hidden';}errorNode.textContent=(removed.size?'Đã xoá '+removed.size+' ảnh. ':'')+failure;errorNode.hidden=false;const remaining=chosen.filter(id=>!removed.has(id));chosen.splice(0,chosen.length,...remaining);confirmButton.disabled=!chosen.length||setupRequired||denied;cancelButton.disabled=false;confirmButton.textContent=setupRequired||denied?'Chưa có quyền xoá':'Thử xoá lại ('+chosen.length+')';if(!chosen.length||setupRequired||denied)cancelButton.textContent='Đóng';}
           paint();
@@ -4439,13 +4909,15 @@ window.TascoCloud = (() => {
     if(state.uploading||state.deleting||state.deleteDialog)return;state.uploading=true;
     try {
       const owner=await account();state.user=owner;
+      const catalog=await loadAlbums(owner.id,await pendingFor(owner.id));if((await account()).id!==owner.id)throw new Error('CLOUD_ACCOUNT');Object.assign(state,{albums:catalog.albums,albumMode:catalog.mode,albumNote:catalog.note});
       for(const record of await pendingFor(owner.id)){
         try{
           if((await account()).id!==owner.id)break;
           if(!record.upload){record.upload=await upload(record);record.error='';await localStore('put',record);}
           if((await account()).id!==owner.id)break;
           const api=await client(),row={id:record.id,owner_id:record.owner_id,title:record.title,address:record.address,location_status:record.location_status,captured_at:record.captured_at,source:'mobile_camera',cloud_name:record.cloud.cloudName,secure_url:record.upload.secure_url,public_id:record.upload.public_id,bytes:record.upload.bytes,width:record.upload.width,height:record.upload.height};
-          const result=await api.from(table).upsert(row,{onConflict:'id'});if(result.error)throw result.error;
+          if(record.album_id&&state.albumMode==='cloud')row.album_id=record.album_id;
+          const result=await cloudRequest(api.from(table).upsert(row,{onConflict:'id'}),'lưu ảnh vào thư viện');if(result.error)throw result.error;
           await localStore('delete',record.id);notify('Đã lưu ảnh vào Cloud của tôi.');
         }catch(error){record.error=message(error);await localStore('put',record);notify(record.error);break;}
         state.pending=await pendingFor(owner.id);paint();
@@ -4453,11 +4925,56 @@ window.TascoCloud = (() => {
     }catch(error){notify(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)?'Đăng nhập đúng tài khoản Cloud để đồng bộ ảnh.':message(error));}
     finally{state.uploading=false;await refresh();}
   }
-  async function queuePhotos(files,title,metadata) {
-    const owner=await account(),cloud=config(),records=[];
-    for(const file of files){const info=await metadata(file);records.push({id:crypto.randomUUID(),owner_id:owner.id,title:(title||'Ảnh của tôi').slice(0,160),blob:file,file_name:file.name,captured_at:new Date(info.capturedAt).toISOString(),address:info.location?.address||'',location_status:info.location?.addressStatus||info.location?.status||'unavailable',cloud,upload:null,error:''});}
-    if((await account()).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Hãy đăng nhập lại trước khi lưu ảnh.');await storeBatch(records);
-    notify('Đã giữ '+files.length+' ảnh trên thiết bị, đang đưa lên Cloud.');await refresh();processQueue();
+  let directRecords=new WeakMap();
+  const unsavedDirect=new Set();
+  function releaseCapture(){unsavedDirect.clear();directRecords=new WeakMap();}
+  window.addEventListener('beforeunload',event=>{if(unsavedDirect.size){event.preventDefault();event.returnValue='';}});
+  async function saveDirect(records,owner) {
+    if(state.uploading)throw new Error('Đợi lần lưu ảnh hiện tại hoàn tất rồi thử lại.');
+    state.uploading=true;
+    try{
+      for(const record of records){
+        if(record.confirmed)continue;
+        if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
+        if(!record.upload)record.upload=await upload(record);
+        if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
+        const api=await client(),row={id:record.id,owner_id:record.owner_id,album_id:record.album_id,title:record.title,address:record.address,location_status:record.location_status,captured_at:record.captured_at,source:'mobile_camera',cloud_name:record.cloud.cloudName,...record.upload};
+        const result=await cloudRequest(api.from(table).upsert(row,{onConflict:'id',ignoreDuplicates:true}).select('id,owner_id,album_id'),'lưu ảnh trực tiếp vào Cloud');
+        if(result.error)throw result.error;
+        const matches=saved=>saved.id===row.id&&saved.owner_id===owner&&saved.album_id===row.album_id;
+        let confirmed=result.data;
+        if(!Array.isArray(confirmed)||!confirmed.some(matches)){
+          const existing=await cloudRequest(api.from(table).select('id,owner_id,album_id').eq('id',row.id).eq('owner_id',owner),'xác nhận ảnh đã lưu');
+          if(existing.error)throw existing.error;confirmed=existing.data;
+        }
+        if(!Array.isArray(confirmed)||!confirmed.some(matches))throw new Error('Cloud chưa xác nhận ảnh trong album. Giữ màn hình chụp và thử lưu lại.');
+        record.confirmed=true;unsavedDirect.delete(record);
+        if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
+      }
+    }catch(error){
+      const saved=records.filter(row=>row.confirmed).length;
+      throw new Error('Đã lưu '+saved+'/'+records.length+' ảnh. '+message(error)+' Giữ màn hình chụp rồi thử Lưu Cloud lại.');
+    }finally{state.uploading=false;}
+  }
+  async function queuePhotos(files,title,metadata,albumContext=null) {
+    const owner=await account(),cloud=config(),records=[];let album=null;
+    const recordKey=owner.id+':'+(albumContext?.albumId||'');
+    const direct=!state.localReady||files.some(file=>directRecords.get(file)?.has(recordKey));
+    if(direct&&(!state.libraryReady||state.albumMode!=='cloud'))throw new Error('Chưa kết nối được album Cloud và bộ nhớ thiết bị. Tải lại Cloud trước khi lưu ảnh.');
+    if(albumContext){
+      if(albumContext.ownerId!==owner.id)throw new Error('Tài khoản đã thay đổi. Album thuộc phiên chụp trước.');
+      album=direct?state.albums.find(row=>row.id===albumContext.albumId&&row.owner_id===owner.id):await localStore('get',albumContext.albumId,'albums');
+      if(!album||album.owner_id!==owner.id)throw new Error('Không tìm thấy album của phiên chụp. Mở lại album rồi thử lại.');
+    }
+    for(const file of files){
+      const key=owner.id+':'+(album?.id||'');let cached=direct?directRecords.get(file)?.get(key):null;
+      if(!cached){const info=await metadata(file);cached={id:crypto.randomUUID(),owner_id:owner.id,title:String(title||album?.name||'Ảnh của tôi').slice(0,160),album_id:album?.id||null,album_name:album?.name||'',blob:file,file_name:file.name,captured_at:new Date(info.capturedAt).toISOString(),address:info.location?.address||'',location_status:info.location?.addressStatus||info.location?.status||'unavailable',cloud,upload:null,error:''};if(direct){let saved=directRecords.get(file);if(!saved){saved=new Map();directRecords.set(file,saved);}saved.set(key,cached);}}
+      records.push(cached);if(direct&&!cached.confirmed)unsavedDirect.add(cached);
+    }
+    if((await account()).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Hãy đăng nhập lại trước khi lưu ảnh.');
+    if(direct){await saveDirect(records,owner.id);notify('Đã lưu '+records.length+' ảnh'+(album?' vào album “'+album.name+'”':' vào Cloud')+'.');await refresh();return;}
+    await storeBatch(records,album);
+    notify('Đã giữ '+files.length+' ảnh'+(album?' trong album “'+album.name+'”':' trên thiết bị')+', đang đưa lên Cloud.');await refresh();processQueue();
   }
   function downloadBlob(blob,name) {
     try{TascoPhotoExport.save(TascoPhotoExport.file(blob,name)).catch(()=>notify('Chưa mở được màn hình lưu ảnh. Hãy thử lại.'));}
@@ -4465,15 +4982,15 @@ window.TascoCloud = (() => {
   }
   function openPhoto(row) {
     const owner=state.user?.id,root=state.root;
-    const items=()=>[...new Map([...state.pending.map(item=>({...item,pending:true})),...state.rows].map(item=>{const url=thumbnail(item);return [item.id,{...item,url,preview:previewURL(url,144)}];})).values()];
-    window.TascoPhotoViewer.open({items:items(),id:row.id,total:state.count+state.pending.length,theme:state.config.mode,email:state.user?.email||'',download:downloadBlob,remove:id=>requestDelete([id]),restoreFocus:()=>root.querySelector('[data-action="open"][data-id="'+CSS.escape(row.id)+'"]')?.focus({preventScroll:true}),
+    const items=()=>[...new Map([...visiblePending().map(item=>({...item,pending:true})),...state.rows].map(item=>{const url=thumbnail(item);return [item.id,{...item,url,preview:previewURL(url,144)}];})).values()];
+    window.TascoPhotoViewer.open({items:items(),id:row.id,total:state.count+visiblePending().length,theme:state.config.mode,email:state.user?.email||'',download:downloadBlob,remove:id=>requestDelete([id]),restoreFocus:()=>root.querySelector('[data-action="open"][data-id="'+CSS.escape(row.id)+'"]')?.focus({preventScroll:true}),
       hasMore:()=>state.user?.id===owner&&state.root===root&&state.rows.length<state.count,
       loadMore:async()=>{if(state.user?.id!==owner||state.root!==root)return [];if(state.busy)return items();state.page=Math.floor(state.rows.length/48);await refresh(true);if(state.error)throw new Error(state.error);return state.user?.id===owner&&state.root===root?items():[];}
     });
   }
   window.addEventListener('online',()=>{if(state.pending.length)processQueue();});
-  window.addEventListener('pagehide',()=>{window.TascoPhotoViewer?.close();clearURLs();});
-  return {configure,mount,refresh,queuePhotos,processQueue,notify,isReady:()=>Boolean(state.user),account,icon};
+  window.addEventListener('pagehide',()=>{state.albumDialog?.cancel();window.TascoPhotoViewer?.close();clearURLs();});
+  return {configure,mount,refresh,queuePhotos,processQueue,notify,isReady:cloudReady,account,icon,createAlbum,openAlbum,captureContext,releaseCapture,captureNotice:()=>state.storageStatus==='unavailable'?'Cần có mạng để lưu ảnh. Giữ màn hình chụp đến khi Lưu Cloud thành công.':'',capture:captureAlbum};
 })();
 
 let lastFetchedGpsCoords=null,lastFetchedAddress=null,gpsPermissionDenied=false;
@@ -5102,19 +5619,22 @@ document.getElementById('customCameraModal')?.addEventListener('keydown',event=>
 },{capture:true});
 
 let customCameraStream=null,customCameraPhotos=[],customCameraFacingMode='environment',customCameraTorchActive=false;
-let mobileCameraTitle='Ảnh của tôi',mobileCameraOwner=null,mobileCameraSaving=false,mobileCameraStreamRevision=0;
+let mobileCameraTitle='Ảnh của tôi',mobileCameraAlbum=null,mobileCameraOwner=null,mobileCameraSaving=false,mobileCameraStreamRevision=0;
 const SVGS={CLOSE:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg>'};
 function triggerToast(message){TascoCloud.notify(message);}
-async function openMobileCamera(title){
+async function openMobileCamera(title,albumContext){
+  const selectedAlbum=albumContext===undefined?TascoCloud.captureContext():albumContext;
+  const sessionAlbum=selectedAlbum?Object.freeze({...selectedAlbum}):null;
   if(!TascoCloud.isReady()){TascoCloud.notify('Kết nối tài khoản Cloud trước khi chụp ảnh.');return;}
   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){TascoCloud.notify('Camera cần mở trang bằng HTTPS và được cấp quyền truy cập.');return;}
   // Request sensor access in the opening click, before account/network awaits consume Safari's user activation.
   requestCameraOrientationPermission(true);
   const preferenceEmail=window.mobileCloudEmail?.();if(!await window.TascoCameraPreferences.ready()||preferenceEmail!==window.mobileCloudEmail?.()){TascoCloud.notify('Đăng nhập đúng tài khoản để tải thiết lập camera.');return;}
-  mobileCameraTitle=title||'Ảnh của tôi';mobileCameraOwner=window.mobileCloudEmail?.();customCameraPhotos=[];
+  mobileCameraAlbum=sessionAlbum;mobileCameraTitle=mobileCameraAlbum?.albumName||title||'Ảnh của tôi';mobileCameraOwner=window.mobileCloudEmail?.();customCameraPhotos=[];
   document.getElementById('cameraActiveCategoryText').textContent=mobileCameraTitle;
   document.getElementById('customCameraModal').style.display='flex';
   onCustomCameraOpen();renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();startCustomCameraStream();prefetchGpsCoordinates();
+  const captureNotice=TascoCloud.captureNotice?.();if(captureNotice)TascoCloud.notify(captureNotice);
 }
 async function startCustomCameraStream(){
   stopCustomCameraStream();const revision=++mobileCameraStreamRevision,session=cameraUiState.session,video=document.getElementById('customCameraVideo');
@@ -5157,11 +5677,11 @@ async function closeCustomCameraModal(savePhotos=false){
       if(mobileCameraOwner!==window.mobileCloudEmail?.())throw new Error('Tài khoản đã thay đổi. Đăng nhập lại đúng tài khoản trước khi lưu.');
       const stamped=[];
       for(const file of [...customCameraPhotos]){const result=await addWatermarkToImageFile(file,mobileCameraTitle,{isCameraSource:true});if(result===file&&cameraPhotoMetadata.get(file)?.stampedFile!==file)throw new Error('Chưa tạo được dấu ngày giờ trên ảnh. Vui lòng thử lưu lại.');stamped.push(result);}
-      await TascoCloud.queuePhotos(stamped,mobileCameraTitle,async file=>{const info=cameraPhotoMetadata.get(file);return {capturedAt:info.capturedAt,location:await info.locationPromise};});
+      await TascoCloud.queuePhotos(stamped,mobileCameraTitle,async file=>{const info=cameraPhotoMetadata.get(file);return {capturedAt:info.capturedAt,location:await info.locationPromise};},mobileCameraAlbum);
     }catch(error){TascoCloud.notify(error.message);mobileCameraSaving=false;cameraUiState.captureBusy=false;syncCameraViewport();updateCustomCameraDoneBtn();return;}
     mobileCameraSaving=false;
   }
-  stopCustomCameraStream();document.getElementById('customCameraModal').style.display='none';onCustomCameraClose();customCameraPhotos=[];renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();
+  TascoCloud.releaseCapture?.();stopCustomCameraStream();document.getElementById('customCameraModal').style.display='none';onCustomCameraClose();customCameraPhotos=[];mobileCameraAlbum=null;renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();
 }
 document.getElementById('customCameraModal').addEventListener('keydown',event=>{if(event.key==='Escape')closeCustomCameraModal(false);if(event.key==='Tab'){const buttons=[...event.currentTarget.querySelectorAll('button:not(:disabled)')];if(event.shiftKey&&document.activeElement===buttons[0]){event.preventDefault();buttons[buttons.length-1].focus();}else if(!event.shiftKey&&document.activeElement===buttons[buttons.length-1]){event.preventDefault();buttons[0].focus();}}});
 window.addEventListener('pagehide',()=>{stopCustomCameraStream();onCustomCameraClose();});
@@ -5639,6 +6159,29 @@ window.TascoLookupFlow = (() => {
   syncSort();
   syncBrowserChrome();
   return {chooseType,choosePart,edit,begin,finish,fail,cancel,onNavigate,afterNavigate,syncChoices,syncSort,toggleSort,chooseSort};
+})();
+
+</script>
+<script id="tascoLoginPresentation">
+(() => {
+  const overlay = document.getElementById('loginOverlay');
+  const input = document.getElementById('loginPass');
+  const toggle = overlay.querySelector('[data-login-password-toggle]');
+  const openEye = toggle.querySelector('[data-login-eye-open]');
+  const closedEye = toggle.querySelector('[data-login-eye-closed]');
+  function setPasswordVisible(visible) {
+    input.type = visible ? 'text' : 'password';
+    toggle.setAttribute('aria-pressed', String(visible));
+    toggle.setAttribute('aria-label', visible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+    openEye.hidden = visible;
+    closedEye.hidden = !visible;
+  }
+  toggle.addEventListener('click', () => setPasswordVisible(input.type === 'password'));
+  // Hide revealed text when leaving this screen or changing login/register mode.
+  new MutationObserver(() => {
+    if (overlay.style.display === 'none') setPasswordVisible(false);
+  }).observe(overlay, { attributes: true, attributeFilter: ['style'] });
+  document.getElementById('toggleRegisterBtn').addEventListener('click', () => setPasswordVisible(false));
 })();
 
 </script>
