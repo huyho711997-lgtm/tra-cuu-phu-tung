@@ -1572,6 +1572,52 @@ html.dark .tasco-workspace #personalCloudSection .cloud-delete-selected { backgr
 .cloud-album-dialog [data-album-error] { margin: 10px 0 0; color: #a65550; font-size: 11px; line-height: 1.7; }
 .cloud-album-dialog button:disabled { opacity: .55; cursor: default; }
 .cloud-album-dialog :is(button,input):focus-visible { outline: 2px solid var(--app-teal); outline-offset: 3px; }
+.tasco-workspace #personalCloudSection .cloud-album-card { position: relative; padding: 0; overflow: hidden; transition: border-color .18s, box-shadow .18s; }
+.tasco-workspace #personalCloudSection .cloud-album-card:hover { border-color: var(--app-teal); box-shadow: 0 6px 20px #18305608; }
+.tasco-workspace #personalCloudSection .cloud-album-open { display: block; width: 100%; min-height: 139px; padding: 16px; border: 0; border-radius: inherit; background: transparent; color: var(--ws-text); font: inherit; text-align: left; cursor: pointer; }
+.cloud-album-open .cloud-album-card-top { margin-bottom: 13px; padding-right: 40px; }
+.cloud-album-open > strong { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; font-size: 13px; font-weight: 600; line-height: 1.5; }
+.cloud-album-open .cloud-album-card-meta { display: flex; align-items: center; gap: 5px; margin-top: 8px; color: var(--ws-muted); font-size: 11px; font-weight: 400; line-height: 1.5; }
+.cloud-album-card-meta > svg { width: 12px; height: 12px; margin-left: auto; flex-shrink: 0; }
+.tasco-workspace #personalCloudSection .cloud-album-more { position: absolute; top: 10px; right: 8px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 13px; background: transparent; color: var(--ws-muted); cursor: pointer; }
+.cloud-album-more svg { width: 21px; height: 21px; }
+.tasco-workspace #personalCloudSection .cloud-album-more:hover { background: var(--ws-soft); color: var(--ws-text); }
+.tasco-workspace #personalCloudSection :is(.cloud-album-open,.cloud-album-more):focus-visible { outline: 2px solid var(--app-teal-ink); outline-offset: -3px; }
+.tasco-workspace #personalCloudSection :is(.cloud-album-open,.cloud-album-more):disabled { opacity: .5; cursor: default; }
+.cloud-album-sheet-handle { display: none; }
+.cloud-album-manage-dialog .cloud-album-manage-summary { display: flex; align-items: center; gap: 12px; padding: 15px; border: 1px solid var(--ws-line); border-radius: 17px; background: var(--ws-soft); }
+.cloud-album-manage-summary > div { flex: 1; min-width: 0; }
+.cloud-album-manage-summary .cloud-album-symbol { flex-shrink: 0; }
+.cloud-album-manage-summary strong { display: block; color: var(--ws-text); font-size: 14px; font-weight: 600; line-height: 1.5; overflow-wrap: anywhere; }
+.cloud-album-manage-summary div > span { display: block; margin-top: 4px; color: var(--ws-muted); font-size: 11px; line-height: 1.5; }
+.cloud-album-menu-actions { display: grid; gap: 8px; margin-top: 17px; }
+.cloud-album-menu-actions button { width: 100%; min-height: 65px; padding: 12px 14px; justify-content: flex-start; gap: 12px; border-color: var(--ws-line); border-radius: 16px; background: var(--ws-surface); text-align: left; }
+.cloud-album-menu-actions button > span { flex: 1; min-width: 0; }
+.cloud-album-menu-actions strong { display: block; font-size: 13px; font-weight: 600; line-height: 1.5; }
+.cloud-album-menu-actions small { display: block; margin-top: 3px; color: var(--ws-muted); font-size: 11px; font-weight: 400; line-height: 1.5; }
+.cloud-album-menu-actions button > svg { width: 19px; height: 19px; flex-shrink: 0; }
+.cloud-album-menu-actions button > svg:last-child { width: 13px; height: 13px; color: var(--ws-muted); }
+.cloud-album-menu-actions [data-album-open]:hover { background: var(--ws-soft); border-color: var(--app-teal); }
+.cloud-album-menu-actions [data-album-rename]:hover { background: var(--ws-soft); border-color: var(--app-teal); }
+.cloud-album-manage-dialog .cloud-album-rename-hint { display: flex; justify-content: space-between; gap: 12px; margin-top: 9px; color: var(--ws-muted); font-size: 11px; font-weight: 400; line-height: 1.6; }
+.cloud-album-manage-dialog [data-album-name-count] { flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.cloud-album-manage-dialog [data-album-rename-save] { min-height: 48px; background: var(--app-teal); border-color: var(--app-teal); color: var(--app-navy); font-weight: 600; }
+.cloud-album-manage-dialog [data-album-rename-save]:hover { background: var(--app-teal-hover); }
+.cloud-album-manage-dialog [data-album-rename-save][aria-busy=true]::before { content: ''; width: 15px; height: 15px; border: 1.5px solid #18305640; border-top-color: var(--app-navy); border-radius: 50%; animation: cloud-album-delete-spin .7s linear infinite; }
+.cloud-album-menu-actions [data-album-remove] { color: #a65550; }
+.cloud-album-menu-actions [data-album-remove]:hover { background: #a6555008; border-color: #a6555040; }
+.cloud-album-manage-dialog .cloud-album-danger-icon { border-color: #a6555026; background: #a655500c; color: #a65550; }
+.cloud-album-manage-dialog [data-album-delete-confirm] { min-height: 48px; background: #a65550; border-color: #a65550; color: #fff; font-weight: 600; }
+.cloud-album-manage-dialog [data-album-delete-confirm]:hover { background: #914740; }
+.cloud-album-manage-dialog [data-album-delete-confirm][aria-busy=true]::before { content: ''; width: 15px; height: 15px; border: 1.5px solid #ffffff60; border-top-color: #fff; border-radius: 50%; animation: cloud-album-delete-spin .7s linear infinite; }
+.dark .cloud-album-menu-actions [data-album-remove], .dark .cloud-album-manage-dialog .cloud-album-danger-icon { color: #e4a49e; }
+@keyframes cloud-album-delete-spin { to { transform: rotate(360deg); } }
+@media(max-width:600px) {
+  .cloud-album-manage-overlay { align-items: flex-end; padding: max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px)); }
+  .cloud-album-manage-dialog { width: 100%; max-height: calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)); padding: 16px 22px 23px; border-radius: 27px; }
+  .cloud-album-sheet-handle { display: block; width: 34px; height: 4px; margin: 0 auto 17px; border-radius: 99px; background: var(--ws-line); }
+}
+@media(prefers-reduced-motion:reduce) { .cloud-album-manage-dialog :is([data-album-delete-confirm],[data-album-rename-save])[aria-busy=true]::before { animation: none; } .tasco-workspace #personalCloudSection .cloud-album-card { transition: none; } }
 @media(min-width:768px) { .tasco-workspace #personalCloudSection .cloud-album-current { max-width: 360px; } .tasco-workspace #personalCloudSection .cloud-albums-panel { margin-left: 38px; margin-right: 38px; } [data-album-list] { grid-template-columns: repeat(3,minmax(0,1fr)); } }
 @media(max-width:360px) { .tasco-workspace #personalCloudSection .cloud-albums-panel { margin-left: 17px; margin-right: 17px; } .cloud-album-card { padding: 13px; } .cloud-album-dialog { padding: 20px; } .cloud-album-dialog footer { grid-template-columns: 1fr; } }
 
@@ -4416,7 +4462,7 @@ window.TascoDatePicker=(()=>{
 /* Cloudinary holds the image; Supabase RLS holds the account-owned manifest. */
 window.TascoCloud = (() => {
   const table = 'tasco_personal_photos';
-  const state = {config:null,client:null,clientInit:null,authUser:null,authRevision:0,user:null,localReady:false,libraryReady:false,storageStatus:'unknown',storageWarning:'',stage:'',root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map(),selecting:false,selected:new Set(),deleting:false,deleteDialog:null,albums:[],activeAlbumId:null,albumMode:'local',albumNote:'',albumDialog:null};
+  const state = {config:null,client:null,clientInit:null,authUser:null,authRevision:0,user:null,localReady:false,libraryReady:false,storageStatus:'unknown',storageWarning:'',stage:'',root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map(),selecting:false,selected:new Set(),deleting:false,deleteDialog:null,albums:[],activeAlbumId:null,albumMode:'local',albumNote:'',albumDialog:null,albumSaving:false};
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const icon = name => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({cloud:'<path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/>',camera:'<path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/>',refresh:'<path d="M20 4v6h-6M4 20v-6h6M4.5 9a8 8 0 0 1 13-5l2.5 3M4 17l2.5 3a8 8 0 0 0 13-5"/>',search:'<circle cx="10" cy="10" r="7"/><path d="m16 16 5 5"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',check:'<path d="m5 12 4 4L19 6"/>'}[name] || '')+'</svg>';
   const stamp = value => new Date(value).toLocaleString('vi-VN',{hour12:false});
@@ -4535,19 +4581,37 @@ window.TascoCloud = (() => {
   const albumIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M3 10h18"/></svg>';
   const plusIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
   const arrowIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
+  const moreIcon='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
+  const editIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 16 16.5 3.5a2.8 2.8 0 0 1 4 4L8 20l-5 1 1-5Z"/></svg>';
+  const deletedAlbums=new Set();
+  const albumKey=(id,owner)=>owner+':'+id;
   const activeAlbum=()=>state.albums.find(row=>row.id===state.activeAlbumId&&row.owner_id===state.user?.id)||null;
   const visiblePending=()=>state.activeAlbumId?state.pending.filter(row=>row.album_id===state.activeAlbumId):state.pending;
   const captureContext=()=>{const album=activeAlbum();return album?Object.freeze({albumId:album.id,albumName:album.name,ownerId:album.owner_id}):null;};
   function missingAlbumSchema(error){return ['42P01','42703','PGRST204','PGRST205'].includes(error?.code);}
+  function detachPendingAlbum(pending,id){for(const photo of pending)if(photo.album_id===id){photo.album_id=null;photo.album_name='';}}
+  async function detachLocalAlbum(id,owner){
+    const db=await database(),tx=db.transaction(['photos','albums'],'readwrite'),photos=tx.objectStore('photos'),albums=tx.objectStore('albums');
+    const queued=photos.getAll();queued.onsuccess=()=>{for(const photo of queued.result||[])if(photo.owner_id===owner&&photo.album_id===id)photos.put({...photo,album_id:null,album_name:''});};
+    const entry=albums.get(id);entry.onsuccess=()=>{
+      if(entry.result&&entry.result.owner_id!==owner){tx.abort();return;}
+      albums.put({...(entry.result||{id,owner_id:owner,name:''}),photo_ids:[],needs_sync:false,cloud_synced:true,deleted:true});
+    };
+    return transactionResult(tx,()=>undefined,'Chưa cập nhật được album trên thiết bị.');
+  }
   async function loadAlbums(owner,pending=[],current=()=>true){
     const check=()=>{if(!current())throw new Error('CLOUD_STALE');};
     let local=[];
     if(state.localReady){
       try{
-        local=(await localStore('getAll',undefined,'albums')).filter(row=>row.owner_id===owner);check();
+        const cached=(await localStore('getAll',undefined,'albums')).filter(row=>row.owner_id===owner);check();
+        for(const row of cached)if(row.deleted)deletedAlbums.add(albumKey(row.id,owner));
+        for(const row of cached.filter(row=>deletedAlbums.has(albumKey(row.id,owner))&&(!row.deleted||pending.some(photo=>photo.album_id===row.id)))){await detachLocalAlbum(row.id,owner);check();detachPendingAlbum(pending,row.id);}
+        local=cached.filter(row=>!deletedAlbums.has(albumKey(row.id,owner))).map(row=>({...row,cloud_synced:row.cloud_synced||!row.needs_sync}));
         const byId=new Map(local.map(row=>[row.id,row]));
         for(const photo of pending){
           if(!photo.album_id)continue;check();
+          if(deletedAlbums.has(albumKey(photo.album_id,owner))){detachPendingAlbum(pending,photo.album_id);continue;}
           let album=byId.get(photo.album_id);
           if(!album){album={id:photo.album_id,owner_id:owner,name:photo.album_name||photo.title||'Album ảnh',created_at:photo.captured_at,updated_at:photo.captured_at,photo_ids:[],needs_sync:true};byId.set(album.id,album);}
           if(!album.photo_ids.includes(photo.id)){album.photo_ids.push(photo.id);album.needs_sync=true;await localStore('put',album,'albums');}
@@ -4560,12 +4624,23 @@ window.TascoCloud = (() => {
       check();const listed=await cloudRequest(api.from(albumTable).select('*').eq('owner_id',owner).order('created_at',{ascending:false}),'tải danh sách album');check();if(listed.error)throw listed.error;
       const members=[];
       for(let offset=0;;offset+=1000){check();const result=await cloudRequest(api.from(table).select('id,album_id').eq('owner_id',owner).order('id',{ascending:true}).range(offset,offset+999),'tải ảnh trong album');check();if(result.error)throw result.error;members.push(...(result.data||[]));if((result.data||[]).length<1000)break;}
-      const remote=new Map((listed.data||[]).filter(row=>row.owner_id===owner).map(row=>[row.id,row]));
+      const remote=new Map((listed.data||[]).filter(row=>row.owner_id===owner&&!deletedAlbums.has(albumKey(row.id,owner))).map(row=>[row.id,row]));
       const memberMap=new Map(members.map(row=>[row.id,row]));
+      // A previously synced album missing from Cloud was deleted on another device.
+      // Never recreate it from a cache or from photos still waiting to upload.
+      for(const album of local.filter(row=>row.cloud_synced&&!remote.has(row.id))){
+        check();deletedAlbums.add(albumKey(album.id,owner));detachPendingAlbum(pending,album.id);
+        if(state.localReady)try{await detachLocalAlbum(album.id,owner);check();}catch(error){if(error.message==='CLOUD_STALE')throw error;check();deviceUnavailable(error);}
+      }
+      local=local.filter(row=>!deletedAlbums.has(albumKey(row.id,owner)));
       for(const album of local.filter(row=>row.needs_sync)){
         check();if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
         const payload={id:album.id,owner_id:owner,name:album.name,created_at:album.created_at,updated_at:album.updated_at};
-        check();const saved=await cloudRequest(api.from(albumTable).upsert(payload,{onConflict:'id'}),'đồng bộ album');check();if(saved.error)throw saved.error;remote.set(album.id,payload);
+        if(!remote.has(album.id)){
+          check();const saved=await cloudRequest(api.from(albumTable).upsert(payload,{onConflict:'id'}),'đồng bộ album');check();if(saved.error)throw saved.error;remote.set(album.id,payload);
+          album.cloud_synced=true;
+          if(state.localReady)try{await localStore('put',album,'albums');check();}catch(error){if(error.message==='CLOUD_STALE')throw error;check();deviceUnavailable(error);}
+        }
         const unassigned=album.photo_ids.filter(id=>memberMap.has(id)&&!memberMap.get(id).album_id);
         for(let start=0;start<unassigned.length;start+=100){
           const ids=unassigned.slice(start,start+100);
@@ -4574,7 +4649,7 @@ window.TascoCloud = (() => {
           for(const id of ids)memberMap.get(id).album_id=album.id;
         }
       }
-      const albums=[...remote.values()].map(row=>({...row,photo_ids:[...new Set([...members.filter(photo=>photo.album_id===row.id).map(photo=>photo.id),...pending.filter(photo=>photo.album_id===row.id).map(photo=>photo.id)])],needs_sync:false}));
+      const albums=[...remote.values()].map(row=>({...row,photo_ids:[...new Set([...members.filter(photo=>photo.album_id===row.id).map(photo=>photo.id),...pending.filter(photo=>photo.album_id===row.id).map(photo=>photo.id)])],needs_sync:false,cloud_synced:true}));
       if(state.localReady){
         try{for(const album of albums){check();await localStore('put',album,'albums');}for(const album of local)if(!remote.has(album.id)&&!album.needs_sync){check();await localStore('delete',album.id,'albums');}}
         catch(error){if(error.message==='CLOUD_STALE')throw error;check();deviceUnavailable(error);}
@@ -4604,6 +4679,7 @@ window.TascoCloud = (() => {
   function captureAlbum(){if(!cloudReady()){if(!state.busy)refresh();return;}const context=captureContext();if(context)state.config.capture(context.albumName,context);else chooseAlbum();}
   const albumAttempts=new Map();
   async function createAlbum(name){
+    if(state.deleting||state.albumSaving)throw new Error('Đợi thao tác Cloud hiện tại hoàn tất rồi tạo album.');
     name=String(name||'').trim();if(!name||name.length>100)throw new Error('Nhập tên album từ 1 đến 100 ký tự.');
     const owner=await account();if(owner.id!==state.user?.id)throw new Error('Tài khoản đã thay đổi. Mở lại Cloud trước khi tạo album.');
     if(state.albums.some(row=>row.owner_id===owner.id&&row.name.toLocaleLowerCase('vi-VN')===name.toLocaleLowerCase('vi-VN')))throw new Error('Tên album này đã có. Chọn tên khác hoặc mở album đã tạo.');
@@ -4616,7 +4692,7 @@ window.TascoCloud = (() => {
       albumAttempts.set(attemptKey,album);
       const api=await client(),payload={id:album.id,owner_id:owner.id,name:album.name,created_at:album.created_at,updated_at:album.updated_at};
       const result=await cloudRequest(api.from(albumTable).upsert(payload,{onConflict:'id'}).select('*'),'tạo album trên Cloud');if(result.error)throw result.error;
-      if(!Array.isArray(result.data)||!result.data.some(saved=>saved.id===album.id&&saved.owner_id===owner.id))throw new Error('Cloud chưa xác nhận album mới. Tải lại thư viện rồi kiểm tra album.');album.needs_sync=false;
+      if(!Array.isArray(result.data)||!result.data.some(saved=>saved.id===album.id&&saved.owner_id===owner.id))throw new Error('Cloud chưa xác nhận album mới. Tải lại thư viện rồi kiểm tra album.');album.needs_sync=false;album.cloud_synced=true;
     }
     if((await account()).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Mở lại Cloud trước khi tạo album.');state.albums.unshift(album);albumAttempts.delete(attemptKey);await openAlbum(album.id);return album;
   }
@@ -4640,6 +4716,124 @@ window.TascoCloud = (() => {
     };
     document.body.style.overflow='hidden';document.body.append(overlay);input.focus();
   }
+  async function renameLocalAlbum(album,owner){
+    const db=await database(),tx=db.transaction(['photos','albums'],'readwrite'),photos=tx.objectStore('photos'),albums=tx.objectStore('albums');
+    const queued=photos.getAll();queued.onsuccess=()=>{for(const photo of queued.result||[])if(photo.owner_id===owner&&photo.album_id===album.id)photos.put({...photo,album_name:album.name});};
+    const entry=albums.get(album.id);entry.onsuccess=()=>{
+      if(entry.result&&(entry.result.owner_id!==owner||entry.result.deleted)){tx.abort();return;}
+      albums.put({...album,...entry.result,name:album.name,updated_at:album.updated_at,cloud_synced:true});
+    };
+    return transactionResult(tx,()=>undefined,'Chưa cập nhật được tên album trên thiết bị.');
+  }
+  async function renameAlbum(id,name){
+    if(state.deleting||state.albumSaving||state.uploading||state.busy)throw new Error('Đợi thư viện đồng bộ xong rồi đổi tên album.');
+    name=String(name||'').trim();if(!name||name.length>100)throw new Error('Nhập tên album từ 1 đến 100 ký tự.');
+    const album=state.albums.find(row=>row.id===id&&row.owner_id===state.user?.id);
+    if(!album||deletedAlbums.has(albumKey(id,album.owner_id)))throw new Error('Album này không còn trong thư viện. Tải lại để kiểm tra.');
+    const owner=album.owner_id,root=state.root;
+    if(state.albums.some(row=>row.id!==id&&row.owner_id===owner&&row.name.toLocaleLowerCase('vi-VN')===name.toLocaleLowerCase('vi-VN')))throw new Error('Tên album này đã có. Vui lòng chọn tên khác.');
+    if(name===album.name)return album;
+    state.albumSaving=true;state.revision++;paint();
+    try{
+      if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
+      const api=await client(),updatedAt=new Date().toISOString();
+      const result=await cloudRequest(api.from(albumTable).update({name,updated_at:updatedAt}).eq('id',id).eq('owner_id',owner).select('id,owner_id,name,updated_at'),'đổi tên album trên Cloud');
+      if(result.error){if(result.error.code==='42501')throw new Error('Bạn chưa có quyền đổi tên album này. Kiểm tra tài khoản rồi thử lại.');throw result.error;}
+      const saved=Array.isArray(result.data)&&result.data.find(row=>row.id===id&&row.owner_id===owner&&row.name===name);
+      if(!saved)throw new Error('Cloud chưa xác nhận tên mới. Tải lại album để kiểm tra hoặc thử lưu lại.');
+      const updated={...album,name:saved.name,updated_at:saved.updated_at||updatedAt,cloud_synced:true};
+      if(state.localReady)try{await renameLocalAlbum(updated,owner);}catch(error){deviceUnavailable(error);}
+      if(state.user?.id===owner&&state.root===root){
+        state.albums=state.albums.map(row=>row.id===id&&row.owner_id===owner?{...row,name:updated.name,updated_at:updated.updated_at,cloud_synced:true}:row);
+        for(const photo of state.pending)if(photo.owner_id===owner&&photo.album_id===id)photo.album_name=updated.name;
+      }
+      return updated;
+    }finally{
+      state.albumSaving=false;
+      if(state.user?.id===owner&&state.root===root)paint();else if(visible())await refresh();
+    }
+  }
+  async function deleteAlbum(id){
+    if(state.deleting||state.albumSaving||state.uploading||state.busy)throw new Error('Đợi thư viện đồng bộ xong rồi xoá album.');
+    const album=state.albums.find(row=>row.id===id&&row.owner_id===state.user?.id);
+    if(!album)throw new Error('Album này không còn trong thư viện. Tải lại để kiểm tra.');
+    const owner=album.owner_id,root=state.root;
+    state.deleting=true;state.revision++;state.busy=false;paint();
+    let confirmed=false;
+    try{
+      if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
+      const api=await client(),result=await cloudRequest(api.rpc('tasco_delete_personal_photo_album',{p_album_id:id,p_owner_id:owner}),'xoá album trên Cloud');
+      if(result.error){
+        if(['PGRST202','42883'].includes(result.error.code))throw new Error('Tính năng xoá album trên Cloud chưa được bật. Vui lòng liên hệ quản trị viên.');
+        if(result.error.code==='42501')throw new Error('Bạn chưa có quyền xoá album này. Kiểm tra tài khoản rồi thử lại.');
+        throw result.error;
+      }
+      const data=result.data;
+      if(data?.album_id!==id||data.owner_id!==owner||!['deleted','absent'].includes(data.status))throw new Error('Cloud chưa xác nhận đã xoá album. Tải lại thư viện để kiểm tra trước khi thử lại.');
+      confirmed=true;deletedAlbums.add(albumKey(id,owner));
+      if(state.localReady)try{await detachLocalAlbum(id,owner);}catch(error){deviceUnavailable(error);}
+      if(state.user?.id===owner&&state.root===root){
+        detachPendingAlbum(state.pending,id);state.albums=state.albums.filter(row=>row.id!==id);
+        if(state.activeAlbumId===id){state.activeAlbumId=null;resetAlbumFilters();}
+      }
+      return {id,name:album.name,owner,keptPhotos:true};
+    }finally{
+      state.deleting=false;
+      if(state.user?.id===owner&&state.root===root){paint();if(confirmed)await refresh();}
+      else if(visible())await refresh();
+    }
+  }
+  function showAlbumActions(id,confirm=false){
+    if(state.albumDialog||state.deleteDialog||state.deleting||state.albumSaving)return;
+    if(state.uploading||state.busy){notify('Đợi thư viện đồng bộ xong rồi quản lý album.');return;}
+    const album=state.albums.find(row=>row.id===id&&row.owner_id===state.user?.id);if(!album)return;
+    const owner=album.owner_id,focus=document.activeElement,overlay=document.createElement('div'),controller=new AbortController();let saving=false,closed=false,editing=false;
+    overlay.className='cloud-album-overlay cloud-album-manage-overlay';
+    const oldOverflow=document.body.style.overflow;
+    function close(force=false){if(closed||(saving&&!force))return;closed=true;controller.abort();overlay.remove();document.body.style.overflow=oldOverflow;if(state.albumDialog?.overlay===overlay)state.albumDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
+    function paintDialog(isConfirm){
+      editing=isConfirm==='rename';confirm=isConfirm===true;
+      if(editing){
+        overlay.innerHTML=`<section class="cloud-album-dialog cloud-album-manage-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudAlbumManageTitle" aria-describedby="cloudAlbumManageCopy"><span class="cloud-album-sheet-handle" aria-hidden="true"></span><header><span class="cloud-album-dialog-icon">${editIcon}</span><button type="button" data-album-close aria-label="Đóng">${icon('close')}</button></header><h2 id="cloudAlbumManageTitle">Đổi tên album</h2><p id="cloudAlbumManageCopy">Đặt tên dễ nhận biết để tìm lại hồ sơ nhanh hơn.</p><form data-album-rename-form><label for="cloudAlbumRenameName">Tên album</label><input id="cloudAlbumRenameName" name="albumName" type="text" maxlength="100" required autocomplete="off" aria-describedby="cloudAlbumRenameHint" value="${esc(album.name)}"><div class="cloud-album-rename-hint"><span id="cloudAlbumRenameHint">Tối đa 100 ký tự</span><span data-album-name-count></span></div><p data-album-error role="alert" hidden></p><footer><button type="button" data-album-close>Hủy</button><button type="submit" data-album-rename-save disabled>${icon('check')}Lưu tên mới</button></footer></form></section>`;
+        const form=overlay.querySelector('form'),input=overlay.querySelector('input'),submit=overlay.querySelector('[data-album-rename-save]'),errorNode=overlay.querySelector('[data-album-error]');
+        input.value=album.name;
+        input.oninput=()=>{overlay.querySelector('[data-album-name-count]').textContent=input.value.length+'/100';submit.disabled=saving||!input.value.trim()||input.value.trim()===album.name||input.value.length>100;errorNode.hidden=true;};
+        input.oninput();
+        form.onsubmit=async event=>{
+          event.preventDefault();if(saving||submit.disabled)return;
+          if(state.user?.id!==owner){close(true);notify('Tài khoản đã thay đổi. Mở lại Cloud.');return;}
+          saving=true;errorNode.hidden=true;submit.innerHTML='Đang lưu tên…';submit.setAttribute('aria-busy','true');overlay.querySelectorAll('button,input').forEach(node=>node.disabled=true);
+          try{const updated=await renameAlbum(id,input.value);close(true);if(state.user?.id===owner)notify('Đã đổi tên album thành “'+updated.name+'”.');}
+          catch(error){if(state.user?.id===owner&&overlay.isConnected){errorNode.textContent=message(error);errorNode.hidden=false;}}
+          finally{saving=false;if(overlay.isConnected){overlay.querySelectorAll('button,input').forEach(node=>node.disabled=false);submit.innerHTML=icon('check')+'Lưu tên mới';submit.setAttribute('aria-busy','false');input.focus({preventScroll:true});}}
+        };
+        input.focus({preventScroll:true});input.select?.();return;
+      }
+      overlay.innerHTML=`<section class="cloud-album-dialog cloud-album-manage-dialog" role="${confirm?'alertdialog':'dialog'}" aria-modal="true" aria-labelledby="cloudAlbumManageTitle" aria-describedby="cloudAlbumManageCopy"><span class="cloud-album-sheet-handle" aria-hidden="true"></span><header><span class="cloud-album-dialog-icon${confirm?' cloud-album-danger-icon':''}">${confirm?icon('trash'):albumIcon}</span><button type="button" data-album-close aria-label="Đóng">${icon('close')}</button></header><h2 id="cloudAlbumManageTitle">${confirm?'Xoá album này?':'Quản lý album'}</h2><p id="cloudAlbumManageCopy">${confirm?'Album sẽ được xoá khỏi thư viện. Tất cả ảnh vẫn được giữ trong “Tất cả ảnh”.':'Chọn thao tác cho album của bạn.'}</p><div class="cloud-album-manage-summary"><span class="cloud-album-symbol">${albumIcon}</span><div><strong>${esc(album.name)}</strong><span>${album.photo_ids.length} ảnh <span aria-hidden="true">·</span> ${esc(new Date(album.created_at).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}))}</span></div></div><p data-album-error role="alert" hidden></p>${confirm?`<footer><button type="button" data-album-close>Giữ album</button><button type="button" data-album-delete-confirm>${icon('trash')}Xoá album</button></footer>`:`<div class="cloud-album-menu-actions"><button type="button" data-album-open>${albumIcon}<span><strong>Mở album</strong><small>Xem ảnh và tiếp tục chụp</small></span>${arrowIcon}</button><button type="button" data-album-rename>${editIcon}<span><strong>Đổi tên album</strong><small>Đặt tên dễ nhận biết cho hồ sơ</small></span>${arrowIcon}</button><button type="button" data-album-remove>${icon('trash')}<span><strong>Xoá album</strong><small>Giữ lại toàn bộ ảnh trong thư viện</small></span>${arrowIcon}</button></div>`}</section>`;
+      overlay.querySelector(confirm?'[data-album-close]':'[data-album-open]')?.focus({preventScroll:true});
+    }
+    state.albumDialog={cancel:()=>close(true),overlay};
+    overlay.addEventListener('click',async event=>{
+      if(saving)return;
+      const button=event.target.closest('button');
+      if(event.target===overlay||button?.hasAttribute('data-album-close')){close();return;}
+      if(button?.hasAttribute('data-album-open')){close();await openAlbum(id);return;}
+      if(button?.hasAttribute('data-album-rename')){paintDialog('rename');return;}
+      if(button?.hasAttribute('data-album-remove')){paintDialog(true);return;}
+      if(!button?.hasAttribute('data-album-delete-confirm'))return;
+      if(state.user?.id!==owner){close(true);notify('Tài khoản đã thay đổi. Mở lại Cloud.');return;}
+      const errorNode=overlay.querySelector('[data-album-error]');
+      saving=true;errorNode.hidden=true;button.innerHTML='Đang xoá album…';button.setAttribute('aria-busy','true');overlay.querySelectorAll('button').forEach(node=>node.disabled=true);
+      try{const result=await deleteAlbum(id);close(true);if(state.user?.id===owner){state.root?.querySelector('#cloudAlbumsTitle')?.focus({preventScroll:true});notify('Đã xoá album “'+result.name+'”. Ảnh vẫn nằm trong Tất cả ảnh.');}}
+      catch(error){if(state.user?.id===owner&&overlay.isConnected){errorNode.textContent=message(error);errorNode.hidden=false;}}
+      finally{saving=false;if(overlay.isConnected){overlay.querySelectorAll('button').forEach(node=>node.disabled=false);button.innerHTML=icon('trash')+'Thử xoá lại';button.setAttribute('aria-busy','false');}}
+    },{signal:controller.signal});
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();close();}
+      if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button:not(:disabled),input:not(:disabled)')];if(!nodes.length){event.preventDefault();return;}if(event.shiftKey&&(document.activeElement===nodes[0]||!overlay.contains(document.activeElement))){event.preventDefault();nodes.at(-1).focus();}else if(!event.shiftKey&&(document.activeElement===nodes.at(-1)||!overlay.contains(document.activeElement))){event.preventDefault();nodes[0].focus();}}
+    },{capture:true,signal:controller.signal});
+    document.body.style.overflow='hidden';document.body.append(overlay);paintDialog(confirm);
+  }
   function paintAlbums(){
     const root=state.root;if(!visible()||state.config.mode!=='mobile')return;const album=activeAlbum(),context=root.querySelector('[data-cloud-album-current]');
     context.hidden=Boolean(album);
@@ -4652,9 +4846,9 @@ window.TascoCloud = (() => {
     context.querySelector('[data-album-change-label]').textContent=album?'Đổi album':'Chọn album';context.disabled=!cloudReady();
     const panel=root.querySelector('.cloud-albums-panel');panel.hidden=Boolean(album);
     const note=root.querySelector('[data-album-note]');note.textContent=state.albumNote;note.hidden=!state.albumNote;
-    root.querySelector('[data-action="new-album"]').disabled=!cloudReady()||state.busy;
+    root.querySelector('[data-action="new-album"]').disabled=!cloudReady()||state.busy||state.deleting||state.albumSaving;
     const list=root.querySelector('[data-album-list]');
-    list.innerHTML=state.albums.length?state.albums.map(row=>`<button type="button" class="cloud-album-card" data-action="open-album" data-id="${esc(row.id)}" aria-label="Mở album ${esc(row.name)}, ${row.photo_ids.length} ảnh"><span class="cloud-album-card-top"><span class="cloud-album-symbol">${albumIcon}</span>${arrowIcon}</span><strong>${esc(row.name)}</strong><span>${row.photo_ids.length} ảnh <span aria-hidden="true">·</span> ${esc(new Date(row.created_at).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'}))}</span></button>`).join(''):`<div class="cloud-albums-empty"><span>${albumIcon}</span><div><strong>${state.busy?'Đang tải album…':'Mỗi hồ sơ, một album'}</strong><p>${state.busy?'Album của bạn sẽ xuất hiện tại đây.':'Tạo album để giữ ảnh cùng hồ sơ trong một nơi.'}</p></div></div>`;
+    list.innerHTML=state.albums.length?state.albums.map(row=>`<article class="cloud-album-card"><button type="button" class="cloud-album-open" data-action="open-album" data-id="${esc(row.id)}" aria-label="Mở album ${esc(row.name)}, ${row.photo_ids.length} ảnh"${state.deleting||state.albumSaving?' disabled':''}><span class="cloud-album-card-top"><span class="cloud-album-symbol">${albumIcon}</span></span><strong>${esc(row.name)}</strong><span class="cloud-album-card-meta">${row.photo_ids.length} ảnh <span aria-hidden="true">·</span> ${esc(new Date(row.created_at).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'}))}${arrowIcon}</span></button><button type="button" class="cloud-album-more" data-action="album-options" data-id="${esc(row.id)}" aria-label="Quản lý album ${esc(row.name)}" aria-haspopup="dialog"${!cloudReady()||state.busy||state.uploading||state.deleting||state.albumSaving?' disabled':''}>${moreIcon}</button></article>`).join(''):`<div class="cloud-albums-empty"><span>${albumIcon}</span><div><strong>${state.busy?'Đang tải album…':'Mỗi hồ sơ, một album'}</strong><p>${state.busy?'Album của bạn sẽ xuất hiện tại đây.':'Tạo album để giữ ảnh cùng hồ sơ trong một nơi.'}</p></div></div>`;
     root.querySelector('[data-cloud-library-heading]').textContent=album?'Ảnh trong album':'Tất cả ảnh';
     const search=root.querySelector('[data-cloud-search]');search.placeholder=album?'Tìm ảnh trong album…':'Tìm nội dung, địa điểm…';search.setAttribute('aria-label',album?'Tìm ảnh trong album '+album.name:'Tìm ảnh');
     const label=root.querySelector('[data-cloud-capture-label]');label.textContent=cloudReady()?(album?'Chụp vào album':'Chọn album để chụp'):state.busy?'Đang kết nối…':state.error?'Thử kết nối lại':'Kết nối để chụp';
@@ -4717,7 +4911,7 @@ window.TascoCloud = (() => {
     root.onclick=event=>{
       const button=event.target.closest('[data-action]');if(!button||!root.contains(button))return;
       const action=button.dataset.action;
-      if(button.disabled||state.deleting)return;
+      if(button.disabled||state.deleting||state.albumSaving)return;
       if(action==='selection'){state.selecting=!state.selecting;state.selected.clear();paintSelection();}
       if(action==='select'&&state.selecting)toggleSelection(button.dataset.id);
       if(action==='select-all'){for(const row of [...state.rows,...visiblePending()])state.selected.add(row.id);paintSelection();}
@@ -4725,6 +4919,7 @@ window.TascoCloud = (() => {
       if(action==='delete-selected')requestDelete([...state.selected]);
       
       if(action==='capture')captureAlbum();
+      if(action==='album-options')showAlbumActions(button.dataset.id);
       if(action==='new-album')showAlbumCreator();
       if(action==='choose-album')chooseAlbum();
       if(action==='open-album'){clearTimeout(timer);openAlbum(button.dataset.id);}
@@ -4800,7 +4995,7 @@ window.TascoCloud = (() => {
     window.dispatchEvent(new CustomEvent('tasco:cloud-summary',{detail:{email:state.user?.email||state.config.expectedEmail?.()||'',ready:cloudReady(),count:state.count,pending:state.pending.length,busy:state.busy,error:state.error||(!state.user&&!state.busy?'Chưa kết nối tài khoản Cloud':''),filtered:Boolean(state.query||state.date||state.activeAlbumId),albumName:activeAlbum()?.name||'',photos:state.rows.slice(0,3).map(row=>({id:row.id,title:row.title,url:previewURL(thumbnail(row),280),capturedAt:row.captured_at}))}}));
   }
   async function refresh(append=false) {
-    if(!visible())return;
+    if(!visible()||state.deleting||state.albumSaving)return;
     const revision=++state.revision;state.busy=true;state.error='';state.localReady=false;state.libraryReady=false;state.stage='Đang kiểm tra phiên Cloud…';
     if(!append){state.rows=[];state.page=0;state.selected.clear();state.count=0;}
     const current=()=>revision===state.revision&&visible();
@@ -4906,7 +5101,7 @@ window.TascoCloud = (() => {
     }finally{clearTimeout(timeout);}
   }
   async function processQueue() {
-    if(state.uploading||state.deleting||state.deleteDialog)return;state.uploading=true;
+    if(state.uploading||state.deleting||state.albumSaving||state.deleteDialog||state.albumDialog)return;state.uploading=true;
     try {
       const owner=await account();state.user=owner;
       const catalog=await loadAlbums(owner.id,await pendingFor(owner.id));if((await account()).id!==owner.id)throw new Error('CLOUD_ACCOUNT');Object.assign(state,{albums:catalog.albums,albumMode:catalog.mode,albumNote:catalog.note});
@@ -4930,7 +5125,7 @@ window.TascoCloud = (() => {
   function releaseCapture(){unsavedDirect.clear();directRecords=new WeakMap();}
   window.addEventListener('beforeunload',event=>{if(unsavedDirect.size){event.preventDefault();event.returnValue='';}});
   async function saveDirect(records,owner) {
-    if(state.uploading)throw new Error('Đợi lần lưu ảnh hiện tại hoàn tất rồi thử lại.');
+    if(state.uploading||state.deleting||state.albumSaving)throw new Error('Đợi thao tác Cloud hiện tại hoàn tất rồi thử lại.');
     state.uploading=true;
     try{
       for(const record of records){
@@ -4957,6 +5152,7 @@ window.TascoCloud = (() => {
     }finally{state.uploading=false;}
   }
   async function queuePhotos(files,title,metadata,albumContext=null) {
+    if(state.albumSaving)throw new Error('Đợi đổi tên album hoàn tất rồi lưu ảnh.');
     const owner=await account(),cloud=config(),records=[];let album=null;
     const recordKey=owner.id+':'+(albumContext?.albumId||'');
     const direct=!state.localReady||files.some(file=>directRecords.get(file)?.has(recordKey));
@@ -4990,7 +5186,7 @@ window.TascoCloud = (() => {
   }
   window.addEventListener('online',()=>{if(state.pending.length)processQueue();});
   window.addEventListener('pagehide',()=>{state.albumDialog?.cancel();window.TascoPhotoViewer?.close();clearURLs();});
-  return {configure,mount,refresh,queuePhotos,processQueue,notify,isReady:cloudReady,account,icon,createAlbum,openAlbum,captureContext,releaseCapture,captureNotice:()=>state.storageStatus==='unavailable'?'Cần có mạng để lưu ảnh. Giữ màn hình chụp đến khi Lưu Cloud thành công.':'',capture:captureAlbum};
+  return {configure,mount,refresh,queuePhotos,processQueue,notify,isReady:cloudReady,account,icon,createAlbum,renameAlbum,deleteAlbum,openAlbum,captureContext,releaseCapture,captureNotice:()=>state.storageStatus==='unavailable'?'Cần có mạng để lưu ảnh. Giữ màn hình chụp đến khi Lưu Cloud thành công.':'',capture:captureAlbum};
 })();
 
 let lastFetchedGpsCoords=null,lastFetchedAddress=null,gpsPermissionDenied=false;
