@@ -1397,28 +1397,31 @@ html.dark .ws-quote-footer { border-top-color: rgba(132,191,199,.26); }
 .tasco-workspace #mainApp[data-page=cloud] > #wsChildbar { display: none !important; }
 html[data-tasco-page=cloud] { background: var(--app-navy); }
 html[data-tasco-page=cloud] body.tasco-workspace::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top,0px); z-index: 100; background: var(--app-navy); pointer-events: none; }
-.tasco-workspace #personalCloudSection .personal-cloud { --cl-bg: var(--ws-surface); --cl-soft: var(--ws-soft); --cl-text: var(--ws-text); --cl-muted: var(--ws-muted); --cl-line: var(--ws-line); --cl-gold: var(--ws-accent-text); padding: 0 !important; }
+.tasco-workspace #personalCloudSection .personal-cloud { --cl-bg: var(--ws-surface); --cl-soft: var(--ws-soft); --cl-text: var(--ws-text); --cl-muted: var(--ws-muted); --cl-line: var(--ws-line); --cl-gold: var(--ws-accent-text); --cloud-control-height: 48px; --cloud-control-radius: 14px; padding: 0 !important; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1.6; letter-spacing: 0; }
+.tasco-workspace #personalCloudSection :is(button,input,summary) { font-family: inherit; letter-spacing: 0; }
+.tasco-workspace #personalCloudSection .cloud-button { min-height: 44px; font-size: 13px; font-weight: 600; line-height: 1.4; }
+.tasco-workspace #personalCloudSection .cloud-button > svg { display: block; width: 18px; height: 18px; }
 .tasco-workspace #personalCloudSection .cloud-hero { display: block; position: relative; isolation: isolate; overflow: hidden; padding: calc(18px + env(safe-area-inset-top,0px)) 24px 48px; border: 0; border-radius: 0 0 32px 32px; background: var(--app-navy); box-shadow: none; color: #fff; }
 .tasco-workspace #personalCloudSection .cloud-hero::after { content: ''; display: block; position: absolute; inset: 70px 8px 38px 35%; z-index: -1; width: auto; height: auto; border: 0; border-radius: 0; opacity: .11; background: radial-gradient(#daecf0 1px,transparent 1px); background-size: 9px 9px; mask-image: linear-gradient(90deg,transparent,#000); pointer-events: none; }
 .cloud-journey-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 23px; }
 .cloud-journey-top > button { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; padding: 0; border: 1px solid rgba(218,236,240,.18); border-radius: 12px; background: rgba(255,255,255,.035); color: #daecf0; }
-.cloud-journey-top > span { flex: 1; color: #daecf0; text-align: center; font-size: 8px; font-weight: 650; letter-spacing: .13em; }
+.cloud-journey-top > span { flex: 1; color: #daecf0; text-align: center; font-size: 9px; font-weight: 600; letter-spacing: .1em; }
 .cloud-journey-top svg { width: 17px; height: 17px; stroke-width: 1.7; }
 .tasco-workspace #personalCloudSection .cloud-hero-copy { width: 100%; min-width: 0; }
-.tasco-workspace #personalCloudSection .cloud-eyebrow { display: inline-flex; align-items: center; gap: 7px; color: #84bfc7; font-size: 8px; font-weight: 650; letter-spacing: .12em; }
+.tasco-workspace #personalCloudSection .cloud-eyebrow { display: inline-flex; align-items: center; gap: 7px; color: #84bfc7; font-size: 9px; font-weight: 600; letter-spacing: .1em; }
 .tasco-workspace #personalCloudSection .cloud-eyebrow::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: #84bfc7; }
-.tasco-workspace #personalCloudSection .cloud-hero-copy h1 { margin: 8px 0 10px; color: #fff !important; font-size: 32px; font-weight: 650; letter-spacing: -1.1px; line-height: 1.15; }
+.tasco-workspace #personalCloudSection .cloud-hero-copy h1 { margin: 8px 0 10px; color: #fff !important; font-size: 32px; font-weight: 600; letter-spacing: -1px; line-height: 1.2; }
 .tasco-workspace #personalCloudSection .cloud-hero-copy h1:focus { outline: none; }
-.tasco-workspace #personalCloudSection .cloud-hero-copy p { color: #daecf0; font-size: 11px; line-height: 1.7; }
+.tasco-workspace #personalCloudSection .cloud-hero-copy p { color: #daecf0; font-size: 12px; font-weight: 400; line-height: 1.7; }
 .tasco-workspace #personalCloudSection .cloud-hero-icon { display: block; position: absolute; right: 19px; top: calc(94px + env(safe-area-inset-top,0px)); width: 71px; height: 65px; padding: 0; border: 0; background: transparent; box-shadow: none; color: #84bfc7; opacity: .2; pointer-events: none; }
 .tasco-workspace #personalCloudSection .cloud-hero-icon svg { width: 100%; height: 100%; stroke-width: .9; }
 .tasco-workspace #personalCloudSection .cloud-hero-actions { width: 100%; margin: 20px 0 0; }
-.tasco-workspace #personalCloudSection .cloud-hero-actions .cloud-primary { justify-content: flex-start; gap: 10px; width: 100%; min-height: 48px; padding: 13px 18px; border: 1px solid var(--app-teal) !important; border-radius: 99px; background: var(--app-teal) !important; color: var(--app-navy) !important; box-shadow: none; font-size: 12px; font-weight: 650; }
-.cloud-hero-actions .cloud-primary > span { flex: 1; text-align: left; }
-.cloud-hero-actions .cloud-primary .cloud-capture-arrow { width: 15px; height: 15px; }
+.tasco-workspace #personalCloudSection .cloud-hero-actions .cloud-primary { justify-content: center; gap: 8px; width: 100%; min-height: var(--cloud-control-height); padding: 12px 18px; border: 1px solid var(--app-teal) !important; border-radius: 99px; background: var(--app-teal) !important; color: var(--app-navy) !important; box-shadow: none; font-size: 13px; font-weight: 600; }
+.cloud-hero-actions .cloud-primary > span { flex: 0 1 auto; text-align: center; }
+.tasco-workspace #personalCloudSection .cloud-hero-actions .cloud-primary .cloud-capture-arrow { display: none; }
 .tasco-workspace #personalCloudSection .cloud-hero-actions .cloud-primary:disabled { opacity: 1; cursor: default; }
 .cloud-capture-name { margin-top: 12px; }
-.cloud-capture-name > summary { display: flex; align-items: center; gap: 7px; width: fit-content; min-height: 34px; padding: 6px 2px; color: #b8dce2; font-size: 10px; font-weight: 450; cursor: pointer; list-style: none; }
+.cloud-capture-name > summary { display: flex; align-items: center; gap: 7px; width: fit-content; min-height: 36px; padding: 6px 2px; color: #b8dce2; font-size: 12px; font-weight: 500; cursor: pointer; list-style: none; }
 .cloud-capture-name > summary::-webkit-details-marker { display: none; }
 .cloud-capture-name > summary svg { width: 13px; height: 13px; }
 .cloud-capture-name > summary .cloud-name-chevron { width: 11px; height: 11px; transition: transform .18s; }
@@ -1426,42 +1429,47 @@ html[data-tasco-page=cloud] body.tasco-workspace::before { content: ''; position
 .cloud-capture-name-field { margin-top: 10px; }
 .tasco-workspace #personalCloudSection .cloud-capture-name .cloud-title-field { display: block; margin: 0; padding: 0; }
 .cloud-capture-name .cloud-title-field > span { display: none; }
-.tasco-workspace #personalCloudSection .cloud-capture-name .cloud-title-field input { width: 100%; min-height: 47px; height: auto; margin: 0; padding: 11px 14px; border: 1px solid rgba(218,236,240,.3) !important; border-radius: 14px; background: rgba(255,255,255,.08) !important; color: #fff !important; font-size: 16px; font-weight: 450; }
+.tasco-workspace #personalCloudSection .cloud-capture-name .cloud-title-field input { width: 100%; min-height: var(--cloud-control-height); height: auto; margin: 0; padding: 11px 14px; border: 1px solid rgba(218,236,240,.3) !important; border-radius: var(--cloud-control-radius); background: rgba(255,255,255,.08) !important; color: #fff !important; font-size: 16px; font-weight: 400; line-height: 1.5; }
 .cloud-capture-name input::placeholder { color: #b8dce2 !important; }
-.cloud-capture-name-field > small { display: block; margin-top: 7px; color: #b8dce2; font-size: 9px; line-height: 1.6; }
+.cloud-capture-name-field > small { display: block; margin-top: 7px; color: #b8dce2; font-size: 11px; line-height: 1.6; }
 .tasco-workspace #personalCloudSection .cloud-control-panel { position: relative; z-index: 2; margin: -27px 12px 0; padding: 20px; overflow: visible; border: 1px solid var(--ws-line); border-radius: 27px; background: var(--ws-surface); box-shadow: 0 16px 40px -30px rgba(24,48,86,.3); }
 .cloud-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 23px; margin-bottom: 13px; }
-.cloud-panel-heading h2 { margin: 0; color: var(--ws-text); font-size: 13px; font-weight: 650; letter-spacing: -.25px; }
-.cloud-clear-filters { display: inline-flex; align-items: center; gap: 4px; padding: 5px 0 5px 8px; border: 0; background: transparent; color: var(--ws-accent-text); font-size: 10px; font-weight: 600; }
+.cloud-panel-heading h2 { margin: 0; color: var(--ws-text); font-size: 14px; font-weight: 600; letter-spacing: -.2px; }
+.cloud-clear-filters { display: inline-flex; align-items: center; gap: 5px; min-height: 32px; padding: 5px 0 5px 8px; border: 0; background: transparent; color: var(--ws-accent-text); font-size: 12px; font-weight: 500; }
 .cloud-clear-filters svg { width: 11px; height: 11px; }
 .tasco-workspace #personalCloudSection .cloud-toolbar { display: block; padding: 0; margin: 0; border: 0; background: transparent; }
-.tasco-workspace #personalCloudSection .cloud-search { min-height: 51px; padding: 0 14px; border: 1px solid transparent; border-radius: 15px; background: var(--ws-soft) !important; color: var(--ws-muted); }
+.tasco-workspace #personalCloudSection .cloud-search { display: flex; align-items: center; gap: 10px; width: 100%; min-height: var(--cloud-control-height); padding: 0 14px; border: 1px solid var(--ws-line); border-radius: var(--cloud-control-radius); background: var(--ws-soft) !important; color: var(--ws-accent-text); }
+.tasco-workspace #personalCloudSection .cloud-search > svg { width: 18px; height: 18px; }
 .tasco-workspace #personalCloudSection .cloud-search:focus-within { border-color: var(--app-teal); box-shadow: 0 0 0 3px var(--ws-accent); }
-.tasco-workspace #personalCloudSection .cloud-search input { height: 49px; margin: 0; padding: 10px 0; font-size: 16px !important; font-weight: 450; color: var(--ws-text) !important; background: transparent !important; border: 0 !important; box-shadow: none; }
+.tasco-workspace #personalCloudSection .cloud-search input { flex: 1; min-width: 0; min-height: 0; height: 46px; margin: 0; padding: 10px 0; font-size: 16px !important; font-weight: 400; line-height: 1.5; color: var(--ws-text) !important; background: transparent !important; border: 0 !important; border-radius: 0; outline: 0 !important; box-shadow: none; appearance: none; -webkit-appearance: none; }
+.tasco-workspace #personalCloudSection .cloud-search input::placeholder { font-size: 14px; font-weight: 400; color: var(--ws-muted); opacity: 1; }
 .tasco-workspace #personalCloudSection input::placeholder { color: var(--ws-muted); }
-.tasco-workspace #personalCloudSection .cloud-details-row { display: grid; grid-template-columns: minmax(0,1fr) 44px; align-items: end; gap: 10px; padding: 0; margin-top: 13px; }
+.tasco-workspace #personalCloudSection .cloud-details-row { display: grid; grid-template-columns: minmax(0,1fr) var(--cloud-control-height); align-items: end; gap: 10px; padding: 0; margin-top: 14px; }
 .tasco-workspace #personalCloudSection .cloud-date { min-width: 0; color: var(--ws-muted); }
-.tasco-workspace #personalCloudSection .cloud-date > span { margin-left: 3px; font-size: 9px; font-weight: 550; }
-.tasco-workspace #personalCloudSection .cloud-date-trigger { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 10px 13px; border: 1px solid var(--ws-line) !important; border-radius: 14px; background: var(--ws-soft) !important; font-size: 11px; font-weight: 600; color: var(--ws-text) !important; }
+.tasco-workspace #personalCloudSection .cloud-date > span { margin-left: 3px; font-size: 11px; font-weight: 500; }
+.tasco-workspace #personalCloudSection .cloud-date-trigger { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; min-height: var(--cloud-control-height); padding: 10px 14px; border: 1px solid var(--ws-line) !important; border-radius: var(--cloud-control-radius); background: var(--ws-soft) !important; font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--ws-text) !important; }
+.tasco-workspace #personalCloudSection .cloud-date-trigger > svg { display: block; width: 18px; height: 18px; color: var(--ws-accent-text); }
+.tasco-workspace #personalCloudSection .cloud-date-trigger small { font-size: 11px; font-weight: 400; line-height: 1.4; }
 .cloud-date-trigger > span { min-width: 0; }
 .tasco-workspace #personalCloudSection .cloud-date-trigger[data-value]:not([data-value=""]) { border-color: var(--app-teal) !important; background: var(--ws-accent) !important; }
-.tasco-workspace #personalCloudSection .cloud-details-row > [data-action=refresh] { display: grid; place-items: center; width: 44px; min-height: 44px; height: 44px; padding: 0; border: 1px solid var(--ws-line); border-radius: 14px; background: var(--ws-surface); color: var(--ws-accent-text); font-size: 0; }
+.tasco-workspace #personalCloudSection .cloud-details-row > [data-action=refresh] { display: inline-flex; justify-content: center; align-items: center; gap: 0; width: var(--cloud-control-height); min-height: var(--cloud-control-height); height: var(--cloud-control-height); padding: 0; border: 1px solid var(--ws-line); border-radius: var(--cloud-control-radius); background: var(--ws-soft); color: var(--ws-accent-text); }
+.tasco-workspace #personalCloudSection .cloud-details-row > [data-action=refresh] > svg { display: block; width: 20px; height: 20px; margin: 0; }
 .cloud-details-row > [data-action=refresh][aria-busy=true] svg { animation: cloud-refresh-spin 1.1s linear infinite; }
-.tasco-workspace #personalCloudSection .cloud-account-line { display: flex; align-items: center; margin: 15px 23px 0; padding: 0; font-size: 10px; line-height: 1.6; }
+.tasco-workspace #personalCloudSection .cloud-account-line { display: flex; align-items: center; margin: 15px 23px 0; padding: 0; font-size: 11px; font-weight: 400; line-height: 1.6; }
 .tasco-workspace #personalCloudSection .cloud-account-line span:first-child { min-width: 0; color: var(--ws-muted) !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tasco-workspace #personalCloudSection .cloud-feedback { margin: 15px 22px 0; padding: 13px 15px; border: 1px solid var(--ws-line); border-radius: 15px; color: var(--ws-muted); background: var(--ws-surface); font-size: 11px; line-height: 1.7; }
 .tasco-workspace #personalCloudSection .cloud-feedback[data-error=true] { color: #a65550; }
 .tasco-workspace #personalCloudSection .cloud-gallery-heading { display: flex; align-items: center; justify-content: space-between; gap: 9px; margin: 25px 22px 15px; }
-.tasco-workspace #personalCloudSection .cloud-gallery-heading h2 { font-size: 18px; font-weight: 650; line-height: 1.4; letter-spacing: -.6px; }
+.tasco-workspace #personalCloudSection .cloud-gallery-heading h2 { font-size: 18px; font-weight: 600; line-height: 1.4; letter-spacing: -.4px; }
 .cloud-gallery-heading .cloud-gallery-actions { display: flex; align-items: center; gap: 8px; }
-.tasco-workspace #personalCloudSection [data-cloud-total] { padding: 4px 0; background: transparent !important; color: var(--ws-muted) !important; font-size: 10px; font-weight: 500; white-space: nowrap; }
-.tasco-workspace #personalCloudSection .cloud-gallery-actions [data-action=selection] { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; padding: 8px 11px; border: 1px solid var(--ws-line); border-radius: 99px; background: var(--ws-surface); color: var(--ws-text); font-size: 10px; font-weight: 600; }
+.tasco-workspace #personalCloudSection [data-cloud-total] { padding: 4px 0; background: transparent !important; color: var(--ws-muted) !important; font-size: 11px; font-weight: 400; white-space: nowrap; }
+.tasco-workspace #personalCloudSection .cloud-gallery-actions [data-action=selection] { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 10px 13px; border: 1px solid var(--ws-line); border-radius: 99px; background: var(--ws-surface); color: var(--ws-text); font-size: 12px; font-weight: 500; }
 .cloud-gallery-actions [data-action=selection] svg { width: 12px; height: 12px; }
 .cloud-gallery-actions [data-action=selection][aria-pressed=true] { border-color: var(--app-teal) !important; background: var(--ws-accent) !important; }
 .tasco-workspace #personalCloudSection .personal-cloud > .cloud-grid { display: block; margin: 0 22px; }
 .tasco-workspace #personalCloudSection .cloud-day-group { margin: 0 0 23px; }
 .tasco-workspace #personalCloudSection .cloud-day-heading { margin: 0 2px 11px; }
-.tasco-workspace #personalCloudSection .cloud-day-heading h3 { font-size: 13px; font-weight: 650; }
+.tasco-workspace #personalCloudSection .cloud-day-heading h3 { font-size: 13px; font-weight: 600; }
 .tasco-workspace #personalCloudSection .cloud-day-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
 .tasco-workspace #personalCloudSection .cloud-photo-card.cloud-photo-tile { border: 1px solid var(--ws-line); border-radius: 18px; background: var(--ws-surface); box-shadow: 0 5px 20px -18px rgba(24,48,86,.25); }
 .tasco-workspace #personalCloudSection .cloud-photo-tile .cloud-photo-image { display: block; width: 100%; height: auto; min-height: 0; padding: 0; border: 0; border-radius: 0; aspect-ratio: auto; background: transparent; color: var(--ws-text); text-align: left; }
@@ -1471,25 +1479,25 @@ html[data-tasco-page=cloud] body.tasco-workspace::before { content: ''; position
 .cloud-tile-preview::after { content: ''; position: absolute; inset: 60% 0 0; background: linear-gradient(transparent,rgba(5,14,28,.42)); pointer-events: none; }
 .cloud-tile-preview .cloud-tile-time { z-index: 1; bottom: 8px; left: 10px; font-size: 9px; }
 .cloud-tile-caption { display: block; padding: 11px 11px 12px; }
-.cloud-tile-caption > strong { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 34px; color: var(--ws-text); font-size: 11px; font-weight: 600; line-height: 1.5; }
-.cloud-tile-caption > span { display: flex; align-items: center; gap: 4px; margin-top: 6px; color: var(--ws-muted); font-size: 9px; line-height: 1.5; }
+.cloud-tile-caption > strong { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 36px; color: var(--ws-text); font-size: 12px; font-weight: 600; line-height: 1.5; }
+.cloud-tile-caption > span { display: flex; align-items: center; gap: 4px; margin-top: 6px; color: var(--ws-muted); font-size: 11px; line-height: 1.5; }
 .cloud-tile-caption > span > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cloud-tile-caption > span svg { width: 11px; height: 11px; }
 .tasco-workspace #personalCloudSection .cloud-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 220px; padding: 30px 20px; border: 1px solid var(--ws-line); border-radius: 25px; background: var(--ws-accent); color: var(--ws-muted); }
 .cloud-empty-symbol { display: grid; place-items: center; width: 58px; height: 58px; margin-bottom: 3px; border: 1px solid var(--ws-line); border-radius: 19px; background: var(--ws-surface); color: var(--ws-accent-text); }
 .cloud-empty-symbol svg { width: 27px; height: 27px; }
-.tasco-workspace #personalCloudSection .cloud-empty h2 { margin: 0; font-size: 15px; font-weight: 650; line-height: 1.5; letter-spacing: -.3px; }
-.tasco-workspace #personalCloudSection .cloud-empty p { margin: 0; max-width: 255px; font-size: 11px; line-height: 1.8; }
-.tasco-workspace #personalCloudSection .cloud-empty .cloud-button { min-height: 40px; margin-top: 3px; padding: 10px 16px; border: 1px solid var(--app-teal); border-radius: 99px; background: var(--app-teal); color: var(--app-navy); font-size: 11px; font-weight: 600; }
+.tasco-workspace #personalCloudSection .cloud-empty h2 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.5; letter-spacing: -.3px; }
+.tasco-workspace #personalCloudSection .cloud-empty p { margin: 0; max-width: 275px; font-size: 12px; font-weight: 400; line-height: 1.7; }
+.tasco-workspace #personalCloudSection .cloud-empty .cloud-button { min-height: var(--cloud-control-height); margin-top: 6px; padding: 12px 18px; border: 1px solid var(--app-teal); border-radius: 99px; background: var(--app-teal); color: var(--app-navy); font-size: 13px; font-weight: 600; }
 .cloud-loading-spinner { width: 27px; height: 27px; margin: 8px 0 6px; border: 2px solid var(--ws-line); border-top-color: var(--ws-accent-text); border-radius: 50%; animation: cloud-refresh-spin .85s linear infinite; }
 .tasco-workspace #personalCloudSection .cloud-pending { margin: 18px 22px 0; border-color: var(--ws-line); border-radius: 23px; background: var(--ws-accent); color: var(--ws-text); }
 .tasco-workspace #personalCloudSection .cloud-selection-bar { position: sticky; top: calc(10px + env(safe-area-inset-top,0px)); z-index: 50; margin: 0 22px 15px; padding: 15px; gap: 11px; border: 1px solid var(--app-teal); border-radius: 22px; background: var(--ws-surface); color: var(--ws-text); box-shadow: 0 8px 28px -15px rgba(24,48,86,.25); }
 .cloud-selection-bar > strong { font-size: 12px; font-weight: 600; }
 .tasco-workspace #personalCloudSection .cloud-selection-bar > div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
-.tasco-workspace #personalCloudSection .cloud-selection-bar .cloud-button { min-height: 39px; padding: 9px; border-radius: 12px; background: var(--ws-soft); color: var(--ws-text); font-size: 10px; }
+.tasco-workspace #personalCloudSection .cloud-selection-bar .cloud-button { min-height: 44px; padding: 10px; border-radius: var(--cloud-control-radius); background: var(--ws-soft); color: var(--ws-text); font-size: 12px; font-weight: 500; }
 .tasco-workspace #personalCloudSection .cloud-selection-bar .cloud-delete-selected { grid-column: 1/-1; color: #a65550; border-color: #ecd1cd; background: #fff5f3; }
 html.dark .tasco-workspace #personalCloudSection .cloud-delete-selected { background: #392b36; color: #edb2a9; border-color: #604050; }
-.tasco-workspace #personalCloudSection .cloud-more { min-height: 43px; margin: 20px auto 0; padding: 10px 21px; border-radius: 99px; background: var(--ws-surface); color: var(--ws-text); font-size: 11px; }
+.tasco-workspace #personalCloudSection .cloud-more { min-height: var(--cloud-control-height); margin: 20px auto 0; padding: 12px 21px; border-radius: 99px; background: var(--ws-surface); color: var(--ws-text); font-size: 13px; }
 .tasco-workspace #personalCloudSection .cloud-login { margin: 18px 22px 0; border-radius: 23px; border-color: var(--ws-line); background: var(--ws-surface); color: var(--ws-text); }
 .cloud-hero button:focus-visible, .cloud-hero summary:focus-visible { outline: 2px solid #84bfc7 !important; outline-offset: 3px; }
 @media(min-width:768px) {
@@ -4240,7 +4248,7 @@ window.TascoCloud = (() => {
     clearURLs();state.root=root;state.page=0;state.query='';state.date='';state.startTime='';state.endTime='';state.rows=[];state.pending=[];
     const searchField=`<label class="cloud-search">${icon('search')}<input type="search" data-cloud-search placeholder="${state.config.mode==='mobile'?'Tìm nội dung, địa điểm…':'Tìm theo nội dung hoặc địa điểm…'}" aria-label="Tìm ảnh"></label>`;
     const dateField='<div class="cloud-date"><span>Ngày chụp</span><button type="button" data-cloud-date data-action="date" class="cloud-date-trigger" aria-label="Chọn ngày và giờ chụp"><span data-cloud-date-label>Tất cả ngày</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></button></div>';
-    const reloadButton=`<button class="cloud-button" type="button" data-action="refresh" aria-label="Tải lại thư viện" title="Tải lại thư viện">${icon('refresh')}Tải lại</button>`;
+    const reloadButton=`<button class="cloud-button" type="button" data-action="refresh" aria-label="Tải lại thư viện" title="Tải lại thư viện">${icon('refresh')}</button>`;
     const titleField='<label class="cloud-title-field"><span>Tên ảnh mới</span><input data-cloud-title maxlength="160" placeholder="VD: Hồ sơ xe 51A…" aria-label="Tên ảnh mới trước khi chụp"></label>';
     const mobileHeader=`<header class="cloud-hero" aria-labelledby="cloudPageTitle">
   <div class="cloud-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · THƯ VIỆN CÁ NHÂN</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div>
