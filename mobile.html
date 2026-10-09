@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta id="tascoThemeColor" name="theme-color" content="#edf5f7">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>TASCO DLK · Không gian làm việc</title>
     
     <!-- Icon hiển thị trên tab trình duyệt (Favicon) -->
@@ -1224,9 +1226,17 @@ html.dark .ws-day .ws-theme-moon { display: block; }
 </style>
 <style id="tascoLookupFlowStyles">
 /* Two-step parts lookup, using the workspace palette. */
+html[data-tasco-page=lookup], html[data-tasco-page=results] { background: var(--app-navy); }
+html[data-tasco-page=lookup] body.tasco-workspace::before,
+html[data-tasco-page=results] body.tasco-workspace::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top,0px); z-index: 100; background: var(--app-navy); pointer-events: none; }
 .tasco-workspace #mainApp[data-shell][data-page=lookup],
 .tasco-workspace #mainApp[data-shell][data-page=results] { max-width: 760px; padding: 0 0 calc(118px + env(safe-area-inset-bottom,0px)) !important; }
 .tasco-workspace #traCuuSection.ws-journey, .tasco-workspace #lookupResultsSection.ws-journey { padding: 0; }
+.tasco-workspace #lookupResultsSection.ws-journey { padding-top: var(--lookup-results-header-height,calc(244px + env(safe-area-inset-top,0px))); }
+.tasco-workspace #mainApp[data-page=lookup] > #mainHeader,
+.tasco-workspace #mainApp[data-page=results] > #mainHeader,
+.tasco-workspace #mainApp[data-page=lookup] > #wsChildbar,
+.tasco-workspace #mainApp[data-page=results] > #wsChildbar { display: none !important; }
 .ws-journey-hero { position: relative; isolation: isolate; overflow: hidden; min-height: 245px; padding: calc(18px + env(safe-area-inset-top,0px)) 24px 50px; border-radius: 0 0 32px 32px; background: var(--app-navy); color: #fff; }
 .ws-journey-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 90% 55%,rgba(99,173,182,.16),transparent 65%); }
 .ws-journey-hero::after { content: ''; position: absolute; inset: 64px 10px 25px 25%; z-index: -1; opacity: .11; background-image: radial-gradient(#daecf0 1px,transparent 1px); background-size: 9px 9px; mask-image: linear-gradient(90deg,transparent,#000); pointer-events: none; }
@@ -1269,7 +1279,7 @@ html.dark .ws-day .ws-theme-moon { display: block; }
 .tasco-workspace .ws-journey .ws-search-actions .ws-secondary { border-radius: 99px; padding: 10px 12px; }
 .ws-journey-note { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 17px 14px 0; color: var(--ws-muted); font-size: 9px; line-height: 1.6; text-align: center; }
 .ws-journey-note .ws-icon { width: 13px; height: 13px; }
-.ws-results-sticky { position: sticky; top: 0; z-index: 85; isolation: isolate; overflow: visible; background: var(--ws-bg); }
+.ws-results-sticky { position: fixed; top: 0; left: 0; right: 0; width: 100%; max-width: 760px; margin: 0 auto; z-index: 85; isolation: isolate; overflow: visible; background: var(--ws-bg); }
 .ws-results-toolbar { position: relative; z-index: 2; margin: -27px 12px 0; padding: 0 22px 11px; border: 1px solid var(--ws-line); border-bottom: 0; border-radius: 28px 28px 0 0; background: var(--ws-surface); }
 .ws-results-toolbar .ws-results-controls { margin: -20px 0 0; }
 .ws-results-hero { min-height: 235px; padding-bottom: 54px; }
@@ -1292,7 +1302,10 @@ html.dark .ws-day .ws-theme-moon { display: block; }
 .ws-sort-pill .ws-sort-chevron { width: 13px; height: 13px; transition: transform .18s ease; }
 .ws-sort-pill[aria-expanded=true] { box-shadow: 0 0 0 3px var(--ws-accent),0 5px 14px rgba(24,48,86,.08); }
 .ws-sort-pill[aria-expanded=true] .ws-sort-chevron { transform: rotate(180deg); }
-.ws-sort-pill:disabled { opacity: .55; cursor: default; }
+.tasco-workspace .ws-sort-pill:disabled { opacity: 1; background: var(--app-teal); color: var(--app-navy); cursor: default; }
+.ws-sort-pill[aria-busy=true] > .ws-icon:first-child { display: none; }
+.ws-sort-pill[aria-busy=true]::before { content: ''; width: 14px; height: 14px; flex-shrink: 0; border: 1.5px solid rgba(24,48,86,.25); border-top-color: var(--app-navy); border-radius: 50%; animation: lookup-spin .8s linear infinite; }
+.ws-sort-pill:disabled .ws-sort-chevron { opacity: .55; }
 .ws-sort-menu-panel { position: absolute; top: calc(100% + 10px); right: 0; width: 260px; max-width: calc(100vw - 58px); padding: 8px; border: 1px solid var(--ws-line); border-radius: 21px; background: var(--ws-surface); color: var(--ws-text); box-shadow: 0 18px 46px -16px rgba(24,48,86,.28),0 3px 10px rgba(24,48,86,.05); animation: lookup-sort-reveal .16s ease-out; }
 .ws-sort-menu-title { margin: 0; padding: 9px 12px 11px; color: var(--ws-muted); font-size: 9px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
 .ws-sort-menu { display: flex; flex-direction: column; gap: 4px; }
@@ -1350,7 +1363,7 @@ html.dark .ws-quote-footer { border-top-color: rgba(132,191,199,.26); }
 .ws-journey button:focus-visible, .ws-journey select:focus-visible { outline: 2px solid var(--ws-accent-text); outline-offset: 3px; }
 .ws-journey-hero button:focus-visible { outline-color: #84bfc7; }
 @media(min-width:768px) {
-  .tasco-workspace #mainApp[data-shell][data-page=lookup], .tasco-workspace #mainApp[data-shell][data-page=results] { padding-top: 24px !important; }
+  .tasco-workspace #mainApp[data-shell][data-page=lookup] { padding-top: 24px !important; }
   .ws-journey-hero { border-radius: 30px; padding-left: 38px; padding-right: 38px; min-height: 265px; }
   .ws-journey-heading h2 { font-size: 40px; }
   .ws-journey-art { right: 45px; bottom: 42px; width: 190px; height: 150px; }
@@ -1375,7 +1388,7 @@ html.dark .ws-quote-footer { border-top-color: rgba(132,191,199,.26); }
 }
 @keyframes lookup-spin { to { transform: rotate(360deg); } }
 @keyframes lookup-sort-reveal { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-@media(prefers-reduced-motion:reduce) { .ws-results-loading > span, .ws-sort-menu-panel { animation: none; } .ws-quote-card, .ws-sort-chevron { transition: none; } }
+@media(prefers-reduced-motion:reduce) { .ws-results-loading > span, .ws-sort-menu-panel, .ws-sort-pill[aria-busy=true]::before { animation: none; } .ws-quote-card, .ws-sort-chevron { transition: none; } }
 
 </style>
 </head>
@@ -1613,6 +1626,7 @@ window.TascoAppShell=(()=>{
   const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',account:'accountSection',admin:'sysMgrSection'};
   let user=null,current='login',mountedOwner='',lastCloud=null;
   const scrolls={};
+  if ('scrollRestoration' in history) history.scrollRestoration='manual';
   const setText=(selector,text)=>document.querySelectorAll(selector).forEach(node=>node.textContent=text);
   function greeting(){
     const name=user?.fullName||user?.email||'bạn';const short=user?.fullName&&!name.includes('@')?name.trim().split(/\s+/).at(-1):name.split('@')[0];
@@ -1635,7 +1649,9 @@ window.TascoAppShell=(()=>{
   function navigate(view,options={}){
     view=view==='main'?'lookup':view;if(view!=='login'&&!pages[view])view='home';
     if(view!=='login'&&!user)view='login';if(view==='admin'&&user?.role!=='admin')view='home';
-    const previous=current;scrolls[previous]=window.scrollY;current=view;window.TascoLookupFlow?.onNavigate(view);
+    const previous=current;scrolls[previous]=Math.max(0,window.scrollY);current=view;
+    if(previous!==view)document.activeElement?.blur?.();
+    window.TascoLookupFlow?.onNavigate(view);
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
     login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
     Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id);node.hidden=page!==view;node.style.display=page===view?'block':'none';});
@@ -1647,8 +1663,11 @@ window.TascoAppShell=(()=>{
     if(options.history!==false){const hash='#'+view;if(location.hash!==hash||options.replace)history[options.replace?'replaceState':'pushState']({tascoPage:view},'',location.pathname+location.search+hash);}
     if(view==='cloud')connectCloud();if(view==='home'){greeting();paintCloud(lastCloud);connectCloud();}
     if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
-    window.scrollTo(0,options.restore?scrolls[view]||0:0);
+    window.TascoLookupFlow?.afterNavigate(view);
     if(previous!==view&&view!=='home')document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':'wsPageTitle').focus({preventScroll:true});
+    const top=options.restore?scrolls[view]||0:0;
+    window.scrollTo({left:0,top,behavior:'instant'});
+    if(previous!==view&&['lookup','results'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
   }
   function paintCloud(summary){
     const relevant=Boolean(user&&summary?.email?.toLowerCase()===user.email.toLowerCase());
@@ -5343,6 +5362,21 @@ window.TascoLookupFlow = (() => {
   let pending = false, failed = false;
   const node = id => document.getElementById(id);
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
+  function syncBrowserChrome(view = node('mainApp').dataset.page) {
+    document.documentElement.dataset.tascoPage = view;
+    const color = ['lookup','results'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    node('tascoThemeColor').setAttribute('content',color);
+  }
+  function measureResultHeader() {
+    if (node('mainApp').dataset.page !== 'results') return;
+    const height = Math.ceil(node('resultsStickyHeader').getBoundingClientRect().height);
+    if (height > 0) node('lookupResultsSection').style.setProperty('--lookup-results-header-height',height + 'px');
+  }
+  function afterNavigate(view) {
+    syncBrowserChrome(view);
+    measureResultHeader();
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(measureResultHeader);
+  }
   const sortLabels = {newest:'Mới nhất','price-asc':'Giá tăng dần','price-desc':'Giá giảm dần'};
   const sortItems = [...document.querySelectorAll('[data-sort-mode]')];
   function syncSort(mode = node('resultSort').value) {
@@ -5401,6 +5435,9 @@ window.TascoLookupFlow = (() => {
     node('resultsSurface').dataset.searchBusy = 'true';
     syncSort('newest');
     node('resultSort').disabled = true;
+    node('resultSort').setAttribute('aria-busy','true');
+    node('resultSort').setAttribute('aria-label','Sắp xếp: đang tải báo giá');
+    node('resultSortLabel').textContent = 'Đang tải…';
     node('btnLookupSearch').disabled = true;
     node('btnLookupSearch').setAttribute('aria-busy','true');
     window.updateView('results');
@@ -5409,6 +5446,8 @@ window.TascoLookupFlow = (() => {
     pending = false;
     node('resultsSurface').dataset.searchBusy = 'false';
     node('resultSort').disabled = failed;
+    node('resultSort').removeAttribute('aria-busy');
+    syncSort();
     if (failed) closeSort();
     node('btnLookupSearch').disabled = false;
     node('btnLookupSearch').removeAttribute('aria-busy');
@@ -5427,7 +5466,7 @@ window.TascoLookupFlow = (() => {
     fail('Tiếp tục tra cứu', 'Các lựa chọn của bạn vẫn được giữ. Nhấn tra cứu lại để tải báo giá.', 'Tra cứu lại');
     finish();
   }
-  function onNavigate(view) { closeSort(); if (pending && view !== 'results') window.cancelLookupSearch?.(); }
+  function onNavigate(view) { closeSort(); syncBrowserChrome(view); if (pending && view !== 'results') window.cancelLookupSearch?.(); }
   node('resultSort').addEventListener('keydown',event => {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openSort(event.key === 'ArrowUp' ? 'last' : undefined); }
     if (event.key === 'Escape') { event.preventDefault(); closeSort(true); }
@@ -5446,9 +5485,15 @@ window.TascoLookupFlow = (() => {
   node('searchInput').addEventListener('input', syncChoices);
   const observer = new MutationObserver(syncChoices);
   observer.observe(node('labelType'), {childList:true,characterData:true,subtree:true});
+  const themeObserver = new MutationObserver(() => syncBrowserChrome());
+  themeObserver.observe(document.documentElement, {attributes:true,attributeFilter:['class']});
+  if (typeof ResizeObserver === 'function') new ResizeObserver(measureResultHeader).observe(node('resultsStickyHeader'));
+  window.addEventListener('resize',measureResultHeader);
+  window.visualViewport?.addEventListener('resize',measureResultHeader);
   syncChoices();
   syncSort();
-  return {chooseType,choosePart,edit,begin,finish,fail,cancel,onNavigate,syncChoices,syncSort,toggleSort,chooseSort};
+  syncBrowserChrome();
+  return {chooseType,choosePart,edit,begin,finish,fail,cancel,onNavigate,afterNavigate,syncChoices,syncSort,toggleSort,chooseSort};
 })();
 
 </script>
