@@ -1801,6 +1801,189 @@ html.dark .tasco-workspace #loginOverlay {
 
 
 </style>
+
+<style id="tascoCloudUsageStyles">
+.tasco-workspace #personalCloudSection .cloud-usage-card{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 32px;column-gap:8px;row-gap:6px;align-items:center;margin:12px 0 0;padding:9px 12px;border:1px solid rgba(218,236,240,.16);border-radius:12px;background:rgba(255,255,255,.035);color:#edf5f7}
+.cloud-usage-stats{grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.cloud-usage-stat{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 5px;min-width:0}
+.cloud-usage-stat>span{font-size:9px;font-weight:400;line-height:1.5;color:#b8dce2;white-space:nowrap}
+.cloud-usage-stat>strong{font-size:13px;font-weight:600;line-height:1.4;letter-spacing:0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cloud-usage-stat:last-child>strong{color:#9dcfd6}
+.cloud-usage-stat>strong[data-empty=true]{font-size:10px;font-weight:500}
+.cloud-usage-track{grid-column:1;grid-row:2;width:100%;height:3px;overflow:hidden;border-radius:99px;background:rgba(218,236,240,.16)}
+.cloud-usage-track>span{display:block;width:0;height:100%;border-radius:inherit;background:#84bfc7;transition:width .25s ease}
+.cloud-usage-track[data-full=true]>span{background:#f3c48d}
+.cloud-usage-track[data-unknown=true]{opacity:.45}
+.cloud-usage-footer{display:contents}
+.tasco-workspace #personalCloudSection .cloud-usage-limit{grid-column:2;grid-row:1 / span 2;display:grid;place-items:center;width:32px;min-height:36px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;color:#b8dce2;cursor:pointer}
+.cloud-usage-limit:hover{background:rgba(218,236,240,.08)}
+.cloud-usage-limit>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.cloud-usage-limit svg{width:14px;height:14px}
+.cloud-usage-limit:focus-visible{outline:2px solid #9dcfd6;outline-offset:3px;border-radius:4px}
+.cloud-usage-limit:disabled{cursor:default;opacity:.65}
+.cloud-usage-percent{display:none}
+.tasco-workspace #personalCloudSection .cloud-usage-card .cloud-usage-note{display:none;grid-column:1 / -1;margin:0;font-size:9px;line-height:1.6;color:#c8e2e6}
+.tasco-workspace #personalCloudSection .cloud-usage-card .cloud-usage-note[data-warning=true]{display:block}
+.cloud-capacity-label{display:block;margin:18px 0 7px;font-size:12px;font-weight:600;color:var(--st-navy)}
+.cloud-capacity-input{width:100%;min-height:48px;padding:12px 14px;border:1px solid var(--st-line);border-radius:13px;background:var(--st-soft);color:var(--st-navy);font:inherit;font-size:16px}
+.cloud-capacity-input:focus{outline:2px solid var(--st-teal);outline-offset:2px}
+@media(max-width:360px){.tasco-workspace #personalCloudSection .cloud-usage-card{padding:8px 10px;column-gap:5px}.cloud-usage-stats{gap:7px}.cloud-usage-stat{column-gap:4px}.cloud-usage-stat>strong{font-size:12px}.cloud-usage-stat>strong[data-empty=true]{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.cloud-usage-track>span{transition:none}}
+</style>
+
+<style id="tascoGalleryDisplayStyles">
+.tasco-workspace #personalCloudSection .cloud-gallery-heading{flex-wrap:wrap;gap:8px;margin-top:20px;margin-bottom:10px}
+.tasco-workspace #personalCloudSection .cloud-gallery-heading h2{font-size:16px;line-height:1.4}
+.tasco-workspace #personalCloudSection .cloud-gallery-actions{gap:5px}
+.tasco-workspace #personalCloudSection .cloud-gallery-actions [data-cloud-total]{font-size:10px}
+.tasco-workspace #personalCloudSection .cloud-gallery-actions :is([data-action=selection],[data-action=gallery-settings]){display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:34px;padding:7px 9px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:11px;font-weight:500;line-height:1.3;white-space:nowrap}
+.tasco-workspace #personalCloudSection .cloud-gallery-actions [data-action=gallery-settings] svg{width:14px;height:14px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-day-grid{grid-template-columns:repeat(var(--cloud-photo-columns,3),minmax(0,1fr));gap:6px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-day-group{margin-bottom:16px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-day-heading{gap:8px;margin:0 1px 7px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-day-heading>div{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 7px;min-width:0}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-day-heading h3{font-size:12px;line-height:1.5}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-day-heading time{margin:0;font-size:9px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-day-heading>span{font-size:9px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-photo-tile{border-radius:10px;box-shadow:none}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-tile-preview{aspect-ratio:1}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-tile-preview .cloud-tile-time{bottom:5px;left:6px;font-size:8px;line-height:1.3}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-tile-caption{padding:6px 7px 7px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-tile-caption>strong{display:block;min-height:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:500;line-height:1.4}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-tile-caption>span{margin-top:3px;gap:3px;font-size:9px;line-height:1.4}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-names=false] .cloud-tile-caption>strong,
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-location=false] .cloud-tile-caption>span,
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-time=false] .cloud-tile-time,
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-names=false][data-gallery-location=false] .cloud-tile-caption{display:none}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-names=false] .cloud-tile-caption>span{margin-top:0}
+.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-time=false] .cloud-tile-preview::after{display:none}
+.cloud-view-panel .storage-header{padding:19px 20px 16px}
+.cloud-view-panel .storage-header h2{font-size:20px}
+.cloud-view-panel .storage-body{padding:18px 20px}
+.cloud-view-columns{min-width:0;margin:0 0 15px;padding:0;border:0}
+.cloud-view-columns legend{margin-bottom:10px;padding:0;color:var(--st-navy);font-size:12px;font-weight:600}
+.cloud-view-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.cloud-view-choice{position:relative;display:block;cursor:pointer}
+.cloud-view-choice>input,.cloud-view-toggle>input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.cloud-view-choice-body{display:grid;justify-items:center;gap:8px;padding:12px 8px 10px;border:1px solid var(--st-line);border-radius:13px;color:var(--st-muted);background:var(--st-bg)}
+.cloud-view-choice-body>strong{font-size:11px;font-weight:500}
+.cloud-view-mini{display:grid;gap:3px;width:38px;height:28px}
+.cloud-view-mini>i{display:block;border-radius:2px;background:currentColor;opacity:.5}
+.cloud-view-choice>input:checked+.cloud-view-choice-body{border-color:var(--st-teal);color:var(--st-navy);background:var(--st-ice);box-shadow:inset 0 0 0 1px var(--st-teal)}
+.cloud-view-choice>input:checked+.cloud-view-choice-body .cloud-view-mini>i{background:var(--st-teal);opacity:1}
+.cloud-view-choice>input:focus-visible+.cloud-view-choice-body,.cloud-view-toggle>input:focus-visible+.cloud-view-switch{outline:2px solid var(--st-teal);outline-offset:3px}
+.cloud-view-options{border-top:1px solid var(--st-line)}
+.cloud-view-toggle{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:47px;border-bottom:1px solid var(--st-line);color:var(--st-navy);font-size:12px;cursor:pointer}
+.cloud-view-switch{position:relative;display:block;flex:0 0 36px;height:22px;border:1px solid var(--st-line);border-radius:99px;background:var(--st-ice)}
+.cloud-view-switch::before{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--st-bg);box-shadow:0 1px 3px rgba(10,25,45,.15);transition:transform .15s}
+.cloud-view-toggle>input:checked+.cloud-view-switch{border-color:var(--st-teal);background:var(--st-teal)}
+.cloud-view-toggle>input:checked+.cloud-view-switch::before{transform:translateX(14px)}
+.cloud-view-panel .storage-footnote{margin:13px 0;color:var(--st-muted);font-size:10px;line-height:1.6}
+.cloud-view-panel .storage-footer{display:flex;flex-direction:row;gap:9px;margin-top:15px}
+.cloud-view-panel .storage-footer>button{flex:1;min-height:42px;font-size:12px}
+.cloud-view-reset{border:1px solid var(--st-line);border-radius:12px;background:var(--st-bg);color:var(--st-muted);font:inherit}
+@media(max-width:360px){.tasco-workspace #personalCloudSection .cloud-gallery-heading h2{font-size:15px}.tasco-workspace #personalCloudSection .cloud-gallery-actions :is([data-action=selection],[data-action=gallery-settings]){padding:7px 8px;font-size:10px}.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns] .cloud-day-grid{gap:5px}.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns="4"] .cloud-tile-caption{padding:5px}.tasco-workspace #personalCloudSection .personal-cloud[data-gallery-columns="4"] .cloud-tile-caption>strong{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.cloud-view-switch::before{transition:none}}
+</style>
+
+<style id="tascoViewerGestureFix">
+.cloud-photo-viewer{width:var(--viewer-width,100vw);max-width:none;touch-action:none;overscroll-behavior:none;isolation:isolate}
+.cloud-photo-viewer .viewer-filmstrip,.cloud-photo-viewer .viewer-info-content{touch-action:none;overscroll-behavior:none}
+</style>
+<style id="tascoRescueStyles">
+.tasco-workspace #mainApp[data-shell][data-page=rescue] { max-width: 760px; padding: 0 0 calc(118px + env(safe-area-inset-bottom,0px)) !important; }
+.tasco-workspace #mainApp[data-page=rescue] > #mainHeader,
+.tasco-workspace #mainApp[data-page=rescue] > #wsChildbar { display: none !important; }
+html[data-tasco-page=rescue] { background: var(--app-navy); }
+@media(max-width:767px){ .tasco-workspace #mainApp[data-shell][data-page=rescue]{ padding-left:0!important; padding-right:0!important; max-width:600px; } }
+.rc .rc-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+.rc .rc-svc{margin-bottom:6px}
+.rc-label{display:block;margin:16px 0 8px 3px;color:var(--ws-muted);font-size:10px;font-weight:600;letter-spacing:.02em}
+.rc-svc + [data-rc-block]{margin-top:0}
+.rc .rc-field{position:relative}
+.rc .rc-field{border-radius:16px;border:1px solid var(--ws-line)!important;min-height:58px}.rc .rc-field:focus-within{border-color:var(--app-teal)!important}.rc .rc-field select,.rc .rc-field input{width:100%;min-height:56px;padding:0 6px;border:0;background:transparent;color:var(--ws-text);font:inherit;font-size:16px;font-weight:500;outline:none;appearance:none;-webkit-appearance:none}
+.rc .rc-field:has(select)::after{content:'';position:absolute;right:16px;top:50%;width:7px;height:7px;margin-top:-6px;border-right:1.7px solid var(--ws-muted);border-bottom:1.7px solid var(--ws-muted);transform:rotate(45deg);pointer-events:none}
+.rc .rc-field select{padding-right:34px;text-overflow:ellipsis}
+.rc .rc-field option{color:#183056;background:#fff}
+.rc-pick{display:flex;align-items:center;gap:11px;width:100%;min-height:58px;padding:9px 13px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-soft);color:var(--ws-text);text-align:left;transition:border-color .18s,background .18s}
+.rc-pick:hover,.rc-pick:focus-visible{border-color:var(--app-teal);outline:none}
+.rc-pick-icon{display:grid;place-items:center;width:34px;height:36px;flex:0 0 34px;border-radius:11px;background:var(--ws-surface);color:var(--ws-accent-text)}
+.rc-pick-icon .ws-icon{width:18px;height:18px}
+.rc-pick-copy{flex:1;min-width:0}
+.rc-pick-copy strong{display:block;margin-bottom:2px;color:var(--ws-muted);font-size:10px;font-weight:500;line-height:1.3}
+.rc-pick-copy small{display:block;color:var(--ws-text);font-size:13px;font-weight:600;line-height:1.35}
+.rc-chev{width:13px;height:13px;flex:0 0 13px;color:var(--ws-muted)}
+.rc .rc-field{display:flex}
+.rc-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:22px;isolation:isolate}
+.rc-modal[hidden]{display:none}
+.rc-sheet{position:relative;z-index:1;display:flex;flex-direction:column;width:min(500px,100%);max-height:min(78dvh,650px);overflow:hidden;border:1px solid var(--ws-line);border-radius:27px;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 28px 90px rgba(11,27,48,.22)}
+.rc-sheet .ws-sheet-heading h3{font-size:19px}
+.rc-sheet-list{flex:1;min-height:0;overflow-y:auto;padding:0 22px 22px;overscroll-behavior:contain}
+.rc-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:53px;margin:0 0 8px;padding:13px 15px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-soft);color:var(--ws-text);text-align:left;font-family:inherit}
+.rc-opt:hover{border-color:var(--app-teal)}
+.rc-opt:focus-visible{outline:2px solid var(--ws-accent-text);outline-offset:3px}
+.rc-opt span{flex:1;min-width:0}
+.rc-opt strong{display:block;font-size:13px;font-weight:600;line-height:1.4}
+.rc-opt small{display:block;margin-top:2px;color:var(--ws-muted);font-size:10.5px;line-height:1.5}
+.rc-opt .ws-icon{width:18px;height:18px;flex:0 0 18px;color:var(--ws-accent-text);opacity:0}
+.rc-opt[aria-selected=true]{border-color:var(--app-teal);background:var(--ws-accent)}
+.rc-opt[aria-selected=true] .ws-icon{opacity:1}
+@media(max-width:767px){.rc-modal{align-items:flex-end;padding:12px 12px max(12px,env(safe-area-inset-bottom,0px))}.rc-sheet{max-height:calc(86dvh - env(safe-area-inset-top,0px))}.rc-sheet .ws-sheet-handle{display:block}.rc-sheet .ws-sheet-heading{padding-top:16px}}
+.rc-hint{margin:8px 3px 0;color:var(--ws-muted);font-size:10px;line-height:1.6}
+.rc-checks{display:grid;gap:8px}
+.rc-check{display:flex;align-items:flex-start;gap:12px;padding:12px 13px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-soft);cursor:pointer}
+.rc-check input{position:absolute;opacity:0;pointer-events:none}
+.rc-box{flex:0 0 auto;display:grid;place-items:center;width:22px;height:22px;margin-top:1px;border:1.5px solid var(--ws-muted);border-radius:7px;color:transparent;background:var(--ws-surface)}
+.rc-box .ws-icon{width:14px;height:14px}
+.rc-check input:checked + .rc-box{background:var(--app-teal);border-color:var(--app-teal);color:var(--app-navy)}
+.rc-check input:focus-visible + .rc-box{outline:2px solid var(--app-teal);outline-offset:2px}
+.rc-check-copy strong{display:block;color:var(--ws-text);font-size:12.5px;font-weight:650;line-height:1.4}
+.rc-check-copy small{display:block;margin-top:2px;color:var(--ws-muted);font-size:10px;line-height:1.5}
+.rc .ws-search-actions{margin-top:20px}
+.rc-result{margin-top:20px;padding:20px;border:1px solid var(--ws-line);border-radius:22px;background:var(--ws-soft)}
+.rc-total{padding:18px;border-radius:18px;background:var(--app-navy);color:#fff}
+.rc-total small{display:block;color:#84bfc7;font-size:9px;font-weight:650;letter-spacing:.13em}
+.rc-total strong{display:block;margin-top:6px;font-size:30px;font-weight:650;letter-spacing:-1px;line-height:1.1}
+.rc-total em{display:block;margin-top:6px;color:#daecf0;font-size:10px;font-style:normal;line-height:1.5}
+.rc-lines{margin:14px 0 0;padding:0;list-style:none}
+.rc-lines li{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px dashed var(--ws-line);color:var(--ws-text);font-size:12px;line-height:1.5}
+.rc-lines li span:first-child{color:var(--ws-muted)}
+.rc-lines li b{font-weight:650;text-align:right;white-space:nowrap}
+.rc-lines li.rc-sub b{color:var(--ws-accent-text)}
+.rc-box-note{margin-top:14px;padding:13px 14px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-surface);font-size:11px;line-height:1.65;color:var(--ws-text)}
+.rc-box-note h4{margin:0 0 6px;font-size:10px;font-weight:650;letter-spacing:.1em;color:var(--ws-muted)}
+.rc-box-note ul{margin:0;padding-left:16px}
+.rc-box-note[data-tone=warn]{border-color:#d9a441;background:rgba(217,164,65,.12)}
+.rc-chip{display:inline-block;padding:4px 10px;border-radius:99px;background:var(--app-ice);color:var(--app-teal-ink);font-size:11px;font-weight:650}
+.dark .rc-chip{background:#244861;color:#daecf0}
+.rc-refnav{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+.rc-refnav button{flex:0 0 auto;min-height:34px;padding:0 13px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-soft);color:var(--ws-muted);font-size:11px;font-weight:600}
+.rc-refnav button[aria-pressed=true]{background:var(--app-teal);border-color:var(--app-teal);color:var(--app-navy)}
+.rc-table-wrap{overflow-x:auto;border:1px solid var(--ws-line);border-radius:16px}
+.rc-table{width:100%;border-collapse:collapse;font-size:11px;color:var(--ws-text)}
+.rc-table th,.rc-table td{padding:10px 11px;border-bottom:1px solid var(--ws-line);text-align:right;white-space:nowrap}
+.rc-table th:first-child,.rc-table td:first-child{text-align:left;white-space:normal;min-width:130px}
+.rc-table th{background:var(--ws-soft);color:var(--ws-muted);font-size:10px;font-weight:650}
+.rc-table tr:last-child td{border-bottom:0}
+.rc-table td.rc-q{color:var(--ws-accent-text);font-weight:600}
+.rc-ref-note{margin:12px 3px 0;color:var(--ws-muted);font-size:10.5px;line-height:1.65}
+.rc-ref-note b{color:var(--ws-text)}
+.rc-ref-list{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.rc-ref-list li{padding:12px 14px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-soft);font-size:12px;line-height:1.55;color:var(--ws-text)}
+.rc-ref-list li small{display:block;margin-top:3px;color:var(--ws-muted);font-size:10.5px}
+.rc-ref-list li b{color:var(--ws-accent-text)}
+/* ===== Đồng bộ font & cỡ chữ form cứu hộ ===== */
+.rc .rc-label,.rc label.rc-label{font-family:inherit;font-size:10px;font-weight:600;line-height:1.4;letter-spacing:.02em;text-transform:none;color:var(--ws-muted);opacity:1}
+.tasco-workspace .rc .rc-field{padding:0 14px;min-height:58px;border-radius:16px;background:var(--ws-soft)}
+.tasco-workspace .rc .rc-field input{padding:0;font-family:inherit!important;font-size:13px!important;font-weight:600!important;line-height:1.35;letter-spacing:0;color:var(--ws-text)}
+.tasco-workspace .rc .rc-field input::placeholder{font-family:inherit;font-size:13px;font-weight:500;color:var(--ws-muted);opacity:.8}
+/* ===== Kết quả hiển thị dạng cửa sổ nổi ===== */
+#rcResult{display:none!important}
+.rc-sheet--result{max-height:min(88dvh,720px)}
+@media(max-width:767px){.rc-sheet--result{max-height:calc(90dvh - env(safe-area-inset-top,0px))}}
+.rc-sheet-result{padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+.rc-result-close{display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;margin-top:16px;border:1px solid var(--app-teal);border-radius:14px;background:var(--app-teal);color:var(--app-navy);font-family:inherit;font-size:13px;font-weight:650;cursor:pointer}
+</style>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
     <script>
@@ -1886,6 +2069,7 @@ html.dark .tasco-workspace #loginOverlay {
     <div class="ws-shortcuts">
       <button type="button" class="ws-shortcut ws-shortcut--camera" data-home-camera data-cloud-only hidden onclick="TascoAppShell.camera()" disabled><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4z"/><circle cx="12" cy="13" r="3.5"/></svg><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg><span><strong>Chụp ảnh hồ sơ</strong><small>Ngày giờ &amp; địa điểm</small></span></button>
       <button type="button" class="ws-shortcut" data-cloud-only hidden onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg><span><strong>Cloud của tôi</strong><small data-cloud-caption>Thư viện ảnh cá nhân</small></span></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="updateView('rescue')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16V8h11v8M14 11h4l3 3v2h-7M3 16h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg><span><strong>Chi phí cứu hộ</strong><small>Tra cứu đơn giá, tính nhanh kéo &amp; cẩu xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="updateView('account')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span><strong>Tài khoản &amp; thiết lập</strong><small>Không gian riêng, theo cách của bạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
     </div>
   </div>
@@ -1910,6 +2094,51 @@ html.dark .tasco-workspace #loginOverlay {
 </section>
 <section id="personalCloudSection" data-shell-page="cloud" hidden style="display:none"></section>
 
+
+<section id="rescueSection" data-shell-page="rescue" class="ws-journey rc" hidden style="display:none" aria-labelledby="rescuePageTitle">
+  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · CỨU HỘ PHƯƠNG TIỆN</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">GĐBT-HD-CHCG-01 · BAREM NỘI BỘ</span><h2 id="rescuePageTitle" tabindex="-1">Chi phí cứu hộ.<br>Tính nhanh.</h2><p>Tra cứu đơn giá và tính trần chi phí kéo, cẩu xe theo hướng dẫn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="94" cy="70" r="59" stroke="currentColor" stroke-opacity=".18"/><circle cx="94" cy="70" r="47" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="3 7"/><path d="M40 92h72l8-24h26l10 24v12H40z" fill="#84bfc7" fill-opacity=".09" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M52 92 74 40l36-8M110 32v22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="62" cy="108" r="11" fill="#183056" stroke="#daecf0" stroke-width="2"/><circle cx="132" cy="108" r="11" fill="#183056" stroke="#daecf0" stroke-width="2"/><path d="M30 124h120" stroke="currentColor" stroke-opacity=".5" stroke-linecap="round"/></svg></header>
+  <div class="ws-search-panel ws-search-panel--premium rc-panel">
+    <div class="ws-kind-tabs rc-tabs" role="group" aria-label="Chế độ"><button type="button" data-rc-tab="calc" aria-pressed="true">Tính chi phí</button><button type="button" data-rc-tab="ref" aria-pressed="false">Bảng tra cứu</button></div>
+
+    <div data-rc-pane="calc">
+      <span class="rc-label">Hạng mục cứu hộ</span>
+      <div class="ws-kind-tabs rc-svc" role="group" aria-label="Hạng mục"><button type="button" data-rc-svc="tow" aria-pressed="true">Kéo xe</button><button type="button" data-rc-svc="crane" aria-pressed="false">Cẩu xe</button><button type="button" data-rc-svc="both" aria-pressed="false">Cả hai</button></div>
+
+      <div data-rc-block="tow">
+        <span class="rc-label">Nhóm xe (kéo) · theo số chỗ / tải trọng</span><button type="button" class="rc-pick" data-rc-pick="rcTowGroup" aria-haspopup="dialog"><span class="rc-pick-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16V8h11v8M14 11h4l3 3v2h-7M3 16h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg></span><span class="rc-pick-copy"><strong></strong><small></small></span><svg class="ws-icon rc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><select id="rcTowGroup" hidden></select>
+        <label class="rc-label" for="rcKm">Quãng đường kéo (km)</label>
+        <div class="ws-search-field rc-field"><input id="rcKm" type="number" inputmode="decimal" min="0" step="0.1" value="10" placeholder="Ví dụ 25"></div>
+        <p class="rc-hint">10 km đầu tính trọn gói; từ km thứ 11 tính theo km, phần lẻ làm tròn lên. Khoảng cách theo bản đồ/GPS.</p>
+      </div>
+
+      <div data-rc-block="crane" hidden>
+        <span class="rc-label">Nhóm xe (cẩu) · theo số chỗ / tải trọng</span><button type="button" class="rc-pick" data-rc-pick="rcCraneClass" aria-haspopup="dialog"><span class="rc-pick-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16V8h11v8M14 11h4l3 3v2h-7M3 16h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg></span><span class="rc-pick-copy"><strong></strong><small></small></span><svg class="ws-icon rc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><select id="rcCraneClass" hidden></select>
+        <span class="rc-label">Vị trí xe cần cẩu</span><button type="button" class="rc-pick" data-rc-pick="rcCranePos" aria-haspopup="dialog"><span class="rc-pick-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.4-6-10a6 6 0 0 1 12 0c0 4.6-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></svg></span><span class="rc-pick-copy"><strong></strong><small></small></span><svg class="ws-icon rc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><select id="rcCranePos" hidden></select>
+      </div>
+
+      <span class="rc-label">Vùng địa lý</span><button type="button" class="rc-pick" data-rc-pick="rcRegion" aria-haspopup="dialog"><span class="rc-pick-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><span class="rc-pick-copy"><strong></strong><small></small></span><svg class="ws-icon rc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><select id="rcRegion" hidden></select>
+
+      <span class="rc-label">Phụ phí điều kiện</span>
+      <div class="rc-checks" id="rcSurcharges"></div>
+
+      <span class="rc-label">Tình huống đặc biệt</span>
+      <div class="rc-checks">
+        <label class="rc-check"><input type="checkbox" id="rcSpecial"><span class="rc-box" aria-hidden="true"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span><span class="rc-check-copy"><strong>Xe đặc biệt / sự cố nghiêm trọng</strong><small>Xe điện, container, đầu kéo, rơi vực/sông/biển, cháy pin, siêu trường siêu trọng, máy công trình, đảo/hầm mỏ</small></span></label>
+        <label class="rc-check"><input type="checkbox" id="rcOver"><span class="rc-box" aria-hidden="true"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span><span class="rc-check-copy"><strong>Chi phí đề xuất vượt barem</strong><small>Dùng để xác định cấp phê duyệt</small></span></label>
+      </div>
+
+      <div class="ws-search-actions"><button type="button" class="ws-primary" id="rcCalcBtn"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg><span>Tính chi phí</span></button><button type="button" class="ws-secondary" id="rcResetBtn" aria-label="Đặt lại" title="Đặt lại"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/></svg><span>Đặt lại</span></button></div>
+
+      <div id="rcResult" class="rc-result" aria-live="polite" hidden></div>
+    </div>
+
+    <div data-rc-pane="ref" hidden>
+      <div class="rc-refnav" id="rcRefNav"></div>
+      <div id="rcRefBody"></div>
+    </div>
+  </div>
+  <p class="ws-journey-note"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>Đơn giá là trần nội bộ chưa VAT · thanh toán theo hóa đơn hợp lệ</span></p>
+</section>
 
         <div id="sysMgrSection" data-shell-page="admin" hidden class="px-4 pt-6" style="display: none;">
             <header class="flex flex-col gap-4 mb-6">
@@ -2056,7 +2285,7 @@ html.dark .tasco-workspace #loginOverlay {
     </div>
 
         <!-- Thanh điều hướng dưới cùng (Bottom Nav) -->
-<nav id="bottomNav" class="ws-bottom-nav" aria-label="Điều hướng chính" style="display:none"><button type="button" id="navHomeBtn" class="ws-nav-button" data-shell-nav="home" onclick="updateView('home')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button><button type="button" id="navLookupBtn" class="ws-nav-button" data-shell-nav="lookup" onclick="updateView('lookup')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Tra cứu</span></button><button type="button" id="navMyCloudBtn" data-cloud-only hidden class="ws-nav-button" data-shell-nav="cloud" onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><span>Cloud</span></button><button type="button" id="navAccountBtn" class="ws-nav-button" data-shell-nav="account" onclick="updateView('account')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span>Tài khoản</span></button></nav>
+<nav id="bottomNav" class="ws-bottom-nav" aria-label="Điều hướng chính" style="display:none"><button type="button" id="navHomeBtn" class="ws-nav-button" data-shell-nav="home" onclick="updateView('home')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button><button type="button" id="navLookupBtn" class="ws-nav-button" data-shell-nav="lookup" onclick="updateView('lookup')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Tra cứu</span></button><button type="button" id="navMyCloudBtn" data-cloud-only hidden class="ws-nav-button" data-shell-nav="cloud" onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><span>Cloud</span></button><button type="button" id="navRescueBtn" class="ws-nav-button" data-shell-nav="rescue" onclick="updateView('rescue')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16V8h11v8M14 11h4l3 3v2h-7M3 16h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg><span>Cứu hộ</span></button><button type="button" id="navAccountBtn" class="ws-nav-button" data-shell-nav="account" onclick="updateView('account')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span>Tài khoản</span></button></nav>
 <script id="tascoCloudPermissions">
 window.TascoCloudAccess=(()=>{
   let options={},identity=null,revision=0,snapshot=null,inflight=null;
@@ -2285,8 +2514,8 @@ window.TascoCloudImport=(()=>{
 </script>
 <script id="tascoPremiumShell">
 window.TascoAppShell=(()=>{
-  const pages={home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',account:'Tài khoản',admin:'Quản lý hệ thống'};
-  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',account:'accountSection',admin:'sysMgrSection'};
+  const pages={home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',rescue:'Tính chi phí cứu hộ',account:'Tài khoản',admin:'Quản lý hệ thống'};
+  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',account:'accountSection',admin:'sysMgrSection'};
   let user=null,current='login',mountedOwner='',lastCloud=null;
   const scrolls={};
   if ('scrollRestoration' in history) history.scrollRestoration='manual';
@@ -2328,7 +2557,7 @@ window.TascoAppShell=(()=>{
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
     login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
     Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id);node.hidden=page!==view;node.style.display=page===view?'block':'none';});
-    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud'].includes(view);
+    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue'].includes(view);
     setText('#wsPageTitle',pages[view]||'');
     document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
     if(view==='login'){window.TascoPhotoViewer?.close();window.TascoDatePicker?.close();window.TascoPhotoExport?.close();document.title='TASCO DLK · Đăng nhập';return;}
@@ -2337,10 +2566,10 @@ window.TascoAppShell=(()=>{
     if(view==='cloud')connectCloud();if(view==='home'){greeting();paintCloud(lastCloud);connectCloud();}
     if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
     window.TascoLookupFlow?.afterNavigate(view);
-    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
+    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
     const top=options.restore?scrolls[view]||0:0;
     window.scrollTo({left:0,top,behavior:'instant'});
-    if(previous!==view&&['lookup','results','cloud'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
+    if(previous!==view&&['lookup','results','cloud','rescue'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
   }
   function paintCloud(summary){
     if(!canCloud()){document.getElementById('homeRecentPhotos')?.replaceChildren();return;}
@@ -4124,7 +4353,8 @@ async function deletePersonalCloudPhotos(ids,owner){
   }
   return result;
 }
-TascoCloud.configure({mode:'mobile',canAccess:()=>window.TascoCloudAccess.allowedFor(currentUserProfile),authorize:user=>window.TascoCloudAccess.check(user,{force:true}),client:()=>Promise.resolve(supabase),sessionUser:()=>auth.currentUser?{id:auth.currentUser.uid,email:auth.currentUser.email}:null,expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,personalStorage:window.TascoPersonalStorage,storageSettings:problem=>window.TascoPersonalStorage.open(problem),capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
+// Optional default capacity in bytes; each account can set its own value in Cloud.
+TascoCloud.configure({mode:'mobile',storageLimitBytes:null,canAccess:()=>window.TascoCloudAccess.allowedFor(currentUserProfile),authorize:user=>window.TascoCloudAccess.check(user,{force:true}),client:()=>Promise.resolve(supabase),sessionUser:()=>auth.currentUser?{id:auth.currentUser.uid,email:auth.currentUser.email}:null,expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,personalStorage:window.TascoPersonalStorage,storageSettings:problem=>window.TascoPersonalStorage.open(problem),capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
 window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mobileCloudEmail});
 </script>
 <!-- BOTTOM SHEET FILTER MODAL -->
@@ -4526,15 +4756,20 @@ window.TascoPhotoViewer=(()=>{
       <div class="viewer-info-backdrop" hidden></div><aside class="viewer-info" hidden aria-label="Thông tin ảnh"><header><div><span>CHI TIẾT ẢNH</span><h2>Thông tin ảnh</h2></div><button type="button" class="viewer-icon-button" data-viewer-action="close-info" aria-label="Đóng thông tin ảnh">${glyph('close')}</button></header><div class="viewer-info-content"></div><p class="viewer-rotation-note">Xoay áp dụng khi xem ảnh. Lưu ảnh để giữ bản đã xoay vào thiết bị.</p></aside><div class="viewer-message" role="status" aria-live="polite" hidden></div>`;
     const stage=overlay.querySelector('.viewer-stage'),image=overlay.querySelector('.viewer-image'),film=overlay.querySelector('.viewer-filmstrip'),info=overlay.querySelector('.viewer-info'),backdrop=overlay.querySelector('.viewer-info-backdrop'),controller=new AbortController(),signal=controller.signal;
     const focus=document.activeElement,scrollX=window.scrollX,scrollY=window.scrollY;
-    const savedStyle=Object.fromEntries(['overflow','position','top','left','right','width'].map(key=>[key,document.body.style[key]])),htmlOverflow=document.documentElement.style.overflow;
-    Object.assign(document.body.style,{overflow:'hidden',position:'fixed',top:-scrollY+'px',left:'0',right:'0',width:'100%'});document.documentElement.style.overflow='hidden';
+    const savedStyle=Object.fromEntries(['overflow','position','top','left','right','width','overscrollBehavior'].map(key=>[key,document.body.style[key]])),savedHtmlStyle=Object.fromEntries(['overflow','overscrollBehavior'].map(key=>[key,document.documentElement.style[key]]));
+    Object.assign(document.body.style,{overflow:'hidden',position:'fixed',top:-scrollY+'px',left:'0',right:'0',width:'100%',overscrollBehavior:'none'});Object.assign(document.documentElement.style,{overflow:'hidden',overscrollBehavior:'none'});window.scrollTo(0,0);
     let zoom=1,x=0,y=0,rotation=0,naturalWidth=0,naturalHeight=0,baseWidth=0,baseHeight=0,ready=false,closed=false,downloading=false,loadingMore=false,loadToken=0,raf=0,tapTimer=0,noticeTimer=0,lastTap=null,lastTouchAt=-Infinity,gesture=null;
     const pointers=new Map(),rotations=new Map(),dimensions=new Map();
     let exportRevision=0,exportTask=null,preparedExport=null,originalExport=null,exportAbort=null;
     const current=()=>items[index];
     const actionButton=name=>overlay.querySelector(`[data-viewer-action="${name}"]`);
     function notice(text){const node=overlay.querySelector('.viewer-message');node.textContent=text;node.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>node.hidden=true,3500);}
-    function updateViewport(){overlay.style.setProperty('--viewer-height',(window.visualViewport?.height||innerHeight)+'px');overlay.style.top=(window.visualViewport?.offsetTop||0)+'px';}
+    function updateViewport(){
+      const viewport=window.visualViewport;
+      overlay.style.setProperty('--viewer-width',(viewport?.width||innerWidth)+'px');
+      overlay.style.setProperty('--viewer-height',(viewport?.height||innerHeight)+'px');
+      overlay.style.left=(viewport?.offsetLeft||0)+'px';overlay.style.top=(viewport?.offsetTop||0)+'px';overlay.style.right='auto';
+    }
     function bounds(){const turned=rotation%180!==0;return {x:Math.max(0,((turned?baseHeight:baseWidth)*zoom-stage.clientWidth)/2),y:Math.max(0,((turned?baseWidth:baseHeight)*zoom-stage.clientHeight)/2)};}
     function constrain(){const limit=bounds();x=clamp(x,-limit.x,limit.x);y=clamp(y,-limit.y,limit.y);if(zoom<=1.001){x=0;y=0;}}
     function render(){
@@ -4567,7 +4802,7 @@ window.TascoPhotoViewer=(()=>{
     }
     function setInfo(show){
       info.hidden=!show;backdrop.hidden=!show;actionButton('info').setAttribute('aria-expanded',String(show));
-      if(show){overlay.classList.remove('is-immersive');paintInfo();actionButton('close-info').focus();}else actionButton('info').focus();
+      if(show){overlay.classList.remove('is-immersive');paintInfo();actionButton('close-info').focus({preventScroll:true});}else actionButton('info').focus({preventScroll:true});
     }
     function paintFilm(){
       film.innerHTML=items.map((row,i)=>`<button type="button" class="viewer-film-thumb${i===index?' is-current':''}" data-viewer-index="${i}" aria-label="Xem ảnh ${i+1}: ${escape(row.title||'Ảnh của tôi')}" aria-current="${i===index?'true':'false'}"><img src="${escape(row.preview||row.url)}" data-original="${escape(row.url)}" alt="" loading="lazy" decoding="async"></button>`).join('')+(options.hasMore?.()?'<button type="button" class="viewer-film-more" data-viewer-action="load-more" aria-label="Tải thêm ảnh">'+glyph('plus')+'</button>':'');
@@ -4644,10 +4879,44 @@ window.TascoPhotoViewer=(()=>{
       finally{downloading=false;if(!closed)render();}
     }
     function close(){
-      if(closed)return;closed=true;invalidateExport(true);TascoPhotoExport.close();controller.abort();observer.disconnect();cancelAnimationFrame(raf);clearTimeout(tapTimer);clearTimeout(noticeTimer);image.onload=image.onerror=null;overlay.remove();Object.assign(document.body.style,savedStyle);document.documentElement.style.overflow=htmlOverflow;window.scrollTo(scrollX,scrollY);if(focus?.isConnected)focus.focus({preventScroll:true});else options.restoreFocus?.();if(active?.close===close)active=null;
+      if(closed)return;closed=true;invalidateExport(true);TascoPhotoExport.close();controller.abort();observer.disconnect();cancelAnimationFrame(raf);clearTimeout(tapTimer);clearTimeout(noticeTimer);image.onload=image.onerror=null;overlay.remove();Object.assign(document.body.style,savedStyle);Object.assign(document.documentElement.style,savedHtmlStyle);window.scrollTo(scrollX,scrollY);if(focus?.isConnected)focus.focus({preventScroll:true});else options.restoreFocus?.();if(active?.close===close)active=null;
     }
     function midpoint(){const [a,b]=[...pointers.values()];return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,distance:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y))};}
     function beginPinch(){const mid=midpoint(),rect=stage.getBoundingClientRect();gesture={type:'pinch',distance:mid.distance,zoom,anchorX:(mid.x-rect.left-rect.width/2-x)/zoom,anchorY:(mid.y-rect.top-rect.height/2-y)/zoom};clearTimeout(tapTimer);lastTap=null;}
+
+    // Keep touch scrolling inside its own panel instead of panning the page.
+    let suppressScrollClickUntil=0;
+    function bindScrollArea(node,axis){
+      let drag=null;
+      const coordinate=event=>axis==='x'?event.clientX:event.clientY;
+      const position=()=>axis==='x'?node.scrollLeft:node.scrollTop;
+      node.addEventListener('pointerdown',event=>{
+        if(event.pointerType==='mouse'||event.button>0||drag)return;
+        drag={id:event.pointerId,start:coordinate(event),position:position(),moved:false};
+      },{signal});
+      node.addEventListener('pointermove',event=>{
+        if(!drag||event.pointerId!==drag.id)return;
+        const delta=coordinate(event)-drag.start;
+        if(!drag.moved&&Math.abs(delta)<6)return;
+        if(!drag.moved){drag.moved=true;try{node.setPointerCapture(event.pointerId);}catch(_){}}
+        event.preventDefault();
+        if(axis==='x')node.scrollLeft=drag.position-delta;else node.scrollTop=drag.position-delta;
+      },{signal});
+      function finish(event){
+        if(!drag||event.pointerId!==drag.id)return;
+        if(drag.moved)suppressScrollClickUntil=performance.now()+350;
+        drag=null;
+        if(node.hasPointerCapture(event.pointerId))node.releasePointerCapture(event.pointerId);
+      }
+      node.addEventListener('pointerup',finish,{signal});node.addEventListener('pointercancel',finish,{signal});
+      node.addEventListener('lostpointercapture',event=>{if(event.target===node&&drag?.id===event.pointerId)finish(event);},{signal});
+    }
+    bindScrollArea(film,'x');bindScrollArea(overlay.querySelector('.viewer-info-content'),'y');
+    overlay.addEventListener('touchmove',event=>{if(event.cancelable)event.preventDefault();},{passive:false,signal});
+    overlay.addEventListener('click',event=>{
+      if(performance.now()<suppressScrollClickUntil&&event.target.closest('.viewer-filmstrip,.viewer-info-content')){event.preventDefault();event.stopImmediatePropagation();}
+    },{capture:true,signal});
+
     stage.addEventListener('pointerdown',event=>{
       if(!ready||event.target.closest('button')||event.button>0||pointers.size>=2)return;clearTimeout(tapTimer);if(event.pointerType!=='mouse')lastTouchAt=performance.now();event.preventDefault();stage.setPointerCapture(event.pointerId);pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});stage.classList.add('is-gesturing');
       if(pointers.size===2)beginPinch();else gesture={type:zoom>1.01?'pan':'swipe',startX:event.clientX,startY:event.clientY,x,y,time:performance.now(),moved:false,suppressTap:false};
@@ -4690,7 +4959,7 @@ window.TascoPhotoViewer=(()=>{
       if(closed||document.querySelector('.cloud-delete-overlay')||document.querySelector('.photo-save-overlay'))return;
       if(event.key==='Tab'){
         const scope=info.hidden?overlay:info,buttons=[...scope.querySelectorAll('button,[tabindex="0"]')].filter(node=>!node.disabled&&node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden');if(!buttons.length)return;
-        const first=buttons[0],last=buttons[buttons.length-1];if(event.shiftKey&&(document.activeElement===first||!scope.contains(document.activeElement))){event.preventDefault();last.focus();}else if(!event.shiftKey&&(document.activeElement===last||!scope.contains(document.activeElement))){event.preventDefault();first.focus();}return;
+        const first=buttons[0],last=buttons[buttons.length-1];if(event.shiftKey&&(document.activeElement===first||!scope.contains(document.activeElement))){event.preventDefault();last.focus({preventScroll:true});}else if(!event.shiftKey&&(document.activeElement===last||!scope.contains(document.activeElement))){event.preventDefault();first.focus({preventScroll:true});}return;
       }
       if(event.key==='Escape'){event.preventDefault();if(!info.hidden)setInfo(false);else close();return;}
       if(!info.hidden)return;
@@ -4699,7 +4968,7 @@ window.TascoPhotoViewer=(()=>{
     },{signal});
     const observer=new ResizeObserver(()=>{if(!closed)fit();});
     window.addEventListener('resize',updateViewport,{signal});window.visualViewport?.addEventListener('resize',updateViewport,{signal});window.visualViewport?.addEventListener('scroll',updateViewport,{signal});
-    document.body.append(overlay);updateViewport();observer.observe(stage);paintFilm();show(index);actionButton('close').focus();active={close};
+    document.body.append(overlay);updateViewport();observer.observe(stage);paintFilm();show(index);actionButton('close').focus({preventScroll:true});active={close};
   }
   return {open,close:()=>active?.close()};
 })();
@@ -4773,7 +5042,7 @@ window.TascoDatePicker=(()=>{
 /* Cloudinary holds the image; Supabase RLS holds the account-owned manifest. */
 window.TascoCloud = (() => {
   const table = 'tasco_personal_photos';
-  const state = {config:null,client:null,clientInit:null,authUser:null,authRevision:0,user:null,localReady:false,libraryReady:false,storageStatus:'unknown',storageWarning:'',stage:'',root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map(),selecting:false,selected:new Set(),deleting:false,deleteDialog:null,albums:[],activeAlbumId:null,albumMode:'local',albumNote:'',albumDialog:null,albumSaving:false};
+  const state = {config:null,client:null,clientInit:null,authUser:null,authRevision:0,user:null,localReady:false,libraryReady:false,storageStatus:'unknown',storageWarning:'',storageUsage:null,usageRevision:0,stage:'',root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map(),selecting:false,selected:new Set(),deleting:false,deleteDialog:null,albums:[],activeAlbumId:null,albumMode:'local',albumNote:'',albumDialog:null,albumSaving:false};
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const icon = name => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({cloud:'<path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/>',camera:'<path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/>',refresh:'<path d="M20 4v6h-6M4 20v-6h6M4.5 9a8 8 0 0 1 13-5l2.5 3M4 17l2.5 3a8 8 0 0 0 13-5"/>',search:'<circle cx="10" cy="10" r="7"/><path d="m16 16 5 5"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',check:'<path d="m5 12 4 4L19 6"/>'}[name] || '')+'</svg>';
   const stamp = value => new Date(value).toLocaleString('vi-VN',{hour12:false});
@@ -4844,7 +5113,7 @@ window.TascoCloud = (() => {
   function hasAccess(){return state.config?.mode!=='mobile'||state.config.canAccess?.()===true;}
   function visible(){return hasAccess()&&state.root?.isConnected&&state.root.querySelector('.personal-cloud');}
   function clearAccount() {
-    state.deleteDialog?.cancel();state.albumDialog?.cancel();state.selected.clear();state.selecting=false;state.activeAlbumId=null;state.albums=[];state.pending=[];state.rows=[];state.count=0;state.user=null;state.localReady=false;state.libraryReady=false;state.albumNote='';
+    state.deleteDialog?.cancel();state.albumDialog?.cancel();state.selected.clear();state.selecting=false;state.activeAlbumId=null;state.albums=[];state.pending=[];state.rows=[];state.count=0;state.user=null;state.storageUsage=null;state.usageRevision++;state.localReady=false;state.libraryReady=false;state.albumNote='';
     window.TascoPhotoViewer?.close();clearURLs();
   }
   async function client() {
@@ -5164,15 +5433,11 @@ window.TascoCloud = (() => {
     document.body.style.overflow='hidden';document.body.append(overlay);paintDialog(confirm);
   }
   function paintAlbums(){
-    const root=state.root;if(!visible()||state.config.mode!=='mobile')return;const album=activeAlbum(),context=root.querySelector('[data-cloud-album-current]');
-    context.hidden=Boolean(album);
+    const root=state.root;if(!visible()||state.config.mode!=='mobile')return;const album=activeAlbum();
     root.querySelector('[data-action="album-back"]').setAttribute('aria-label',album?'Quay lại Cloud của tôi':'Quay về trang chủ');
     root.querySelector('#cloudPageTitle').textContent=album?album.name:'Cloud của tôi';
     root.querySelector('[data-cloud-eyebrow]').textContent=album?'ALBUM ẢNH HỒ SƠ':'KHÔNG GIAN LƯU TRỮ CỦA BẠN';
     root.querySelector('[data-cloud-intro]').textContent=album?'Ảnh mới tự động lưu vào album đang mở.':'Tạo album theo hồ sơ, mở album rồi bắt đầu chụp.';
-    context.querySelector('small').textContent=album?'ĐANG CHỤP VÀO ALBUM':'CHỤP VÀ LƯU THEO ALBUM';
-    context.querySelector('strong').textContent=album?album.name:'Chọn hoặc tạo album';
-    context.querySelector('[data-album-change-label]').textContent=album?'Đổi album':'Chọn album';context.disabled=!cloudReady();
     const panel=root.querySelector('.cloud-albums-panel');panel.hidden=Boolean(album);
     const note=root.querySelector('[data-album-note]');note.textContent=state.albumNote;note.hidden=!state.albumNote;
     root.querySelector('[data-action="new-album"]').disabled=!cloudReady()||state.busy||state.deleting||state.albumSaving;
@@ -5222,10 +5487,93 @@ window.TascoCloud = (() => {
     window.TascoCloudImport.open({owner:{...state.user},cloud:config(),album:activeAlbum(),albums:state.albums,
       save:(files,context,options)=>queuePhotos(files,'',window.TascoCloudImport.metadata,context,options)});
   }
+
+  // Only confirmed photo records count; pending files and gallery filters do not.
+  function storageBytes(value){
+    if(typeof value!=='number'&&(typeof value!=='string'||!/^\d+$/.test(value)))return null;
+    const bytes=Number(value);return Number.isSafeInteger(bytes)&&bytes>=0?bytes:null;
+  }
+  function formatStorageBytes(bytes){
+    if(!Number.isFinite(bytes)||bytes<0)return '—';
+    const units=['B','KB','MB','GB','TB'],index=bytes?Math.min(Math.floor(Math.log(bytes)/Math.log(1000)),units.length-1):0;
+    return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:index?2:0}).format(bytes/1000**index)+' '+units[index];
+  }
+  const capacityKey=owner=>'tasco-cloud-capacity-v1:'+owner;
+  function storageCapacity(){
+    if(!state.user)return null;
+    try{const saved=storageBytes(localStorage.getItem(capacityKey(state.user.id)));if(saved>0)return saved;}catch(_){}
+    const configured=storageBytes(state.config?.storageLimitBytes);return configured>0?configured:null;
+  }
+  async function refreshStorageUsage(owner){
+    const token=++state.usageRevision;
+    const current=()=>token===state.usageRevision&&hasAccess()&&state.user?.id===owner.id;
+    state.storageUsage={ownerId:owner.id,usedBytes:null,complete:false,loading:true,error:''};paintStorageUsage();
+    try{
+      const api=await client();let offset=0,expected=null,used=0,complete=true;const seen=new Set();
+      for(;;){
+        if(!current())return;
+        const result=await cloudRequest(api.from(table).select('id,owner_id,bytes',{count:'exact'}).eq('owner_id',owner.id).order('id',{ascending:true}).range(offset,offset+999),'tính dung lượng thư viện');
+        if(!current())return;if(result.error)throw result.error;
+        if(!Array.isArray(result.data)||!Number.isSafeInteger(result.count)||result.count<0)throw new Error('Chưa xác nhận được dung lượng thư viện.');
+        if(expected===null)expected=result.count;
+        if(result.count!==expected)throw new Error('Thư viện vừa thay đổi. Nhấn tải lại để cập nhật dung lượng.');
+        for(const row of result.data){
+          if(row.owner_id!==owner.id||!row.id||seen.has(row.id))throw new Error('Chưa xác nhận được dung lượng thư viện.');
+          seen.add(row.id);const bytes=storageBytes(row.bytes);if(bytes===null)complete=false;else used+=bytes;
+          if(!Number.isSafeInteger(used))throw new Error('Chưa tính được dung lượng thư viện.');
+        }
+        offset+=result.data.length;
+        if(offset===expected)break;
+        if(!result.data.length||offset>expected)throw new Error('Chưa tải đủ dữ liệu dung lượng. Nhấn tải lại để thử lại.');
+      }
+      if(current())state.storageUsage={ownerId:owner.id,usedBytes:used,complete,loading:false,error:''};
+    }catch(error){if(current())state.storageUsage={ownerId:owner.id,usedBytes:null,complete:false,loading:false,error:message(error)};}
+    finally{if(current())paintStorageUsage();}
+  }
+  function paintStorageUsage(){
+    const card=state.root?.querySelector('[data-cloud-usage]');if(!card)return;
+    const usage=state.storageUsage?.ownerId===state.user?.id?state.storageUsage:null,limit=storageCapacity();
+    const known=Boolean(usage&&!usage.loading&&!usage.error&&usage.usedBytes!==null),exact=known&&usage.complete;
+    const used=card.querySelector('[data-cloud-used]'),remaining=card.querySelector('[data-cloud-remaining]');
+    used.textContent=known?(exact?'':'≥ ')+formatStorageBytes(usage.usedBytes):usage?.loading?'Đang tính…':'—';used.dataset.empty=String(!known);
+    remaining.textContent=exact&&limit!==null?formatStorageBytes(Math.max(0,limit-usage.usedBytes)):limit===null?'Chưa có hạn mức':'—';remaining.dataset.empty=String(!(exact&&limit!==null));
+    const percent=exact&&limit!==null?Math.min(100,usage.usedBytes/limit*100):null,track=card.querySelector('[data-cloud-usage-track]');
+    track.dataset.unknown=String(percent===null);track.dataset.full=String(percent!==null&&usage.usedBytes>=limit);track.firstElementChild.style.width=(percent??0)+'%';
+    if(percent===null){track.removeAttribute('role');track.removeAttribute('aria-valuenow');track.removeAttribute('aria-valuetext');}
+    else{track.setAttribute('role','progressbar');track.setAttribute('aria-valuenow',String(percent));track.setAttribute('aria-valuetext',formatStorageBytes(usage.usedBytes)+' trên '+formatStorageBytes(limit));}
+    const setting=card.querySelector('[data-action="storage-capacity"]');setting.disabled=!state.user;setting.querySelector('span').textContent=limit===null?'Thiết lập tổng dung lượng':'Tổng: '+formatStorageBytes(limit);
+    const settingLabel=limit===null?'Thiết lập tổng dung lượng':'Tổng dung lượng: '+formatStorageBytes(limit)+'. Nhấn để chỉnh sửa';setting.title=settingLabel;setting.setAttribute('aria-label',settingLabel);
+    card.querySelector('[data-cloud-usage-percent]').textContent=percent===null?'':percent>0&&percent<.01?'< 0,01% đã dùng':new Intl.NumberFormat('vi-VN',{maximumFractionDigits:2}).format(percent)+'% đã dùng';
+    const note=card.querySelector('[data-cloud-usage-note]');note.dataset.warning=String(Boolean(usage?.error||known&&!exact||known&&limit!==null&&usage.usedBytes>limit));
+    note.textContent=usage?.error?'Chưa tải được dung lượng. Nhấn tải lại thư viện để thử lại.':known&&!exact?'Một số ảnh thiếu kích thước; chưa tính được phần còn lại.':known&&limit!==null&&usage.usedBytes>limit?'Ảnh đã lưu trong ứng dụng vượt tổng dung lượng đã thiết lập.':'Tính theo ảnh đã lưu trong ứng dụng.';
+    card.setAttribute('aria-busy',String(Boolean(usage?.loading)));
+  }
+  function showStorageCapacity(){
+    if(!state.user||state.albumDialog||state.deleteDialog)return;
+    const owner=state.user.id,focus=document.activeElement,overflow=document.body.style.overflow,overlay=document.createElement('div'),controller=new AbortController();let closed=false;
+    overlay.className='storage-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','cloudCapacityTitle');
+    overlay.innerHTML=`<section class="storage-panel"><header class="storage-header"><span class="storage-symbol">${icon('cloud')}</span><div><small>DUNG LƯỢNG THƯ VIỆN</small><h2 id="cloudCapacityTitle">Tổng dung lượng</h2></div><button type="button" class="storage-icon-button" data-capacity-close aria-label="Đóng">${icon('close')}</button></header><form class="storage-body"><p class="storage-lead">Nhập tổng dung lượng dành cho thư viện ảnh để tính dung lượng còn lại.</p><label class="cloud-capacity-label" for="cloudCapacityInput">Tổng dung lượng (GB)</label><input id="cloudCapacityInput" class="cloud-capacity-input" name="capacity" type="text" inputmode="decimal" autocomplete="off" maxlength="16" required placeholder="Ví dụ: 25" aria-describedby="cloudCapacityHint"><p id="cloudCapacityHint" class="storage-footnote">Thiết lập lưu trên trình duyệt này cho tài khoản của bạn. Số liệu chỉ tính ảnh đã lưu trong ứng dụng.</p><p class="storage-error" data-capacity-error role="alert" hidden></p><footer class="storage-footer"><button type="submit" class="storage-primary">Lưu dung lượng</button><button type="button" class="storage-icon-button" data-capacity-close>Hủy</button></footer></form></section>`;
+    const form=overlay.querySelector('form'),input=form.elements.capacity,limit=storageCapacity();input.value=limit===null?'':String(limit/1e9).replace('.',',');
+    function close(){if(closed)return;closed=true;controller.abort();overlay.remove();document.body.style.overflow=overflow;if(state.albumDialog?.cancel===close)state.albumDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
+    state.albumDialog={cancel:close};
+    form.onsubmit=event=>{
+      event.preventDefault();const text=input.value.trim().replace(',','.'),gb=/^\d+(?:\.\d+)?$/.test(text)?Number(text):NaN,bytes=Math.round(gb*1e9),error=overlay.querySelector('[data-capacity-error]');
+      if(state.user?.id!==owner){close();return;}
+      if(!Number.isFinite(gb)||gb<=0||!Number.isSafeInteger(bytes)||bytes<1){error.textContent='Nhập dung lượng lớn hơn 0, ví dụ 25 hoặc 2,5 GB.';error.hidden=false;input.focus();return;}
+      try{localStorage.setItem(capacityKey(owner),String(bytes));}catch(_){error.textContent='Chưa lưu được thiết lập. Kiểm tra quyền lưu trữ của trình duyệt rồi thử lại.';error.hidden=false;return;}
+      close();paintStorageUsage();
+    };
+    overlay.addEventListener('click',event=>{if(event.target===overlay||event.target.closest('[data-capacity-close]'))close();},{signal:controller.signal});
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){event.preventDefault();close();}
+      if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button,input')];if(event.shiftKey&&(document.activeElement===nodes[0]||!overlay.contains(document.activeElement))){event.preventDefault();nodes.at(-1).focus();}else if(!event.shiftKey&&(document.activeElement===nodes.at(-1)||!overlay.contains(document.activeElement))){event.preventDefault();nodes[0].focus();}}
+    },{capture:true,signal:controller.signal});
+    document.body.append(overlay);document.body.style.overflow='hidden';input.focus({preventScroll:true});input.select();
+  }
+
   function paintStorage(){
     if(!visible()||state.config.mode!=='mobile')return;
-    const chip=state.root.querySelector('[data-cloud-storage]'),info=state.config.personalStorage?.status();
-    if(chip){chip.querySelector('span').textContent=info?.label||'Tài khoản lưu trữ';chip.dataset.ready=String(info?.ready===true);}
+    paintStorageUsage();
     const uploadButton=state.root.querySelector('[data-action="upload-photos"]');if(uploadButton)uploadButton.disabled=!cloudReady()||state.busy||state.uploading;
     const label=state.root.querySelector('[data-cloud-capture-label]');if(cloudReady()&&!uploadReady()&&label)label.textContent='Kết nối lưu trữ';
   }
@@ -5271,8 +5619,12 @@ window.TascoCloud = (() => {
   <div class="cloud-hero-copy"><span class="cloud-eyebrow" data-cloud-eyebrow>KHÔNG GIAN LƯU TRỮ CỦA BẠN</span><h1 id="cloudPageTitle" tabindex="-1">Cloud của tôi</h1><p data-cloud-intro>Tạo album theo hồ sơ, mở album rồi bắt đầu chụp.</p></div>
   <div class="cloud-hero-icon" aria-hidden="true">${icon('cloud')}</div>
   <div class="cloud-hero-actions"><button type="button" class="cloud-button cloud-primary" data-action="capture" disabled>${icon('camera')}<span data-cloud-capture-label>Đang kết nối…</span><svg class="cloud-capture-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><button type="button" class="cloud-button cloud-upload-button" data-action="upload-photos" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></svg><span>Tải ảnh lên</span></button></div>
-  <button type="button" class="cloud-storage-chip" data-cloud-storage data-action="storage-settings">${icon('cloud')}<span>Thêm tài khoản lưu trữ</span></button>
-  <button type="button" class="cloud-album-current" data-cloud-album-current data-action="choose-album" disabled>${albumIcon}<span><small>CHỤP VÀ LƯU THEO ALBUM</small><strong>Chọn hoặc tạo album</strong></span><span data-album-change-label>Chọn album</span>${arrowIcon}</button>
+  <section class="cloud-usage-card" data-cloud-usage aria-label="Dung lượng thư viện ảnh" aria-busy="true" title="Tính theo ảnh đã lưu trong ứng dụng">
+    <div class="cloud-usage-stats" aria-live="polite"><div class="cloud-usage-stat"><span>Đã dùng</span><strong data-cloud-used data-empty="true">Đang tính…</strong></div><div class="cloud-usage-stat"><span>Còn lại</span><strong data-cloud-remaining data-empty="true">Chưa có hạn mức</strong></div></div>
+    <div class="cloud-usage-track" data-cloud-usage-track data-unknown="true" aria-label="Dung lượng đã sử dụng" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+    <div class="cloud-usage-footer"><button type="button" class="cloud-usage-limit" data-action="storage-capacity" aria-haspopup="dialog" aria-label="Thiết lập tổng dung lượng thư viện" disabled><span>Thiết lập tổng dung lượng</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m15 5 4 4M4 16 16.5 3.5a2.8 2.8 0 0 1 4 4L8 20l-5 1 1-5Z"/></svg></button><span class="cloud-usage-percent" data-cloud-usage-percent></span></div>
+    <p class="cloud-usage-note" data-cloud-usage-note>Tính theo ảnh đã lưu trong ứng dụng.</p>
+  </section>
 </header>`;
     root.innerHTML=`<section class="personal-cloud" data-cloud-theme="${state.config.mode}">
       ${state.config.mode==='mobile'?mobileHeader:`<header class="cloud-hero"><div class="cloud-hero-icon">${icon('cloud')}</div><div class="cloud-hero-copy"><span class="cloud-eyebrow">TASCO DLK · THƯ VIỆN CÁ NHÂN</span><h1>Cloud của tôi</h1><p>${state.config.mode==='mobile'?'Lưu ảnh có ngày giờ và địa điểm. Quản lý mọi ảnh trong một nơi.':'Ảnh chụp có ngày giờ và địa điểm, lưu trên Cloudinary của bạn.'}</p></div><div class="cloud-hero-actions">${state.config.mode==='mobile'?`<button type="button" class="cloud-button cloud-primary" data-action="capture" disabled>${icon('camera')}Chụp ảnh</button>`:`<a class="cloud-button cloud-primary" href="mobile.html" target="_blank" rel="noopener">${icon('camera')}Mở camera mobile</a>`}</div></header>`}
@@ -5281,7 +5633,7 @@ window.TascoCloud = (() => {
       <div class="cloud-login" hidden></div>
       <div class="cloud-feedback" role="status" aria-live="polite" hidden></div>
       <p data-album-status hidden></p><section class="cloud-albums-panel"><div class="cloud-album-heading"><h2 id="cloudAlbumsTitle" tabindex="-1">Album của bạn</h2><button class="cloud-button" type="button" data-action="new-album" disabled>${plusIcon}Tạo album</button></div><p data-album-note hidden></p><div data-album-list></div></section>
-      <div class="cloud-pending" hidden></div><div class="cloud-gallery-heading"><h2 data-cloud-library-heading>Tất cả ảnh</h2><div class="cloud-gallery-actions"><span data-cloud-total>0 ảnh</span><button class="cloud-button" type="button" data-action="selection" disabled>${icon('check')}<span data-selection-label>Chọn ảnh</span></button></div></div><div class="cloud-selection-bar" data-cloud-selection hidden><strong data-selected-count role="status" aria-live="polite">Đã chọn 0 ảnh</strong><div><button type="button" class="cloud-button" data-action="select-all">Chọn ảnh đã tải</button><button type="button" class="cloud-button" data-action="deselect-all">Bỏ chọn</button><button type="button" class="cloud-button cloud-delete-selected" data-action="delete-selected" disabled>${icon('trash')}<span>Xoá (0)</span></button></div></div><div class="cloud-grid"><div class="cloud-empty cloud-loading" role="status"><span class="cloud-loading-spinner" aria-hidden="true"></span><h2>Đang tải thư viện</h2><p>Đang tìm ảnh đã lưu trong tài khoản của bạn…</p></div></div><button class="cloud-button cloud-more" type="button" data-action="more" hidden>Xem thêm ảnh</button>
+      <div class="cloud-pending" hidden></div><div class="cloud-gallery-heading"><h2 data-cloud-library-heading>Tất cả ảnh</h2><div class="cloud-gallery-actions"><span data-cloud-total>0 ảnh</span>${state.config.mode==='mobile'?`<button class="cloud-button" type="button" data-action="gallery-settings" aria-haspopup="dialog" aria-label="Cài đặt hiển thị ảnh" disabled>${gallerySettingsIcon}<span>Hiển thị</span></button>`:''}<button class="cloud-button" type="button" data-action="selection" disabled>${icon('check')}<span data-selection-label>Chọn ảnh</span></button></div></div><div class="cloud-selection-bar" data-cloud-selection hidden><strong data-selected-count role="status" aria-live="polite">Đã chọn 0 ảnh</strong><div><button type="button" class="cloud-button" data-action="select-all">Chọn ảnh đã tải</button><button type="button" class="cloud-button" data-action="deselect-all">Bỏ chọn</button><button type="button" class="cloud-button cloud-delete-selected" data-action="delete-selected" disabled>${icon('trash')}<span>Xoá (0)</span></button></div></div><div class="cloud-grid"><div class="cloud-empty cloud-loading" role="status"><span class="cloud-loading-spinner" aria-hidden="true"></span><h2>Đang tải thư viện</h2><p>Đang tìm ảnh đã lưu trong tài khoản của bạn…</p></div></div><button class="cloud-button cloud-more" type="button" data-action="more" hidden>Xem thêm ảnh</button>
     </section>`;
     root.onclick=event=>{
       const button=event.target.closest('[data-action]');if(!button||!root.contains(button))return;
@@ -5295,6 +5647,8 @@ window.TascoCloud = (() => {
       
       if(action==='capture')captureAlbum();
       if(action==='upload-photos')importPhotos();
+      if(action==='storage-capacity')showStorageCapacity();
+      if(action==='gallery-settings')showGalleryPreferences();
       if(action==='storage-settings'){const row=button.dataset.id?state.pending.find(item=>item.id===button.dataset.id):null;storageSettings(row?presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud):null);}
       if(action==='adopt-storage')adoptPendingStorage().catch(error=>notify(message(error)));
       if(action==='album-options')showAlbumActions(button.dataset.id);
@@ -5322,6 +5676,71 @@ window.TascoCloud = (() => {
       try{const api=await client();const result=await waitFor(()=>api.auth.signInWithPassword({email:expected,password:form.elements.password.value}),15000,'Kết nối tài khoản quá thời gian. Kiểm tra mạng rồi thử lại.');if(result.error)throw result.error;form.elements.password.value='';await refresh();}catch(error){errorNode.textContent=message(error);}finally{button.disabled=false;}
     };
   }
+
+  const galleryViewDefaults=Object.freeze({columns:3,names:true,location:false,time:true,groupDays:true});
+  let galleryPreferencesOwner=null,galleryPreferencesValue=null;
+  const galleryPreferencesKey=owner=>'tasco-cloud-view-v1:'+owner;
+  const gallerySettingsIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="var(--ws-surface,#fff)"/><circle cx="15" cy="17" r="3" fill="var(--ws-surface,#fff)"/></svg>';
+  function normalizeGalleryPreferences(value){
+    const result={...galleryViewDefaults};
+    if(value&&typeof value==='object'){
+      if([2,3,4].includes(value.columns))result.columns=value.columns;
+      for(const key of ['names','location','time','groupDays'])if(typeof value[key]==='boolean')result[key]=value[key];
+    }
+    return result;
+  }
+  function galleryPreferences(){
+    const owner=state.user?.id||null;
+    if(galleryPreferencesValue&&owner===galleryPreferencesOwner)return galleryPreferencesValue;
+    let stored=null;try{if(owner)stored=JSON.parse(localStorage.getItem(galleryPreferencesKey(owner))||'null');}catch(_){}
+    galleryPreferencesOwner=owner;galleryPreferencesValue=normalizeGalleryPreferences(stored);return galleryPreferencesValue;
+  }
+  function applyGalleryPreferences(){
+    if(!visible()||state.config.mode!=='mobile')return;
+    const view=galleryPreferences(),root=state.root.querySelector('.personal-cloud');
+    root.dataset.galleryColumns=String(view.columns);root.style.setProperty('--cloud-photo-columns',String(view.columns));
+    for(const key of ['names','location','time'])root.dataset['gallery'+key[0].toUpperCase()+key.slice(1)]=String(view[key]);
+    const button=state.root.querySelector('[data-action="gallery-settings"]');
+    if(button){button.disabled=!state.user;button.title='Hiển thị '+view.columns+' ảnh mỗi hàng';}
+  }
+  function showGalleryPreferences(){
+    if(!state.user||state.albumDialog||state.deleteDialog)return;
+    const owner=state.user.id,root=state.root,focus=document.activeElement,overflow=document.body.style.overflow,overlay=document.createElement('div'),controller=new AbortController();let closed=false;
+    const view=galleryPreferences();
+    overlay.className='storage-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','cloudViewTitle');
+    const choices=[2,3,4].map(columns=>`<label class="cloud-view-choice"><input type="radio" name="columns" value="${columns}"${view.columns===columns?' checked':''}><span class="cloud-view-choice-body"><span class="cloud-view-mini" style="grid-template-columns:repeat(${columns},1fr)" aria-hidden="true">${'<i></i>'.repeat(columns*3)}</span><strong>${columns} ảnh</strong></span></label>`).join('');
+    const toggles=[['names','Tên ảnh'],['location','Địa điểm'],['time','Giờ chụp'],['groupDays','Nhóm theo ngày']].map(([key,label])=>`<label class="cloud-view-toggle"><span>${label}</span><input type="checkbox" role="switch" name="${key}"${view[key]?' checked':''}><span class="cloud-view-switch" aria-hidden="true"></span></label>`).join('');
+    overlay.innerHTML=`<section class="storage-panel cloud-view-panel"><header class="storage-header"><span class="storage-symbol">${gallerySettingsIcon}</span><div><small>THƯ VIỆN ẢNH</small><h2 id="cloudViewTitle">Cách hiển thị</h2></div><button type="button" class="storage-icon-button" data-gallery-close aria-label="Đóng cài đặt hiển thị">${icon('close')}</button></header><form class="storage-body"><fieldset class="cloud-view-columns"><legend>Số ảnh trên mỗi hàng</legend><div class="cloud-view-choices">${choices}</div></fieldset><div class="cloud-view-options">${toggles}</div><p class="storage-footnote">Ghi nhớ cho tất cả album của bạn trên trình duyệt này.</p><p class="storage-error" data-gallery-error role="alert" hidden></p><footer class="storage-footer"><button type="button" class="cloud-view-reset" data-gallery-reset>Mặc định</button><button type="submit" class="storage-primary">Áp dụng</button></footer></form></section>`;
+    const form=overlay.querySelector('form');
+    function close(){if(closed)return;closed=true;controller.abort();overlay.remove();document.body.style.overflow=overflow;if(state.albumDialog?.cancel===close)state.albumDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
+    state.albumDialog={cancel:close};
+    form.onsubmit=event=>{
+      event.preventDefault();if(state.user?.id!==owner||state.root!==root||!hasAccess()){close();return;}
+      const value=normalizeGalleryPreferences({columns:Number(form.elements.columns.value),...Object.fromEntries(['names','location','time','groupDays'].map(key=>[key,form.elements[key].checked]))});
+      try{localStorage.setItem(galleryPreferencesKey(owner),JSON.stringify(value));}catch(_){const error=overlay.querySelector('[data-gallery-error]');error.textContent='Chưa lưu được lựa chọn. Kiểm tra quyền lưu trữ của trình duyệt rồi thử lại.';error.hidden=false;return;}
+      galleryPreferencesOwner=owner;galleryPreferencesValue=value;close();applyGalleryPreferences();
+      if(state.rows.length)root.querySelector('.personal-cloud>.cloud-grid').innerHTML=gallery(state.rows);
+      paintSelection();
+    };
+    overlay.addEventListener('click',event=>{
+      if(event.target===overlay||event.target.closest('[data-gallery-close]')){close();return;}
+      if(event.target.closest('[data-gallery-reset]')){
+        form.elements.columns.value=String(galleryViewDefaults.columns);
+        for(const key of ['names','location','time','groupDays'])form.elements[key].checked=galleryViewDefaults[key];
+        overlay.querySelector('[data-gallery-error]').hidden=true;
+      }
+    },{signal:controller.signal});
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();close();return;}
+      if(event.key==='Tab'){
+        const nodes=[...overlay.querySelectorAll('button:not(:disabled),input:not(:disabled)')].filter(node=>node.type!=='radio'||node.checked);
+        if(event.shiftKey&&(document.activeElement===nodes[0]||!overlay.contains(document.activeElement))){event.preventDefault();nodes.at(-1).focus();}
+        else if(!event.shiftKey&&(document.activeElement===nodes.at(-1)||!overlay.contains(document.activeElement))){event.preventDefault();nodes[0].focus();}
+      }
+    },{capture:true,signal:controller.signal});
+    document.body.append(overlay);document.body.style.overflow='hidden';form.querySelector('input[name=columns]:checked').focus({preventScroll:true});
+  }
+
   function photoActions(row){return `<label class="cloud-photo-select" data-checked="false" hidden><input type="checkbox" data-action="select" data-id="${esc(row.id)}" data-photo-title="${esc(row.title||'Ảnh của tôi')}" aria-label="Chọn ảnh ${esc(row.title||'Ảnh của tôi')}">${icon('check')}</label>`;}
   function toggleSelection(id){if(![...state.rows,...visiblePending()].some(row=>row.id===id))return;if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);paintSelection();}
   function paintSelection(){
@@ -5344,6 +5763,7 @@ window.TascoCloud = (() => {
   }
   function gallery(rows){
     if(state.config.mode!=='mobile')return rows.map(row=>card(row)).join('');
+    if(!galleryPreferences().groupDays)return '<div class="cloud-day-grid">'+rows.map(row=>card(row)).join('')+'</div>';
     const groups=new Map(),today=new Date(),yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
     const dayKey=date=>[date.getFullYear(),date.getMonth(),date.getDate()].join('-');
     for(const row of rows){const date=new Date(row.captured_at),key=dayKey(date);if(!groups.has(key))groups.set(key,{date,rows:[]});groups.get(key).rows.push(row);}
@@ -5361,6 +5781,7 @@ window.TascoCloud = (() => {
     const clear=root.querySelector('[data-action="clear-filters"]');if(clear)clear.hidden=!Boolean(state.query.trim()||state.date);
     const reload=root.querySelector('[data-action="refresh"]');reload.disabled=state.busy;reload.setAttribute('aria-busy',String(state.busy));
     const capture=root.querySelector('[data-action="capture"]');if(capture){capture.disabled=!cloudReady()&&(state.busy||!state.error);const label=capture.querySelector('[data-cloud-capture-label]');if(label)label.textContent=cloudReady()?(activeAlbum()?'Chụp vào album':'Chọn album để chụp'):state.busy?'Đang kết nối…':state.error?'Thử kết nối lại':'Kết nối để chụp';}
+    applyGalleryPreferences();
     const grid=root.querySelector('.personal-cloud>.cloud-grid');grid.innerHTML=gallery(state.rows);
     if(!state.rows.length&&state.busy)grid.innerHTML='<div class="cloud-empty cloud-loading" role="status"><span class="cloud-loading-spinner" aria-hidden="true"></span><h2>Đang tải thư viện</h2><p>'+esc(state.stage)+'</p></div>';
     if(!state.rows.length&&!state.busy&&!state.error&&state.user){
@@ -5384,6 +5805,7 @@ window.TascoCloud = (() => {
       paint();
       const owner=await account({verify:false});if(!current())return;
       if(state.user?.id!==owner.id)clearAccount();state.user=owner;state.root.querySelector('.cloud-login').hidden=true;
+      refreshStorageUsage(owner);
       advance('Đang mở thư viện cá nhân…');
       const [pending]=await Promise.all([readDevice(owner.id,current),state.config.personalStorage?.load()]);if(!current())return;state.pending=pending||state.pending.filter(row=>row.owner_id===owner.id);
       advance('Đang tải album của bạn…');
@@ -6628,7 +7050,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const color = ['lookup','results','cloud'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    const color = ['lookup','results','cloud','rescue'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -6784,6 +7206,161 @@ window.TascoLookupFlow = (() => {
 })();
 
 </script>
+<script id="tascoRescueCalc">
+(function(){
+'use strict';
+var TOW=[
+ {l:'≤ 12 chỗ hoặc ≤ 1,4 tấn',base:800000,km:30000},
+ {l:'Trên 12–30 chỗ hoặc >1,4–3 tấn',base:1300000,km:35000},
+ {l:'Trên 30–39 chỗ hoặc >3–5 tấn',base:1690000,km:40000},
+ {l:'Trên 39–45 chỗ hoặc >5–8 tấn',base:1820000,km:45000},
+ {l:'Trên 45–54 chỗ hoặc >8–13 tấn',base:1820000,km:50000},
+ {l:'Trên 54–80 chỗ hoặc >13–18 tấn',base:2340000,km:60000},
+ {l:'Trên 80 chỗ hoặc >18 tấn',base:3250000,km:70000}];
+var CLS=['A · ≤12 chỗ / ≤2 tấn','B · >12–30 chỗ / >2–3,5 tấn','C · >30–45 chỗ / >3,5–8 tấn','D · >45–54 chỗ / >8–13 tấn','E · >54–80 chỗ / >13–18 tấn','F · >80 chỗ / >18 tấn, đầu kéo, container'];
+var CRANE=[
+ {l:'Lật trên mặt đường hoặc dưới taluy ≤ 5 m',p:[1700000,2200000,5000000,7000000,8500000,10500000]},
+ {l:'Dưới taluy >5–10 m',p:[2300000,3600000,5500000,8000000,9500000,11500000]},
+ {l:'Dưới taluy >10–30 m',p:[3500000,5000000,7000000,10500000,12500000,15500000]},
+ {l:'Dưới taluy >30–50 m',p:[4500000,7000000,9500000,14500000,18000000,22500000]},
+ {l:'Dưới taluy >50–100 m',p:[7000000,10000000,13000000,18500000,22000000,30000000]},
+ {l:'Trên 100 m hoặc cần >1 xe cẩu',p:null}];
+var REGION=[
+ {k:'A',l:'Vùng A · +0% (HN, TP.HCM, Hải Phòng, Đà Nẵng, Cần Thơ, Bình Dương, Đồng Nai, đô thị loại I)',pct:0},
+ {k:'B',l:'Vùng B · +10% (tỉnh đồng bằng, trung du)',pct:10},
+ {k:'C',l:'Vùng C · +15% (miền núi, Tây Nguyên, biên giới, hải đảo)',pct:15}];
+var SUR=[
+ {k:'night',l:'Ban đêm 18h00–06h00',s:'+15% trên giá cứu hộ',pct:15},
+ {k:'disaster',l:'Thiên tai / ngập diện rộng',s:'+30% · theo thông báo cơ quan có thẩm quyền',pct:30},
+ {k:'highway',l:'Đường cao tốc',s:'+35% trên giá cứu hộ',pct:35},
+ {k:'dolly',l:'Dolly / kích đôi',s:'+200.000đ · khóa 4 bánh, xe điện…',fix:200000}];
+var APPROVAL=[
+ ['Trong barem ≤ 3 triệu','Trưởng Zone'],
+ ['Trong barem >3 – ≤5 triệu','Chuyên quản'],
+ ['Trong barem >5 – ≤20 triệu','TP KSVH / Giám đốc Trung tâm DVGĐBT'],
+ ['Trong barem >20 triệu','Giám đốc Ban GĐBT'],
+ ['Vượt barem, tổng ≤ 5 triệu','Chuyên quản'],
+ ['Vượt barem hoặc tổng >5 triệu','TP KSVH / Giám đốc Trung tâm DVGĐBT'],
+ ['Xe điện, container, rơi vực/sông, cháy, cứu hộ đặc biệt','Giám đốc Ban GĐBT']];
+var EVIDENCE=['Ảnh hiện trường trước khi cứu hộ','Ảnh phương tiện cứu hộ (biển số xe cứu hộ)','Ảnh bàn giao xe sau cứu hộ','Định vị GPS / lộ trình di chuyển','Xác nhận sử dụng dịch vụ của khách hàng/chủ xe'];
+function vnd(n){return Math.round(n).toLocaleString('vi-VN')+'đ';}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function approval(total,over,special,quote){
+ if(special)return 'Giám đốc Ban GĐBT';
+ if(quote)return 'TP KSVH / Giám đốc Trung tâm DVGĐBT (tối thiểu) · tổng chi phí theo báo giá';
+ if(over)return total<=5000000?'Chuyên quản':'TP KSVH / Giám đốc Trung tâm DVGĐBT';
+ if(total<=3000000)return 'Trưởng Zone';
+ if(total<=5000000)return 'Chuyên quản';
+ if(total<=20000000)return 'TP KSVH / Giám đốc Trung tâm DVGĐBT';
+ return 'Giám đốc Ban GĐBT';
+}
+function calc(i){
+ var lines=[],base=0,quote=false,r=REGION[i.region||0]||REGION[0],f=1+r.pct/100;
+ if(i.svc==='tow'||i.svc==='both'){
+  var t=TOW[i.towGroup||0],km=Math.max(0,Number(i.km)||0),extra=Math.ceil(Math.max(0,km-10)),amt=t.base+extra*t.km;
+  lines.push({l:'Kéo xe · 10 km đầu',v:t.base});
+  if(extra)lines.push({l:'Thêm '+extra+' km × '+vnd(t.km),v:extra*t.km});
+  base+=amt;
+ }
+ if(i.svc==='crane'||i.svc==='both'){
+  var row=CRANE[i.cranePos||0],p=row.p&&row.p[i.craneClass||0];
+  if(p==null){quote=true;lines.push({l:'Cẩu xe · '+row.l,v:null,q:true});}
+  else{lines.push({l:'Cẩu xe · nhóm '+CLS[i.craneClass||0].charAt(0),v:p});base+=p;}
+ }
+ var regionAmt=Math.round(base*f)-base;
+ var rescue=base+regionAmt,pctSum=0,fixSum=0,sur=[];
+ SUR.forEach(function(s){if(i.sur&&i.sur[s.k]){if(s.pct){pctSum+=s.pct;sur.push({l:s.l+' (+'+s.pct+'%)',v:Math.round(rescue*s.pct/100)});}else{fixSum+=s.fix;sur.push({l:s.l,v:s.fix});}}});
+ var surTotal=Math.round(rescue*pctSum/100)+fixSum,cap=Math.round(rescue*0.5),capped=false;
+ if(surTotal>cap){surTotal=cap;capped=true;}
+ var total=rescue+surTotal;
+ return {lines:lines,base:base,region:r,regionAmt:regionAmt,rescue:rescue,sur:sur,surTotal:surTotal,cap:cap,capped:capped,total:total,quote:quote,
+  approver:approval(total,!!i.over,!!i.special,quote),special:!!i.special,over:!!i.over,svc:i.svc};
+}
+window.TascoRescue={calc:calc,data:{TOW:TOW,CRANE:CRANE,CLS:CLS,REGION:REGION,SUR:SUR}};
+if(typeof document==='undefined')return;
+function $(s,r){return (r||document).querySelector(s);}
+var root=$('#rescueSection');if(!root)return;
+function opts(el,arr,fn){el.innerHTML=arr.map(function(x,n){return '<option value="'+n+'">'+esc(fn(x,n))+'</option>';}).join('');}
+opts($('#rcTowGroup'),TOW,function(x){return x.l;});
+opts($('#rcCraneClass'),CLS,function(x){return x;});
+opts($('#rcCranePos'),CRANE,function(x){return x.l;});
+opts($('#rcRegion'),REGION,function(x){return x.l.split(' (')[0];});
+var CHK='<span class="rc-box" aria-hidden="true"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>';
+$('#rcSurcharges').innerHTML=SUR.map(function(s){return '<label class="rc-check"><input type="checkbox" data-rc-sur="'+s.k+'">'+CHK+'<span class="rc-check-copy"><strong>'+esc(s.l)+'</strong><small>'+esc(s.s)+'</small></span></label>';}).join('');
+var SHEETS={
+ rcTowGroup:{eb:'KÉO XE',t:'Chọn nhóm xe',items:function(){return TOW.map(function(x){return {t:x.l,s:vnd(x.base)+' · 10 km đầu'};});}},
+ rcCraneClass:{eb:'CẨU XE',t:'Chọn nhóm xe',items:function(){return CLS.map(function(x){var a=x.split(' · ');return {t:'Nhóm '+a[0],s:a[1]};});}},
+ rcCranePos:{eb:'CẨU XE',t:'Vị trí xe cần cẩu',items:function(){return CRANE.map(function(x){return {t:x.l,s:x.p?'Từ '+vnd(x.p[0]):'Báo giá riêng'};});}},
+ rcRegion:{eb:'HỆ SỐ VÙNG',t:'Chọn vùng địa lý',items:function(){return REGION.map(function(x){var a=x.l.split(' · ');return {t:a[0]+' · +'+x.pct+'%',s:(a[1]||'').replace(/^\+\d+% /,'').replace(/^\(|\)$/g,'')};});}}};
+function syncPick(id){var sel=$('#'+id),def=SHEETS[id],b=root.querySelector('[data-rc-pick="'+id+'"]'),it=def.items()[+sel.value];
+ b.querySelector('strong').textContent=def.t.replace('Chọn ','').replace(/^./,function(c){return c.toUpperCase();});b.querySelector('small').textContent=it.t;}
+var sheet=null,lastFocus=null;
+function closeSheet(){if(!sheet)return;sheet.remove();sheet=null;document.body.style.overflow=sheet_ov;if(lastFocus&&lastFocus.isConnected)lastFocus.focus({preventScroll:true});}
+var sheet_ov='';
+function openSheet(id){var def=SHEETS[id],sel=$('#'+id),items=def.items();lastFocus=document.activeElement;
+ closeSheet();sheet=document.createElement('div');sheet.className='rc-modal';
+ sheet.innerHTML='<div class="ws-filter-backdrop" data-rc-close aria-hidden="true"></div><div class="rc-sheet" role="dialog" aria-modal="true" aria-label="'+esc(def.t)+'"><div class="ws-sheet-handle" aria-hidden="true"></div><header class="ws-sheet-heading"><div><span class="ws-panel-eyebrow">'+def.eb+'</span><h3>'+esc(def.t)+'</h3></div><button type="button" class="ws-sheet-close" data-rc-close aria-label="Đóng"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header><div class="rc-sheet-list" role="listbox">'+items.map(function(x,n){return '<button type="button" class="rc-opt" role="option" data-rc-opt="'+n+'" aria-selected="'+(n===+sel.value)+'"><span><strong>'+esc(x.t)+'</strong>'+(x.s?'<small>'+esc(x.s)+'</small>':'')+'</span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>';}).join('')+'</div></div>';
+ sheet_ov=document.body.style.overflow;document.body.style.overflow='hidden';document.body.appendChild(sheet);
+ sheet.addEventListener('click',function(e){if(e.target.closest('[data-rc-close]')){closeSheet();return;}var o=e.target.closest('[data-rc-opt]');if(o){sel.value=o.dataset.rcOpt;syncPick(id);$('#rcResult').hidden=true;closeSheet();}});
+ sheet.addEventListener('keydown',function(e){if(e.key==='Escape'){e.stopPropagation();closeSheet();}});
+ var cur=sheet.querySelector('[aria-selected=true]');(cur||sheet.querySelector('.rc-opt')).focus({preventScroll:true});if(cur)cur.scrollIntoView({block:'center'});}
+root.querySelectorAll('[data-rc-pick]').forEach(function(b){b.addEventListener('click',function(){openSheet(b.dataset.rcPick);});});
+Object.keys(SHEETS).forEach(syncPick);
+var svc='tow';
+function setSvc(v){svc=v;root.querySelectorAll('[data-rc-svc]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.rcSvc===v));});
+ $('[data-rc-block=tow]').hidden=v==='crane';$('[data-rc-block=crane]').hidden=v==='tow';$('#rcResult').hidden=true;}
+root.querySelectorAll('[data-rc-svc]').forEach(function(b){b.addEventListener('click',function(){setSvc(b.dataset.rcSvc);});});
+function setTab(t){root.querySelectorAll('[data-rc-tab]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.rcTab===t));});
+ root.querySelectorAll('[data-rc-pane]').forEach(function(p){p.hidden=p.dataset.rcPane!==t;});if(t==='ref'&&!refBuilt)refShow('tow');}
+root.querySelectorAll('[data-rc-tab]').forEach(function(b){b.addEventListener('click',function(){setTab(b.dataset.rcTab);});});
+function read(){var s={};root.querySelectorAll('[data-rc-sur]').forEach(function(c){s[c.dataset.rcSur]=c.checked;});
+ return {svc:svc,towGroup:+$('#rcTowGroup').value,km:$('#rcKm').value,cranePos:+$('#rcCranePos').value,craneClass:+$('#rcCraneClass').value,region:+$('#rcRegion').value,sur:s,special:$('#rcSpecial').checked,over:$('#rcOver').checked};}
+function openResult(h){
+ lastFocus=document.activeElement;closeSheet();sheet=document.createElement('div');sheet.className='rc-modal';
+ sheet.innerHTML='<div class="ws-filter-backdrop" data-rc-close aria-hidden="true"></div><div class="rc-sheet rc-sheet--result" role="dialog" aria-modal="true" aria-label="Kết quả tính chi phí"><div class="ws-sheet-handle" aria-hidden="true"></div><header class="ws-sheet-heading"><div><span class="ws-panel-eyebrow">CỨU HỘ PHƯƠNG TIỆN</span><h3>Kết quả tính chi phí</h3></div><button type="button" class="ws-sheet-close" data-rc-close aria-label="Đóng"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header><div class="rc-sheet-list rc-sheet-result">'+h+'<button type="button" class="rc-result-close" data-rc-close>Đóng</button></div></div>';
+ sheet_ov=document.body.style.overflow;document.body.style.overflow='hidden';document.body.appendChild(sheet);
+ sheet.addEventListener('click',function(e){if(e.target.closest('[data-rc-close]'))closeSheet();});
+ sheet.addEventListener('keydown',function(e){if(e.key==='Escape'){e.stopPropagation();closeSheet();}});
+ var cb=sheet.querySelector('.ws-sheet-close');if(cb)cb.focus({preventScroll:true});}
+function render(){
+ var i=read(),r=calc(i),box=$('#rcResult'),h='';
+ h+='<div class="rc-total"><small>TỔNG TRẦN CHI PHÍ · CHƯA VAT</small><strong>'+(r.quote?(r.total?vnd(r.total)+' + báo giá':'Báo giá'):vnd(r.total))+'</strong><em>'+(r.quote?'Hạng mục cẩu trên 100 m / nhiều xe cẩu không có đơn giá cố định, cần báo giá riêng.':'Thanh toán theo hóa đơn hợp lệ, không vượt số tiền được duyệt.')+'</em></div><ul class="rc-lines">';
+ r.lines.forEach(function(x){h+='<li><span>'+esc(x.l)+'</span><b>'+(x.v==null?'Báo giá':vnd(x.v))+'</b></li>';});
+ if(r.region.pct)h+='<li><span>Hệ số '+esc(r.region.l.split(' · ')[0])+' (+'+r.region.pct+'%)</span><b>+'+vnd(r.regionAmt)+'</b></li>';
+ if(!r.quote||r.rescue)h+='<li class="rc-sub"><span>Giá cứu hộ sau hệ số vùng</span><b>'+vnd(r.rescue)+'</b></li>';
+ r.sur.forEach(function(x){h+='<li><span>'+esc(x.l)+'</span><b>+'+vnd(x.v)+'</b></li>';});
+ h+='</ul>';
+ h+='<div class="rc-box-note"><h4>CẤP PHÊ DUYỆT</h4><span class="rc-chip">'+esc(r.approver)+'</span><div style="margin-top:8px;color:var(--ws-muted);font-size:10.5px">Căn cứ tổng chi phí một sự kiện cứu hộ, không tách nhỏ để giảm cấp duyệt.</div></div>';
+ var w=[];
+ if(r.capped)w.push('Tổng phụ phí điều kiện đã chạm trần 50% giá cứu hộ ('+vnd(r.cap)+'). Vượt mức này phải được Giám đốc Ban GĐBT phê duyệt.');
+ if(r.special)w.push('Tình huống đặc biệt: cần báo giá/duyệt riêng, kết quả trên chỉ mang tính tham khảo.');
+ if(r.quote)w.push('Chưa tính chi phí cẩu >100 m hoặc >1 xe cẩu.');
+ w.push('Nhiều tiêu chí (chỗ ngồi/tải trọng) cùng áp dụng: chọn nhóm có mức rủi ro cao hơn. Không cộng dồn nhiều hệ số vùng.');
+ w.push('Phụ phí không tính phí BOT, cẩu, phà/phao, bãi đỗ; các khoản này theo chứng từ.');
+ h+='<div class="rc-box-note" data-tone="'+((r.capped||r.special)?'warn':'')+'"><h4>LƯU Ý</h4><ul>'+w.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
+ h+='<div class="rc-box-note"><h4>HỒ SƠ BẮT BUỘC</h4><ul>'+EVIDENCE.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
+ openResult(h);
+}
+$('#rcCalcBtn').addEventListener('click',render);
+$('#rcKm').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing){e.preventDefault();render();}});
+$('#rcResetBtn').addEventListener('click',function(){['rcTowGroup','rcCraneClass','rcCranePos','rcRegion'].forEach(function(id){$('#'+id).value='0';});$('#rcKm').value='10';Object.keys(SHEETS).forEach(syncPick);
+ root.querySelectorAll('input[type=checkbox]').forEach(function(c){c.checked=false;});setSvc('tow');});
+var refBuilt=false,refTabs=[['tow','Kéo xe'],['crane','Cẩu xe'],['sur','Phụ phí & vùng'],['app','Phê duyệt'],['ev','Hồ sơ & kiểm soát']];
+function tbl(head,rows){return '<div class="rc-table-wrap"><table class="rc-table"><thead><tr>'+head.map(function(x){return '<th>'+esc(x)+'</th>';}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr>'+r.map(function(c){return '<td'+(c==='Báo giá'?' class="rc-q"':'')+'>'+esc(c)+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table></div>';}
+function list(a){return '<ul class="rc-ref-list">'+a.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';}
+function refShow(k){refBuilt=true;
+ $('#rcRefNav').innerHTML=refTabs.map(function(t){return '<button type="button" data-rc-ref="'+t[0]+'" aria-pressed="'+(t[0]===k)+'">'+t[1]+'</button>';}).join('');
+ $('#rcRefNav').querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){refShow(b.dataset.rcRef);});});
+ var h='';
+ if(k==='tow')h=tbl(['Nhóm xe','10 km đầu','Từ km 11 (/km)'],TOW.map(function(t){return [t.l,vnd(t.base),vnd(t.km)];}))+'<p class="rc-ref-note"><b>Quy tắc:</b> phần km vượt 10 km làm tròn lên số nguyên; khoảng cách theo bản đồ/GPS. Kéo xe và cẩu xe là hai hạng mục độc lập.</p>';
+ if(k==='crane')h=tbl(['Vị trí xe'].concat(CLS.map(function(c){return 'Nhóm '+c.charAt(0);})),CRANE.map(function(r){return [r.l].concat(r.p?r.p.map(vnd):CLS.map(function(){return 'Báo giá';}));}))+'<p class="rc-ref-note">'+CLS.map(function(c){return '<b>'+esc(c.charAt(0))+'</b>: '+esc(c.slice(4));}).join(' · ')+'</p>';
+ if(k==='sur')h='<ul class="rc-ref-list">'+SUR.map(function(s){return '<li><b>'+esc(s.l)+'</b><small>'+esc(s.s)+'</small></li>';}).join('')+'<li><b>Giới hạn</b><small>Tổng phụ phí điều kiện (trừ BOT, cẩu, phà/phao, bãi) ≤ 50% đơn giá cứu hộ, trừ khi Giám đốc Ban GĐBT duyệt.</small></li></ul><span class="rc-label">Hệ số vùng (không cộng dồn)</span>'+list(REGION.map(function(r){return '<b>'+esc(r.l.split(' · ')[0])+' · +'+r.pct+'%</b><small>'+esc(r.l.split(' · ')[1].replace(/^\+\d+% /,''))+'</small>';}));
+ if(k==='app')h=tbl(['Trường hợp','Cấp phê duyệt'],APPROVAL);
+ if(k==='ev')h=list(['<b>Hồ sơ chứng từ</b><small>'+EVIDENCE.map(esc).join(' · ')+'</small>','<b>Thứ tự ưu tiên đơn vị cứu hộ</b><small>VETC cứu hộ miễn phí → đối tác được Tasco duyệt → gara/đối tác chiến lược trong barem → đơn vị ngoài (khẩn cấp, có xác nhận lãnh đạo Zone/Trung tâm)</small>','<b>Cảnh báo kiểm soát</b><small>Giá/km cao hơn >20% mức trung bình cùng tỉnh/loại xe/cự ly; đơn vị cứu hộ vượt barem >15%/tháng</small>','<b>Trường hợp báo giá riêng</b><small>Container, đầu kéo, rơ-moóc, siêu trường siêu trọng, xe chuyên dùng, máy công trình, xe điện, rơi vực/sông/biển/hồ, cháy pin, đảo/hầm mỏ/địa điểm đặc biệt</small>','<b>Nguyên tắc</b><small>Đơn giá là trần nội bộ chưa VAT; thanh toán theo hóa đơn hợp lệ, không vượt số được duyệt.</small>']);
+ $('#rcRefBody').innerHTML=h;}
+})();
+</script>
+
 </body>
 </html>
 
