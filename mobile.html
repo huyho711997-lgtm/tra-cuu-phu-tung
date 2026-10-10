@@ -1797,6 +1797,7 @@ html.dark .tasco-workspace #loginOverlay {
 .dark .storage-overlay{--st-navy:#e1edf7;--st-muted:#8fa8bf;--st-line:#2c4660;--st-bg:#152b43;--st-soft:#1c354e;--st-ice:#254b5a}.dark .storage-error{background:#372935;border-color:#66424e;color:#f1babb}.dark .storage-help a,.dark .import-file-state[data-saved=true]{color:#89c8cf}.dark .storage-symbol,.dark .storage-provider-badge{color:#9acbd0}.dark .storage-disconnect{color:#f0b5b8}
 @media(max-width:480px){.storage-overlay{align-items:flex-end;padding:max(12px,env(safe-area-inset-top,0px)) 10px max(12px,env(safe-area-inset-bottom,0px))}.storage-panel{max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border-radius:25px}.storage-header{padding:19px 18px 16px}.storage-header h2{font-size:20px}.storage-body{padding:18px}.storage-body input{font-size:16px}.storage-body input::placeholder{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.storage-overlay *{scroll-behavior:auto;transition:none}}
+.storage-preset-note{font-size:10px;line-height:1.7;color:var(--st-muted);margin:-9px 0 18px}.storage-preset-note strong{font-weight:600;color:var(--st-navy)}.cloud-fix-preset{display:inline-flex;align-items:center;gap:6px;min-height:36px;margin:9px 0 0;padding:7px 10px!important;border:1px solid var(--cl-line)!important;border-radius:10px;background:var(--cl-soft);color:var(--cl-gold);font-size:10px}.cloud-fix-preset svg{width:13px;height:13px}.cloud-fix-preset:disabled{opacity:.5}.cloud-fix-preset:focus-visible{outline:3px solid #63adb6;outline-offset:2px}
 
 
 </style>
@@ -2208,12 +2209,12 @@ window.TascoPersonalStorage=(()=>{
     if(result?.owner_id!==identity.id||result.connection_id!==expectedId||result.removed!==true)throw new Error('Chưa xác nhận ngắt kết nối. Tải lại và thử lại.');
     snapshot={ownerId:identity.id,connection:null,checkedAt:Date.now(),error:''};emit();
   }
-  function open(){
+  function open(problem=null){
     if(!permitted()){window.TascoCloud?.notify('Admin chưa cấp quyền Cloud cho tài khoản này.');return;}
     if(busy()){window.TascoCloud?.notify('Đợi lưu ảnh hoàn tất trước khi đổi kết nối.');return;}
     dialog?.close(true);const identity={...owner},focus=document.activeElement,overflow=document.body.style.overflow,overlay=document.createElement('div');let working=false,closed=false,connection=current(),confirmedDisconnect=false;
     overlay.className='storage-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','storageTitle');
-    overlay.innerHTML=`<section class="storage-panel"><header class="storage-header"><span class="storage-symbol">${icon('cloud')}</span><div><small>THIẾT LẬP CÁ NHÂN</small><h2 id="storageTitle">Tài khoản lưu trữ</h2></div><button type="button" class="storage-icon-button" data-storage-action="close" aria-label="Đóng cài đặt">${icon('close')}</button></header><div class="storage-body"><p class="storage-lead">Lưu ảnh vào Cloudinary của bạn. Kết nối này chỉ dùng cho tài khoản TASCO đang đăng nhập.</p><span class="storage-owner">${esc(identity.email)}</span><div class="storage-provider"><span>${icon('cloud')}</span><div><strong>Cloudinary</strong><small>Kho ảnh cá nhân</small></div><span class="storage-provider-badge">Tài khoản riêng</span></div><form novalidate><label>Cloud name<input name="cloudName" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Ví dụ: cloud-cua-ban" maxlength="80" required></label><label>Upload preset <span class="storage-field-tag">Unsigned</span><input name="preset" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Tên preset của bạn" maxlength="120" required></label><label>Thư mục lưu ảnh <span class="storage-optional">Tuỳ chọn</span><input name="folder" autocomplete="off" placeholder="Ví dụ: ho-so-xe" maxlength="160"></label><details class="storage-help"><summary>Lấy thông tin kết nối ở đâu?</summary><p>Trong Cloudinary Console, lấy Cloud name ở trang tổng quan. Vào Settings → Upload → Upload presets, tạo preset và chọn Signing mode: Unsigned.</p><a href="https://cloudinary.com/documentation/upload_presets" target="_blank" rel="noopener noreferrer">Xem hướng dẫn Cloudinary ↗</a><p>Chỉ cần Cloud name và preset. Không nhập API Secret hay mật khẩu. Kết nối được kiểm tra khi bạn tải ảnh đầu tiên.</p></details><p class="storage-error" data-storage-error role="alert" hidden></p><footer class="storage-footer"><button type="submit" class="storage-primary">${icon('check')}Lưu kết nối</button><button type="button" class="storage-disconnect" data-storage-action="disconnect" hidden>Ngắt kết nối</button></footer></form><p class="storage-footnote">Ảnh và album đã lưu vẫn được giữ khi bạn thay đổi kết nối.</p></div></section>`;
+    overlay.innerHTML=`<section class="storage-panel"><header class="storage-header"><span class="storage-symbol">${icon('cloud')}</span><div><small>THIẾT LẬP CÁ NHÂN</small><h2 id="storageTitle">Tài khoản lưu trữ</h2></div><button type="button" class="storage-icon-button" data-storage-action="close" aria-label="Đóng cài đặt">${icon('close')}</button></header><div class="storage-body"><p class="storage-lead">Lưu ảnh vào Cloudinary của bạn. Kết nối này chỉ dùng cho tài khoản TASCO đang đăng nhập.</p><span class="storage-owner">${esc(identity.email)}</span><div class="storage-provider"><span>${icon('cloud')}</span><div><strong>Cloudinary</strong><small>Kho ảnh cá nhân</small></div><span class="storage-provider-badge">Tài khoản riêng</span></div><form novalidate><label>Cloud name<input name="cloudName" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Ví dụ: cloud-cua-ban" maxlength="80" required></label><label>Upload preset <span class="storage-field-tag">Unsigned</span><input name="preset" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Tên preset của bạn" maxlength="120" required></label><p class="storage-preset-note">Preset phải có Signing mode: <strong>Unsigned</strong> trong Cloudinary của bạn.</p><label>Thư mục lưu ảnh <span class="storage-optional">Tuỳ chọn</span><input name="folder" autocomplete="off" placeholder="Ví dụ: ho-so-xe" maxlength="160"></label><details class="storage-help"><summary>Lấy thông tin kết nối ở đâu?</summary><p>Trong Cloudinary Console, chọn đúng Cloud name ở trang tổng quan. Vào Settings → Upload → Upload presets, nhấn Edit ở preset đang dùng (hoặc tạo preset mới), chọn Signing mode: Unsigned rồi Save. Sao chép đúng tên preset vào ô ở trên.</p><a href="https://cloudinary.com/documentation/upload_presets" target="_blank" rel="noopener noreferrer">Xem hướng dẫn Cloudinary ↗</a><p>Chỉ cần Cloud name và preset. Không nhập API Secret hay mật khẩu. Kết nối được kiểm tra khi bạn tải ảnh đầu tiên.</p></details><p class="storage-error" data-storage-error role="alert" hidden></p><footer class="storage-footer"><button type="submit" class="storage-primary">${icon('check')}Lưu kết nối</button><button type="button" class="storage-disconnect" data-storage-action="disconnect" hidden>Ngắt kết nối</button></footer></form><p class="storage-footnote">Ảnh và album đã lưu vẫn được giữ khi bạn thay đổi kết nối.</p></div></section>`;
     const form=overlay.querySelector('form'),errorNode=overlay.querySelector('[data-storage-error]'),disconnectButton=overlay.querySelector('[data-storage-action=disconnect]');
     function fill(){for(const key of ['cloudName','preset','folder'])form.elements[key].value=connection?.[key]||'';disconnectButton.hidden=!connection;}
     function error(value){errorNode.hidden=!value;errorNode.textContent=value||'';}
@@ -2221,7 +2222,7 @@ window.TascoPersonalStorage=(()=>{
     function close(force=false){if(closed||working&&!force)return;closed=true;overlay.remove();document.body.style.overflow=overflow;if(focus?.isConnected)focus.focus({preventScroll:true});if(dialog?.close===close)dialog=null;}
     fill();document.body.append(overlay);document.body.style.overflow='hidden';dialog={close};form.elements.cloudName.focus({preventScroll:true});
     lock(true);form.querySelector('[type=submit]').textContent='Đang tải kết nối…';
-    load({force:true}).then(()=>{if(closed||!same(identity,owner))return;connection=current();fill();error(snapshot?.error);lock(false);});
+    load({force:true}).then(()=>{if(closed||!same(identity,owner))return;connection=current();fill();error(snapshot?.error||problem?.message);lock(false);if(problem){const help=overlay.querySelector('.storage-help');if(help)help.open=true;}});
     form.onsubmit=async event=>{event.preventDefault();if(working||closed)return;error('');try{validate(Object.fromEntries(['cloudName','preset','folder'].map(key=>[key,form.elements[key].value])));lock(true);connection=await save(Object.fromEntries(['cloudName','preset','folder'].map(key=>[key,form.elements[key].value])),connection?.connectionId||null);window.TascoCloud?.notify('Đã lưu tài khoản lưu trữ riêng.');close(true);}catch(e){if(!closed)error(errorText(e));}finally{if(!closed)lock(false);}};
     overlay.onclick=async event=>{const action=event.target.closest('[data-storage-action]')?.dataset.storageAction;if(action==='close')close();if(action==='disconnect'&&!working&&connection){if(!confirmedDisconnect){confirmedDisconnect=true;disconnectButton.textContent='Xác nhận ngắt kết nối';error('Ảnh đã lưu vẫn còn. Bạn cần thêm kết nối để tiếp tục chụp hoặc tải ảnh mới.');return;}lock(true);try{await disconnect(connection.connectionId);window.TascoCloud?.notify('Đã ngắt kết nối lưu trữ.');close(true);}catch(e){if(!closed)error(errorText(e));}finally{if(!closed)lock(false);}}};
     overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();}if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button,input,summary,a[href]')].filter(node=>!node.disabled&&!node.hidden&&node.getClientRects().length),first=nodes[0],last=nodes.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}}});
@@ -4123,7 +4124,7 @@ async function deletePersonalCloudPhotos(ids,owner){
   }
   return result;
 }
-TascoCloud.configure({mode:'mobile',canAccess:()=>window.TascoCloudAccess.allowedFor(currentUserProfile),authorize:user=>window.TascoCloudAccess.check(user,{force:true}),client:()=>Promise.resolve(supabase),sessionUser:()=>auth.currentUser?{id:auth.currentUser.uid,email:auth.currentUser.email}:null,expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,personalStorage:window.TascoPersonalStorage,storageSettings:()=>window.TascoPersonalStorage.open(),capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
+TascoCloud.configure({mode:'mobile',canAccess:()=>window.TascoCloudAccess.allowedFor(currentUserProfile),authorize:user=>window.TascoCloudAccess.check(user,{force:true}),client:()=>Promise.resolve(supabase),sessionUser:()=>auth.currentUser?{id:auth.currentUser.uid,email:auth.currentUser.email}:null,expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,personalStorage:window.TascoPersonalStorage,storageSettings:problem=>window.TascoPersonalStorage.open(problem),capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
 window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mobileCloudEmail});
 </script>
 <!-- BOTTOM SHEET FILTER MODAL -->
@@ -4780,12 +4781,22 @@ window.TascoCloud = (() => {
     let node=document.getElementById('cloudNotice');if(!node){node=document.createElement('div');node.id='cloudNotice';node.className='cloud-notice';node.setAttribute('role','status');document.body.append(node);}
     node.dataset.cloudTheme=state.config?.mode||'index';node.textContent=message;node.hidden=false;clearTimeout(node._timer);node._timer=setTimeout(()=>node.hidden=true,5000);
   }
+  function presetUploadIssue(error,cloud=null) {
+    const text=typeof error==='string'?error:String(error?.message||''),code=error?.code;
+    const unsigned=code==='CLOUDINARY_UNSIGNED_PRESET'||/upload preset must be (?:whitelisted|enabled).*unsigned/i.test(text);
+    const missing=code==='CLOUDINARY_PRESET_MISSING'||/(?:upload[ _]preset.*(?:not found|does not exist|invalid)|(?:invalid|unknown).*upload[ _]preset)/i.test(text);
+    if(!unsigned&&!missing)return null;
+    const preset=String(cloud?.preset||'').slice(0,120),name=String(cloud?.cloudName||'').slice(0,80);
+    const target=preset?'Preset “'+preset+'”'+(name?' của Cloudinary “'+name+'”':''):'Upload preset của Cloudinary';
+    const summary=target+(unsigned?' chưa bật chế độ Unsigned.':' không tồn tại hoặc chưa đúng.');
+    return {code:unsigned?'CLOUDINARY_UNSIGNED_PRESET':'CLOUDINARY_PRESET_MISSING',summary,message:summary+(unsigned?' Vào Cloudinary → Settings → Upload → Upload presets, mở preset, chọn Signing mode: Unsigned và lưu. Sau đó nhấn Thử đồng bộ lại.':' Kiểm tra Cloud name và tên preset trong Tài khoản → Tài khoản lưu trữ; preset phải ở chế độ Unsigned.'),preset,cloudName:name};
+  }
   function message(error) {
     if(error?.message==='CLOUD_FORBIDDEN')return 'Admin chưa cấp quyền Cloud hoặc đã thu hồi quyền. Liên hệ admin để được truy cập.';
     if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error?.message))return 'Phiên đăng nhập đã thay đổi. Kết nối đúng tài khoản Cloud rồi thử lại.';
     if(['42P01','PGRST205'].includes(error?.code)||/tasco_personal_photos.*(schema cache|does not exist)/i.test(error?.message||''))return 'Chưa tạo thư viện ảnh. Chạy file cloud-cua-toi.sql trong Supabase SQL Editor một lần, rồi tải lại.';
     if(error?.code==='42501')return 'Chưa có quyền thao tác Cloud. Nhờ admin kiểm tra quyền Cloud của tài khoản.';
-    return error?.message || 'Chưa kết nối được Cloud. Kiểm tra mạng rồi thử lại.';
+    return presetUploadIssue(error,error?.cloud)?.message || error?.message || 'Chưa kết nối được Cloud. Kiểm tra mạng rồi thử lại.';
   }
   function waitFor(work,ms,text,onTimeout) {
     let timer;
@@ -5203,7 +5214,7 @@ window.TascoCloud = (() => {
     const target=config({id:record.owner_id,email:state.user?.email});
     if(!sameTarget(record,target))throw new Error('Kết nối lưu trữ đã đổi. Ảnh vẫn được giữ; chọn “Dùng kết nối hiện tại” cho ảnh chờ hoặc mở lại phần tải ảnh.');
   }
-  function storageSettings(){state.config.storageSettings?.();}
+  function storageSettings(problem=null){state.config.storageSettings?.(problem);}
   function importPhotos(){
     if(!cloudReady()){if(!state.busy)refresh();return;}
     if(!uploadReady()){storageSettings();return;}
@@ -5232,7 +5243,7 @@ window.TascoCloud = (() => {
     overlay.onclick=async event=>{if(event.target.closest('[data-adopt-close]'))close();if(!event.target.closest('[data-adopt-submit]')||saving)return;saving=true;overlay.querySelectorAll('button').forEach(node=>node.disabled=true);try{
       if((await account()).id!==owner.id)throw new Error('CLOUD_ACCOUNT');await state.config.personalStorage.load({force:true});if(!sameTarget({owner_id:owner.id,cloud:target},config(owner)))throw new Error('Kết nối đã đổi. Mở lại và xác nhận nơi lưu.');
       const ids=new Set(rows.map(row=>row.id)),pending=await pendingFor(owner.id);
-      for(const record of pending)if(ids.has(record.id)&&!record.upload){record.cloud=target;record.error='';await localStore('put',record);}
+      for(const record of pending)if(ids.has(record.id)&&!record.upload){record.cloud=target;record.error='';record.upload_error_code='';await localStore('put',record);}
       close(true);await refresh();processQueue();
     }catch(error){const node=overlay.querySelector('[data-adopt-error]');node.textContent=message(error);node.hidden=false;}finally{saving=false;overlay.querySelectorAll('button').forEach(node=>node.disabled=false);}};
     overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();}if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button:not(:disabled)')];if(event.shiftKey&&document.activeElement===nodes[0]){event.preventDefault();nodes.at(-1)?.focus();}else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0]?.focus();}}});overlay.querySelector('[data-adopt-submit]').focus();
@@ -5284,7 +5295,7 @@ window.TascoCloud = (() => {
       
       if(action==='capture')captureAlbum();
       if(action==='upload-photos')importPhotos();
-      if(action==='storage-settings')storageSettings();
+      if(action==='storage-settings'){const row=button.dataset.id?state.pending.find(item=>item.id===button.dataset.id):null;storageSettings(row?presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud):null);}
       if(action==='adopt-storage')adoptPendingStorage().catch(error=>notify(message(error)));
       if(action==='album-options')showAlbumActions(button.dataset.id);
       if(action==='new-album')showAlbumCreator();
@@ -5328,7 +5339,8 @@ window.TascoCloud = (() => {
       const url=thumbnail(row),time=new Date(row.captured_at).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
       return `<article class="cloud-photo-card cloud-photo-tile" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${esc(row.title)}, ${esc(stamp(row.captured_at))}, ${esc(row.address||'Chưa xác định địa điểm')}"><span class="cloud-tile-preview">${url?`<img src="${esc(previewURL(url))}" data-original="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.original" loading="lazy" decoding="async" alt="${esc(row.title)}">`:icon('camera')}<time class="cloud-tile-time" datetime="${esc(row.captured_at)}">${esc(time)}</time></span><span class="cloud-tile-caption"><strong>${esc(row.title||'Ảnh của tôi')}</strong><span>${icon('pin')}<span>${esc(row.address||'Chưa có địa điểm')}</span></span></span></button></article>`;
     }
-    const url=thumbnail(row);return `<article class="cloud-photo-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(row.error||'Đã giữ bản ảnh trên thiết bị này')}</span><button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}</button>`:''}</div></article>`;
+    const issue=pending?presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud):null;
+    const url=thumbnail(row);return `<article class="cloud-photo-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(issue?.summary||row.error||'Đã giữ bản ảnh trên thiết bị này')}</span>${issue?`<button class="cloud-text-button cloud-fix-preset" type="button" data-action="storage-settings" data-id="${esc(row.id)}"${state.uploading?' disabled':''}>Sửa preset ${icon('check')}</button>`:''}<button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}</button>`:''}</div></article>`;
   }
   function gallery(rows){
     if(state.config.mode!=='mobile')return rows.map(row=>card(row)).join('');
@@ -5463,7 +5475,7 @@ window.TascoCloud = (() => {
     try{
       const form=new FormData();form.append('file',record.blob,record.file_name);form.append('upload_preset',record.cloud.preset);const folder=(record.cloud.folder?record.cloud.folder+'/':'')+'cloud_cua_toi/'+record.owner_id;form.append('folder',folder);form.append('asset_folder',folder);form.append('tags','tasco_cloud_cua_toi');
       const response=await fetch('https://api.cloudinary.com/v1_1/'+encodeURIComponent(record.cloud.cloudName)+'/image/upload',{method:'POST',body:form,signal:controller.signal});
-      const data=await response.json();if(!response.ok||!imageURL(data.secure_url)||!data.public_id)throw new Error(data.error?.message||'Cloudinary chưa nhận được ảnh. Kiểm tra cloud name và unsigned preset.');
+      const data=await response.json();if(!response.ok||!imageURL(data.secure_url)||!data.public_id){const issue=presetUploadIssue(data.error?.message||'',record.cloud),error=new Error(issue?.message||data.error?.message||'Cloudinary chưa nhận được ảnh. Kiểm tra cloud name và unsigned preset.');if(issue){error.code=issue.code;error.cloud=record.cloud;}throw error;}
       return {secure_url:data.secure_url,public_id:data.public_id,bytes:data.bytes||record.blob.size,width:data.width||0,height:data.height||0};
     }finally{clearTimeout(timeout);}
   }
@@ -5476,7 +5488,7 @@ window.TascoCloud = (() => {
         try{
           if((await account()).id!==owner.id)break;
           await verifyUploadTarget(record);
-          if(!record.upload){record.upload=await upload(record);record.error='';await localStore('put',record);}
+          if(!record.upload){record.upload=await upload(record);record.error='';record.upload_error_code='';await localStore('put',record);}
           if((await account()).id!==owner.id)break;
           const api=await client(),row={id:record.id,owner_id:record.owner_id,title:record.title,address:record.address,location_status:record.location_status,captured_at:record.captured_at,source:'mobile_camera',cloud_name:record.cloud.cloudName,secure_url:record.upload.secure_url,public_id:record.upload.public_id,bytes:record.upload.bytes,width:record.upload.width,height:record.upload.height};
           if(record.origin)row.upload_origin=record.origin;
@@ -5484,7 +5496,7 @@ window.TascoCloud = (() => {
           const result=await cloudRequest(api.from(table).upsert(row,{onConflict:'id'}).select('id,owner_id'),'lưu ảnh vào thư viện');if(result.error)throw result.error;
           if(!Array.isArray(result.data)||!result.data.some(saved=>saved.id===row.id&&saved.owner_id===owner.id))throw new Error('Cloud chưa xác nhận ảnh. Bản ảnh vẫn được giữ để thử lại.');
           await localStore('delete',record.id);notify('Đã lưu ảnh vào Cloud của tôi.');
-        }catch(error){record.error=message(error);await localStore('put',record);notify(record.error);break;}
+        }catch(error){const presetError=String(error?.code||'').startsWith('CLOUDINARY_');record.error=presetError?error.message:message(error);record.upload_error_code=presetError?error.code:'';await localStore('put',record);notify(record.error);break;}
         state.pending=await pendingFor(owner.id);paint();
       }
     }catch(error){notify(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)?'Đăng nhập đúng tài khoản Cloud để đồng bộ ảnh.':message(error));}
