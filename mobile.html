@@ -2161,6 +2161,16 @@ html.dark .tasco-workspace .part-kind-tag{box-shadow:inset 0 1px 0 rgba(255,255,
 .tasco-workspace #traCuuSection [data-lookup-type=aftermarket][aria-pressed=true]{background:var(--part-aftermarket-bg);color:var(--part-aftermarket-ink);box-shadow:inset 0 0 0 1px var(--part-aftermarket-line)}
 @media(max-width:359px){.ws-quote-head{flex-wrap:wrap;gap:8px}.ws-quote-head .ws-quote-name{flex-basis:100%}.ws-quote-head .ws-quote-type{margin-top:0}#modalDetail .part-detail-kind-field{grid-column:1/-1}}
 </style>
+<style id="tascoAlbumTitleRenameStyles">
+.tasco-workspace #personalCloudSection .cloud-album-title{display:flex;align-items:center;gap:8px;min-width:0;max-width:100%}
+.tasco-workspace #personalCloudSection .cloud-album-title h1{flex:0 1 auto;min-width:0}
+.tasco-workspace #personalCloudSection .cloud-album-rename-button{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;padding:10px;border:1px solid rgba(218,236,240,.25);border-radius:12px;background:rgba(255,255,255,.06);color:#daecf0;font:inherit;cursor:pointer;touch-action:manipulation}
+.tasco-workspace #personalCloudSection .cloud-album-rename-button svg{width:18px;height:18px;flex-shrink:0}
+.tasco-workspace #personalCloudSection .cloud-album-rename-button:hover{background:rgba(218,236,240,.14);border-color:rgba(218,236,240,.5)}
+.tasco-workspace #personalCloudSection .cloud-album-rename-button:disabled{opacity:.4;cursor:default}
+.tasco-workspace #personalCloudSection .cloud-album-rename-button:focus-visible{outline:2px solid #84bfc7;outline-offset:3px}
+.tasco-workspace #personalCloudSection .cloud-album-rename-button[hidden]{display:none!important}
+</style>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
     <script>
@@ -5624,6 +5634,10 @@ window.TascoCloud = (() => {
     const root=state.root;if(!visible()||state.config.mode!=='mobile')return;const album=activeAlbum();
     root.querySelector('[data-action="album-back"]').setAttribute('aria-label',album?'Quay lại Cloud của tôi':'Quay về trang chủ');
     root.querySelector('#cloudPageTitle').textContent=album?album.name:'Cloud của tôi';
+    const renameButton=root.querySelector('[data-action="rename-active-album"]');
+    renameButton.hidden=!album;
+    renameButton.disabled=!album||!cloudReady()||state.busy||state.uploading||state.deleting||state.albumSaving;
+    renameButton.setAttribute('aria-label',album?'Đổi tên album '+album.name:'Đổi tên album');
     root.querySelector('[data-cloud-eyebrow]').textContent=album?'ALBUM ẢNH HỒ SƠ':'KHÔNG GIAN LƯU TRỮ CỦA BẠN';
     root.querySelector('[data-cloud-intro]').textContent=album?'Ảnh mới tự động lưu vào album đang mở.':'Tạo album theo hồ sơ, mở album rồi bắt đầu chụp.';
     const panel=root.querySelector('.cloud-albums-panel');panel.hidden=Boolean(album);
@@ -5804,7 +5818,7 @@ window.TascoCloud = (() => {
     const reloadButton=`<button class="cloud-button" type="button" data-action="refresh" aria-label="Tải lại thư viện" title="Tải lại thư viện">${icon('refresh')}</button>`;
     const mobileHeader=`<header class="cloud-hero" aria-labelledby="cloudPageTitle">
   <div class="cloud-journey-top"><button type="button" data-action="album-back" aria-label="Quay lại Cloud hoặc trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · THƯ VIỆN CÁ NHÂN</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div>
-  <div class="cloud-hero-copy"><span class="cloud-eyebrow" data-cloud-eyebrow>KHÔNG GIAN LƯU TRỮ CỦA BẠN</span><h1 id="cloudPageTitle" tabindex="-1">Cloud của tôi</h1><p data-cloud-intro>Tạo album theo hồ sơ, mở album rồi bắt đầu chụp.</p></div>
+  <div class="cloud-hero-copy"><span class="cloud-eyebrow" data-cloud-eyebrow>KHÔNG GIAN LƯU TRỮ CỦA BẠN</span><div class="cloud-album-title"><h1 id="cloudPageTitle" tabindex="-1">Cloud của tôi</h1><button type="button" class="cloud-album-rename-button" data-action="rename-active-album" aria-label="Đổi tên album" title="Đổi tên album" aria-haspopup="dialog" hidden disabled>${editIcon}</button></div><p data-cloud-intro>Tạo album theo hồ sơ, mở album rồi bắt đầu chụp.</p></div>
   <div class="cloud-hero-icon" aria-hidden="true">${icon('cloud')}</div>
   <div class="cloud-hero-actions"><button type="button" class="cloud-button cloud-primary" data-action="capture" disabled>${icon('camera')}<span data-cloud-capture-label>Đang kết nối…</span><svg class="cloud-capture-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><button type="button" class="cloud-button cloud-upload-button" data-action="upload-photos" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></svg><span>Tải ảnh lên</span></button></div>
   <section class="cloud-usage-card" data-cloud-usage aria-label="Dung lượng thư viện ảnh" aria-busy="true" title="Tính theo ảnh đã lưu trong ứng dụng">
@@ -5841,6 +5855,7 @@ window.TascoCloud = (() => {
       if(action==='storage-settings'){const row=button.dataset.id?state.pending.find(item=>item.id===button.dataset.id):null;storageSettings(row?presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud):null);}
       if(action==='adopt-storage')adoptPendingStorage().catch(error=>notify(message(error)));
       if(action==='album-options')showAlbumActions(button.dataset.id);
+      if(action==='rename-active-album'){const album=activeAlbum();if(album)showAlbumActions(album.id,'rename');}
       if(action==='new-album')showAlbumCreator();
       if(action==='choose-album')chooseAlbum();
       if(action==='open-album'){clearTimeout(timer);openAlbum(button.dataset.id);}
