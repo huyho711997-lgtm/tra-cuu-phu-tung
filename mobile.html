@@ -2089,6 +2089,47 @@ html.dark .tasco-workspace #personalCloudSection .cloud-selection-bar .cloud-del
 .tasco-workspace #personalCloudSection [data-album-list]{margin:0 -14px;padding-left:14px;padding-right:14px}
 }
 </style>
+
+<style id="tascoCompactPendingStyles">
+/* Keep the upload queue small even when many originals are waiting on the device. */
+#personalCloudSection .cloud-pending{padding:12px 14px;border-radius:20px}
+#personalCloudSection .cloud-pending[hidden],#personalCloudSection #cloudPendingDetails[hidden]{display:none!important}
+#personalCloudSection .cloud-pending-heading{align-items:center;gap:10px;margin-bottom:0}
+#personalCloudSection .cloud-pending-summary{flex:1;min-width:0}
+#personalCloudSection .cloud-pending-heading h2{margin:0;font-size:13px;line-height:1.5;font-weight:700}
+#personalCloudSection .cloud-pending-heading p{margin:2px 0 0;font-size:11px;line-height:1.5;color:var(--ws-muted,var(--cl-muted))}
+#personalCloudSection .cloud-pending-heading>.cloud-button{flex-shrink:0;min-height:38px;padding:8px 10px;font-size:11px;white-space:nowrap}
+#personalCloudSection .cloud-pending-heading>.cloud-button svg{width:16px;height:16px}
+#personalCloudSection .cloud-pending-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+#personalCloudSection .cloud-pending-previews{display:flex;align-items:center;gap:4px;min-width:0}
+#personalCloudSection .cloud-pending-thumb{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;overflow:hidden;border:1px solid var(--ws-line,var(--cl-line));border-radius:8px;background:var(--ws-surface,var(--cl-bg));color:var(--ws-muted,var(--cl-muted))}
+#personalCloudSection .cloud-pending-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+#personalCloudSection .cloud-pending-thumb svg{width:16px;height:16px}
+#personalCloudSection .cloud-pending-extra{font-size:11px;font-weight:700;padding-left:3px;color:var(--ws-text,var(--cl-text))}
+#personalCloudSection .cloud-pending-toggle{display:flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0;min-height:40px;padding:6px 0 6px 8px;border:0;background:transparent;color:var(--ws-text,var(--cl-text));font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+#personalCloudSection .cloud-pending-toggle svg{width:15px;height:15px;transition:transform .18s ease}
+#personalCloudSection .cloud-pending-toggle[aria-expanded=true] svg{transform:rotate(180deg)}
+#personalCloudSection #cloudPendingDetails{margin-top:10px;border-top:1px solid var(--ws-line,var(--cl-line));padding-top:10px}
+#personalCloudSection .cloud-pending-list{display:flex;flex-direction:column;gap:8px;max-height:340px;max-height:min(340px,42dvh);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding:1px 2px 1px 0}
+#personalCloudSection .cloud-pending-card{position:relative;display:flex;align-items:center;gap:10px;flex-shrink:0;min-height:82px;padding:9px;border:1px solid var(--ws-line,var(--cl-line));border-radius:13px;background:var(--ws-surface,var(--cl-bg));box-shadow:none}
+#personalCloudSection .cloud-pending-card>.cloud-photo-image{display:grid;place-items:center;flex:0 0 52px;width:52px;height:58px;min-height:0;aspect-ratio:auto;border-radius:8px;overflow:hidden;background:var(--ws-accent,var(--cl-soft));color:var(--ws-muted,var(--cl-muted))}
+#personalCloudSection .cloud-pending-card>.cloud-photo-image img{display:block;width:100%;height:100%;object-fit:cover}
+#personalCloudSection .cloud-pending-card>.cloud-photo-image svg{width:24px;height:24px}
+#personalCloudSection .cloud-pending-copy{flex:1;min-width:0}
+#personalCloudSection .cloud-pending-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ws-text,var(--cl-text));font-size:12px;font-weight:700;line-height:1.5}
+#personalCloudSection .cloud-pending-copy time{display:block;margin-top:1px;color:var(--ws-muted,var(--cl-muted));font-size:10px;line-height:1.5}
+#personalCloudSection .cloud-pending-copy .cloud-upload-error{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;margin-top:2px;font-size:10px;line-height:1.4;color:var(--ws-gold,#946421)}
+#personalCloudSection .cloud-pending-actions{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+#personalCloudSection .cloud-pending-save{display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid var(--ws-line,var(--cl-line));border-radius:11px;background:var(--ws-accent,var(--cl-soft));color:var(--ws-text,var(--cl-text));cursor:pointer}
+#personalCloudSection .cloud-pending-save svg{width:18px;height:18px}
+#personalCloudSection .cloud-pending-fix{min-height:30px;max-width:65px;padding:3px;border:0;background:transparent;color:var(--ws-text,var(--cl-text));font-size:10px;font-weight:700;cursor:pointer}
+#personalCloudSection .cloud-pending-connections{margin:0 0 10px}
+#personalCloudSection .cloud-pending-connections p{margin:0 0 6px;font-size:11px;line-height:1.5}
+#personalCloudSection .cloud-pending-connections .cloud-button{min-height:38px;font-size:11px}
+#personalCloudSection .cloud-pending :is(button,[tabindex]):focus-visible{outline:2px solid var(--ws-primary,#39747e);outline-offset:2px}
+@media(max-width:359px){#personalCloudSection .cloud-pending{padding:10px}#personalCloudSection .cloud-pending-thumb{width:24px;height:24px;flex-basis:24px}#personalCloudSection .cloud-pending-previews{gap:3px}#personalCloudSection .cloud-pending-heading>.cloud-button{padding:7px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){#personalCloudSection .cloud-pending-toggle svg{transition:none}}
+</style>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
     <script>
@@ -2613,7 +2654,11 @@ window.TascoCloudImport=(()=>{
   function open(options){
     if(active?.busy)return;
     if(!options.owner?.id||!options.cloud?.ownerId||options.cloud.ownerId!==options.owner.id)return;
-    active?.close();chooseSource(options);
+    active?.close();
+    // iOS owns the Photo Library / Camera / Files menu. Avoid asking twice.
+    // Keep this call synchronous with the upload button's user gesture.
+    if(window.TascoPhotoExport?.isIOS){closeSource();pick('library',options);}
+    else chooseSource(options);
   }
   function review(files,options){
     const ownerId=options.owner.id,focus=document.activeElement,overflow=document.body.style.overflow,urls=new Map(),overlay=document.createElement('div');let busy=false,closed=false,album=options.album?{...options.album}:null,started=false;
@@ -4758,9 +4803,9 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
           <div class="camera-ratio-section"><div class="camera-section-heading"><h3>Tỷ lệ ảnh</h3><span id="cameraRatioBadge">Gốc</span></div><div class="camera-ratio-options" role="radiogroup" aria-label="Tỷ lệ ảnh"><button type="button" role="radio" data-camera-ratio="native" aria-checked="true" tabindex="0"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.0" y="4.5" width="20" height="15" rx="2"/></svg><strong>Gốc</strong><small>Theo camera</small></button><button type="button" role="radio" data-camera-ratio="3:4" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.0" y="4.0" width="12" height="16" rx="2"/></svg><strong>3:4</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="4:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="6.0" width="16" height="12" rx="2"/></svg><strong>4:3</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="1:1" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.0" y="5.0" width="14" height="14" rx="2"/></svg><strong>1:1</strong><small>Vuông</small></button><button type="button" role="radio" data-camera-ratio="9:16" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.5" y="4.0" width="9" height="16" rx="2"/></svg><strong>9:16</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="16:9" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="7.5" width="16" height="9" rx="2"/></svg><strong>16:9</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="2:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.0" y="4.5" width="10" height="15" rx="2"/></svg><strong>2:3</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="3:2" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="7.0" width="15" height="10" rx="2"/></svg><strong>3:2</strong><small>Tự xoay</small></button></div><p class="camera-settings-note">Tỷ lệ tự đổi theo hướng cầm máy: dựng dọc là khung dọc, xoay ngang là khung ngang. 1:1 luôn vuông. Khung xem và ảnh lưu cùng tỷ lệ, cắt giữa để vừa khung.</p></div>
           <div class="camera-section-heading"><h3>Chất lượng ảnh</h3><span id="cameraQualityBadge">Cân bằng</span></div>
           <div class="camera-quality-options" role="radiogroup" aria-label="Chất lượng ảnh">
-            <button type="button" role="radio" data-camera-quality="economy" aria-checked="false"><span>Tiết kiệm</span><small>1920 px · nhẹ máy</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
-            <button type="button" role="radio" data-camera-quality="high" aria-checked="true"><span>Cân bằng <b>ĐỀ XUẤT</b></span><small>2560 px · rõ nét, vừa đủ</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
-            <button type="button" role="radio" data-camera-quality="maximum" aria-checked="false"><span>Chi tiết</span><small>4096 px · chất lượng cao nhất</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" role="radio" data-camera-quality="economy" aria-checked="false"><span>Tiết kiệm</span><small>1280 px · nhẹ máy</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" role="radio" data-camera-quality="high" aria-checked="true"><span>Cân bằng <b>ĐỀ XUẤT</b></span><small>1920 px · rõ nét, vừa đủ</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" role="radio" data-camera-quality="maximum" aria-checked="false"><span>Chi tiết</span><small>2560 px · ảnh lớn hơn</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
           </div>
           <p id="cameraActualResolution" class="camera-settings-note">Camera đang khởi động…</p>
           <label class="camera-setting-field camera-field-spaced"><span>Camera đang dùng</span><select id="cameraDeviceSelect" aria-label="Camera đang dùng"></select></label>
@@ -5176,7 +5221,7 @@ window.TascoDatePicker=(()=>{
 /* Cloudinary holds the image; Supabase RLS holds the account-owned manifest. */
 window.TascoCloud = (() => {
   const table = 'tasco_personal_photos';
-  const state = {config:null,client:null,clientInit:null,authUser:null,authRevision:0,user:null,localReady:false,libraryReady:false,storageStatus:'unknown',storageWarning:'',storageUsage:null,usageRevision:0,stage:'',root:null,rows:[],pending:[],count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map(),selecting:false,selected:new Set(),deleting:false,deleteDialog:null,albums:[],activeAlbumId:null,albumMode:'local',albumNote:'',albumDialog:null,albumSaving:false};
+  const state = {config:null,client:null,clientInit:null,authUser:null,authRevision:0,user:null,localReady:false,libraryReady:false,storageStatus:'unknown',storageWarning:'',storageUsage:null,usageRevision:0,stage:'',root:null,rows:[],pending:[],pendingExpanded:false,count:0,page:0,query:'',date:'',startTime:'',endTime:'',revision:0,busy:false,error:'',uploading:false,urls:new Map(),selecting:false,selected:new Set(),deleting:false,deleteDialog:null,albums:[],activeAlbumId:null,albumMode:'local',albumNote:'',albumDialog:null,albumSaving:false};
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const icon = name => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({cloud:'<path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/>',camera:'<path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/>',refresh:'<path d="M20 4v6h-6M4 20v-6h6M4.5 9a8 8 0 0 1 13-5l2.5 3M4 17l2.5 3a8 8 0 0 0 13-5"/>',search:'<circle cx="10" cy="10" r="7"/><path d="m16 16 5 5"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',check:'<path d="m5 12 4 4L19 6"/>'}[name] || '')+'</svg>';
   const stamp = value => new Date(value).toLocaleString('vi-VN',{hour12:false});
@@ -5247,7 +5292,7 @@ window.TascoCloud = (() => {
   function hasAccess(){return state.config?.mode!=='mobile'||state.config.canAccess?.()===true;}
   function visible(){return hasAccess()&&state.root?.isConnected&&state.root.querySelector('.personal-cloud');}
   function clearAccount() {
-    state.deleteDialog?.cancel();state.albumDialog?.cancel();state.selected.clear();state.selecting=false;state.activeAlbumId=null;state.albums=[];state.pending=[];state.rows=[];state.count=0;state.user=null;state.storageUsage=null;state.usageRevision++;state.localReady=false;state.libraryReady=false;state.albumNote='';
+    state.deleteDialog?.cancel();state.albumDialog?.cancel();state.selected.clear();state.selecting=false;state.activeAlbumId=null;state.albums=[];state.pending=[];state.pendingExpanded=false;state.rows=[];state.count=0;state.user=null;state.storageUsage=null;state.usageRevision++;state.localReady=false;state.libraryReady=false;state.albumNote='';
     window.TascoPhotoViewer?.close();clearURLs();
   }
   async function client() {
@@ -5390,7 +5435,7 @@ window.TascoCloud = (() => {
     }
   }
   function resetAlbumFilters(){
-    state.query='';state.date='';state.startTime='';state.endTime='';state.page=0;state.rows=[];state.count=0;state.selecting=false;state.selected.clear();
+    state.query='';state.date='';state.startTime='';state.endTime='';state.page=0;state.rows=[];state.count=0;state.pendingExpanded=false;state.selecting=false;state.selected.clear();
     const root=state.root;if(!root)return;
     root.querySelector('[data-cloud-search]').value='';root.querySelector('[data-cloud-date-label]').textContent='Tất cả ngày';root.querySelector('[data-cloud-date]').dataset.value='';
   }
@@ -5744,7 +5789,7 @@ window.TascoCloud = (() => {
     state.deleteDialog?.cancel();state.albumDialog?.cancel();state.selecting=false;state.selected.clear();
     window.TascoPhotoViewer?.close();
     window.TascoDatePicker?.close();
-    clearURLs();state.root=root;state.page=0;state.query='';state.date='';state.startTime='';state.endTime='';state.rows=[];state.pending=[];state.albums=[];state.activeAlbumId=null;state.albumMode='local';state.albumNote='';state.localReady=false;state.libraryReady=false;
+    clearURLs();state.root=root;state.page=0;state.query='';state.date='';state.startTime='';state.endTime='';state.rows=[];state.pending=[];state.pendingExpanded=false;state.albums=[];state.activeAlbumId=null;state.albumMode='local';state.albumNote='';state.localReady=false;state.libraryReady=false;
     const searchField=`<label class="cloud-search">${icon('search')}<input type="search" data-cloud-search placeholder="${state.config.mode==='mobile'?'Tìm nội dung, địa điểm…':'Tìm theo nội dung hoặc địa điểm…'}" aria-label="Tìm ảnh"></label>`;
     const dateField='<div class="cloud-date"><span>Ngày chụp</span><button type="button" data-cloud-date data-action="date" class="cloud-date-trigger" aria-label="Chọn ngày và giờ chụp"><span data-cloud-date-label>Tất cả ngày</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></button></div>';
     const reloadButton=`<button class="cloud-button" type="button" data-action="refresh" aria-label="Tải lại thư viện" title="Tải lại thư viện">${icon('refresh')}</button>`;
@@ -5773,7 +5818,8 @@ window.TascoCloud = (() => {
       const button=event.target.closest('[data-action]');if(!button||!root.contains(button))return;
       const action=button.dataset.action;
       if(button.disabled||state.deleting||state.albumSaving)return;
-      if(action==='selection'){state.selecting=!state.selecting;state.selected.clear();paintSelection();}
+      if(action==='selection'){state.selecting=!state.selecting;state.selected.clear();if(state.selecting&&visiblePending().length){state.pendingExpanded=true;paintPending();}paintSelection();}
+      if(action==='toggle-pending'){state.pendingExpanded=!state.pendingExpanded;paintPending();paintSelection();}
       if(action==='select'&&state.selecting)toggleSelection(button.dataset.id);
       if(action==='select-all'){for(const row of [...state.rows,...visiblePending()])state.selected.add(row.id);paintSelection();}
       if(action==='deselect-all'){state.selected.clear();paintSelection();}
@@ -5895,6 +5941,26 @@ window.TascoCloud = (() => {
     const issue=pending?presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud):null;
     const url=thumbnail(row);return `<article class="cloud-photo-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(issue?.summary||row.error||'Đã giữ bản ảnh trên thiết bị này')}</span>${issue?`<button class="cloud-text-button cloud-fix-preset" type="button" data-action="storage-settings" data-id="${esc(row.id)}"${state.uploading?' disabled':''}>Sửa preset ${icon('check')}</button>`:''}<button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}</button>`:''}</div></article>`;
   }
+  function pendingCard(row) {
+    const issue=presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud),url=thumbnail(row),title=row.title||'Ảnh của tôi';
+    return `<article class="cloud-photo-card cloud-pending-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(title)}">${url?`<img src="${esc(url)}" loading="lazy" decoding="async" alt="${esc(title)}">`:icon('camera')}</button><div class="cloud-pending-copy"><strong>${esc(title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><span class="cloud-upload-error" title="${esc(issue?.message||row.error||'Bản ảnh được giữ trên thiết bị đến khi đồng bộ thành công.')}">${esc(issue?.summary||row.error||'Chờ đồng bộ')}</span></div><div class="cloud-pending-actions">${issue?`<button class="cloud-pending-fix" type="button" data-action="storage-settings" data-id="${esc(row.id)}"${state.uploading?' disabled':''}>Sửa preset</button>`:''}<button class="cloud-pending-save" type="button" data-action="download-pending" data-id="${esc(row.id)}" aria-label="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}: ${esc(title)}" title="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}">${icon('download')}</button></div></article>`;
+  }
+  function paintPending() {
+    const root=state.root;if(!visible())return;
+    const rows=visiblePending(),pending=root.querySelector('.cloud-pending');
+    if(!rows.length){pending.hidden=true;pending.innerHTML='';state.pendingExpanded=false;return;}
+    const scrollTop=pending.querySelector('.cloud-pending-list')?.scrollTop||0;
+    const focused=pending.contains(document.activeElement)?document.activeElement.closest('[data-action]'):null;
+    const focusAction=focused?.dataset.action,focusId=focused?.dataset.id;
+    const failed=rows.filter(row=>row.error||row.upload_error_code).length;
+    const needsConnection=state.config.personalStorage&&rows.some(row=>!row.upload&&(!uploadReady()||!sameTarget(row,config())));
+    const status=state.uploading?'Đang lưu ảnh lên Cloud…':needsConnection?'Cần chọn lại kết nối lưu trữ':failed?failed+' ảnh cần thử lại':'Bản ảnh vẫn được giữ trên thiết bị';
+    const previews=rows.slice(0,4).map(row=>{const url=thumbnail(row);return `<span class="cloud-pending-thumb">${url?`<img src="${esc(url)}" alt="" loading="lazy" decoding="async">`:icon('camera')}</span>`;}).join('');
+    pending.hidden=false;
+    pending.innerHTML=`<div class="cloud-pending-heading"><div class="cloud-pending-summary"><h2>${rows.length} ảnh chờ đồng bộ</h2><p role="status" aria-live="polite">${esc(status)}</p></div><button class="cloud-button" type="button" data-action="retry"${state.uploading?' disabled':''}>${icon('refresh')}${state.uploading?'Đang lưu…':'Thử lại'}</button></div><div class="cloud-pending-footer"><div class="cloud-pending-previews" aria-hidden="true">${previews}${rows.length>4?`<span class="cloud-pending-extra">+${rows.length-4}</span>`:''}</div><button class="cloud-pending-toggle" type="button" data-action="toggle-pending" aria-expanded="${state.pendingExpanded}" aria-controls="cloudPendingDetails">${state.pendingExpanded?'Thu gọn':'Xem hàng chờ'}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div><div id="cloudPendingDetails"${state.pendingExpanded?'':' hidden'}>${needsConnection?`<div class="cloud-pending-connections"><p>Chọn kết nối riêng để tiếp tục tải ảnh chờ.</p><button type="button" class="cloud-button" data-action="adopt-storage"${state.uploading?' disabled':''}>Dùng kết nối hiện tại</button></div>`:''}<div class="cloud-pending-list" role="region" aria-label="Danh sách ảnh chờ đồng bộ" tabindex="0">${state.pendingExpanded?rows.map(pendingCard).join(''):''}</div></div>`;
+    const list=pending.querySelector('.cloud-pending-list');list.scrollTop=scrollTop;
+    if(focusAction){const next=[...pending.querySelectorAll('[data-action]')].find(node=>node.dataset.action===focusAction&&node.dataset.id===focusId);if(next&&!next.disabled)next.focus({preventScroll:true});}
+  }
   function gallery(rows){
     if(state.config.mode!=='mobile')return rows.map(row=>card(row)).join('');
     if(!galleryPreferences().groupDays)return '<div class="cloud-day-grid">'+rows.map(row=>card(row)).join('')+'</div>';
@@ -5923,7 +5989,7 @@ window.TascoCloud = (() => {
       grid.innerHTML=`<div class="cloud-empty"><span class="cloud-empty-symbol" aria-hidden="true">${icon(filtered?'search':'cloud')}</span><h2>${filtered?'Không tìm thấy ảnh phù hợp':album?'Album chưa có ảnh':'Lưu ảnh theo từng album'}</h2><p>${filtered?'Thử từ khóa khác hoặc xóa bộ lọc để xem các ảnh.':album?'Chụp ảnh ngay tại đây. Cả loạt ảnh sẽ tự vào album đang mở.':'Tạo album theo từng hồ sơ để lưu và tìm lại ảnh dễ hơn.'}</p><button class="cloud-button" type="button" data-action="${filtered?'clear-filters':album?'capture':state.albums.length?'choose-album':'new-album'}">${filtered?icon('close'):album?icon('camera'):albumIcon}${filtered?'Xóa bộ lọc':album?'Chụp ảnh đầu tiên':state.albums.length?'Chọn album để chụp':'Tạo album đầu tiên'}</button></div>`;
     }
     if(!state.rows.length&&!state.busy&&state.error)grid.innerHTML=`<div class="cloud-empty"><span class="cloud-empty-symbol" aria-hidden="true">${icon('cloud')}</span><h2>Chưa thể tải ảnh</h2><p>${esc(state.error)}</p><button class="cloud-button" type="button" data-action="refresh">${icon('refresh')}Thử lại</button></div>`;
-    const scopedPending=visiblePending(),pending=root.querySelector('.cloud-pending');pending.hidden=!scopedPending.length;pending.innerHTML=scopedPending.length?`<div class="cloud-pending-heading"><div><h2>${scopedPending.length} ảnh chờ đồng bộ</h2><p>Bản ảnh được giữ trên thiết bị này cho đến khi lưu thành công.</p></div><button class="cloud-button" type="button" data-action="retry" ${state.uploading?'disabled':''}>${icon('refresh')}${state.uploading?'Đang lưu…':'Thử đồng bộ lại'}</button></div>${state.config.personalStorage&&scopedPending.some(row=>!row.upload&&(!uploadReady()||!sameTarget(row,config())))?`<div class="cloud-pending-connections"><p>Chọn kết nối riêng để tiếp tục tải ảnh chờ.</p><button type="button" class="cloud-button" data-action="adopt-storage" ${state.uploading?'disabled':''}>Dùng kết nối hiện tại</button></div>`:''}<div class="cloud-grid">${scopedPending.map(row=>card(row,true)).join('')}</div>`:'';
+    paintPending();
     root.querySelector('[data-action="more"]').hidden=state.rows.length>=state.count||!state.user||Boolean(state.error);
     paintSelection();paintAlbums();paintStorage();
     window.dispatchEvent(new CustomEvent('tasco:cloud-summary',{detail:{email:state.user?.email||state.config.expectedEmail?.()||'',ready:cloudReady(),count:state.count,pending:state.pending.length,busy:state.busy,error:state.error||(!state.user&&!state.busy?'Chưa kết nối tài khoản Cloud':''),filtered:Boolean(state.query||state.date||state.activeAlbumId),albumName:activeAlbum()?.name||'',photos:state.rows.slice(0,3).map(row=>({id:row.id,title:row.title,url:previewURL(thumbnail(row),280),capturedAt:row.captured_at}))}}));
@@ -6462,20 +6528,16 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
 }
 /* Shared camera quality, device selection and capability-based zoom. */
 const cameraQualityProfiles={
-  economy:{id:'economy',label:'Tiết kiệm',detail:'1920 px · nhẹ máy',request:1920,maxSide:1920,fps:15,jpeg:.85,still:false},
-  high:{id:'high',label:'Cân bằng',detail:'2560 px · rõ nét, vừa đủ',request:2560,maxSide:2560,fps:24,jpeg:.92,still:true},
-  maximum:{id:'maximum',label:'Chi tiết',detail:'4096 px · chất lượng cao nhất',request:4096,maxSide:4096,fps:30,jpeg:.98,still:true}
+  economy:{id:'economy',label:'Tiết kiệm',detail:'1280 px · nhẹ máy',request:1280,maxSide:1280,fps:15,jpeg:.85},
+  high:{id:'high',label:'Cân bằng',detail:'1920 px · rõ nét, vừa đủ',request:1920,maxSide:1920,fps:20,jpeg:.92},
+  maximum:{id:'maximum',label:'Chi tiết',detail:'2560 px · ảnh lớn hơn',request:2560,maxSide:2560,fps:24,jpeg:.95}
 };
 const cameraControlsState={quality:'high',deviceId:'',devices:[],baseFactor:1,zoom:1,digitalZoom:1,capabilities:{},busy:false,settingsOpen:false,location:null,clock:null,manualRotation:{environment:0,user:0},settingsFocus:null};
 // Quality and rotation are restored with the user's other preferences.
 function cameraQuality(){return {...cameraQualityProfiles[cameraControlsState.quality]};}
 function cameraVideoConstraints(){
   const quality=cameraQuality(),device=cameraControlsState.deviceId?{deviceId:{exact:cameraControlsState.deviceId}}:{facingMode:{ideal:customCameraFacingMode}};
-  return [
-    {video:{...device,width:{ideal:quality.request},height:{ideal:quality.request},frameRate:{ideal:quality.fps}},audio:false},
-    {video:{...device,width:{ideal:1920},height:{ideal:1920},frameRate:{ideal:24}},audio:false},
-    {video:{...device,width:{ideal:1280},height:{ideal:1280}},audio:false}
-  ];
+  return [{video:{...device,width:{ideal:quality.request,max:quality.request},height:{ideal:quality.request,max:quality.request},frameRate:{ideal:quality.fps,max:quality.fps}},audio:false},{video:{...device,width:{ideal:1280,max:1920},height:{ideal:1280,max:1920},frameRate:{ideal:15,max:24}},audio:false}];
 }
 function cameraDeviceKind(label){
   const value=String(label).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
@@ -6748,28 +6810,10 @@ function selectCameraRatio(ratio){
   if(!(ratio in cameraAspectRatios)||cameraUiState.captureBusy)return;
   cameraAppearance=sanitizeCameraAppearance({...cameraAppearance,aspectRatio:ratio});saveCameraAppearance();syncCameraViewport();renderCameraAppearanceControls();renderCameraSettings();
 }
-// Chụp ảnh tĩnh độ phân giải đầy đủ (Android/Chrome). iOS Safari không hỗ trợ -> tự quay về khung hình video.
-async function cameraTakeStill(video,track){
-  try{
-    if(!('ImageCapture' in window)||!track||track.readyState!=='live')return null;
-    const capture=new ImageCapture(track),caps=await capture.getPhotoCapabilities().catch(()=>null);
-    const options={};
-    if(caps?.imageWidth?.max)options.imageWidth=caps.imageWidth.max;
-    if(caps?.imageHeight?.max)options.imageHeight=caps.imageHeight.max;
-    const blob=await Promise.race([capture.takePhoto(options),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),5000))]);
-    const bitmap=await createImageBitmap(blob);
-    // Chỉ dùng ảnh tĩnh nếu cùng chiều (dọc/ngang) và cùng tỉ lệ khung với preview, tránh lệch khung hình.
-    const sameOrientation=(bitmap.width>=bitmap.height)===(video.videoWidth>=video.videoHeight);
-    const photoRatio=Math.max(bitmap.width,bitmap.height)/Math.min(bitmap.width,bitmap.height);
-    const videoRatio=Math.max(video.videoWidth,video.videoHeight)/Math.min(video.videoWidth,video.videoHeight);
-    if(!sameOrientation||Math.abs(photoRatio-videoRatio)/videoRatio>.03){bitmap.close();return null;}
-    return bitmap;
-  }catch(_){return null;}
-}
 function cameraCanvasFromSource(source,frame,quality){
   const width=source.videoWidth||source.naturalWidth||source.width,height=source.videoHeight||source.naturalHeight||source.height,swapped=Math.abs(frame.rotation)%180===90,orientedWidth=swapped?height:width,orientedHeight=swapped?width:height;
   const output=cameraOutputSize(orientedWidth,orientedHeight,frame.aspectRatio||'native',quality),canvas=document.createElement('canvas');canvas.width=output.width;canvas.height=output.height;
-  const scale=canvas.width/output.crop.width,ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate((frame.rotation||0)*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);ctx.setTransform(1,0,0,1,0,0);return canvas;
+  const scale=canvas.width/output.crop.width,ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate((frame.rotation||0)*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);ctx.setTransform(1,0,0,1,0,0);return canvas;
 }
 
 const cameraSettingsPanel=document.getElementById('cameraSettingsPanel');
@@ -7018,9 +7062,7 @@ async function triggerCustomCameraCapture() {
   try{
     if(track.readyState==='ended'||track.muted||!await cameraWaitForFrame(video)){recover=true;throw new Error('Khung hình chưa sẵn sàng.');}
     if(session!==cameraUiState.session||track!==customCameraStream?.getVideoTracks()[0])return;
-    const frame=cameraFrameOrientation(video);
-    const still=quality.still?await cameraTakeStill(video,track):null;
-    try{canvas=cameraCanvasFromSource(still||video,frame,quality);}finally{still?.close?.();}
+    const frame=cameraFrameOrientation(video);canvas=cameraCanvasFromSource(video,frame,quality);
     if(!cameraFrameHasPixels(canvas)){recover=true;throw new Error('Camera vừa mất khung hình. Đang thử kết nối lại.');}
     metadata.frame={...frame,width:canvas.width,height:canvas.height,nativeWidth:video.videoWidth,nativeHeight:video.videoHeight};metadata.quality=quality;
     const location=await metadata.locationPromise;if(session!==cameraUiState.session)return;
