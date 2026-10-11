@@ -2158,6 +2158,20 @@ html.dark .tasco-workspace #personalCloudSection .cloud-selection-bar .cloud-del
 @media(max-width:767px){.tasco-workspace #modalDetail.part-detail-modal{align-items:flex-end;padding:12px 12px max(12px,env(safe-area-inset-bottom,0px))}.tasco-workspace #modalDetail>.part-detail-sheet{max-height:calc(90dvh - env(safe-area-inset-top,0px))}}
 @media(max-width:359px){#modalDetail .ws-sheet-heading,#modalDetail .part-detail-body{padding-left:18px;padding-right:18px}#modalDetail .part-detail-footer{padding-left:18px;padding-right:18px}#modalDetail .part-detail-price strong{font-size:28px}#modalDetail .part-detail-fields{column-gap:10px}}
 </style>
+<style id="tascoPartKindPremiumStyles">
+.tasco-workspace{--part-genuine-bg:#edf7f1;--part-genuine-line:#bfdccd;--part-genuine-ink:#216348;--part-aftermarket-bg:#fff3e5;--part-aftermarket-line:#ead3ae;--part-aftermarket-ink:#805323}
+html.dark .tasco-workspace{--part-genuine-bg:#213d34;--part-genuine-line:#3b6851;--part-genuine-ink:#b0e0c5;--part-aftermarket-bg:#493827;--part-aftermarket-line:#7d6341;--part-aftermarket-ink:#f3d5a5}
+.tasco-workspace .part-kind-tag{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0;min-height:27px;max-width:100%;padding:5px 9px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-soft);color:var(--ws-muted);font-family:inherit;font-size:10.5px;font-weight:650;line-height:1.35;letter-spacing:0;white-space:nowrap;vertical-align:middle;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.tasco-workspace .part-kind-tag[data-part-kind=genuine]{border-color:var(--part-genuine-line);background:var(--part-genuine-bg);color:var(--part-genuine-ink)}
+.tasco-workspace .part-kind-tag[data-part-kind=aftermarket]{border-color:var(--part-aftermarket-line);background:var(--part-aftermarket-bg);color:var(--part-aftermarket-ink)}
+.tasco-workspace .part-kind-tag>svg{display:block;flex:0 0 13px;width:13px;height:13px}
+.tasco-workspace .part-kind-tag>span{font:inherit;color:inherit;line-height:inherit}
+html.dark .tasco-workspace .part-kind-tag{box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+#traCuuSection .ws-kind-tabs[aria-label="Loại hàng cần tra cứu"]{grid-template-columns:minmax(0,.75fr) minmax(0,1fr) minmax(0,1.45fr)}
+.tasco-workspace #traCuuSection [data-lookup-type=genuine][aria-pressed=true]{background:var(--part-genuine-bg);color:var(--part-genuine-ink);box-shadow:inset 0 0 0 1px var(--part-genuine-line)}
+.tasco-workspace #traCuuSection [data-lookup-type=aftermarket][aria-pressed=true]{background:var(--part-aftermarket-bg);color:var(--part-aftermarket-ink);box-shadow:inset 0 0 0 1px var(--part-aftermarket-line)}
+@media(max-width:359px){.ws-quote-head{flex-wrap:wrap;gap:8px}.ws-quote-head .ws-quote-name{flex-basis:100%}.ws-quote-head .ws-quote-type{margin-top:0}#modalDetail .part-detail-kind-field{grid-column:1/-1}}
+</style>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
     <script>
@@ -2405,7 +2419,7 @@ html.dark .tasco-workspace #personalCloudSection .cloud-selection-bar .cloud-del
 <section id="traCuuSection" data-shell-page="lookup" class="ws-lookup ws-journey" hidden aria-labelledby="lookupPageTitle">
   <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TRA CỨU PHỤ TÙNG</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">THÔNG TIN ĐÚNG · LỰA CHỌN RÕ RÀNG</span><h2 id="lookupPageTitle" tabindex="-1">Chọn phụ tùng.<br>Tra cứu nhanh.</h2><p>Giá và thông tin phụ tùng theo xe của bạn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="94" cy="70" r="59" stroke="currentColor" stroke-opacity=".18"/><circle cx="94" cy="70" r="47" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="3 7"/><path d="m35 80 12-22h59l24 17 17 4v16H28V84l7-4Z" fill="#84bfc7" fill-opacity=".09" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m51 60-9 19h77l-19-19H51ZM78 60v19M36 85h12m86 0h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="53" cy="96" r="13" fill="#183056" stroke="#daecf0" stroke-width="2"/><circle cx="123" cy="96" r="13" fill="#183056" stroke="#daecf0" stroke-width="2"/><circle cx="53" cy="96" r="5" stroke="currentColor"/><circle cx="123" cy="96" r="5" stroke="currentColor"/><path d="M29 118h120" stroke="currentColor" stroke-opacity=".2" stroke-linecap="round"/></svg></header>
   <div class="ws-search-panel ws-search-panel--premium">
-    <div class="ws-kind-tabs" role="group" aria-label="Loại hàng cần tra cứu"><button type="button" data-lookup-type="all" onclick="TascoLookupFlow.chooseType('all')" aria-pressed="true">Tất cả</button><button type="button" data-lookup-type="genuine" onclick="TascoLookupFlow.chooseType('genuine')" aria-pressed="false">Chính hãng</button><button type="button" data-lookup-type="aftermarket" onclick="TascoLookupFlow.chooseType('aftermarket')" aria-pressed="false">Hàng ngoài</button></div>
+    <div class="ws-kind-tabs" role="group" aria-label="Loại hàng cần tra cứu"><button type="button" data-lookup-type="all" onclick="TascoLookupFlow.chooseType('all')" aria-pressed="true">Tất cả</button><button type="button" data-lookup-type="genuine" onclick="TascoLookupFlow.chooseType('genuine')" aria-pressed="false">Chính hãng</button><button type="button" data-lookup-type="aftermarket" onclick="TascoLookupFlow.chooseType('aftermarket')" aria-pressed="false">Không chính hãng</button></div>
     <label for="searchInput" class="ws-search-label">Phụ tùng cần tìm</label>
     <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" id="searchInput" placeholder="Nhập tên phụ tùng…" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();searchData();}"></div>
     <div class="ws-part-suggestions" aria-label="Gợi ý phụ tùng"><span>Gợi ý</span><button type="button" data-part-suggestion="Đèn pha" onclick="TascoLookupFlow.choosePart('Đèn pha')" aria-pressed="false">Đèn pha</button><button type="button" data-part-suggestion="Cản trước" onclick="TascoLookupFlow.choosePart('Cản trước')" aria-pressed="false">Cản trước</button><button type="button" data-part-suggestion="Gương chiếu hậu" onclick="TascoLookupFlow.choosePart('Gương chiếu hậu')" aria-pressed="false">Gương chiếu hậu</button></div>
@@ -2813,6 +2827,28 @@ window.TascoAppShell=(()=>{
 </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+    <script id="tascoPartKind">
+/* One classification for result cards, details and client-side filters. */
+window.TascoPartKind=(()=>{
+  const shield='<path d="M12 3 4.5 6v5.4c0 4.1 2.9 7.7 7.5 9.6 4.6-1.9 7.5-5.5 7.5-9.6V6z"/><path d="m8.5 11.8 2.3 2.3 4.7-4.7"/>';
+  const layers='<path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"/>';
+  const neutral='<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>';
+  const types={genuine:{label:'Chính hãng',icon:shield},aftermarket:{label:'Không chính hãng',icon:layers},unknown:{label:'Chưa phân loại',icon:neutral}};
+  function classify(value){
+    if(typeof value!=='string')return 'unknown';
+    const normalized=value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[\s_-]+/g,' ');
+    // Whole values only: "khong chinh hang" must never match "chinh hang".
+    if(normalized==='chinh hang')return 'genuine';
+    if(normalized==='khong chinh hang'||normalized==='hang ngoai')return 'aftermarket';
+    return 'unknown';
+  }
+  function contents(kind){const type=types[kind];return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+type.icon+'</svg><span>'+type.label+'</span>';}
+  function badge(value){const kind=classify(value);return '<span class="part-kind-tag" data-part-kind="'+kind+'">'+contents(kind)+'</span>';}
+  function decorate(node,value){if(!node)return;const kind=classify(value);node.classList.add('part-kind-tag');node.dataset.partKind=kind;node.innerHTML=contents(kind);}
+  function matches(value,filter){return !filter||filter==='all'||classify(value)===filter;}
+  return Object.freeze({classify,badge,decorate,matches});
+})();
+</script>
     <script type="module">
         import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
         const SUPABASE_PROJECT_URL = "https://yxwmcpoklxpzlikxojez.supabase.co";
@@ -3979,7 +4015,7 @@ window.TascoAppShell=(()=>{
                         ${currentType === 'genuine' ? '<svg class="w-5 h-5 text-navy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
                     </div>
                     <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-colors ${currentType === 'aftermarket' ? 'bg-navy-50 border border-navy-100' : 'bg-zinc-50 border border-zinc-100'}" onclick="selectFilterItem('aftermarket')">
-                        <span class="text-sm font-bold ${currentType === 'aftermarket' ? 'text-navy-500' : 'text-zinc-700'}">Hàng ngoài</span>
+                        <span class="text-sm font-bold ${currentType === 'aftermarket' ? 'text-navy-500' : 'text-zinc-700'}">Không chính hãng</span>
                         ${currentType === 'aftermarket' ? '<svg class="w-5 h-5 text-navy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' : ''}
                     </div>
                 `;
@@ -4061,7 +4097,7 @@ window.TascoAppShell=(()=>{
                 document.getElementById('filterType').value = value;
                 let text = 'Tất cả';
                 if (value === 'genuine') text = 'Chính hãng';
-                if (value === 'aftermarket') text = 'Hàng ngoài';
+                if (value === 'aftermarket') text = 'Không chính hãng';
                 document.getElementById('labelType').innerText = text;
             }
             
@@ -4220,8 +4256,7 @@ window.searchData = async function() {
                 snap.forEach(docSnap => {
                     const item = docSnap.data();
                     item.id = docSnap.id;
-                    const chinhHangValue = (item.chinh_hang || '').toLowerCase();
-                    if (type === 'aftermarket' && chinhHangValue.includes("chính hãng")) return;
+                    if (!window.TascoPartKind.matches(item.chinh_hang,type)) return;
                     
                     if (!search) {
                         MASTER_DATA.push(item);
@@ -4345,7 +4380,7 @@ window.searchData = async function() {
                 card.innerHTML = "<span class=\"ws-quote-head\"><span class=\"ws-quote-name\" data-quote-name></span><span class=\"ws-quote-type\" data-quote-type></span></span><span class=\"ws-quote-vehicle\"><span><small>Hãng xe</small><strong data-quote-brand></strong></span><span class=\"ws-quote-route\"><svg class=\"ws-icon \" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2\"/></svg></span><span><small>Dòng xe</small><strong data-quote-model></strong></span></span><span class=\"ws-quote-footer\"><span class=\"ws-quote-date\"><small data-quote-year></small><span data-quote-date></span></span><span class=\"ws-quote-price\"><small>Đơn giá</small><strong data-quote-price></strong></span></span><span class=\"ws-quote-detail\"><span>Xem thông tin <svg class=\"ws-icon \" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 5 7 7-7 7\"/></svg></span><span class=\"ws-quote-verified\" data-quote-verified hidden>Đã xác thực</span></span>";
                 const set = (selector,value) => { card.querySelector(selector).textContent = value; };
                 set('[data-quote-name]',item.ten_phu_tung || 'Phụ tùng');
-                set('[data-quote-type]',(item.chinh_hang || '').toLowerCase().includes('chính hãng') ? 'Chính hãng' : 'Hàng ngoài');
+                window.TascoPartKind.decorate(card.querySelector('[data-quote-type]'),item.chinh_hang);
                 set('[data-quote-brand]',item.hang_xe || 'Chưa cập nhật');
                 set('[data-quote-model]',item.hieu_xe || 'Chưa cập nhật');
                 set('[data-quote-year]','Năm sản xuất · ' + (item.nam_sx || '—'));
@@ -7297,7 +7332,7 @@ window.TascoLookupFlow = (() => {
   function chooseType(type) {
     if (!['all','genuine','aftermarket'].includes(type)) return;
     node('filterType').value = type;
-    node('labelType').textContent = type === 'genuine' ? 'Chính hãng' : type === 'aftermarket' ? 'Hàng ngoài' : 'Tất cả';
+    node('labelType').textContent = type === 'genuine' ? 'Chính hãng' : type === 'aftermarket' ? 'Không chính hãng' : 'Tất cả';
     syncChoices();
   }
   function choosePart(value) { node('searchInput').value = value; syncChoices(); }
@@ -7309,7 +7344,7 @@ window.TascoLookupFlow = (() => {
     text('[data-results-keyword]', snapshot.keyword || 'Tất cả phụ tùng');
     const vehicle = [snapshot.hang, snapshot.hieu !== 'Tất cả' ? snapshot.hieu : '', snapshot.nam !== 'Tất cả' ? snapshot.nam : ''].filter(Boolean).join(' · ');
     text('[data-results-vehicle]', vehicle || 'Tất cả dòng xe');
-    text('[data-results-type]', snapshot.type === 'genuine' ? 'Chính hãng' : snapshot.type === 'aftermarket' ? 'Hàng ngoài' : 'Tất cả loại hàng');
+    text('[data-results-type]', snapshot.type === 'genuine' ? 'Chính hãng' : snapshot.type === 'aftermarket' ? 'Không chính hãng' : 'Tất cả loại hàng');
     node('statCount').textContent = 'Đang tìm kết quả…';
     node('resultsTableBody').replaceChildren();
     node('resultsSurface').dataset.searchBusy = 'true';
@@ -7577,11 +7612,10 @@ window.TascoPartDetail=(()=>{
   }
   const field=(label,value)=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(display(value))+'</dd></div>';
   function render(item){
-    const genuine=item.chinh_hang==='Chính hãng',kind=String(item.chinh_hang||'').trim()||'Chưa phân loại';
     const verified=item.verified?'<section class="rc-box-note part-detail-verified" aria-label="Xác thực báo giá"><h4>XÁC THỰC BÁO GIÁ</h4><span class="rc-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>Đã xác thực</span>'+(item.verification_note?'<p class="part-detail-note">'+esc(item.verification_note)+'</p>':'')+'</section>':'';
     content.innerHTML='<div class="rc-total part-detail-price"><small>ĐƠN GIÁ PHỤ TÙNG</small><strong>'+esc(price(item.gia_duyet))+'</strong><em id="partDetailName">'+esc(display(item.ten_phu_tung))+'</em></div>'+
       '<ul class="rc-lines part-detail-records"><li><span>Số hồ sơ</span><b>'+esc(display(item.so_hsbt))+'</b></li><li><span>Ngày báo giá</span><b>'+esc(quoteDate(item.ngay_bao_gia))+'</b></li></ul>'+
-      '<section class="rc-box-note part-detail-vehicle" aria-label="Thông tin xe và phụ tùng"><h4>THÔNG TIN XE &amp; PHỤ TÙNG</h4><dl class="part-detail-fields">'+field('Hãng xe',item.hang_xe)+field('Dòng xe',item.hieu_xe)+field('Năm sản xuất',item.nam_sx)+'<div><dt>Loại hàng</dt><dd><span class="rc-chip">'+esc(genuine?'Chính hãng':kind==='Hàng ngoài'?'Hàng ngoài':kind)+'</span></dd></div></dl></section>'+
+      '<section class="rc-box-note part-detail-vehicle" aria-label="Thông tin xe và phụ tùng"><h4>THÔNG TIN XE &amp; PHỤ TÙNG</h4><dl class="part-detail-fields">'+field('Hãng xe',item.hang_xe)+field('Dòng xe',item.hieu_xe)+field('Năm sản xuất',item.nam_sx)+'<div class="part-detail-kind-field"><dt>Loại hàng</dt><dd>'+window.TascoPartKind.badge(item.chinh_hang)+'</dd></div></dl></section>'+
       '<section class="rc-box-note part-detail-garage" aria-label="Garage báo giá"><h4>GARAGE BÁO GIÁ</h4><strong class="part-detail-garage-name">'+esc(display(item.ten_gara_viet_tat||item.ten_garage))+'</strong><dl class="part-detail-fields">'+field('Tỉnh thành',item.tinh_thanh)+field('Loại hình',item.loai_hinh||'Gara')+'</dl></section>'+verified;
     content.scrollTop=0;
   }
