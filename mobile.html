@@ -2273,6 +2273,70 @@ html[data-tasco-page=garage]{background:var(--app-navy)}
 .rc-modal .rc-field input{width:100%;min-height:56px;padding:0 6px;border:0;background:transparent;color:var(--ws-text);font:inherit;font-size:16px;font-weight:500;outline:none;appearance:none;-webkit-appearance:none}
 </style>
 
+<style id="tascoGaragePremiumStyles">
+/* Garage directory: navy actions, restrained teal accents and shared spacing. */
+#garageSection .ws-journey-hero{min-height:246px;padding-bottom:54px}
+#garageSection .ws-journey-heading{max-width:82%}
+#garageSection .ws-journey-heading h2{font-size:32px;font-weight:700;line-height:1.16;letter-spacing:-1.1px}
+#garageSection .ws-journey-heading p{max-width:280px;font-size:12px;line-height:1.65}
+#garageSection .ws-journey-art{width:138px;right:-12px;bottom:34px;opacity:.4;transform:rotate(-8deg)}
+.tasco-workspace #garageSection .rc-panel{margin:-28px 14px 0;padding:20px;border-radius:26px;border-color:var(--ws-line)}
+.rg-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.rg-panel-head h3{margin:0;color:var(--ws-text);font-size:16px;font-weight:700;letter-spacing:-.4px}
+.rg-panel-head p{margin:4px 0 0;color:var(--ws-muted);font-size:11px;line-height:1.5}
+#garageSection .rg-add{min-height:42px;flex-shrink:0;padding:0 13px;border-radius:12px;background:var(--app-navy);border-color:var(--app-navy);color:#fff;font-size:11px}
+.rg-add .ws-icon{width:15px;height:15px}
+#garageSection .rg-bar{display:block}
+#garageSection .rg-bar .rc-field{min-height:48px;border-radius:13px;background:var(--ws-bg);gap:9px;padding:0 13px}
+#garageSection .rg-bar input{min-height:46px;min-width:0!important;font-size:16px!important;background:transparent!important;padding:0!important;border-radius:0!important;box-shadow:none!important}
+.rg-search-icon{flex-shrink:0;width:17px;height:17px}
+.rg-filter-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 0 14px}
+.rg-filters{display:flex;flex-wrap:wrap;gap:5px}
+.rg-filters button{min-height:34px;padding:0 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--ws-muted);font:600 10px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.rg-filters button[aria-pressed=true]{background:var(--ws-accent);color:var(--ws-text);border-color:var(--ws-line)}
+.rg-stats{margin:0;font-size:10px;font-weight:500;white-space:nowrap}
+.rg-list{gap:12px}
+#garageSection .rg-card{position:relative;padding:16px;border-radius:18px;background:var(--ws-surface);border:1px solid var(--ws-line);box-shadow:0 3px 12px rgba(24,48,86,.025)}
+#garageSection .rg-card[data-active="0"]{opacity:1;background:var(--ws-bg)}
+.rg-top{display:flex;align-items:flex-start;gap:11px}
+.rg-icon{flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:var(--ws-accent);color:var(--ws-accent-text)}
+.rg-title strong{font-size:15px;font-weight:700;letter-spacing:-.3px;line-height:1.45}
+.rg-title small{margin-top:4px;font-size:11px;line-height:1.6}
+.rg-status-line{display:flex;align-items:center;gap:8px;margin:12px 0 0 51px}
+.rg-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;background:var(--ws-accent);color:var(--ws-accent-text);font-size:9px;font-weight:650;letter-spacing:0}
+.rg-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.rg-badge[data-on="0"]{background:var(--ws-surface);color:var(--ws-muted)}
+.rg-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:10px 0 0 51px;font-size:10px;font-variant-numeric:tabular-nums}
+.rg-meta span{display:inline-flex;align-items:center;gap:5px}
+.rg-meta .ws-icon{width:12px;height:12px}
+.rg-note{margin:9px 0 0 51px;font-size:11px}
+#garageSection .rg-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:7px;margin:15px 0 0;padding-top:14px;border-top:1px solid var(--ws-line)}
+#garageSection .rg-actions a,#garageSection .rg-actions button{justify-content:center;gap:6px;min-height:42px;padding:0 8px;border-radius:11px;font-size:11px;font-weight:650;white-space:nowrap}
+.rg-actions .ws-icon{width:15px;height:15px;flex-shrink:0}
+#garageSection .rg-actions .rg-primary{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
+#garageSection .rg-actions .rg-more{padding:0;font-size:19px;letter-spacing:2px}
+.rg-tools{display:flex;flex-wrap:wrap;gap:7px;padding-top:12px}
+.rg-tools[hidden]{display:none}
+#garageSection .rg-tools :is(a,button){display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 11px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-bg);color:var(--ws-text);font:600 11px 'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decoration:none}
+#garageSection .rg-tools .rg-danger{color:#b45335}
+.rg-tools .ws-icon{width:14px;height:14px}
+.rg-empty{display:grid;justify-items:center;gap:4px;min-height:160px;align-content:center;background:var(--ws-bg);border-style:dashed;border-radius:18px;font-size:11px}
+.rg-empty>.ws-icon{width:29px;height:29px;margin-bottom:8px;color:var(--ws-accent-text)}
+.rg-empty strong{font-size:14px}
+.rg-empty .rr-btn{margin-top:10px;min-height:40px;font-size:11px}
+.rg-form-actions .rr-btn--primary{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
+.rg-form :is(button,input,textarea):focus-visible{outline:2px solid var(--ws-accent-text);outline-offset:2px}
+#garageSection button:disabled{cursor:wait;opacity:.55}
+.dark #garageSection :is(.rg-add,.rg-primary),.dark .rg-form-actions .rr-btn--primary{background:var(--app-teal);border-color:var(--app-teal);color:#0b1b30}
+@media(min-width:640px){#garageSection .rg-list{grid-template-columns:repeat(2,minmax(0,1fr))}#garageSection .rg-list>.rg-empty{grid-column:1/-1}.tasco-workspace #garageSection .rc-panel{padding:26px}}
+@media(max-width:359px){#garageSection .ws-journey-heading{max-width:100%}#garageSection .ws-journey-heading h2{font-size:28px;letter-spacing:-.9px}#garageSection .ws-journey-art{opacity:.22;width:110px}.tasco-workspace #garageSection .rc-panel{padding:15px;margin-left:10px;margin-right:10px}.rg-filter-row{align-items:flex-start;flex-direction:column}.rg-panel-head h3{font-size:15px}.rg-card{padding:13px!important}}
+
+.rg-load-error{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-bg);color:var(--ws-muted);font-size:11px;line-height:1.6}
+.rg-load-error span{flex:1}
+.rg-load-error .rr-btn{flex-shrink:0;min-height:40px;padding:0 12px;font-size:11px}
+
+</style>
+
 <style id="tascoLookupTypographyStyles">
 .tasco-workspace :is(#traCuuSection,#lookupResultsSection,#modalFilterSelection,#modalDetail){--lookup-font:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--lookup-label-size:11px;--lookup-body-size:14px;--lookup-title-size:16px;font-family:var(--lookup-font);line-height:1.5}
 .tasco-workspace :is(#traCuuSection,#lookupResultsSection,#modalFilterSelection,#modalDetail) :is(button,input,select){font-family:inherit;letter-spacing:0}
@@ -2524,21 +2588,13 @@ html[data-tasco-page=garage]{background:var(--app-navy)}
 </section>
 
 <section id="garageSection" data-shell-page="garage" class="ws-journey rc rg-page" hidden style="display:none" aria-labelledby="garagePageTitle">
-  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('rescue')" aria-label="Quay lại chi phí cứu hộ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · QUẢN LÝ GARA</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">ĐIỂM ĐẾN KÉO XE · DANH SÁCH NỘI BỘ</span><h2 id="garagePageTitle" tabindex="-1">Quản lý gara.<br>Gọn &amp; chính xác.</h2><p>Thêm, sửa, tạm ngưng gara để chọn nhanh khi tính km cứu hộ.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="94" cy="70" r="59" stroke="currentColor" stroke-opacity=".18"/><circle cx="94" cy="70" r="47" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="3 7"/><path d="M42 106V62l44-24 44 24v44z" fill="#84bfc7" fill-opacity=".09" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M64 106V84h44v22M64 84l6-12h32l6 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="76" cy="95" r="2.4" fill="currentColor"/><circle cx="98" cy="95" r="2.4" fill="currentColor"/><path d="M30 124h120" stroke="currentColor" stroke-opacity=".5" stroke-linecap="round"/></svg></header>
+  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('rescue')" aria-label="Quay lại chi phí cứu hộ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · QUẢN LÝ GARA</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">ĐIỂM ĐẾN KÉO XE · DANH SÁCH NỘI BỘ</span><h2 id="garagePageTitle" tabindex="-1">Quản lý gara.<br>Sẵn sàng cứu hộ.</h2><p>Danh sách đối tác tập trung.<br>Chọn đúng điểm đến cho mỗi hành trình.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="94" cy="70" r="59" stroke="currentColor" stroke-opacity=".18"/><circle cx="94" cy="70" r="47" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="3 7"/><path d="M42 106V62l44-24 44 24v44z" fill="#84bfc7" fill-opacity=".09" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M64 106V84h44v22M64 84l6-12h32l6 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="76" cy="95" r="2.4" fill="currentColor"/><circle cx="98" cy="95" r="2.4" fill="currentColor"/><path d="M30 124h120" stroke="currentColor" stroke-opacity=".5" stroke-linecap="round"/></svg></header>
   <div class="ws-search-panel ws-search-panel--premium rc-panel">
     <div class="rg" id="rgBox">
-      <div class="rg-bar">
-        <div class="ws-search-field rc-field"><input id="rgSearch" type="search" autocomplete="off" placeholder="Tìm gara theo tên, địa chỉ, SĐT…" aria-label="Tìm gara"></div>
-        <button type="button" id="rgAdd" class="rr-btn rr-btn--primary">+ Thêm gara</button>
-      </div>
-      <div class="rg-stats" id="rgStats" aria-live="polite"></div>
-      <div class="rg-list" id="rgList"></div>
-      <div class="rg-foot">
-        <button type="button" class="rr-btn" id="rgExport">Xuất JSON</button>
-        <button type="button" class="rr-btn" id="rgImport">Nhập JSON</button>
-        <input type="file" id="rgFile" accept="application/json,.json" hidden>
-      </div>
-      <p class="rc-hint" id="rgNote"></p>
+      <div class="rg-panel-head"><div><h3>Danh sách gara</h3><p>Đối tác &amp; điểm đến kéo xe</p></div><button type="button" id="rgAdd" class="rr-btn rg-add"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Thêm gara</button></div>
+      <div class="rg-bar"><div class="ws-search-field rc-field"><svg class="ws-icon rg-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="rgSearch" type="search" autocomplete="off" placeholder="Tìm tên, địa chỉ, số điện thoại…" aria-label="Tìm gara"></div></div>
+      <div class="rg-filter-row"><div class="rg-filters" role="group" aria-label="Lọc trạng thái gara"><button type="button" data-rg-filter="all" aria-pressed="true">Tất cả</button><button type="button" data-rg-filter="active" aria-pressed="false">Hoạt động</button><button type="button" data-rg-filter="paused" aria-pressed="false">Tạm ngưng</button></div><div class="rg-stats" id="rgStats" aria-live="polite"></div></div>
+      <div class="rg-list" id="rgList" aria-label="Danh sách gara"></div>
     </div>
   </div>
   <p class="ws-journey-note"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>Gara đang hoạt động sẽ xuất hiện khi chọn điểm đến trong “Chi phí cứu hộ”.</span></p>
@@ -3580,6 +3636,7 @@ window.TascoPartKind=(()=>{
         let currentUserProfile = null;
         window.TascoCloudAccess.configure({client:()=>supabase});
         window.TascoPersonalStorage.configure({client:()=>supabase});
+        window.TascoGarageDB.configure({client:supabase});
         let lastLoggedUid = null;
         onAuthStateChanged(auth, async (user) => {
             if (window.IS_REGISTERING) return;
@@ -3709,6 +3766,7 @@ window.TascoPartKind=(()=>{
             currentUserProfile = { ...(currentUserProfile?.email===email?currentUserProfile:{}), email, role, fullName, id:authenticated?session.uid:null };
             window.TascoCloudAccess.setIdentity(authenticated?{id:session.uid,email:session.email}:null);
             window.TascoCameraPreferences?.setIdentity(email);
+            window.TascoGarageDB?.setIdentity(authenticated?{id:session.uid}:null);
 
             // Cập nhật Avatar Initials trên Header
             let initials = "U";
@@ -3748,6 +3806,7 @@ window.TascoPartKind=(()=>{
             currentUserProfile = null;
             window.TascoAppShell.setUser(null);
             window.TascoCameraPreferences?.setIdentity('');
+            window.TascoGarageDB?.setIdentity(null);
         }
 
         
@@ -7808,7 +7867,7 @@ function refShow(k){refBuilt=true;
    Cứu hộ · Định vị tính km + Quản lý gara
    - Mặc định NHẬP SỐ KM; chuyển "Định vị tính km" khi cần (GPS / địa chỉ / bản đồ)
    - Khoảng cách đường bộ qua OSRM; lỗi → dự phòng đường chim bay × 1,3
-   - Danh sách gara lưu localStorage (adapter GarageStore: thay bằng API khi có backend)
+   - Gara dùng chung: Supabase là nguồn dữ liệu chính; localStorage chỉ là bản đọc dự phòng
    - Dropdown dùng bottom-sheet cùng kiểu rc-sheet của các lựa chọn khác
    ===================================================================== */
 (function(){
@@ -7817,8 +7876,6 @@ const root=document.getElementById('rescueSection'),box=document.getElementById(
 if(!root||!box||!kmInput||!gbox)return;
 
 /* ---------- CẤU HÌNH ---------- */
-const DEFAULT_GARAGES=[]; // nạp sẵn nếu muốn: [{name,address,phone,lat,lon}]
-const STORE_KEY='tasco.rescue.garages.v1';
 const DEFAULT_CENTER=[12.6667,108.0383];
 const ROUTE_URL='https://router.project-osrm.org/route/v1/driving/'; // demo: production nên tự host / ORS / Goong
 const GEOCODE_URL='https://nominatim.openstreetmap.org/';
@@ -7906,33 +7963,107 @@ function sanitize(g){
   const name=String(g.name??'').trim().slice(0,80),lat=num(g.lat),lon=num(g.lon);
   if(!name||!validCoord(lat,lon))return null;
   return {id:String(g.id||uid()).slice(0,40),name,address:String(g.address??'').trim().slice(0,200),phone:String(g.phone??'').trim().slice(0,20),
-    lat,lon,active:g.active!==false,note:String(g.note??'').trim().slice(0,300),updatedAt:Number(g.updatedAt)||Date.now()};
+    lat,lon,active:g.active!==false,note:String(g.note??'').trim().slice(0,300),updatedAt:Number(g.updatedAt)||Date.now(),...(typeof g._version==='string'?{_version:g._version}:{})};
 }
 const store=(()=>{
-  let items=[],persistOK=true;const subs=[];
-  function read(){
-    try{
-      const raw=localStorage.getItem(STORE_KEY);
-      if(raw!==null){const a=JSON.parse(raw);if(Array.isArray(a))return a.map(sanitize).filter(Boolean);}
-    }catch(e){persistOK=false;}
-    return DEFAULT_GARAGES.map(sanitize).filter(Boolean);
+  const TABLE='tasco_rescue_garages',PREFIX='tasco.rescue.garages.shared.v2:';
+  let api=null,owner=null,epoch=0,items=[],persistOK=true,loading=null,busy=false,lastSync=0,status='signedout',message='';
+  const subs=[];
+  const emit=()=>subs.forEach(fn=>{try{fn();}catch(e){console.error(e);}});
+  const same=(id,rev)=>owner===id&&epoch===rev;
+  function cache(){if(!owner)return;try{localStorage.setItem(PREFIX+owner,JSON.stringify(items));persistOK=true;}catch(_){persistOK=false;}}
+  function failure(error){
+    const code=error?.code||'',raw=error?.message||'';
+    if(['42P01','PGRST205','PGRST202','42703'].includes(code)){status='setup';message='Chưa kết nối được danh sách gara. Vui lòng thử lại hoặc liên hệ quản trị viên.';}
+    else if(code==='42501'||/row.level security/i.test(raw)){status='error';message='Tài khoản chưa có quyền quản lý gara. Kiểm tra trạng thái tài khoản và chính sách truy cập.';}
+    else if(code==='23505'){status='error';message='Gara này đã tồn tại trong hệ thống. Tải lại danh sách trước khi sửa.';}
+    else if(code==='CONFLICT'){status='error';message='Gara đã được người khác sửa hoặc xóa. Tải lại danh sách rồi thử lại.';}
+    else{status='error';message=error?.userMessage||'Chưa kết nối được hệ thống gara. Kiểm tra mạng rồi thử lại; thay đổi chưa được lưu.';}
+    emit();return new Error(message);
   }
-  function write(){try{localStorage.setItem(STORE_KEY,JSON.stringify(items));persistOK=true;}catch(e){persistOK=false;}}
-  const emit=()=>subs.forEach(f=>{try{f();}catch(e){console.error(e);}});
-  items=read();
-  return {
-    all:()=>items.slice(),
-    active:()=>items.filter(g=>g.active),
-    find:id=>items.find(g=>g.id===id)||null,
-    findByName:(n,exceptId)=>items.find(g=>g.id!==exceptId&&norm(g.name)===norm(n))||null,
-    upsert(rec){const i=items.findIndex(g=>g.id===rec.id);if(i>=0)items[i]=rec;else items.push(rec);write();emit();},
-    remove(id){items=items.filter(g=>g.id!==id);write();emit();},
-    reload(){items=read();emit();},
-    persistOK:()=>persistOK,
-    subscribe:f=>subs.push(f)
+  async function timed(query){
+    const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),12000);
+    try{const result=await query.abortSignal(ctrl.signal);if(result.error)throw result.error;return result.data;}finally{clearTimeout(timer);}
+  }
+  function fromDB(row){return sanitize({...row,updatedAt:Date.parse(row.updated_at)||Date.now(),_version:row.updated_at});}
+  function payload(rec){return {id:rec.id,name:rec.name,address:rec.address,phone:rec.phone,lat:rec.lat,lon:rec.lon,active:rec.active,note:rec.note};}
+  function requireOwner(){if(!api||!owner)throw new Error('Đăng nhập để lưu gara vào hệ thống.');}
+  async function load(){
+    if(!api||!owner)return false;if(loading)return loading;if(busy)return false;
+    const id=owner,rev=epoch;status='loading';message='';emit();
+    const task=(async()=>{
+      try{
+        const result=[];
+        for(let start=0;;start+=500){
+          const rows=await timed(api.from(TABLE).select('*').order('id').range(start,start+499));
+          if(!same(id,rev))return false;
+          result.push(...(rows||[]));if(!rows||rows.length<500)break;
+        }
+        items=result.map(fromDB).filter(Boolean);lastSync=Date.now();status='saved';message='';cache();emit();return true;
+      }catch(error){if(same(id,rev))failure(error);return false;}
+    })();
+    loading=task;try{return await task;}finally{if(same(id,rev)&&loading===task){loading=null;emit();}}
+  }
+  async function mutate(operation){
+    requireOwner();if(busy)throw new Error('Đang lưu dữ liệu gara. Vui lòng chờ hoàn tất.');
+    const requestedOwner=owner,requestedEpoch=epoch;
+    if(loading)await loading;requireOwner();
+    if(!same(requestedOwner,requestedEpoch))throw new Error('Tài khoản đã thay đổi. Vui lòng thử lại.');
+    if(!lastSync)throw new Error(message||'Cần tải được danh sách gara từ hệ thống trước khi lưu.');
+    const id=owner,rev=epoch;busy=true;status='saving';message='';emit();
+    try{
+      await operation(id,rev);
+      if(!same(id,rev))throw new Error('Tài khoản đã thay đổi. Đăng nhập lại để kiểm tra dữ liệu.');
+      status='saved';message='';lastSync=Date.now();cache();emit();return true;
+    }catch(error){if(same(id,rev))throw failure(error);throw error;}
+    finally{if(same(id,rev)){busy=false;emit();}}
+  }
+  async function saveRecord(raw,id,rev){
+    const rec=sanitize(raw);if(!rec)throw {userMessage:'Tên hoặc tọa độ gara chưa hợp lệ.'};
+    const existing=items.find(g=>g.id===rec.id),duplicate=items.find(g=>g.id!==rec.id&&norm(g.name)===norm(rec.name));
+    if(rec._version&&!existing)throw {code:'CONFLICT'};
+    if(duplicate)throw {code:'23505'};
+    let row;
+    if(existing){
+      row=await timed(api.from(TABLE).update(payload(rec)).eq('id',rec.id).eq('updated_at',rec._version||existing._version).select('*').maybeSingle());
+      if(!row)throw {code:'CONFLICT'};
+    }else row=await timed(api.from(TABLE).insert(payload(rec)).select('*').single());
+    if(!same(id,rev))return;
+    const saved=fromDB(row);if(!saved)throw {userMessage:'Hệ thống trả về dữ liệu gara không hợp lệ.'};
+    const index=items.findIndex(g=>g.id===saved.id);if(index<0)items.push(saved);else items[index]=saved;
+    cache();emit();
+  }
+  function setIdentity(user){
+    const next=user?.id||null;if(next===owner){if(next&&!lastSync&&!loading)load();return;}
+    epoch++;owner=next;items=[];loading=null;busy=false;lastSync=0;status=next?'loading':'signedout';message='';persistOK=true;
+    if(owner){try{const raw=JSON.parse(localStorage.getItem(PREFIX+owner)||'[]');if(Array.isArray(raw))items=raw.map(sanitize).filter(Boolean);}catch(_){persistOK=false;}}
+    emit();if(owner)load();
+  }
+  const publicAPI={
+    configure({client}){api=client;if(owner)load();},setIdentity,
+    all:()=>items.slice(),active:()=>items.filter(g=>g.active),find:id=>items.find(g=>g.id===id)||null,
+    findByName:(name,except)=>items.find(g=>g.id!==except&&norm(g.name)===norm(name))||null,
+    persistOK:()=>persistOK,subscribe:fn=>subs.push(fn),reload:load,
+    info:()=>({status,message,busy:busy||Boolean(loading)||status==='loading',connected:Boolean(owner&&api),lastSync}),
+    upsert:rec=>mutate((id,rev)=>saveRecord(rec,id,rev)),
+    remove:key=>mutate(async(id,rev)=>{
+      const current=items.find(g=>g.id===key);if(!current)return;
+      const rows=await timed(api.from(TABLE).delete().eq('id',key).eq('updated_at',current._version).select('id'));
+      if(!rows?.length)throw {code:'CONFLICT'};
+      if(same(id,rev))items=items.filter(g=>g.id!==key);
+    }),
+
   };
+  window.TascoGarageDB=publicAPI;
+  window.addEventListener('online',()=>load());
+  window.addEventListener('focus',()=>{if(Date.now()-lastSync>15000)load();});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-lastSync>15000)load();});
+  window.addEventListener('storage',event=>{if(owner&&event.key===PREFIX+owner)load();});
+  const shell=document.getElementById('mainApp');
+  if(shell)new MutationObserver(()=>{if(['garage','rescue'].includes(shell.dataset.page)&&Date.now()-lastSync>10000)load();}).observe(shell,{attributes:true,attributeFilter:['data-page']});
+  return publicAPI;
 })();
-window.addEventListener('storage',e=>{if(e.key===STORE_KEY)store.reload();});
+
 
 /* ---------- Leaflet (tải lười, dùng chung) ---------- */
 let leafletPromise=null;
@@ -8226,64 +8357,58 @@ const resetBtn=document.getElementById('rcResetBtn');if(resetBtn)resetBtn.addEve
 /* =====================================================================
    PHẦN 2 · QUẢN LÝ GARA
    ===================================================================== */
-const gui={search:document.getElementById('rgSearch'),add:document.getElementById('rgAdd'),stats:document.getElementById('rgStats'),list:document.getElementById('rgList'),exp:document.getElementById('rgExport'),imp:document.getElementById('rgImport'),file:document.getElementById('rgFile'),note:document.getElementById('rgNote')};
+const gui={search:document.getElementById('rgSearch'),add:document.getElementById('rgAdd'),stats:document.getElementById('rgStats'),list:document.getElementById('rgList')};
+let garageFilter='all';
 const IC={
-  phone:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>'
+  phone:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>',
+  arrow:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>',map:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15"/></svg>',edit:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z"/></svg>',pause:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>',delete:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg>'
 };
 function renderGarages(){
-  const all=store.all(),nq=norm(gui.search.value);
-  const f=all.filter(g=>!nq||norm([g.name,g.address,g.phone,g.note].join(' ')).includes(nq)).sort((a,b)=>(b.active-a.active)||a.name.localeCompare(b.name,'vi'));
-  const on=all.filter(g=>g.active).length;
-  gui.stats.textContent=all.length?all.length+' gara · '+on+' đang hoạt động'+(nq?' · '+f.length+' kết quả':''):'';
-  gui.note.textContent=store.persistOK()?'Danh sách lưu trên thiết bị này. Dùng “Xuất JSON” để sao lưu hoặc chuyển sang thiết bị khác.':'Không lưu được vào bộ nhớ trình duyệt (chế độ riêng tư hoặc hết dung lượng). Danh sách sẽ mất khi tải lại trang, hãy dùng “Xuất JSON” để sao lưu.';
+  const all=store.all(),nq=norm(gui.search.value),info=store.info();
+  const f=all.filter(g=>(garageFilter==='all'||(garageFilter==='active'?g.active:!g.active))&&(!nq||norm([g.name,g.address,g.phone,g.note].join(' ')).includes(nq))).sort((a,b)=>(b.active-a.active)||a.name.localeCompare(b.name,'vi'));
+  gui.stats.textContent=f.length+' gara';
+  gbox.querySelectorAll('[data-rg-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.rgFilter===garageFilter)));
+  const disabled=!info.connected||info.busy||!info.lastSync;
+  gui.add.disabled=disabled;
+  const issue=['error','setup'].includes(info.status);
+  gui.list.setAttribute('aria-busy',String(info.busy));
   if(!f.length){
-    gui.list.innerHTML='<div class="rg-empty"><strong>'+(all.length?'Không tìm thấy gara':'Chưa có gara nào')+'</strong>'+(all.length?'Thử từ khóa khác.':'Thêm gara để chọn nhanh khi tính km cứu hộ.')+'</div>';
-    return;
+    const loading=info.status==='loading',unready=!info.lastSync,empty=!all.length&&garageFilter==='all'&&!nq&&!unready;
+    const title=loading?'Đang tải danh sách…':unready?(info.status==='signedout'?'Kết nối danh sách gara':'Chưa tải được danh sách'):empty?'Gara đầu tiên, hành trình mới':'Không có gara phù hợp';
+    const body=loading?'Danh sách được cập nhật từ hệ thống.':unready?(info.message||'Đăng nhập để xem và quản lý danh sách gara chung.'):empty?'Thêm đối tác để chọn nhanh điểm đến cứu hộ.':'Thử từ khóa hoặc trạng thái khác.';
+    gui.list.innerHTML='<div class="rg-empty">'+ICON_PIN+'<strong>'+title+'</strong><span>'+esc(body)+'</span>'+(empty?'<button type="button" class="rr-btn" data-empty-add>Thêm gara đầu tiên</button>':issue?'<button type="button" class="rr-btn" data-rg-retry>Thử lại</button>':'')+'</div>';return;
   }
-  gui.list.innerHTML=f.map(g=>{
-    const tel=g.phone.replace(/[^\d+]/g,'');
-    return '<article class="rg-card" data-id="'+esc(g.id)+'" data-active="'+(g.active?1:0)+'"><div class="rg-top"><span class="rg-icon">'+ICON_PIN+'</span><div class="rg-title"><strong>'+esc(g.name)+'</strong><small>'+esc(g.address||'Chưa có địa chỉ')+'</small></div><span class="rg-badge" data-on="'+(g.active?1:0)+'">'+(g.active?'HOẠT ĐỘNG':'TẠM NGƯNG')+'</span></div>'
-      +'<div class="rg-meta">'+(g.phone?'<span>'+esc(g.phone)+'</span>':'')+'<span>'+g.lat.toFixed(5)+', '+g.lon.toFixed(5)+'</span></div>'
+  const errorHTML=issue?'<div class="rg-load-error" role="alert"><span>'+esc(info.message)+'</span><button type="button" class="rr-btn" data-rg-retry>Thử lại</button></div>':'';
+  gui.list.innerHTML=errorHTML+f.map(g=>{
+    const tel=g.phone.replace(/[^\d+]/g,''),off=disabled?' disabled':'';
+    const mapURL='https://www.google.com/maps/search/?api=1&query='+g.lat+','+g.lon;
+    return '<article class="rg-card" data-id="'+esc(g.id)+'" data-active="'+(g.active?1:0)+'"><div class="rg-top"><span class="rg-icon">'+ICON_PIN+'</span><div class="rg-title"><strong>'+esc(g.name)+'</strong><small>'+esc(g.address||'Chưa cập nhật địa chỉ')+'</small></div></div>'
+      +'<div class="rg-status-line"><span class="rg-badge" data-on="'+(g.active?1:0)+'">'+(g.active?'Đang hoạt động':'Tạm ngưng hợp tác')+'</span></div>'
+      +'<div class="rg-meta">'+(g.phone?'<span>'+IC.phone+esc(g.phone)+'</span>':'')+'<span>'+ICON_PIN+g.lat.toFixed(5)+', '+g.lon.toFixed(5)+'</span></div>'
       +(g.note?'<p class="rg-note">'+esc(g.note)+'</p>':'')
-      +'<div class="rg-actions">'+(g.active?'<button type="button" class="rg-primary" data-act="use">Dùng tính km</button>':'')
-      +(tel?'<a href="tel:'+esc(tel)+'">Gọi</a>':'')
-      +'<a href="https://www.google.com/maps/search/?api=1&query='+g.lat+','+g.lon+'" target="_blank" rel="noopener noreferrer">Bản đồ</a>'
-      +'<button type="button" data-act="edit">Sửa</button><button type="button" data-act="toggle">'+(g.active?'Tạm ngưng':'Kích hoạt')+'</button><button type="button" class="rg-danger" data-act="del">Xóa</button></div></article>';
+      +'<div class="rg-actions">'+(g.active?'<button type="button" class="rg-primary" data-act="use">'+IC.arrow+'Tính lộ trình</button>':'<button type="button" class="rg-primary" data-act="toggle"'+off+'>Kích hoạt</button>')
+      +'<a href="'+mapURL+'" target="_blank" rel="noopener noreferrer">'+IC.map+'Bản đồ</a><button type="button" class="rg-more" data-act="more" aria-label="Thao tác với '+esc(g.name)+'" aria-expanded="false" aria-controls="rgtools-'+esc(g.id)+'">···</button></div>'
+      +'<div class="rg-tools" id="rgtools-'+esc(g.id)+'" hidden>'+(tel?'<a href="tel:'+esc(tel)+'">'+IC.phone+'Gọi gara</a>':'')
+      +'<button type="button" data-act="edit"'+off+'>'+IC.edit+'Chỉnh sửa</button><button type="button" data-act="toggle"'+off+'>'+IC.pause+(g.active?'Tạm ngưng':'Kích hoạt')+'</button><button type="button" class="rg-danger" data-act="del"'+off+'>'+IC.delete+'Xóa gara</button></div></article>';
   }).join('');
 }
 gui.search.addEventListener('input',renderGarages);
+gbox.querySelectorAll('[data-rg-filter]').forEach(button=>button.addEventListener('click',()=>{garageFilter=button.dataset.rgFilter;renderGarages();}));
 gui.add.addEventListener('click',()=>openEditor(null));
-gui.list.addEventListener('click',async e=>{
-  const b=e.target.closest('[data-act]'),card=e.target.closest('[data-id]');if(!b||!card)return;
+gui.list.addEventListener('click',async event=>{
+  if(event.target.closest('[data-rg-retry]'))return store.reload();
+  if(event.target.closest('[data-empty-add]'))return openEditor(null);
+  const b=event.target.closest('[data-act]'),card=event.target.closest('[data-id]');if(!b||!card)return;
   const g=store.find(card.dataset.id);if(!g)return;
-  if(b.dataset.act==='edit')openEditor(g);
-  else if(b.dataset.act==='toggle')store.upsert({...g,active:!g.active,updatedAt:Date.now()});
-  else if(b.dataset.act==='use'){goto('rescue');setMode('locate');selectGarageById(g.id);}
-  else if(b.dataset.act==='del'&&await confirmSheet({title:'Xóa “'+g.name+'”?',text:'Gara sẽ bị xóa khỏi danh sách trên thiết bị này. Bạn có thể khôi phục nếu đã xuất file sao lưu JSON.',ok:'Xóa gara',danger:true}))store.remove(g.id);
+  if(b.dataset.act==='more'){const tools=card.querySelector('.rg-tools');tools.hidden=!tools.hidden;b.setAttribute('aria-expanded',String(!tools.hidden));return;}
+  if(b.dataset.act==='edit')return openEditor(g);
+  if(b.dataset.act==='use'){goto('rescue');setMode('locate');selectGarageById(g.id);return;}
+  try{
+    if(b.dataset.act==='toggle')await store.upsert({...g,active:!g.active,updatedAt:Date.now()});
+    else if(b.dataset.act==='del'&&await confirmSheet({title:'Xóa “'+g.name+'”?',text:'Gara sẽ bị xóa khỏi danh sách dùng chung của hệ thống. Gara này sẽ không còn xuất hiện khi chọn điểm đến cứu hộ.',ok:'Xóa gara',danger:true}))await store.remove(g.id);
+  }catch(error){confirmSheet({title:'Chưa lưu được thay đổi',text:error.message,ok:'Đóng',cancel:null});}
 });
-gui.exp.addEventListener('click',()=>{
-  const d=new Date(),stamp=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
-  const blob=new Blob([JSON.stringify({version:1,exportedAt:d.toISOString(),garages:store.all()},null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='gara-cuu-ho-'+stamp+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-});
-gui.imp.addEventListener('click',()=>gui.file.click());
-gui.file.addEventListener('change',async()=>{
-  const f=gui.file.files&&gui.file.files[0];gui.file.value='';if(!f)return;
-  const fail=t=>confirmSheet({title:'Không nhập được',text:t,ok:'Đóng',cancel:null});
-  if(f.size>1024*1024)return fail('File quá lớn (tối đa 1 MB).');
-  let data;
-  try{data=JSON.parse(await f.text());}catch(e){return fail('File không phải JSON hợp lệ.');}
-  const arr=Array.isArray(data)?data:data&&Array.isArray(data.garages)?data.garages:null;
-  if(!arr)return fail('Không tìm thấy danh sách gara trong file (cần mảng hoặc {"garages":[…]}).');
-  let added=0,updated=0,skipped=0;
-  arr.slice(0,500).forEach(raw=>{
-    const rec=sanitize(raw);if(!rec){skipped++;return;}
-    const same=store.find(rec.id)||store.findByName(rec.name);
-    if(same){rec.id=same.id;updated++;}else added++;
-    store.upsert(rec);
-  });
-  fail('Thêm mới '+added+', cập nhật '+updated+(skipped?', bỏ qua '+skipped+' dòng thiếu tên hoặc toạ độ sai':'')+'.');
-});
+
 
 /* --- Form thêm / sửa gara --- */
 function openEditor(g){
@@ -8343,7 +8468,7 @@ function openEditor(g){
   }
   q('#rgfSearch').addEventListener('click',search);
   q('#rgfQ').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();search();}});
-  q('#rgfSave').addEventListener('click',()=>{
+  q('#rgfSave').addEventListener('click',async()=>{
     const name=q('#rgfName').value.trim(),phone=q('#rgfPhone').value.trim(),c=readCoords();
     if(!name){err('Vui lòng nhập tên gara.');return q('#rgfName').focus();}
     if(store.findByName(name,data.id)){err('Đã có gara trùng tên “'+name+'”. Hãy đặt tên khác để dễ phân biệt.');return q('#rgfName').focus();}
@@ -8351,7 +8476,10 @@ function openEditor(g){
     if(!validCoord(c.lat,c.lon)){err('Vui lòng chọn vị trí gara: dùng GPS, tìm địa chỉ, chạm bản đồ hoặc nhập toạ độ hợp lệ.');return q('#rgfLat').focus();}
     const rec=sanitize({...data,name,address:q('#rgfAddr').value,phone,lat:c.lat,lon:c.lon,active:q('#rgfActive').checked,note:q('#rgfNote').value,updatedAt:Date.now()});
     if(!rec){err('Dữ liệu chưa hợp lệ.');return;}
-    store.upsert(rec);sh.close();
+    const button=q('#rgfSave');button.disabled=true;button.textContent='Đang lưu…';err('');
+    try{await store.upsert(rec);if(!sh.closed)sh.close();}
+    catch(error){if(!sh.closed)err(error.message);}
+    finally{if(!sh.closed){button.disabled=false;button.textContent='Lưu gara';}}
   });
   q('#rgfName').focus({preventScroll:true});
 }
