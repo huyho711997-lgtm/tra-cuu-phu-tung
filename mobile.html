@@ -2542,11 +2542,49 @@ html.dark .fm-scroll{background:#06111d}
 .fm-progress{width:168px;height:5px;overflow:hidden;border-radius:99px;background:var(--ws-line)}
 .fm-progress[hidden]{display:none}
 .fm-progress i{display:block;width:0;height:100%;border-radius:99px;background:var(--app-teal);transition:width .2s}
-.fm-viewer-hint{position:absolute;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-surface);box-shadow:0 14px 36px -18px rgba(10,25,45,.5);font-size:11px;line-height:1.6;color:var(--ws-muted)}
+.fm-viewer-hint{position:absolute;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px 14px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-surface);box-shadow:0 14px 36px -18px rgba(10,25,45,.5);font-size:11px;line-height:1.6;color:var(--ws-muted)}
 .fm-viewer-hint[hidden]{display:none}
-.fm-viewer-hint span{flex:1}
+.fm-viewer-hint span{flex:1;min-width:180px}
 .fm-viewer-hint a{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:8px 13px;border-radius:99px;background:var(--app-teal);color:var(--app-navy);font-size:11px;font-weight:650;text-decoration:none;white-space:nowrap}
 .fm-viewer-hint a svg{width:15px;height:15px}
+.fm-vbtn--sign{background:rgba(238,0,51,.15);border-color:rgba(238,0,51,.4);color:#ff4d6d}
+.fm-vbtn--sign:active{background:rgba(238,0,51,.25)}
+.fm-viewer-hint-actions{display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+.fm-hint-sign-btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:8px 14px;border:0;border-radius:99px;background:#ee0033;color:#fff;font:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;touch-action:manipulation;box-shadow:0 4px 14px -3px rgba(238,0,51,.5)}
+.fm-hint-sign-btn:active{transform:scale(.95)}
+.fm-hint-sign-btn svg{width:15px;height:15px}
+.fm-mysign-sheet{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(14,32,55,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:fm-fade .18s ease-out}
+.fm-mysign-sheet[hidden]{display:none}
+@keyframes fm-fade{from{opacity:0}to{opacity:1}}
+.fm-mysign-panel{display:flex;flex-direction:column;gap:13px;max-height:85%;padding:18px 20px calc(20px + env(safe-area-inset-bottom,0px));border:1px solid var(--ws-line);border-bottom:0;border-radius:26px 26px 0 0;background:var(--ws-surface);box-shadow:0 -24px 60px -30px rgba(10,25,45,.6);animation:fm-rise .22s ease-out;overflow-y:auto}
+.fm-mysign-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.fm-mysign-brand{display:flex;align-items:center;gap:12px}
+.fm-mysign-logo{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(238,0,51,.12);color:#ee0033}
+.fm-mysign-logo svg{width:22px;height:22px}
+.fm-mysign-brand strong{display:block;font-size:16px;font-weight:700;letter-spacing:-.3px;color:var(--ws-text)}
+.fm-mysign-brand small{display:block;font-size:11px;font-weight:600;color:#ee0033}
+.fm-mysign-doc{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-soft)}
+.fm-mysign-meta{flex:1;min-width:0}
+.fm-mysign-meta strong{display:block;font-size:13px;font-weight:650;color:var(--ws-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fm-mysign-meta small{display:block;margin-top:2px;font-size:11px;color:var(--ws-muted)}
+.fm-mysign-guide{padding:12px 14px;border-radius:12px;background:rgba(14,32,55,.04);font-size:12px;line-height:1.6;color:var(--ws-muted)}
+html.dark .fm-mysign-guide{background:rgba(255,255,255,.04)}
+.fm-mysign-guide ol{margin:0;padding-left:18px}
+.fm-mysign-guide li{margin-bottom:4px}
+.fm-mysign-guide li:last-child{margin-bottom:0}
+.fm-mysign-guide b{color:var(--ws-text)}
+.fm-mysign-note{padding:10px 12px;border-radius:10px;background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.25);font-size:11px;color:#a16207;line-height:1.5}
+html.dark .fm-mysign-note{color:#facc15;background:rgba(234,179,8,.12)}
+.fm-mysign-alert{padding:10px 12px;border-radius:10px;background:rgba(238,0,51,.1);border:1px solid rgba(238,0,51,.25);font-size:12px;color:#ee0033;line-height:1.5}
+.fm-mysign-actions{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.fm-btn-mysign{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;padding:12px 18px;border:0;border-radius:14px;background:#ee0033;color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;box-shadow:0 8px 20px -6px rgba(238,0,51,.5);transition:transform .12s}
+.fm-btn-mysign:active{transform:scale(.98)}
+.fm-btn-mysign:disabled{opacity:.6;cursor:not-allowed}
+.fm-btn-mysign svg{width:18px;height:18px}
+.fm-mysign-subactions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fm-btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:8px 12px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;touch-action:manipulation;transition:background .15s}
+.fm-btn-outline:active{transform:scale(.97)}
+.fm-btn-outline svg{width:15px;height:15px}
 
 /* Bảng chọn trang */
 .fm-sheet{position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(14,32,55,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
@@ -3364,7 +3402,7 @@ window.TascoForms=(()=>{
     chevron:'<path d="m9 5 7 7-7 7"/>',eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
     search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>',alert:'<path d="M12 8v5m0 3.5h.01M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>',
     grid:'<rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/>',plus:'<path d="M12 5v14M5 12h14"/>',minus:'<path d="M5 12h14"/>',left:'<path d="m15 5-7 7 7 7"/>',
-    check:'<path d="m5 12 4 4L19 6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',plug:'<path d="M9 3v5m6-5v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/>'
+    check:'<path d="m5 12 4 4L19 6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',plug:'<path d="M9 3v5m6-5v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/>',sign:'<path d="m18 2 4 4-14 14H4v-4L18 2z"/><path d="m14.5 5.5 4 4"/><path d="M4 22h16"/>'
   };
   const icon=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(PATH[name]||'')+'</svg>';
 
@@ -3798,6 +3836,7 @@ window.TascoForms=(()=>{
     try{
       setStatus(st,'Đang tải biểu mẫu…',0);
       const buffer=await fetchBytes(file,p=>setStatus(st,'Đang tải biểu mẫu… '+Math.round(p*100)+'%',p),st.controller.signal);
+      st.buffer=buffer;
       if(st.destroyed)return;setStatus(st,'Đang dựng trang…');
       await (st.mode==='pdf'?runPdf(st,buffer):runDocx(st,buffer));
       if(st.destroyed)return;
@@ -3811,17 +3850,181 @@ window.TascoForms=(()=>{
       st.doc.replaceChildren();st.pageEls=[];st.total=0;st.pdf?.destroy?.();useFrame(st,'error');
     }
   }
+
+  /* ---------- Ký số qua Viettel MySign (Share Sheet / Web) ---------- */
+  async function openMySignDialog(st){
+    if(st.destroyed)return;
+    const file=st.file,focus=document.activeElement;
+    const dialog=document.createElement('div');
+    dialog.className='fm-mysign-sheet';
+    dialog.setAttribute('role','dialog');
+    dialog.setAttribute('aria-modal','true');
+    dialog.setAttribute('aria-labelledby','fmMySignTitle');
+
+    const kind=kindOf(file);
+    const isDoc=/\.docx?$/i.test(file.name)||file.mimeType==='application/msword'||file.mimeType==='application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+    dialog.innerHTML=`<div class="fm-mysign-panel">
+      <div class="fm-mysign-head">
+        <div class="fm-mysign-brand">
+          <span class="fm-mysign-logo">${icon('sign')}</span>
+          <div>
+            <strong id="fmMySignTitle">Ký số qua Viettel MySign</strong>
+            <small>Chữ ký số từ xa Cloud CA</small>
+          </div>
+        </div>
+        <button type="button" class="fm-tbtn" data-mysign="close" aria-label="Đóng">${icon('close')}</button>
+      </div>
+
+      <div class="fm-mysign-doc">
+        <span class="fm-ico fm-ico--${kind}">${icon(kind)}</span>
+        <div class="fm-mysign-meta">
+          <strong>${esc(displayName(file.name))}</strong>
+          <small data-mysign-status>Đang chuẩn bị tệp…</small>
+        </div>
+      </div>
+
+      <div class="fm-mysign-guide">
+        <ol>
+          <li>Nhấn <b>“Chuyển sang Viettel MySign”</b> bên dưới.</li>
+          <li>Trong bảng chia sẻ của điện thoại, chọn biểu tượng <b>Viettel MySign</b>.</li>
+          <li>Kéo chữ ký vào biểu mẫu và xác thực bằng <b>Face ID / Mã PIN</b> trên app MySign.</li>
+        </ol>
+      </div>
+
+      ${isDoc?`<div class="fm-mysign-note">💡 <b>Lưu ý:</b> Một số phiên bản MySign yêu cầu file PDF. Nếu app MySign báo lỗi định dạng, bạn hãy tải file về và xuất sang PDF trước khi ký.</div>`:''}
+
+      <div class="fm-mysign-alert" hidden data-mysign-alert></div>
+
+      <div class="fm-mysign-actions">
+        <button type="button" class="fm-btn-mysign" data-mysign="share">
+          ${icon('sign')}
+          <span data-mysign-share-label>Chuyển sang Viettel MySign</span>
+        </button>
+        <div class="fm-mysign-subactions">
+          <a class="fm-btn-outline" data-mysign="web" href="https://mysign.viettel.vn" target="_blank" rel="noopener">
+            Mở Web MySign
+          </a>
+          <a class="fm-btn-outline" data-mysign="download" href="${esc(downloadUrl(file))}" download rel="noopener">
+            ${icon('download')} Tải về máy
+          </a>
+        </div>
+      </div>
+    </div>`;
+
+    const statusEl=dialog.querySelector('[data-mysign-status]');
+    const alertEl=dialog.querySelector('[data-mysign-alert]');
+    let closed=false;
+
+    function closeDialog(){
+      if(closed)return;closed=true;
+      dialog.remove();
+      if(focus?.isConnected)focus.focus({preventScroll:true});
+    }
+
+    dialog.addEventListener('click',async event=>{
+      const target=event.target.closest('[data-mysign]');
+      if(!target||closed)return;
+      const action=target.dataset.mysign;
+      if(action==='close'){closeDialog();return;}
+      if(action==='share'){
+        if(!st.signingFile){
+          toast('Đang chuẩn bị tệp, vui lòng đợi giây lát…');
+          return;
+        }
+        try{
+          if(navigator.share&&navigator.canShare?.({files:[st.signingFile]})){
+            await navigator.share({
+              files:[st.signingFile],
+              title:'Ký số Viettel MySign',
+              text:displayName(file.name)
+            });
+            toast('Đã mở bảng chia sẻ sang Viettel MySign!');
+            closeDialog();
+          }else{
+            alertEl.hidden=false;
+            alertEl.innerHTML='Thiết bị hoặc trình duyệt này chưa hỗ trợ mở trực tiếp app từ web. Vui lòng bấm <b>“Tải về máy”</b> rồi nạp vào cổng <a href="https://mysign.viettel.vn" target="_blank" style="text-decoration:underline">mysign.viettel.vn</a> để ký.';
+            toast('Thiết bị chưa hỗ trợ chia sẻ tệp trực tiếp.');
+          }
+        }catch(err){
+          if(err.name!=='AbortError'){
+            alertEl.hidden=false;
+            alertEl.textContent='Không thể mở bảng chia sẻ: '+(err.message||err);
+          }
+        }
+      }
+    });
+
+    dialog.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){event.preventDefault();closeDialog();}
+    });
+
+    st.overlay.append(dialog);
+    dialog.querySelector('[data-mysign="close"]').focus({preventScroll:true});
+
+    // Chuẩn bị tệp ký
+    try{
+      if(!st.signingFile){
+        let buffer=st.buffer;
+        if(!buffer){
+          statusEl.textContent='Đang tải nội dung tệp…';
+          if(config?.apiKey){
+            try{buffer=await fetchBytes(file,p=>statusEl.textContent='Đang tải tệp… '+Math.round(p*100)+'%',st.controller.signal);}catch(_){}
+          }
+          if(!buffer){
+            const isGDoc=String(file.mimeType||'').startsWith('application/vnd.google-apps.');
+            const url=isGDoc?`https://docs.google.com/document/d/${encodeURIComponent(file.id)}/export?format=pdf`:downloadUrl(file);
+            const res=await fetch(url,{signal:st.controller.signal});
+            if(!res.ok)throw new Error('Chưa tải được tệp');
+            buffer=await res.arrayBuffer();
+          }
+          st.buffer=buffer;
+        }
+
+        const isGDoc=String(file.mimeType||'').startsWith('application/vnd.google-apps.');
+        const isPdf=file.mimeType==='application/pdf'||/\.pdf$/i.test(file.name);
+        let finalName=file.name||'bieu-mau.pdf';
+        let finalMime=file.mimeType||'application/pdf';
+
+        if(isGDoc){
+          finalName=finalName.replace(/\.[^.]+$/, '')+'.pdf';
+          finalMime='application/pdf';
+        }else if(isPdf){
+          if(!/\.pdf$/i.test(finalName))finalName+='.pdf';
+          finalMime='application/pdf';
+        }else if(/\.docx$/i.test(finalName)){
+          finalMime='application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        }else if(/\.doc$/i.test(finalName)){
+          finalMime='application/msword';
+        }
+
+        st.signingFile=new File([buffer],finalName,{type:finalMime,lastModified:Date.now()});
+      }
+
+      if(!closed){
+        statusEl.textContent=`Sẵn sàng chuyển (${bytes(st.signingFile.size)}) · ${st.signingFile.name}`;
+      }
+    }catch(err){
+      if(!closed){
+        statusEl.textContent='Không tải được tệp tự động.';
+        alertEl.hidden=false;
+        alertEl.textContent='Không tải được dữ liệu trực tiếp. Bạn có thể bấm nút “Tải về máy” để lưu và ký thủ công.';
+      }
+    }
+  }
+
   function openViewer(file){
     closeViewer(true);
     const kind=kindOf(file),focus=document.activeElement,overflow=document.body.style.overflow,overlay=document.createElement('div');
     overlay.className='fm-viewer';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','fmViewerTitle');
-    overlay.innerHTML=`<header class="fm-viewer-bar"><button type="button" class="fm-vbtn" data-fmv="close" aria-label="Đóng biểu mẫu">${icon('back')}</button><div class="fm-viewer-title"><small>BIỂU MẪU · ${KIND_LABEL[kind]}<span data-fmv-meta></span></small><strong id="fmViewerTitle">${esc(displayName(file.name))}</strong></div><a class="fm-vbtn" data-fmv="download" href="${esc(downloadUrl(file))}" download rel="noopener" aria-label="Tải về ${esc(file.name)}">${icon('download')}</a></header><div class="fm-tools" hidden role="toolbar" aria-label="Công cụ xem tài liệu"><button type="button" class="fm-tbtn" data-fmv="sheet" aria-label="Danh sách trang">${icon('grid')}</button><div class="fm-pager" role="group" aria-label="Chuyển trang"><button type="button" data-fmv="prev" aria-label="Trang trước">${icon('left')}</button><label><input type="text" inputmode="numeric" value="1" aria-label="Số trang hiện tại"><span>/ <b data-fmv-total>1</b></span></label><button type="button" data-fmv="next" aria-label="Trang sau">${icon('chevron')}</button></div><div class="fm-zoom" role="group" aria-label="Thu phóng"><button type="button" data-fmv="zout" aria-label="Thu nhỏ">${icon('minus')}</button><button type="button" data-fmv="fit" aria-label="Về vừa khít chiều rộng">100%</button><button type="button" data-fmv="zin" aria-label="Phóng to">${icon('plus')}</button></div></div><div class="fm-viewer-stage"><div class="fm-scroll" tabindex="0" aria-label="Nội dung biểu mẫu"><div class="fm-doc"></div></div><div class="fm-viewer-loading" role="status"><span class="fm-spinner"></span><span data-fmv-status>Đang tải biểu mẫu…</span><div class="fm-progress" hidden><i></i></div></div><div class="fm-pill" aria-hidden="true"></div><div class="fm-sheet" hidden><div class="fm-sheet-panel" role="dialog" aria-label="Danh sách trang"><div class="fm-sheet-head"><strong>Các trang</strong><button type="button" class="fm-tbtn" data-fmv="sheet-close" aria-label="Đóng danh sách trang">${icon('close')}</button></div><div class="fm-thumbs"></div></div></div><div class="fm-viewer-hint" hidden><span></span><a href="${esc(downloadUrl(file))}" download rel="noopener">${icon('download')}Tải về</a></div></div>`;
+    overlay.innerHTML=`<header class="fm-viewer-bar"><button type="button" class="fm-vbtn" data-fmv="close" aria-label="Đóng biểu mẫu">${icon('back')}</button><div class="fm-viewer-title"><small>BIỂU MẪU · ${KIND_LABEL[kind]}<span data-fmv-meta></span></small><strong id="fmViewerTitle">${esc(displayName(file.name))}</strong></div><button type="button" class="fm-vbtn fm-vbtn--sign" data-fmv="sign" aria-label="Ký số Viettel MySign" title="Ký số bằng Viettel MySign">${icon('sign')}</button><a class="fm-vbtn" data-fmv="download" href="${esc(downloadUrl(file))}" download rel="noopener" aria-label="Tải về ${esc(file.name)}">${icon('download')}</a></header><div class="fm-tools" hidden role="toolbar" aria-label="Công cụ xem tài liệu"><button type="button" class="fm-tbtn" data-fmv="sheet" aria-label="Danh sách trang">${icon('grid')}</button><div class="fm-pager" role="group" aria-label="Chuyển trang"><button type="button" data-fmv="prev" aria-label="Trang trước">${icon('left')}</button><label><input type="text" inputmode="numeric" value="1" aria-label="Số trang hiện tại"><span>/ <b data-fmv-total>1</b></span></label><button type="button" data-fmv="next" aria-label="Trang sau">${icon('chevron')}</button></div><div class="fm-zoom" role="group" aria-label="Thu phóng"><button type="button" data-fmv="zout" aria-label="Thu nhỏ">${icon('minus')}</button><button type="button" data-fmv="fit" aria-label="Về vừa khít chiều rộng">100%</button><button type="button" data-fmv="zin" aria-label="Phóng to">${icon('plus')}</button></div></div><div class="fm-viewer-stage"><div class="fm-scroll" tabindex="0" aria-label="Nội dung biểu mẫu"><div class="fm-doc"></div></div><div class="fm-viewer-loading" role="status"><span class="fm-spinner"></span><span data-fmv-status>Đang tải biểu mẫu…</span><div class="fm-progress" hidden><i></i></div></div><div class="fm-pill" aria-hidden="true"></div><div class="fm-sheet" hidden><div class="fm-sheet-panel" role="dialog" aria-label="Danh sách trang"><div class="fm-sheet-head"><strong>Các trang</strong><button type="button" class="fm-tbtn" data-fmv="sheet-close" aria-label="Đóng danh sách trang">${icon('close')}</button></div><div class="fm-thumbs"></div></div></div><div class="fm-viewer-hint" hidden><span></span><div class="fm-viewer-hint-actions"><button type="button" class="fm-hint-sign-btn" data-fmv="sign">${icon('sign')}Ký MySign</button><a href="${esc(downloadUrl(file))}" download rel="noopener">${icon('download')}Tải về</a></div></div></div>`;
     const st={file,mode:viewerKind(file),overlay,scroll:overlay.querySelector('.fm-scroll'),doc:overlay.querySelector('.fm-doc'),controller:new AbortController(),zoom:1,total:0,current:1,destroyed:false,pageEls:[],cleanup:[]};
     overlay.addEventListener('click',event=>{
-      const node=event.target.closest('[data-fmv],[data-fmv-page]');if(!node||!st.total&&node.dataset.fmv!=='close')return;
+      const node=event.target.closest('[data-fmv],[data-fmv-page]');if(!node||!st.total&&!['close','sign'].includes(node.dataset.fmv))return;
       if(node.dataset.fmvPage){closeSheet(st);st.scroll.focus({preventScroll:true});goTo(st,node.dataset.fmvPage);return;}
       switch(node.dataset.fmv){
         case 'close':closeViewer();break;
+        case 'sign':openMySignDialog(st);break;
         case 'prev':goTo(st,st.current-1);break;
         case 'next':goTo(st,st.current+1);break;
         case 'zin':stepZoom(st,1);break;
