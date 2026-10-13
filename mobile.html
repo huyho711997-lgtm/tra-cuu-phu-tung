@@ -2586,6 +2586,8 @@ html.dark .fm-scroll{background:#06111d}
 .fm-mysign-meta small{display:block;margin-top:2px;font-size:11px;color:var(--ws-muted)}
 .fm-mysign-guide{padding:12px 14px;border-radius:12px;background:rgba(14,32,55,.04);font-size:12px;line-height:1.6;color:var(--ws-muted)}
 html.dark .fm-mysign-guide{background:rgba(255,255,255,.04)}
+.fm-guide-title{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:12px;font-weight:700;color:var(--ws-text)}
+.fm-mysign-guide p{margin:0 0 6px;font-size:11.5px;line-height:1.55}
 .fm-mysign-guide ol{margin:0;padding-left:18px}
 .fm-mysign-guide li{margin-bottom:4px}
 .fm-mysign-guide li:last-child{margin-bottom:0}
@@ -2598,6 +2600,10 @@ html.dark .fm-mysign-note{color:#facc15;background:rgba(234,179,8,.12)}
 .fm-btn-mysign:active{transform:scale(.98)}
 .fm-btn-mysign:disabled{opacity:.6;cursor:not-allowed}
 .fm-btn-mysign svg{width:18px;height:18px}
+.fm-btn-portal{min-height:44px;background:rgba(238,0,51,.08);border:1px solid rgba(238,0,51,.35);border-radius:12px;color:#ee0033;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;padding:10px 14px;text-decoration:none;transition:background .15s}
+html.dark .fm-btn-portal{background:rgba(238,0,51,.15);border-color:rgba(238,0,51,.45);color:#ff4d6d}
+.fm-btn-portal svg:first-child{color:#ee0033;width:16px;height:16px}
+html.dark .fm-btn-portal svg:first-child{color:#ff4d6d}
 .fm-mysign-subactions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .fm-btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:8px 12px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;touch-action:manipulation;transition:background .15s}
 .fm-btn-outline:active{transform:scale(.97)}
@@ -4017,33 +4023,41 @@ window.TascoForms=(()=>{
       </div>
 
       <div class="fm-mysign-guide">
+        <div class="fm-guide-title">
+          <span>ℹ️</span>
+          <strong>Cách ký tài liệu với Viettel MySign:</strong>
+        </div>
+        <p>App <b>MySign</b> trên điện thoại là ứng dụng <i>xác thực Smart OTP</i>, không nhận file mở trực tiếp từ trình duyệt. Để ký số biểu mẫu này:</p>
         <ol>
-          <li>Bấm <b>“Chuyển sang Viettel MySign”</b> và chọn biểu tượng <b>MySign</b> trong bảng chia sẻ.</li>
-          <li><b>Nếu app MySign chưa tự mở:</b> Trong bảng chia sẻ, cuộn xuống chọn <b>“Lưu vào Tệp”</b> (hoặc bấm <b>“Tải về máy”</b> bên dưới) ➔ Mở app <b>MySign</b> ➔ vào mục <b>Tài liệu</b> để chọn file vừa lưu.</li>
-          <li>Kéo chữ ký vào biểu mẫu và xác thực bằng <b>Face ID / Mã PIN</b> trên app MySign.</li>
+          <li>Bấm nút <b>“1. Tải biểu mẫu PDF về máy”</b> bên dưới.</li>
+          <li>Bấm <b>“2. Mở Cổng Ký Số mysign.viettel.vn”</b> ➔ Tải file vừa lưu lên, đặt vị trí chữ ký và bấm <b>Ký số</b>.</li>
+          <li>Mở app <b>MySign</b> trên iPhone để quét <b>Face ID / Mã PIN</b> là văn bản được ký hoàn tất!</li>
         </ol>
       </div>
 
-      ${isDoc?`<div class="fm-mysign-note">💡 <b>Lưu ý:</b> Một số phiên bản MySign yêu cầu file PDF. Nếu app MySign báo lỗi định dạng, bạn hãy tải file về và xuất sang PDF trước khi ký.</div>`:''}
+      ${isDoc?`<div class="fm-mysign-note">💡 <b>Lưu ý:</b> Hệ thống đã tự động chuyển đổi biểu mẫu sang định dạng <b>PDF chuẩn</b> để sẵn sàng ký trên Viettel MySign.</div>`:''}
 
       <div class="fm-mysign-alert" hidden data-mysign-alert></div>
 
       <div class="fm-mysign-actions">
-        <button type="button" class="fm-btn-mysign" data-mysign="share">
-          ${icon('sign')}
-          <span data-mysign-share-label>Chuyển sang Viettel MySign</span>
+        <button type="button" class="fm-btn-mysign" data-mysign="download-pdf">
+          ${icon('download')}
+          <span>1. Tải biểu mẫu PDF về máy</span>
         </button>
+        <a class="fm-btn-portal" data-mysign="web" href="https://mysign.viettel.vn" target="_blank" rel="noopener">
+          ${icon('sign')}
+          <span>2. Mở Cổng Ký Số mysign.viettel.vn</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-left:auto"><path d="M7 17l10-10M7 7h10v10"/></svg>
+        </a>
         <div class="fm-mysign-subactions">
           <button type="button" class="fm-btn-outline" data-mysign="open-pdf">
             ${icon('eye')} Mở xem PDF
           </button>
-          <a class="fm-btn-outline" data-mysign="download" href="${esc(downloadUrl(file))}" download rel="noopener">
-            ${icon('download')} Tải về máy
-          </a>
+          <button type="button" class="fm-btn-outline" data-mysign="share">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:14px;height:14px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98m-.01-10.98-6.82 3.98"/></svg>
+            Gửi qua Zalo / Tệp
+          </button>
         </div>
-        <a class="fm-btn-outline" style="width:100%;text-align:center" data-mysign="web" href="https://mysign.viettel.vn" target="_blank" rel="noopener">
-          Cổng ký số Web mysign.viettel.vn
-        </a>
       </div>
     </div>`;
 
@@ -4062,6 +4076,27 @@ window.TascoForms=(()=>{
       if(!target||closed)return;
       const action=target.dataset.mysign;
       if(action==='close'){closeDialog();return;}
+      if(action==='download-pdf'){
+        try{
+          const blob=st.signingFile||(st.buffer?new Blob([st.buffer],{type:'application/pdf'}):null);
+          const name=st.signingFile?.name||(file.name?file.name.replace(/\.[^.]+$/, '')+'.pdf':'bieu-mau.pdf');
+          if(blob){
+            const blobUrl=URL.createObjectURL(blob);
+            const a=document.createElement('a');
+            a.href=blobUrl;
+            a.download=name;
+            document.body.append(a);
+            a.click();
+            setTimeout(()=>{a.remove();URL.revokeObjectURL(blobUrl);},4000);
+            toast('Đã tải biểu mẫu PDF về máy! Bạn mở mysign.viettel.vn để ký.');
+          }else{
+            window.open(downloadUrl(file),'_blank');
+          }
+        }catch(_){
+          window.open(downloadUrl(file),'_blank');
+        }
+        return;
+      }
       if(action==='open-pdf'){
         try{
           const blob=st.signingFile||(st.buffer?new Blob([st.buffer],{type:'application/pdf'}):null);
@@ -4085,19 +4120,17 @@ window.TascoForms=(()=>{
         alertEl.hidden=true;
         alertEl.textContent='';
         isSharing=true;
-        const btn=dialog.querySelector('[data-mysign="share"]');
+        const btn=event.target.closest('button');
         if(btn){btn.disabled=true;btn.style.opacity='.6';}
         try{
           if(navigator.share&&navigator.canShare?.({files:[st.signingFile]})){
-            // Pass ONLY files array without title/text to ensure strict single-attachment compatibility with iOS app extensions
             await navigator.share({
               files:[st.signingFile]
             });
             toast('Đã mở bảng chia sẻ!');
           }else{
             alertEl.hidden=false;
-            alertEl.innerHTML='Thiết bị hoặc trình duyệt chưa hỗ trợ chia sẻ tệp trực tiếp. Vui lòng bấm <b>“Tải về máy”</b> rồi nạp vào app MySign hoặc cổng <a href="https://mysign.viettel.vn" target="_blank" style="text-decoration:underline">mysign.viettel.vn</a> để ký.';
-            toast('Thiết bị chưa hỗ trợ chia sẻ tệp trực tiếp.');
+            alertEl.textContent='Thiết bị chưa hỗ trợ chia sẻ tệp trực tiếp. Bạn hãy bấm “1. Tải biểu mẫu PDF về máy” để lưu file.';
           }
         }catch(err){
           if(err.name!=='AbortError'&&!/already in progress/i.test(err.message||'')){
@@ -4108,6 +4141,7 @@ window.TascoForms=(()=>{
           isSharing=false;
           if(btn){btn.disabled=false;btn.style.opacity='';}
         }
+        return;
       }
     });
 
