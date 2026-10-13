@@ -4018,8 +4018,8 @@ window.TascoForms=(()=>{
 
       <div class="fm-mysign-guide">
         <ol>
-          <li>Nhấn <b>“Chuyển sang Viettel MySign”</b> bên dưới.</li>
-          <li>Trong bảng chia sẻ của điện thoại, chọn biểu tượng <b>Viettel MySign</b>.</li>
+          <li>Bấm <b>“Chuyển sang Viettel MySign”</b> và chọn biểu tượng <b>MySign</b> trong bảng chia sẻ.</li>
+          <li><b>Nếu app MySign chưa tự mở:</b> Trong bảng chia sẻ, cuộn xuống chọn <b>“Lưu vào Tệp”</b> (hoặc bấm <b>“Tải về máy”</b> bên dưới) ➔ Mở app <b>MySign</b> ➔ vào mục <b>Tài liệu</b> để chọn file vừa lưu.</li>
           <li>Kéo chữ ký vào biểu mẫu và xác thực bằng <b>Face ID / Mã PIN</b> trên app MySign.</li>
         </ol>
       </div>
@@ -4034,19 +4034,22 @@ window.TascoForms=(()=>{
           <span data-mysign-share-label>Chuyển sang Viettel MySign</span>
         </button>
         <div class="fm-mysign-subactions">
-          <a class="fm-btn-outline" data-mysign="web" href="https://mysign.viettel.vn" target="_blank" rel="noopener">
-            Mở Web MySign
-          </a>
+          <button type="button" class="fm-btn-outline" data-mysign="open-pdf">
+            ${icon('eye')} Mở xem PDF
+          </button>
           <a class="fm-btn-outline" data-mysign="download" href="${esc(downloadUrl(file))}" download rel="noopener">
             ${icon('download')} Tải về máy
           </a>
         </div>
+        <a class="fm-btn-outline" style="width:100%;text-align:center" data-mysign="web" href="https://mysign.viettel.vn" target="_blank" rel="noopener">
+          Cổng ký số Web mysign.viettel.vn
+        </a>
       </div>
     </div>`;
 
     const statusEl=dialog.querySelector('[data-mysign-status]');
     const alertEl=dialog.querySelector('[data-mysign-alert]');
-    let closed=false;
+    let closed=false,isSharing=false;
 
     function closeDialog(){
       if(closed)return;closed=true;
@@ -4059,30 +4062,51 @@ window.TascoForms=(()=>{
       if(!target||closed)return;
       const action=target.dataset.mysign;
       if(action==='close'){closeDialog();return;}
+      if(action==='open-pdf'){
+        try{
+          const blob=st.signingFile||(st.buffer?new Blob([st.buffer],{type:'application/pdf'}):null);
+          if(blob){
+            const blobUrl=URL.createObjectURL(blob);
+            window.open(blobUrl,'_blank');
+          }else{
+            window.open(downloadUrl(file),'_blank');
+          }
+        }catch(_){
+          window.open(downloadUrl(file),'_blank');
+        }
+        return;
+      }
       if(action==='share'){
+        if(isSharing)return;
         if(!st.signingFile){
           toast('Đang chuẩn bị tệp, vui lòng đợi giây lát…');
           return;
         }
+        alertEl.hidden=true;
+        alertEl.textContent='';
+        isSharing=true;
+        const btn=dialog.querySelector('[data-mysign="share"]');
+        if(btn){btn.disabled=true;btn.style.opacity='.6';}
         try{
           if(navigator.share&&navigator.canShare?.({files:[st.signingFile]})){
+            // Pass ONLY files array without title/text to ensure strict single-attachment compatibility with iOS app extensions
             await navigator.share({
-              files:[st.signingFile],
-              title:'Ký số Viettel MySign',
-              text:displayName(file.name)
+              files:[st.signingFile]
             });
-            toast('Đã mở bảng chia sẻ sang Viettel MySign!');
-            closeDialog();
+            toast('Đã mở bảng chia sẻ!');
           }else{
             alertEl.hidden=false;
-            alertEl.innerHTML='Thiết bị hoặc trình duyệt này chưa hỗ trợ mở trực tiếp app từ web. Vui lòng bấm <b>“Tải về máy”</b> rồi nạp vào cổng <a href="https://mysign.viettel.vn" target="_blank" style="text-decoration:underline">mysign.viettel.vn</a> để ký.';
+            alertEl.innerHTML='Thiết bị hoặc trình duyệt chưa hỗ trợ chia sẻ tệp trực tiếp. Vui lòng bấm <b>“Tải về máy”</b> rồi nạp vào app MySign hoặc cổng <a href="https://mysign.viettel.vn" target="_blank" style="text-decoration:underline">mysign.viettel.vn</a> để ký.';
             toast('Thiết bị chưa hỗ trợ chia sẻ tệp trực tiếp.');
           }
         }catch(err){
-          if(err.name!=='AbortError'){
+          if(err.name!=='AbortError'&&!/already in progress/i.test(err.message||'')){
             alertEl.hidden=false;
             alertEl.textContent='Không thể mở bảng chia sẻ: '+(err.message||err);
           }
+        }finally{
+          isSharing=false;
+          if(btn){btn.disabled=false;btn.style.opacity='';}
         }
       }
     });
