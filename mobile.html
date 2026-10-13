@@ -2405,15 +2405,32 @@ html[data-tasco-page=forms]{background:var(--app-navy)}
 .fm-icon-btn[hidden]{display:none}
 .fm-icon-btn.is-spinning svg{animation:fm-spin .8s linear infinite}
 
-/* Bộ lọc loại tệp */
-.fm-filter-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0 0}
-.fm-chips{display:flex;gap:6px;padding:4px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-soft)}
+/* Bộ lọc loại tệp và sắp xếp */
+.fm-filter-row{position:relative;z-index:25;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0 0}
+.fm-chips{display:flex;gap:6px;padding:4px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-soft);flex-shrink:0}
 .fm-chips button{min-width:0;min-height:34px;padding:7px 14px;border:0;border-radius:99px;background:transparent;color:var(--ws-muted);font:inherit;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap}
 .fm-chips button[aria-pressed=true]{background:var(--app-teal);color:var(--app-navy);box-shadow:0 3px 10px rgba(24,48,86,.06)}
-.fm-stats{font-size:10px;font-weight:550;color:var(--ws-muted);text-align:right;line-height:1.5}
+
+/* Nút và menu sắp xếp biểu mẫu - đồng bộ giao diện Tra cứu */
+.fm-sort-control{position:relative;flex-shrink:0;z-index:30}
+.fm-sort-pill{width:auto;min-width:130px;gap:6px;padding:8px 12px;font-family:inherit;cursor:pointer}
+.fm-sort-pill .ws-sort-value{max-width:76px}
+.fm-sort-menu-panel{z-index:70}
+
+/* Dòng thông tin phụ: đường dẫn thư mục và thống kê */
+.fm-meta-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 0;min-height:22px}
+.fm-meta-row .fm-crumbs{margin:0;flex:1;min-width:0}
+.fm-meta-row .fm-stats{margin-left:auto;white-space:nowrap;font-size:10px;font-weight:550;color:var(--ws-muted);line-height:1.5}
 
 /* Đường dẫn thư mục */
-.fm-crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:2px 4px;margin:14px 0 0;padding:0;font-size:11px;line-height:1.5}
+.fm-crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:2px 4px;margin:0;padding:0;font-size:11px;line-height:1.5}
+
+@media(max-width:380px){
+  .fm-chips{gap:4px;padding:3px}
+  .fm-chips button{padding:7px 10px;font-size:10.5px}
+  .fm-sort-pill{min-width:0;padding:8px 10px}
+  .fm-sort-pill .ws-sort-prefix{display:none}
+}
 .fm-crumbs[hidden]{display:none}
 .fm-crumbs button{max-width:150px;padding:6px 8px;border:0;border-radius:9px;background:transparent;color:var(--ws-accent-text);font:inherit;font-weight:600;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fm-crumbs button[aria-current=page]{color:var(--ws-text);background:var(--ws-soft);cursor:default}
@@ -2791,8 +2808,50 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   <div class="ws-search-panel ws-search-panel--premium">
     <div class="fm-head"><div><h3>Thư viện biểu mẫu</h3><p id="fmSubtitle">Đang tải kho biểu mẫu…</p></div><div class="fm-head-actions"><button type="button" class="fm-icon-btn" id="fmRefresh" data-fm="refresh" aria-label="Làm mới danh sách"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.5-4M4 4v4h4M4 13a8 8 0 0 0 14.5 4M20 20v-4h-4"/></svg></button><button type="button" class="fm-icon-btn" data-fm="settings" data-admin-only hidden aria-label="Thiết lập kho lưu trữ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></button></div></div>
     <div class="ws-search-field"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:18px;height:18px"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="fmSearch" type="search" autocomplete="off" placeholder="Tìm tên biểu mẫu…" aria-label="Tìm biểu mẫu"></div>
-    <div class="fm-filter-row"><div class="fm-chips" role="group" aria-label="Lọc loại tệp"><button type="button" data-fm-filter="all" aria-pressed="true">Tất cả</button><button type="button" data-fm-filter="word" aria-pressed="false">Word</button><button type="button" data-fm-filter="pdf" aria-pressed="false">PDF</button></div><div class="fm-stats" id="fmStats" aria-live="polite"></div></div>
-    <nav class="fm-crumbs" id="fmCrumbs" aria-label="Đường dẫn thư mục" hidden></nav>
+    <div class="fm-filter-row">
+      <div class="fm-chips" role="group" aria-label="Lọc loại tệp">
+        <button type="button" data-fm-filter="all" aria-pressed="true">Tất cả</button>
+        <button type="button" data-fm-filter="word" aria-pressed="false">Word</button>
+        <button type="button" data-fm-filter="pdf" aria-pressed="false">PDF</button>
+      </div>
+      <div class="ws-sort-control fm-sort-control" id="fmSortControl">
+        <button type="button" class="ws-sort-pill fm-sort-pill" id="fmSort" value="modified-desc" onclick="TascoForms.toggleSort()" aria-label="Sắp xếp: Mới nhất" aria-haspopup="menu" aria-expanded="false" aria-controls="fmSortMenu">
+          <svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v16m-4-4 4 4 4-4M15 5h6m-6 5h4m-4 5h2"/></svg>
+          <span class="ws-sort-prefix">Sắp xếp</span>
+          <span class="ws-sort-value" id="fmSortLabel">Mới nhất</span>
+          <svg class="ws-icon ws-sort-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="ws-sort-menu-panel fm-sort-menu-panel" id="fmSortPanel" hidden>
+          <p class="ws-sort-menu-title" id="fmSortTitle">Sắp xếp biểu mẫu</p>
+          <div class="ws-sort-menu" id="fmSortMenu" role="menu" aria-labelledby="fmSortTitle">
+            <button type="button" class="ws-sort-option" role="menuitemradio" data-fm-sort-mode="modified-desc" aria-checked="true" tabindex="0" onclick="TascoForms.chooseSort('modified-desc')">
+              <span class="ws-sort-option-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+              <span class="ws-sort-option-copy"><strong>Mới nhất</strong><small>Theo ngày sửa đổi</small></span>
+              <span class="ws-sort-check"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span>
+            </button>
+            <button type="button" class="ws-sort-option" role="menuitemradio" data-fm-sort-mode="modified-asc" aria-checked="false" tabindex="-1" onclick="TascoForms.chooseSort('modified-asc')">
+              <span class="ws-sort-option-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l-3 2"/></svg></span>
+              <span class="ws-sort-option-copy"><strong>Cũ nhất</strong><small>Theo ngày sửa đổi</small></span>
+              <span class="ws-sort-check"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span>
+            </button>
+            <button type="button" class="ws-sort-option" role="menuitemradio" data-fm-sort-mode="name-asc" aria-checked="false" tabindex="-1" onclick="TascoForms.chooseSort('name-asc')">
+              <span class="ws-sort-option-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 4-4 4 4M7 5v14M13 7h7M13 12h5M13 17h3"/></svg></span>
+              <span class="ws-sort-option-copy"><strong>Tên A → Z</strong><small>Từ A đến Z</small></span>
+              <span class="ws-sort-check"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span>
+            </button>
+            <button type="button" class="ws-sort-option" role="menuitemradio" data-fm-sort-mode="name-desc" aria-checked="false" tabindex="-1" onclick="TascoForms.chooseSort('name-desc')">
+              <span class="ws-sort-option-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 19-4-4m4 4 4-4M7 19V5M13 7h3M13 12h5M13 17h7"/></svg></span>
+              <span class="ws-sort-option-copy"><strong>Tên Z → A</strong><small>Từ Z đến A</small></span>
+              <span class="ws-sort-check"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fm-meta-row">
+      <nav class="fm-crumbs" id="fmCrumbs" aria-label="Đường dẫn thư mục" hidden></nav>
+      <div class="fm-stats" id="fmStats" aria-live="polite"></div>
+    </div>
     <div id="fmBody" aria-live="polite"></div>
     <nav class="fm-pagination" id="fmPagination" aria-label="Phân trang biểu mẫu" hidden></nav>
     <p class="fm-page-sr" id="fmPageStatus" role="status" aria-live="polite" aria-atomic="true"></p>
@@ -3387,7 +3446,8 @@ window.TascoForms=(()=>{
   const WORD_MIME=['application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword','application/vnd.google-apps.document','application/vnd.oasis.opendocument.text','application/rtf'];
   const SHEET_MIME=['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.ms-excel','application/vnd.google-apps.spreadsheet'];
   const KIND_LABEL={word:'WORD',pdf:'PDF',sheet:'EXCEL',other:'TÀI LIỆU',folder:'THƯ MỤC'};
-  let options={},user=null,config=null,configState='idle',configAt=0,configError='',stack=[],cache=new Map(),query='',filter='all',list={loading:false,error:'',items:[]},token=0,viewer=null,dialog=null,toastTimer=0,page=1,pageSize=10;
+  const SORT_LABELS={'modified-desc':'Mới nhất','modified-asc':'Cũ nhất','name-asc':'Tên A → Z','name-desc':'Tên Z → A'};
+  let options={},user=null,config=null,configState='idle',configAt=0,configError='',stack=[],cache=new Map(),query='',filter='all',sortMode='modified-desc',list={loading:false,error:'',items:[]},token=0,viewer=null,dialog=null,toastTimer=0,page=1,pageSize=10;
 
   const $=id=>document.getElementById(id);
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -3497,9 +3557,10 @@ window.TascoForms=(()=>{
     emitStatus();
   }
   function resetBrowse(){
-    token++;cache.clear();query='';filter='all';page=1;list={loading:false,error:'',items:[]};
+    token++;cache.clear();query='';filter='all';page=1;sortMode='modified-desc';list={loading:false,error:'',items:[]};
     stack=config?[{id:config.folderId,name:config.folderName||'Biểu mẫu'}]:[];
     const search=$('fmSearch');if(search)search.value='';
+    closeSort();syncSort('modified-desc');
   }
   function setUser(profile){
     const changed=user?.email!==profile?.email;user=profile?{...profile}:null;
@@ -3530,7 +3591,7 @@ window.TascoForms=(()=>{
     if(!stack.length||stack[0].id!==config.folderId)resetBrowse();
     showFolder();
   }
-  function onNavigate(view){if(view==='forms')onShow();else{closeViewer(true);}}
+  function onNavigate(view){if(view==='forms')onShow();else{closeViewer(true);closeSort();}}
   async function refresh(){
     const button=$('fmRefresh');button?.classList.add('is-spinning');
     try{await loadConfig(true);if(config){if(!stack.length||stack[0].id!==config.folderId)resetBrowse();await showFolder(true);}else paint();}
@@ -3541,10 +3602,28 @@ window.TascoForms=(()=>{
   /* ---------- Hiển thị ---------- */
   function visibleItems(){
     const q=norm(query.trim());
-    return list.items.filter(file=>{
+    const filtered=list.items.filter(file=>{
       const kind=kindOf(file);
       if(kind!=='folder'&&filter!=='all'&&kind!==filter)return false;
       return !q||norm(file.name).includes(q);
+    });
+    return filtered.sort((a,b)=>{
+      const aFolder=kindOf(a)==='folder',bFolder=kindOf(b)==='folder';
+      if(aFolder!==bFolder)return aFolder?-1:1;
+      if(sortMode==='modified-desc'){
+        const diff=(new Date(b.modifiedTime||0).getTime()||0)-(new Date(a.modifiedTime||0).getTime()||0);
+        if(diff!==0)return diff;
+        return (a.name||'').localeCompare(b.name||'','vi',{numeric:true,sensitivity:'base'});
+      }
+      if(sortMode==='modified-asc'){
+        const diff=(new Date(a.modifiedTime||0).getTime()||0)-(new Date(b.modifiedTime||0).getTime()||0);
+        if(diff!==0)return diff;
+        return (a.name||'').localeCompare(b.name||'','vi',{numeric:true,sensitivity:'base'});
+      }
+      if(sortMode==='name-desc'){
+        return (b.name||'').localeCompare(a.name||'','vi',{numeric:true,sensitivity:'base'});
+      }
+      return (a.name||'').localeCompare(b.name||'','vi',{numeric:true,sensitivity:'base'});
     });
   }
   function stateBlock(name,title,copy,action=''){return `<div class="fm-state"><span class="fm-state-ico">${icon(name)}</span><strong>${esc(title)}</strong><p>${esc(copy)}</p>${action}</div>`;}
@@ -3600,6 +3679,57 @@ window.TascoForms=(()=>{
     });
   }
 
+  function syncSort(mode=sortMode){
+    if(!Object.hasOwn(SORT_LABELS,mode))mode='modified-desc';
+    sortMode=mode;
+    const btn=$('fmSort'),lbl=$('fmSortLabel');
+    if(btn){
+      btn.value=mode;
+      btn.setAttribute('aria-label','Sắp xếp: '+SORT_LABELS[mode]);
+    }
+    if(lbl)lbl.textContent=SORT_LABELS[mode];
+    document.querySelectorAll('#formsSection [data-fm-sort-mode]').forEach(item=>{
+      const selected=item.dataset.fmSortMode===mode;
+      item.setAttribute('aria-checked',String(selected));
+      item.setAttribute('tabindex',selected?'0':'-1');
+    });
+  }
+  function closeSort(restoreFocus=false){
+    const panel=$('fmSortPanel'),btn=$('fmSort');
+    if(panel)panel.hidden=true;
+    if(btn){
+      btn.setAttribute('aria-expanded','false');
+      if(restoreFocus&&!btn.disabled)btn.focus({preventScroll:true});
+    }
+  }
+  function openSort(position){
+    const panel=$('fmSortPanel'),btn=$('fmSort');
+    if(!panel||!btn||btn.disabled)return;
+    panel.hidden=false;
+    btn.setAttribute('aria-expanded','true');
+    const items=[...panel.querySelectorAll('[data-fm-sort-mode]')];
+    const item=position==='last'?items.at(-1):items.find(el=>el.dataset.fmSortMode===sortMode)||items[0];
+    item?.focus({preventScroll:true});
+  }
+  function toggleSort(){
+    const panel=$('fmSortPanel');
+    if(!panel)return;
+    if(panel.hidden)openSort();
+    else closeSort(true);
+  }
+  function chooseSort(mode){
+    const btn=$('fmSort');
+    if(!btn||btn.disabled||!Object.hasOwn(SORT_LABELS,mode))return;
+    if(mode!==sortMode){
+      sortMode=mode;
+      page=1;
+      syncSort(mode);
+      paint();
+      focusResults();
+    }
+    closeSort(true);
+  }
+
   function paint(){
     const body=$('fmBody');if(!body)return;
     const subtitle=$('fmSubtitle'),stats=$('fmStats'),crumbs=$('fmCrumbs'),setup=isAdmin()?'<button type="button" class="ws-primary" data-fm="settings">Thiết lập kho lưu trữ</button>':'';
@@ -3608,6 +3738,8 @@ window.TascoForms=(()=>{
     $('fmPageStatus').textContent='';
     $('fmBody').setAttribute('aria-busy',String(list.loading||configState==='loading'));
     document.querySelectorAll('#formsSection [data-fm-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.fmFilter===filter)));
+    const sortBtn=$('fmSort');if(sortBtn)sortBtn.disabled=list.loading||configState==='loading'||!config;
+    syncSort();
     if(!user){body.innerHTML='';return;}
     if(configState==='loading'||configState==='idle'){subtitle.textContent='Đang tải kho biểu mẫu…';body.innerHTML='<div class="fm-list"><div class="fm-skel"></div><div class="fm-skel"></div><div class="fm-skel"></div></div>';return;}
     if(configState==='error'){subtitle.textContent='Chưa kết nối được kho biểu mẫu';body.innerHTML=stateBlock('alert','Chưa tải được cấu hình',configError,'<button type="button" class="ws-secondary" data-fm="refresh">Thử lại</button>');return;}
@@ -4178,7 +4310,31 @@ window.TascoForms=(()=>{
     items[next]?.focus({preventScroll:true});
   });
 
-  return {configure:value=>{options=value;},setUser,onNavigate,onShow,openSettings,openViewer,closeViewer,refresh,status:()=>({connected:Boolean(config),folder:config?.folderName||''})};
+  document.addEventListener('keydown',event=>{
+    const trigger=event.target.closest('#formsSection #fmSort');
+    if(trigger&&['ArrowDown','ArrowUp'].includes(event.key)){
+      event.preventDefault();openSort(event.key==='ArrowUp'?'last':undefined);return;
+    }
+    if(trigger&&event.key==='Escape'){event.preventDefault();closeSort(true);return;}
+    const menu=event.target.closest('#formsSection #fmSortMenu');
+    if(!menu||menu.hidden)return;
+    if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeSort(true);return;}
+    if(event.key==='Tab'){closeSort(true);return;}
+    if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+    event.preventDefault();
+    const items=[...menu.querySelectorAll('[data-fm-sort-mode]')];
+    const index=items.indexOf(document.activeElement);
+    const next=event.key==='Home'?0:event.key==='End'?items.length-1:(index+(event.key==='ArrowDown'?1:-1)+items.length)%items.length;
+    items[next]?.focus({preventScroll:true});
+  });
+  document.addEventListener('pointerdown',event=>{
+    if(!event.target.closest('#formsSection #fmSortControl'))closeSort();
+  });
+  document.addEventListener('focusin',event=>{
+    if(!event.target.closest('#formsSection #fmSortControl'))closeSort();
+  });
+
+  return {configure:value=>{options=value;},setUser,onNavigate,onShow,openSettings,openViewer,closeViewer,refresh,status:()=>({connected:Boolean(config),folder:config?.folderName||''}),toggleSort,chooseSort,syncSort};
 })();
 </script>
 
