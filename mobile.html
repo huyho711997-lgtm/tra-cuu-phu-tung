@@ -6015,6 +6015,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
           <div class="camera-toggle-list">
             <label class="camera-setting-check"><span>Soi gương camera trước<small>Ảnh lưu cùng chiều bản xem</small></span><input type="checkbox" data-camera-pref="mirrorFront" checked></label>
             <label class="camera-setting-check"><span>Lưới bố cục<small>Căn thẳng và chia khung hình</small></span><input type="checkbox" data-camera-pref="showGrid" checked></label>
+            <label class="camera-setting-check"><span>Tự lưu ảnh về máy<small>Lưu thêm 1 bản vào thư mục Tải xuống ngay sau khi chụp</small></span><input type="checkbox" data-camera-pref="autoSaveDevice"></label>
           </div>
           <details class="camera-settings-group"><summary><span>Tùy chọn khác</span><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></summary><div class="camera-settings-fields">
             <label class="camera-setting-check"><span>Dấu căn giữa</span><input type="checkbox" data-camera-pref="showCrosshair" checked></label>
@@ -7408,7 +7409,7 @@ window.TascoCloud = (() => {
     const types={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',gif:'image/gif',heic:'image/heic',heif:'image/heif',avif:'image/avif'};
     return types[String(name).split('.').pop().toLowerCase()]||'image/jpeg';
   }
-  function downloadBatches(files,maxCount=20,maxBytes=80*1024*1024){
+  function downloadBatches(files,maxCount=Infinity,maxBytes=Infinity){
     const out=[];let current=[],size=0;
     for(const file of files){
       if(current.length&&(current.length>=maxCount||size+file.size>maxBytes)){out.push(current);current=[];size=0;}
@@ -7839,7 +7840,7 @@ function retryCameraLocation() {return ensureRealtimeGpsCoordinates({forceAddres
 
 /* The same immutable preferences drive the live preview and captured pixels. */
 const cameraAspectRatios={native:null,'3:4':[3,4],'4:3':[4,3],'1:1':[1,1],'9:16':[9,16],'16:9':[16,9],'2:3':[2,3],'3:2':[3,2]};
-const cameraAppearanceDefaults={aspectRatio:'native',title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true};
+const cameraAppearanceDefaults={aspectRatio:'native',title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true,autoSaveDevice:false};
 const cameraStampFonts={sans:'Arial, sans-serif',jakarta:'"Plus Jakarta Sans", Arial, sans-serif',serif:'Georgia, serif',mono:'"Courier New", monospace',tahoma:'Tahoma, sans-serif'};
 function sanitizeCameraAppearance(value={}){
   const result={...cameraAppearanceDefaults};
@@ -7856,6 +7857,22 @@ let cameraAppearance={...cameraAppearanceDefaults};
 // Preferences are restored for the authenticated user by TascoCameraPreferences.
 function cameraAppearanceSnapshot(){return Object.freeze({...cameraAppearance});}
 function saveCameraAppearance(){window.TascoCameraPreferences?.changed();}
+let cameraAutoSaveChain=Promise.resolve();
+function cameraAutoSaveToDevice(file){
+  if(!cameraAppearance.autoSaveDevice||!(file instanceof Blob))return;
+  const d=new Date(file.lastModified||Date.now()),p=(n,l=2)=>String(n).padStart(l,'0');
+  const name='Tasco_'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds())+'_'+p(d.getMilliseconds(),3)+'.jpg';
+  // Xếp hàng để nhiều ảnh chụp liên tiếp được tải lần lượt, không chồng nhau.
+  cameraAutoSaveChain=cameraAutoSaveChain.then(()=>new Promise(resolve=>{
+    try{
+      const url=URL.createObjectURL(file),link=document.createElement('a');
+      link.href=url;link.download=name;link.rel='noopener';link.hidden=true;
+      document.body.append(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+    }catch(_){cameraFeedback('Ảnh đã chụp nhưng chưa lưu được về máy.');}
+    setTimeout(resolve,350);
+  }));
+}
 function changeCameraAppearance(input){
   const key=input.dataset.cameraPref;if(!(key in cameraAppearanceDefaults))return;
   const value=input.type==='checkbox'?input.checked:input.type==='range'?Number(input.value):input.value;
@@ -8220,7 +8237,7 @@ document.getElementById('cameraNativeInput')?.addEventListener('change',async ev
     const metadata=createCameraPhotoMetadata();metadata.quality=cameraQuality();metadata.source='camera';cameraPhotoMetadata.set(file,metadata);
     const stamped=await addWatermarkToImageFile(file,'',{isCameraSource:true});
     if(session!==cameraUiState.session)return;if(stamped===file)throw new Error('Chưa xử lý được ảnh từ camera hệ thống.');
-    customCameraPhotos.push(stamped);renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();cameraFeedback('Đã thêm ảnh.');
+    customCameraPhotos.push(stamped);cameraAutoSaveToDevice(stamped);renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();cameraFeedback('Đã thêm ảnh.');
   }catch(error){if(session===cameraUiState.session)cameraFeedback(error.message);}
   finally{if(session===cameraUiState.session){cameraUiState.captureBusy=false;event.target.value='';await cameraReturnFromNative();syncCameraViewport();}}
 });
@@ -8521,7 +8538,8 @@ async function triggerCustomCameraCapture() {
     if(session!==cameraUiState.session)return;
     const file=new File([blob],'capture_'+metadata.capturedAt+'_'+customCameraPhotos.length+'.jpg',{type:'image/jpeg',lastModified:metadata.capturedAt});
     metadata.stampedFile=file;metadata.locationPromise=Promise.resolve(location);cameraPhotoMetadata.set(file,metadata);customCameraPhotos.push(file);
-    renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();cameraFeedback('Đã chụp '+customCameraPhotos.length+' ảnh.',1100);return file;
+    cameraAutoSaveToDevice(file);
+    renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();cameraFeedback('Đã chụp '+customCameraPhotos.length+' ảnh'+(cameraAppearance.autoSaveDevice?' · đã lưu về máy.':'.'),1100);return file;
   }catch(error){if(session===cameraUiState.session){recover=recover||track.readyState==='ended'||track.muted||video.readyState<2;cameraFeedback(error.message||'Chưa tạo được ảnh. Vui lòng chụp lại.');}}
   finally{cameraReleaseCanvas(canvas);if(session===cameraUiState.session){cameraUiState.captureBusy=false;syncCameraViewport();if(recover)cameraRecoverPreview();}}
 }
