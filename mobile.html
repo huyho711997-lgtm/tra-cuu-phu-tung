@@ -2778,6 +2778,86 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   .tasco-workspace #modalFilterSelection[data-keyboard=true][data-short-viewport=true] .ws-sheet-bulk { display: none; }
 
 </style>
+<style id="tascoLookupCompactType">
+.tasco-workspace #traCuuSection .ws-filter-grid strong { font-size: 10px; }
+.tasco-workspace #traCuuSection .ws-filter-grid small { font-size: 13px; }
+.tasco-workspace #traCuuSection .ws-search-input-wrap { position: relative; display: block; flex: 1; min-width: 0; height: 52px; overflow: hidden; }
+/* Render at 14px while retaining 16px intrinsic input text for iOS focus. */
+.tasco-workspace #traCuuSection .ws-search-input-wrap #searchInput { position: absolute; top: 0; left: 0; width: 114.285714%; max-width: none; height: 52px; padding: 0 !important; margin: 0; font-size: 16px !important; transform: scale(.875); transform-origin: left center; }
+</style>
+<style id="tascoPremiumHomeActions">
+/* Camera and personal library form a matched pair of home actions. */
+.tasco-workspace #homeSection .home-action-card {
+  position: relative; isolation: isolate; overflow: hidden; display: flex;
+  flex-direction: column; align-items: stretch; justify-content: space-between;
+  min-height: 150px; min-width: 0; padding: 16px 17px 17px; gap: 17px;
+  border-radius: 22px; text-align: left; transition: transform .18s ease,box-shadow .18s ease;
+}
+.tasco-workspace #homeSection .home-action-card--camera {
+  border: 1px solid #456a80; background: linear-gradient(145deg,#244861 0%,#173452 54%,#102440 100%);
+  color: #edf5f7; box-shadow: 0 8px 18px -12px #0b1b3090,inset 0 1px 0 #daecf026;
+}
+.tasco-workspace #homeSection .home-action-card--cloud {
+  border: 1px solid #bfd8df; background: linear-gradient(145deg,#fff 25%,#f1f8f9 100%);
+  color: #183056; box-shadow: 0 8px 20px -15px #18305655,inset 0 1px 0 #fff;
+}
+.home-action-card::before { content: ''; position: absolute; z-index: -1; pointer-events: none; width: 160px; height: 160px; top: -77px; left: -57px; border-radius: 50%; }
+.home-action-card--camera::before { background: radial-gradient(circle,#84bfc72b,transparent 70%); }
+.home-action-card--cloud::before { background: radial-gradient(circle,#b8dce259,transparent 72%); }
+.home-action-card::after { content: ''; position: absolute; z-index: -1; pointer-events: none; width: 104px; height: 104px; right: -65px; bottom: -34px; border: 1px solid; border-radius: 50%; box-shadow: 0 0 0 14px transparent,0 0 0 15px; opacity: .1; }
+.home-action-card--camera::after { border-color: #9dcfd6; color: #9dcfd6; }
+.home-action-card--cloud::after { border-color: #63adb6; color: #63adb6; }
+.hc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; width: 100%; }
+.hc-art { display: block; width: 54px; height: 48px; flex: 0 0 54px; }
+.hc-art svg { display: block; width: 54px; height: 48px; overflow: visible; }
+.hc-open { display: grid; place-items: center; width: 26px; height: 26px; flex: 0 0 26px; border: 1px solid; border-radius: 50%; margin-top: 1px; }
+.hc-open svg { display: block; width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.home-action-card--camera .hc-open { background: #daecf00b; border-color: #a7c3d035; color: #b8dce2; }
+.home-action-card--cloud .hc-open { background: #fff9; border-color: #c7dde3; color: #39747e; }
+.hc-copy { display: block; position: relative; z-index: 1; min-width: 0; }
+.tasco-workspace #homeSection .home-action-card strong { display: block; margin: 0; font-size: 13px; font-weight: 650; letter-spacing: -.25px; line-height: 1.4; color: inherit; }
+.tasco-workspace #homeSection .home-action-card small { display: block; margin-top: 5px; font-size: 9px; line-height: 1.6; font-weight: 450; letter-spacing: .02em; color: #a7c3d0; }
+.tasco-workspace #homeSection .home-action-card--cloud small { color: #526c81; }
+.tasco-workspace #homeSection .home-action-card:focus-visible { outline: 2px solid var(--ws-accent-text); outline-offset: 4px; }
+.tasco-workspace #homeSection .home-action-card:active:not(:disabled) { transform: translateY(1px); }
+@media(hover:hover) { .tasco-workspace #homeSection .home-action-card:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 24px -15px #18305665,inset 0 1px 0 #daecf026; } }
+.dark .tasco-workspace #homeSection .home-action-card--camera { border-color: #456a80; background: linear-gradient(145deg,#244861,#102440); }
+.dark .tasco-workspace #homeSection .home-action-card--cloud { border-color: #335b76; background: linear-gradient(145deg,#203f61,#142f3d); color: #edf5f7; box-shadow: 0 8px 20px -15px #0008,inset 0 1px 0 #daecf010; }
+.dark .home-action-card--cloud .hc-open { border-color: #456a80; background: #daecf00b; color: #b8dce2; }
+.dark .tasco-workspace #homeSection .home-action-card--cloud small { color: #a7c3d0; }
+@media(max-width:360px) { .tasco-workspace #homeSection .home-action-card { min-height: 145px; padding: 15px; gap: 15px; border-radius: 20px; } .tasco-workspace #homeSection .home-action-card strong { font-size: 12px; } }
+@media(prefers-reduced-motion:reduce) { .tasco-workspace #homeSection .home-action-card { transition: none; } }
+
+</style>
+<style id="tascoNavigationMotionStyles">
+/* One composited selection surface, rather than five independent backgrounds. */
+.tasco-workspace #bottomNav.ws-bottom-nav[data-nav-motion] { isolation: isolate; }
+.tasco-workspace #bottomNav[data-nav-motion] .ws-nav-indicator {
+  position: absolute; z-index: 0; left: 0; top: 0; display: block; pointer-events: none;
+  width: var(--nav-selection-width,0px); height: var(--nav-selection-height,0px);
+  transform: translate3d(var(--nav-selection-x,0px),var(--nav-selection-y,0px),0);
+  border: 1px solid #ffffff8c; border-radius: 17px; opacity: 0;
+  background: linear-gradient(150deg,#e6f3f6,#daecf0);
+  box-shadow: inset 0 1px 0 #ffffffbf,0 3px 9px -7px #39747e52;
+  transition: transform 420ms cubic-bezier(.22,.8,.2,1),width 300ms cubic-bezier(.22,.8,.2,1),height 300ms cubic-bezier(.22,.8,.2,1),opacity 160ms ease;
+  will-change: transform;
+}
+.tasco-workspace #bottomNav[data-nav-motion][data-indicator-visible=true] .ws-nav-indicator { opacity: 1; }
+.tasco-workspace #bottomNav[data-nav-motion] .ws-nav-button { position: relative; z-index: 1; background: transparent !important; transition: color 200ms ease; -webkit-tap-highlight-color: transparent; }
+.tasco-workspace #bottomNav[data-nav-motion] .ws-nav-button[aria-current=page] { background: transparent !important; }
+.tasco-workspace #bottomNav[data-nav-motion] .ws-nav-button .ws-icon { transition: transform 300ms cubic-bezier(.22,.8,.2,1),color 200ms ease,fill 200ms ease,stroke-width 200ms ease; transform: translate3d(0,0,0) scale(1); transform-origin: center; }
+.tasco-workspace #bottomNav[data-nav-motion] .ws-nav-button[aria-current=page] .ws-icon { transform: translate3d(0,-1px,0) scale(1.05); }
+.tasco-workspace #bottomNav[data-nav-motion] .ws-nav-button:active .ws-icon { transform: translate3d(0,0,0) scale(.96); }
+.tasco-workspace #bottomNav[data-nav-motion] .ws-nav-button span { transition: color 200ms ease; }
+.tasco-workspace #bottomNav[data-nav-motion] .ws-nav-button[data-shell-nav=home] svg { fill: transparent; }
+.tasco-workspace #bottomNav[data-nav-motion] .ws-nav-button[data-shell-nav=home][aria-current=page] svg { fill: currentColor; }
+html.dark .tasco-workspace #bottomNav[data-nav-motion] .ws-nav-indicator { border-color: #52798a55; background: linear-gradient(150deg,#2b5269,#244861); box-shadow: inset 0 1px 0 #daecf017,0 3px 9px -7px #0007; }
+@media(prefers-reduced-motion:reduce) {
+  .tasco-workspace #bottomNav[data-nav-motion] :is(.ws-nav-indicator,.ws-nav-button,.ws-nav-button .ws-icon,.ws-nav-button span) { transition: none !important; }
+  .tasco-workspace #bottomNav[data-nav-motion] .ws-nav-button[aria-current=page] .ws-icon { transform: none; }
+}
+
+</style>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
 <section id="tascoBootSplash" aria-labelledby="bootTitle" aria-busy="true">
@@ -2960,11 +3040,46 @@ window.TascoBootSplash = (() => {
   <div class="ws-home-grid">
     <article class="ws-feature"><span class="ws-eyebrow"><i></i>TRA CỨU PHỤ TÙNG</span><h2>Tìm đúng.<br>Làm tốt.</h2><p>Thông tin phụ tùng theo hãng xe, dòng xe và năm sản xuất.</p><button type="button" class="ws-primary" onclick="updateView('lookup')">Tra cứu ngay <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><svg class="ws-mechanical" viewBox="0 0 280 280" fill="none" aria-hidden="true"><defs><linearGradient id="rotorMetal" x1="42" y1="10" x2="230" y2="242" gradientUnits="userSpaceOnUse"><stop stop-color="#edf5f7"/><stop offset=".26" stop-color="#63adb6"/><stop offset=".51" stop-color="#daecf0"/><stop offset=".76" stop-color="#39747e"/><stop offset="1" stop-color="#84bfc7"/></linearGradient><linearGradient id="rotorRim" x1="45" y1="50" x2="230" y2="250"><stop stop-color="#daecf0"/><stop offset="1" stop-color="#39747e"/></linearGradient></defs><ellipse cx="141" cy="166" rx="108" ry="104" fill="#0b1b30" opacity=".45"/><g transform="translate(16 0) rotate(12 140 140) scale(.9 1)"><circle cx="140" cy="151" r="113" fill="#244861" stroke="#63adb6" stroke-width="4"/><circle cx="140" cy="140" r="113" fill="url(#rotorMetal)" stroke="url(#rotorRim)" stroke-width="5"/><circle cx="140" cy="140" r="106" stroke="#edf5f7" stroke-opacity=".4"/><circle cx="140" cy="140" r="92" stroke="#244861" stroke-opacity=".5"/><circle cx="140" cy="140" r="67" fill="#335b76" stroke="#daecf0" stroke-width="2"/><circle cx="140" cy="140" r="48" fill="url(#rotorMetal)" stroke="#daecf0" stroke-width="2"/><circle cx="140" cy="140" r="20" fill="#183056" stroke="#daecf0" stroke-width="4"/><circle cx="220.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="60.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="140.0" cy="106.0" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/><circle cx="172.3" cy="129.5" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/><circle cx="160.0" cy="167.5" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/><circle cx="120.0" cy="167.5" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/><circle cx="107.7" cy="129.5" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/></g></svg><span class="ws-feature-foot">TASCO INSURANCE</span></article>
     <div class="ws-shortcuts">
-      <button type="button" class="ws-shortcut ws-shortcut--camera" data-home-camera data-cloud-only hidden onclick="TascoAppShell.camera()" disabled><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4z"/><circle cx="12" cy="13" r="3.5"/></svg><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg><span><strong>Chụp ảnh hồ sơ</strong><small>Ngày giờ &amp; địa điểm</small></span></button>
-      <button type="button" class="ws-shortcut" data-cloud-only hidden onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg><span><strong>Cloud của tôi</strong><small data-cloud-caption>Thư viện ảnh cá nhân</small></span></button>
+      <button type="button" class="ws-shortcut ws-shortcut--camera home-action-card home-action-card--camera" data-home-camera data-cloud-only hidden onclick="TascoAppShell.camera()" disabled>
+  <span class="hc-top" aria-hidden="true">
+    <span class="hc-art"><svg viewBox="0 0 62 56" fill="none">
+      <defs><linearGradient id="hcCameraBody" x1="9" y1="12" x2="55" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#49748c"/><stop offset="1" stop-color="#183056"/></linearGradient><linearGradient id="hcCameraRim" x1="20" y1="19" x2="43" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="#edf5f7"/><stop offset=".36" stop-color="#84bfc7"/><stop offset=".65" stop-color="#daecf0"/><stop offset="1" stop-color="#39747e"/></linearGradient><linearGradient id="hcCameraGlass" x1="25" y1="23" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#335b76"/><stop offset="1" stop-color="#071423"/></linearGradient></defs>
+      <rect x="7" y="21" width="49" height="30" rx="9" fill="#071423" opacity=".25"/>
+      <path d="M13 16h8l3-5h16l3 5h7a6 6 0 0 1 6 6v21a6 6 0 0 1-6 6H13a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6Z" fill="url(#hcCameraBody)" stroke="#a7c3d0" stroke-width="1.1"/>
+      <path d="M14 18h7m5-5h11" stroke="#daecf0" stroke-opacity=".6" stroke-linecap="round"/>
+      <rect x="44" y="21" width="7" height="4" rx="1.5" fill="#b8dce2"/>
+      <circle cx="31" cy="32" r="13" fill="#0b1b30" stroke="#52798d" stroke-width="1.2"/>
+      <circle cx="31" cy="31" r="12" fill="url(#hcCameraRim)" stroke="#daecf0" stroke-width=".6"/>
+      <circle cx="31" cy="31" r="8.7" fill="url(#hcCameraGlass)" stroke="#39747e" stroke-width="1.2"/>
+      <circle cx="31" cy="31" r="5.5" stroke="#63adb6" stroke-opacity=".5"/>
+      <ellipse cx="28.5" cy="27.5" rx="2.3" ry="1.4" transform="rotate(-32 28.5 27.5)" fill="#b8dce2" opacity=".68"/>
+      <path d="M11 39v4a2 2 0 0 0 2 2h5" stroke="#84bfc7" stroke-opacity=".35" stroke-linecap="round"/>
+    </svg></span>
+    <span class="hc-open"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+  </span>
+  <span class="hc-copy"><strong>Chụp ảnh hồ sơ</strong><small>Ngày giờ &amp; địa điểm</small></span>
+</button>
+      <button type="button" class="ws-shortcut home-action-card home-action-card--cloud" data-cloud-only hidden onclick="updateView('cloud')">
+  <span class="hc-top" aria-hidden="true">
+    <span class="hc-art"><svg viewBox="0 0 62 56" fill="none">
+      <defs><linearGradient id="hcCloudBack" x1="12" y1="13" x2="49" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="#b8dce2"/><stop offset="1" stop-color="#63adb6"/></linearGradient><linearGradient id="hcCloudFront" x1="13" y1="21" x2="48" y2="53" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#daecf0"/></linearGradient><linearGradient id="hcCloudSurface" x1="26" y1="15" x2="53" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#edf5f7"/><stop offset="1" stop-color="#9dcfd6"/></linearGradient></defs>
+      <ellipse cx="32" cy="50" rx="23" ry="3" fill="#183056" opacity=".08"/>
+      <rect x="8" y="12" width="35" height="29" rx="5" transform="rotate(-12 8 12)" fill="url(#hcCloudBack)" stroke="#84bfc7"/>
+      <rect x="14" y="14" width="35" height="29" rx="5" transform="rotate(6 14 14)" fill="#edf5f7" stroke="#a7c3d0"/>
+      <rect x="10" y="23" width="38" height="27" rx="6" fill="url(#hcCloudFront)" stroke="#84bfc7"/>
+      <path d="m15 42 9-10 7 7 6-4 6 7" stroke="#63adb6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="37" cy="30" r="2.2" fill="#9dcfd6"/>
+      <path d="M47 15h-.8a8.2 8.2 0 0 0-16.2 2.1 5.8 5.8 0 0 0 1.1 11.5H47a6.8 6.8 0 0 0 0-13.6Z" fill="#39747e" opacity=".16" transform="translate(1 2)"/>
+      <path d="M47 15h-.8a8.2 8.2 0 0 0-16.2 2.1 5.8 5.8 0 0 0 1.1 11.5H47a6.8 6.8 0 0 0 0-13.6Z" fill="url(#hcCloudSurface)" stroke="#63adb6" stroke-width="1.1"/>
+      <path d="M35 16a4.5 4.5 0 0 1 7-2" stroke="#fff" stroke-opacity=".8" stroke-width="1.3" stroke-linecap="round"/>
+    </svg></span>
+    <span class="hc-open"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+  </span>
+  <span class="hc-copy"><strong>Cloud của tôi</strong><small data-cloud-caption>Thư viện ảnh cá nhân</small></span>
+</button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="updateView('rescue')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16V8h11v8M14 11h4l3 3v2h-7M3 16h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg><span><strong>Chi phí cứu hộ</strong><small>Tra cứu đơn giá, tính nhanh kéo &amp; cẩu xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="updateView('garage')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.4-6-10a6 6 0 0 1 12 0c0 4.6-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></svg><span><strong>Quản lý gara</strong><small>Danh sách gara &amp; điểm đến kéo xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
-      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="updateView('forms')"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Word &amp; PDF xem ngay trong ứng dụng.</small></span></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="updateView('forms')"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Word &amp; PDF xem ngay trong ứng dụng.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="updateView('account')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span><strong>Tài khoản &amp; thiết lập</strong><small>Không gian riêng, theo cách của bạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
     </div>
   </div>
@@ -3203,7 +3318,7 @@ window.TascoBootSplash = (() => {
   <div class="ws-search-panel ws-search-panel--premium">
     <div class="ws-kind-tabs" role="group" aria-label="Loại hàng cần tra cứu"><button type="button" data-lookup-type="all" onclick="TascoLookupFlow.chooseType('all')" aria-pressed="true">Tất cả</button><button type="button" data-lookup-type="genuine" onclick="TascoLookupFlow.chooseType('genuine')" aria-pressed="false">Chính hãng</button><button type="button" data-lookup-type="aftermarket" onclick="TascoLookupFlow.chooseType('aftermarket')" aria-pressed="false">Không chính hãng</button></div>
     <label for="searchInput" class="ws-search-label">Phụ tùng cần tìm</label>
-    <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" id="searchInput" placeholder="Nhập tên phụ tùng…" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();searchData();}"></div>
+    <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="ws-search-input-wrap"><input type="search" id="searchInput" placeholder="Nhập tên phụ tùng…" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();searchData();}"></span></div>
     <div class="ws-part-suggestions" aria-label="Gợi ý phụ tùng"><span>Gợi ý</span><button type="button" data-part-suggestion="Đèn pha" onclick="TascoLookupFlow.choosePart('Đèn pha')" aria-pressed="false">Đèn pha</button><button type="button" data-part-suggestion="Cản trước" onclick="TascoLookupFlow.choosePart('Cản trước')" aria-pressed="false">Cản trước</button><button type="button" data-part-suggestion="Gương chiếu hậu" onclick="TascoLookupFlow.choosePart('Gương chiếu hậu')" aria-pressed="false">Gương chiếu hậu</button></div>
     <div class="ws-filter-grid"><button type="button" id="btnHang" onclick="openFilterModal('hang')" aria-label="Chọn hãng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Hãng xe</strong><small id="labelHang">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="multiHieuBtn" onclick="openFilterModal('hieu')" aria-label="Chọn dòng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Dòng xe</strong><small id="labelHieu">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnNam" onclick="openFilterModal('nam')" aria-label="Chọn năm sản xuất" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></span><span class="ws-filter-copy"><strong>Năm sản xuất</strong><small id="labelNam">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnType" onclick="openFilterModal('type')" aria-label="Chọn loại hàng" data-active="false" hidden><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M8 6V3h8v3M3 12h18m-11 0v3h4v-3"/></svg></span><span class="ws-filter-copy"><strong>Loại hàng</strong><small id="labelType">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
     <div class="ws-search-options"><button type="button" id="btnExactPartName" class="ws-exact-toggle" onclick="toggleExactPartName()" title="Khớp chính xác tên phụ tùng" aria-label="Khớp chính xác tên phụ tùng" aria-pressed="false"><span class="ws-exact-box" aria-hidden="true"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span>Khớp chính xác tên</span></button></div>
@@ -3255,7 +3370,7 @@ window.TascoBootSplash = (() => {
     </div>
 
         <!-- Thanh điều hướng dưới cùng (Bottom Nav) -->
-<nav id="bottomNav" class="ws-bottom-nav" aria-label="Điều hướng chính" style="display:none"><button type="button" id="navHomeBtn" class="ws-nav-button" data-shell-nav="home" onclick="updateView('home')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button><button type="button" id="navLookupBtn" class="ws-nav-button" data-shell-nav="lookup" onclick="updateView('lookup')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Tra cứu</span></button><button type="button" id="navMyCloudBtn" data-cloud-only hidden class="ws-nav-button" data-shell-nav="cloud" onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><span>Cloud</span></button><button type="button" id="navRescueBtn" class="ws-nav-button" data-shell-nav="rescue" onclick="updateView('rescue')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16V8h11v8M14 11h4l3 3v2h-7M3 16h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg><span>Cứu hộ</span></button><button type="button" id="navAccountBtn" class="ws-nav-button" data-shell-nav="account" onclick="updateView('account')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span>Tài khoản</span></button></nav>
+<nav id="bottomNav" class="ws-bottom-nav" aria-label="Điều hướng chính" style="display:none"><span class="ws-nav-indicator" aria-hidden="true"></span><button type="button" id="navHomeBtn" class="ws-nav-button" data-shell-nav="home" onclick="updateView('home')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button><button type="button" id="navLookupBtn" class="ws-nav-button" data-shell-nav="lookup" onclick="updateView('lookup')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Tra cứu</span></button><button type="button" id="navMyCloudBtn" data-cloud-only hidden class="ws-nav-button" data-shell-nav="cloud" onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><span>Cloud</span></button><button type="button" id="navRescueBtn" class="ws-nav-button" data-shell-nav="rescue" onclick="updateView('rescue')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16V8h11v8M14 11h4l3 3v2h-7M3 16h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg><span>Cứu hộ</span></button><button type="button" id="navAccountBtn" class="ws-nav-button" data-shell-nav="account" onclick="updateView('account')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span>Tài khoản</span></button></nav>
 <script id="tascoCloudPermissions">
 window.TascoCloudAccess=(()=>{
   let options={},identity=null,revision=0,snapshot=null,inflight=null;
@@ -3538,6 +3653,7 @@ window.TascoAppShell=(()=>{
     document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','forms'].includes(view);
     setText('#wsPageTitle',pages[view]||'');
     document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
+    window.TascoNavigationMotion?.sync(view,previous);
     if(view==='login'){window.TascoPhotoViewer?.close();window.TascoDatePicker?.close();window.TascoPhotoExport?.close();document.title='TASCO DLK · Đăng nhập';return;}
     document.title=pages[view]+' · TASCO DLK';
     if(options.history!==false){const hash='#'+view;if(location.hash!==hash||options.replace)history[options.replace?'replaceState':'pushState']({tascoPage:view},'',location.pathname+location.search+hash);}
@@ -10553,6 +10669,79 @@ window.TascoFilterViewport = (() => {
     if (event.key === 'Enter') { event.preventDefault(); search.blur(); }
   });
   return { open, close, measure };
+})();
+
+</script>
+<script id="tascoNavigationMotion">
+window.TascoNavigationMotion = (() => {
+  const nav = document.getElementById('bottomNav');
+  const indicator = nav?.querySelector('.ws-nav-indicator');
+  if (!nav || !indicator) return { sync() {} };
+  const motionPreference = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+  const pageIds = {home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',account:'accountSection',forms:'formsSection',admin:'sysMgrSection'};
+  let positioned = false, frame = 0, pendingAnimated = true, pageAnimation = null, lastGeometry = null;
+  nav.dataset.navMotion = 'true';
+  function position(animate = true) {
+    const selected = nav.querySelector('[data-shell-nav][aria-current="page"]');
+    const navRect = nav.getBoundingClientRect();
+    const target = selected?.getBoundingClientRect();
+    if (!target?.width || !navRect.width || selected.hidden || nav.style.display === 'none') {
+      nav.dataset.indicatorVisible = 'false';
+      if (nav.style.display === 'none') positioned = false;
+      return;
+    }
+    const geometry = [target.left - navRect.left - nav.clientLeft,target.top - navRect.top - nav.clientTop,target.width,target.height];
+    // A keyboard/observer resize with unchanged tab bounds must not interrupt a slide.
+    if (positioned && nav.dataset.indicatorVisible === 'true' && lastGeometry && geometry.every((value,index) => Math.abs(value - lastGeometry[index]) < .25)) return;
+    lastGeometry = geometry;
+    const smooth = positioned && animate && !motionPreference?.matches;
+    if (!smooth) indicator.style.transition = 'none';
+    indicator.style.setProperty('--nav-selection-x',geometry[0] + 'px');
+    indicator.style.setProperty('--nav-selection-y',geometry[1] + 'px');
+    indicator.style.setProperty('--nav-selection-width',geometry[2] + 'px');
+    indicator.style.setProperty('--nav-selection-height',geometry[3] + 'px');
+    nav.dataset.indicatorVisible = 'true';
+    if (!smooth) {
+      // Only first paint and geometry changes snap; subsequent tabs transition in CSS.
+      indicator.getBoundingClientRect();
+      indicator.style.removeProperty('transition');
+    }
+    positioned = true;
+  }
+  function schedule(animate = true) {
+    pendingAnimated = pendingAnimated && animate;
+    if (frame) return;
+    frame = window.requestAnimationFrame(() => {
+      frame = 0; const smooth = pendingAnimated; pendingAnimated = true; position(smooth);
+    });
+  }
+  function animatePage(view, previous) {
+    pageAnimation?.cancel(); pageAnimation = null;
+    if (!previous || previous === 'login' || view === 'login' || view === previous || motionPreference?.matches) return;
+    const page = document.getElementById(pageIds[view]);
+    if (!page || page.hidden || typeof page.animate !== 'function') return;
+    // Opacity keeps fixed toolbars anchored to the viewport during navigation.
+    const animation = page.animate([{opacity:.65},{opacity:1}], {duration:210,easing:'cubic-bezier(.2,.65,.3,1)'});
+    pageAnimation = animation;
+    animation.onfinish = () => { if (pageAnimation === animation) pageAnimation = null; };
+  }
+  function sync(view, previous) {
+    if (frame) { window.cancelAnimationFrame(frame); frame = 0; pendingAnimated = true; }
+    position(previous !== 'login');
+    animatePage(view,previous);
+  }
+  window.addEventListener('resize', () => schedule(false), {passive:true});
+  window.addEventListener('pageshow', () => schedule(false));
+  document.fonts?.ready?.then(() => schedule(false));
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => schedule(false)).observe(nav);
+  if (typeof MutationObserver !== 'undefined') new MutationObserver(records => {
+    if (records.some(record => record.target === nav || record.target.matches?.('[data-shell-nav]'))) schedule(true);
+  }).observe(nav,{attributes:true,subtree:true,attributeFilter:['hidden','aria-current','style']});
+  motionPreference?.addEventListener?.('change', () => {
+    pageAnimation?.cancel(); pageAnimation = null; schedule(false);
+  });
+  schedule(false);
+  return { sync };
 })();
 
 </script>
