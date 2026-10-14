@@ -3,6 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script id="tascoBootEarly">
+/* Detect a saved session before the login form can paint. Verification stays with Supabase. */
+(() => { try {
+  const stored = JSON.parse(localStorage.getItem('tasco_dlk_supabase_auth') || 'null');
+  const session = stored?.currentSession || stored;
+  if (session && typeof session.access_token === 'string' && session.access_token && typeof session.refresh_token === 'string' && session.refresh_token) {
+    document.documentElement.classList.add('tasco-boot-pending');
+  }
+} catch (_) {} })();
+</script>
+<style id="tascoBootStyles">
+/* A single startup sequence for a previously saved sign-in. */
+html.tasco-boot-pending { background: #0b1b30 !important; }
+html.tasco-boot-pending body { overflow: hidden !important; }
+html.tasco-boot-pending :is(#loginOverlay,#mainApp,#bottomNav) { visibility: hidden !important; }
+#tascoBootSplash { display: none; position: fixed; inset: 0; z-index: 2147483000; align-items: center; justify-content: center; overflow: auto; isolation: isolate; box-sizing: border-box; padding: max(32px,env(safe-area-inset-top)) 24px max(30px,env(safe-area-inset-bottom)); background: #0b1b30; color: #edf5f7; font-family: 'Plus Jakarta Sans',system-ui,sans-serif; opacity: 1; transition: opacity .38s ease,transform .38s ease; }
+html.tasco-boot-pending #tascoBootSplash { display: flex; }
+#tascoBootSplash.is-leaving { opacity: 0; transform: scale(1.015); pointer-events: none; }
+#tascoBootSplash::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 42%,#20434f85 0,transparent 57%),radial-gradient(ellipse at 90% 0,#183056aa 0,transparent 48%); }
+.boot-content { width: min(100%,360px); text-align: center; }
+#tascoBootSplash { align-items: safe center; }
+.boot-brand { display: inline-flex; align-items: center; gap: 10px; color: #edf5f7; font-size: 17px; font-weight: 750; letter-spacing: .06em; }
+.boot-brand svg { width: 31px; height: 36px; color: #84bfc7; }
+.boot-brand small { display: block; margin-top: 5px; color: #a7c3d0; font-size: 8px; font-weight: 500; letter-spacing: .18em; text-align: left; }
+.boot-system { display: block; width: min(100%,320px); height: auto; margin: 38px auto 23px; overflow: visible; }
+.boot-grid { fill: #84bfc7; opacity: .07; }
+.boot-orbit { fill: none; stroke: #84bfc7; stroke-width: 1; opacity: .13; }
+.boot-orbit-ticks { fill: none; stroke: #84bfc7; stroke-width: 1.5; stroke-dasharray: 1 9; opacity: .45; }
+.boot-sweep { fill: none; stroke: url(#bootSweepGradient); stroke-width: 2.5; stroke-linecap: round; transform-origin: 160px 135px; }
+.boot-track { fill: none; stroke: #84bfc7; stroke-width: 1; opacity: .16; }
+.boot-signal { fill: none; stroke: #9dcfd6; stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.boot-node-disc { fill: #142f3d; stroke: #335b76; stroke-width: 1; }
+.boot-node-icon { fill: none; stroke: #a7c3d0; stroke-width: 1.45; stroke-linecap: round; stroke-linejoin: round; }
+.boot-node-label { fill: #a7c3d0; font-size: 8px; font-weight: 550; letter-spacing: .1em; }
+.boot-centre { fill: #183056; stroke: #84bfc7; stroke-width: 1.2; }
+.boot-centre-inner { fill: #20434f; stroke: #335b76; }
+.boot-emblem { fill: none; stroke: #daecf0; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.boot-check { fill: #84bfc7; stroke: #0b1b30; stroke-width: 4; }
+.boot-check-mark { fill: none; stroke: #102440; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#tascoBootSplash h1 { margin: 0; color: #edf5f7; font-size: clamp(23px,6.3vw,28px); font-weight: 650; letter-spacing: -.85px; line-height: 1.35; }
+.boot-subtitle { margin: 11px auto 0; color: #a7c3d0; font-size: 12px; line-height: 1.8; }
+.boot-progress { height: 2px; width: 132px; margin: 30px auto 15px; overflow: hidden; border-radius: 9px; background: #335b76; }
+.boot-progress span { display: block; width: 100%; height: 100%; background: #84bfc7; transform: scaleX(0); transform-origin: left; }
+.boot-status { min-height: 32px; margin: 0; color: #a7c3d0; font-size: 10px; line-height: 1.6; }
+.boot-foot { margin: 35px 0 0; color: #7d9aad; font-size: 8px; letter-spacing: .15em; }
+.boot-recovery { margin-top: 18px; }
+.boot-recovery[hidden] { display: none !important; }
+.boot-recovery p { color: #a7c3d0; font-size: 11px; line-height: 1.75; }
+.boot-recovery button { min-height: 42px; border: 1px solid #52798a; border-radius: 12px; padding: 9px 18px; background: #183056; color: #edf5f7; font: inherit; font-size: 11px; cursor: pointer; }
+.boot-recovery button:focus-visible { outline: 2px solid #84bfc7; outline-offset: 4px; }
+#tascoBootSplash[data-playing] .boot-sweep { animation: boot-orbit-turn 2.4s cubic-bezier(.3,.1,.3,1) 1 both; }
+#tascoBootSplash[data-playing] .boot-signal { animation: boot-connect .8s ease .45s 1 both; }
+#tascoBootSplash[data-playing] .boot-signal--2 { animation-delay: .85s; }
+#tascoBootSplash[data-playing] .boot-signal--3 { animation-delay: 1.25s; }
+#tascoBootSplash[data-playing] .boot-node { animation: boot-node-ready .65s ease .55s 1 both; transform-box: fill-box; transform-origin: center; }
+#tascoBootSplash[data-playing] .boot-node--2 { animation-delay: .95s; }
+#tascoBootSplash[data-playing] .boot-node--3 { animation-delay: 1.35s; }
+#tascoBootSplash[data-playing] .boot-gear { animation: boot-gear-turn 1.3s ease .5s 1 both; transform-box: fill-box; transform-origin: center; }
+#tascoBootSplash[data-playing] .boot-core { animation: boot-core-in .85s ease 1 both; transform-origin: 160px 135px; }
+#tascoBootSplash[data-playing] .boot-check-group { animation: boot-check-in .4s ease 2.1s 1 both; transform-origin: 195px 168px; }
+#tascoBootSplash[data-playing] .boot-progress span { animation: boot-progress 2.6s cubic-bezier(.2,.65,.4,1) 1 both; }
+@keyframes boot-orbit-turn { from { transform: rotate(-100deg); opacity: 0; } 15% { opacity: .85; } to { transform: rotate(260deg); opacity: .4; } }
+@keyframes boot-connect { from { stroke-dashoffset: 1; opacity: 0; } 15% { opacity: 1; } to { stroke-dashoffset: 0; opacity: .7; } }
+@keyframes boot-node-ready { from { opacity: .28; transform: scale(.91); } 60% { transform: scale(1.035); } to { opacity: 1; transform: scale(1); } }
+@keyframes boot-gear-turn { from { transform: rotate(-90deg); } to { transform: rotate(90deg); } }
+@keyframes boot-core-in { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes boot-check-in { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: scale(1); } }
+@keyframes boot-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media(max-height:620px) { .boot-system { width: 240px; margin: 19px auto 12px; } .boot-progress { margin-top: 21px; } .boot-foot { margin-top: 20px; } }
+@media(prefers-reduced-motion:reduce) { #tascoBootSplash[data-playing] :is(.boot-sweep,.boot-signal,.boot-node,.boot-gear,.boot-core,.boot-check-group,.boot-progress span) { animation: none !important; } .boot-signal { stroke-dashoffset: 0; opacity: .7; } .boot-progress span { transform: scaleX(1); } #tascoBootSplash { transition: opacity .12s ease; } }
+</style>
     <meta id="tascoThemeColor" name="theme-color" content="#edf5f7">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>TASCO DLK · Không gian làm việc</title>
@@ -2674,6 +2745,105 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 </script>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
+<section id="tascoBootSplash" aria-labelledby="bootTitle" aria-busy="true">
+  <div class="boot-content">
+    <div class="boot-brand"><svg viewBox="0 0 32 36" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16 2 28 6v11c0 7-5 12-12 16C9 29 4 24 4 17V6z"/><path d="m10 16 2-5h8l2 5M9 16h14v7H9zm3 7v2m8-2v2m-8-5h1m6 0h1"/></svg><span>TASCO DLK<small>INSURANCE WORKSPACE</small></span></div>
+    <svg class="boot-system" viewBox="0 0 320 280" fill="none" aria-hidden="true">
+      <defs><linearGradient id="bootSweepGradient"><stop stop-color="#84bfc7" stop-opacity="0"/><stop offset="1" stop-color="#b8dce2"/></linearGradient><pattern id="bootGridPattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" class="boot-grid"/></pattern></defs>
+      <rect x="30" y="16" width="260" height="250" fill="url(#bootGridPattern)"/>
+      <circle cx="160" cy="135" r="88" class="boot-orbit"/><circle cx="160" cy="135" r="72" class="boot-orbit-ticks"/>
+      <path d="M86 96a83 83 0 0 1 135-21" class="boot-sweep"/>
+      <path d="M76 126h27q12 0 17 9h14M192 119l35-45h15M186 159l39 45h20" class="boot-track"/>
+      <path d="M76 126h27q12 0 17 9h14" pathLength="1" class="boot-signal"/>
+      <path d="M192 119l35-45h15" pathLength="1" class="boot-signal boot-signal--2"/>
+      <path d="M186 159l39 45h20" pathLength="1" class="boot-signal boot-signal--3"/>
+      <g class="boot-node"><circle cx="57" cy="126" r="23" class="boot-node-disc"/><g class="boot-node-icon boot-gear"><path d="m54 114 6 0 1 4 3 2 4-1 3 5-3 3v3l3 3-3 5-4-1-3 2-1 4h-6l-1-4-3-2-4 1-3-5 3-3v-3l-3-3 3-5 4 1 3-2z" transform="translate(0 -2) scale(.94)"/><circle cx="57" cy="126" r="4"/></g><text x="57" y="166" text-anchor="middle" class="boot-node-label">PHỤ TÙNG</text></g>
+      <g class="boot-node boot-node--2"><circle cx="259" cy="74" r="23" class="boot-node-disc"/><g class="boot-node-icon"><path d="M249 71v-5h8l3 3h9v15h-20V71z"/><path d="M249 71h20M254 76h10m-10 4h6"/></g><text x="259" y="114" text-anchor="middle" class="boot-node-label">HỒ SƠ</text></g>
+      <g class="boot-node boot-node--3"><circle cx="259" cy="204" r="23" class="boot-node-disc"/><g class="boot-node-icon"><path d="M249 213v-15l10-6 10 6v15M253 213v-10h12v10m-12-6h12m-12 3h12"/></g><text x="259" y="244" text-anchor="middle" class="boot-node-label">GARA</text></g>
+      <g class="boot-core"><rect x="118" y="93" width="84" height="84" rx="27" class="boot-centre"/><rect x="125" y="100" width="70" height="70" rx="22" class="boot-centre-inner"/><g class="boot-emblem"><path d="m160 110 17 6v14c0 11-8 18-17 23-9-5-17-12-17-23v-14z"/><path d="m151 129 3-7h12l3 7m-20 0h22v11h-22zm4 11v3m14-3v3m-13-10h2m10 0h2"/></g></g>
+      <g class="boot-check-group"><circle cx="196" cy="168" r="12" class="boot-check"/><path d="m191 168 3 3 7-7" class="boot-check-mark"/></g>
+    </svg>
+    <h1 id="bootTitle">Sẵn sàng<br>cho ngày làm việc.</h1>
+    <p class="boot-subtitle">Không gian của bạn.<br>Dữ liệu luôn đồng hành.</p>
+    <div class="boot-progress" aria-hidden="true"><span></span></div>
+    <p id="bootStatus" class="boot-status" role="status" aria-live="polite">Đang khôi phục đăng nhập…</p>
+    <div id="bootRecovery" class="boot-recovery" hidden><p>Kết nối đang mất nhiều thời gian hơn.<br>Bạn có thể quay về màn hình đăng nhập.</p><button type="button" id="bootLoginButton">Về màn hình đăng nhập</button></div>
+    <p class="boot-foot">TRA CỨU · HỒ SƠ · KẾT NỐI</p>
+  </div>
+</section>
+
+<script id="tascoBootController">
+window.TascoBootSplash = (() => {
+  const root = document.getElementById('tascoBootSplash');
+  const status = document.getElementById('bootStatus');
+  const recovery = document.getElementById('bootRecovery');
+  const timers = new Set();
+  let active = false, startedOnce = false, abandoned = false, dismissed = false;
+  let cycleReady = Promise.resolve(), resolveCycle = null, leaving = null, resolveEntry = null;
+  const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+  const duration = reduced ? 600 : 2800;
+  function later(fn, ms) {
+    const id = setTimeout(() => { timers.delete(id); fn(); }, ms);
+    timers.add(id); return id;
+  }
+  function clearTimers() { timers.forEach(clearTimeout); timers.clear(); }
+  function hide(entered = false) {
+    active = false; dismissed = true; clearTimers();
+    resolveCycle?.(); resolveCycle = null;
+    resolveEntry?.(entered && !abandoned); resolveEntry = null;
+    root.setAttribute('aria-busy', 'false'); root.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('tasco-boot-pending');
+  }
+  function start() {
+    if (startedOnce || dismissed || abandoned) return;
+    startedOnce = true; active = true;
+    document.documentElement.classList.add('tasco-boot-pending');
+    root.setAttribute('data-playing', ''); root.setAttribute('aria-hidden', 'false');
+    cycleReady = new Promise(resolve => { resolveCycle = resolve; });
+    if (!reduced) {
+      later(() => { status.textContent = 'Đang kết nối không gian làm việc…'; }, 850);
+      later(() => { status.textContent = 'Đang chuẩn bị tra cứu phụ tùng…'; }, 1700);
+    }
+    later(() => {
+      status.textContent = 'Đang xác thực tài khoản…';
+      resolveCycle?.(); resolveCycle = null;
+    }, duration);
+    later(() => { recovery.hidden = false; }, 12000);
+    // CDN, network and session restoration failures must not trap the login form.
+    later(() => fail('Chưa khôi phục được phiên đăng nhập. Vui lòng đăng nhập lại.'), 30000);
+  }
+  function cancel() { hide(); }
+  function fail(message) {
+    abandoned = true; hide();
+    const error = document.getElementById('loginError');
+    if (error) { error.textContent = message; error.classList.remove('hidden'); }
+    window.TascoAppShell?.navigate('login', { replace: true });
+  }
+  async function allowEntry() {
+    if (abandoned) return false;
+    if (!active) return true;
+    await cycleReady;
+    if (abandoned || !active) return false;
+    if (!leaving) {
+      clearTimers(); recovery.hidden = true;
+      status.textContent = 'Sẵn sàng. Đang mở không gian làm việc…';
+      root.classList.add('is-leaving');
+      leaving = new Promise(resolve => { resolveEntry = resolve; later(() => hide(true), reduced ? 120 : 380); });
+    }
+    return leaving;
+  }
+  function observeSession(user, event) {
+    if (!user || event === 'SIGNED_OUT') { cancel(); return; }
+    if (event === 'INITIAL_SESSION' && !startedOnce && !dismissed) start();
+  }
+  function manualLogin() { abandoned = false; }
+  document.getElementById('bootLoginButton').addEventListener('click', () => fail('Vui lòng đăng nhập để tiếp tục.'));
+  if (document.documentElement.classList.contains('tasco-boot-pending')) start();
+  else root.setAttribute('aria-hidden', 'true');
+  return { observeSession, allowEntry, cancel, fail, manualLogin, get active() { return active; } };
+})();
+</script>
+
     <script>
         function syncThemeControls() {
             const isDark = document.documentElement.classList.contains('dark');
@@ -4292,7 +4462,7 @@ window.TascoPartKind=(()=>{
                 // SDK auth events run under its session lock. Start API work after it releases.
                 setTimeout(() => {
                     if (disposed || current !== revision) return;
-                    Promise.resolve().then(() => callback(user)).catch(error => console.error('Không cập nhật được phiên đăng nhập:', error));
+                    Promise.resolve().then(() => callback(user, event)).catch(error => console.error('Không cập nhật được phiên đăng nhập:', error));
                 }, 0);
             });
             return () => { disposed = true; revision++; data?.subscription?.unsubscribe?.(); };
@@ -4757,7 +4927,10 @@ window.TascoPartKind=(()=>{
         window.TascoGarageDB.configure({client:supabase});
         window.TascoForms.configure({client:supabase});
         let lastLoggedUid = null;
-        onAuthStateChanged(auth, async (user) => {
+        let AUTH_VIEW_REVISION = 0;
+        onAuthStateChanged(auth, async (user, event) => {
+            const authRevision = ++AUTH_VIEW_REVISION;
+            window.TascoBootSplash.observeSession(user, event);
             if (window.IS_REGISTERING) return;
             if (user) {
                 try {
@@ -4770,8 +4943,13 @@ window.TascoPartKind=(()=>{
                         }
                     } catch (dbErr) {
                         console.warn("Lỗi tải thông tin profile:", dbErr);
+                        if (window.TascoBootSplash.active) {
+                            window.TascoBootSplash.fail('Chưa tải được thông tin tài khoản. Vui lòng đăng nhập lại.');
+                            return;
+                        }
                     }
                     
+                    if (authRevision !== AUTH_VIEW_REVISION || auth.currentUser?.uid !== user.uid) return;
                     if (
                         (profile.status === 'locked' || profile.status === 'pending') &&
                         user.email.toLowerCase().trim() !== MGR_EMAIL.toLowerCase().trim()
@@ -4795,7 +4973,8 @@ window.TascoPartKind=(()=>{
                             
                     currentUserProfile = profile; currentUserProfile.email = user.email; currentUserProfile.role = role; currentUserProfile.id = user.uid;
                     const fullName = profile.fullName || user.displayName || user.email;
-                    showApp(user.email, role, fullName);
+                    const entered = await showApp(user.email, role, fullName);
+                    if (entered === false || authRevision !== AUTH_VIEW_REVISION) return;
                     
                     if (user.uid !== lastLoggedUid) {
                         lastLoggedUid = user.uid;
@@ -4826,6 +5005,7 @@ window.TascoPartKind=(()=>{
                     }
                 } catch (error) {
                     console.error("Lỗi auth state:", error);
+                    if (window.TascoBootSplash.active) window.TascoBootSplash.fail('Chưa mở được không gian làm việc. Vui lòng đăng nhập lại.');
                 }
             } else {
                 lastLoggedUid = null;
@@ -4869,7 +5049,9 @@ window.TascoPartKind=(()=>{
             updateView('account');
         }
 
-        window.showApp = function(email, role, fullName = '') {
+        window.showApp = async function(email, role, fullName = '') {
+            if (!await window.TascoBootSplash.allowEntry()) return false;
+            if (auth.currentUser?.email?.toLowerCase() !== email?.toLowerCase()) return false;
             const nextView=currentUserProfile?.email===email&&window.TascoAppShell.page!=='login'?window.TascoAppShell.page:'home';
             console.log("Showing App for:", email, "Role:", role);
             // Đảm bảo dữ liệu bộ lọc (Hãng, Dòng, Năm) được tải sau khi đăng nhập thành công
@@ -4916,9 +5098,11 @@ window.TascoPartKind=(()=>{
             }
             window.TascoAppShell.setUser(currentUserProfile);
             updateView(nextView,{replace:true});
+            return true;
         }
 
         window.hideApp = function() {
+            window.TascoBootSplash.cancel();
             TascoFilterCounts.setUser('');
             CAY_GIA_PHA = {}; NAM_ALL = []; FILTER_LOAD_PROMISE = null;
             window.TascoCloudAccess.setIdentity(null);
@@ -4984,6 +5168,7 @@ window.TascoPartKind=(()=>{
             const err = document.getElementById('loginError');
             const btn = document.getElementById('loginBtn');
             if (btn.disabled) return;
+            window.TascoBootSplash.manualLogin();
             err.classList.remove('text-emerald-500');
             
             
