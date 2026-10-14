@@ -2786,47 +2786,132 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 .tasco-workspace #traCuuSection .ws-search-input-wrap #searchInput { position: absolute; top: 0; left: 0; width: 114.285714%; max-width: none; height: 52px; padding: 0 !important; margin: 0; font-size: 16px !important; transform: scale(.875); transform-origin: left center; }
 </style>
 <style id="tascoPremiumHomeActions">
-/* Camera and personal library form a matched pair of home actions. */
+/* Shared surfaces and illustration materials across the home screen. */
+.tasco-workspace #homeSection {
+  --home-radius: 24px;
+  --home-surface-end: #f5fafb;
+  --home-icon-surface: var(--ws-soft);
+  --home-line: var(--ws-line);
+  --home-shadow: 0 7px 22px -15px #18305630;
+  --home-art-light: #edf5f7;
+  --home-art-mid: #b8dce2;
+  --home-art-ice: #daecf0;
+  --home-art-teal: #63adb6;
+  --home-art-shade: #39747e;
+  --home-art-ink: #183056;
+}
+.tasco-workspace #homeSection .ws-home-grid { gap: 16px; }
+.tasco-workspace #homeSection .ws-shortcuts { gap: 12px; }
+.tasco-workspace #homeSection .ws-feature {
+  border: 1px solid #335b764d;
+  border-radius: var(--home-radius);
+  background: linear-gradient(135deg,var(--app-navy) 8%,#203f61 100%);
+  box-shadow: var(--home-shadow);
+  color: var(--home-art-light);
+}
+.tasco-workspace #homeSection .ws-feature::after {
+  background: radial-gradient(ellipse at 94% 36%,#63adb61a,transparent 66%);
+}
+.tasco-workspace #homeSection .ws-feature h2 { color: var(--home-art-light); }
+.tasco-workspace #homeSection .ws-feature .ws-eyebrow,
+.tasco-workspace #homeSection .ws-feature p,
+.tasco-workspace #homeSection .ws-feature-foot { color: var(--home-art-ice); }
+.tasco-workspace #homeSection .ws-feature .ws-primary {
+  border-radius: 12px; font-weight: 600; letter-spacing: -.1px;
+}
+.tasco-workspace #homeSection .ws-mechanical {
+  filter: drop-shadow(0 10px 14px #0b1b3038);
+}
+.tasco-workspace #homeSection .ws-shortcut {
+  border: 1px solid var(--home-line);
+  border-radius: var(--home-radius);
+  background: linear-gradient(145deg,var(--ws-surface) 45%,var(--home-surface-end));
+  box-shadow: var(--home-shadow);
+  color: var(--ws-text);
+  transition: transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
 .tasco-workspace #homeSection .home-action-card {
   position: relative; isolation: isolate; overflow: hidden; display: flex;
   flex-direction: column; align-items: stretch; justify-content: space-between;
-  min-height: 150px; min-width: 0; padding: 16px 17px 17px; gap: 17px;
-  border-radius: 22px; text-align: left; transition: transform .18s ease,box-shadow .18s ease;
+  min-height: 150px; min-width: 0; padding: 17px; gap: 17px; text-align: left;
 }
-.tasco-workspace #homeSection .home-action-card--camera {
-  border: 1px solid #456a80; background: linear-gradient(145deg,#244861 0%,#173452 54%,#102440 100%);
-  color: #edf5f7; box-shadow: 0 8px 18px -12px #0b1b3090,inset 0 1px 0 #daecf026;
+.tasco-workspace #homeSection .home-action-card::before,
+.tasco-workspace #homeSection .home-action-card::after { display: none; }
+.tasco-workspace #homeSection .hc-top {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; width: 100%;
 }
-.tasco-workspace #homeSection .home-action-card--cloud {
-  border: 1px solid #bfd8df; background: linear-gradient(145deg,#fff 25%,#f1f8f9 100%);
-  color: #183056; box-shadow: 0 8px 20px -15px #18305655,inset 0 1px 0 #fff;
+.tasco-workspace #homeSection .hc-art {
+  display: grid; place-items: center; width: 54px; height: 54px; flex: 0 0 54px;
+  border: 1px solid var(--ws-accent); border-radius: 16px; background: var(--home-icon-surface);
 }
-.home-action-card::before { content: ''; position: absolute; z-index: -1; pointer-events: none; width: 160px; height: 160px; top: -77px; left: -57px; border-radius: 50%; }
-.home-action-card--camera::before { background: radial-gradient(circle,#84bfc72b,transparent 70%); }
-.home-action-card--cloud::before { background: radial-gradient(circle,#b8dce259,transparent 72%); }
-.home-action-card::after { content: ''; position: absolute; z-index: -1; pointer-events: none; width: 104px; height: 104px; right: -65px; bottom: -34px; border: 1px solid; border-radius: 50%; box-shadow: 0 0 0 14px transparent,0 0 0 15px; opacity: .1; }
-.home-action-card--camera::after { border-color: #9dcfd6; color: #9dcfd6; }
-.home-action-card--cloud::after { border-color: #63adb6; color: #63adb6; }
-.hc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; width: 100%; }
-.hc-art { display: block; width: 54px; height: 48px; flex: 0 0 54px; }
-.hc-art svg { display: block; width: 54px; height: 48px; overflow: visible; }
-.hc-open { display: grid; place-items: center; width: 26px; height: 26px; flex: 0 0 26px; border: 1px solid; border-radius: 50%; margin-top: 1px; }
-.hc-open svg { display: block; width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.home-action-card--camera .hc-open { background: #daecf00b; border-color: #a7c3d035; color: #b8dce2; }
-.home-action-card--cloud .hc-open { background: #fff9; border-color: #c7dde3; color: #39747e; }
-.hc-copy { display: block; position: relative; z-index: 1; min-width: 0; }
-.tasco-workspace #homeSection .home-action-card strong { display: block; margin: 0; font-size: 13px; font-weight: 650; letter-spacing: -.25px; line-height: 1.4; color: inherit; }
-.tasco-workspace #homeSection .home-action-card small { display: block; margin-top: 5px; font-size: 9px; line-height: 1.6; font-weight: 450; letter-spacing: .02em; color: #a7c3d0; }
-.tasco-workspace #homeSection .home-action-card--cloud small { color: #526c81; }
-.tasco-workspace #homeSection .home-action-card:focus-visible { outline: 2px solid var(--ws-accent-text); outline-offset: 4px; }
-.tasco-workspace #homeSection .home-action-card:active:not(:disabled) { transform: translateY(1px); }
-@media(hover:hover) { .tasco-workspace #homeSection .home-action-card:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 24px -15px #18305665,inset 0 1px 0 #daecf026; } }
-.dark .tasco-workspace #homeSection .home-action-card--camera { border-color: #456a80; background: linear-gradient(145deg,#244861,#102440); }
-.dark .tasco-workspace #homeSection .home-action-card--cloud { border-color: #335b76; background: linear-gradient(145deg,#203f61,#142f3d); color: #edf5f7; box-shadow: 0 8px 20px -15px #0008,inset 0 1px 0 #daecf010; }
-.dark .home-action-card--cloud .hc-open { border-color: #456a80; background: #daecf00b; color: #b8dce2; }
-.dark .tasco-workspace #homeSection .home-action-card--cloud small { color: #a7c3d0; }
-@media(max-width:360px) { .tasco-workspace #homeSection .home-action-card { min-height: 145px; padding: 15px; gap: 15px; border-radius: 20px; } .tasco-workspace #homeSection .home-action-card strong { font-size: 12px; } }
-@media(prefers-reduced-motion:reduce) { .tasco-workspace #homeSection .home-action-card { transition: none; } }
+.tasco-workspace #homeSection .hc-art svg { display: block; width: 46px; height: 46px; overflow: visible; }
+.tasco-workspace #homeSection .hc-open {
+  display: grid; place-items: center; width: 26px; height: 26px; flex: 0 0 26px;
+  border: 1px solid var(--home-line); border-radius: 50%; margin-top: 1px;
+  background: transparent; color: var(--ws-accent-text);
+}
+.tasco-workspace #homeSection .hc-open svg {
+  display: block; width: 13px; height: 13px; fill: none; stroke: currentColor;
+  stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+}
+.tasco-workspace #homeSection .hc-copy { display: block; position: relative; z-index: 1; min-width: 0; }
+.tasco-workspace #homeSection .home-action-card strong {
+  display: block; margin: 0; font-size: 13px; font-weight: 650;
+  letter-spacing: -.25px; line-height: 1.4; color: var(--ws-text);
+}
+.tasco-workspace #homeSection .home-action-card small {
+  display: block; margin-top: 5px; font-size: 9px; line-height: 1.6;
+  font-weight: 450; letter-spacing: .02em; color: var(--ws-muted);
+}
+.tasco-workspace #homeSection .ws-shortcut--wide { gap: 14px; }
+.tasco-workspace #homeSection .ws-shortcut--wide > .ws-icon:not(.ws-arrow) {
+  width: 44px; height: 44px; padding: 10px; border: 1px solid var(--ws-accent);
+  border-radius: 14px; background: var(--home-icon-surface); color: var(--ws-accent-text);
+}
+.tasco-workspace #homeSection .ws-shortcut--wide .ws-arrow {
+  position: static; transform: none; width: 26px; height: 26px; padding: 6px;
+  border: 1px solid var(--home-line); border-radius: 50%; color: var(--ws-accent-text);
+}
+.tasco-workspace #homeSection .ws-shortcut:focus-visible {
+  outline: 2px solid var(--ws-accent-text); outline-offset: 4px;
+}
+.tasco-workspace #homeSection .ws-shortcut:active:not(:disabled) { transform: translateY(1px); }
+@media(hover:hover) {
+  .tasco-workspace #homeSection .ws-shortcut:hover:not(:disabled) {
+    transform: translateY(-2px); border-color: var(--app-teal);
+    box-shadow: 0 10px 24px -15px #18305645;
+  }
+}
+html.dark .tasco-workspace #homeSection {
+  --home-surface-end: #1c3856;
+  --home-shadow: 0 7px 22px -15px #0005;
+}
+@media(max-width:767px) {
+  .tasco-workspace #homeSection .ws-feature { min-height: 276px; padding: 24px; }
+  .tasco-workspace #homeSection .ws-feature h2 {
+    margin: 18px 0 10px; font-size: 34px; line-height: 1.14; letter-spacing: -1.4px;
+  }
+  .tasco-workspace #homeSection .ws-feature p { max-width: 59%; font-size: 10.5px; line-height: 1.75; }
+  .tasco-workspace #homeSection .ws-feature .ws-primary { margin-top: 22px; font-size: 11px; }
+  .tasco-workspace #homeSection .ws-mechanical { width: 198px; height: 198px; top: 42px; right: -43px; }
+  .tasco-workspace #homeSection .ws-feature-foot { right: 22px; bottom: 23px; font-size: 7px; letter-spacing: .13em; }
+  .tasco-workspace #homeSection .ws-shortcut--wide { min-height: 94px; padding: 18px; }
+  .tasco-workspace #homeSection .ws-shortcut--wide strong { font-size: 13px; }
+  .tasco-workspace #homeSection .ws-shortcut--wide small { font-size: 9px; }
+}
+@media(max-width:360px) {
+  .tasco-workspace #homeSection { --home-radius: 22px; }
+  .tasco-workspace #homeSection .ws-feature { padding: 22px; min-height: 268px; }
+  .tasco-workspace #homeSection .ws-feature h2 { font-size: 32px; }
+  .tasco-workspace #homeSection .ws-mechanical { width: 183px; height: 183px; right: -50px; }
+  .tasco-workspace #homeSection .home-action-card { min-height: 145px; padding: 15px; gap: 15px; }
+  .tasco-workspace #homeSection .home-action-card strong { font-size: 12px; }
+  .tasco-workspace #homeSection .ws-shortcut--wide { padding: 16px; gap: 11px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .tasco-workspace #homeSection .ws-shortcut { transition: none; }
+}
 
 </style>
 <style id="tascoNavigationMotionStyles">
@@ -3038,22 +3123,22 @@ window.TascoBootSplash = (() => {
 <section id="homeSection" data-shell-page="home" hidden aria-label="Trang chủ">
   <div class="ws-greeting"><div><p data-home-greeting>Không gian làm việc của bạn</p><h1>Chào <span id="userEmail">bạn</span>.</h1></div><button type="button" class="ws-day ws-focus" data-theme-toggle onclick="toggleTheme()" aria-pressed="false" aria-label="Chuyển sang chế độ tối" title="Chuyển sang chế độ tối"><svg class="ws-icon ws-theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg class="ws-icon ws-theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 13.3A8.9 8.9 0 0 1 10.7 3.2 9 9 0 1 0 20.8 13.3Z"/></svg></button></div>
   <div class="ws-home-grid">
-    <article class="ws-feature"><span class="ws-eyebrow"><i></i>TRA CỨU PHỤ TÙNG</span><h2>Tìm đúng.<br>Làm tốt.</h2><p>Thông tin phụ tùng theo hãng xe, dòng xe và năm sản xuất.</p><button type="button" class="ws-primary" onclick="updateView('lookup')">Tra cứu ngay <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><svg class="ws-mechanical" viewBox="0 0 280 280" fill="none" aria-hidden="true"><defs><linearGradient id="rotorMetal" x1="42" y1="10" x2="230" y2="242" gradientUnits="userSpaceOnUse"><stop stop-color="#edf5f7"/><stop offset=".26" stop-color="#63adb6"/><stop offset=".51" stop-color="#daecf0"/><stop offset=".76" stop-color="#39747e"/><stop offset="1" stop-color="#84bfc7"/></linearGradient><linearGradient id="rotorRim" x1="45" y1="50" x2="230" y2="250"><stop stop-color="#daecf0"/><stop offset="1" stop-color="#39747e"/></linearGradient></defs><ellipse cx="141" cy="166" rx="108" ry="104" fill="#0b1b30" opacity=".45"/><g transform="translate(16 0) rotate(12 140 140) scale(.9 1)"><circle cx="140" cy="151" r="113" fill="#244861" stroke="#63adb6" stroke-width="4"/><circle cx="140" cy="140" r="113" fill="url(#rotorMetal)" stroke="url(#rotorRim)" stroke-width="5"/><circle cx="140" cy="140" r="106" stroke="#edf5f7" stroke-opacity=".4"/><circle cx="140" cy="140" r="92" stroke="#244861" stroke-opacity=".5"/><circle cx="140" cy="140" r="67" fill="#335b76" stroke="#daecf0" stroke-width="2"/><circle cx="140" cy="140" r="48" fill="url(#rotorMetal)" stroke="#daecf0" stroke-width="2"/><circle cx="140" cy="140" r="20" fill="#183056" stroke="#daecf0" stroke-width="4"/><circle cx="220.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="60.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="140.0" cy="106.0" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/><circle cx="172.3" cy="129.5" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/><circle cx="160.0" cy="167.5" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/><circle cx="120.0" cy="167.5" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/><circle cx="107.7" cy="129.5" r="4.2" fill="#183056" stroke="#daecf0" stroke-width="1.3"/></g></svg><span class="ws-feature-foot">TASCO INSURANCE</span></article>
+    <article class="ws-feature"><span class="ws-eyebrow"><i></i>TRA CỨU PHỤ TÙNG</span><h2>Tìm đúng.<br>Làm tốt.</h2><p>Thông tin phụ tùng theo hãng xe, dòng xe và năm sản xuất.</p><button type="button" class="ws-primary" onclick="updateView('lookup')">Tra cứu ngay <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><svg class="ws-mechanical" viewBox="0 0 280 280" fill="none" aria-hidden="true"><defs><linearGradient id="rotorMetal" x1="42" y1="10" x2="230" y2="242" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-light)"/><stop offset=".26" stop-color="var(--home-art-mid)"/><stop offset=".51" stop-color="var(--home-art-ice)"/><stop offset=".76" stop-color="var(--home-art-teal)"/><stop offset="1" stop-color="#84bfc7"/></linearGradient><linearGradient id="rotorRim" x1="45" y1="50" x2="230" y2="250"><stop stop-color="var(--home-art-ice)"/><stop offset="1" stop-color="var(--home-art-shade)"/></linearGradient></defs><ellipse cx="141" cy="166" rx="108" ry="104" fill="#0b1b30" opacity=".45"/><g transform="translate(16 0) rotate(12 140 140) scale(.9 1)"><circle cx="140" cy="151" r="113" fill="#244861" stroke="var(--home-art-teal)" stroke-width="4"/><circle cx="140" cy="140" r="113" fill="url(#rotorMetal)" stroke="url(#rotorRim)" stroke-width="2.5"/><circle cx="140" cy="140" r="106" stroke="var(--home-art-light)" stroke-opacity=".4"/><circle cx="140" cy="140" r="92" stroke="#244861" stroke-opacity=".5"/><circle cx="140" cy="140" r="67" fill="#335b76" stroke="var(--home-art-ice)" stroke-width="2"/><circle cx="140" cy="140" r="48" fill="url(#rotorMetal)" stroke="var(--home-art-ice)" stroke-width="2"/><circle cx="140" cy="140" r="20" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="2.5"/><circle cx="220.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="60.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="140.0" cy="106.0" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="172.3" cy="129.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="160.0" cy="167.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="120.0" cy="167.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="107.7" cy="129.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/></g></svg><span class="ws-feature-foot">TASCO INSURANCE</span></article>
     <div class="ws-shortcuts">
       <button type="button" class="ws-shortcut ws-shortcut--camera home-action-card home-action-card--camera" data-home-camera data-cloud-only hidden onclick="TascoAppShell.camera()" disabled>
   <span class="hc-top" aria-hidden="true">
     <span class="hc-art"><svg viewBox="0 0 62 56" fill="none">
-      <defs><linearGradient id="hcCameraBody" x1="9" y1="12" x2="55" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#49748c"/><stop offset="1" stop-color="#183056"/></linearGradient><linearGradient id="hcCameraRim" x1="20" y1="19" x2="43" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="#edf5f7"/><stop offset=".36" stop-color="#84bfc7"/><stop offset=".65" stop-color="#daecf0"/><stop offset="1" stop-color="#39747e"/></linearGradient><linearGradient id="hcCameraGlass" x1="25" y1="23" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#335b76"/><stop offset="1" stop-color="#071423"/></linearGradient></defs>
-      <rect x="7" y="21" width="49" height="30" rx="9" fill="#071423" opacity=".25"/>
-      <path d="M13 16h8l3-5h16l3 5h7a6 6 0 0 1 6 6v21a6 6 0 0 1-6 6H13a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6Z" fill="url(#hcCameraBody)" stroke="#a7c3d0" stroke-width="1.1"/>
-      <path d="M14 18h7m5-5h11" stroke="#daecf0" stroke-opacity=".6" stroke-linecap="round"/>
-      <rect x="44" y="21" width="7" height="4" rx="1.5" fill="#b8dce2"/>
+      <defs><linearGradient id="hcCameraBody" x1="9" y1="12" x2="55" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-light)"/><stop offset="1" stop-color="var(--home-art-mid)"/></linearGradient><linearGradient id="hcCameraRim" x1="20" y1="19" x2="43" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-light)"/><stop offset=".36" stop-color="var(--home-art-mid)"/><stop offset=".65" stop-color="var(--home-art-ice)"/><stop offset="1" stop-color="var(--home-art-shade)"/></linearGradient><linearGradient id="hcCameraGlass" x1="25" y1="23" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#335b76"/><stop offset="1" stop-color="#071423"/></linearGradient></defs>
+      <rect x="7" y="21" width="49" height="30" rx="9" fill="var(--home-art-ink)" opacity=".08"/>
+      <path d="M13 16h8l3-5h16l3 5h7a6 6 0 0 1 6 6v21a6 6 0 0 1-6 6H13a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6Z" fill="url(#hcCameraBody)" stroke="#84bfc7" stroke-width="1.1"/>
+      <path d="M14 18h7m5-5h11" stroke="var(--home-art-ice)" stroke-opacity=".6" stroke-linecap="round"/>
+      <rect x="44" y="21" width="7" height="4" rx="1.5" fill="var(--home-art-teal)"/>
       <circle cx="31" cy="32" r="13" fill="#0b1b30" stroke="#52798d" stroke-width="1.2"/>
-      <circle cx="31" cy="31" r="12" fill="url(#hcCameraRim)" stroke="#daecf0" stroke-width=".6"/>
-      <circle cx="31" cy="31" r="8.7" fill="url(#hcCameraGlass)" stroke="#39747e" stroke-width="1.2"/>
-      <circle cx="31" cy="31" r="5.5" stroke="#63adb6" stroke-opacity=".5"/>
-      <ellipse cx="28.5" cy="27.5" rx="2.3" ry="1.4" transform="rotate(-32 28.5 27.5)" fill="#b8dce2" opacity=".68"/>
-      <path d="M11 39v4a2 2 0 0 0 2 2h5" stroke="#84bfc7" stroke-opacity=".35" stroke-linecap="round"/>
+      <circle cx="31" cy="31" r="12" fill="url(#hcCameraRim)" stroke="var(--home-art-ice)" stroke-width=".6"/>
+      <circle cx="31" cy="31" r="8.7" fill="url(#hcCameraGlass)" stroke="var(--home-art-shade)" stroke-width="1.2"/>
+      <circle cx="31" cy="31" r="5.5" stroke="var(--home-art-teal)" stroke-opacity=".5"/>
+      <ellipse cx="28.5" cy="27.5" rx="2.3" ry="1.4" transform="rotate(-32 28.5 27.5)" fill="var(--home-art-mid)" opacity=".68"/>
+      <path d="M11 39v4a2 2 0 0 0 2 2h5" stroke="var(--home-art-shade)" stroke-opacity=".35" stroke-linecap="round"/>
     </svg></span>
     <span class="hc-open"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
   </span>
@@ -3062,15 +3147,15 @@ window.TascoBootSplash = (() => {
       <button type="button" class="ws-shortcut home-action-card home-action-card--cloud" data-cloud-only hidden onclick="updateView('cloud')">
   <span class="hc-top" aria-hidden="true">
     <span class="hc-art"><svg viewBox="0 0 62 56" fill="none">
-      <defs><linearGradient id="hcCloudBack" x1="12" y1="13" x2="49" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="#b8dce2"/><stop offset="1" stop-color="#63adb6"/></linearGradient><linearGradient id="hcCloudFront" x1="13" y1="21" x2="48" y2="53" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#daecf0"/></linearGradient><linearGradient id="hcCloudSurface" x1="26" y1="15" x2="53" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#edf5f7"/><stop offset="1" stop-color="#9dcfd6"/></linearGradient></defs>
-      <ellipse cx="32" cy="50" rx="23" ry="3" fill="#183056" opacity=".08"/>
+      <defs><linearGradient id="hcCloudBack" x1="12" y1="13" x2="49" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-mid)"/><stop offset="1" stop-color="var(--home-art-teal)"/></linearGradient><linearGradient id="hcCloudFront" x1="13" y1="21" x2="48" y2="53" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="var(--home-art-ice)"/></linearGradient><linearGradient id="hcCloudSurface" x1="26" y1="15" x2="53" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-light)"/><stop offset="1" stop-color="#9dcfd6"/></linearGradient></defs>
+      <ellipse cx="32" cy="50" rx="23" ry="3" fill="var(--home-art-ink)" opacity=".08"/>
       <rect x="8" y="12" width="35" height="29" rx="5" transform="rotate(-12 8 12)" fill="url(#hcCloudBack)" stroke="#84bfc7"/>
-      <rect x="14" y="14" width="35" height="29" rx="5" transform="rotate(6 14 14)" fill="#edf5f7" stroke="#a7c3d0"/>
+      <rect x="14" y="14" width="35" height="29" rx="5" transform="rotate(6 14 14)" fill="var(--home-art-light)" stroke="#a7c3d0"/>
       <rect x="10" y="23" width="38" height="27" rx="6" fill="url(#hcCloudFront)" stroke="#84bfc7"/>
-      <path d="m15 42 9-10 7 7 6-4 6 7" stroke="#63adb6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="m15 42 9-10 7 7 6-4 6 7" stroke="var(--home-art-teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       <circle cx="37" cy="30" r="2.2" fill="#9dcfd6"/>
-      <path d="M47 15h-.8a8.2 8.2 0 0 0-16.2 2.1 5.8 5.8 0 0 0 1.1 11.5H47a6.8 6.8 0 0 0 0-13.6Z" fill="#39747e" opacity=".16" transform="translate(1 2)"/>
-      <path d="M47 15h-.8a8.2 8.2 0 0 0-16.2 2.1 5.8 5.8 0 0 0 1.1 11.5H47a6.8 6.8 0 0 0 0-13.6Z" fill="url(#hcCloudSurface)" stroke="#63adb6" stroke-width="1.1"/>
+      <path d="M47 15h-.8a8.2 8.2 0 0 0-16.2 2.1 5.8 5.8 0 0 0 1.1 11.5H47a6.8 6.8 0 0 0 0-13.6Z" fill="var(--home-art-shade)" opacity=".16" transform="translate(1 2)"/>
+      <path d="M47 15h-.8a8.2 8.2 0 0 0-16.2 2.1 5.8 5.8 0 0 0 1.1 11.5H47a6.8 6.8 0 0 0 0-13.6Z" fill="url(#hcCloudSurface)" stroke="var(--home-art-teal)" stroke-width="1.1"/>
       <path d="M35 16a4.5 4.5 0 0 1 7-2" stroke="#fff" stroke-opacity=".8" stroke-width="1.3" stroke-linecap="round"/>
     </svg></span>
     <span class="hc-open"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
