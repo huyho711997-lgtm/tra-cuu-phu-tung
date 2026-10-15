@@ -3065,6 +3065,94 @@ html[data-tasco-page] body.tasco-workspace::before{content:none;display:none}
 /* The results page keeps its measured space for the fixed header. */
 .tasco-workspace #resultsStickyHeader{top:0;margin-top:0}
 </style>
+<style id="tascoRefinedPartLabels">
+/* Quiet classification labels: the part name and price keep visual priority. */
+.tasco-workspace .part-kind-tag[data-part-kind]{--kind-ink:var(--ws-muted);display:inline-flex;align-items:center;justify-content:flex-start;gap:6px;min-height:24px;max-width:100%;padding:0;border:0;border-radius:0;background:transparent;color:var(--kind-ink);box-shadow:none;font-size:10.5px;font-weight:550;line-height:1.4;letter-spacing:0;white-space:nowrap}
+.tasco-workspace .part-kind-tag[data-part-kind="genuine"]{--kind-ink:#326b60;background:transparent;border:0}
+.tasco-workspace .part-kind-tag[data-part-kind="aftermarket"]{--kind-ink:#526c81;background:transparent;border:0}
+.tasco-workspace .part-kind-tag[data-part-kind]>svg{display:block;box-sizing:border-box;flex:0 0 22px;width:22px;height:22px;padding:3px;border:1px solid rgba(255,255,255,.65);border-radius:7px;background:rgba(255,255,255,.48);stroke-width:1.6;color:var(--kind-ink)}
+.tasco-workspace .part-kind-tag[data-part-kind]>span{font:inherit;line-height:inherit;color:inherit}
+.tasco-workspace #lookupResultsSection .ws-quote-head .part-kind-tag{margin-top:0;align-self:flex-start}
+html.dark .tasco-workspace .part-kind-tag[data-part-kind]{background:transparent;border:0;box-shadow:none}
+html.dark .tasco-workspace .part-kind-tag[data-part-kind="genuine"]{--kind-ink:#a3cebf}
+html.dark .tasco-workspace .part-kind-tag[data-part-kind="aftermarket"]{--kind-ink:#b6cad8}
+html.dark .tasco-workspace .part-kind-tag[data-part-kind]>svg{border-color:rgba(167,195,208,.16);background:rgba(218,236,240,.06)}
+@media(max-width:359px){.tasco-workspace .part-kind-tag[data-part-kind]{gap:5px;font-size:10px}.tasco-workspace .part-kind-tag[data-part-kind]>svg{flex-basis:20px;width:20px;height:20px;padding:2px}}
+</style>
+<style id="tascoResultsEditorialDesign">
+/* Compact reading layout: real quote data, restrained surfaces, explicit actions. */
+.tasco-workspace #lookupResultsSection.ws-journey{padding-top:0!important;background:var(--ws-bg)}
+.tasco-workspace #lookupResultsSection #resultsStickyHeader{position:relative;inset:auto;width:100%;max-width:none;margin:0;background:var(--app-navy);z-index:1}
+.tasco-workspace #lookupResultsSection .ws-results-hero{min-height:0;padding:calc(16px + env(safe-area-inset-top,0px)) 22px 22px;border-radius:0;background:var(--app-navy)}
+#lookupResultsSection .ws-results-hero::after{opacity:.035}
+#lookupResultsSection .ws-journey-top{margin-bottom:19px}
+#lookupResultsSection .ws-journey-top>button{width:36px;height:36px;border-radius:11px}
+#lookupResultsSection .ws-journey-top>span{font-size:8px;letter-spacing:.12em}
+#lookupResultsSection .ws-journey-eyebrow{display:none}
+#lookupResultsSection .ws-journey-heading h2{margin:0;color:#fff;font-size:27px;font-weight:650;line-height:1.2;letter-spacing:-.8px}
+#lookupResultsSection .ws-journey-heading p{margin:9px 0 0;color:#daecf0;font-size:13px;font-weight:500;line-height:1.5}
+.tasco-workspace #lookupResultsSection .ws-result-context{gap:7px;margin-top:8px;color:#a7c3d0;font-size:10.5px;font-weight:450;line-height:1.6}
+.tasco-workspace #lookupResultsSection #resultsToolbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:90;margin:0;padding:12px 18px;border:0;border-bottom:1px solid var(--ws-line);border-radius:0;background:var(--ws-surface);box-shadow:0 5px 15px rgba(24,48,86,.025)}
+.tasco-workspace #lookupResultsSection .ws-results-controls{margin:0;gap:10px}
+.tasco-workspace #lookupResultsSection :is(.ws-refine-button,.ws-sort-pill){min-height:44px;padding:10px 13px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-surface);color:var(--ws-text);box-shadow:none;font-size:12px;font-weight:550;line-height:1.5}
+.tasco-workspace #lookupResultsSection .ws-refine-button{background:var(--ws-soft)}
+.tasco-workspace #lookupResultsSection .ws-sort-prefix{color:var(--ws-muted);font-size:10px}
+.tasco-workspace #lookupResultsSection .ws-sort-value{color:var(--ws-text);font-size:12px;font-weight:600}
+#lookupResultsSection .ws-sort-pill:disabled{opacity:.6}
+#lookupResultsSection .ws-sort-pill[aria-expanded="true"]{border-color:var(--ws-accent-text);box-shadow:0 0 0 2px var(--ws-accent)}
+#lookupResultsSection .ws-sort-menu-panel{top:calc(100% + 8px);border-radius:16px}
+.tasco-workspace #lookupResultsSection #resultsSurface{margin:0;padding:20px 18px 26px;border:0;border-radius:0;background:var(--ws-bg)}
+.tasco-workspace #lookupResultsSection .ws-results-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
+#lookupResultsSection .ws-results-heading{position:static;width:auto;height:auto;margin:0;overflow:visible;clip-path:none;white-space:normal;color:var(--ws-text);font-size:13px;font-weight:650;line-height:1.5;letter-spacing:-.1px}
+.tasco-workspace #lookupResultsSection #statCount{padding:0;background:none;color:var(--ws-muted);font-size:11px;font-weight:500;line-height:1.5}
+#lookupResultsSection #resultsSurface[data-search-busy="true"] .ws-results-top{display:none}
+.tasco-workspace #lookupResultsSection #resultsTableBody{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+#lookupResultsSection .ws-quote-entry{position:relative;min-width:0;border:1px solid var(--ws-line);border-radius:20px;background:var(--ws-surface);box-shadow:0 4px 18px rgba(24,48,86,.025);overflow:hidden}
+.tasco-workspace #lookupResultsSection .ws-quote-entry .ws-quote-card{display:block;min-width:0;width:100%;margin:0;padding:18px 18px 16px;border:0;border-radius:0;background:transparent;color:var(--ws-text);box-shadow:none;text-align:left;cursor:default}
+#lookupResultsSection .rq-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:15px}
+.tasco-workspace #lookupResultsSection .rq-heading .ws-quote-name{display:block;flex:1;min-width:0;margin:0;overflow:visible;-webkit-line-clamp:unset;color:var(--ws-text);font-size:16px;font-weight:650;line-height:1.4;letter-spacing:-.3px;overflow-wrap:anywhere}
+#lookupResultsSection .rq-heading .part-kind-tag{margin:0;min-height:22px;font-size:10px;font-weight:500;gap:5px}
+#lookupResultsSection .rq-heading .part-kind-tag>svg{width:20px;height:20px;flex-basis:20px;padding:2px;background:var(--ws-soft);border:0;border-radius:6px}
+#lookupResultsSection .rq-vehicle{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr) minmax(0,.7fr);gap:10px;margin:0;padding:11px 12px;border:0;border-radius:12px;background:var(--ws-soft)}
+#lookupResultsSection .rq-vehicle>div{min-width:0}
+#lookupResultsSection .rq-vehicle dt{margin:0 0 4px;color:var(--ws-muted);font-size:9.5px;font-weight:450;line-height:1.5}
+#lookupResultsSection .rq-vehicle dd{margin:0;color:var(--ws-text);font-size:12px;font-weight:600;line-height:1.45;overflow-wrap:anywhere}
+#lookupResultsSection .rq-price-row{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:13px;margin-top:16px}
+#lookupResultsSection :is(.rq-price,.rq-date)>span{display:block;margin-bottom:5px;color:var(--ws-muted);font-size:10px;font-weight:450;line-height:1.5}
+#lookupResultsSection .rq-price{min-width:0}
+#lookupResultsSection .rq-price strong{display:block;color:var(--ws-text);font-size:clamp(21px,5.7vw,27px);font-weight:700;line-height:1.2;letter-spacing:-.7px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#lookupResultsSection .rq-date{margin-left:auto;text-align:right}
+#lookupResultsSection .rq-date time{display:block;color:var(--ws-muted);font-size:11px;font-weight:500;line-height:1.5;font-variant-numeric:tabular-nums}
+#lookupResultsSection .is-zero-price .rq-price strong{color:var(--ws-muted)}
+#lookupResultsSection .rq-verified{display:inline-flex;align-items:center;gap:4px;margin-top:10px;color:var(--ws-accent-text);font-size:10px;line-height:1.4}
+#lookupResultsSection .rq-verified>svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#lookupResultsSection .rq-actions{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ws-line);background:var(--ws-surface)}
+#lookupResultsSection .rq-actions>button{position:static;display:inline-flex;align-items:center;justify-content:center;gap:7px;width:100%;min-width:0;min-height:46px;max-width:none;margin:0;padding:11px 8px;border:0;border-radius:0;background:transparent;color:var(--ws-accent-text);box-shadow:none;font-family:inherit;font-size:11px;font-weight:550;line-height:1.5;cursor:pointer}
+#lookupResultsSection .rq-actions>button:first-child{border-right:1px solid var(--ws-line);color:var(--ws-text);font-weight:600}
+#lookupResultsSection .rq-actions>button>svg{display:block;flex:0 0 14px;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#lookupResultsSection .rq-actions>button:hover{background:var(--ws-soft)}
+#lookupResultsSection .rq-actions>button:focus-visible{position:relative;z-index:1;outline:2px solid var(--ws-accent-text);outline-offset:-3px;background:var(--ws-soft)}
+#lookupResultsSection .rq-actions>button:disabled{opacity:.45;cursor:default}
+.tasco-workspace #lookupResultsSection .ws-pagination{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--ws-line)}
+.tasco-workspace #lookupResultsSection #resultsSurface[data-search-busy="true"] .ws-pagination{display:none}
+.tasco-workspace #lookupResultsSection .ws-pagination button{min-height:40px;border-radius:10px;font-size:11px}
+#lookupResultsSection .ws-results-loading{min-height:260px}
+#lookupResultsSection .ws-lookup-empty{grid-column:1/-1}
+html.dark #lookupResultsSection .ws-quote-entry{box-shadow:none}
+@media(min-width:768px){.tasco-workspace #lookupResultsSection #resultsTableBody{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.tasco-workspace #lookupResultsSection #resultsSurface{padding:24px}.tasco-workspace #lookupResultsSection #resultsToolbar{padding-left:24px;padding-right:24px}.tasco-workspace #lookupResultsSection .ws-results-hero{padding-left:28px;padding-right:28px}}
+@media(max-width:359px){.tasco-workspace #lookupResultsSection #resultsSurface{padding:18px 12px 24px}.tasco-workspace #lookupResultsSection #resultsToolbar{padding-left:12px;padding-right:12px}.tasco-workspace #lookupResultsSection .ws-quote-entry .ws-quote-card{padding:16px 14px}.tasco-workspace #lookupResultsSection .rq-heading .ws-quote-name{font-size:15px}#lookupResultsSection .rq-heading{flex-wrap:wrap;gap:7px}#lookupResultsSection .rq-heading .part-kind-tag{font-size:9.5px}#lookupResultsSection .rq-vehicle{gap:7px;padding:10px}#lookupResultsSection .rq-vehicle dd{font-size:11px}#lookupResultsSection .rq-price-row{gap:10px}#lookupResultsSection .rq-date{margin-left:0;text-align:left}}
+@media(prefers-reduced-motion:reduce){#lookupResultsSection *,#lookupResultsSection *::before,#lookupResultsSection *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style id="tascoDistinctPartLabels">
+/* Distinct classification colors, with labels and icons retained in both themes. */
+.tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data-part-kind]{--kind-bg:var(--ws-soft);--kind-line:var(--ws-line);--kind-ink:var(--ws-muted);min-height:28px;gap:5px;padding:5px 8px;border:1px solid var(--kind-line);border-radius:8px;background:var(--kind-bg);color:var(--kind-ink);box-shadow:none;font-size:10.5px;font-weight:650;line-height:1.4}
+.tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data-part-kind="genuine"]{--kind-bg:#e8f4ed;--kind-line:#a8cfba;--kind-ink:#226345}
+.tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data-part-kind="aftermarket"]{--kind-bg:#fff3df;--kind-line:#dfbd80;--kind-ink:#805317}
+.tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data-part-kind]>svg{width:14px;height:14px;flex-basis:14px;padding:0;border:0;border-radius:0;background:transparent;color:inherit;stroke-width:1.9}
+html.dark .tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data-part-kind="genuine"]{--kind-bg:#1e3f34;--kind-line:#497660;--kind-ink:#b5e1c9}
+html.dark .tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data-part-kind="aftermarket"]{--kind-bg:#463725;--kind-line:#95723e;--kind-ink:#f3d49e}
+@media(max-width:359px){.tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data-part-kind]{min-height:26px;padding:4px 7px;font-size:10px}}
+</style>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
 <div id="tascoStatusBackdrop" aria-hidden="true"></div>
@@ -3546,6 +3634,7 @@ window.TascoBootSplash = (() => {
 <section id="lookupResultsSection" data-shell-page="results" class="ws-journey" hidden aria-labelledby="resultsPageTitle">
   <div class="ws-results-sticky" id="resultsStickyHeader">
   <header class="ws-journey-hero ws-results-hero"><div class="ws-journey-top"><button type="button" onclick="TascoLookupFlow.edit()" aria-label="Quay lại chỉnh bộ lọc"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TRA CỨU PHỤ TÙNG</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">PHỤ TÙNG PHÙ HỢP VỚI BẠN</span><h2 id="resultsPageTitle" tabindex="-1">Kết quả tra cứu</h2><p data-results-keyword>Tất cả phụ tùng</p><div class="ws-result-context"><span data-results-vehicle>Tất cả dòng xe</span><span data-results-type>Tất cả loại hàng</span></div></div></header>
+  </div>
     <div class="ws-results-toolbar" id="resultsToolbar">
     <div class="ws-results-controls"><button type="button" class="ws-refine-button" onclick="TascoLookupFlow.edit()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg><span>Bộ lọc</span></button><div class="ws-sort-control" id="resultSortControl">
   <button type="button" class="ws-sort-pill" id="resultSort" value="newest" onclick="TascoLookupFlow.toggleSort()" aria-label="Sắp xếp: Mới nhất" aria-haspopup="menu" aria-expanded="false" aria-controls="resultSortMenu">
@@ -3575,9 +3664,8 @@ window.TascoBootSplash = (() => {
   </div>
 </div></div>
     </div>
-  </div>
   <div class="ws-results-surface" id="resultsSurface" data-search-busy="false">
-    <div class="ws-results-top"><h3 class="ws-results-heading">Danh sách báo giá</h3><span id="statCount" aria-live="polite">0 kết quả</span></div>
+    <div class="ws-results-top"><h3 class="ws-results-heading">Báo giá phụ tùng</h3><span id="statCount" aria-live="polite">0 kết quả</span></div>
     <div id="loadingIndicator" class="ws-results-loading hidden" role="status" aria-live="polite"><span aria-hidden="true"></span><strong>Đang tra cứu phụ tùng</strong><p>Đang tìm báo giá phù hợp với lựa chọn của bạn…</p></div>
     <div id="resultsTableBody"><div class="ws-lookup-empty"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><strong>Sẵn sàng tra cứu</strong><p>Chọn phụ tùng và nhấn Tra cứu để xem báo giá.</p></div></div>
     <div class="ws-pagination"><div id="customPageSizeContainer"><button type="button" onclick="togglePageSizeMenu(event)"><span id="customPageSizeLabel">10 dòng / trang</span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg></button><div id="pageSizeMenu" class="hidden"><button type="button" onclick="selectPageSize(10)">10 dòng / trang</button><button type="button" onclick="selectPageSize(25)">25 dòng / trang</button><button type="button" onclick="selectPageSize(50)">50 dòng / trang</button></div></div><div><span id="pageInfo">Trang 0 / 0</span><button type="button" id="btnPrev" onclick="changePage(-1)" aria-label="Trang kết quả trước" disabled><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><button type="button" id="btnNext" onclick="changePage(1)" aria-label="Trang kết quả tiếp theo" disabled><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div></div>
@@ -6417,6 +6505,17 @@ window.TascoPartKind=(()=>{
             input.value=input.value==='0'?'1':'0';button.setAttribute('aria-pressed',String(input.value==='1'));
         }
 
+        window.searchSamePartName = async function(value) {
+            const name = typeof value === 'string' ? value.trim() : '';
+            if (!name || document.getElementById('btnLookupSearch').getAttribute('aria-busy') === 'true') return;
+            document.getElementById('searchInput').value = name;
+            document.getElementById('exactPartName').value = '1';
+            document.getElementById('btnExactPartName').setAttribute('aria-pressed','true');
+            window.TascoLookupFlow.syncChoices();
+            // Reuse the server search, keeping brand, models, years and part kind intact.
+            return await window.searchData();
+        };
+
 window.cancelLookupSearch = function() {
             LOOKUP_SEARCH_REVISION++;
             document.getElementById('loadingIndicator').classList.add('hidden');
@@ -6577,13 +6676,16 @@ window.searchData = async function() {
             const totalPages = Math.ceil(MASTER_DATA.length / ITEMS_PER_PAGE);
             const startIndex = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
             const itemsToRender = MASTER_DATA.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-            if (!itemsToRender.length) tableBody.innerHTML = "<div class=\"ws-lookup-empty\"><svg class=\"ws-icon \" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"10.5\" cy=\"10.5\" r=\"6.5\"/><path d=\"m16 16 4.5 4.5\"/></svg><strong>Không tìm thấy phụ tùng</strong><p>Thử từ khóa khác hoặc quay lại điều chỉnh bộ lọc.</p><button type=\"button\" class=\"ws-results-retry\" onclick=\"TascoLookupFlow.edit()\">Điều chỉnh bộ lọc</button></div>";
+            if (!itemsToRender.length) tableBody.innerHTML = '<div class="ws-lookup-empty"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><strong>Chưa có báo giá phù hợp</strong><p>Thử đổi từ khóa hoặc mở rộng bộ lọc xe.</p><button type="button" class="ws-results-retry" onclick="TascoLookupFlow.edit()">Điều chỉnh bộ lọc</button></div>';
             itemsToRender.forEach(item => {
-                const card = document.createElement('button');
-                card.type = 'button'; card.className = 'ws-quote-card';
-                card.innerHTML = "<span class=\"ws-quote-head\"><span class=\"ws-quote-name\" data-quote-name></span><span class=\"ws-quote-type\" data-quote-type></span></span><span class=\"ws-quote-vehicle\"><span><small>Hãng xe</small><strong data-quote-brand></strong></span><span class=\"ws-quote-route\"><span class=\"ws-quote-route-icon\"><svg class=\"ws-icon \" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2\"/></svg></span><span class=\"ws-quote-year\"><small>Năm sản xuất</small><strong data-quote-year></strong></span></span><span><small>Dòng xe</small><strong data-quote-model></strong></span></span><span class=\"ws-quote-footer\"><span class=\"ws-quote-date\"><small>Ngày báo giá</small><span data-quote-date></span></span><span class=\"ws-quote-price\"><small>Đơn giá</small><strong data-quote-price></strong></span></span><span class=\"ws-quote-detail\"><span>Xem thông tin <svg class=\"ws-icon \" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 5 7 7-7 7\"/></svg></span><span class=\"ws-quote-verified\" data-quote-verified hidden>Đã xác thực</span></span>";
+                const entry = document.createElement('article');
+                entry.className = 'ws-quote-entry';
+                const card = document.createElement('div');
+                card.className = 'ws-quote-card';
+                card.innerHTML = '<div class="rq-heading"><h3 class="ws-quote-name" data-quote-name></h3><span class="ws-quote-type" data-quote-type></span></div><dl class="rq-vehicle"><div><dt>Hãng xe</dt><dd data-quote-brand></dd></div><div><dt>Dòng xe</dt><dd data-quote-model></dd></div><div><dt>Năm SX</dt><dd data-quote-year></dd></div></dl><div class="rq-price-row"><div class="rq-price"><span>Đơn giá</span><strong data-quote-price></strong></div><div class="rq-date"><span>Ngày báo giá</span><time data-quote-date></time></div></div><span class="rq-verified" data-quote-verified hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>Đã xác thực</span>';
                 const set = (selector,value) => { card.querySelector(selector).textContent = value; };
-                set('[data-quote-name]',item.ten_phu_tung || 'Phụ tùng');
+                const partName = typeof item.ten_phu_tung === 'string' ? item.ten_phu_tung.trim() : '';
+                set('[data-quote-name]',partName || 'Phụ tùng');
                 window.TascoPartKind.decorate(card.querySelector('[data-quote-type]'),item.chinh_hang);
                 set('[data-quote-brand]',item.hang_xe || 'Chưa cập nhật');
                 set('[data-quote-model]',item.hieu_xe || 'Chưa cập nhật');
@@ -6591,12 +6693,37 @@ window.searchData = async function() {
                 const dateValue = parseDateForSort(item.ngay_bao_gia);
                 const date = dateValue ? new Date(dateValue).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'UTC'}) : '';
                 set('[data-quote-date]',date || 'Chưa cập nhật');
+                if (dateValue) card.querySelector('[data-quote-date]').setAttribute('datetime',new Date(dateValue).toISOString().slice(0,10));
                 const quotePrice = typeof item.gia_duyet === 'number' ? item.gia_duyet : Number(String(item.gia_duyet || '').replace(/[^0-9]/g,'')) || 0;
                 set('[data-quote-price]',formatCurrency(quotePrice));
                 card.querySelector('[data-quote-verified]').hidden = !item.verified;
-                card.classList.toggle('is-zero-price',!quotePrice);
-                card.onclick = () => window.showDetail(item.id);
-                tableBody.append(card);
+                entry.classList.toggle('is-zero-price',!quotePrice);
+                const actions = document.createElement('div');
+                actions.className = 'rq-actions';
+                const detail = document.createElement('button');
+                detail.type = 'button';
+                detail.className = 'rq-detail-action';
+                detail.innerHTML = '<span>Xem chi tiết</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
+                detail.setAttribute('aria-label','Xem chi tiết: ' + (partName || 'Phụ tùng'));
+                detail.onclick = () => window.showDetail(item.id);
+                const sameName = document.createElement('button');
+                sameName.type = 'button';
+                sameName.className = 'ws-quote-same-name';
+                sameName.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Tìm cùng tên</span>';
+                sameName.setAttribute('aria-label',partName ? 'Tìm phụ tùng cùng tên: ' + partName : 'Phụ tùng chưa có tên để tra cứu');
+                sameName.title = partName ? 'Tìm đúng tên, giữ bộ lọc hiện tại: ' + partName : 'Phụ tùng chưa có tên';
+                sameName.disabled = !partName;
+                sameName.onclick = async event => {
+                    event.stopPropagation();
+                    if (!partName || document.getElementById('btnLookupSearch').getAttribute('aria-busy') === 'true') return;
+                    sameName.disabled = true;
+                    sameName.setAttribute('aria-busy','true');
+                    try { await window.searchSamePartName(partName); }
+                    finally { sameName.disabled = !partName; sameName.removeAttribute('aria-busy'); }
+                };
+                actions.append(detail,sameName);
+                entry.append(card,actions);
+                tableBody.append(entry);
             });
             updatePaginationUI(totalPages);
         }
@@ -6608,6 +6735,7 @@ window.searchData = async function() {
             CURRENT_PAGE = 1;
             window.TascoLookupFlow.syncSort(mode);
             renderTable();
+            scrollLookupResultsToTop();
         };
 
         function updatePaginationUI(totalPages) {
