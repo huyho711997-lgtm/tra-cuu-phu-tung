@@ -76,6 +76,8 @@ html.tasco-boot-pending #tascoBootSplash { display: flex; }
 </style>
     <meta id="tascoThemeColor" name="theme-color" content="#edf5f7">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>TASCO DLK · Không gian làm việc</title>
     
     <!-- Icon hiển thị trên tab trình duyệt (Favicon) -->
@@ -2943,6 +2945,122 @@ html.dark .tasco-workspace #bottomNav[data-nav-motion] .ws-nav-indicator { borde
 }
 
 </style>
+<!-- Lucian UX/UI Prompt #021 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#021 -->
+<style id="tascoDayNightSwitch">
+/* Theme tokens inherit the app's light/dark palette; sky artwork keeps the supplied colors. */
+.u021{--ux-accent:var(--ws-accent-text);--ux-ink:var(--ws-text);--ux-ink-3:var(--ws-muted);--ux-surface:var(--ws-surface);--ux-ease:cubic-bezier(.2,.8,.2,1);--ux-spring:cubic-bezier(.34,1.45,.64,1)}
+.u021 .u021-frame,.u021 .u021-frame *,.u021 .u021-frame *::before,.u021 .u021-frame *::after{box-sizing:border-box}
+.u021 .u021-frame{position:relative;display:block;width:56px;height:23.5px;flex:0 0 56px;pointer-events:none}
+.u021 .u021-sw{display:block;transform:scale(.25);transform-origin:top left}
+.u021:focus-visible{outline:2px solid var(--ux-accent);outline-offset:-4px}
+.u021:focus-visible .u021-frame{outline:2px solid var(--ux-accent);outline-offset:4px;border-radius:999px}
+
+
+.u021 .u021-sw{position:relative;width:224px;height:94px;border:0;padding:0;border-radius:999px;overflow:hidden;isolation:isolate;
+  background:linear-gradient(180deg,#5DB7FF,#9ED8FF);box-shadow:inset 0 4px 10px rgba(0,30,80,.28),inset 0 -2px 4px rgba(255,255,255,.4),0 18px 34px -18px rgba(40,110,200,.7);transition:box-shadow .8s var(--ux-ease)}
+.u021 .u021-sw::before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#141A3A,#232C5C);opacity:0;transition:opacity .8s var(--ux-ease)}
+.u021 .u021-sw:focus-visible{outline:2px solid var(--ux-accent);outline-offset:5px}
+html.dark .u021 .u021-sw::before{opacity:1}
+html.dark .u021 .u021-sw{box-shadow:inset 0 4px 10px rgba(0,0,0,.5),inset 0 -2px 4px rgba(255,255,255,.08),0 18px 34px -18px rgba(20,24,70,.9)}
+
+.u021 .u021-halo{position:absolute;z-index:1;left:47px;top:47px;width:0;height:0;transition:transform .9s var(--ux-spring)}
+.u021 .u021-halo i{position:absolute;border-radius:50%;background:rgba(255,255,255,.12)}
+.u021 .u021-halo i:nth-child(1){width:130px;height:130px;margin:-65px}
+.u021 .u021-halo i:nth-child(2){width:176px;height:176px;margin:-88px}
+.u021 .u021-halo i:nth-child(3){width:222px;height:222px;margin:-111px}
+html.dark .u021 .u021-halo{transform:translateX(130px)}
+.u021 .u021-knob{position:absolute;z-index:3;left:8px;top:8px;width:78px;height:78px;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle at 35% 30%,#FFF1A8,#FFD23F 45%,#F8A91E);box-shadow:0 6px 14px -4px rgba(140,80,0,.5),inset -4px -6px 10px rgba(200,110,0,.35),inset 4px 4px 8px rgba(255,255,255,.5);
+  transition:transform .9s var(--ux-spring)}
+.u021 .u021-moon{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#F4F6FB,#C9CFDD 60%,#A9B0C2);opacity:0;transform:translateX(100%);transition:transform .8s var(--ux-ease),opacity .4s var(--ux-ease)}
+.u021 .u021-moon i{position:absolute;border-radius:50%;background:#A3AABC;box-shadow:inset 1px 2px 2px rgba(0,0,0,.18)}
+.u021 .u021-moon i:nth-child(1){left:20px;top:16px;width:20px;height:20px}
+.u021 .u021-moon i:nth-child(2){left:46px;top:40px;width:14px;height:14px}
+.u021 .u021-moon i:nth-child(3){left:24px;top:48px;width:9px;height:9px}
+html.dark .u021 .u021-knob{transform:translateX(130px) rotate(200deg)}
+html.dark .u021 .u021-moon{opacity:1;transform:none}
+.u021 .u021-clouds{position:absolute;z-index:2;inset:0;transition:transform .8s var(--ux-ease),opacity .6s var(--ux-ease)}
+.u021 .u021-clouds i{position:absolute;border-radius:999px;background:#fff}
+.u021 .u021-clouds i:nth-child(1){right:-10px;bottom:-18px;width:120px;height:56px;box-shadow:-46px 8px 0 -6px #fff,-80px 18px 0 -10px #fff}
+.u021 .u021-clouds i:nth-child(2){right:20px;bottom:-30px;width:96px;height:52px;background:#E3F1FF;box-shadow:-44px 6px 0 -8px #E3F1FF;z-index:-1}
+html.dark .u021 .u021-clouds{transform:translateY(80px);opacity:0}
+.u021 .u021-stars{position:absolute;z-index:1;inset:0;opacity:0;transform:translateY(-30px);transition:transform .8s var(--ux-ease),opacity .6s var(--ux-ease)}
+.u021 .u021-stars i{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff;animation:u021-tw 2.4s ease-in-out infinite}
+html.dark .u021 .u021-stars{opacity:1;transform:none}
+@keyframes u021-tw{50%{opacity:.3;transform:scale(.6)}}
+
+@media(prefers-reduced-motion:reduce){
+  .u021 .u021-frame,.u021 .u021-frame *,.u021 .u021-frame *::before,.u021 .u021-frame *::after{animation:none!important;transition:none!important}
+}
+</style>
+<!-- Lucian UX/UI Prompt #056 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#056 -->
+<style id="tascoLookupSlidingToggle">
+/* Existing app tokens supply both themes. Only the supplied segmented selector is used. */
+.u056{--ux-page:var(--ws-bg);--ux-surface:var(--ws-surface);--ux-ink:var(--ws-text);--ux-ink-2:var(--ws-muted);--ux-line:var(--ws-line);--ux-accent:var(--ws-accent-text);--ux-ease:cubic-bezier(.2,.8,.2,1);--ux-spring:cubic-bezier(.34,1.45,.64,1)}
+.tasco-workspace :is(#traCuuSection,#rescueSection) .u056.u056-sw{position:relative;display:flex;align-self:center;width:100%;min-width:0;box-sizing:border-box;gap:0;padding:4px;border:0;border-radius:999px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line);isolation:isolate}
+.u056 .u056-knob{position:absolute;top:4px;bottom:4px;left:4px;width:var(--w,0px);border-radius:999px;background:var(--ux-ink);transform:translateX(var(--x,0px));transition:transform .5s var(--ux-spring),width .5s var(--ux-spring);pointer-events:none;visibility:hidden;z-index:0}
+.u056[data-u056-ready] .u056-knob{visibility:visible}
+.tasco-workspace :is(#traCuuSection,#rescueSection) .u056.u056-sw button{position:relative;z-index:1;flex:1 1 0;min-width:0;height:40px;min-height:40px;box-sizing:border-box;padding:0 clamp(4px,1.4vw,18px);border:0;border-radius:999px;background:none;box-shadow:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;font-size:clamp(10px,2.6vw,11px);font-weight:720;line-height:1.25;white-space:nowrap;color:var(--ux-ink-2);transition:color .3s;cursor:pointer}
+.tasco-workspace :is(#traCuuSection,#rescueSection) .u056.u056-sw button[data-lookup-type="all"]{flex-grow:.75}
+.tasco-workspace :is(#traCuuSection,#rescueSection) .u056.u056-sw button[data-lookup-type="aftermarket"]{flex-grow:1.45}
+.tasco-workspace :is(#traCuuSection,#rescueSection) .u056.u056-sw button[aria-pressed="true"]{color:var(--ux-page);background:none;box-shadow:none}
+.tasco-workspace :is(#traCuuSection,#rescueSection) .u056.u056-sw:not([data-u056-ready]) button[aria-pressed="true"]{background:var(--ux-ink)}
+.tasco-workspace :is(#traCuuSection,#rescueSection) .u056.u056-sw button:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}
+.u056 .u056-icon{display:block;width:14px;height:14px;flex:0 0 14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+@media(max-width:359px){.tasco-workspace :is(#traCuuSection,#rescueSection) .u056.u056-sw button{gap:3px;padding-inline:4px}.tasco-workspace :is(#traCuuSection,#rescueSection) .u056.u056-sw button[data-lookup-type="aftermarket"]{flex-grow:1.65}.u056 .u056-icon{width:12px;height:12px;flex-basis:12px}}
+.u056:not([data-u056-ready]) .u056-knob{transition:none}
+@media(prefers-reduced-motion:reduce){.u056,.u056 *,.u056 *::before,.u056 *::after{transition:none!important;animation:none!important}}
+</style>
+<style id="tascoSceneLocationDesign">
+/* Scene location controls share the app's navy, ice and teal theme tokens. */
+#rescueSection .rr-scene{background:var(--ws-soft);padding:16px;border-radius:20px}
+#rescueSection .rr-scene .rr-head{margin-bottom:14px}
+#rescueSection .rr-scene #rrGps{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:46px;margin:0;padding:11px 14px;border:1px solid var(--ws-text);border-radius:999px;background:var(--ws-text);color:var(--ws-bg);font-size:12px;font-weight:650;line-height:1.4;box-shadow:0 4px 12px rgba(24,48,86,.08)}
+#rescueSection .rr-scene #rrGps::before{content:"";display:block;flex:0 0 17px;width:17px;height:17px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='7'/%3E%3Ccircle cx='12' cy='12' r='2.5'/%3E%3Cpath d='M12 2v3m0 14v3M2 12h3m14 0h3'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='7'/%3E%3Ccircle cx='12' cy='12' r='2.5'/%3E%3Cpath d='M12 2v3m0 14v3M2 12h3m14 0h3'/%3E%3C/svg%3E") center/contain no-repeat;pointer-events:none}
+#rescueSection .rr-scene .rr-scene-label{display:block;margin:16px 1px 8px;color:var(--ws-muted);font-size:10px;font-weight:550;line-height:1.5}
+#rescueSection .rr-scene .rr-scene-search{display:grid;grid-template-columns:minmax(0,1fr) 40px;gap:6px;align-items:center;margin:0;padding:5px;box-sizing:border-box;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-surface);transition:border-color .15s,box-shadow .15s}
+#rescueSection .rr-scene .rr-scene-search:focus-within{border-color:var(--app-teal);box-shadow:0 0 0 2px var(--ws-accent)}
+#rescueSection .rr-scene .rr-scene-search .rc-field{display:flex;align-items:center;gap:8px;min-width:0;min-height:40px;margin:0;padding:0 3px 0 7px;border:0!important;border-radius:0;background:transparent}
+#rescueSection .rr-scene .rr-scene-search input{width:100%;min-width:0;min-height:40px;padding:0!important;font-size:16px!important;font-weight:500!important;line-height:1.4}
+#rescueSection .rr-scene .rr-scene-search input::placeholder{font-size:12px;font-weight:450;opacity:.85}
+#rescueSection .rr-scene .rr-scene-icon{display:block;flex:0 0 17px;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#rescueSection .rr-scene #rrSceneSearch{display:grid;place-items:center;width:40px;height:40px;min-height:40px;padding:0;border:0;border-radius:12px;background:var(--ws-accent);color:var(--ws-text);box-shadow:none}
+#rescueSection .rr-scene #rrSceneSearch .rr-scene-icon{width:18px;height:18px}
+#rescueSection .rr-scene :is(#rrGps,#rrSceneSearch):focus-visible{outline:2px solid var(--ws-accent-text);outline-offset:3px}
+#rescueSection .rr-scene :is(#rrGps,#rrSceneSearch):disabled{opacity:.55;cursor:progress}
+#rescueSection .rr-scene .rr-info{margin:11px 2px 0;font-size:11px;line-height:1.6}
+@media(max-width:359px){#rescueSection .rr-scene{padding:14px}#rescueSection .rr-scene .rr-scene-search .rc-field{gap:6px;padding-left:4px}#rescueSection .rr-scene .rr-scene-search .rc-field>.rr-scene-icon{flex-basis:14px;width:14px;height:14px}}
+@media(prefers-reduced-motion:reduce){#rescueSection .rr-scene,#rescueSection .rr-scene *{transition:none!important}}
+</style>
+<style id="tascoGarageLocationDesign">
+#rescueSection .rr-garage{padding:16px;border-radius:20px;background:var(--ws-soft)}
+#rescueSection .rr-garage .rr-head{margin-bottom:14px}
+#rescueSection .rr-garage #rrGaragePick{display:flex;align-items:center;gap:11px;min-height:62px;padding:11px 12px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-surface);color:var(--ws-text)}
+#rescueSection .rr-garage #rrGaragePick .rc-pick-icon{width:36px;height:36px;flex-basis:36px;border-radius:12px;background:var(--ws-accent);color:var(--ws-accent-text)}
+#rescueSection .rr-garage #rrGaragePick .rc-pick-copy{min-width:0}
+#rescueSection .rr-garage #rrGaragePick .rc-pick-copy strong{margin-bottom:3px;font-size:10px;color:var(--ws-muted)}
+#rescueSection .rr-garage #rrGaragePick .rc-pick-copy small{font-size:12px;font-weight:600;line-height:1.45;overflow-wrap:anywhere}
+#rescueSection .rr-garage #rrGaragePick .rc-chev{width:14px;height:14px;flex-basis:14px}
+#rescueSection .rr-garage #rrNearest{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:46px;margin:10px 0 0;padding:11px 14px;border:1px solid var(--ws-text);border-radius:999px;background:var(--ws-text);color:var(--ws-bg);font-size:12px;font-weight:650;line-height:1.4;box-shadow:0 4px 12px rgba(24,48,86,.08)}
+#rescueSection .rr-garage .rr-garage-icon{display:block;flex:0 0 17px;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#rescueSection .rr-garage :is(#rrGaragePick,#rrNearest):focus-visible{outline:2px solid var(--ws-accent-text);outline-offset:3px}
+#rescueSection .rr-garage :is(#rrGaragePick,#rrNearest):disabled{opacity:.55;cursor:progress}
+#rescueSection .rr-garage [hidden]{display:none!important}
+@media(max-width:359px){#rescueSection .rr-garage{padding:14px}}
+@media(prefers-reduced-motion:reduce){#rescueSection .rr-garage,#rescueSection .rr-garage *{transition:none!important}}
+</style>
+<style id="tascoTopEdgeStyles">
+/* Paint the safe area as part of the current header; inset controls, not the page. */
+html[data-tasco-page]{--tasco-top-color:var(--ws-bg);margin:0;padding:0;background:var(--tasco-top-color)}
+html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="forms"]){--tasco-top-color:var(--app-navy)}
+html[data-tasco-page] body.tasco-workspace{margin:0;padding:0}
+html[data-tasco-page] body.tasco-workspace::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:100;background:var(--tasco-top-color);pointer-events:none}
+.tasco-workspace #mainApp[data-shell][data-page]{margin-top:0!important;padding-top:0!important}
+.tasco-workspace :is(#traCuuSection,#personalCloudSection,#rescueSection,#garageSection,#formsSection){margin-top:0;padding-top:0}
+.tasco-workspace .ws-journey-hero,.tasco-workspace #personalCloudSection .cloud-hero{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+/* The results page keeps its measured space for the fixed header. */
+.tasco-workspace #resultsStickyHeader{top:0;margin-top:0}
+</style>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
 <section id="tascoBootSplash" aria-labelledby="bootTitle" aria-busy="true">
@@ -3178,7 +3296,14 @@ window.TascoBootSplash = (() => {
 <section id="accountSection" data-shell-page="account" hidden aria-label="Tài khoản và thiết lập">
   <div class="ws-account-layout"><div><article class="ws-account-card"><span class="ws-avatar" data-shell-avatar>HQ</span><div><h2 data-account-name>Tài khoản</h2><p data-account-email></p><span class="ws-role" data-account-role>Thành viên</span></div></article></div>
   <div><span class="ws-settings-label">Thiết lập cá nhân</span><div class="ws-settings-list">
-    <button type="button" class="ws-setting-row" data-theme-toggle onclick="toggleTheme()" aria-pressed="false"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span><strong>Giao diện sáng / tối</strong><small>Chọn giao diện phù hợp với bạn</small></span><span class="ws-switch" aria-hidden="true"></span></button>
+    <button type="button" class="ws-setting-row u021" data-theme-toggle onclick="toggleTheme()" aria-pressed="false"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span><strong>Giao diện sáng / tối</strong><small>Chọn giao diện phù hợp với bạn</small></span><span class="u021-frame" aria-hidden="true"><span class="u021-sw">
+    <span class="u021-halo" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="u021-stars" aria-hidden="true">
+      <i style="left:30px;top:20px"></i><i style="left:58px;top:56px;animation-delay:-.6s;width:3px;height:3px"></i><i style="left:86px;top:26px;animation-delay:-1.2s"></i><i style="left:44px;top:72px;animation-delay:-1.8s;width:3px;height:3px"></i><i style="left:110px;top:60px;animation-delay:-.9s;width:2px;height:2px"></i><i style="left:20px;top:46px;animation-delay:-1.5s;width:2px;height:2px"></i>
+    </span>
+    <span class="u021-clouds" aria-hidden="true"><i></i><i></i></span>
+    <span class="u021-knob" aria-hidden="true"><span class="u021-moon"><i></i><i></i><i></i></span></span>
+  </span></span></button>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="TascoPersonalStorage.open()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/><path d="m9 14 2 2 4-4"/></svg><span><strong>Tài khoản lưu trữ</strong><small data-storage-setting-status>Thêm tài khoản lưu trữ</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" onclick="openChangePasswordModal()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span><strong>Đổi mật khẩu</strong><small>Cập nhật mật khẩu tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-admin-only hidden onclick="updateView('admin')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span><strong>Quản lý hệ thống</strong><small>Người dùng và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
@@ -3210,37 +3335,38 @@ window.TascoBootSplash = (() => {
 <section id="rescueSection" data-shell-page="rescue" class="ws-journey rc" hidden style="display:none" aria-labelledby="rescuePageTitle">
   <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · CỨU HỘ PHƯƠNG TIỆN</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">GĐBT-HD-CHCG-01 · BAREM NỘI BỘ</span><h2 id="rescuePageTitle" tabindex="-1">Chi phí cứu hộ.<br>Tính nhanh.</h2><p>Tra cứu đơn giá và tính trần chi phí kéo, cẩu xe theo hướng dẫn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="94" cy="70" r="59" stroke="currentColor" stroke-opacity=".18"/><circle cx="94" cy="70" r="47" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="3 7"/><path d="M40 92h72l8-24h26l10 24v12H40z" fill="#84bfc7" fill-opacity=".09" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M52 92 74 40l36-8M110 32v22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="62" cy="108" r="11" fill="#183056" stroke="#daecf0" stroke-width="2"/><circle cx="132" cy="108" r="11" fill="#183056" stroke="#daecf0" stroke-width="2"/><path d="M30 124h120" stroke="currentColor" stroke-opacity=".5" stroke-linecap="round"/></svg></header>
   <div class="ws-search-panel ws-search-panel--premium rc-panel">
-    <div class="ws-kind-tabs rc-tabs" role="group" aria-label="Chế độ"><button type="button" data-rc-tab="calc" aria-pressed="true">Tính chi phí</button><button type="button" data-rc-tab="ref" aria-pressed="false">Bảng tra cứu</button></div>
+    <div class="ws-kind-tabs rc-tabs u056 u056-sw" role="group" aria-label="Chế độ"><span class="u056-knob" aria-hidden="true"></span><button type="button" data-rc-tab="calc" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h1m6 0h1M8 15h1m6 0h1M8 18h1m6 0h1"/></svg>Tính chi phí</button><button type="button" data-rc-tab="ref" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M15 9v11M3 14h18"/></svg>Bảng tra cứu</button></div>
 
     <div data-rc-pane="calc">
       <span class="rc-label">Hạng mục cứu hộ</span>
-      <div class="ws-kind-tabs rc-svc" role="group" aria-label="Hạng mục"><button type="button" data-rc-svc="tow" aria-pressed="true">Kéo xe</button><button type="button" data-rc-svc="crane" aria-pressed="false">Cẩu xe</button><button type="button" data-rc-svc="both" aria-pressed="false">Cả hai</button></div>
+      <div class="ws-kind-tabs rc-svc u056 u056-sw" role="group" aria-label="Hạng mục"><span class="u056-knob" aria-hidden="true"></span><button type="button" data-rc-svc="tow" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 15V8h10v7m0-4h5l4 4v3H2v-3h19"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M4 5h6"/></svg>Kéo xe</button><button type="button" data-rc-svc="crane" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 18h18M5 18V9l9-6 4 9M14 3v8m0 0v2a2 2 0 1 1-4 0M3 21v-3m18 3v-3"/></svg>Cẩu xe</button><button type="button" data-rc-svc="both" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M15 6h3v6M6 15v3h6"/></svg>Cả hai</button></div>
 
       <div data-rc-block="tow">
         <span class="rc-label">Nhóm xe (kéo) · theo số chỗ / tải trọng</span><button type="button" class="rc-pick" data-rc-pick="rcTowGroup" aria-haspopup="dialog"><span class="rc-pick-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16V8h11v8M14 11h4l3 3v2h-7M3 16h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg></span><span class="rc-pick-copy"><strong></strong><small></small></span><svg class="ws-icon rc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><select id="rcTowGroup" hidden></select>
         <span class="rc-label">Cách xác định quãng đường</span>
-        <div class="ws-kind-tabs rc-tabs rr-mode" role="group" aria-label="Cách xác định quãng đường">
-          <button type="button" data-rr-mode="manual" aria-pressed="true">Nhập số km</button>
-          <button type="button" data-rr-mode="locate" aria-pressed="false">Định vị tính km</button>
+        <div class="ws-kind-tabs rc-tabs rr-mode u056 u056-sw" role="group" aria-label="Cách xác định quãng đường"><span class="u056-knob" aria-hidden="true"></span>
+          <button type="button" data-rr-mode="manual" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4 15 11-11a2 2 0 0 1 3 0l2 2a2 2 0 0 1 0 3L9 20H4zM13 6l5 5M4 20h7"/></svg>Nhập số km</button>
+          <button type="button" data-rr-mode="locate" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m21 3-6.5 18-3.8-7.7L3 9.5zM21 3 10.7 13.3"/></svg>Định vị tính km</button>
         </div>
 
         <div class="rr" id="rrBox" hidden>
-          <div class="rr-card">
+          <div class="rr-card rr-scene">
             <div class="rr-head"><i class="rr-dot rr-dot--a">A</i><strong>Vị trí hiện trường</strong></div>
-            <button type="button" id="rrGps" class="rr-btn rr-btn--primary rr-btn--wide">Dùng vị trí hiện tại của tôi</button>
-            <div class="rr-row">
-              <div class="ws-search-field rc-field"><input id="rrSceneQ" type="text" enterkeyhint="search" autocomplete="off" placeholder="Hoặc nhập địa chỉ / toạ độ (lat, lon)"></div>
-              <button type="button" id="rrSceneSearch" class="rr-btn">Tìm</button>
+            <button type="button" id="rrGps" class="rr-btn rr-btn--primary rr-btn--wide">Dùng vị trí hiện tại</button>
+            <label class="rr-scene-label" for="rrSceneQ">Hoặc tìm theo địa chỉ</label>
+            <div class="rr-row rr-scene-search">
+              <div class="ws-search-field rc-field"><svg class="rr-scene-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><input id="rrSceneQ" type="text" enterkeyhint="search" autocomplete="off" placeholder="Địa chỉ hoặc tọa độ"></div>
+              <button type="button" id="rrSceneSearch" class="rr-btn" aria-label="Tìm địa chỉ hiện trường" title="Tìm địa chỉ"><svg class="rr-scene-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></button>
             </div>
             <ul id="rrSceneList" class="rr-list" hidden></ul>
             <p id="rrSceneMsg" class="rr-msg" role="alert" hidden></p>
             <div id="rrSceneInfo" class="rr-info"></div>
           </div>
 
-          <div class="rr-card">
+          <div class="rr-card rr-garage">
             <div class="rr-head"><i class="rr-dot rr-dot--b">B</i><strong>Địa điểm gara</strong></div>
-            <button type="button" class="rc-pick" id="rrGaragePick" data-rr-pick="garage" aria-haspopup="dialog"><span class="rc-pick-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.4-6-10a6 6 0 0 1 12 0c0 4.6-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></svg></span><span class="rc-pick-copy"><strong>Gara</strong><small>Chọn gara</small></span><svg class="ws-icon rc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
-            <button type="button" id="rrNearest" class="rr-btn rr-btn--wide">Chọn gara gần hiện trường nhất</button>
+            <button type="button" class="rc-pick" id="rrGaragePick" data-rr-pick="garage" aria-haspopup="dialog"><span class="rc-pick-icon"><svg class="ws-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7v11H3z"/><path d="M7 21V11h10v10M7 15h10M7 18h10"/></svg></span><span class="rc-pick-copy"><strong>Gara</strong><small>Chọn gara</small></span><svg class="ws-icon rc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+            <button type="button" id="rrNearest" class="rr-btn rr-btn--wide" aria-label="Chọn gara gần hiện trường nhất" title="Chọn gara gần hiện trường nhất"><svg class="rr-garage-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m21 3-6.5 18-3.8-7.7L3 9.5zM21 3 10.7 13.3"/></svg>Chọn gara gần nhất</button>
             <button type="button" id="rrManage" class="rr-link">Quản lý danh sách gara →</button>
             <div id="rrGarageOther" hidden>
               <div class="rr-row">
@@ -3254,9 +3380,9 @@ window.TascoBootSplash = (() => {
           </div>
 
           <span class="rc-label">Chạm bản đồ để đặt điểm</span>
-          <div class="ws-kind-tabs rc-tabs rr-target" role="group" aria-label="Điểm đang đặt">
-            <button type="button" data-rr-target="scene" aria-pressed="true">A · Hiện trường</button>
-            <button type="button" data-rr-target="garage" aria-pressed="false">B · Gara</button>
+          <div class="ws-kind-tabs rc-tabs rr-target u056 u056-sw" role="group" aria-label="Điểm đang đặt"><span class="u056-knob" aria-hidden="true"></span>
+            <button type="button" data-rr-target="scene" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>A · Hiện trường</button>
+            <button type="button" data-rr-target="garage" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7v11H3z"/><path d="M7 21V11h10v10M7 15h10M7 18h10"/></svg>B · Gara</button>
           </div>
           <div id="rrMap" class="rr-map" role="application" aria-label="Bản đồ lộ trình"></div>
           <p class="rc-hint">Kéo ghim A/B để chỉnh vị trí. Trên điện thoại dùng 2 ngón để di chuyển bản đồ.</p>
@@ -3401,7 +3527,7 @@ window.TascoBootSplash = (() => {
 <section id="traCuuSection" data-shell-page="lookup" class="ws-lookup ws-journey" hidden aria-labelledby="lookupPageTitle">
   <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TRA CỨU PHỤ TÙNG</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">THÔNG TIN ĐÚNG · LỰA CHỌN RÕ RÀNG</span><h2 id="lookupPageTitle" tabindex="-1">Chọn phụ tùng.<br>Tra cứu nhanh.</h2><p>Giá và thông tin phụ tùng theo xe của bạn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="94" cy="70" r="59" stroke="currentColor" stroke-opacity=".18"/><circle cx="94" cy="70" r="47" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="3 7"/><path d="m35 80 12-22h59l24 17 17 4v16H28V84l7-4Z" fill="#84bfc7" fill-opacity=".09" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m51 60-9 19h77l-19-19H51ZM78 60v19M36 85h12m86 0h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="53" cy="96" r="13" fill="#183056" stroke="#daecf0" stroke-width="2"/><circle cx="123" cy="96" r="13" fill="#183056" stroke="#daecf0" stroke-width="2"/><circle cx="53" cy="96" r="5" stroke="currentColor"/><circle cx="123" cy="96" r="5" stroke="currentColor"/><path d="M29 118h120" stroke="currentColor" stroke-opacity=".2" stroke-linecap="round"/></svg></header>
   <div class="ws-search-panel ws-search-panel--premium">
-    <div class="ws-kind-tabs" role="group" aria-label="Loại hàng cần tra cứu"><button type="button" data-lookup-type="all" onclick="TascoLookupFlow.chooseType('all')" aria-pressed="true">Tất cả</button><button type="button" data-lookup-type="genuine" onclick="TascoLookupFlow.chooseType('genuine')" aria-pressed="false">Chính hãng</button><button type="button" data-lookup-type="aftermarket" onclick="TascoLookupFlow.chooseType('aftermarket')" aria-pressed="false">Không chính hãng</button></div>
+    <div class="ws-kind-tabs u056 u056-sw" role="group" aria-label="Loại hàng cần tra cứu"><span class="u056-knob" aria-hidden="true"></span><button type="button" data-lookup-type="all" onclick="TascoLookupFlow.chooseType('all')" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="3.5" y="14.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="14.5" width="6" height="6" rx="1.5"/></svg>Tất cả</button><button type="button" data-lookup-type="genuine" onclick="TascoLookupFlow.chooseType('genuine')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg>Chính hãng</button><button type="button" data-lookup-type="aftermarket" onclick="TascoLookupFlow.chooseType('aftermarket')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 10 5-10 5L2 8z"/><path d="m2 12 10 5 10-5M2 16l10 5 10-5"/></svg>Không chính hãng</button></div>
     <label for="searchInput" class="ws-search-label">Phụ tùng cần tìm</label>
     <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="ws-search-input-wrap"><input type="search" id="searchInput" placeholder="Nhập tên phụ tùng…" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();searchData();}"></span></div>
     <div class="ws-part-suggestions" aria-label="Gợi ý phụ tùng"><span>Gợi ý</span><button type="button" data-part-suggestion="Đèn pha" onclick="TascoLookupFlow.choosePart('Đèn pha')" aria-pressed="false">Đèn pha</button><button type="button" data-part-suggestion="Cản trước" onclick="TascoLookupFlow.choosePart('Cản trước')" aria-pressed="false">Cản trước</button><button type="button" data-part-suggestion="Gương chiếu hậu" onclick="TascoLookupFlow.choosePart('Gương chiếu hậu')" aria-pressed="false">Gương chiếu hậu</button></div>
@@ -9704,7 +9830,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const color = ['lookup','results','cloud','rescue','garage'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    const color = ['lookup','results','cloud','rescue','garage','forms'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -10829,6 +10955,52 @@ window.TascoNavigationMotion = (() => {
   return { sync };
 })();
 
+</script>
+<!-- Lucian UX/UI Prompt #056 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#056 -->
+<script id="tascoLookupSlidingToggleScript">
+(function () {
+  document.querySelectorAll('.u056.u056-sw').forEach(function (root) {
+  var knob = root.querySelector('.u056-knob');
+  var opts = Array.from(root.querySelectorAll(':scope > button'));
+  var frame = 0;
+  function place() {
+    var selected = opts.find(function (o) { return o.getAttribute('aria-pressed') === 'true'; }) || opts[0];
+    opts.forEach(function (o) { o.tabIndex = o === selected ? 0 : -1; });
+    if (!selected || !selected.offsetWidth || !root.offsetWidth) return;
+    knob.style.setProperty('--x', (selected.offsetLeft - 4) + 'px');
+    knob.style.setProperty('--w', selected.offsetWidth + 'px');
+    if (!root.hasAttribute('data-u056-ready')) {
+      /* Commit the initial position before enabling the supplied spring transition. */
+      void knob.offsetWidth;
+      root.setAttribute('data-u056-ready', '');
+    }
+  }
+  function schedule() {
+    if (frame) return;
+    frame = requestAnimationFrame(function () { frame = 0; place(); });
+  }
+  opts.forEach(function (o, index) {
+    o.addEventListener('keydown', function (event) {
+      var next;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (index + 1) % opts.length;
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (index + opts.length - 1) % opts.length;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = opts.length - 1;
+      else return;
+      event.preventDefault();
+      opts[next].click();
+      opts[next].focus();
+    });
+  });
+  root.addEventListener('click', schedule);
+  /* Existing application handlers remain the only source of each selected value. */
+  new MutationObserver(schedule).observe(root, {subtree:true,attributes:true,attributeFilter:['aria-pressed']});
+  if (window.ResizeObserver) new ResizeObserver(schedule).observe(root);
+  window.addEventListener('resize', schedule, {passive:true});
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  place();
+  });
+})();
 </script>
 </body>
 </html>
