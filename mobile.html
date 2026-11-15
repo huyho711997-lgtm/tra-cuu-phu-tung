@@ -3014,7 +3014,7 @@ html.dark .u021 .u021-stars{opacity:1;transform:none}
 <style id="tascoTopEdgeStyles">
 /* Paint the safe area as part of the current header; inset controls, not the page. */
 html[data-tasco-page]{--tasco-top-color:var(--ws-bg);margin:0;padding:0;background:var(--tasco-top-color)}
-html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="forms"]){--tasco-top-color:var(--app-navy)}
+html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="forms"],[data-tasco-page="account"]){--tasco-top-color:var(--app-navy)}
 html[data-tasco-page] body.tasco-workspace{margin:0;padding:0;background:var(--tasco-top-color)!important}
 /* Safari can use body paint when its viewport excludes the device status bar. */
 .tasco-workspace #mainApp[data-shell]{background:var(--ws-bg)}
@@ -3353,27 +3353,29 @@ window.TascoBootSplash = (() => {
   <button type="button" class="ws-admin-card" data-admin-only hidden onclick="updateView('admin')"><span><strong>Quản lý hệ thống</strong><small>Tài khoản và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
   <p class="ws-bottom-note"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span data-cloud-only hidden><span data-cloud-connection>Đang kết nối thư viện…</span> · </span><span>TASCO INSURANCE</span></p>
 </section>
-<section id="accountSection" data-shell-page="account" hidden aria-label="Tài khoản và thiết lập">
-  <div class="ws-account-layout"><div><article class="ws-account-card"><span class="ws-avatar" data-shell-avatar>HQ</span><div><h2 data-account-name>Tài khoản</h2><p data-account-email></p><span class="ws-role" data-account-role>Thành viên</span></div></article></div>
-  <div><span class="ws-settings-label">Thiết lập cá nhân</span><div class="ws-settings-list">
-    <button type="button" class="ws-setting-row u021" data-theme-toggle onclick="toggleTheme()" aria-pressed="false"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span><strong>Giao diện sáng / tối</strong><small>Chọn giao diện phù hợp với bạn</small></span><span class="u021-frame" aria-hidden="true"><span class="u021-sw">
-    <span class="u021-halo" aria-hidden="true"><i></i><i></i><i></i></span>
-    <span class="u021-stars" aria-hidden="true">
-      <i style="left:30px;top:20px"></i><i style="left:58px;top:56px;animation-delay:-.6s;width:3px;height:3px"></i><i style="left:86px;top:26px;animation-delay:-1.2s"></i><i style="left:44px;top:72px;animation-delay:-1.8s;width:3px;height:3px"></i><i style="left:110px;top:60px;animation-delay:-.9s;width:2px;height:2px"></i><i style="left:20px;top:46px;animation-delay:-1.5s;width:2px;height:2px"></i>
-    </span>
-    <span class="u021-clouds" aria-hidden="true"><i></i><i></i></span>
-    <span class="u021-knob" aria-hidden="true"><span class="u021-moon"><i></i><i></i><i></i></span></span>
-  </span></span></button>
+<section id="accountSection" data-shell-page="account" class="ws-journey ws-account-page" hidden aria-labelledby="accountPageTitle">
+  <header class="ws-journey-hero ws-account-hero">
+    <div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TÀI KHOẢN</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div>
+    <div class="ws-account-id"><span class="ws-avatar" data-shell-avatar aria-hidden="true">HQ</span><div><h2 id="accountPageTitle" tabindex="-1" data-account-name>Tài khoản</h2><p data-account-email></p><span class="ws-role" data-account-role>Thành viên</span></div></div>
+  </header>
+  <div class="ws-account-body">
+    <div class="ws-settings-list"><span class="ws-settings-label">Thiết lập cá nhân</span>
+    <button type="button" class="ws-setting-row" data-theme-toggle onclick="toggleTheme()" aria-pressed="false"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span><strong>Giao diện sáng / tối</strong><small>Chọn giao diện phù hợp với bạn</small></span><span class="ws-theme-pill" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg></span></button>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="TascoPersonalStorage.open()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/><path d="m9 14 2 2 4-4"/></svg><span><strong>Tài khoản lưu trữ</strong><small data-storage-setting-status>Thêm tài khoản lưu trữ</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" onclick="openChangePasswordModal()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span><strong>Đổi mật khẩu</strong><small>Cập nhật mật khẩu tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-admin-only hidden onclick="updateView('admin')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span><strong>Quản lý hệ thống</strong><small>Người dùng và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-admin-only hidden onclick="TascoForms.openSettings()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span><strong>Kho lưu trữ biểu mẫu</strong><small data-forms-setting-status>Kết nối thư mục Google Drive</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
-  </div><span class="ws-settings-label">Không gian làm việc</span><div class="ws-settings-list">
+  </div>
+    <div class="ws-settings-list"><span class="ws-settings-label">Không gian làm việc</span>
     <button type="button" class="ws-setting-row" onclick="updateView('forms')"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Xem và tải biểu mẫu Word, PDF</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><span><strong>Cloud của tôi</strong><small>Quản lý ảnh theo tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" id="btnUpdateApp" onclick="tascoUpdateApp(this)"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12A8 8 0 0 1 18.3 7.1"/><path d="M18 3v4.5h-4.5M6 21v-4.5h4.5"/></svg><span><strong>Cập nhật ứng dụng</strong><small data-update-status>Tải phiên bản mới nhất</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+  </div>
+    <div class="ws-settings-list ws-settings-list--session">
     <button type="button" class="ws-setting-row" data-danger onclick="handleLogout()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4m5-15 7 7-7 7M8 12h13"/></svg><span><strong>Đăng xuất</strong><small>Kết thúc phiên trên thiết bị này</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
-  </div></div></div>
+  </div>
+    <p class="ws-journey-note"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>TASCO INSURANCE · Tài khoản nội bộ</span></p>
+  </div>
 </section>
 <section id="personalCloudSection" data-shell-page="cloud" hidden style="display:none"></section>
 
@@ -3941,7 +3943,7 @@ window.TascoAppShell=(()=>{
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
     login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
     Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id);node.hidden=page!==view;node.style.display=page===view?'block':'none';});
-    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','forms'].includes(view);
+    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','forms','account'].includes(view);
     setText('#wsPageTitle',pages[view]||'');
     document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
     window.TascoNavigationMotion?.sync(view,previous);
@@ -3951,7 +3953,7 @@ window.TascoAppShell=(()=>{
     if(view==='cloud')connectCloud();if(view==='home'){greeting();paintCloud(lastCloud);connectCloud();}
     if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
     window.TascoLookupFlow?.afterNavigate(view);
-    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='forms'?'formsPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
+    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
     const top=options.restore?scrolls[view]||0:0;
     window.scrollTo({left:0,top,behavior:'instant'});
     if(previous!==view&&['lookup','results','cloud','rescue','garage'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
@@ -10353,7 +10355,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const color = ['lookup','results','cloud','rescue','garage','forms'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    const color = ['lookup','results','cloud','rescue','garage','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -12641,6 +12643,50 @@ window.TascoCameraRescue = (function () {
 #btnUpdateApp.has-update strong::after{content:'Mới';margin-left:8px;padding:2px 7px;border-radius:999px;background:#ff6b5f;color:#fff;font-size:10px;font-weight:700;vertical-align:middle}
 </style>
 <style>.cloud-photo-viewer[data-media="video"] :is([data-viewer-action="zoom-in"],[data-viewer-action="zoom-out"],[data-viewer-action="rotate"],.viewer-image){display:none!important}</style>
+<style id="tascoAccountPremium">
+/* Trang Tài khoản: cùng ngôn ngữ thiết kế với Biểu mẫu / Cứu hộ (hero navy + thẻ trắng bo lớn nổi lên). */
+.tasco-workspace #mainApp[data-shell][data-page=account]{max-width:760px;padding:0 0 calc(118px + env(safe-area-inset-bottom,0px))!important}
+.tasco-workspace #mainApp[data-page=account]>#mainHeader,.tasco-workspace #mainApp[data-page=account]>#wsChildbar{display:none!important}
+@media(max-width:767px){.tasco-workspace #mainApp[data-shell][data-page=account]{padding-left:0!important;padding-right:0!important;max-width:600px}}
+#accountSection{padding:0}
+#accountSection .ws-account-hero{min-height:0;padding-bottom:60px}
+#accountSection .ws-journey-top{margin-bottom:26px}
+.ws-account-id{position:relative;z-index:1;display:flex;align-items:center;gap:16px}
+.ws-account-id>div{min-width:0}
+#accountSection .ws-account-id .ws-avatar{width:68px;height:68px;flex:none;border:1px solid rgba(218,236,240,.28);border-radius:23px;background:linear-gradient(155deg,#b4e0e6,#63adb6);color:#0f2742;font-size:23px;font-weight:700;letter-spacing:-.5px;box-shadow:0 12px 28px -14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.4)}
+#accountSection .ws-account-id h2{margin:0;color:#fff;font-size:24px;font-weight:650;letter-spacing:-.8px;line-height:1.2;overflow-wrap:anywhere}
+#accountSection .ws-account-id h2:focus{outline:0}
+#accountSection .ws-account-id p{margin:5px 0 0;color:#b9d6dd;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+#accountSection .ws-account-id .ws-role{display:inline-flex;align-items:center;gap:6px;margin-top:11px;padding:5px 11px 5px 9px;border:1px solid rgba(132,191,199,.34);border-radius:99px;background:rgba(132,191,199,.14);color:#a9dbe1;font-size:10px;font-weight:650;letter-spacing:.02em}
+#accountSection .ws-account-id .ws-role::before{content:'';width:5px;height:5px;border-radius:50%;background:#84bfc7}
+.ws-account-body{position:relative;z-index:2;display:flex;flex-direction:column;gap:12px;margin:-30px 12px 0}
+#accountSection .ws-settings-list{overflow:hidden;padding:3px 0;border:1px solid var(--ws-line);border-radius:26px;background:var(--ws-surface);box-shadow:0 16px 44px -30px rgba(24,48,86,.35)}
+#accountSection .ws-settings-label{margin:0;padding:17px 22px 7px;font-size:9px;font-weight:650;letter-spacing:.15em;color:var(--ws-muted)}
+#accountSection .ws-setting-row{position:relative;min-height:68px;padding:11px 20px 11px 18px;gap:14px;border:0;background:transparent;-webkit-tap-highlight-color:transparent;transition:background .15s}
+#accountSection .ws-setting-row:active{background:var(--ws-soft)}
+#accountSection .ws-setting-row:not([hidden])~.ws-setting-row:not([hidden])::before{content:'';position:absolute;top:0;left:74px;right:20px;height:1px;background:var(--ws-line)}
+#accountSection .ws-setting-row>svg.ws-icon:first-child{box-sizing:border-box;flex:none;width:42px;height:42px;padding:10px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-soft);color:var(--ws-accent-text)}
+#accountSection .ws-setting-row strong{font-size:13.5px;font-weight:650;letter-spacing:-.15px;line-height:1.4;color:var(--ws-text)}
+#accountSection .ws-setting-row small{margin-top:3px;font-size:11px;line-height:1.5;color:var(--ws-muted)}
+#accountSection .ws-setting-row>svg.ws-icon:last-child:not(:first-child){flex:none;width:16px;height:16px;color:var(--ws-muted);opacity:.75}
+#accountSection .ws-setting-row.has-update small{color:#a9791f;font-weight:600}
+html.dark #accountSection .ws-setting-row.has-update small{color:#e8c77a}
+/* Công tắc Sáng / Tối */
+.ws-theme-pill{position:relative;display:grid;grid-template-columns:1fr 1fr;align-items:center;justify-items:center;flex:none;width:70px;height:36px;padding:3px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-soft);box-shadow:inset 0 1px 2px rgba(24,48,86,.08)}
+.ws-theme-pill i{position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:var(--ws-surface);border:1px solid var(--ws-line);box-shadow:0 3px 8px -2px rgba(24,48,86,.28);transition:transform .3s cubic-bezier(.3,.9,.3,1)}
+.ws-theme-pill svg{position:relative;z-index:1;width:15px;height:15px;color:var(--ws-muted);transition:color .2s}
+#accountSection .ws-setting-row[aria-pressed=false] .ws-theme-pill svg:nth-of-type(1),#accountSection .ws-setting-row[aria-pressed=true] .ws-theme-pill svg:nth-of-type(2){color:var(--ws-accent-text)}
+#accountSection .ws-setting-row[aria-pressed=true] .ws-theme-pill i{transform:translateX(32px);background:var(--ws-accent)}
+/* Đăng xuất */
+.ws-settings-list--session{padding:3px 0}
+#accountSection .ws-setting-row[data-danger]>svg.ws-icon:first-child{border-color:#f0d3d1;background:#fbeeed;color:#b1514d}
+#accountSection .ws-setting-row[data-danger] strong{color:#a3433f}
+html.dark #accountSection .ws-setting-row[data-danger]>svg.ws-icon:first-child{border-color:rgba(240,160,155,.3);background:rgba(240,160,155,.1);color:#f0a09b}
+html.dark #accountSection .ws-setting-row[data-danger] strong{color:#f0a09b}
+#accountSection .ws-journey-note{margin:10px 0 0}
+@media(max-width:360px){#accountSection .ws-account-hero{padding-left:18px;padding-right:18px}#accountSection .ws-account-id .ws-avatar{width:60px;height:60px;border-radius:20px;font-size:20px}#accountSection .ws-account-id h2{font-size:22px}.ws-account-body{margin-left:10px;margin-right:10px}}
+@media(min-width:768px){.ws-account-body{max-width:560px;margin-left:auto;margin-right:auto}}
+</style>
 <script id="tascoPhotoFX">
 /* Xử lý màu sắc & độ nét cho ảnh chụp bằng camera native: camera chỉ trả ảnh gần như chưa xử lý nên nhạt và mềm hơn app Camera của iPhone.
    Chạy theo từng dải dòng ảnh để không tốn RAM với ảnh 12 MP; nhường luồng giữa các dải để màn hình không bị đứng. */
