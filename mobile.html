@@ -7208,7 +7208,8 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
             </div>
             <div class="cam-pro-card">
               <div class="cam-pro-head"><h3>Đèn flash khi chụp</h3></div>
-              <div class="cam-seg" data-pro="flash" role="radiogroup" aria-label="Đèn flash"><button type="button" data-v="off">Tắt</button><button type="button" data-v="auto">Tự động</button><button type="button" data-v="on">Bật</button></div>
+              <div class="cam-seg" data-pro="flash" role="radiogroup" aria-label="Đèn flash"><button type="button" data-v="off">Tắt</button><button type="button" data-v="auto">Tự động</button><button type="button" data-v="on">Bật</button><button type="button" data-v="torch">Luôn sáng</button></div>
+              <p class="cam-pro-hint">Luôn sáng: đèn bật liên tục trong suốt lúc ngắm, chụp và quay video. Tốn pin và máy ấm hơn.</p>
             </div>
             <div class="cam-pro-card">
               <div class="cam-pro-head"><h3>Lưới bố cục</h3></div>
@@ -11681,22 +11682,36 @@ window.TascoNavigationMotion = (() => {
       st.position = st.position === 'rear' ? 'front' : 'rear';
       customCameraFacingMode = st.position === 'front' ? 'user' : 'environment';
       await refreshCapabilities();
+      await setFlash(pro.flash, false);  // bật lại đèn (vd. Luôn sáng) khi quay về camera sau
     } catch (_) { feedback('Chưa đổi được camera.'); }
     finally { cameraControlsState.busy = false; renderCameraLensChoices(); syncCameraViewport(); }
   };
 
   window.toggleCustomCameraTorch = async function () {
     if (!st.running || st.flashModes.indexOf('on') < 0) return;
-    var order = ['off', 'auto', 'on'].filter(function (m) { return m === 'off' || st.flashModes.indexOf(m) >= 0; });
-    await setFlash(order[(order.indexOf(pro.flash) + 1) % order.length], true);
+    var order = ['off', 'auto', 'on', 'torch'].filter(function (m) { return m === 'off' || st.flashModes.indexOf(m) >= 0; });
+    var currentIndex = Math.max(0, order.indexOf(st.flash));
+    await setFlash(order[(currentIndex + 1) % order.length], true);
   };
+  var FLASH_LABEL = { off: 'Tắt', auto: 'Tự động', on: 'Bật khi chụp', torch: 'Luôn sáng' };
+  /* pro.flash = chế độ bạn chọn (được lưu); st.flash = chế độ đang chạy (camera trước không có đèn thì tạm Tắt, đổi lại camera sau thì bật lại). */
   async function setFlash(mode, announce) {
-    if (st.running && st.flashModes.length && st.flashModes.indexOf(mode) < 0 && mode !== 'off') mode = 'off';
-    try { if (st.running) await CP.setFlashMode({ flashMode: mode }); pro.flash = mode; st.flash = mode; savePro(); }
-    catch (_) { feedback('Camera này chưa đổi được đèn flash.'); }
+    var effective = mode !== 'off' && st.running && st.flashModes.indexOf(mode) < 0 ? 'off' : mode;
+    try {
+      if (st.running) {
+        if (effective === 'torch') {
+          // Tắt flash chụp trước, để lúc chụp đèn không nháy thêm; rồi bật đèn sáng liên tục.
+          await CP.setFlashMode({ flashMode: 'off' });
+          await CP.setFlashMode({ flashMode: 'torch' });
+        } else {
+          await CP.setFlashMode({ flashMode: effective });  // 'off' / 'auto' / 'on' cũng tắt đèn torch nếu đang bật
+        }
+      }
+      pro.flash = mode; st.flash = effective; savePro();
+    } catch (_) { st.flash = 'off'; feedback('Camera này chưa đổi được đèn flash.'); }
     var btn = document.getElementById('btnToggleCameraFlash');
-    if (btn) { btn.classList.toggle('active', pro.flash !== 'off'); btn.dataset.flash = pro.flash; btn.setAttribute('aria-label', 'Đèn flash: ' + ({ off: 'tắt', auto: 'tự động', on: 'bật' })[pro.flash]); }
-    if (announce) feedback('Đèn flash: ' + ({ off: 'Tắt', auto: 'Tự động', on: 'Bật khi chụp' })[pro.flash], 1200);
+    if (btn) { btn.classList.toggle('active', st.flash !== 'off'); btn.dataset.flash = st.flash; btn.setAttribute('aria-label', 'Đèn flash: ' + FLASH_LABEL[st.flash]); }
+    if (announce) feedback('Đèn flash: ' + FLASH_LABEL[st.flash] + (effective !== mode ? ' (camera này không có đèn)' : ''), 1400);
     renderPro();
   }
   var evTimer = 0;
@@ -11713,7 +11728,7 @@ window.TascoNavigationMotion = (() => {
       var key = seg.dataset.pro;
       seg.querySelectorAll('button').forEach(function (b) {
         var on = String(pro[key]) === b.dataset.v; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', String(on));
-        b.disabled = key === 'flash' && st.running && b.dataset.v !== 'off' && st.flashModes.indexOf(b.dataset.v) < 0;
+        b.disabled = key === 'flash' && st.running && b.dataset.v !== 'off' && st.flashModes.indexOf(b.dataset.v) < 0 && st.position !== 'front';
       });
     });
     var ev = panel.querySelector('[data-pro-ev]');
@@ -11927,6 +11942,7 @@ html.tasco-native-camera-ready #cameraSettingsPanel label:has([data-camera-pref=
 .cam-pro-switch small{display:block;font-size:10px;line-height:1.6;color:#8fa7b6}
 .cam-pro-hint{margin:10px 2px 0;font-size:10.5px;line-height:1.6;color:#8fa7b6}
 .cam-pro-info{margin:4px 2px 0;font-size:10.5px;color:#7d9aad;text-align:center}
+#customCameraModal #btnToggleCameraFlash[data-flash="torch"]{background:#f4e3a1;border-color:#f4e3a1;color:#1b2a3a;box-shadow:0 0 18px rgba(244,227,161,.55)}
 #btnToggleCameraFlash[data-flash="auto"]::after{content:'A';position:absolute;right:6px;bottom:4px;font-size:9px;font-weight:800;color:#84bfc7}
 #btnToggleCameraFlash{position:relative}
 </style>
