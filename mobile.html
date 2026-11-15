@@ -4471,6 +4471,28 @@ window.TascoForms=(()=>{
     }
   }
 
+  /* Chia sẻ file thật qua iOS (như app Tệp): ghi file vào bộ nhớ tạm của app rồi mở bảng chia sẻ.
+     navigator.share của WKWebView đưa file qua WebKit nên MySign nhận xong tự đóng; plugin native thì đưa file:// thật.
+     Trả về true nếu đã xử lý (kể cả người dùng bấm huỷ), false nếu app chưa có plugin → dùng cách web. */
+  async function nativeShareFile(file){
+    const cap=window.Capacitor;
+    if(!(cap&&typeof cap.isNativePlatform==='function'&&cap.isNativePlatform()))return false;
+    const FS=cap.Plugins&&cap.Plugins.Filesystem,SH=cap.Plugins&&cap.Plugins.Share;
+    if(!FS||!SH)return false;
+    const bytes=new Uint8Array(await file.arrayBuffer());
+    if(!bytes.length)throw new Error('Tệp rỗng');
+    let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));
+    const safe=String(file.name||'bieu-mau.pdf').replace(/[\\/:*?"<>|\u0000-\u001f]+/g,'_');
+    const saved=await FS.writeFile({path:'mysign/'+safe,data:btoa(bin),directory:'CACHE',recursive:true});
+    try{
+      await SH.share({files:[saved.uri],dialogTitle:'Ký số Viettel MySign'});
+    }catch(err){
+      if(/cancel/i.test(String(err&&(err.message||err.errorMessage)||err)))return 'cancelled';  // người dùng đóng bảng chia sẻ
+      throw err;
+    }
+    return true;
+  }
+
   /* ---------- Ký số qua Viettel MySign (Share Sheet / Web) ---------- */
   async function openMySignDialog(st){
     if(st.destroyed)return;
@@ -4553,7 +4575,15 @@ window.TascoForms=(()=>{
           return;
         }
         try{
-          if(navigator.share&&navigator.canShare?.({files:[st.signingFile]})){
+          let handled=false;
+          try{handled=await nativeShareFile(st.signingFile);}
+          catch(nativeErr){console.warn('Chia sẻ native lỗi, dùng cách web:',nativeErr);}
+          if(handled==='cancelled'){
+            /* người dùng đóng bảng chia sẻ: giữ nguyên hộp thoại để bấm lại */
+          }else if(handled){
+            toast('Đã mở bảng chia sẻ sang Viettel MySign!');
+            closeDialog();
+          }else if(navigator.share&&navigator.canShare?.({files:[st.signingFile]})){
             await navigator.share({files:[st.signingFile]});  // iOS: kèm title/text thì bảng chia sẻ ưu tiên chữ, ẩn app chỉ nhận PDF như MySign
             toast('Đã mở bảng chia sẻ sang Viettel MySign!');
             closeDialog();

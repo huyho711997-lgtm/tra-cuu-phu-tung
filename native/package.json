@@ -13,8 +13,10 @@
   "dependencies": {
     "@capacitor/cli": "8.6.2",
     "@capacitor/core": "8.6.2",
+    "@capacitor/filesystem": "8.1.5",
     "@capacitor/geolocation": "8.2.4",
     "@capacitor/ios": "8.6.2",
+    "@capacitor/share": "8.0.3",
     "@capgo/camera-preview": "8.15.4"
   }
 }
