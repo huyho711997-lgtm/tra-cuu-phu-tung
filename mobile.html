@@ -12,6 +12,10 @@ window.tascoIsVideo = function (row) { row = row || {}; var u = String(row.url |
   const session = stored?.currentSession || stored;
   if (session && typeof session.access_token === 'string' && session.access_token && typeof session.refresh_token === 'string' && session.refresh_token) {
     document.documentElement.classList.add('tasco-boot-pending');
+    /* Vừa bấm Cập nhật (trong 60 giây): bỏ màn chào, chỉ chờ khôi phục phiên rồi mở lại trang cũ. */
+    const quick = Number(sessionStorage.getItem('tasco_quick_boot') || 0);
+    sessionStorage.removeItem('tasco_quick_boot');
+    if (quick && Date.now() - quick < 60000) document.documentElement.classList.add('tasco-quick-boot');
   }
 } catch (_) {} })();
 </script>
@@ -22,6 +26,10 @@ html.tasco-boot-pending body { overflow: hidden !important; }
 html.tasco-boot-pending :is(#loginOverlay,#mainApp,#bottomNav) { visibility: hidden !important; }
 #tascoBootSplash { display: none; position: fixed; inset: 0; z-index: 2147483000; align-items: center; justify-content: center; overflow: auto; isolation: isolate; box-sizing: border-box; padding: max(32px,env(safe-area-inset-top)) 24px max(30px,env(safe-area-inset-bottom)); background: #0b1b30; color: #edf5f7; font-family: 'Plus Jakarta Sans',system-ui,sans-serif; opacity: 1; transition: opacity .38s ease,transform .38s ease; }
 html.tasco-boot-pending #tascoBootSplash { display: flex; }
+html.tasco-quick-boot.tasco-boot-pending { background: #edf5f7 !important; }
+html.dark.tasco-quick-boot.tasco-boot-pending { background: #0b1b30 !important; }
+html.tasco-quick-boot #tascoBootSplash { background: transparent !important; }
+html.tasco-quick-boot #tascoBootSplash > *, html.tasco-quick-boot #tascoBootSplash::before { display: none !important; }
 #tascoBootSplash.is-leaving { opacity: 0; transform: scale(1.015); pointer-events: none; }
 #tascoBootSplash::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 42%,#20434f85 0,transparent 57%),radial-gradient(ellipse at 90% 0,#183056aa 0,transparent 48%); }
 .boot-content { width: min(100%,360px); text-align: center; }
@@ -3189,7 +3197,8 @@ window.TascoBootSplash = (() => {
   let active = false, startedOnce = false, abandoned = false, dismissed = false;
   let cycleReady = Promise.resolve(), resolveCycle = null, leaving = null, resolveEntry = null;
   const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
-  const duration = reduced ? 600 : 2800;
+  const quick = document.documentElement.classList.contains('tasco-quick-boot');
+  const duration = quick ? 0 : reduced ? 600 : 2800;
   function later(fn, ms) {
     const id = setTimeout(() => { timers.delete(id); fn(); }, ms);
     timers.add(id); return id;
@@ -3208,7 +3217,7 @@ window.TascoBootSplash = (() => {
     document.documentElement.classList.add('tasco-boot-pending');
     root.setAttribute('data-playing', ''); root.setAttribute('aria-hidden', 'false');
     cycleReady = new Promise(resolve => { resolveCycle = resolve; });
-    if (!reduced) {
+    if (!reduced && !quick) {
       later(() => { status.textContent = 'Đang kết nối không gian làm việc…'; }, 850);
       later(() => { status.textContent = 'Đang chuẩn bị tra cứu phụ tùng…'; }, 1700);
     }
@@ -3236,7 +3245,7 @@ window.TascoBootSplash = (() => {
       clearTimers(); recovery.hidden = true;
       status.textContent = 'Sẵn sàng. Đang mở không gian làm việc…';
       root.classList.add('is-leaving');
-      leaving = new Promise(resolve => { resolveEntry = resolve; later(() => hide(true), reduced ? 120 : 380); });
+      leaving = new Promise(resolve => { resolveEntry = resolve; later(() => hide(true), quick ? 0 : reduced ? 120 : 380); });
     }
     return leaving;
   }
@@ -11989,7 +11998,12 @@ html.dark .tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide>.tasco-
 .tasco-workspace .ws-update-pill svg{width:16px;height:16px;flex:none}
 .tasco-workspace .ws-update-pill i{position:absolute;top:-1px;right:-1px;width:10px;height:10px;border:2px solid var(--ws-bg,#edf5f7);border-radius:50%;background:#e8c77a}
 .tasco-workspace .ws-update-pill i::after{content:'';position:absolute;inset:-2px;border-radius:50%;background:#e8c77a;animation:wsPillPing 1.8s ease-out infinite}
-.tasco-workspace .ws-update-pill[data-busy] svg{animation:wsPillSpin 1s linear infinite}
+.tasco-workspace .ws-update-pill{overflow:visible}
+.tasco-workspace .ws-update-pill[data-busy]{pointer-events:none;background-size:200% 100%;background-image:linear-gradient(110deg,#183056 0%,#183056 35%,#3b6a8f 50%,#183056 65%,#183056 100%);animation:wsPillSheen 1.4s linear infinite}
+html.dark .tasco-workspace .ws-update-pill[data-busy]{background-image:linear-gradient(110deg,#7fc0c9 0%,#7fc0c9 35%,#d4f0f3 50%,#7fc0c9 65%,#7fc0c9 100%)}
+.tasco-workspace .ws-update-pill[data-busy] svg path:first-child{animation:wsArrowDrop 1s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes wsPillSheen{from{background-position:150% 0}to{background-position:-50% 0}}
+@keyframes wsArrowDrop{0%{transform:translateY(-6px);opacity:0}35%{transform:translateY(0);opacity:1}70%{transform:translateY(2px);opacity:1}100%{transform:translateY(6px);opacity:0}}
 .tasco-workspace .ws-update-pill[data-busy] i{display:none}
 html.dark .tasco-workspace .ws-update-pill{background:linear-gradient(160deg,#a6dbe1,#7fc0c9);color:#0b1b30}
 @keyframes wsPillIn{from{opacity:0;transform:scale(.7)}}
@@ -12734,6 +12748,7 @@ async function tascoUpdateApp(button) {
     const base = location.origin + location.pathname;
     const css = new URL('tailwind.css', base).href;
     await Promise.all([base, css].map(function (u) { return fetch(u, { cache: 'reload' }).catch(function () {}); }));
+    try { sessionStorage.setItem('tasco_quick_boot', String(Date.now())); } catch (_) {}  // mở lại thẳng trang đang dùng, không chạy màn chào
     location.reload();
   } catch (error) {
     delete button.dataset.busy;
