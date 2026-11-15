@@ -3678,7 +3678,10 @@ window.TascoCloudAccess=(()=>{
   let options={},identity=null,revision=0,snapshot=null,inflight=null;
   const ttl=15000;
   const same=(a,b)=>Boolean(a?.id&&a.id===b?.id&&a.email?.toLowerCase()===b.email?.toLowerCase());
-  function allowedFor(user){return same(identity,user)&&snapshot?.allowed===true&&Date.now()-snapshot.checkedAt<45000;}
+  /* Quyền đã được máy chủ xác nhận giữ nguyên đến khi máy chủ trả lời khác (tự kiểm tra lại mỗi 30 giây và khi mở lại app).
+     Trước đây hết hạn sau 45 giây nên quay lại app sau khi để nền là bị đẩy về trang chủ. */
+  function allowedFor(user){return same(identity,user)&&snapshot?.allowed===true&&Date.now()-snapshot.checkedAt<12*3600*1000;}
+  function pending(){return Boolean(identity)&&!snapshot;}
   function isAdmin(){return allowedFor(identity)&&snapshot?.admin===true;}
   function emit(){window.dispatchEvent(new CustomEvent('tasco:cloud-access',{detail:{user:identity?{...identity}:null,allowed:allowedFor(identity),admin:isAdmin(),error:snapshot?.error||''}}));}
   function setIdentity(user){
@@ -3713,7 +3716,11 @@ window.TascoCloudAccess=(()=>{
         if(value?.user_id!==owner.id||String(value.email||'').toLowerCase()!==owner.email.toLowerCase())throw new Error('Phiên đăng nhập đã thay đổi.');
         snapshot={allowed:value.allowed===true,admin:value.admin===true,checkedAt:Date.now(),error:''};emit();return allowedFor(owner);
       }catch(error){
-        if(token===revision&&same(owner,identity)){snapshot={allowed:false,admin:false,checkedAt:Date.now(),error:errorText(error)};emit();}
+        if(token===revision&&same(owner,identity)){
+          // Lỗi mạng/hết giờ (thường ngay khi app vừa mở lại): giữ quyền đã xác nhận, chỉ thu hồi khi máy chủ trả lời là không có quyền.
+          if(snapshot?.allowed===true){snapshot={...snapshot,error:''};return allowedFor(owner);}
+          snapshot={allowed:false,admin:false,checkedAt:Date.now(),error:errorText(error)};emit();
+        }
         return false;
       }
     })();
@@ -3742,7 +3749,7 @@ window.TascoCloudAccess=(()=>{
   window.addEventListener('focus',recheck);window.addEventListener('online',recheck);
   document.addEventListener('visibilitychange',recheck);
   setInterval(recheck,30000);
-  return {configure,setIdentity,refresh,check,allowedFor,isAdmin,list,setPermission,errorText,get error(){return snapshot?.error||'';}};
+  return {configure,setIdentity,refresh,check,allowedFor,pending,isAdmin,list,setPermission,errorText,get error(){return snapshot?.error||'';}};
 })();
 
 </script>
@@ -3921,8 +3928,12 @@ window.TascoAppShell=(()=>{
     setText('#userEmail',short);const now=new Date();setText('[data-shell-date]',now.toLocaleDateString('vi-VN',{weekday:'short',day:'2-digit',month:'2-digit'}));
   }
   const canCloud=()=>Boolean(user&&window.TascoCloudAccess?.allowedFor(user));
+  let pendingView='';
+  /* Màn hình mở lại sau khi app bị iOS tải lại (tối đa 2 giờ). */
+  function lastView(email){try{const v=JSON.parse(localStorage.getItem('tasco_last_view')||'null');return v&&pages[v.view]&&v.view!=='admin'&&String(v.email).toLowerCase()===String(email||'').toLowerCase()&&Date.now()-v.at<2*3600*1000?v.view:'';}catch(_){return '';}}
   function syncCloudAccess(){
     const allowed=canCloud();
+    if(allowed&&pendingView==='cloud'&&current==='home'){pendingView='';navigate('cloud',{replace:true});return;}
     document.querySelectorAll('[data-cloud-only]').forEach(node=>node.hidden=!allowed);
     if(!allowed){
       mountedOwner='';lastCloud=null;document.getElementById('homeRecentPhotos')?.replaceChildren();
@@ -3945,7 +3956,9 @@ window.TascoAppShell=(()=>{
   }
   function navigate(view,options={}){
     view=view==='main'?'lookup':view;if(view!=='login'&&!pages[view])view='home';
-    if(view!=='login'&&!user)view='login';if(view==='admin'&&user?.role!=='admin')view='home';if(view==='cloud'&&!canCloud())view='home';
+    if(view!=='login'&&!user)view='login';if(view==='admin'&&user?.role!=='admin')view='home';
+    if(view==='cloud'&&!canCloud()){if(window.TascoCloudAccess?.pending?.())pendingView='cloud';view='home';}else if(view!=='home')pendingView='';
+    if(view!=='login')try{localStorage.setItem('tasco_last_view',JSON.stringify({view,email:user?.email||'',at:Date.now()}));}catch(_){}
     const previous=current;scrolls[previous]=Math.max(0,window.scrollY);current=view;
     if(previous!==view)document.activeElement?.blur?.();
     window.TascoLookupFlow?.onNavigate(view);window.TascoForms?.onNavigate(view);
@@ -4006,7 +4019,7 @@ window.TascoAppShell=(()=>{
   window.addEventListener('popstate',()=>{if(user)navigate(location.hash.slice(1)||'home',{history:false,restore:true});});
   window.addEventListener('pageshow',()=>{if(user)greeting();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&user)greeting();});
-  return {setUser,navigate,camera,cameraHome,canCloud,get page(){return current;}};
+  return {setUser,navigate,camera,cameraHome,canCloud,lastView,get page(){return current;}};
 })();
 
 </script>
@@ -5508,7 +5521,7 @@ window.TascoPartKind=(()=>{
         window.showApp = async function(email, role, fullName = '') {
             if (!await window.TascoBootSplash.allowEntry()) return false;
             if (auth.currentUser?.email?.toLowerCase() !== email?.toLowerCase()) return false;
-            const nextView=currentUserProfile?.email===email&&window.TascoAppShell.page!=='login'?window.TascoAppShell.page:'home';
+            const nextView=currentUserProfile?.email===email&&window.TascoAppShell.page!=='login'?window.TascoAppShell.page:(window.TascoAppShell.lastView?.(email)||'home');
             console.log("Showing App for:", email, "Role:", role);
             // Đảm bảo dữ liệu bộ lọc (Hãng, Dòng, Năm) được tải sau khi đăng nhập thành công
             if (typeof loadFilters === 'function') {
