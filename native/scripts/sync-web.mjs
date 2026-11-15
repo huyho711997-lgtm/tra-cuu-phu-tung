@@ -14,6 +14,7 @@ await mkdir(www, { recursive: true });
 const src = path.join(root, 'mobile.html');
 if (!existsSync(src)) throw new Error('Không thấy mobile.html ở gốc repo: ' + src);
 await copyFile(src, path.join(www, 'index.html'));          // Capacitor mở index.html
+await copyFile(path.join(here, '..', 'offline.html'), path.join(www, 'offline.html'));  // trang báo lỗi khi mở app mà không có mạng
 await copyFile(path.join(root, 'tailwind.css'), path.join(www, 'tailwind.css'));  // CSS biên dịch sẵn (tools/css)
 await cp(path.join(root, 'icons'), path.join(www, 'icons'), { recursive: true });
 console.log('Đã chép mobile.html -> www/index.html và icons/');

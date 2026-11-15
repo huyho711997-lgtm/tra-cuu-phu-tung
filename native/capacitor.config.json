@@ -7,5 +7,13 @@
     "contentInset": "never",
     "limitsNavigationsToAppBoundDomains": false,
     "preferredContentMode": "mobile"
+  },
+  "server": {
+    "url": "https://huyho711997-lgtm.github.io/tra-cuu-phu-tung/mobile",
+    "allowNavigation": [
+      "huyho711997-lgtm.github.io"
+    ],
+    "cleartext": false,
+    "errorPath": "offline.html"
   }
 }

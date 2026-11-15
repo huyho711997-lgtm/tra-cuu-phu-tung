@@ -25,7 +25,13 @@ Muốn cho cả nhóm cài qua link, không hết hạn: dùng TestFlight (xem `
 
 ## Hằng tuần
 - Trước khi hết 7 ngày, nối iPhone vào máy tính và nạp lại đúng file đó bằng cùng Apple ID (Sideloadly ghi đè bản cũ). Có thể bật tùy chọn tự làm mới của Sideloadly, nhưng máy tính phải mở và cùng mạng.
-- Khi có bản mới của app: chạy lại workflow, tải file mới rồi nạp như trên.
+
+## Cập nhật nội dung app
+App chỉ là "vỏ" iOS, mỗi lần mở nó tải trang web mới nhất từ GitHub Pages. Vì vậy **sửa code xong là app tự có bản mới**, không cần nạp lại file IPA.
+- GitHub Pages giữ cache khoảng 10 phút. Nếu chưa thấy thay đổi: vào **Tài khoản → Cập nhật ứng dụng** trong app.
+- Chỉ cần nạp lại IPA khi đổi phần vỏ iOS (quyền, icon, plugin). Khi đó chạy workflow **iOS unsigned IPA**, tải file mới rồi nạp như trên.
+- Cần có mạng khi mở app. Không có mạng, app hiện màn hình "Chưa kết nối được" kèm nút Thử lại.
+- Lần đầu mở bản này bạn sẽ phải đăng nhập lại một lần (địa chỉ tải trang đã đổi nên phiên cũ không dùng chung).
 
 ## Nếu gặp lỗi
 - "Developer Mode required": làm lại bước 4 phần Chuẩn bị.

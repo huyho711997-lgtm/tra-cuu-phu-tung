@@ -3399,6 +3399,7 @@ window.TascoBootSplash = (() => {
   </div><span class="ws-settings-label">Không gian làm việc</span><div class="ws-settings-list">
     <button type="button" class="ws-setting-row" onclick="updateView('forms')"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Xem và tải biểu mẫu Word, PDF</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="updateView('cloud')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/></svg><span><strong>Cloud của tôi</strong><small>Quản lý ảnh theo tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+    <button type="button" class="ws-setting-row" id="btnUpdateApp" onclick="tascoUpdateApp(this)"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12A8 8 0 0 1 18.3 7.1"/><path d="M18 3v4.5h-4.5M6 21v-4.5h4.5"/></svg><span><strong>Cập nhật ứng dụng</strong><small data-update-status>Tải phiên bản mới nhất</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-danger onclick="handleLogout()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4m5-15 7 7-7 7M8 12h13"/></svg><span><strong>Đăng xuất</strong><small>Kết thúc phiên trên thiết bị này</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
   </div></div></div>
 </section>
@@ -11202,6 +11203,36 @@ window.TascoNavigationMotion = (() => {
   try { Object.defineProperty(navigator, 'geolocation', { value: shim, configurable: true }); }
   catch (error) { console.warn('Không thay được navigator.geolocation:', error); }
 })();
+</script>
+<script id="tascoAppUpdate">
+/* Nút "Cập nhật ứng dụng": làm mới trang, CSS và bộ nhớ đệm để lấy bản mới nhất ngay.
+ * GitHub Pages giữ cache ~10 phút nên sau khi có bản mới có thể cần bấm nút này. */
+async function tascoUpdateApp(button) {
+  if (!button || button.dataset.busy) return;
+  button.dataset.busy = '1';
+  const status = button.querySelector('[data-update-status]');
+  const idle = status ? status.textContent : '';
+  if (status) status.textContent = 'Đang tải phiên bản mới nhất…';
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(function (r) { return r.unregister(); }));
+    }
+    if (window.caches) {
+      const keys = await caches.keys();
+      await Promise.all(keys.filter(function (k) { return k.indexOf('tasco-') === 0; }).map(function (k) { return caches.delete(k); }));
+    }
+    // cache:'reload' bắt buộc lấy từ mạng và ghi đè bản cũ trong cache HTTP, rồi mới nạp lại trang.
+    const base = location.origin + location.pathname;
+    const css = new URL('tailwind.css', base).href;
+    await Promise.all([base, css].map(function (u) { return fetch(u, { cache: 'reload' }).catch(function () {}); }));
+    location.reload();
+  } catch (error) {
+    delete button.dataset.busy;
+    if (status) status.textContent = 'Chưa cập nhật được. Kiểm tra mạng rồi thử lại.';
+    setTimeout(function () { if (status) status.textContent = idle; }, 4000);
+  }
+}
 </script>
 <script id="tascoPwaInstall">
 /* PWA: đăng ký service worker + gợi ý cài lên màn hình chính trên iPhone (Safari không có nút "Cài đặt" tự động). */
