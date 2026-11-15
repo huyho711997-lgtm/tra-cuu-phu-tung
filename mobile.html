@@ -5878,16 +5878,19 @@ window.TascoPartKind=(()=>{
                 // Sắp xếp mới nhất lên đầu (Client-side để tránh lỗi index)
                 logs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
+                // FIX (XSS): log.action / log.details chứa dữ liệu do người dùng nhập (vd. từ khóa tra cứu)
+                // nên bắt buộc escape trước khi chèn vào innerHTML, nếu không admin xem lịch sử sẽ bị chạy script lạ.
+                const escLog = value => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
                 container.innerHTML = logs.map(log => {
                     const time = log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString('vi-VN') : 'N/A';
                     const actionColor = log.action === 'Đăng nhập' ? 'text-green-600 bg-green-50 border-green-200' : 'text-navy-500 bg-navy-50 border-navy-200';
                     return `
                         <div class="bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-sm border border-zinc-100 dark:border-zinc-700">
                             <div class="flex items-center justify-between mb-1.5">
-                                <span class="px-2.5 py-1 text-[9px] font-black rounded-lg border ${actionColor} uppercase tracking-widest">${log.action}</span>
+                                <span class="px-2.5 py-1 text-[9px] font-black rounded-lg border ${actionColor} uppercase tracking-widest">${escLog(log.action)}</span>
                                 <span class="text-[11px] font-bold text-zinc-400">${time}</span>
                             </div>
-                            ${log.details ? `<p class="text-xs font-bold text-zinc-600 dark:text-zinc-300 mt-2">${log.details}</p>` : ''}
+                            ${log.details ? `<p class="text-xs font-bold text-zinc-600 dark:text-zinc-300 mt-2">${escLog(log.details)}</p>` : ''}
                         </div>
                     `;
                 }).join('');
@@ -6833,38 +6836,40 @@ window.searchData = async function() {
                 return customAlert("Mật khẩu mới và xác nhận không khớp!");
             }
 
-            try {
-                if (currentUserProfile.role === 'admin') {
-                    // Của Admin (Sử dụng Firebase Auth)
-                    await updatePassword(auth.currentUser, newPass);
-                    closeModal('modalChangePassword');
-                    customAlert("Đổi mật khẩu thành công!", "success");
-                } else {
-                    // Của Sub-user (Sử dụng Firestore)
-                    const subUserSession = JSON.parse(localStorage.getItem('subUserSession'));
-                    if (!subUserSession || !subUserSession.id) throw new Error("Không tìm thấy phiên đăng nhập!");
-                    
-                    const userRef = doc(db, "sub_users", subUserSession.id);
-                    const userSnap = await getDoc(userRef);
-                    if (!userSnap.exists()) throw new Error("Tài khoản không tồn tại!");
-                    
-                    if (userSnap.data().password !== oldPass) {
-                        return customAlert("Mật khẩu hiện tại không chính xác!");
-                    }
+            if (newPass.length < 6) {
+                return customAlert("Mật khẩu mới cần có ít nhất 6 ký tự!");
+            }
+            if (newPass === oldPass) {
+                return customAlert("Mật khẩu mới phải khác mật khẩu hiện tại!");
+            }
 
-                    // Cập nhật lên Database
-                    await updateDoc(userRef, { password: newPass });
-                    
-                    // Ghi log hoạt động
+            try {
+                // FIX: mọi tài khoản (admin lẫn người dùng thường) đều đăng nhập qua Supabase Auth.
+                // Nhánh cũ cho "sub-user" đọc localStorage.subUserSession (không bao giờ được ghi)
+                // nên người dùng thường luôn gặp lỗi "Không tìm thấy phiên đăng nhập!".
+                const email = auth.currentUser?.email || currentUserProfile?.email;
+                if (!auth.currentUser || !email) throw new Error("Không tìm thấy phiên đăng nhập!");
+
+                // Xác minh mật khẩu hiện tại bằng client phụ (persistSession=false) để không đụng tới phiên chính.
+                const { error: verifyError } = await secondarySupabase.auth.signInWithPassword({ email, password: oldPass });
+                // scope 'local' bắt buộc: mặc định 'global' sẽ thu hồi cả phiên đăng nhập chính.
+                try { await secondarySupabase.auth.signOut({ scope: 'local' }); } catch (_) {}
+                if (verifyError) {
+                    return customAlert("Mật khẩu hiện tại không chính xác!");
+                }
+
+                await updatePassword(auth.currentUser, newPass);
+
+                try {
                     await addDoc(collection(db, "user_logs"), {
-                        email: currentUserProfile.email,
+                        email,
                         action: "Đổi mật khẩu",
                         timestamp: serverTimestamp()
                     });
+                } catch (logErr) { console.warn('Không ghi được log đổi mật khẩu:', logErr); }
 
-                    closeModal('modalChangePassword');
-                    customAlert("Đổi mật khẩu thành công!", "success");
-                }
+                closeModal('modalChangePassword');
+                customAlert("Đổi mật khẩu thành công!", "success");
             } catch (error) {
                 // Xử lý lỗi bảo mật nếu phiên đăng nhập Firebase Auth của admin quá cũ
                 if (error.code === 'auth/requires-recent-login') {
