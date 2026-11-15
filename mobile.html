@@ -11476,7 +11476,7 @@ html.tasco-native-cam #customCameraModal .camera-grid-overlay,
 html.tasco-native-cam #customCameraModal .camera-target-crosshair { display: none !important; }
 </style>
 <script id="tascoAppUpdate">
-/* Phiên bản đang chạy. Workflow "Build CSS" tự đóng dấu ngày + mã commit vào dòng dưới mỗi lần mobile.html đổi. */
+/* Dự phòng khi trình duyệt không có ngày triển khai. Phiên bản hiển thị lấy từ document.lastModified. */
 window.TASCO_APP_VERSION = '2026.11.15-92ccbd0';
 /* Nút "Cập nhật ứng dụng": làm mới trang, CSS và bộ nhớ đệm để lấy bản mới nhất ngay.
  * GitHub Pages giữ cache ~10 phút nên sau khi có bản mới có thể cần bấm nút này. */
@@ -11507,8 +11507,11 @@ async function tascoUpdateApp(button) {
   }
 }
 (function () {
+  /* Phiên bản = thời điểm GitHub Pages triển khai trang (header Last-Modified), không cần commit đóng dấu. */
   var el = document.querySelector('[data-update-status]');
-  if (el) el.textContent = 'Phiên bản ' + window.TASCO_APP_VERSION + (window.TASCO_NATIVE ? ' · ứng dụng iOS' : ' · web') + '. Chạm để tải bản mới nhất';
+  var d = new Date(document.lastModified), p = function (n) { return String(n).padStart(2, '0'); };
+  var stamp = isNaN(d) ? window.TASCO_APP_VERSION : p(d.getDate()) + '/' + p(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  if (el) el.textContent = 'Phiên bản ' + stamp + (window.TASCO_NATIVE ? ' · ứng dụng iOS' : ' · web') + '. Chạm để tải bản mới nhất';
 })();
 </script>
 <script id="tascoPwaInstall">

@@ -1,6 +1,6 @@
 name: Build CSS
 
-# Mỗi khi mobile.html hoặc cấu hình CSS đổi: biên dịch lại tailwind.css, đóng dấu phiên bản và tự commit nếu có thay đổi.
+# Mỗi khi mobile.html hoặc cấu hình CSS đổi: biên dịch lại tailwind.css và tự commit nếu thiếu class (bình thường không cần, vì tailwind.css được build sẵn trước khi push).
 # Nhờ vậy class Tailwind mới thêm vào mobile.html luôn có CSS đi kèm, không cần ai chạy tay.
 on:
   push:
@@ -35,23 +35,18 @@ jobs:
         run: |
           npm ci
           npm run build
-      - name: Đóng dấu phiên bản (ngày + mã commit) vào mobile.html
-        run: |
-          STAMP="$(TZ=Asia/Ho_Chi_Minh date +%Y.%m.%d)-${GITHUB_SHA::7}"
-          sed -i "s|window.TASCO_APP_VERSION = '[^']*';|window.TASCO_APP_VERSION = '${STAMP}';|" mobile.html
-          grep -n "window.TASCO_APP_VERSION = " mobile.html
-      - name: Commit nếu CSS hoặc phiên bản thay đổi
+      - name: Commit nếu CSS thay đổi
         id: commit
         run: |
-          if git diff --quiet -- tailwind.css mobile.html; then
+          if git diff --quiet -- tailwind.css; then
             echo "Không có gì cần commit."
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tailwind.css mobile.html
-          git commit -m "chore: rebuild tailwind.css + đóng dấu phiên bản ${GITHUB_SHA::7}"
+          git add tailwind.css
+          git commit -m "chore: rebuild tailwind.css (${GITHUB_SHA::7})"
           git pull --rebase origin main
           git push origin HEAD:main
           echo "changed=true" >> "$GITHUB_OUTPUT"

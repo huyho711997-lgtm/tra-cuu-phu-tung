@@ -10,5 +10,6 @@ Nhờ vậy app mở nhanh hơn và vẫn đúng giao diện khi mất mạng.
 - Màu `navy` và `teal` cấu hình trong `tailwind.config.js`.
 
 ## Phiên bản hiển thị trong app
-Dòng `window.TASCO_APP_VERSION = '...';` trong `mobile.html` do workflow **Build CSS** tự ghi (ngày + mã commit) mỗi lần `mobile.html` đổi.
-Không sửa tay dòng này. App hiển thị nó trong **Tài khoản → Cập nhật ứng dụng**.
+App hiển thị thời điểm GitHub Pages triển khai trang (document.lastModified) trong **Tài khoản → Cập nhật ứng dụng**. Không cần commit đóng dấu.
+
+**Trước khi push mobile.html, chạy `npm run build` ở đây và commit kèm tailwind.css** để workflow không phải tạo thêm commit (commit thêm làm bản triển khai Pages trước đó bị hủy, hiện dấu ✕).
