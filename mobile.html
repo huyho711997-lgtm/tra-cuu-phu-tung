@@ -11251,11 +11251,14 @@ window.TascoNavigationMotion = (() => {
 </script>
 <script id="tascoVideoCapture">
 /* Quay video hồ sơ: quay bằng camera iPhone (chế độ video), in dấu ngày giờ + vị trí lên từng khung hình,
- * nén về 720p, tối đa 3 phút, rồi đưa vào hàng đợi tải lên Cloud như ảnh (cùng album).
+ * giữ tới 1080p (bitrate theo thời lượng), tối đa 3 phút, rồi đưa vào hàng đợi tải lên Cloud như ảnh (cùng album).
  * In dấu = phát lại video vào canvas và ghi lại bằng MediaRecorder, nên mất khoảng bằng thời lượng video. */
 (function () {
   'use strict';
-  var MAX_SECONDS = 180, LONG_SIDE = 1280, VIDEO_BPS = 2500000, AUDIO_BPS = 128000;
+  /* Chất lượng: giữ tới 1080p. Bitrate tự chọn theo thời lượng để file luôn dưới ~95 MB
+     (giới hạn 100 MB/video của Cloudinary miễn phí): video ngắn rất nét (tối đa 12 Mbps), video 3 phút ~4 Mbps. */
+  var MAX_SECONDS = 180, LONG_SIDE = 1920, AUDIO_BPS = 192000, MAX_BYTES = 95 * 1024 * 1024;
+  function videoBitrate(seconds) { return Math.round(Math.max(3e6, Math.min(12e6, MAX_BYTES * 8 * 0.92 / Math.max(seconds, 1) - AUDIO_BPS))); }
   var input = document.createElement('input');
   input.type = 'file'; input.accept = 'video/*'; input.setAttribute('capture', 'environment'); input.hidden = true;
   document.body.append(input);
@@ -11300,6 +11303,7 @@ window.TascoNavigationMotion = (() => {
       var duration = Math.min(isFinite(video.duration) ? video.duration : MAX_SECONDS, MAX_SECONDS);
       var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
       var ctx = canvas.getContext('2d', { alpha: false });
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';  // thu nhỏ không vỡ chi tiết
       var stream = canvas.captureStream(30);
       try {
         var AC = window.AudioContext || window.webkitAudioContext;
@@ -11309,7 +11313,7 @@ window.TascoNavigationMotion = (() => {
         dest.stream.getAudioTracks().forEach(function (t) { stream.addTrack(t); });
       } catch (_) { video.muted = true; }
       var mime = pickMime(), chunks = [];
-      recorder = new MediaRecorder(stream, Object.assign({ videoBitsPerSecond: VIDEO_BPS, audioBitsPerSecond: AUDIO_BPS }, mime ? { mimeType: mime } : {}));
+      recorder = new MediaRecorder(stream, Object.assign({ videoBitsPerSecond: videoBitrate(duration), audioBitsPerSecond: AUDIO_BPS }, mime ? { mimeType: mime } : {}));
       recorder.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
       var done = new Promise(function (ok) { recorder.onstop = ok; });
       function draw() {
