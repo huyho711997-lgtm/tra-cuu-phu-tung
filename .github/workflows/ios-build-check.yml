@@ -1,0 +1,70 @@
+name: iOS build check (không ký)
+
+# Kiểm tra app iOS vẫn biên dịch được, KHÔNG cần tài khoản Apple và KHÔNG tải lên đâu cả.
+# Chạy tay (Actions -> iOS build check -> Run workflow) hoặc tự chạy khi sửa thư mục native/.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "native/**"
+      - ".github/workflows/ios-build-check.yml"
+
+concurrency:
+  group: ios-build-check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: native
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: native/package-lock.json
+
+      - name: Cài thư viện và đồng bộ web vào app iOS
+        run: |
+          npm ci
+          npm run sync
+
+      - name: Phiên bản Xcode
+        run: |
+          xcodebuild -version
+          major=$(xcodebuild -version | head -1 | sed -E 's/Xcode ([0-9]+).*/\1/')
+          [ "$major" -ge 26 ] || { echo "::error::Cần Xcode 26 trở lên"; exit 1; }
+
+      - name: Build không ký (kiểm tra biên dịch)
+        run: |
+          xcodebuild build \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            | tail -60
+          test ${PIPESTATUS[0]} -eq 0
+        shell: bash
+
+      - name: Kiểm tra Info.plist trong bản build
+        run: |
+          APP=$(find ~/Library/Developer/Xcode/DerivedData -type d -name "App.app" -path "*Release-iphoneos*" | head -1)
+          echo "App: $APP"
+          /usr/libexec/PlistBuddy -c "Print :NSCameraUsageDescription" "$APP/Info.plist"
+          /usr/libexec/PlistBuddy -c "Print :NSLocationWhenInUseUsageDescription" "$APP/Info.plist"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP/Info.plist"
+          ls "$APP/public" | head
