@@ -3325,16 +3325,11 @@ window.TascoBootSplash = (() => {
         <!-- NEW HEADER -->
 <header id="mainHeader" class="ws-topbar">
   <button type="button" class="ws-brand ws-focus" onclick="updateView('home')" aria-label="TASCO DLK · Trang chủ"><span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="m10 15 1.5-4h9l1.5 4M9 15h14v6H9v-6ZM11 21v2m10-2v2m-9-5h1m6 0h1"/></g></svg></span><span><strong>TASCO DLK</strong><small>Insurance workspace</small></span></button>
-  <div class="ws-top-actions"><span id="headerDate" data-shell-date class="ws-date"></span><button type="button" id="headerAvatar" data-shell-avatar class="ws-avatar" onclick="openUserProfileModal()" aria-label="Mở tài khoản">HQ</button></div>
+  <div class="ws-top-actions"><span id="headerDate" data-shell-date class="ws-date"></span><button type="button" id="tascoUpdatePill" class="ws-update-pill" data-update-short hidden onclick="tascoUpdateApp(this)" aria-label="Có phiên bản mới, chạm để cập nhật"><i aria-hidden="true"></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.2-4.2M12 15l4.2-4.2"/><path d="M5 19.5h14"/></svg><span data-update-status>Cập nhật</span></button><button type="button" id="headerAvatar" data-shell-avatar class="ws-avatar" onclick="openUserProfileModal()" aria-label="Mở tài khoản">HQ</button></div>
 </header>
 <header id="wsChildbar" class="ws-childbar" hidden><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><small>TASCO DLK</small><h1 id="wsPageTitle" tabindex="-1"></h1></div><button type="button" class="ws-home-return" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button></header>
 <section id="homeSection" data-shell-page="home" hidden aria-label="Trang chủ">
   <div class="ws-greeting"><div><p data-home-greeting>Không gian làm việc của bạn</p><h1>Chào <span id="userEmail">bạn</span>.</h1></div><button type="button" class="ws-day ws-focus" data-theme-toggle onclick="toggleTheme()" aria-pressed="false" aria-label="Chuyển sang chế độ tối" title="Chuyển sang chế độ tối"><svg class="ws-icon ws-theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg class="ws-icon ws-theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 13.3A8.9 8.9 0 0 1 10.7 3.2 9 9 0 1 0 20.8 13.3Z"/></svg></button></div>
-  <div id="tascoUpdateBanner" class="ws-update-banner" hidden role="status" aria-live="polite">
-    <span class="ws-update-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span>
-    <div class="ws-update-copy"><strong>Đã có phiên bản mới</strong><small data-update-banner-detail></small></div>
-    <div class="ws-update-actions"><button type="button" class="ws-update-later" data-update-dismiss>Để sau</button><button type="button" class="ws-update-now" data-update-short onclick="tascoUpdateApp(this)"><span data-update-status>Cập nhật ngay</span></button></div>
-  </div>
   <div class="ws-home-grid">
     <article class="ws-feature"><span class="ws-eyebrow"><i></i>TRA CỨU PHỤ TÙNG</span><h2>Tìm đúng.<br>Làm tốt.</h2><p>Thông tin phụ tùng theo hãng xe, dòng xe và năm sản xuất.</p><button type="button" class="ws-primary" onclick="tascoGo('lookup')">Tra cứu ngay <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><svg class="ws-mechanical" viewBox="0 0 280 280" fill="none" aria-hidden="true"><defs><linearGradient id="rotorMetal" x1="42" y1="10" x2="230" y2="242" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-light)"/><stop offset=".26" stop-color="var(--home-art-mid)"/><stop offset=".51" stop-color="var(--home-art-ice)"/><stop offset=".76" stop-color="var(--home-art-teal)"/><stop offset="1" stop-color="#84bfc7"/></linearGradient><linearGradient id="rotorRim" x1="45" y1="50" x2="230" y2="250"><stop stop-color="var(--home-art-ice)"/><stop offset="1" stop-color="var(--home-art-shade)"/></linearGradient></defs><ellipse cx="141" cy="166" rx="108" ry="104" fill="#0b1b30" opacity=".45"/><g transform="translate(16 0) rotate(12 140 140) scale(.9 1)"><circle cx="140" cy="151" r="113" fill="#244861" stroke="var(--home-art-teal)" stroke-width="4"/><circle cx="140" cy="140" r="113" fill="url(#rotorMetal)" stroke="url(#rotorRim)" stroke-width="2.5"/><circle cx="140" cy="140" r="106" stroke="var(--home-art-light)" stroke-opacity=".4"/><circle cx="140" cy="140" r="92" stroke="#244861" stroke-opacity=".5"/><circle cx="140" cy="140" r="67" fill="#335b76" stroke="var(--home-art-ice)" stroke-width="2"/><circle cx="140" cy="140" r="48" fill="url(#rotorMetal)" stroke="var(--home-art-ice)" stroke-width="2"/><circle cx="140" cy="140" r="20" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="2.5"/><circle cx="220.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="60.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="140.0" cy="106.0" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="172.3" cy="129.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="160.0" cy="167.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="120.0" cy="167.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="107.7" cy="129.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/></g></svg><span class="ws-feature-foot">TASCO INSURANCE</span></article>
     <div class="ws-shortcuts">
@@ -11965,6 +11960,24 @@ html.dark .tasco-workspace #bottomNav .ws-nav-button[aria-current=page] .tasco-d
 .tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide>.tasco-di .i-fill{fill:#63adb6;fill-opacity:.32}
 html.dark .tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide>.tasco-di{border-color:rgba(132,191,199,.22)!important;background:linear-gradient(150deg,#244861,#1a3550)!important;color:#b8e0e5!important;box-shadow:inset 0 1px 0 rgba(218,236,240,.08),0 4px 12px -6px rgba(0,0,0,.5)}
 html.dark .tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide>.tasco-di .i-fill{fill:#84bfc7;fill-opacity:.26}
+/* ===== Nút cập nhật gọn cạnh ảnh đại diện ===== */
+.tasco-workspace #mainHeader .ws-top-actions{display:flex;align-items:center;gap:8px;min-width:0}
+.tasco-workspace #mainHeader .ws-brand{min-width:0}
+.tasco-workspace #mainHeader .ws-brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws-update-pill[hidden]{display:none!important}
+.tasco-workspace .ws-update-pill{position:relative;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 13px 0 11px;border:0;border-radius:99px;background:linear-gradient(160deg,#24476b,#183056 70%);color:#edf5f7;font:inherit;font-size:12.5px;font-weight:650;white-space:nowrap;box-shadow:0 8px 18px -8px rgba(24,48,86,.6),inset 0 1px 0 rgba(255,255,255,.14);animation:wsPillIn .45s cubic-bezier(.3,1.4,.5,1) backwards;transition:transform .15s ease}
+.tasco-workspace .ws-update-pill:active{transform:scale(.95)}
+.tasco-workspace .ws-update-pill svg{width:16px;height:16px;flex:none}
+.tasco-workspace .ws-update-pill i{position:absolute;top:-1px;right:-1px;width:10px;height:10px;border:2px solid var(--ws-bg,#edf5f7);border-radius:50%;background:#e8c77a}
+.tasco-workspace .ws-update-pill i::after{content:'';position:absolute;inset:-2px;border-radius:50%;background:#e8c77a;animation:wsPillPing 1.8s ease-out infinite}
+.tasco-workspace .ws-update-pill[data-busy] svg{animation:wsPillSpin 1s linear infinite}
+.tasco-workspace .ws-update-pill[data-busy] i{display:none}
+html.dark .tasco-workspace .ws-update-pill{background:linear-gradient(160deg,#a6dbe1,#7fc0c9);color:#0b1b30}
+@keyframes wsPillIn{from{opacity:0;transform:scale(.7)}}
+@keyframes wsPillPing{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(2.4);opacity:0}}
+@keyframes wsPillSpin{to{transform:rotate(360deg)}}
+@media(max-width:370px){.tasco-workspace .ws-update-pill{width:38px;padding:0;justify-content:center}.tasco-workspace .ws-update-pill span{display:none}}
+@media(prefers-reduced-motion:reduce){.tasco-workspace .ws-update-pill,.tasco-workspace .ws-update-pill i::after{animation:none!important}}
 /* Hiện lần lượt khi vào trang chủ */
 @keyframes wsRise{from{opacity:0;transform:translate3d(0,16px,0)}}
 @keyframes wsRotorIn{from{opacity:0;transform:rotate(-125deg) scale(.86)}to{transform:rotate(-17deg)}}
@@ -12731,12 +12744,11 @@ window.TascoVersion = (function () {
       row.classList.toggle('has-update', !!latest);
     }
     document.querySelectorAll('[data-shell-nav="account"]').forEach(function (n) { n.classList.toggle('has-update', !!latest); });
-    var banner = document.getElementById('tascoUpdateBanner');
-    if (banner) {
-      var dismissed = ''; try { dismissed = sessionStorage.getItem(DISMISS_KEY) || ''; } catch (_) {}
-      banner.hidden = !latest || dismissed === String(latest.getTime());
-      var detail = banner.querySelector('[data-update-banner-detail]');
-      if (detail && latest) detail.textContent = 'Bản ' + fmt(latest) + ' · bạn đang dùng bản ' + fmt(loaded);
+    /* Nút gọn cạnh ảnh đại diện (trang chủ): chỉ hiện khi có bản mới */
+    var pill = document.getElementById('tascoUpdatePill');
+    if (pill && !pill.dataset.busy) {
+      pill.hidden = !latest;
+      if (latest) pill.title = 'Bản mới ' + fmt(latest) + ' · đang dùng ' + fmt(loaded);
     }
   }
   async function check() {
