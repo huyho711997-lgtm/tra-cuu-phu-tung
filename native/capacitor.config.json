@@ -15,5 +15,6 @@
     ],
     "cleartext": false,
     "errorPath": "offline.html"
-  }
+  },
+  "appendUserAgent": "TascoApp/2"
 }

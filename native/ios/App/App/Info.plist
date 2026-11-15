@@ -30,6 +30,10 @@
 	<string>TASCO DLK cần dùng camera để chụp ảnh hồ sơ và phụ tùng của gara.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>TASCO DLK cần vị trí của bạn để ghi nhận địa điểm khi chụp ảnh hồ sơ.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>TASCO DLK cần micro để ghi tiếng khi quay video hồ sơ.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>TASCO DLK cần quyền lưu để bạn lưu ảnh và video hồ sơ vào thư viện Ảnh.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>TASCO DLK cần truy cập thư viện ảnh để bạn chọn ảnh gắn vào hồ sơ.</string>
 	<key>UIApplicationSceneManifest</key>

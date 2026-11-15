@@ -11393,6 +11393,8 @@ window.TascoNavigationMotion = (() => {
     if (!window.TascoAppShell || !TascoAppShell.canCloud()) { feedback('Chưa có quyền Cloud để quay video.'); return; }
     if (!supported()) { feedback('Thiết bị này chưa hỗ trợ in dấu lên video. Cập nhật iOS rồi thử lại.', 3500); return; }
     if (session || cameraUiState.captureBusy || mobileCameraSaving) return;
+    /* App iOS bản cũ thiếu quyền micro trong Info.plist: iOS sẽ đóng app khi quay video. Bản mới gắn 'TascoApp/2' vào user agent. */
+    if (window.TASCO_NATIVE && !/TascoApp\/[2-9]/.test(navigator.userAgent)) { feedback('Cần nạp lại app bản mới (TASCO-DLK.ipa) để quay video. Bản đang cài thiếu quyền micro.', 5000); return; }
     if (!TascoCloud.isReady()) { feedback('Kết nối Cloud trước khi quay video.'); return; }
     session = { metadata: createCameraPhotoMetadata(), title: mobileCameraTitle, album: mobileCameraAlbum, owner: mobileCameraOwner, file: null, cancel: null };
     cameraUiState.captureBusy = true;
