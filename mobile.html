@@ -9425,8 +9425,8 @@ function cameraCategoryShot(name){return (cameraCategoryCounts.get(name)||0)+((w
 function cameraPlanMissing(){return cameraPlan().filter(n=>!cameraCategoryShot(n));}
 function cameraCategoryList(){
   const out=[],seen=new Set(),add=n=>{n=TascoCategories.clean(n);if(n&&!seen.has(n.toLowerCase())){seen.add(n.toLowerCase());out.push(n);}};
-  // Thứ tự cố định để không chạm nhầm: hạng mục của album, rồi hạng mục tạo trong lần chụp này, rồi các tên dùng gần đây.
-  cameraPlan().forEach(add);(window.TascoCloud?.categories?.()||[]).forEach(add);cameraSessionCategories.forEach(add);if(mobileCameraCategory)add(mobileCameraCategory);TascoCategories.recent().slice(0,8).forEach(add);
+  // Thứ tự cố định để không chạm nhầm: danh sách cần chụp, hạng mục của album, rồi hạng mục tạo trong lần chụp này.
+  cameraPlan().forEach(add);(window.TascoCloud?.categories?.()||[]).forEach(add);cameraSessionCategories.forEach(add);if(mobileCameraCategory)add(mobileCameraCategory);/* Tên dùng gần đây (toàn tài khoản) chỉ hiện ở phần Gợi ý của bảng danh sách, không tự chen vào thanh chọn của album này. */
   return ['',...out];  // '' = không phân hạng mục
 }
 function renderCameraCategory(){
