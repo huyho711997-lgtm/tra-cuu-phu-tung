@@ -12022,9 +12022,8 @@ html.dark .tasco-workspace .ws-update-pill{background:linear-gradient(160deg,#a6
   'use strict';
   /* Chất lượng: giữ tới 1080p. Bitrate tự chọn theo thời lượng để file luôn dưới ~95 MB
      (giới hạn 100 MB/video của Cloudinary miễn phí): video ngắn rất nét (tối đa 12 Mbps), video 3 phút ~4 Mbps. */
-  var MAX_SECONDS = 180, LONG_SIDE = 1920, AUDIO_BPS = 192000, MAX_BYTES = 95 * 1024 * 1024, OUT_FPS = 60;
-  /* 60fps cần bitrate cao hơn: video ngắn tới 16 Mbps, vẫn giữ file < 95 MB theo thời lượng. */
-  function videoBitrate(seconds) { return Math.round(Math.max(3e6, Math.min(16e6, MAX_BYTES * 8 * 0.92 / Math.max(seconds, 1) - AUDIO_BPS))); }
+  var MAX_SECONDS = 180, LONG_SIDE = 1920, AUDIO_BPS = 192000, MAX_BYTES = 95 * 1024 * 1024;
+  function videoBitrate(seconds) { return Math.round(Math.max(3e6, Math.min(12e6, MAX_BYTES * 8 * 0.92 / Math.max(seconds, 1) - AUDIO_BPS))); }
   var input = document.createElement('input');
   input.type = 'file'; input.accept = 'video/*'; input.setAttribute('capture', 'environment'); input.hidden = true;
   document.body.append(input);
@@ -12072,7 +12071,7 @@ html.dark .tasco-workspace .ws-update-pill{background:linear-gradient(160deg,#a6
       var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
       var ctx = canvas.getContext('2d', { alpha: false });
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';  // thu nhỏ không vỡ chi tiết
-      var stream = canvas.captureStream(OUT_FPS);  // giữ nhịp 60 khung/giây của video gốc
+      var stream = canvas.captureStream(30);
       try {
         var AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC(); await audioCtx.resume();
@@ -12607,17 +12606,9 @@ html.dark .tasco-workspace .ws-update-pill{background:linear-gradient(160deg,#a6
     try {
       if (!st.recording) {
         st.recMeta = createCameraPhotoMetadata();
-        /* 60 khung hình/giây: lấy mức cao nhất ≤ 60 mà camera hỗ trợ (iPhone: 1080p60). */
-        var fps = 60, fallbackFps = 30;  // luôn thử 60 trước; danh sách máy báo chỉ dùng để chọn mức dự phòng
-        try { var fr = await CP.getSupportedVideoFrameRates(); var list = (fr && fr.frameRates || []).map(Number).filter(function (f) { return f > 0 && f < 60; }); if (list.length) fallbackFps = Math.max.apply(null, list); } catch (_) {}
-        var recOpts = { frameRate: fps, videoStabilizationMode: pro.stab, videoBitrate: 24000000, videoCodec: 'avc1', maxDuration: window.TascoVideoCapture.maxSeconds, mirrorFrontCamera: !!cameraAppearance.mirrorFront };
-        /* Thử lần lượt: đủ tuỳ chọn → bỏ chống rung (60fps thường không đi cùng chống rung điện ảnh) → bỏ 60fps. */
-        var tries = [{}, pro.stab !== 'off' ? { videoStabilizationMode: 'off' } : null, { videoStabilizationMode: 'off', frameRate: fallbackFps, videoBitrate: 14000000 }].filter(Boolean), lastErr = null, used = null;
-        for (var t = 0; t < tries.length && !used; t++) { var o = Object.assign({}, recOpts, tries[t]); try { await CP.startRecordVideo(o); used = o; } catch (e) { lastErr = e; } }
-        if (!used) throw lastErr;
-        if (used.videoStabilizationMode !== recOpts.videoStabilizationMode && used.frameRate === recOpts.frameRate) feedback('Quay ' + used.frameRate + 'fps không kèm chống rung (máy không hỗ trợ cùng lúc).', 3000);
-        else if (used.frameRate < recOpts.frameRate) feedback('Máy chưa quay được ' + recOpts.frameRate + 'fps ở chế độ này, đang quay ' + used.frameRate + 'fps.', 3000);
-        st.recFps = used.frameRate;
+        var recOpts = { videoStabilizationMode: pro.stab, videoBitrate: 12000000, videoCodec: 'avc1', maxDuration: window.TascoVideoCapture.maxSeconds, mirrorFrontCamera: !!cameraAppearance.mirrorFront };
+        try { await CP.startRecordVideo(recOpts); }
+        catch (first) { if (pro.stab === 'off') throw first; recOpts.videoStabilizationMode = 'off'; await CP.startRecordVideo(recOpts); feedback('Máy chưa hỗ trợ chế độ chống rung này, đang quay không chống rung.', 3000); }
         st.recording = true; st.recStart = Date.now();
         st.recTimer = setInterval(updateModeUI, 500);
       } else {
