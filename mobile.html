@@ -11709,7 +11709,7 @@ window.TascoCategories = (function () {
     function fit() { if (!vv) return; wrap.style.setProperty('--tcs-vh', vv.height + 'px'); wrap.style.setProperty('--tcs-kb', Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px'); }
     if (vv) { vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); new MutationObserver(function (m, o) { if (!wrap.isConnected) { vv.removeEventListener('resize', fit); vv.removeEventListener('scroll', fit); o.disconnect(); } }).observe(document.body, { childList: true, subtree: true }); fit(); }
     render(); syncInput();
-    (document.getElementById('customCameraModal')?.style.display === 'flex' ? document.getElementById('customCameraModal') : document.body).append(wrap);
+    document.body.append(wrap); /* luôn gắn vào body: modal camera tự xoay theo hướng cầm máy, gắn bên trong sẽ làm bảng xoay ngang theo trong khi bàn phím vẫn đứng */
     setTimeout(function () { if (planMode ? !plan.length : !opts.current) input.focus(); }, 80);
   }
   /* Bảng nhắc khi bấm Xong mà danh sách còn mục chưa chụp (thay hộp thoại hệ thống).
@@ -11743,7 +11743,7 @@ window.TascoCategories = (function () {
         if (b.dataset.cat === 'back') finish({ action: 'shoot', name: list[0] });
         if (b.dataset.cat === 'save') finish({ action: 'save' });
       });
-      (document.getElementById('customCameraModal')?.style.display === 'flex' ? document.getElementById('customCameraModal') : document.body).append(wrap);
+      document.body.append(wrap); /* luôn gắn vào body: modal camera tự xoay theo hướng cầm máy, gắn bên trong sẽ làm bảng xoay ngang theo trong khi bàn phím vẫn đứng */
     });
   }
   /* Hỏi xác nhận bằng bảng riêng (thay hộp thoại hệ thống).
@@ -11762,7 +11762,7 @@ window.TascoCategories = (function () {
         if (a.arm && !b.classList.contains('is-armed')) { var label = b.textContent; b.classList.add('is-armed'); b.textContent = a.arm; setTimeout(function () { if (b.isConnected) { b.classList.remove('is-armed'); b.textContent = label; } }, 3000); return; }
         finish(b.dataset.k);
       });
-      (document.getElementById('customCameraModal')?.style.display === 'flex' ? document.getElementById('customCameraModal') : document.body).append(wrap);
+      document.body.append(wrap); /* luôn gắn vào body: modal camera tự xoay theo hướng cầm máy, gắn bên trong sẽ làm bảng xoay ngang theo trong khi bàn phím vẫn đứng */
     });
   }
   return { open: open, missing: missing, ask: ask, recent: recent, remember: remember, clean: clean };
