@@ -11234,6 +11234,210 @@ window.TascoNavigationMotion = (() => {
   catch (error) { console.warn('Không thay được navigator.geolocation:', error); }
 })();
 </script>
+<script id="tascoNativeCamera">
+/* Camera native iOS (plugin @capgo/camera-preview) cho app TASCO DLK.
+ * Camera thật của iPhone chạy phía sau trang web: ống kính 0.5×/1×/2× thật, ảnh chụp đầy đủ độ phân giải, mượt.
+ * Chỉ bật khi app iOS có plugin. Trên web/Safari, hoặc IPA cũ chưa có plugin, giữ nguyên camera cũ. */
+(function () {
+  'use strict';
+  var cap = window.Capacitor;
+  if (!(window.TASCO_NATIVE && cap && typeof cap.isPluginAvailable === 'function' && cap.isPluginAvailable('CameraPreview'))) return;
+  var CP = cap.Plugins.CameraPreview;
+  if (!CP) return;
+  window.TASCO_NATIVE_CAMERA = true;
+
+  var st = { running: false, starting: null, gen: 0, rect: null, zooms: [1], zoom: 1, position: 'rear', flashModes: [], flash: 'off' };
+  var root = document.documentElement;
+  var MAX_SIDE = { economy: 2048, high: 3024, maximum: 4032 };
+
+  function modalOpen() { var m = document.getElementById('customCameraModal'); return !!m && m.style.display !== 'none'; }
+  function feedback(text, ms) { try { cameraFeedback(text, ms); } catch (_) {} }
+  function zoomLabel(v) { return (v < 1 ? String(v).replace(/^0/, '') : String(v)) + '×'; }
+
+  /* Đặt khung chứa dấu ngày giờ đúng chỗ khung hình camera thật. */
+  function placePlane() {
+    var plane = document.getElementById('cameraImagePlane'), box = document.querySelector('#customCameraModal .camera-stream-container');
+    if (!plane || !box || !st.rect) return;
+    var c = box.getBoundingClientRect(), r = st.rect;
+    plane.style.width = r.width + 'px'; plane.style.height = r.height + 'px';
+    plane.style.left = (r.x - c.left + r.width / 2) + 'px'; plane.style.top = (r.y - c.top + r.height / 2) + 'px';
+    plane.style.setProperty('--camera-stamp-size', Math.max(10, Math.min(18, r.width / 56)) + 'px');
+  }
+
+  function stopNative() {
+    st.gen++;
+    var wasActive = st.running || st.starting;
+    st.running = false; st.rect = null;
+    root.classList.remove('tasco-native-cam');
+    if (wasActive) CP.stop({ force: true }).catch(function () {});
+  }
+
+  async function refreshCapabilities() {
+    try { st.zooms = ((await CP.getZoomButtonValues()).values || [1]).filter(function (v) { return v > 0; }); } catch (_) { st.zooms = [1]; }
+    if (!st.zooms.length) st.zooms = [1];
+    try { st.flashModes = (await CP.getSupportedFlashModes()).result || []; } catch (_) { st.flashModes = []; }
+    st.zoom = 1; st.flash = 'off';
+    var flash = document.getElementById('btnToggleCameraFlash');
+    if (flash) { flash.disabled = st.flashModes.indexOf('on') < 0; flash.classList.remove('active'); }
+  }
+
+  function startNative() {
+    if (!modalOpen()) return Promise.resolve(null);
+    if (st.starting) return st.starting;
+    var gen = ++st.gen;
+    st.starting = (async function () {
+      root.classList.add('tasco-native-cam');
+      var box = document.querySelector('#customCameraModal .camera-stream-container').getBoundingClientRect();
+      var height43 = innerWidth * 4 / 3, y = Math.round(box.top + Math.max(0, (box.height - height43) / 2));
+      var result;
+      try {
+        result = await CP.start({
+          position: st.position, toBack: true, aspectRatio: '4:3', aspectMode: 'contain', y: y,
+          disableAudio: true, rotateWhenOrientationChanged: false, force: true,
+          gridMode: cameraAppearance.showGrid ? '3x3' : 'none',
+          captureResolution: { width: 4032, height: 3024 }
+        });
+      } catch (error) {
+        if (gen === st.gen) {
+          root.classList.remove('tasco-native-cam');
+          var msg = String((error && error.message) || error || '');
+          feedback(/denied|permission|authoriz/i.test(msg) ? 'Chưa cấp quyền camera. Vào Cài đặt > TASCO DLK > bật Camera.' : 'Chưa mở được camera. Thử đóng rồi mở lại.', 0);
+        }
+        return null;
+      }
+      if (gen !== st.gen || !modalOpen()) { CP.stop({ force: true }).catch(function () {}); return null; }
+      st.running = true;
+      st.rect = { x: result.x, y: result.y, width: result.width, height: result.height };
+      customCameraFacingMode = st.position === 'front' ? 'user' : 'environment';
+      await refreshCapabilities();
+      if (gen !== st.gen) return null;
+      placePlane(); renderCameraLensChoices(); syncCameraViewport();
+      return true;
+    })();
+    var task = st.starting;
+    task.finally(function () { if (st.starting === task) st.starting = null; });
+    return task;
+  }
+
+  /* ---- Thay các hàm camera web bằng bản native ---- */
+  var origStop = window.stopCustomCameraStream, origSync = window.syncCameraViewport, origRenderSettings = window.renderCameraSettings;
+
+  window.startCustomCameraStream = async function () {
+    if (!window.TascoAppShell || !TascoAppShell.canCloud()) { stopNative(); feedback('Chưa có quyền Cloud để mở camera.'); return null; }
+    return startNative();
+  };
+  window.stopCustomCameraStream = function () { stopNative(); try { origStop(); } catch (_) {} };
+
+  window.syncCameraViewport = function () {
+    try { origSync(); } catch (_) {}
+    if (!st.running) return;
+    placePlane();
+    var shutter = document.getElementById('cameraCaptureButton');
+    if (shutter) shutter.disabled = cameraUiState.captureBusy || cameraControlsState.busy || cameraControlsState.settingsOpen;
+  };
+
+  window.renderCameraSettings = function () {
+    try { origRenderSettings(); } catch (_) {}
+    var res = document.getElementById('cameraActualResolution');
+    if (res) res.textContent = 'Camera iPhone gốc · ảnh lưu tối đa ' + (MAX_SIDE[cameraControlsState.quality] || 3024) + ' px';
+  };
+
+  window.renderCameraLensChoices = function () {
+    var bar = document.getElementById('cameraLensBar'); if (!bar) return;
+    bar.replaceChildren();
+    st.zooms.forEach(function (v) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = zoomLabel(v);
+      b.setAttribute('aria-label', 'Góc camera ' + zoomLabel(v)); b.setAttribute('aria-pressed', String(st.zoom === v));
+      b.disabled = cameraControlsState.busy || !st.running;
+      b.onclick = function () { selectCameraZoom(v); };
+      bar.append(b);
+    });
+    var info = document.getElementById('cameraZoomDetail'); if (info) info.textContent = '';
+  };
+
+  window.selectCameraZoom = async function (v) {
+    if (!st.running || cameraControlsState.busy || cameraUiState.captureBusy) return;
+    cameraControlsState.busy = true; renderCameraLensChoices();
+    try { await CP.setZoom({ level: v }); st.zoom = v; cameraControlsState.zoom = v; }
+    catch (_) { feedback('Thiết bị chưa đổi được sang góc ' + zoomLabel(v) + '.'); }
+    finally { cameraControlsState.busy = false; renderCameraLensChoices(); syncCameraViewport(); }
+  };
+
+  window.switchCustomCamera = async function () {
+    if (!st.running || mobileCameraSaving || cameraControlsState.busy || cameraUiState.captureBusy) return;
+    cameraControlsState.busy = true; renderCameraLensChoices();
+    try {
+      await CP.flip();
+      st.position = st.position === 'rear' ? 'front' : 'rear';
+      customCameraFacingMode = st.position === 'front' ? 'user' : 'environment';
+      await refreshCapabilities();
+    } catch (_) { feedback('Chưa đổi được camera.'); }
+    finally { cameraControlsState.busy = false; renderCameraLensChoices(); syncCameraViewport(); }
+  };
+
+  window.toggleCustomCameraTorch = async function () {
+    if (!st.running || st.flashModes.indexOf('on') < 0) return;
+    var next = st.flash === 'on' ? 'off' : 'on';
+    try {
+      await CP.setFlashMode({ flashMode: next }); st.flash = next;
+      document.getElementById('btnToggleCameraFlash').classList.toggle('active', next === 'on');
+      feedback(next === 'on' ? 'Đèn flash: bật khi chụp' : 'Đèn flash: tắt', 1200);
+    } catch (_) { feedback('Camera này chưa bật được đèn flash.'); }
+  };
+
+  window.triggerCustomCameraFocus = function (event) {
+    if (!st.running || !st.rect || cameraControlsState.settingsOpen) return;
+    var r = st.rect, x = (event.clientX - r.x) / r.width, y = (event.clientY - r.y) / r.height;
+    if (x < 0 || y < 0 || x > 1 || y > 1) return;
+    CP.setFocus({ x: x, y: y }).catch(function () {});
+  };
+  document.getElementById('cameraImagePlane')?.addEventListener('click', function (event) {
+    if (st.running && !event.target.closest('button,a')) triggerCustomCameraFocus(event);
+  });
+
+  window.triggerCustomCameraCapture = async function () {
+    if (!TascoAppShell.canCloud()) { feedback('Chưa có quyền Cloud để chụp ảnh.'); return; }
+    if (!st.running || cameraUiState.captureBusy || cameraControlsState.busy || cameraControlsState.settingsOpen || mobileCameraSaving) return;
+    var session = cameraUiState.session, metadata = createCameraPhotoMetadata();
+    cameraUiState.captureBusy = true; syncCameraViewport();
+    var fx = document.getElementById('cameraFlashEffect');
+    if (fx && cameraAppearance.shutterFlash) { fx.classList.add('flash-active'); setTimeout(function () { fx.classList.remove('flash-active'); }, 80); }
+    try {
+      var shot = await CP.capture({ quality: 92, photoQualityPrioritization: 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront });
+      if (session !== cameraUiState.session) return;
+      feedback('Đang đóng dấu ảnh…', 0);
+      var blob = await (await fetch('data:image/jpeg;base64,' + shot.value)).blob();
+      var file = new File([blob], 'capture_' + metadata.capturedAt + '_' + customCameraPhotos.length + '.jpg', { type: 'image/jpeg', lastModified: metadata.capturedAt });
+      metadata.quality = Object.assign({}, cameraQuality(), { maxSide: MAX_SIDE[cameraControlsState.quality] || 3024, jpeg: .92 });
+      cameraPhotoMetadata.set(file, metadata);
+      var stamped = await addWatermarkToImageFile(file, '', { isCameraSource: true });
+      if (session !== cameraUiState.session) return;
+      if (stamped === file) throw new Error('Chưa đóng dấu được ảnh. Vui lòng chụp lại.');
+      customCameraPhotos.push(stamped);
+      cameraAutoUpload(stamped);
+      renderCustomCameraPreviewStrip(); updateCustomCameraDoneBtn();
+      feedback('Đã chụp ' + customCameraPhotos.length + ' ảnh.' + (cameraQueueState.has(stamped) ? ' Đang gửi lên Cloud.' : ''), 1100);
+    } catch (error) {
+      if (session === cameraUiState.session) feedback((error && error.message) || 'Chưa chụp được ảnh. Vui lòng thử lại.');
+    } finally {
+      if (session === cameraUiState.session) { cameraUiState.captureBusy = false; syncCameraViewport(); }
+    }
+  };
+
+  window.addEventListener('pagehide', stopNative);
+})();
+</script>
+<style id="tascoNativeCameraStyles">
+/* Camera native nằm phía sau trang: làm trong suốt nền và ẩn mọi thứ trừ màn hình camera. */
+html.tasco-native-cam, html.tasco-native-cam body { background: transparent !important; }
+html.tasco-native-cam body { visibility: hidden; }
+html.tasco-native-cam #customCameraModal { visibility: visible; background: transparent !important; }
+html.tasco-native-cam #customCameraModal .camera-stream-container,
+html.tasco-native-cam #customCameraModal .camera-image-plane { background: transparent !important; }
+html.tasco-native-cam #customCameraVideo,
+html.tasco-native-cam #customCameraModal .camera-grid-overlay,
+html.tasco-native-cam #customCameraModal .camera-target-crosshair { display: none !important; }
+</style>
 <script id="tascoAppUpdate">
 /* Phiên bản đang chạy. Workflow "Build CSS" tự đóng dấu ngày + mã commit vào dòng dưới mỗi lần mobile.html đổi. */
 window.TASCO_APP_VERSION = '2026.11.15-92d57b2';
