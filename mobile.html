@@ -7216,7 +7216,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
             </div>
             <div class="cam-pro-card">
               <div class="cam-pro-head"><h3>Ưu tiên khi chụp</h3></div>
-              <div class="cam-seg" data-pro="priority" role="radiogroup" aria-label="Ưu tiên khi chụp"><button type="button" data-v="speed">Nhanh</button><button type="button" data-v="balanced">Cân bằng</button><button type="button" data-v="quality">Chất lượng</button></div>
+              <div class="cam-seg" data-pro="priority" role="radiogroup" aria-label="Ưu tiên khi chụp"><button type="button" data-v="speed">Nhanh</button><button type="button" data-v="balanced">Cân bằng</button></div>
               <p class="cam-pro-hint" data-pro-priority-hint></p>
             </div>
             <div class="cam-pro-card">
@@ -11513,6 +11513,8 @@ window.TascoNavigationMotion = (() => {
   /* Thiết lập chuyên sâu, lưu trên thiết bị. */
   var PRO_KEY = 'tasco_camera_pro_v1', PRO_DEFAULT = { ev: 0, lock: false, flash: 'off', grid: '3x3', priority: 'balanced', stab: 'standard' };
   var pro = (function () { try { return Object.assign({}, PRO_DEFAULT, JSON.parse(localStorage.getItem(PRO_KEY) || '{}')); } catch (_) { return Object.assign({}, PRO_DEFAULT); } })();
+  /* Plugin chỉ bật maxPhotoQualityPrioritization = balanced; gửi 'quality' làm iOS ném NSInvalidArgumentException (văng app). */
+  if (pro.priority !== 'speed') pro.priority = 'balanced';
   function savePro() { try { localStorage.setItem(PRO_KEY, JSON.stringify(pro)); } catch (_) {} }
   var evRange = { min: -2, max: 2, step: 0.1 };
   var root = document.documentElement;
@@ -11704,7 +11706,7 @@ window.TascoNavigationMotion = (() => {
     if (pro.lock) { try { await CP.setExposureMode({ mode: 'LOCK' }); } catch (_) {} }
     await setFlash(pro.flash, false);
   }
-  var PRIORITY_HINT = { speed: 'Chụp liền tay, ảnh xử lý nhanh nhất.', balanced: 'Cân bằng giữa tốc độ và độ nét (khuyên dùng).', quality: 'iPhone xử lý ảnh kỹ hơn, nét và ít nhiễu hơn, mỗi lần chụp chậm hơn một chút.' };
+  var PRIORITY_HINT = { speed: 'Chụp liền tay, ảnh xử lý nhanh nhất.', balanced: 'iPhone xử lý ảnh kỹ hơn cho độ nét và ít nhiễu (khuyên dùng).' };
   function renderPro() {
     var panel = document.getElementById('cameraSettingsPanel'); if (!panel) return;
     panel.querySelectorAll('.cam-seg[data-pro]').forEach(function (seg) {
@@ -11777,7 +11779,7 @@ window.TascoNavigationMotion = (() => {
     var fx = document.getElementById('cameraFlashEffect');
     if (fx && cameraAppearance.shutterFlash) { fx.classList.add('flash-active'); setTimeout(function () { fx.classList.remove('flash-active'); }, 80); }
     try {
-      var shot = await CP.capture({ quality: 92, photoQualityPrioritization: pro.priority, mirrorFrontCamera: !!cameraAppearance.mirrorFront });
+      var shot = await CP.capture({ quality: 92, photoQualityPrioritization: pro.priority === 'speed' ? 'speed' : 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront });
       if (session !== cameraUiState.session) return;
       feedback('Đang đóng dấu ảnh…', 0);
       var blob = await (await fetch('data:image/jpeg;base64,' + shot.value)).blob();
