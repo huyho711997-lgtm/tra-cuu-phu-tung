@@ -1,14 +1,14 @@
 /* TASCO DLK service worker.
  * Mục tiêu: cho phép cài như ứng dụng và mở lại được khi mạng yếu, KHÔNG làm app bị "kẹt" bản cũ.
  *  - Trang/asset cùng origin: ưu tiên MẠNG (luôn lấy bản mới nhất), chỉ dùng cache khi mất mạng.
- *  - Thư viện CDN tĩnh (Tailwind, Flowbite, esm.sh, font): lấy từ cache trước, cập nhật ngầm.
+ *  - Thư viện CDN tĩnh (esm.sh, font): lấy từ cache trước, cập nhật ngầm.
  *  - Mọi thứ khác (Supabase, Cloudinary, API, POST...) đi thẳng ra mạng, KHÔNG bao giờ cache.
  * Đổi CACHE_VERSION khi cần buộc làm mới toàn bộ cache.
  */
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const SHELL_CACHE = 'tasco-shell-' + CACHE_VERSION;
 const CDN_CACHE = 'tasco-cdn-' + CACHE_VERSION;
-const SHELL_URLS = ['./mobile', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png'];
+const SHELL_URLS = ['./mobile', './tailwind.css', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png'];
 const CDN_HOSTS = new Set([
   'cdn.tailwindcss.com',
   'cdnjs.cloudflare.com',

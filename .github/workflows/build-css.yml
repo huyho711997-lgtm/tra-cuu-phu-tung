@@ -1,0 +1,58 @@
+name: Build CSS
+
+# Mỗi khi mobile.html hoặc cấu hình CSS đổi, biên dịch lại tailwind.css và tự commit nếu có thay đổi.
+# Nhờ vậy class Tailwind mới thêm vào mobile.html luôn có CSS đi kèm, không cần ai chạy tay.
+on:
+  push:
+    branches: [main]
+    paths:
+      - mobile.html
+      - tools/css/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: build-css
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/css/package-lock.json
+      - name: Biên dịch tailwind.css
+        working-directory: tools/css
+        run: |
+          npm ci
+          npm run build
+      - name: Commit nếu CSS thay đổi
+        id: commit
+        run: |
+          if git diff --quiet -- tailwind.css; then
+            echo "tailwind.css đã khớp mobile.html, không cần commit."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tailwind.css
+          git commit -m "chore(css): rebuild tailwind.css"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      - name: Yêu cầu GitHub Pages dựng lại (commit của bot không tự kích hoạt)
+        if: steps.commit.outputs.changed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"

@@ -89,22 +89,10 @@ html.tasco-boot-pending #tascoBootSplash { display: flex; }
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
     
     <!-- CSS & Fonts -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font: kết nối sớm; display=swap giữ chữ hiện ngay bằng font hệ thống rồi mới đổi. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        navy: { 50: '#edf5f7', 100: '#daecf0', 200: '#b6cedd', 300: '#8daac3', 400: '#5d7c9b', 500: '#183056', 600: '#102440', 700: '#0d2039', 800: '#0b1b30', 900: '#071423' },
-                        teal: { 50: '#edf5f7', 100: '#daecf0', 200: '#b8dce2', 300: '#9dcfd6', 400: '#84bfc7', 500: '#63adb6', 600: '#39747e', 700: '#2c5b65', 800: '#20434f', 900: '#142f3d' }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         :root { --primary: #183056; --primary-hover: #102440; }
         
@@ -3158,6 +3146,8 @@ html.dark .tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data
 html.dark .tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data-part-kind="aftermarket"]{--kind-bg:#463725;--kind-line:#95723e;--kind-ink:#f3d49e}
 @media(max-width:359px){.tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data-part-kind]{min-height:26px;padding:4px 7px;font-size:10px}}
 </style>
+    <!-- Tailwind + Flowbite đã biên dịch sẵn (tools/css). Đặt cuối head để giữ thứ tự ưu tiên CSS cũ. -->
+    <link rel="stylesheet" href="tailwind.css">
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
 <div id="tascoStatusBackdrop" aria-hidden="true"></div>
@@ -4018,7 +4008,6 @@ window.TascoAppShell=(()=>{
 
 </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 <script id="tascoForms">
 /* Biểu mẫu dùng chung: liệt kê thư mục Google Drive do admin thiết lập,
    xem Word / PDF ngay trong app (iframe bản xem trước của Drive). */
