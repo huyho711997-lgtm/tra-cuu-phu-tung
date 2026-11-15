@@ -7186,8 +7186,8 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
           <div class="camera-section-heading"><h3>Chất lượng ảnh</h3><span id="cameraQualityBadge">Cân bằng</span></div>
           <div class="camera-quality-options" role="radiogroup" aria-label="Chất lượng ảnh">
             <button type="button" role="radio" data-camera-quality="economy" aria-checked="false"><span>Tiết kiệm</span><small>1280 px · nhẹ máy</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
-            <button type="button" role="radio" data-camera-quality="high" aria-checked="true"><span>Cân bằng <b>ĐỀ XUẤT</b></span><small>1920 px · rõ nét, vừa đủ</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
-            <button type="button" role="radio" data-camera-quality="maximum" aria-checked="false"><span>Chi tiết</span><small>2560 px · ảnh lớn hơn</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" role="radio" data-camera-quality="high" aria-checked="true"><span>Cân bằng <b>ĐỀ XUẤT</b></span><small>2560 px · rõ nét, vừa đủ</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" role="radio" data-camera-quality="maximum" aria-checked="false"><span>Siêu nét</span><small>4K · ảnh nặng hơn</small><svg class="camera-radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle class="camera-radio-dot" cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg></button>
           </div>
           <p id="cameraActualResolution" class="camera-settings-note">Camera đang khởi động…</p>
           <label class="camera-setting-field camera-field-spaced"><span>Camera đang dùng</span><select id="cameraDeviceSelect" aria-label="Camera đang dùng"></select></label>
@@ -9188,15 +9188,16 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
 /* Shared camera quality, device selection and capability-based zoom. */
 const cameraQualityProfiles={
   economy:{id:'economy',label:'Tiết kiệm',detail:'1280 px · nhẹ máy',request:1280,maxSide:1280,fps:15,jpeg:.85},
-  high:{id:'high',label:'Cân bằng',detail:'1920 px · rõ nét, vừa đủ',request:1920,maxSide:1920,fps:20,jpeg:.92},
-  maximum:{id:'maximum',label:'Chi tiết',detail:'2560 px · ảnh lớn hơn',request:2560,maxSide:2560,fps:24,jpeg:.95}
+  high:{id:'high',label:'Cân bằng',detail:'2560 px · rõ nét, vừa đủ',request:2560,maxSide:2560,fps:20,jpeg:.93},
+  maximum:{id:'maximum',label:'Siêu nét',detail:'4K · ảnh nặng hơn',request:4096,maxSide:4096,fps:15,jpeg:.95}
 };
 const cameraControlsState={quality:'high',deviceId:'',devices:[],baseFactor:1,zoom:1,digitalZoom:1,capabilities:{},busy:false,settingsOpen:false,location:null,clock:null,manualRotation:{environment:0,user:0},settingsFocus:null};
 // Quality and rotation are restored with the user's other preferences.
 function cameraQuality(){return {...cameraQualityProfiles[cameraControlsState.quality]};}
 function cameraVideoConstraints(){
   const quality=cameraQuality(),device=cameraControlsState.deviceId?{deviceId:{exact:cameraControlsState.deviceId}}:{facingMode:{ideal:customCameraFacingMode}};
-  return [{video:{...device,width:{ideal:quality.request,max:quality.request},height:{ideal:quality.request,max:quality.request},frameRate:{ideal:quality.fps,max:quality.fps}},audio:false},{video:{...device,width:{ideal:1280,max:1920},height:{ideal:1280,max:1920},frameRate:{ideal:15,max:24}},audio:false}];
+  /* Không đặt max để máy được phép trả khung hình lớn nhất gần mức yêu cầu (trước đây bị chặn ở 1920 nên ảnh mờ). Hạ dần nếu máy không mở được. */
+  return [{video:{...device,width:{ideal:quality.request},height:{ideal:quality.request},frameRate:{ideal:quality.fps}},audio:false},{video:{...device,width:{ideal:1920},height:{ideal:1920},frameRate:{ideal:20}},audio:false},{video:{...device,width:{ideal:1280,max:1920},height:{ideal:1280,max:1920},frameRate:{ideal:15,max:24}},audio:false}];
 }
 function cameraDeviceKind(label){
   const value=String(label).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
@@ -9265,7 +9266,7 @@ function cameraRotateImage(reset=false){
 function renderCameraSettings(){
   const panel=document.getElementById('cameraSettingsPanel');if(!panel||panel.hidden)return;
   const video=document.getElementById('customCameraVideo'),resolution=document.getElementById('cameraActualResolution');
-  if(resolution){if(video?.videoWidth){const frame=cameraFrameOrientation(video),size=cameraOutputSize(frame.width,frame.height,frame.aspectRatio,cameraQuality());resolution.textContent='Ảnh lưu '+size.width+' × '+size.height+' px · Camera '+video.videoWidth+' × '+video.videoHeight+' px';}else resolution.textContent='Camera đang khởi động…';}
+  if(resolution){if(video?.videoWidth){const frame=cameraFrameOrientation(video),size=cameraOutputSize(frame.width,frame.height,frame.aspectRatio,cameraQuality());resolution.textContent='Ảnh lưu '+size.width+' × '+size.height+' px · Camera '+video.videoWidth+' × '+video.videoHeight+' px'+(Math.max(video.videoWidth,video.videoHeight)<3000?'. Muốn nét tối đa: chọn Siêu nét hoặc dùng Camera hệ thống.':'');}else resolution.textContent='Camera đang khởi động…';}
   for(const button of panel.querySelectorAll('[data-camera-quality]')){button.setAttribute('aria-checked',String(button.dataset.cameraQuality===cameraControlsState.quality));button.disabled=cameraControlsState.busy;}
   const list=document.getElementById('cameraDeviceSelect'),active=customCameraStream?.getVideoTracks()[0]?.getSettings?.().deviceId||cameraControlsState.deviceId;
   const signature=cameraControlsState.devices.map(device=>device.id+'|'+device.label).join(';');
@@ -9486,7 +9487,7 @@ function selectCameraRatio(ratio){
 function cameraCanvasFromSource(source,frame,quality){
   const width=source.videoWidth||source.naturalWidth||source.width,height=source.videoHeight||source.naturalHeight||source.height,swapped=Math.abs(frame.rotation)%180===90,orientedWidth=swapped?height:width,orientedHeight=swapped?width:height;
   const output=cameraOutputSize(orientedWidth,orientedHeight,frame.aspectRatio||'native',quality),canvas=document.createElement('canvas');canvas.width=output.width;canvas.height=output.height;
-  const scale=canvas.width/output.crop.width,ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate((frame.rotation||0)*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);ctx.setTransform(1,0,0,1,0,0);return canvas;
+  const scale=canvas.width/output.crop.width,ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate((frame.rotation||0)*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);ctx.setTransform(1,0,0,1,0,0);return canvas;
 }
 
 const cameraSettingsPanel=document.getElementById('cameraSettingsPanel');
