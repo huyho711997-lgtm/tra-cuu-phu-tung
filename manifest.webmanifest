@@ -1,0 +1,20 @@
+{
+  "name": "TASCO DLK · Tra cứu phụ tùng",
+  "short_name": "TASCO DLK",
+  "description": "Tra cứu phụ tùng và lưu ảnh hồ sơ gara — TASCO DLK Insurance.",
+  "lang": "vi",
+  "dir": "ltr",
+  "id": "./mobile",
+  "start_url": "./mobile",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1b30",
+  "theme_color": "#0b1b30",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

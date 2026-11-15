@@ -80,8 +80,13 @@ html.tasco-boot-pending #tascoBootSplash { display: flex; }
     <meta name="mobile-web-app-capable" content="yes">
     <title>TASCO DLK · Không gian làm việc</title>
     
+    <!-- PWA: cài lên màn hình chính iPhone/Android không cần App Store -->
+    <meta name="apple-mobile-web-app-title" content="TASCO DLK">
+    <meta name="application-name" content="TASCO DLK">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
     <!-- Icon hiển thị trên tab trình duyệt (Favicon) -->
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/2965/2965279.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
     
     <!-- CSS & Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
@@ -11138,6 +11143,43 @@ window.TascoNavigationMotion = (() => {
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
   place();
   });
+})();
+</script>
+<script id="tascoPwaInstall">
+/* PWA: đăng ký service worker + gợi ý cài lên màn hình chính trên iPhone (Safari không có nút "Cài đặt" tự động). */
+(function () {
+  'use strict';
+  var secure = location.protocol === 'https:' || location.hostname === 'localhost';
+  if (secure && 'serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function (error) { console.warn('Không đăng ký được service worker:', error); });
+    });
+  }
+
+  var standalone = (window.navigator.standalone === true) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var KEY = 'tasco_ios_install_hint_dismissed';
+  var dismissed = false;
+  try { dismissed = localStorage.getItem(KEY) === '1'; } catch (_) {}
+  if (!isIOS || standalone || dismissed) return;
+
+  function show() {
+    if (document.getElementById('tascoIosInstallHint')) return;
+    var style = document.createElement('style');
+    style.textContent = '#tascoIosInstallHint{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:9000;display:flex;gap:12px;align-items:flex-start;padding:14px 14px 14px 16px;border-radius:18px;background:#0b1b30;color:#edf5f7;border:1px solid rgba(132,191,199,.35);box-shadow:0 18px 40px rgba(0,0,0,.35);font:500 13px/1.45 "Plus Jakarta Sans",system-ui,sans-serif}#tascoIosInstallHint strong{display:block;font-size:14px;margin-bottom:2px}#tascoIosInstallHint button{flex:none;border:0;border-radius:10px;padding:6px 10px;background:rgba(132,191,199,.18);color:#edf5f7;font:600 12px "Plus Jakarta Sans",system-ui,sans-serif;cursor:pointer}';
+    document.head.appendChild(style);
+    var box = document.createElement('div');
+    box.id = 'tascoIosInstallHint';
+    box.setAttribute('role', 'status');
+    box.innerHTML = '<div><strong>Cài TASCO DLK lên iPhone</strong>Mở bằng Safari, bấm nút <b>Chia sẻ</b> (hình ô vuông có mũi tên lên) rồi chọn <b>Thêm vào Màn hình chính</b>.</div><button type="button" aria-label="Đóng gợi ý cài đặt">Đóng</button>';
+    box.querySelector('button').addEventListener('click', function () {
+      try { localStorage.setItem(KEY, '1'); } catch (_) {}
+      box.remove();
+    });
+    document.body.appendChild(box);
+  }
+  window.addEventListener('load', function () { setTimeout(show, 3500); });
 })();
 </script>
 </body>
