@@ -8082,7 +8082,11 @@ window.TascoCloud = (() => {
     const search=root.querySelector('[data-cloud-search]');search.placeholder=album?'Tìm ảnh trong album…':'Tìm nội dung, địa điểm…';search.setAttribute('aria-label',album?'Tìm ảnh trong album '+album.name:'Tìm ảnh');
     const label=root.querySelector('[data-cloud-capture-label]');label.textContent=cloudReady()?(album?'Chụp vào album':'Chọn album để chụp'):state.busy?'Đang kết nối…':state.error?'Thử kết nối lại':'Kết nối để chụp';
     root.querySelector('[data-album-status]').textContent=album?(state.albumMode==='cloud'?'Album đã đồng bộ Cloud':state.albumNote):'';
-    root.querySelector('[data-album-status]').hidden=!album;
+    root.querySelector('[data-album-status]').hidden=!album||state.albumMode==='cloud';
+    /* Trang album: gắn cờ để CSS thu gọn phần đầu, và tóm tắt album trên một dòng */
+    const shell=root.querySelector('.personal-cloud');if(shell)shell.dataset.albumView=album?'open':'home';
+    const meta=root.querySelector('[data-cloud-hero-meta]');
+    if(meta){meta.hidden=!album;if(album){const synced=state.albumMode==='cloud';meta.innerHTML='<span><b>'+album.photo_ids.length+'</b>&nbsp;ảnh</span><span class="'+(synced?'is-synced':'is-local')+'">'+(synced?'Đã đồng bộ Cloud':'Chỉ trên máy này')+'</span><span>Tạo '+esc(new Date(album.created_at).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}))+'</span>';}}
   }
   async function localAlbumPhotos(api,owner,album,current=()=>true){
     const rows=[];const pendingIds=new Set(state.pending.map(row=>row.id)),ids=album.photo_ids.filter(id=>!pendingIds.has(id));
@@ -8302,7 +8306,7 @@ window.TascoCloud = (() => {
     const reloadButton=`<button class="cloud-button" type="button" data-action="refresh" aria-label="Tải lại thư viện" title="Tải lại thư viện">${icon('refresh')}</button>`;
     const mobileHeader=`<header class="cloud-hero" aria-labelledby="cloudPageTitle">
   <div class="cloud-journey-top"><button type="button" data-action="album-back" aria-label="Quay lại Cloud hoặc trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · THƯ VIỆN CÁ NHÂN</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div>
-  <div class="cloud-hero-copy"><span class="cloud-eyebrow" data-cloud-eyebrow>KHÔNG GIAN LƯU TRỮ CỦA BẠN</span><div class="cloud-album-title"><h1 id="cloudPageTitle" tabindex="-1">Cloud của tôi</h1><button type="button" class="cloud-album-rename-button" data-action="rename-active-album" aria-label="Quản lý album" title="Quản lý album" aria-haspopup="dialog" hidden disabled>${moreIcon}</button></div><p data-cloud-intro>Tạo album theo hồ sơ, mở album rồi bắt đầu chụp.</p></div>
+  <div class="cloud-hero-copy"><span class="cloud-eyebrow" data-cloud-eyebrow>KHÔNG GIAN LƯU TRỮ CỦA BẠN</span><div class="cloud-album-title"><h1 id="cloudPageTitle" tabindex="-1">Cloud của tôi</h1><button type="button" class="cloud-album-rename-button" data-action="rename-active-album" aria-label="Quản lý album" title="Quản lý album" aria-haspopup="dialog" hidden disabled>${moreIcon}</button></div><div class="cloud-hero-meta" data-cloud-hero-meta hidden></div><p data-cloud-intro>Tạo album theo hồ sơ, mở album rồi bắt đầu chụp.</p></div>
   <div class="cloud-hero-icon" aria-hidden="true">${icon('cloud')}</div>
   <div class="cloud-hero-actions"><button type="button" class="cloud-button cloud-primary" data-action="capture" disabled>${icon('camera')}<span data-cloud-capture-label>Đang kết nối…</span><svg class="cloud-capture-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><button type="button" class="cloud-button cloud-upload-button" data-action="upload-photos" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></svg><span>Tải ảnh lên</span></button></div>
   <section class="cloud-usage-card" data-cloud-usage aria-label="Dung lượng thư viện ảnh" aria-busy="true" title="Tính theo ảnh đã lưu trong ứng dụng">
@@ -11773,6 +11777,58 @@ window.TascoCategories = (function () {
 .cloud-category-bar button[aria-pressed="true"]{border-color:#39747e;background:#183056;color:#edf5f7}
 .cloud-tile-cat{display:inline-block;max-width:100%;margin-bottom:3px;padding:2px 8px;border-radius:999px;background:rgba(132,191,199,.22);color:#20434f;font-size:10.5px;font-style:normal;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dark .cloud-tile-cat{color:#9dcfd6}
+</style>
+<style id="tascoCloudAlbumPremium">
+/* Trang Cloud / album (mobile) — gọn, ưu tiên ảnh, giữ màu & kiểu nút của app */
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-journey-top{margin-bottom:16px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-journey-top>button{width:40px;height:40px;border-radius:13px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-journey-top>button:active{background:rgba(255,255,255,.12)}
+/* — Album đang mở: phần đầu gọn — */
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero{padding-bottom:46px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero-icon,
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] [data-cloud-intro],
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-usage-card{display:none!important}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero-copy h1{margin:6px 0 0;font-size:30px;letter-spacing:-.8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-album-title{display:flex;align-items:center;gap:10px;min-width:0}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-album-rename-button{margin-top:6px}
+.cloud-hero-meta[hidden]{display:none!important}
+.tasco-workspace #personalCloudSection .cloud-hero-meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.tasco-workspace #personalCloudSection .cloud-hero-meta span{display:inline-flex;align-items:center;gap:0;min-height:28px;padding:0 11px;border:1px solid rgba(218,236,240,.16);border-radius:99px;background:rgba(255,255,255,.06);color:#daecf0;font-size:12px;font-weight:500;line-height:1}
+.tasco-workspace #personalCloudSection .cloud-hero-meta b{font-weight:700;color:#fff}
+.tasco-workspace #personalCloudSection .cloud-hero-meta .is-synced::before,.tasco-workspace #personalCloudSection .cloud-hero-meta .is-local::before{content:'';width:7px;height:7px;margin-right:7px;border-radius:50%;background:#84bfc7;box-shadow:0 0 0 3px rgba(132,191,199,.22)}
+.tasco-workspace #personalCloudSection .cloud-hero-meta .is-local::before{background:#e8c77a;box-shadow:0 0 0 3px rgba(232,199,122,.22)}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero-actions{display:flex!important;gap:10px;margin-top:18px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero-actions .cloud-primary{flex:1;min-width:0;min-height:52px;font-size:15px;box-shadow:0 10px 26px rgba(0,0,0,.22)}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero-actions .cloud-primary svg{width:20px;height:20px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero-actions .cloud-upload-button{flex:0 0 52px;width:52px;min-width:52px;min-height:52px;padding:0;justify-content:center;border-radius:50%}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero-actions .cloud-upload-button svg{width:20px;height:20px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero-actions .cloud-upload-button>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tasco-workspace #personalCloudSection .cloud-hero-actions .cloud-button:active:not(:disabled){transform:scale(.97)}
+/* — Ô tìm + ngày + làm mới: một hàng — */
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-control-panel{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:'head head head' 'search date refresh';column-gap:8px;row-gap:0;margin:-28px 14px 0;padding:10px;border-radius:24px;box-shadow:0 14px 34px rgba(12,28,52,.12)}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-control-panel:has(.cloud-date-trigger[data-value]:not([data-value=""])){grid-template-areas:'head head head' 'search search refresh' 'date date date'}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-panel-heading{grid-area:head;display:none;min-height:0;margin:0 4px 8px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-panel-heading:has(.cloud-clear-filters:not([hidden])){display:flex}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-panel-heading h2{font-size:12px;font-weight:600;color:var(--ws-muted)}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-panel-heading h2::after{content:' · đang lọc'}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-toolbar{grid-area:search;min-width:0}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-search{min-height:48px;border-radius:16px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-search input{height:46px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-details-row{display:contents}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date{grid-area:date;min-width:0}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date>span{display:none}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger{width:48px;min-height:48px;height:48px;padding:0;justify-content:center;border-radius:16px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger:not([data-value]) [data-cloud-date-label],.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger[data-value=""] [data-cloud-date-label]{display:none}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger[data-value]:not([data-value=""]){width:100%;height:auto;min-height:44px;margin-top:8px;padding:8px 14px;justify-content:space-between;flex-direction:row-reverse;color:var(--ws-text)!important;font-weight:600}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-details-row>[data-action=refresh]{grid-area:refresh;width:48px;min-height:48px;height:48px;border-radius:16px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] :is(.cloud-date-trigger,.cloud-details-row>[data-action=refresh]):active{transform:scale(.95)}
+/* — Trạng thái đồng bộ (chỉ hiện khi album chưa lên Cloud) — */
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] [data-album-status]{margin:14px 22px 0;font-size:12px;color:var(--ws-muted)}
+/* — Tiêu đề thư viện — */
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-gallery-heading{margin-top:22px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-gallery-heading :is([data-action=selection],[data-action=gallery-settings]){min-height:38px;padding:7px 13px;font-size:12.5px;font-weight:600}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-gallery-heading :is([data-action=selection],[data-action=gallery-settings]):active{transform:scale(.96)}
+@media(max-width:360px){.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-hero-copy h1{font-size:26px}}
 </style>
 <script id="tascoVideoCapture">
 /* Quay video hồ sơ: quay bằng camera iPhone (chế độ video), in dấu ngày giờ + vị trí lên từng khung hình,
