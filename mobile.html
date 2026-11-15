@@ -8638,6 +8638,7 @@ window.TascoCloud = (() => {
       }
       if(!current())return;state.libraryReady=true;state.rows=append?[...state.rows,...(result.data||[])]:result.data||[];state.count=result.count??state.rows.length;if(quiet){state.page=keepPages-1;const ids=new Set(state.rows.map(r=>r.id));for(const id of [...state.selected])if(!ids.has(id))state.selected.delete(id);}
       if(!append&&(!quiet||Date.now()-(state.categoriesAt||0)>20000)){state.categoriesAt=Date.now();loadCategories(api,owner.id,album,current).catch(()=>{});}
+      if(!quiet&&!append&&!state.uploading&&state.pending.some(row=>row.owner_id===owner.id))setTimeout(()=>{if(state.pending.length&&!state.uploading)processQueue();},400);  // mở app: tự gửi tiếp ảnh còn chờ trên máy
     }catch(error){
       if(!current())return;
       if(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)){clearAccount();loginPanel(error.message);}
@@ -9063,6 +9064,8 @@ window.TascoCloud = (() => {
   }
   window.addEventListener('tasco:storage-change',()=>{if(visible())paint();});
   window.addEventListener('online',()=>{if(state.pending.length)processQueue();});
+  /* Quay lại app (iOS mở lại từ nền): tiếp tục gửi ảnh còn trong hàng đợi trên máy. */
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.pending.length&&!state.uploading&&hasAccess()&&state.localReady)processQueue();});
   window.addEventListener('pagehide',()=>{cancelDownloads();state.albumDialog?.cancel();window.TascoPhotoViewer?.close();clearURLs();});
   return {downloadAlbum:id=>startCloudDownload({albumId:id}),downloadSelected:()=>startCloudDownload({ids:[...state.selected]}),cancelDownloads,isDownloading:()=>Boolean(cloudDownload),configure,mount,revokeAccess,refresh,queuePhotos,processQueue,notify,errorMessage:message,categories:()=>(state.categories||[]).map(c=>c.name),isReady:cloudReady,isUploadReady:uploadReady,queueReady:()=>state.localReady===true&&state.storageStatus==='ready',isUploading:()=>state.uploading,account,icon,createAlbum,renameAlbum,deleteAlbum,openAlbum,captureContext,releaseCapture,importPhotos,captureNotice:()=>state.storageStatus==='unavailable'?'Cần có mạng để lưu ảnh. Giữ màn hình chụp đến khi Lưu Cloud thành công.':'',capture:captureAlbum};
 })();
@@ -9799,6 +9802,7 @@ function cameraAutoUploadActive(){return cameraAutoUploadEnabled()&&Boolean(Tasc
 async function cameraQueueMetadata(file){const info=cameraPhotoMetadata.get(file);return {capturedAt:info.capturedAt,location:await info.locationPromise,category:info.category||''};}
 function cameraAutoUpload(file){
   if(file)countCameraCategory(cameraPhotoMetadata.get(file)?.category||'');
+  if(file)try{window.TascoCameraRescue?.keep(file);}catch(_){}  // ghi ngay vào bộ nhớ máy, phòng app bị tắt giữa chừng
   if(!cameraAutoUploadActive()||!file)return;
   const owner=mobileCameraOwner,album=mobileCameraAlbum,title=mobileCameraTitle;
   cameraQueueState.set(file,'sending');
@@ -9806,6 +9810,7 @@ function cameraAutoUpload(file){
     if(owner!==window.mobileCloudEmail?.())throw new Error('Tài khoản đã thay đổi. Ảnh chưa được gửi.');
     await TascoCloud.queuePhotos([file],title,cameraQueueMetadata,album,{silent:true});
     cameraQueueState.set(file,'queued');
+    try{window.TascoCameraRescue?.drop(file);}catch(_){}
   }).catch(error=>{cameraQueueState.delete(file);try{cameraFeedback((error&&error.message)||'Chưa gửi được ảnh, sẽ lưu lại khi bấm Xong.',3200);}catch(_){}})
     .finally(()=>{try{renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();}catch(_){}});
   try{renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();}catch(_){}
@@ -9890,7 +9895,12 @@ async function closeCustomCameraModal(savePhotos=false){
       if(mobileCameraSaving||cameraUiState.captureBusy)return;
     }}
   const unsentPhotos=customCameraPhotos.filter(file=>!cameraQueueState.has(file));
-  if(!savePhotos&&unsentPhotos.length&&!confirm('Đóng camera và bỏ '+unsentPhotos.length+' ảnh chưa lưu?'))return;
+  if(!savePhotos&&unsentPhotos.length){
+    const choice=await TascoCategories.ask({title:unsentPhotos.length+' ảnh chưa lưu lên Cloud',text:'Đóng camera bây giờ sẽ bỏ các ảnh này khỏi máy.',
+      actions:[{key:'stay',label:'Chụp tiếp'},{key:'save',label:'Lưu & đóng',primary:true},{key:'discard',label:'Bỏ '+unsentPhotos.length+' ảnh & đóng',danger:true,arm:'Chạm lần nữa để bỏ ảnh'}]});
+    if(choice==='save'){return closeCustomCameraModal(true);}
+    if(choice!=='discard')return;
+  }
   if(savePhotos){
     if(!customCameraPhotos.length)return;
     cameraSaveBatchToDevice([...customCameraPhotos]);
@@ -9917,6 +9927,7 @@ async function closeCustomCameraModal(savePhotos=false){
   mobileCameraSaving=false;
   cameraUiState.captureBusy=false;
   try{onCustomCameraClose();}catch(_){}
+  try{window.TascoCameraRescue?.dropAll(customCameraPhotos);}catch(_){}
   customCameraPhotos=[];
   mobileCameraAlbum=null;
   try{renderCustomCameraPreviewStrip();}catch(_){}
@@ -11693,7 +11704,26 @@ window.TascoCategories = (function () {
       (document.getElementById('customCameraModal')?.style.display === 'flex' ? document.getElementById('customCameraModal') : document.body).append(wrap);
     });
   }
-  return { open: open, missing: missing, recent: recent, remember: remember, clean: clean };
+  /* Hỏi xác nhận bằng bảng riêng (thay hộp thoại hệ thống).
+     ask({ title, text, actions: [{ key, label, primary?, danger?, arm? }] }) -> Promise<key | null> */
+  function ask(opts) {
+    return new Promise(function (resolve) {
+      var wrap = document.createElement('div'), settled = false; wrap.className = 'tasco-cat-sheet is-plan is-missing tcs-ask'; wrap.setAttribute('role', 'alertdialog'); wrap.setAttribute('aria-modal', 'true'); wrap.setAttribute('aria-labelledby', 'tcsAskTitle');
+      wrap.innerHTML = '<div class="tasco-cat-panel"><i class="tcs-grab" aria-hidden="true"></i><header class="tcs-head"><span class="tcs-badge">' + ICON.alert + '</span><div><h3 id="tcsAskTitle">' + esc(opts.title || '') + '</h3><p>' + esc(opts.text || '') + '</p></div></header>' +
+        '<div class="tcs-ask-actions">' + (opts.actions || []).map(function (a) { return '<button type="button" data-k="' + esc(a.key) + '" class="' + (a.primary ? 'is-primary' : a.danger ? 'is-danger' : '') + '">' + esc(a.label) + '</button>'; }).join('') + '</div></div>';
+      function finish(v) { if (settled) return; settled = true; document.removeEventListener('keydown', onKey, true); wrap.classList.add('is-leaving'); setTimeout(function () { wrap.remove(); }, 180); resolve(v); }
+      function onKey(e) { if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); finish(null); } }
+      document.addEventListener('keydown', onKey, true);
+      wrap.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-k]'); if (!b) { if (e.target === wrap) finish(null); return; }
+        var a = (opts.actions || []).find(function (x) { return x.key === b.dataset.k; }) || {};
+        if (a.arm && !b.classList.contains('is-armed')) { var label = b.textContent; b.classList.add('is-armed'); b.textContent = a.arm; setTimeout(function () { if (b.isConnected) { b.classList.remove('is-armed'); b.textContent = label; } }, 3000); return; }
+        finish(b.dataset.k);
+      });
+      (document.getElementById('customCameraModal')?.style.display === 'flex' ? document.getElementById('customCameraModal') : document.body).append(wrap);
+    });
+  }
+  return { open: open, missing: missing, ask: ask, recent: recent, remember: remember, clean: clean };
 })();
 </script>
 <style id="tascoCategoryStyles">
@@ -11790,6 +11820,21 @@ window.TascoCategories = (function () {
 .tcs-go b{font-weight:800}
 .tcs-go:active{transform:scale(.98)}
 .tasco-cat-sheet button{-webkit-tap-highlight-color:transparent;cursor:pointer}
+.tcs-ask-actions{display:flex;flex-direction:column;gap:9px;margin:4px 0 0;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.tcs-ask-actions button{min-height:52px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.05);color:var(--tcs-ink);font:inherit;font-size:15px;font-weight:650;transition:transform .12s,background .2s}
+.tcs-ask-actions button:active{transform:scale(.98)}
+.tcs-ask-actions .is-primary{border:0;background:linear-gradient(180deg,#b2e6eb,#7fc2cb);color:#06141f;box-shadow:0 10px 24px rgba(127,194,203,.3)}
+.tcs-ask-actions .is-danger{border-color:rgba(255,120,110,.3);color:#ff9b91;background:rgba(255,120,110,.06)}
+.tcs-ask-actions .is-danger.is-armed{background:#e2554a;border-color:#e2554a;color:#fff}
+.tcs-rescue .tcs-badge svg{width:22px;height:22px}
+.tcs-rescue-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tcs-rescue-grid img,.tcs-rescue-grid span{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:rgba(255,255,255,.06)}
+.tcs-rescue-grid span{display:grid;place-items:center;color:var(--tcs-ink);font-weight:700}
+.tcs-rescue-note{margin:12px 2px 0;font-size:12.5px;color:var(--tcs-mute)}
+.tcs-rescue-note b{color:var(--tcs-ink);font-weight:600}
+.tcs-rescue-err{margin:8px 2px 0;font-size:12.5px;color:#ff9b91}
+.tcs-rescue .tcs-foot .tcs-none.is-armed{background:#e2554a;border-color:#e2554a;color:#fff}
+.tcs-rescue .tcs-go:disabled{opacity:.6}
 .tcs-sec button.is-armed{padding:4px 10px;border-radius:99px;background:rgba(255,120,110,.16);color:#ffb3ab}
 .tasco-cat-sheet.is-missing .tcs-badge{border-color:rgba(242,217,141,.34);background:linear-gradient(145deg,rgba(242,217,141,.26),rgba(242,217,141,.06));color:var(--tcs-gold)}
 .tasco-cat-sheet.is-missing .tcs-dot{border-style:solid;border-color:rgba(242,217,141,.55);background:rgba(242,217,141,.1)}
@@ -12028,6 +12073,110 @@ html.dark .tasco-workspace .ws-update-pill{background:linear-gradient(160deg,#a6
   ::view-transition-old(root),::view-transition-new(root){animation:none!important}
 }
 </style>
+<script id="tascoCameraRescue">
+/* Kho cứu ảnh: mỗi ảnh vừa chụp (đã in dấu) được ghi ngay vào bộ nhớ máy (IndexedDB) cho tới khi đã vào
+   hàng đợi Cloud hoặc người dùng chủ động bỏ. App bị iOS tắt / hết pin giữa chừng thì lần mở sau sẽ hỏi lưu tiếp. */
+window.TascoCameraRescue = (function () {
+  var DB = 'tasco-camera-rescue', STORE = 'photos', dbp = null, ids = new WeakMap(), writes = new Map(), checking = false, shown = false;
+  function db() {
+    if (dbp) return dbp;
+    dbp = new Promise(function (ok, fail) {
+      var r; try { r = indexedDB.open(DB, 1); } catch (e) { fail(e); return; }
+      r.onupgradeneeded = function () { if (!r.result.objectStoreNames.contains(STORE)) r.result.createObjectStore(STORE, { keyPath: 'id' }); };
+      r.onsuccess = function () { ok(r.result); }; r.onerror = function () { fail(r.error); };
+    });
+    dbp.catch(function () { dbp = null; });
+    return dbp;
+  }
+  function tx(mode, fn) {
+    return db().then(function (d) { return new Promise(function (ok, fail) {
+      var t = d.transaction(STORE, mode), s = t.objectStore(STORE), out; var req = fn(s); if (req) req.onsuccess = function () { out = req.result; };
+      t.oncomplete = function () { ok(out); }; t.onerror = t.onabort = function () { fail(t.error); };
+    }); });
+  }
+  function email() { return String((window.mobileCloudEmail && window.mobileCloudEmail()) || '').toLowerCase(); }
+  /* Gọi ngay khi có ảnh đã in dấu. */
+  function keep(file) {
+    if (!file || ids.has(file)) return;
+    var id = (crypto.randomUUID && crypto.randomUUID()) || String(Date.now()) + Math.random();
+    ids.set(file, id);
+    /* các biến camera là let/const toàn cục (không nằm trên window) */
+    var info = (typeof cameraPhotoMetadata !== 'undefined' && cameraPhotoMetadata.get(file)) || {};
+    var album = (typeof mobileCameraAlbum !== 'undefined' && mobileCameraAlbum) || null;
+    var rec = { id: id, owner: String((typeof mobileCameraOwner !== 'undefined' && mobileCameraOwner) || email()).toLowerCase(), album: album ? { albumId: album.albumId, albumName: album.albumName || '', ownerId: album.ownerId } : null,
+      title: String((typeof mobileCameraTitle !== 'undefined' && mobileCameraTitle) || ''), capturedAt: info.capturedAt || new Date().toISOString(), category: info.category || '', location: null,
+      blob: file, name: file.name || ('tasco-' + Date.now() + '.jpg'), type: file.type || 'image/jpeg', at: Date.now() };
+    var w = tx('readwrite', function (s) { return s.put(rec); }).then(function () {
+      return Promise.resolve(info.locationPromise).then(function (loc) { if (loc && ids.get(file) === id) { rec.location = loc; return tx('readwrite', function (s) { return s.put(rec); }); } }).catch(function () {});
+    }).catch(function () {});
+    writes.set(id, w);
+  }
+  /* Ảnh đã vào hàng đợi Cloud (đã an toàn trong bộ nhớ hàng đợi) hoặc người dùng bỏ: xoá khỏi kho cứu. */
+  function drop(file) {
+    var id = file && ids.get(file); if (!id) return Promise.resolve();
+    ids.delete(file);
+    return Promise.resolve(writes.get(id)).then(function () { writes.delete(id); return tx('readwrite', function (s) { return s.delete(id); }); }).catch(function () {});
+  }
+  function dropAll(files) { return Promise.all((files || []).map(drop)); }
+  function list() { return tx('readonly', function (s) { return s.getAll(); }).then(function (r) { return r || []; }).catch(function () { return []; }); }
+  function remove(recs) { return tx('readwrite', function (s) { recs.forEach(function (r) { s.delete(r.id); }); }).catch(function () {}); }
+
+  function cameraOpen() { var m = document.getElementById('customCameraModal'); return !!m && m.style.display === 'flex'; }
+  /* Kiểm tra ảnh còn sót khi Cloud đã sẵn sàng và camera đang đóng. */
+  async function check() {
+    if (checking || shown || cameraOpen() || document.querySelector('.tasco-cat-sheet')) return;
+    if (!window.TascoCloud || !TascoCloud.queueReady || !TascoCloud.queueReady() || !email()) return;
+    checking = true;
+    try {
+      var mine = (await list()).filter(function (r) { return r.owner === email() && r.blob; });
+      if (mine.length && !cameraOpen()) { shown = true; offer(mine); }
+    } finally { checking = false; }
+  }
+  function esc(v) { return String(v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function offer(recs) {
+    recs.sort(function (a, b) { return String(a.capturedAt).localeCompare(String(b.capturedAt)); });
+    var urls = recs.slice(0, 11).map(function (r) { return URL.createObjectURL(r.blob); });
+    var albums = []; recs.forEach(function (r) { var n = r.album ? r.album.albumName || 'Album' : 'Tất cả ảnh'; if (albums.indexOf(n) < 0) albums.push(n); });
+    var wrap = document.createElement('div'); wrap.className = 'tasco-cat-sheet is-plan is-missing tcs-rescue'; wrap.setAttribute('role', 'alertdialog'); wrap.setAttribute('aria-modal', 'true'); wrap.setAttribute('aria-labelledby', 'tcsRescueTitle');
+    wrap.innerHTML = '<div class="tasco-cat-panel"><i class="tcs-grab" aria-hidden="true"></i>' +
+      '<header class="tcs-head"><span class="tcs-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 4.5 6.5v5.2c0 4.3 3.1 7.6 7.5 8.8 4.4-1.2 7.5-4.5 7.5-8.8V6.5z"/><path d="M12 9v4M12 16v.1"/></svg></span>' +
+      '<div><h3 id="tcsRescueTitle">' + recs.length + ' ảnh chưa được lưu</h3><p>Lần chụp trước app bị đóng trước khi gửi lên Cloud</p></div></header>' +
+      '<div class="tcs-body"><div class="tcs-rescue-grid">' + urls.map(function (u) { return '<img src="' + u + '" alt="">'; }).join('') + (recs.length > 11 ? '<span>+' + (recs.length - 11) + '</span>' : '') + '</div>' +
+      '<p class="tcs-rescue-note">Lưu vào: <b>' + esc(albums.join(', ')) + '</b></p><p class="tcs-rescue-err" hidden></p></div>' +
+      '<footer class="tcs-foot"><button type="button" class="tcs-none" data-r="discard">Bỏ ảnh</button><button type="button" class="tcs-go" data-r="save"><span>Lưu ' + recs.length + ' ảnh</span></button></footer></div>';
+    var err = wrap.querySelector('.tcs-rescue-err'), busy = false;
+    function close() { wrap.classList.add('is-leaving'); setTimeout(function () { wrap.remove(); urls.forEach(URL.revokeObjectURL); }, 180); }
+    wrap.addEventListener('click', async function (e) {
+      var b = e.target.closest('[data-r]'); if (!b || busy) return;
+      if (b.dataset.r === 'discard') {
+        if (!b.classList.contains('is-armed')) { b.classList.add('is-armed'); b.textContent = 'Chạm lần nữa để bỏ'; setTimeout(function () { if (b.isConnected) { b.classList.remove('is-armed'); b.textContent = 'Bỏ ảnh'; } }, 3000); return; }
+        await remove(recs); close(); TascoCloud.notify('Đã bỏ ' + recs.length + ' ảnh chưa lưu.'); return;
+      }
+      busy = true; b.disabled = true; b.querySelector('span').textContent = 'Đang lưu…'; err.hidden = true;
+      try {
+        var groups = new Map();
+        recs.forEach(function (r) { var k = r.album ? r.album.albumId : ''; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(r); });
+        var saved = 0;
+        for (var entry of groups) {
+          var rows = entry[1], meta = new Map();
+          var files = rows.map(function (r) { var f = new File([r.blob], r.name, { type: r.type, lastModified: Number(r.capturedAt) || Date.parse(r.capturedAt) || Date.now() }); meta.set(f, { capturedAt: r.capturedAt, location: r.location, category: r.category }); return f; });
+          var metaFn = async function (f) { return meta.get(f); };
+          try { await TascoCloud.queuePhotos(files, rows[0].title, metaFn, rows[0].album, { silent: true }); }
+          catch (e2) { if (!rows[0].album) throw e2; await TascoCloud.queuePhotos(files, rows[0].title, metaFn, null, { silent: true }); }  // album đã bị xoá: lưu vào Tất cả ảnh
+          await remove(rows); saved += rows.length;
+        }
+        close(); TascoCloud.notify('Đã đưa ' + saved + ' ảnh vào hàng đợi, đang gửi lên Cloud.');
+      } catch (e3) {
+        busy = false; b.disabled = false; b.querySelector('span').textContent = 'Thử lưu lại'; err.hidden = false; err.textContent = (e3 && e3.message) || 'Chưa lưu được. Kiểm tra mạng rồi thử lại.';
+      }
+    });
+    document.body.append(wrap);
+  }
+  var tries = 0, timer = setInterval(function () { if (shown || ++tries > 60) { clearInterval(timer); return; } check(); }, 2000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) { shown = false; setTimeout(check, 1500); } });
+  return { keep: keep, drop: drop, dropAll: dropAll, check: check };
+})();
+</script>
 <script id="tascoVideoCapture">
 /* Quay video hồ sơ: quay bằng camera iPhone (chế độ video), in dấu ngày giờ + vị trí lên từng khung hình,
  * giữ tới 1080p (bitrate theo thời lượng), tối đa 3 phút, rồi đưa vào hàng đợi tải lên Cloud như ảnh (cùng album).
