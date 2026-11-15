@@ -7207,6 +7207,16 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
           <p class="cam-pro-web-note">Các chỉnh chuyên sâu dùng camera thật của iPhone, chỉ có trong <strong>ứng dụng TASCO DLK</strong> (không có trên trình duyệt).</p>
           <div class="cam-pro">
             <div class="cam-pro-card">
+              <div class="cam-pro-head"><h3>Màu sắc &amp; độ nét</h3></div>
+              <div class="cam-seg" data-pro="look" role="radiogroup" aria-label="Kiểu màu"><button type="button" data-v="raw">Gốc</button><button type="button" data-v="natural">Tự nhiên</button><button type="button" data-v="vivid">Tươi</button><button type="button" data-v="punchy">Đậm</button></div>
+              <p class="cam-pro-hint" data-pro-look-hint></p>
+              <div class="cam-fx-row"><label>Độ tươi màu<output data-pro-fx-out="sat">0</output></label><input type="range" data-pro-fx="sat" min="-50" max="80" step="1" aria-label="Độ tươi màu"></div>
+              <div class="cam-fx-row"><label>Tương phản<output data-pro-fx-out="contrast">0</output></label><input type="range" data-pro-fx="contrast" min="-30" max="40" step="1" aria-label="Tương phản"></div>
+              <div class="cam-fx-row"><label>Ấm / lạnh<output data-pro-fx-out="warm">0</output></label><input type="range" data-pro-fx="warm" min="-30" max="30" step="1" aria-label="Ấm lạnh"></div>
+              <div class="cam-fx-row"><label>Độ nét<output data-pro-fx-out="sharp">0</output></label><input type="range" data-pro-fx="sharp" min="0" max="100" step="1" aria-label="Độ nét"></div>
+              <p class="cam-pro-hint">Áp dụng lên ảnh sau khi chụp. Hình ngắm trực tiếp vẫn hiện màu gốc của camera.</p>
+            </div>
+            <div class="cam-pro-card">
               <div class="cam-pro-head"><h3>Phơi sáng</h3><output data-pro-ev-value>0.0 EV</output></div>
               <input type="range" data-pro-ev min="-2" max="2" step="0.1" value="0" aria-label="Bù phơi sáng">
               <div class="cam-pro-scale"><span>Tối hơn</span><button type="button" data-pro-ev-reset>Đặt lại</button><span>Sáng hơn</span></div>
@@ -9505,6 +9515,7 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
       const aspectRatio=cameraOrientedRatio(appearance.aspectRatio,orientation,imageWidth,imageHeight);
       canvas=cameraCanvasFromSource(image.source,{rotation:0,mirror:false,digitalZoom:1,aspectRatio},metadata.quality||cameraQuality());
       const ctx=canvas.getContext('2d',{alpha:false});image.release();image=null;
+      if(metadata.fx&&window.TascoPhotoFX){try{await TascoPhotoFX.apply(canvas,metadata.fx);}catch(_){}}
       try{await document.fonts?.load((appearance.bold?'700':'400')+' 20px '+cameraStampFonts[appearance.font]);}catch(_){}
       drawCameraStamp(ctx,cameraWatermarkLines(location,metadata.capturedAt,metadata.source,appearance),canvas.width,canvas.height,appearance);
       const blob=await cameraCanvasBlob(canvas,'image/jpeg',metadata.quality?.jpeg||.92);
@@ -9816,7 +9827,7 @@ function selectCameraRatio(ratio){
 function cameraCanvasFromSource(source,frame,quality){
   const width=source.videoWidth||source.naturalWidth||source.width,height=source.videoHeight||source.naturalHeight||source.height,swapped=Math.abs(frame.rotation)%180===90,orientedWidth=swapped?height:width,orientedHeight=swapped?width:height;
   const output=cameraOutputSize(orientedWidth,orientedHeight,frame.aspectRatio||'native',quality),canvas=document.createElement('canvas');canvas.width=output.width;canvas.height=output.height;
-  const scale=canvas.width/output.crop.width,ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate((frame.rotation||0)*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);ctx.setTransform(1,0,0,1,0,0);return canvas;
+  const scale=canvas.width/output.crop.width,ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas unavailable');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(frame.mirror?-1:1,1);ctx.rotate((frame.rotation||0)*Math.PI/180);ctx.scale(scale*(frame.digitalZoom||1),scale*(frame.digitalZoom||1));ctx.drawImage(source,-width/2,-height/2,width,height);ctx.setTransform(1,0,0,1,0,0);return canvas;
 }
 
 const cameraSettingsPanel=document.getElementById('cameraSettingsPanel');
@@ -12630,6 +12641,72 @@ window.TascoCameraRescue = (function () {
 #btnUpdateApp.has-update strong::after{content:'Mới';margin-left:8px;padding:2px 7px;border-radius:999px;background:#ff6b5f;color:#fff;font-size:10px;font-weight:700;vertical-align:middle}
 </style>
 <style>.cloud-photo-viewer[data-media="video"] :is([data-viewer-action="zoom-in"],[data-viewer-action="zoom-out"],[data-viewer-action="rotate"],.viewer-image){display:none!important}</style>
+<script id="tascoPhotoFX">
+/* Xử lý màu sắc & độ nét cho ảnh chụp bằng camera native: camera chỉ trả ảnh gần như chưa xử lý nên nhạt và mềm hơn app Camera của iPhone.
+   Chạy theo từng dải dòng ảnh để không tốn RAM với ảnh 12 MP; nhường luồng giữa các dải để màn hình không bị đứng. */
+window.TascoPhotoFX = (function () {
+  var presets = {
+    raw: { sat: 0, contrast: 0, warm: 0, sharp: 0 },
+    natural: { sat: 12, contrast: 6, warm: 0, sharp: 30 },
+    vivid: { sat: 24, contrast: 10, warm: 0, sharp: 45 },
+    punchy: { sat: 40, contrast: 18, warm: 4, sharp: 62 }
+  };
+  function num(v, lo, hi) { v = Number(v); return isFinite(v) ? Math.max(lo, Math.min(hi, v)) : 0; }
+  function fromPro(pro) {
+    var fx = { sat: num(pro.sat, -50, 80), contrast: num(pro.contrast, -30, 40), warm: num(pro.warm, -30, 30), sharp: num(pro.sharp, 0, 100) };
+    return fx.sat || fx.contrast || fx.warm || fx.sharp ? fx : null;
+  }
+  function buildLut(fx) {
+    var c = 1 + fx.contrast / 100, w = fx.warm * 0.6, lr = new Uint8ClampedArray(256), lg = new Uint8ClampedArray(256), lb = new Uint8ClampedArray(256);
+    for (var i = 0; i < 256; i++) {
+      var base = (i - 128) * c + 128;
+      /* Tương phản quanh xám trung bình; ấm/lạnh dịch kênh đỏ và xanh ngược chiều nhau. */
+      lr[i] = base + w; lg[i] = base; lb[i] = base - w;
+    }
+    return { r: lr, g: lg, b: lb };
+  }
+  function tick() { return new Promise(function (r) { setTimeout(r, 0); }); }
+  async function apply(canvas, fx) {
+    if (!canvas || !fx) return canvas;
+    var W = canvas.width, H = canvas.height; if (W < 3 || H < 3) return canvas;
+    var ctx = canvas.getContext('2d'), lut = buildLut(fx), sa = fx.sat / 100, amt = fx.sharp / 100 * 0.62;
+    var doColor = fx.sat || fx.contrast || fx.warm, doSharp = amt > 0.001;
+    var STRIP = 160;
+    for (var y0 = 0; y0 < H; y0 += STRIP) {
+      var y1 = Math.min(H, y0 + STRIP), a = Math.max(0, y0 - (doSharp ? 1 : 0)), b = Math.min(H, y1 + (doSharp ? 1 : 0)), rows = b - a;
+      var img = ctx.getImageData(0, a, W, rows), d = img.data, n = W * rows;
+      var Y = doSharp ? new Uint8ClampedArray(n) : null;
+      for (var p = 0, i = 0; p < n; p++, i += 4) {
+        var r = lut.r[d[i]], g = lut.g[d[i + 1]], bl = lut.b[d[i + 2]];
+        if (fx.sat) {
+          var mx = r > g ? (r > bl ? r : bl) : (g > bl ? g : bl), mn = r < g ? (r < bl ? r : bl) : (g < bl ? g : bl);
+          var l = (r * 77 + g * 150 + bl * 29) >> 8;
+          /* Tăng nhiều hơn ở màu nhạt, ít hơn ở màu vốn đã đậm (da, đèn, biển báo) để không bệt màu. */
+          var k = 1 + sa * (1 - 0.55 * (mx ? (mx - mn) / mx : 0));
+          r = l + (r - l) * k; g = l + (g - l) * k; bl = l + (bl - l) * k;
+        }
+        d[i] = r; d[i + 1] = g; d[i + 2] = bl;
+        if (Y) Y[p] = (d[i] * 77 + d[i + 1] * 150 + d[i + 2] * 29) >> 8;
+      }
+      if (doSharp) {
+        var from = y0 - a, to = from + (y1 - y0);
+        for (var yy = from; yy < to; yy++) {
+          var gy = a + yy; if (gy === 0 || gy === H - 1) continue;
+          for (var x = 1; x < W - 1; x++) {
+            var q = yy * W + x, lap = 4 * Y[q] - Y[q - 1] - Y[q + 1] - Y[q - W] - Y[q + W], dl = lap * amt;
+            if (dl > 42) dl = 42; else if (dl < -42) dl = -42;
+            if (dl > 1 || dl < -1) { var o = q * 4; d[o] += dl; d[o + 1] += dl; d[o + 2] += dl; }
+          }
+        }
+      }
+      ctx.putImageData(img, 0, a, 0, y0 - a, W, y1 - y0);
+      if (y1 < H) await tick();
+    }
+    return canvas;
+  }
+  return { presets: presets, fromPro: fromPro, apply: apply };
+})();
+</script>
 <script id="tascoNativeCamera">
 /* Camera native iOS (plugin @capgo/camera-preview) cho app TASCO DLK.
  * Camera thật của iPhone chạy phía sau trang web: ống kính 0.5×/1×/2× thật, ảnh chụp đầy đủ độ phân giải, mượt.
@@ -12647,7 +12724,7 @@ window.TascoCameraRescue = (function () {
   var canNativeVideo = /TascoApp\/([3-9]|\d\d)/.test(navigator.userAgent);
   document.documentElement.classList.add('tasco-native-camera-ready');
   /* Thiết lập chuyên sâu, lưu trên thiết bị. */
-  var PRO_KEY = 'tasco_camera_pro_v1', PRO_DEFAULT = { ev: 0, lock: false, flash: 'off', grid: '3x3', priority: 'balanced', stab: 'standard' };
+  var PRO_KEY = 'tasco_camera_pro_v1', PRO_DEFAULT = { ev: 0, lock: false, flash: 'off', grid: '3x3', priority: 'balanced', stab: 'standard', look: 'vivid', sat: 24, contrast: 10, warm: 0, sharp: 45 };
   var pro = (function () { try { return Object.assign({}, PRO_DEFAULT, JSON.parse(localStorage.getItem(PRO_KEY) || '{}')); } catch (_) { return Object.assign({}, PRO_DEFAULT); } })();
   /* Plugin chỉ bật maxPhotoQualityPrioritization = balanced; gửi 'quality' làm iOS ném NSInvalidArgumentException (văng app). */
   if (pro.priority !== 'speed') pro.priority = 'balanced';
@@ -12856,6 +12933,7 @@ window.TascoCameraRescue = (function () {
     if (pro.lock) { try { await CP.setExposureMode({ mode: 'LOCK' }); } catch (_) {} }
     await setFlash(pro.flash, false);
   }
+  var LOOK_HINT = { raw: 'Giữ nguyên màu của camera, không chỉnh thêm.', natural: 'Hơi tươi và nét hơn, vẫn gần màu thật.', vivid: 'Màu tươi, rõ nét (đề xuất cho ảnh hiện trường).', punchy: 'Màu đậm, tương phản cao. Dùng khi trời âm u hoặc thiếu sáng.' };
   var PRIORITY_HINT = { speed: 'Chụp liền tay, ảnh xử lý nhanh nhất.', balanced: 'iPhone xử lý ảnh kỹ hơn cho độ nét và ít nhiễu (khuyên dùng).' };
   function renderPro() {
     var panel = document.getElementById('cameraSettingsPanel'); if (!panel) return;
@@ -12870,6 +12948,8 @@ window.TascoCameraRescue = (function () {
     if (ev) { ev.min = evRange.min; ev.max = evRange.max; ev.step = evRange.step; ev.value = pro.ev; ev.disabled = pro.lock; }
     var out = panel.querySelector('[data-pro-ev-value]'); if (out) out.textContent = (pro.ev > 0 ? '+' : '') + Number(pro.ev).toFixed(1) + ' EV';
     var lock = panel.querySelector('[data-pro-lock]'); if (lock) lock.checked = !!pro.lock;
+    panel.querySelectorAll('[data-pro-fx]').forEach(function (r) { var k = r.dataset.proFx, v = Number(pro[k]) || 0; if (document.activeElement !== r) r.value = v; var o = panel.querySelector('[data-pro-fx-out="' + k + '"]'); if (o) o.textContent = (k !== 'sharp' && v > 0 ? '+' : '') + v; });
+    var fxHint = panel.querySelector('[data-pro-look-hint]'); if (fxHint) fxHint.textContent = pro.look === 'custom' ? 'Đang dùng mức bạn tự chỉnh.' : (LOOK_HINT[pro.look] || '');
     var hint = panel.querySelector('[data-pro-priority-hint]'); if (hint) hint.textContent = PRIORITY_HINT[pro.priority] || '';
     var info = panel.querySelector('[data-pro-info]');
     if (info) info.textContent = st.running ? 'Ống kính: ' + st.zooms.map(zoomLabel).join(' · ') + ' · ' + (st.position === 'front' ? 'camera trước' : 'camera sau') : 'Mở camera để áp dụng thiết lập.';
@@ -12880,13 +12960,17 @@ window.TascoCameraRescue = (function () {
       var b = event.target.closest('.cam-seg[data-pro] button'); if (b && !b.disabled) {
         var key = b.closest('.cam-seg').dataset.pro, v = b.dataset.v;
         if (key === 'flash') { await setFlash(v, false); return; }
-        pro[key] = v; savePro(); renderPro();
+        pro[key] = v;
+        if (key === 'look' && window.TascoPhotoFX && TascoPhotoFX.presets[v]) Object.assign(pro, TascoPhotoFX.presets[v]);
+        savePro(); renderPro();
         if (key === 'grid' && st.running) { try { await CP.setGridMode({ gridMode: v }); } catch (_) {} }
         return;
       }
       if (event.target.closest('[data-pro-ev-reset]')) { pro.ev = 0; savePro(); renderPro(); if (st.running) CP.setExposureCompensation({ value: 0 }).catch(function () {}); }
     });
     panel.addEventListener('input', function (event) {
+      var fxr = event.target.closest('[data-pro-fx]');
+      if (fxr) { pro[fxr.dataset.proFx] = Number(fxr.value); pro.look = 'custom'; savePro(); renderPro(); return; }
       var ev = event.target.closest('[data-pro-ev]'); if (!ev) return;
       pro.ev = Math.round(Number(ev.value) * 10) / 10; renderPro();
       clearTimeout(evTimer); evTimer = setTimeout(function () { savePro(); if (st.running) CP.setExposureCompensation({ value: pro.ev }).catch(function () {}); }, 60);
@@ -12934,7 +13018,8 @@ window.TascoCameraRescue = (function () {
       feedback('Đang đóng dấu ảnh…', 0);
       var blob = await (await fetch('data:image/jpeg;base64,' + shot.value)).blob();
       var file = new File([blob], 'capture_' + metadata.capturedAt + '_' + customCameraPhotos.length + '.jpg', { type: 'image/jpeg', lastModified: metadata.capturedAt });
-      metadata.quality = Object.assign({}, cameraQuality(), { maxSide: MAX_SIDE[cameraControlsState.quality] || 3024, jpeg: .92 });
+      metadata.quality = Object.assign({}, cameraQuality(), { maxSide: MAX_SIDE[cameraControlsState.quality] || 3024, jpeg: cameraControlsState.quality === 'economy' ? .88 : .95 });
+      metadata.fx = window.TascoPhotoFX ? TascoPhotoFX.fromPro(pro) : null;  // màu sắc & độ nét áp lên ảnh sau khi chụp
       cameraPhotoMetadata.set(file, metadata);
       var stamped = await addWatermarkToImageFile(file, '', { isCameraSource: true });
       if (session !== cameraUiState.session) return;
@@ -13066,6 +13151,7 @@ html.tasco-native-camera-ready #cameraSettingsPanel label:has([data-camera-pref=
 #customCameraModal .cam-seg button{min-height:38px;padding:0 6px;border:0;border-radius:10px;background:transparent;color:#a7c3d0;font-size:12px;font-weight:650}
 #customCameraModal .cam-seg button[aria-checked=true]{background:linear-gradient(180deg,#a9dbe1,#84bfc7);color:#071423;box-shadow:0 3px 10px rgba(132,191,199,.25)}
 #customCameraModal .cam-seg button:disabled{opacity:.35}
+.cam-fx-row{margin-top:10px}.cam-fx-row label{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:650;color:#c9dde3}.cam-fx-row output{font:700 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#edf5f7;padding:4px 8px;border-radius:7px;background:rgba(0,0,0,.3)}.cam-fx-row input[type=range]{margin-top:2px}
 .cam-pro input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;margin:0;background:transparent}
 .cam-pro input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,#1b3a63,#84bfc7 50%,#f4e3a1)}
 .cam-pro input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.45),0 0 0 4px rgba(132,191,199,.25)}
