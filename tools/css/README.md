@@ -8,3 +8,7 @@ Nhờ vậy app mở nhanh hơn và vẫn đúng giao diện khi mất mạng.
 - Nếu quên, workflow **Build CSS** (`.github/workflows/build-css.yml`) tự biên dịch lại và commit `tailwind.css` lên `main`.
 - Không ghép tên class bằng chuỗi động (ví dụ `'bg-' + mau`): Tailwind chỉ giữ class xuất hiện nguyên văn trong `mobile.html`.
 - Màu `navy` và `teal` cấu hình trong `tailwind.config.js`.
+
+## Phiên bản hiển thị trong app
+Dòng `window.TASCO_APP_VERSION = '...';` trong `mobile.html` do workflow **Build CSS** tự ghi (ngày + mã commit) mỗi lần `mobile.html` đổi.
+Không sửa tay dòng này. App hiển thị nó trong **Tài khoản → Cập nhật ứng dụng**.
