@@ -16,7 +16,7 @@ Muốn cho cả nhóm cài qua link, không hết hạn: dùng TestFlight (xem `
 1. Vào GitHub repo → tab **Actions** → **iOS IPA miễn phí** → **Run workflow**. Chờ khoảng 5 phút.
 2. Tải file **TASCO-DLK.ipa** ở trang Releases: https://github.com/huyho711997-lgtm/tra-cuu-phu-tung/releases/tag/ios-latest
 
-## Nạp vào iPhone (bước 5 ở trên)
+## Nạp vào iPhone
 1. Nối iPhone vào máy tính bằng cáp, bấm **Tin cậy** (Trust) trên iPhone.
 2. Mở Sideloadly, kéo file `TASCO-DLK.ipa` vào cửa sổ, chọn đúng iPhone ở mục thiết bị.
 3. Nhập Apple ID (nên dùng Apple ID phụ) rồi bấm **Start**. Nhập mã xác minh 2 lớp nếu được hỏi.
