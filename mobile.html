@@ -11262,21 +11262,31 @@ window.TascoNavigationMotion = (() => {
   function feedback(text, ms) { try { cameraFeedback(text, ms); } catch (_) {} }
   function zoomLabel(v) { return (v < 1 ? String(v).replace(/^0/, '') : String(v)) + '×'; }
 
-  /* Đặt khung chứa dấu ngày giờ đúng chỗ khung hình camera thật. */
+  function cameraModal() { return document.getElementById('customCameraModal'); }
+  function nativeTurn() { var m = cameraModal(); return Number(m && m.dataset.nativeTurn) || 0; }
+  /* Đặt khung dấu ngày giờ trùng khung hình camera thật. Khi cầm ngang, khung xoay theo để dấu
+     định vị nằm đúng góc dưới-phải của ảnh ngang (giống ảnh được lưu). */
   function placePlane() {
     var plane = document.getElementById('cameraImagePlane'), box = document.querySelector('#customCameraModal .camera-stream-container');
     if (!plane || !box || !st.rect) return;
-    var c = box.getBoundingClientRect(), r = st.rect;
-    plane.style.width = r.width + 'px'; plane.style.height = r.height + 'px';
+    var c = box.getBoundingClientRect(), r = st.rect, turn = nativeTurn(), swap = Math.abs(turn) % 180 === 90;
+    var w = swap ? r.height : r.width, h = swap ? r.width : r.height;
+    plane.style.width = w + 'px'; plane.style.height = h + 'px';
     plane.style.left = (r.x - c.left + r.width / 2) + 'px'; plane.style.top = (r.y - c.top + r.height / 2) + 'px';
-    plane.style.setProperty('--camera-stamp-size', Math.max(10, Math.min(18, r.width / 56)) + 'px');
+    plane.style.transform = 'translate(-50%,-50%) rotate(' + turn + 'deg)';
+    plane.style.setProperty('--camera-stamp-size', Math.max(10, Math.min(18, w / 56)) + 'px');
+  }
+  function clearPlane() {
+    var plane = document.getElementById('cameraImagePlane'); if (!plane) return;
+    ['left', 'top', 'transform', 'width', 'height'].forEach(function (k) { plane.style[k] = ''; });
   }
 
   function stopNative() {
     st.gen++;
     var wasActive = st.running || st.starting;
     st.running = false; st.rect = null;
-    root.classList.remove('tasco-native-cam'); setTransparent(false);
+    root.classList.remove('tasco-native-cam'); setTransparent(false); clearPlane();
+    var m = cameraModal(); if (m) delete m.dataset.nativeTurn;
     if (wasActive) CP.stop({ force: true }).catch(function () {});
   }
 
@@ -11295,8 +11305,11 @@ window.TascoNavigationMotion = (() => {
     var gen = ++st.gen;
     st.starting = (async function () {
       root.classList.add('tasco-native-cam'); setTransparent(true);
+      window.syncCameraViewport();   // bỏ xoay giao diện trước khi đo
       var box = document.querySelector('#customCameraModal .camera-stream-container').getBoundingClientRect();
-      var height43 = innerWidth * 4 / 3, y = Math.round(box.top + Math.max(0, (box.height - height43) / 2));
+      var head = document.querySelector('#customCameraModal .camera-overlay-header'), headBottom = head ? head.getBoundingClientRect().bottom : box.top;
+      var width = (window.visualViewport && visualViewport.width) || innerWidth, height43 = width * 4 / 3, room = box.bottom - headBottom;
+      var y = Math.round(height43 <= room ? headBottom + (room - height43) / 2 : box.top + Math.max(0, (box.height - height43) / 2));
       var result;
       try {
         result = await CP.start({
@@ -11336,8 +11349,18 @@ window.TascoNavigationMotion = (() => {
   };
   window.stopCustomCameraStream = function () { stopNative(); try { origStop(); } catch (_) {} };
 
+  /* Camera thật không xoay theo giao diện, nên giữ màn hình camera đứng yên (như app Camera của iPhone)
+     và chỉ xoay biểu tượng + dấu định vị theo hướng cầm máy. */
   window.syncCameraViewport = function () {
     try { origSync(); } catch (_) {}
+    var modal = cameraModal();
+    if (!modal || modal.style.display === 'none' || !root.classList.contains('tasco-native-cam')) return;
+    var turn = Number(modal.dataset.uiRotation) || 0, vv = window.visualViewport;
+    modal.style.transform = 'none'; modal.style.left = '0px'; modal.style.top = (vv ? vv.offsetTop : 0) + 'px';
+    modal.style.setProperty('--camera-viewport-width', (vv ? vv.width : innerWidth) + 'px');
+    modal.style.setProperty('--camera-viewport-height', (vv ? vv.height : innerHeight) + 'px');
+    ['top', 'right', 'bottom', 'left'].forEach(function (side) { modal.style.setProperty('--camera-safe-' + side, 'env(safe-area-inset-' + side + ',0px)'); });
+    modal.dataset.orientation = 'portrait'; modal.dataset.uiRotation = '0'; modal.dataset.nativeTurn = String(turn);
     if (!st.running) return;
     placePlane();
     var shutter = document.getElementById('cameraCaptureButton');
@@ -11442,6 +11465,12 @@ html.tasco-native-cam body { visibility: hidden; }
 html.tasco-native-cam #customCameraModal { visibility: visible; background: transparent !important; }
 html.tasco-native-cam #customCameraModal .camera-stream-container,
 html.tasco-native-cam #customCameraModal .camera-image-plane { background: transparent !important; }
+/* Vùng ngoài khung hình tô màu nền, khung hình trong suốt để thấy camera. */
+html.tasco-native-cam #customCameraModal .camera-image-plane { box-shadow: 0 0 0 200vmax #0b1b30; }
+html.tasco-native-cam #customCameraModal :is(.camera-action-btn svg, #cameraLensBar button) { transition: transform .25s ease; }
+html.tasco-native-cam #customCameraModal[data-native-turn="90"] :is(.camera-action-btn svg, #cameraLensBar button) { transform: rotate(90deg); }
+html.tasco-native-cam #customCameraModal[data-native-turn="-90"] :is(.camera-action-btn svg, #cameraLensBar button) { transform: rotate(-90deg); }
+html.tasco-native-cam #customCameraModal[data-native-turn="180"] :is(.camera-action-btn svg, #cameraLensBar button) { transform: rotate(180deg); }
 html.tasco-native-cam #customCameraVideo,
 html.tasco-native-cam #customCameraModal .camera-grid-overlay,
 html.tasco-native-cam #customCameraModal .camera-target-crosshair { display: none !important; }
