@@ -1,0 +1,19 @@
+{
+  "name": "tasco-dlk-ios",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vỏ iOS (Capacitor) cho TASCO DLK - phân phối qua TestFlight",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "web": "node scripts/sync-web.mjs",
+    "sync": "npm run web && cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/cli": "8.6.2",
+    "@capacitor/core": "8.6.2",
+    "@capacitor/geolocation": "8.2.4",
+    "@capacitor/ios": "8.6.2"
+  }
+}

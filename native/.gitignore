@@ -1,0 +1,11 @@
+node_modules/
+www/
+ios/App/Pods/
+ios/App/build/
+ios/DerivedData/
+ios/App/App/public/
+ios/App/App/capacitor.config.json
+ios/App/CapApp-SPM/.build/
+*.p8
+*.p12
+*.mobileprovision

@@ -4933,7 +4933,11 @@ window.TascoPartKind=(()=>{
             authRef._setCurrentUser(null);
         }
         async function sendPasswordResetEmail(authRef, email) {
-            const redirectTo = `${location.origin}${location.pathname}`;
+            // Trong app iOS (Capacitor) origin là capacitor://localhost nên không dùng được làm link khôi phục:
+            // dùng địa chỉ web công khai để email mở được bằng Safari.
+            const redirectTo = window.TASCO_NATIVE
+                ? 'https://huyho711997-lgtm.github.io/tra-cuu-phu-tung/mobile'
+                : `${location.origin}${location.pathname}`;
             const { error } = await authRef._client.auth.resetPasswordForEmail(email, { redirectTo });
             if (error) throw normalizeAuthError(error, 'Không gửi được email khôi phục mật khẩu');
         }
@@ -11145,10 +11149,76 @@ window.TascoNavigationMotion = (() => {
   });
 })();
 </script>
+<script id="tascoNativeBridge">
+/* App iOS (Capacitor): dùng định vị native để iOS nhớ quyền vĩnh viễn (PWA/Safari hỏi lại mỗi lần mở).
+ * Ngoài app native (trình duyệt/PWA) đoạn này không làm gì. Lỗi bất kỳ -> giữ nguyên navigator.geolocation gốc. */
+(function () {
+  'use strict';
+  var cap = window.Capacitor;
+  if (!(cap && typeof cap.isNativePlatform === 'function' && cap.isNativePlatform())) return;
+  window.TASCO_NATIVE = true;
+  document.documentElement.classList.add('tasco-native');
+  var Geo = cap.Plugins && cap.Plugins.Geolocation;
+  if (!Geo) { console.warn('Plugin Geolocation native chưa sẵn sàng, dùng định vị mặc định.'); return; }
+
+  function toError(e) {
+    var msg = String((e && (e.message || e.errorMessage)) || e || '').toLowerCase();
+    var code = 2;                                            // POSITION_UNAVAILABLE
+    if (msg.indexOf('denied') >= 0 || msg.indexOf('permission') >= 0 || msg.indexOf('not authorized') >= 0) code = 1; // PERMISSION_DENIED
+    else if (msg.indexOf('timeout') >= 0 || msg.indexOf('timed out') >= 0) code = 3;                                   // TIMEOUT
+    return { code: code, message: msg || 'Không lấy được vị trí', PERMISSION_DENIED: 1, POSITION_UNAVAILABLE: 2, TIMEOUT: 3 };
+  }
+  function toPosition(p) { return { coords: p.coords, timestamp: p.timestamp }; }
+  function toOptions(o) {
+    o = o || {};
+    return { enableHighAccuracy: !!o.enableHighAccuracy, timeout: o.timeout > 0 ? o.timeout : 10000, maximumAge: o.maximumAge >= 0 ? o.maximumAge : 0 };
+  }
+  function ensurePermission() {
+    return Geo.checkPermissions().then(function (s) {
+      if (s.location === 'granted' || s.coarseLocation === 'granted') return s;
+      return Geo.requestPermissions({ permissions: ['location'] });
+    }).then(function (s) {
+      if (s.location === 'granted' || s.coarseLocation === 'granted') return s;
+      throw new Error('permission denied');
+    });
+  }
+
+  var counter = 0, watches = {};
+  var shim = {
+    getCurrentPosition: function (ok, fail, opts) {
+      ensurePermission().then(function () { return Geo.getCurrentPosition(toOptions(opts)); })
+        .then(function (p) { if (ok) ok(toPosition(p)); }, function (e) { if (fail) fail(toError(e)); });
+    },
+    watchPosition: function (ok, fail, opts) {
+      var id = ++counter, entry = watches[id] = { cid: null, cleared: false };
+      ensurePermission().then(function () {
+        return Geo.watchPosition(toOptions(opts), function (p, err) {
+          if (err) { if (fail) fail(toError(err)); }
+          else if (p && ok) ok(toPosition(p));
+        });
+      }).then(function (cid) {
+        entry.cid = cid;
+        if (entry.cleared) Geo.clearWatch({ id: cid });
+      }, function (e) { if (fail) fail(toError(e)); });
+      return id;
+    },
+    clearWatch: function (id) {
+      var entry = watches[id];
+      if (!entry) return;
+      entry.cleared = true;
+      if (entry.cid != null) Geo.clearWatch({ id: entry.cid });
+      delete watches[id];
+    }
+  };
+  try { Object.defineProperty(navigator, 'geolocation', { value: shim, configurable: true }); }
+  catch (error) { console.warn('Không thay được navigator.geolocation:', error); }
+})();
+</script>
 <script id="tascoPwaInstall">
 /* PWA: đăng ký service worker + gợi ý cài lên màn hình chính trên iPhone (Safari không có nút "Cài đặt" tự động). */
 (function () {
   'use strict';
+  if (window.TASCO_NATIVE) return;   // đang chạy trong app iOS: không cần service worker hay gợi ý cài
   var secure = location.protocol === 'https:' || location.hostname === 'localhost';
   if (secure && 'serviceWorker' in navigator) {
     window.addEventListener('load', function () {

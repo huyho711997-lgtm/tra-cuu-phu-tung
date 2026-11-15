@@ -1,0 +1,11 @@
+{
+  "appId": "vn.tascodlk.workspace",
+  "appName": "TASCO DLK",
+  "webDir": "www",
+  "backgroundColor": "#0b1b30",
+  "ios": {
+    "contentInset": "never",
+    "limitsNavigationsToAppBoundDomains": false,
+    "preferredContentMode": "mobile"
+  }
+}
