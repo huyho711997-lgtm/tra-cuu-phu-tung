@@ -8383,17 +8383,57 @@ window.TascoCloud = (() => {
   }
 
   function photoActions(row){return `<label class="cloud-photo-select" data-checked="false" hidden><input type="checkbox" data-action="select" data-id="${esc(row.id)}" data-photo-title="${esc(row.title||'Ảnh của tôi')}" aria-label="Chọn ảnh ${esc(row.title||'Ảnh của tôi')}">${icon('check')}</label>`;}
-  /* Nhấn giữ một ảnh trong lưới: bảng thao tác nhanh (Chọn, Xem, Tải về máy, Xoá). */
+  /* Nhấn giữ một ảnh trong lưới: bảng thao tác nhanh (Chọn, Xem, Tải về máy, Xoá).
+     Đang ở chế độ chọn: giữ rồi lướt (hoặc lướt ngang ngay) để chọn/bỏ chọn cả dải ảnh như app Ảnh của iPhone. */
   function bindLongPress(root){
-    let timer=0,start=null;
+    let timer=0,start=null,drag=null,autoRaf=0,lastPoint=null;
+    const tileAt=(x,y)=>{const node=document.elementFromPoint(x,y)?.closest?.('[data-action="open"][data-id]');return node&&root.contains(node)?node:null;};
+    const tiles=()=>[...root.querySelectorAll('[data-action="open"][data-id]')];
     const cancel=()=>{clearTimeout(timer);timer=0;start=null;};
+    function beginDrag(tile){
+      clearTimeout(timer);timer=0;
+      const order=tiles().map(node=>node.dataset.id),valid=new Set([...state.rows,...visiblePending()].map(row=>row.id));
+      const anchor=order.indexOf(tile.dataset.id);if(anchor<0)return;
+      drag={order,valid,anchor,current:anchor,snapshot:new Set(state.selected),select:!state.selected.has(tile.dataset.id)};
+      root.querySelector('.personal-cloud')?.classList.add('is-drag-selecting');
+      applyDrag(anchor);
+    }
+    function applyDrag(index){
+      if(!drag||index<0)return;drag.current=index;
+      const lo=Math.min(drag.anchor,index),hi=Math.max(drag.anchor,index),next=new Set(drag.snapshot);
+      for(let i=lo;i<=hi;i++){const id=drag.order[i];if(!drag.valid.has(id))continue;if(drag.select)next.add(id);else next.delete(id);}
+      if(next.size===state.selected.size&&[...next].every(id=>state.selected.has(id)))return;
+      state.selected=next;paintSelection();
+    }
+    function trackPoint(x,y){lastPoint={x,y};const tile=tileAt(x,y);if(tile)applyDrag(drag.order.indexOf(tile.dataset.id));}
+    function autoScroll(){
+      autoRaf=0;if(!drag||!lastPoint)return;
+      const h=window.innerHeight,edge=72,y=lastPoint.y,speed=y<edge?-(edge-y)/4:y>h-edge?(y-(h-edge))/4:0;
+      if(speed){window.scrollBy(0,speed);trackPoint(lastPoint.x,lastPoint.y);}
+      autoRaf=requestAnimationFrame(autoScroll);
+    }
+    function endDrag(){
+      if(!drag)return;drag=null;lastPoint=null;cancelAnimationFrame(autoRaf);autoRaf=0;
+      root.querySelector('.personal-cloud')?.classList.remove('is-drag-selecting');
+      state.longPressAt=Date.now();  // bỏ qua cú click khi nhấc tay
+    }
     root.onpointerdown=event=>{
       const tile=event.target.closest('[data-action="open"][data-id]');if(!tile||!root.contains(tile)||event.button>0)return;
-      cancel();start={x:event.clientX,y:event.clientY};
-      timer=setTimeout(()=>{timer=0;state.longPressAt=Date.now();openPhotoMenu(tile.dataset.id);},480);
+      cancel();start={x:event.clientX,y:event.clientY,tile};
+      if(state.selecting)timer=setTimeout(()=>{if(start)beginDrag(start.tile);},220);  // giữ yên ~0.2s rồi lướt hướng nào cũng được
+      else timer=setTimeout(()=>{timer=0;state.longPressAt=Date.now();openPhotoMenu(tile.dataset.id);},480);
     };
-    root.onpointermove=event=>{if(start&&Math.hypot(event.clientX-start.x,event.clientY-start.y)>10)cancel();};
-    root.onpointerup=cancel;root.onpointercancel=cancel;
+    root.onpointermove=event=>{
+      if(drag){trackPoint(event.clientX,event.clientY);if(!autoRaf)autoRaf=requestAnimationFrame(autoScroll);return;}
+      if(!start)return;
+      const dx=event.clientX-start.x,dy=event.clientY-start.y;
+      if(state.selecting&&Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)){const tile=start.tile;start=null;beginDrag(tile);trackPoint(event.clientX,event.clientY);return;}  // lướt ngang: chọn ngay
+      if(Math.hypot(dx,dy)>10)cancel();
+    };
+    root.onpointerup=()=>{cancel();endDrag();};
+    root.onpointercancel=()=>{cancel();endDrag();};
+    // Đang lướt chọn: chặn cuộn trang của trình duyệt (iOS chỉ nhận preventDefault ở touchmove không thụ động).
+    if(!root._dragTouchBound){root._dragTouchBound=true;root.addEventListener('touchmove',event=>{if(drag||(state.selecting&&start&&timer===0))event.preventDefault();},{passive:false});}
     root.oncontextmenu=event=>{if(event.target.closest('[data-action="open"][data-id]'))event.preventDefault();};
   }
   function closePhotoMenu(){document.querySelector('.cloud-photo-menu')?.remove();}
@@ -11554,6 +11594,9 @@ window.TascoNavigationMotion = (() => {
 <style id="cloudPhotoMenuStyles">
 /* Bảng thao tác khi nhấn giữ ảnh. Tắt menu mặc định của iPhone khi nhấn giữ ảnh trong lưới. */
 .personal-cloud [data-action="open"],.personal-cloud [data-action="open"] img{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+/* Chế độ chọn: lướt ngang trên ảnh là chọn, vuốt dọc vẫn cuộn trang. */
+.personal-cloud[data-selecting="true"] [data-action="open"]{touch-action:pan-y}
+.personal-cloud.is-drag-selecting [data-action="open"]{touch-action:none}
 .cloud-photo-menu{position:fixed;inset:0;z-index:2147480000;display:flex;align-items:flex-end;justify-content:center;background:rgba(4,12,22,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:cpmFade .18s ease}
 .cloud-photo-menu-sheet{width:min(100%,480px);padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));animation:cpmUp .26s cubic-bezier(.2,.85,.25,1)}
 .cloud-photo-menu-sheet header{display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:8px;border-radius:20px;background:rgba(16,36,64,.96);border:1px solid rgba(157,207,214,.14);color:#edf5f7}
