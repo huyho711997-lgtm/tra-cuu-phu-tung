@@ -7183,10 +7183,10 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
       </div>
       <div class="camera-feedback" id="cameraFeedback" role="status" aria-live="polite" hidden></div>
       <div class="camera-flash-effect" id="cameraFlashEffect"></div>
-      <div class="camera-target-crosshair" aria-hidden="true"></div><div id="cameraFocusRing" class="camera-focus-ring" aria-hidden="true"></div>
+      <div class="camera-target-crosshair" aria-hidden="true"></div><div id="cameraFocusRing" class="camera-focus-ring" aria-hidden="true"></div><div id="cameraCategoryToast" class="camera-category-toast" aria-live="polite" hidden></div>
     </div>
     <div class="camera-footer">
-      <button type="button" class="camera-category-chip" id="cameraCategoryChip" onclick="tascoPickCameraCategory()" data-empty="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span data-camera-category>Chọn hạng mục chụp</span></button>
+      <div class="camera-category-strip" id="cameraCategoryStrip" role="radiogroup" aria-label="Hạng mục chụp. Vuốt ngang trên khung hình để đổi nhanh"></div>
       <div class="camera-lens-selector"><div id="cameraLensBar" class="camera-lens-bar" aria-label="Chọn góc camera"></div><span id="cameraZoomDetail"></span></div>
       <div class="camera-preview-container" hidden><div class="camera-preview-strip" id="cameraPreviewStrip" aria-label="Ảnh vừa chụp"></div></div>
       <div class="camera-controls">
@@ -9328,13 +9328,52 @@ function applyCameraDisplayPreferences(){
 function createCameraPhotoMetadata(capturedAt=Date.now()) {
   return {capturedAt,source:'camera',appearance:cameraAppearanceSnapshot(),locationPromise:cameraCaptureLocation(),category:mobileCameraCategory||''};
 }
-/* Hạng mục đang chụp: nhớ theo album (mở lại camera trong album đó thì dùng lại hạng mục gần nhất). */
-let mobileCameraCategory='';
+/* Hạng mục đang chụp: nhớ theo album. Dải hạng mục trên nút chụp: chạm để đổi, vuốt ngang trên khung hình để chuyển nhanh,
+   mỗi hạng mục hiện số ảnh đã chụp trong lần mở camera này. */
+let mobileCameraCategory='',cameraSessionCategories=[],cameraCategoryCounts=new Map(),cameraCategoryToastTimer=0;
 function cameraCategoryKey(){return 'tasco_camera_category_v1:'+(window.mobileCloudEmail?.()||'')+':'+(mobileCameraAlbum?.albumId||'all');}
-function renderCameraCategory(){const chip=document.getElementById('cameraCategoryChip');if(!chip)return;chip.dataset.empty=String(!mobileCameraCategory);chip.querySelector('[data-camera-category]').textContent=mobileCameraCategory?'Hạng mục: '+mobileCameraCategory:'Chọn hạng mục chụp';chip.setAttribute('aria-label',mobileCameraCategory?'Hạng mục đang chụp: '+mobileCameraCategory+'. Chạm để đổi':'Chọn hạng mục chụp');}
-function setCameraCategory(name){mobileCameraCategory=TascoCategories.clean(name);try{localStorage.setItem(cameraCategoryKey(),mobileCameraCategory);}catch(_){}renderCameraCategory();}
-function restoreCameraCategory(){let v='';try{v=localStorage.getItem(cameraCategoryKey())||'';}catch(_){}mobileCameraCategory=v;renderCameraCategory();}
-function tascoPickCameraCategory(){TascoCategories.open({current:mobileCameraCategory,extra:window.TascoCloud?.categories?.()||[],title:mobileCameraAlbum?.albumName?'Hạng mục · '+mobileCameraAlbum.albumName:'Chọn hạng mục',onPick:name=>{setCameraCategory(name);cameraFeedback(name?'Đang chụp hạng mục: '+name:'Chụp không phân hạng mục',1600);}});}
+function cameraCategoryList(){
+  const out=[],seen=new Set(),add=n=>{n=TascoCategories.clean(n);if(n&&!seen.has(n.toLowerCase())){seen.add(n.toLowerCase());out.push(n);}};
+  // Thứ tự cố định để không chạm nhầm: hạng mục của album, rồi hạng mục tạo trong lần chụp này, rồi các tên dùng gần đây.
+  (window.TascoCloud?.categories?.()||[]).forEach(add);cameraSessionCategories.forEach(add);if(mobileCameraCategory)add(mobileCameraCategory);TascoCategories.recent().slice(0,8).forEach(add);
+  return ['',...out];  // '' = không phân hạng mục
+}
+function renderCameraCategory(){
+  const strip=document.getElementById('cameraCategoryStrip');if(!strip)return;
+  const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  strip.innerHTML=cameraCategoryList().map(name=>{const n=cameraCategoryCounts.get(name)||0,on=name===mobileCameraCategory;return `<button type="button" role="radio" aria-checked="${on}" data-camera-cat="${esc(name)}" class="${name?'':'is-none'}">${name?esc(name):'Không'}${n?`<b>${n}</b>`:''}</button>`;}).join('')+'<button type="button" class="is-add" data-camera-cat-add aria-label="Thêm hạng mục mới">＋ Thêm</button>';
+  strip.querySelector('[aria-checked="true"]')?.scrollIntoView({block:'nearest',inline:'center'});
+}
+function showCameraCategoryToast(){
+  const toast=document.getElementById('cameraCategoryToast');if(!toast)return;
+  toast.textContent=mobileCameraCategory||'Không phân hạng mục';toast.dataset.empty=String(!mobileCameraCategory);toast.hidden=false;toast.classList.remove('is-in');void toast.offsetWidth;toast.classList.add('is-in');
+  clearTimeout(cameraCategoryToastTimer);cameraCategoryToastTimer=setTimeout(()=>{toast.hidden=true;},1300);
+}
+function setCameraCategory(name,announce=true){
+  name=TascoCategories.clean(name);mobileCameraCategory=name;
+  if(name){if(!cameraSessionCategories.some(n=>n.toLowerCase()===name.toLowerCase()))cameraSessionCategories.push(name);TascoCategories.remember(name);}
+  try{localStorage.setItem(cameraCategoryKey(),name);}catch(_){}
+  renderCameraCategory();if(announce)showCameraCategoryToast();
+}
+function restoreCameraCategory(){let v='';try{v=localStorage.getItem(cameraCategoryKey())||'';}catch(_){}cameraSessionCategories=[];cameraCategoryCounts=new Map();mobileCameraCategory=TascoCategories.clean(v);renderCameraCategory();}
+function stepCameraCategory(delta){const list=cameraCategoryList(),i=Math.max(0,list.indexOf(mobileCameraCategory)),next=list[(i+delta+list.length)%list.length];setCameraCategory(next);}
+function countCameraCategory(name){name=name||'';cameraCategoryCounts.set(name,(cameraCategoryCounts.get(name)||0)+1);renderCameraCategory();}
+window.tascoCountCategory=countCameraCategory;
+function tascoPickCameraCategory(){TascoCategories.open({current:mobileCameraCategory,extra:cameraCategoryList().filter(Boolean),title:mobileCameraAlbum?.albumName?'Hạng mục · '+mobileCameraAlbum.albumName:'Chọn hạng mục',onPick:name=>setCameraCategory(name)});}
+document.getElementById('cameraCategoryStrip')?.addEventListener('click',event=>{
+  if(event.target.closest('[data-camera-cat-add]')){tascoPickCameraCategory();return;}
+  const b=event.target.closest('[data-camera-cat]');if(b)setCameraCategory(b.dataset.cameraCat);
+});
+/* Vuốt ngang trên khung hình: đổi hạng mục kế tiếp / trước đó. Chạm (không vuốt) vẫn để lấy nét. */
+(function(){
+  const box=document.querySelector('#customCameraModal .camera-stream-container');if(!box)return;let start=null;
+  box.addEventListener('pointerdown',e=>{if(e.target.closest('button,a,input,select,label,.camera-overlay-header,.camera-video-panel,#cameraSettingsPanel'))return;start={x:e.clientX,y:e.clientY,t:Date.now()};},true);
+  box.addEventListener('pointerup',e=>{if(!start)return;const dx=e.clientX-start.x,dy=e.clientY-start.y,fast=Date.now()-start.t<700;start=null;
+    if(fast&&Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){box.dataset.swiped=String(Date.now());stepCameraCategory(dx<0?1:-1);}},true);
+  box.addEventListener('pointercancel',()=>{start=null;},true);
+  // Cú vuốt không được tính là chạm lấy nét.
+  box.addEventListener('click',e=>{if(Date.now()-Number(box.dataset.swiped||0)<400){e.stopImmediatePropagation();e.preventDefault();}},true);
+})();
 function cameraWatermarkLines(location,time,source,settings=cameraAppearance) {
   const when=new Date(time),pad=value=>String(value).padStart(2,'0'),lines=[];
   if(settings.showTitle&&settings.title.trim())lines.push(settings.title.trim());
@@ -9711,6 +9750,7 @@ function cameraAutoUploadEnabled(){try{return localStorage.getItem('tasco_camera
 function cameraAutoUploadActive(){return cameraAutoUploadEnabled()&&Boolean(TascoCloud.queueReady?.());}
 async function cameraQueueMetadata(file){const info=cameraPhotoMetadata.get(file);return {capturedAt:info.capturedAt,location:await info.locationPromise,category:info.category||''};}
 function cameraAutoUpload(file){
+  if(file)countCameraCategory(cameraPhotoMetadata.get(file)?.category||'');
   if(!cameraAutoUploadActive()||!file)return;
   const owner=mobileCameraOwner,album=mobileCameraAlbum,title=mobileCameraTitle;
   cameraQueueState.set(file,'sending');
@@ -11487,6 +11527,18 @@ window.TascoCategories = (function () {
 .tasco-cat-item button+button{padding:0 12px 0 6px;color:#8fa7b6;font-size:16px}
 .tasco-cat-none{min-height:44px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;background:transparent;color:#a7c3d0;font:inherit;font-size:13px}
 /* Thanh hạng mục trong camera */
+.custom-camera-modal .camera-category-strip{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 4px;margin:0 -14px;padding-left:14px;padding-right:14px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent)}
+.custom-camera-modal .camera-category-strip::-webkit-scrollbar{display:none}
+.custom-camera-modal .camera-category-strip button{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:36px;max-width:220px;padding:0 14px;border:1px solid rgba(132,191,199,.35);border-radius:999px;background:rgba(7,20,35,.55);color:#daecf0;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;scroll-snap-align:center}
+.custom-camera-modal .camera-category-strip button b{display:grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:rgba(132,191,199,.25);color:#edf5f7;font-size:11px}
+.custom-camera-modal .camera-category-strip button[aria-checked="true"]{border-color:#84bfc7;background:linear-gradient(180deg,#a9dbe1,#84bfc7);color:#071423;box-shadow:0 4px 14px rgba(132,191,199,.35)}
+.custom-camera-modal .camera-category-strip button[aria-checked="true"] b{background:rgba(7,20,35,.2);color:#071423}
+.custom-camera-modal .camera-category-strip .is-none{color:#a7c3d0}
+.custom-camera-modal .camera-category-strip .is-add{border-style:dashed;color:#9dcfd6}
+.custom-camera-modal .camera-category-toast{position:absolute;left:50%;top:38%;z-index:6;max-width:80%;padding:12px 22px;border-radius:18px;background:rgba(7,20,35,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font-size:22px;font-weight:700;text-align:center;letter-spacing:-.3px;pointer-events:none;transform:translate(-50%,-50%)}
+.custom-camera-modal .camera-category-toast[data-empty="true"]{font-size:16px;color:#a7c3d0}
+.custom-camera-modal .camera-category-toast.is-in{animation:camCatIn .9s ease forwards}
+@keyframes camCatIn{0%{opacity:0;transform:translate(-50%,-40%) scale(.96)}15%{opacity:1;transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0}}
 .custom-camera-modal .camera-category-chip{display:flex;align-items:center;gap:8px;align-self:center;max-width:100%;min-height:36px;padding:0 14px;margin:0 auto;border:1px solid rgba(132,191,199,.5);border-radius:999px;background:rgba(7,20,35,.6);color:#edf5f7;font-size:13px;font-weight:600}
 .custom-camera-modal .camera-category-chip svg{width:16px;height:16px;flex:none;color:#84bfc7}
 .custom-camera-modal .camera-category-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -11619,6 +11671,7 @@ window.TascoCategories = (function () {
       setNote('Đang đưa video vào hàng đợi tải lên…');
       await TascoCloud.queuePhotos([file], s.title, async function () { return { capturedAt: s.metadata.capturedAt, location: location, category: s.metadata.category || '' }; }, s.album);
       closePanel();
+      try { window.tascoCountCategory && window.tascoCountCategory(s.metadata.category || ''); } catch (_) {}
       feedback('Đã lưu video ' + fmt(out.duration) + (out.trimmed ? ' (cắt còn 3 phút)' : '') + ', đang tải lên Cloud.', 3200);
     } catch (error) {
       if (session !== s) return;
