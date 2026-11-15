@@ -2640,9 +2640,10 @@ html.dark .fm-mysign-guide{background:rgba(255,255,255,.04)}
 html.dark .fm-mysign-note{color:#facc15;background:rgba(234,179,8,.12)}
 .fm-mysign-alert{padding:10px 12px;border-radius:10px;background:rgba(238,0,51,.1);border:1px solid rgba(238,0,51,.25);font-size:12px;color:#ee0033;line-height:1.5}
 .fm-mysign-actions{display:flex;flex-direction:column;gap:10px;margin-top:4px}
-.fm-btn-mysign{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;padding:12px 18px;border:0;border-radius:14px;background:#ee0033;color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;box-shadow:0 8px 20px -6px rgba(238,0,51,.5);transition:transform .12s}
+.fm-btn-mysign,button.fm-btn-mysign[type=button]{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;padding:12px 18px;border:0;border-radius:14px;background:#ee0033;color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;box-shadow:0 8px 20px -6px rgba(238,0,51,.5);transition:transform .12s}
 .fm-btn-mysign:active{transform:scale(.98)}
 .fm-btn-mysign:disabled{opacity:.6;cursor:not-allowed}
+button.fm-btn-mysign[type=button]:disabled{background:#ee0033;color:#fff;opacity:.55}
 .fm-btn-mysign svg{width:18px;height:18px}
 .fm-mysign-subactions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .fm-btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:8px 12px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;touch-action:manipulation;transition:background .15s}
@@ -4553,11 +4554,7 @@ window.TascoForms=(()=>{
         }
         try{
           if(navigator.share&&navigator.canShare?.({files:[st.signingFile]})){
-            await navigator.share({
-              files:[st.signingFile],
-              title:'Ký số Viettel MySign',
-              text:displayName(file.name)
-            });
+            await navigator.share({files:[st.signingFile]});  // iOS: kèm title/text thì bảng chia sẻ ưu tiên chữ, ẩn app chỉ nhận PDF như MySign
             toast('Đã mở bảng chia sẻ sang Viettel MySign!');
             closeDialog();
           }else{
