@@ -7742,7 +7742,7 @@ window.TascoCloud = (() => {
   function visible(){return hasAccess()&&state.root?.isConnected&&state.root.querySelector('.personal-cloud');}
   function clearAccount() {
     cancelDownloads();
-    state.deleteDialog?.cancel();state.albumDialog?.cancel();state.selected.clear();state.selecting=false;state.activeAlbumId=null;state.albums=[];state.pending=[];state.pendingExpanded=false;state.rows=[];state.count=0;state.user=null;state.storageUsage=null;state.usageRevision++;state.localReady=false;state.libraryReady=false;state.albumNote='';
+    state.deleteDialog?.cancel();state.albumDialog?.cancel();state.allAlbumsSheet?.close();state.selected.clear();state.selecting=false;state.activeAlbumId=null;state.albums=[];state.pending=[];state.pendingExpanded=false;state.rows=[];state.count=0;state.user=null;state.storageUsage=null;state.usageRevision++;state.localReady=false;state.libraryReady=false;state.albumNote='';
     window.TascoPhotoViewer?.close();clearURLs();
   }
   async function client() {
@@ -7806,6 +7806,10 @@ window.TascoCloud = (() => {
   const arrowIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
   const moreIcon='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
   const editIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 16 16.5 3.5a2.8 2.8 0 0 1 4 4L8 20l-5 1 1-5Z"/></svg>';
+  const chevronIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+  const gridIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/></svg>';
+  const searchIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>';
+  const closeIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
   const deletedAlbums=new Set();
   const albumKey=(id,owner)=>owner+':'+id;
   const activeAlbum=()=>state.albums.find(row=>row.id===state.activeAlbumId&&row.owner_id===state.user?.id)||null;
@@ -8011,6 +8015,43 @@ window.TascoCloud = (() => {
       else if(visible())await refresh();
     }
   }
+  /* Bảng "Tất cả album": danh sách đầy đủ, tìm theo tên, sắp xếp, mở album hoặc quản lý album */
+  function showAllAlbums(){
+    if(state.allAlbumsSheet||!state.user)return;
+    const focus=document.activeElement,controller=new AbortController(),oldOverflow=document.body.style.overflow;
+    const overlay=document.createElement('div');overlay.className='cloud-albums-sheet';
+    overlay.innerHTML=`<section class="cas-panel" role="dialog" aria-modal="true" aria-labelledby="casTitle"><header class="cas-head"><div><h2 id="casTitle">Tất cả album</h2><small data-cas-count></small></div><button type="button" class="cas-close" data-cas="close" aria-label="Đóng">${closeIcon}</button></header><div class="cas-tools"><label class="cas-search">${searchIcon}<input type="search" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="Tìm album theo tên…" aria-label="Tìm album theo tên" data-cas-search></label><div class="cas-sort" role="group" aria-label="Sắp xếp album"><button type="button" data-cas-sort="recent" aria-pressed="true">Mới nhất</button><button type="button" data-cas-sort="photos" aria-pressed="false">Nhiều ảnh</button><button type="button" data-cas-sort="name" aria-pressed="false">Tên A–Z</button></div></div><div class="cas-list" data-cas-list></div><footer class="cas-foot"><button type="button" class="cas-new" data-cas="new">${plusIcon}Tạo album mới</button></footer></section>`;
+    const list=overlay.querySelector('[data-cas-list]'),count=overlay.querySelector('[data-cas-count]'),input=overlay.querySelector('[data-cas-search]');
+    let sort='recent',term='';
+    const fold=v=>String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLocaleLowerCase('vi-VN');
+    function paint(){
+      const all=state.albums.filter(row=>row.owner_id===state.user?.id),q=fold(term.trim());
+      let rows=q?all.filter(row=>fold(row.name).includes(q)):all.slice();
+      if(sort==='photos')rows.sort((a,b)=>b.photo_ids.length-a.photo_ids.length||String(b.created_at).localeCompare(String(a.created_at)));
+      else if(sort==='name')rows.sort((a,b)=>a.name.localeCompare(b.name,'vi',{numeric:true,sensitivity:'base'}));
+      else rows.sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+      count.textContent=q?rows.length+' / '+all.length+' album':all.length+' album';
+      const locked=state.deleting||state.albumSaving,busy=!cloudReady()||state.busy||state.uploading||locked;
+      list.innerHTML=rows.length?rows.map(row=>`<article class="cas-row"><button type="button" class="cas-open" data-cas="open" data-id="${esc(row.id)}" aria-label="Mở album ${esc(row.name)}, ${row.photo_ids.length} ảnh"${locked?' disabled':''}><span class="cas-icon">${albumIcon}</span><span class="cas-text"><strong>${esc(row.name)}</strong><small>${row.photo_ids.length} ảnh <i aria-hidden="true">·</i> ${esc(new Date(row.created_at).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}))}</small></span>${chevronIcon}</button><button type="button" class="cas-more" data-cas="options" data-id="${esc(row.id)}" aria-label="Quản lý album ${esc(row.name)}" aria-haspopup="dialog"${busy?' disabled':''}>${moreIcon}</button></article>`).join(''):`<div class="cas-empty"><span>${q?searchIcon:albumIcon}</span><strong>${q?'Không tìm thấy album':'Chưa có album nào'}</strong><p>${q?'Thử tên khác hoặc xoá từ khoá tìm kiếm.':'Tạo album để giữ ảnh cùng hồ sơ trong một nơi.'}</p></div>`;
+    }
+    function close(){controller.abort();overlay.remove();document.body.style.overflow=oldOverflow;state.allAlbumsSheet=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
+    state.allAlbumsSheet={close,refresh:paint};
+    overlay.addEventListener('click',event=>{
+      if(event.target===overlay){close();return;}
+      const sortBtn=event.target.closest('[data-cas-sort]');
+      if(sortBtn){sort=sortBtn.dataset.casSort;overlay.querySelectorAll('[data-cas-sort]').forEach(b=>b.setAttribute('aria-pressed',String(b===sortBtn)));paint();list.scrollTop=0;return;}
+      const node=event.target.closest('[data-cas]');if(!node||node.disabled)return;
+      const act=node.dataset.cas;
+      if(act==='close')close();
+      else if(act==='open'){const id=node.dataset.id;close();openAlbum(id);}
+      else if(act==='options')showAlbumActions(node.dataset.id);   // hộp quản lý album hiện phía trên bảng này
+      else if(act==='new'){close();showAlbumCreator();}
+    },{signal:controller.signal});
+    input.addEventListener('input',()=>{term=input.value;paint();},{signal:controller.signal});
+    overlay.addEventListener('keydown',event=>{if(event.key==='Escape'&&!document.querySelector('.cloud-album-overlay')){event.preventDefault();close();}},{signal:controller.signal});
+    paint();document.body.style.overflow='hidden';document.body.append(overlay);
+    requestAnimationFrame(()=>overlay.classList.add('is-open'));
+  }
   function showAlbumActions(id,confirm=false){
     if(state.albumDialog||state.deleteDialog||state.deleting||state.albumSaving)return;
     if(state.uploading||state.busy){notify('Đợi thư viện đồng bộ xong rồi quản lý album.');return;}
@@ -8076,8 +8117,10 @@ window.TascoCloud = (() => {
     const panel=root.querySelector('.cloud-albums-panel');panel.hidden=Boolean(album);
     const note=root.querySelector('[data-album-note]');note.textContent=state.albumNote;note.hidden=!state.albumNote;
     root.querySelector('[data-action="new-album"]').disabled=!cloudReady()||state.busy||state.deleting||state.albumSaving;
+    const allBtn=root.querySelector('[data-album-all]');
+    if(allBtn){allBtn.hidden=!state.albums.length;allBtn.innerHTML='Xem tất cả '+state.albums.length+' album'+chevronIcon;}
     const list=root.querySelector('[data-album-list]');
-    list.innerHTML=state.albums.length?state.albums.map(row=>`<article class="cloud-album-card"><button type="button" class="cloud-album-open" data-action="open-album" data-id="${esc(row.id)}" aria-label="Mở album ${esc(row.name)}, ${row.photo_ids.length} ảnh"${state.deleting||state.albumSaving?' disabled':''}><span class="cloud-album-card-top"><span class="cloud-album-symbol">${albumIcon}</span></span><strong>${esc(row.name)}</strong><span class="cloud-album-card-meta">${row.photo_ids.length} ảnh <span aria-hidden="true">·</span> ${esc(new Date(row.created_at).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'}))}${arrowIcon}</span></button><button type="button" class="cloud-album-more" data-action="album-options" data-id="${esc(row.id)}" aria-label="Quản lý album ${esc(row.name)}" aria-haspopup="dialog"${!cloudReady()||state.busy||state.uploading||state.deleting||state.albumSaving?' disabled':''}>${moreIcon}</button></article>`).join(''):`<div class="cloud-albums-empty"><span>${albumIcon}</span><div><strong>${state.busy?'Đang tải album…':'Mỗi hồ sơ, một album'}</strong><p>${state.busy?'Album của bạn sẽ xuất hiện tại đây.':'Tạo album để giữ ảnh cùng hồ sơ trong một nơi.'}</p></div></div>`;
+    list.innerHTML=state.albums.length?state.albums.map(row=>`<article class="cloud-album-card"><button type="button" class="cloud-album-open" data-action="open-album" data-id="${esc(row.id)}" aria-label="Mở album ${esc(row.name)}, ${row.photo_ids.length} ảnh"${state.deleting||state.albumSaving?' disabled':''}><span class="cloud-album-card-top"><span class="cloud-album-symbol">${albumIcon}</span></span><strong>${esc(row.name)}</strong><span class="cloud-album-card-meta">${row.photo_ids.length} ảnh <span aria-hidden="true">·</span> ${esc(new Date(row.created_at).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'}))}${arrowIcon}</span></button><button type="button" class="cloud-album-more" data-action="album-options" data-id="${esc(row.id)}" aria-label="Quản lý album ${esc(row.name)}" aria-haspopup="dialog"${!cloudReady()||state.busy||state.uploading||state.deleting||state.albumSaving?' disabled':''}>${moreIcon}</button></article>`).join('')+(state.albums.length>2?`<button type="button" class="cloud-album-all-tile" data-action="all-albums"><span>${gridIcon}</span><strong>Xem tất cả</strong><small>${state.albums.length} album</small></button>`:''):`<div class="cloud-albums-empty"><span>${albumIcon}</span><div><strong>${state.busy?'Đang tải album…':'Mỗi hồ sơ, một album'}</strong><p>${state.busy?'Album của bạn sẽ xuất hiện tại đây.':'Tạo album để giữ ảnh cùng hồ sơ trong một nơi.'}</p></div></div>`;
     root.querySelector('[data-cloud-library-heading]').textContent=album?'Ảnh trong album':'Tất cả ảnh';
     const search=root.querySelector('[data-cloud-search]');search.placeholder=album?'Tìm ảnh trong album…':'Tìm nội dung, địa điểm…';search.setAttribute('aria-label',album?'Tìm ảnh trong album '+album.name:'Tìm ảnh');
     const label=root.querySelector('[data-cloud-capture-label]');label.textContent=cloudReady()?(album?'Chụp vào album':'Chọn album để chụp'):state.busy?'Đang kết nối…':state.error?'Thử kết nối lại':'Kết nối để chụp';
@@ -8088,6 +8131,7 @@ window.TascoCloud = (() => {
     const meta=root.querySelector('[data-cloud-hero-meta]');
     if(meta&&!album){meta.hidden=false;meta.innerHTML='<span><b>'+state.albums.length+'</b>&nbsp;album</span><span class="is-synced">Ảnh tự lưu lên Cloud</span>';}
     else if(meta){meta.hidden=!album;if(album){const synced=state.albumMode==='cloud';meta.innerHTML='<span><b>'+album.photo_ids.length+'</b>&nbsp;ảnh</span><span class="'+(synced?'is-synced':'is-local')+'">'+(synced?'Đã đồng bộ Cloud':'Chỉ trên máy này')+'</span><span>Tạo '+esc(new Date(album.created_at).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}))+'</span>';}}
+    state.allAlbumsSheet?.refresh();   // bảng "Tất cả album" đang mở: cập nhật sau khi đổi tên / xoá
   }
   async function localAlbumPhotos(api,owner,album,current=()=>true){
     const rows=[];const pendingIds=new Set(state.pending.map(row=>row.id)),ids=album.photo_ids.filter(id=>!pendingIds.has(id));
@@ -8323,7 +8367,7 @@ window.TascoCloud = (() => {
       <div class="cloud-account-line"${state.config.mode==='mobile'?' hidden':''}><span data-cloud-account>Đang kết nối tài khoản…</span><span data-cloud-target></span></div>
       <div class="cloud-login" hidden></div>
       <div class="cloud-feedback" role="status" aria-live="polite" hidden></div>
-      <p data-album-status hidden></p><section class="cloud-albums-panel"><div class="cloud-album-heading"><h2 id="cloudAlbumsTitle" tabindex="-1">Album của bạn</h2><button class="cloud-button" type="button" data-action="new-album" disabled>${plusIcon}Tạo album</button></div><p data-album-note hidden></p><div data-album-list></div></section>
+      <p data-album-status hidden></p><section class="cloud-albums-panel"><div class="cloud-album-heading"><div class="cloud-album-heading-copy"><h2 id="cloudAlbumsTitle" tabindex="-1">Album của bạn</h2><button class="cloud-album-all" type="button" data-action="all-albums" data-album-all hidden></button></div><button class="cloud-button" type="button" data-action="new-album" disabled>${plusIcon}Tạo album</button></div><p data-album-note hidden></p><div data-album-list></div></section>
       <div class="cloud-pending" hidden></div><div class="cloud-gallery-heading"><h2 data-cloud-library-heading>Tất cả ảnh</h2><div class="cloud-gallery-actions"><span data-cloud-total>0 ảnh</span>${state.config.mode==='mobile'?`<button class="cloud-button" type="button" data-action="gallery-settings" aria-haspopup="dialog" aria-label="Cài đặt hiển thị ảnh" disabled>${gallerySettingsIcon}<span>Hiển thị</span></button>`:''}<button class="cloud-button" type="button" data-action="selection" disabled>${icon('check')}<span data-selection-label>Chọn ảnh</span></button></div></div><div class="cloud-category-bar" data-cloud-categories hidden role="toolbar" aria-label="Lọc theo hạng mục"></div><div class="cloud-selection-bar" data-cloud-selection hidden role="toolbar" aria-label="Thao tác với ảnh đã chọn"><strong data-selected-count data-empty="true" role="status" aria-live="polite"><b>0</b><span>đã chọn</span></strong><div><button type="button" class="cloud-button sel-act" data-action="select-all" aria-label="Chọn tất cả ảnh đã tải"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="m8 12.2 2.7 2.7L16.2 9"/></svg><span>Chọn hết</span></button><button type="button" class="cloud-button sel-act" data-action="deselect-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M8.5 12h7"/></svg><span>Bỏ chọn</span></button><button type="button" class="cloud-button sel-act sel-dl" data-action="download-selected" disabled>${icon('download')}<span>Tải về</span></button><button type="button" class="cloud-button sel-act cloud-delete-selected" data-action="delete-selected" disabled>${icon('trash')}<span>Xoá</span></button></div><button type="button" class="cloud-sel-close" data-action="selection" aria-label="Xong, thoát chọn ảnh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" stroke-width="2.2"><path d="m5.5 12.5 4.2 4.2L18.5 8"/></svg><span>Xong</span></button></div><div class="cloud-grid"><div class="cloud-empty cloud-loading" role="status"><span class="cloud-loading-spinner" aria-hidden="true"></span><h2>Đang tải thư viện</h2><p>Đang tìm ảnh đã lưu trong tài khoản của bạn…</p></div></div><div class="cloud-more-row" data-cloud-more-row hidden><button class="cloud-button cloud-more" type="button" data-action="more">Xem thêm ảnh</button><button class="cloud-button cloud-more cloud-more-all" type="button" data-action="all"><span data-cloud-all-label>Xem tất cả</span></button></div>
     </section>`;
     bindLongPress(root);
@@ -8350,6 +8394,7 @@ window.TascoCloud = (() => {
       if(action==='album-options')showAlbumActions(button.dataset.id);
       if(action==='rename-active-album'){const album=activeAlbum();if(album)showAlbumActions(album.id);}
       if(action==='new-album')showAlbumCreator();
+      if(action==='all-albums')showAllAlbums();
       if(action==='choose-album')chooseAlbum();
       if(action==='open-album'){clearTimeout(timer);openAlbum(button.dataset.id);}
       if(action==='album-back'){clearTimeout(timer);if(state.activeAlbumId)openAlbum(null);else window.updateView('home');}
@@ -11962,6 +12007,65 @@ html.dark .tasco-workspace #personalCloudSection .personal-cloud[data-album-view
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-empty .cloud-button{min-height:40px;margin-top:8px;padding:9px 16px;gap:7px;font-size:12.5px}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-empty .cloud-button svg{width:16px;height:16px}
 @media(max-width:360px){.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-copy h1{font-size:21px}.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-meta span{font-size:11px}}
+/* — Xem tất cả album: nút ở tiêu đề, ô cuối hàng, bảng danh sách đầy đủ — */
+.cloud-album-heading-copy{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0}
+.cloud-album-heading-copy .cloud-album-all{display:inline-flex;align-items:center;gap:1px;min-height:28px;padding:0;border:0;background:none;color:var(--ws-accent-text);font:inherit;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.cloud-album-heading-copy .cloud-album-all[hidden]{display:none}
+.cloud-album-heading-copy .cloud-album-all svg{width:14px;height:14px;margin-top:1px}
+.cloud-album-heading-copy .cloud-album-all:active{opacity:.6}
+.tasco-workspace #personalCloudSection .cloud-album-all-tile{flex:0 0 104px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:118px;padding:12px 8px;border:1px dashed var(--ws-line);border-radius:20px;background:transparent;color:var(--ws-accent-text);font:inherit;scroll-snap-align:start;cursor:pointer;touch-action:manipulation;transition:transform .2s cubic-bezier(.3,1.3,.5,1)}
+.tasco-workspace #personalCloudSection .cloud-album-all-tile:active{transform:scale(.96)}
+.cloud-album-all-tile>span{display:grid;place-items:center;width:38px;height:38px;margin-bottom:2px;border-radius:13px;background:var(--ws-accent)}
+.cloud-album-all-tile>span svg{width:20px;height:20px}
+.cloud-album-all-tile strong{font-size:13px;font-weight:650;color:var(--ws-text)}
+.cloud-album-all-tile small{font-size:11px;color:var(--ws-muted)}
+.cloud-albums-sheet{position:fixed;inset:0;z-index:100070;display:flex;align-items:flex-end;justify-content:center;background:rgba(11,27,48,0);transition:background .25s}
+.cloud-albums-sheet.is-open{background:rgba(11,27,48,.52)}
+.cloud-albums-sheet *{box-sizing:border-box}
+.cloud-albums-sheet .cas-panel{display:flex;flex-direction:column;width:min(560px,100%);height:min(94dvh,calc(100dvh - env(safe-area-inset-top,0px) - 16px));border:1px solid var(--ws-line);border-bottom:0;border-radius:26px 26px 0 0;background:var(--ws-bg);color:var(--ws-text);overflow:hidden;transform:translateY(28px);opacity:0;transition:transform .34s cubic-bezier(.2,.9,.3,1),opacity .22s}
+.cloud-albums-sheet.is-open .cas-panel{transform:none;opacity:1}
+.cloud-albums-sheet .cas-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 16px 10px 20px}
+.cloud-albums-sheet .cas-head h2{margin:0;font-size:18px;font-weight:650;letter-spacing:-.4px;line-height:1.3}
+.cloud-albums-sheet .cas-head small{display:block;margin-top:2px;font-size:12px;color:var(--ws-muted)}
+.cloud-albums-sheet .cas-close{display:grid;place-items:center;width:38px;height:38px;padding:0;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-surface);color:var(--ws-text);cursor:pointer}
+.cloud-albums-sheet .cas-close svg{width:18px;height:18px}
+.cloud-albums-sheet .cas-tools{padding:2px 16px 10px}
+.cloud-albums-sheet .cas-search{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-surface);color:var(--ws-muted)}
+.cloud-albums-sheet .cas-search:focus-within{border-color:var(--app-teal,#84bfc7);box-shadow:0 0 0 3px var(--ws-accent)}
+.cloud-albums-sheet .cas-search svg{width:17px;height:17px;flex:none}
+.cloud-albums-sheet .cas-search input{flex:1;min-width:0;height:42px;padding:0;border:0;outline:0;background:transparent;color:var(--ws-text);font:inherit;font-size:16px;-webkit-appearance:none;appearance:none}
+.cloud-albums-sheet .cas-search input,html.dark .cloud-albums-sheet .cas-search input{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important}
+.cloud-albums-sheet .cas-search input::-webkit-search-cancel-button{-webkit-appearance:none}
+.cloud-albums-sheet .cas-search input::placeholder{font-size:14px;color:var(--ws-muted);opacity:1}
+.cloud-albums-sheet .cas-sort{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+.cloud-albums-sheet .cas-sort::-webkit-scrollbar{display:none}
+.cloud-albums-sheet .cas-sort button{flex:none;min-height:32px;padding:0 13px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.cloud-albums-sheet .cas-sort button[aria-pressed=true]{border-color:#39747e;background:#183056;color:#edf5f7}
+html.dark .cloud-albums-sheet .cas-sort button[aria-pressed=true]{border-color:#84bfc7;background:#84bfc7;color:#0b1b30}
+.cloud-albums-sheet .cas-list{flex:1;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;gap:10px;padding:4px 16px 16px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.cloud-albums-sheet .cas-row{display:flex;align-items:center;min-width:0;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-surface)}
+.cloud-albums-sheet .cas-open{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:12px 4px 12px 12px;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;touch-action:manipulation}
+.cloud-albums-sheet .cas-open:active{opacity:.65}
+.cloud-albums-sheet .cas-open:disabled,.cloud-albums-sheet .cas-more:disabled{opacity:.5}
+.cloud-albums-sheet .cas-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:13px;background:var(--ws-accent);color:var(--ws-accent-text)}
+.cloud-albums-sheet .cas-icon svg{width:22px;height:22px}
+.cloud-albums-sheet .cas-text{flex:1;min-width:0}
+.cloud-albums-sheet .cas-text strong{display:block;font-size:14px;font-weight:650;letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cloud-albums-sheet .cas-text small{display:block;margin-top:3px;font-size:11.5px;color:var(--ws-muted)}
+.cloud-albums-sheet .cas-text small i{font-style:normal;margin:0 2px}
+.cloud-albums-sheet .cas-open>svg{width:16px;height:16px;flex:none;color:var(--ws-muted)}
+.cloud-albums-sheet .cas-more{display:grid;place-items:center;flex:none;width:46px;height:56px;padding:0;border:0;background:none;color:var(--ws-muted);cursor:pointer}
+.cloud-albums-sheet .cas-more svg{width:20px;height:20px}
+.cloud-albums-sheet .cas-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:44px 20px;text-align:center;color:var(--ws-muted)}
+.cloud-albums-sheet .cas-empty>span{display:grid;place-items:center;width:52px;height:52px;margin-bottom:4px;border-radius:17px;background:var(--ws-accent);color:var(--ws-accent-text)}
+.cloud-albums-sheet .cas-empty>span svg{width:24px;height:24px}
+.cloud-albums-sheet .cas-empty strong{font-size:15px;font-weight:650;color:var(--ws-text)}
+.cloud-albums-sheet .cas-empty p{margin:0;font-size:12px;line-height:1.6}
+.cloud-albums-sheet .cas-foot{padding:10px 16px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--ws-line);background:var(--ws-bg)}
+.cloud-albums-sheet .cas-new{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;padding:10px 18px;border:1px solid var(--app-teal,#84bfc7);border-radius:99px;background:var(--app-teal,#84bfc7);color:var(--app-navy,#183056);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.cloud-albums-sheet .cas-new svg{width:18px;height:18px}
+.cloud-albums-sheet .cas-new:active{transform:scale(.98)}
+@media(prefers-reduced-motion:reduce){.cloud-albums-sheet,.cloud-albums-sheet .cas-panel{transition:none}}
 </style>
 <script id="tascoPageTransitions">
 /* Chuyển trang có hiệu ứng trượt + mờ (View Transitions, iOS 18+). Chỉ dùng cho thao tác chạm của người dùng;
