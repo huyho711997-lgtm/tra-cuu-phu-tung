@@ -4008,11 +4008,10 @@ window.TascoAppShell=(()=>{
     try{await window.closeCustomCameraModal(false);}catch(_){}
     const modal=document.getElementById('customCameraModal');
     if(!modal||modal.style.display==='none'){
-      if(typeof window.updateView==='function')window.updateView('home');
+      /* Đóng camera: ở lại đúng trang đang mở (album/Cloud), không nhảy về trang chủ, giữ vị trí cuộn */
       document.body.style.overflow='';
       document.documentElement.style.overflow='';
       document.body.style.pointerEvents='';
-      window.scrollTo({left:0,top:0,behavior:'instant'});
     }
   }
   window.addEventListener('tasco:cloud-access',syncCloudAccess);
@@ -7168,7 +7167,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
 </div>
       <div class="camera-grid-overlay" aria-hidden="true"><div class="grid-line vertical"></div><div class="grid-line vertical"></div><div class="grid-line horizontal"></div><div class="grid-line horizontal"></div></div>
       <div class="camera-overlay-header">
-        <button type="button" class="camera-action-btn btn-close-cam" onclick="TascoAppShell.cameraHome()" aria-label="Đóng camera và về trang chủ" title="Về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+        <button type="button" class="camera-action-btn btn-close-cam" onclick="TascoAppShell.cameraHome()" aria-label="Đóng camera" title="Đóng camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
         <div class="camera-heading"><span>TASCO DLK · ẢNH HỒ SƠ</span><div class="camera-current-category" id="cameraActiveCategoryText">Chụp ảnh hồ sơ</div></div>
         <div class="camera-header-actions">
           <button type="button" class="camera-action-btn btn-settings-cam" id="btnCameraSettings" onclick="toggleCameraSettings()" aria-label="Cài đặt camera" aria-expanded="false" title="Cài đặt camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#121a25"/><circle cx="15" cy="17" r="3" fill="#121a25"/></svg></button>
