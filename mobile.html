@@ -7181,8 +7181,39 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
         <button type="button" id="cameraTabCapture" role="tab" data-camera-settings-tab="capture" aria-selected="true" aria-controls="cameraSettingsCapture"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h-4L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4Z"/><circle cx="12" cy="13" r="4"/></svg><span>Camera</span></button>
         <button type="button" id="cameraTabStamp" role="tab" data-camera-settings-tab="stamp" aria-selected="false" aria-controls="cameraSettingsStamp" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h4"/></svg><span>Nội dung</span></button>
         <button type="button" id="cameraTabStyle" role="tab" data-camera-settings-tab="style" aria-selected="false" aria-controls="cameraSettingsStyle" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19 10 5l6 14M6 15h8M16 9h6m-3 0v10"/></svg><span>Kiểu chữ</span></button>
+        <button type="button" id="cameraTabPro" role="tab" data-camera-settings-tab="pro" aria-selected="false" aria-controls="cameraSettingsPro" tabindex="-1"><span>Chuyên sâu</span></button>
       </nav>
       <div class="camera-settings-body">
+        <section id="cameraSettingsPro" role="tabpanel" aria-labelledby="cameraTabPro" data-camera-settings-page="pro" hidden>
+          <p class="cam-pro-web-note">Các chỉnh chuyên sâu dùng camera thật của iPhone, chỉ có trong <strong>ứng dụng TASCO DLK</strong> (không có trên trình duyệt).</p>
+          <div class="cam-pro">
+            <div class="cam-pro-card">
+              <div class="cam-pro-head"><h3>Phơi sáng</h3><output data-pro-ev-value>0.0 EV</output></div>
+              <input type="range" data-pro-ev min="-2" max="2" step="0.1" value="0" aria-label="Bù phơi sáng">
+              <div class="cam-pro-scale"><span>Tối hơn</span><button type="button" data-pro-ev-reset>Đặt lại</button><span>Sáng hơn</span></div>
+              <label class="cam-pro-switch"><span><strong>Khóa phơi sáng</strong><small>Giữ độ sáng cố định khi đổi góc chụp</small></span><input type="checkbox" data-pro-lock></label>
+            </div>
+            <div class="cam-pro-card">
+              <div class="cam-pro-head"><h3>Đèn flash khi chụp</h3></div>
+              <div class="cam-seg" data-pro="flash" role="radiogroup" aria-label="Đèn flash"><button type="button" data-v="off">Tắt</button><button type="button" data-v="auto">Tự động</button><button type="button" data-v="on">Bật</button></div>
+            </div>
+            <div class="cam-pro-card">
+              <div class="cam-pro-head"><h3>Lưới bố cục</h3></div>
+              <div class="cam-seg" data-pro="grid" role="radiogroup" aria-label="Lưới bố cục"><button type="button" data-v="none">Không</button><button type="button" data-v="3x3">3 × 3</button><button type="button" data-v="4x4">4 × 4</button></div>
+            </div>
+            <div class="cam-pro-card">
+              <div class="cam-pro-head"><h3>Ưu tiên khi chụp</h3></div>
+              <div class="cam-seg" data-pro="priority" role="radiogroup" aria-label="Ưu tiên khi chụp"><button type="button" data-v="speed">Nhanh</button><button type="button" data-v="balanced">Cân bằng</button><button type="button" data-v="quality">Chất lượng</button></div>
+              <p class="cam-pro-hint" data-pro-priority-hint></p>
+            </div>
+            <div class="cam-pro-card">
+              <div class="cam-pro-head"><h3>Chống rung khi quay video</h3></div>
+              <div class="cam-seg" data-pro="stab" role="radiogroup" aria-label="Chống rung video"><button type="button" data-v="off">Tắt</button><button type="button" data-v="standard">Chuẩn</button><button type="button" data-v="cinematic">Điện ảnh</button></div>
+              <p class="cam-pro-hint">Điện ảnh mượt nhất nhưng khung hình hẹp hơn một chút.</p>
+            </div>
+            <p class="cam-pro-info" data-pro-info></p>
+          </div>
+        </section>
         <section id="cameraSettingsCapture" role="tabpanel" aria-labelledby="cameraTabCapture" data-camera-settings-page="capture">
           <div class="camera-ratio-section"><div class="camera-section-heading"><h3>Tỷ lệ ảnh</h3><span id="cameraRatioBadge">Gốc</span></div><div class="camera-ratio-options" role="radiogroup" aria-label="Tỷ lệ ảnh"><button type="button" role="radio" data-camera-ratio="native" aria-checked="true" tabindex="0"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.0" y="4.5" width="20" height="15" rx="2"/></svg><strong>Gốc</strong><small>Theo camera</small></button><button type="button" role="radio" data-camera-ratio="3:4" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.0" y="4.0" width="12" height="16" rx="2"/></svg><strong>3:4</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="4:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="6.0" width="16" height="12" rx="2"/></svg><strong>4:3</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="1:1" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.0" y="5.0" width="14" height="14" rx="2"/></svg><strong>1:1</strong><small>Vuông</small></button><button type="button" role="radio" data-camera-ratio="9:16" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.5" y="4.0" width="9" height="16" rx="2"/></svg><strong>9:16</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="16:9" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.0" y="7.5" width="16" height="9" rx="2"/></svg><strong>16:9</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="2:3" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.0" y="4.5" width="10" height="15" rx="2"/></svg><strong>2:3</strong><small>Tự xoay</small></button><button type="button" role="radio" data-camera-ratio="3:2" aria-checked="false" tabindex="-1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="7.0" width="15" height="10" rx="2"/></svg><strong>3:2</strong><small>Tự xoay</small></button></div><p class="camera-settings-note">Tỷ lệ tự đổi theo hướng cầm máy: dựng dọc là khung dọc, xoay ngang là khung ngang. 1:1 luôn vuông. Khung xem và ảnh lưu cùng tỷ lệ, cắt giữa để vừa khung.</p></div>
           <div class="camera-section-heading"><h3>Chất lượng ảnh</h3><span id="cameraQualityBadge">Cân bằng</span></div>
@@ -9341,7 +9372,7 @@ function cameraFeedback(message='',duration=2400){
 }
 function cameraSetSettingsTab(name,focus=false){
   const panel=document.getElementById('cameraSettingsPanel');if(!panel)return;
-  if(!['capture','stamp','style'].includes(name))name='capture';cameraRuntime.settingsTab=name;
+  if(!['capture','stamp','style','pro'].includes(name))name='capture';cameraRuntime.settingsTab=name;
   for(const tab of panel.querySelectorAll('[data-camera-settings-tab]')){const selected=tab.dataset.cameraSettingsTab===name;tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;if(selected&&focus)tab.focus();}
   for(const page of panel.querySelectorAll('[data-camera-settings-page]'))page.hidden=page.dataset.cameraSettingsPage!==name;
   panel.querySelector('.camera-settings-body').scrollTop=0;if(name==='style')renderCameraStampSample();
@@ -9507,7 +9538,7 @@ function cameraCanvasFromSource(source,frame,quality){
 const cameraSettingsPanel=document.getElementById('cameraSettingsPanel');
 cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close')){window.TascoCameraPreferences?.flush();toggleCameraSettings(false);}if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.dataset.cameraRatio)selectCameraRatio(button.dataset.cameraRatio);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.dataset.cameraSettingsTab)cameraSetSettingsTab(button.dataset.cameraSettingsTab);if(button.dataset.cameraPreset)cameraApplyPreset(button.dataset.cameraPreset);if(button.dataset.cameraColor){cameraAppearance={...cameraAppearance,color:button.dataset.cameraColor};saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}if(button.hasAttribute('data-camera-native'))openCameraNative();if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
 document.getElementById('cameraDeviceSelect')?.addEventListener('change',event=>selectCameraDevice(event.target.value));
-cameraSettingsPanel?.addEventListener('keydown',event=>{const ratio=event.target.closest('[data-camera-ratio]');if(ratio&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key)){event.preventDefault();const buttons=[...cameraSettingsPanel.querySelectorAll('[data-camera-ratio]')],index=buttons.indexOf(ratio),next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(['ArrowRight','ArrowDown'].includes(event.key)?1:buttons.length-1))%buttons.length;selectCameraRatio(buttons[next].dataset.cameraRatio);buttons[next].focus();return;}const tab=event.target.closest('[data-camera-settings-tab]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const pages=['capture','stamp','style'],index=pages.indexOf(tab.dataset.cameraSettingsTab),next=event.key==='Home'?0:event.key==='End'?2:(index+(event.key==='ArrowRight'?1:2))%3;cameraSetSettingsTab(pages[next],true);});
+cameraSettingsPanel?.addEventListener('keydown',event=>{const ratio=event.target.closest('[data-camera-ratio]');if(ratio&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key)){event.preventDefault();const buttons=[...cameraSettingsPanel.querySelectorAll('[data-camera-ratio]')],index=buttons.indexOf(ratio),next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(['ArrowRight','ArrowDown'].includes(event.key)?1:buttons.length-1))%buttons.length;selectCameraRatio(buttons[next].dataset.cameraRatio);buttons[next].focus();return;}const tab=event.target.closest('[data-camera-settings-tab]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const pages=['capture','stamp','style','pro'],index=pages.indexOf(tab.dataset.cameraSettingsTab),next=event.key==='Home'?0:event.key==='End'?pages.length-1:(index+(event.key==='ArrowRight'?1:pages.length-1))%pages.length;cameraSetSettingsTab(pages[next],true);});
 cameraSettingsPanel?.addEventListener('input',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
 cameraSettingsPanel?.addEventListener('change',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
 document.getElementById('customCameraModal')?.addEventListener('keydown',event=>{
@@ -11465,6 +11496,12 @@ window.TascoNavigationMotion = (() => {
   var st = { running: false, starting: null, gen: 0, rect: null, zooms: [1], zoom: 1, position: 'rear', flashModes: [], flash: 'off', mode: 'photo', recording: false, recBusy: false, recStart: 0, recTimer: null, recMeta: null };
   /* Quay video bằng camera native cần bản app có server.url đúng tên miền (đọc tệp video qua CORS): 'TascoApp/3'. */
   var canNativeVideo = /TascoApp\/([3-9]|\d\d)/.test(navigator.userAgent);
+  document.documentElement.classList.add('tasco-native-camera-ready');
+  /* Thiết lập chuyên sâu, lưu trên thiết bị. */
+  var PRO_KEY = 'tasco_camera_pro_v1', PRO_DEFAULT = { ev: 0, lock: false, flash: 'off', grid: '3x3', priority: 'balanced', stab: 'standard' };
+  var pro = (function () { try { return Object.assign({}, PRO_DEFAULT, JSON.parse(localStorage.getItem(PRO_KEY) || '{}')); } catch (_) { return Object.assign({}, PRO_DEFAULT); } })();
+  function savePro() { try { localStorage.setItem(PRO_KEY, JSON.stringify(pro)); } catch (_) {} }
+  var evRange = { min: -2, max: 2, step: 0.1 };
   var root = document.documentElement;
   var MAX_SIDE = { economy: 2048, high: 3024, maximum: 4032 };
   /* CSS của trang có nền !important độ ưu tiên cao (html[data-tasco-page] body...), nên ép trong suốt bằng style inline. */
@@ -11513,9 +11550,10 @@ window.TascoNavigationMotion = (() => {
     try { st.zooms = ((await CP.getZoomButtonValues()).values || [1]).filter(function (v) { return v > 0; }); } catch (_) { st.zooms = [1]; }
     if (!st.zooms.length) st.zooms = [1];
     try { st.flashModes = (await CP.getSupportedFlashModes()).result || []; } catch (_) { st.flashModes = []; }
-    st.zoom = 1; st.flash = 'off';
+    st.zoom = 1;
+    try { var r = await CP.getExposureCompensationRange(); if (r && isFinite(r.min) && isFinite(r.max) && r.max > r.min) evRange = { min: r.min, max: r.max, step: r.step > 0 ? r.step : 0.1 }; } catch (_) {}
     var flash = document.getElementById('btnToggleCameraFlash');
-    if (flash) { flash.disabled = st.flashModes.indexOf('on') < 0; flash.classList.remove('active'); }
+    if (flash) flash.disabled = st.flashModes.indexOf('on') < 0;
   }
 
   function startNative() {
@@ -11538,7 +11576,7 @@ window.TascoNavigationMotion = (() => {
         result = await CP.start({
           position: st.position, toBack: true, aspectRatio: isVideo ? '16:9' : '4:3', aspectMode: 'contain', y: y,
           rotateWhenOrientationChanged: false, force: true,
-          gridMode: cameraAppearance.showGrid ? '3x3' : 'none',
+          gridMode: pro.grid,
           captureResolution: { width: 4032, height: 3024 },
           enableVideoMode: isVideo, disableAudio: !isVideo, videoQuality: isVideo ? '1080p' : 'high'
         });
@@ -11556,6 +11594,7 @@ window.TascoNavigationMotion = (() => {
       customCameraFacingMode = st.position === 'front' ? 'user' : 'environment';
       await refreshCapabilities();
       if (gen !== st.gen) return null;
+      await applyPro();
       placePlane(); renderCameraLensChoices(); syncCameraViewport(); updateModeUI();
       return true;
     })();
@@ -11595,6 +11634,7 @@ window.TascoNavigationMotion = (() => {
     try { origRenderSettings(); } catch (_) {}
     var res = document.getElementById('cameraActualResolution');
     if (res) res.textContent = 'Camera iPhone gốc · ảnh lưu tối đa ' + (MAX_SIDE[cameraControlsState.quality] || 3024) + ' px';
+    renderPro();
   };
 
   window.renderCameraLensChoices = function () {
@@ -11632,13 +11672,66 @@ window.TascoNavigationMotion = (() => {
 
   window.toggleCustomCameraTorch = async function () {
     if (!st.running || st.flashModes.indexOf('on') < 0) return;
-    var next = st.flash === 'on' ? 'off' : 'on';
-    try {
-      await CP.setFlashMode({ flashMode: next }); st.flash = next;
-      document.getElementById('btnToggleCameraFlash').classList.toggle('active', next === 'on');
-      feedback(next === 'on' ? 'Đèn flash: bật khi chụp' : 'Đèn flash: tắt', 1200);
-    } catch (_) { feedback('Camera này chưa bật được đèn flash.'); }
+    var order = ['off', 'auto', 'on'].filter(function (m) { return m === 'off' || st.flashModes.indexOf(m) >= 0; });
+    await setFlash(order[(order.indexOf(pro.flash) + 1) % order.length], true);
   };
+  async function setFlash(mode, announce) {
+    if (st.running && st.flashModes.length && st.flashModes.indexOf(mode) < 0 && mode !== 'off') mode = 'off';
+    try { if (st.running) await CP.setFlashMode({ flashMode: mode }); pro.flash = mode; st.flash = mode; savePro(); }
+    catch (_) { feedback('Camera này chưa đổi được đèn flash.'); }
+    var btn = document.getElementById('btnToggleCameraFlash');
+    if (btn) { btn.classList.toggle('active', pro.flash !== 'off'); btn.dataset.flash = pro.flash; btn.setAttribute('aria-label', 'Đèn flash: ' + ({ off: 'tắt', auto: 'tự động', on: 'bật' })[pro.flash]); }
+    if (announce) feedback('Đèn flash: ' + ({ off: 'Tắt', auto: 'Tự động', on: 'Bật khi chụp' })[pro.flash], 1200);
+    renderPro();
+  }
+  var evTimer = 0;
+  async function applyPro() {
+    try { await CP.setExposureMode({ mode: 'CONTINUOUS' }); } catch (_) {}
+    if (pro.ev) { try { await CP.setExposureCompensation({ value: pro.ev }); } catch (_) {} }
+    if (pro.lock) { try { await CP.setExposureMode({ mode: 'LOCK' }); } catch (_) {} }
+    await setFlash(pro.flash, false);
+  }
+  var PRIORITY_HINT = { speed: 'Chụp liền tay, ảnh xử lý nhanh nhất.', balanced: 'Cân bằng giữa tốc độ và độ nét (khuyên dùng).', quality: 'iPhone xử lý ảnh kỹ hơn, nét và ít nhiễu hơn, mỗi lần chụp chậm hơn một chút.' };
+  function renderPro() {
+    var panel = document.getElementById('cameraSettingsPanel'); if (!panel) return;
+    panel.querySelectorAll('.cam-seg[data-pro]').forEach(function (seg) {
+      var key = seg.dataset.pro;
+      seg.querySelectorAll('button').forEach(function (b) {
+        var on = String(pro[key]) === b.dataset.v; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', String(on));
+        b.disabled = key === 'flash' && st.running && b.dataset.v !== 'off' && st.flashModes.indexOf(b.dataset.v) < 0;
+      });
+    });
+    var ev = panel.querySelector('[data-pro-ev]');
+    if (ev) { ev.min = evRange.min; ev.max = evRange.max; ev.step = evRange.step; ev.value = pro.ev; ev.disabled = pro.lock; }
+    var out = panel.querySelector('[data-pro-ev-value]'); if (out) out.textContent = (pro.ev > 0 ? '+' : '') + Number(pro.ev).toFixed(1) + ' EV';
+    var lock = panel.querySelector('[data-pro-lock]'); if (lock) lock.checked = !!pro.lock;
+    var hint = panel.querySelector('[data-pro-priority-hint]'); if (hint) hint.textContent = PRIORITY_HINT[pro.priority] || '';
+    var info = panel.querySelector('[data-pro-info]');
+    if (info) info.textContent = st.running ? 'Ống kính: ' + st.zooms.map(zoomLabel).join(' · ') + ' · ' + (st.position === 'front' ? 'camera trước' : 'camera sau') : 'Mở camera để áp dụng thiết lập.';
+  }
+  (function bindPro() {
+    var panel = document.getElementById('cameraSettingsPanel'); if (!panel) return;
+    panel.addEventListener('click', async function (event) {
+      var b = event.target.closest('.cam-seg[data-pro] button'); if (b && !b.disabled) {
+        var key = b.closest('.cam-seg').dataset.pro, v = b.dataset.v;
+        if (key === 'flash') { await setFlash(v, false); return; }
+        pro[key] = v; savePro(); renderPro();
+        if (key === 'grid' && st.running) { try { await CP.setGridMode({ gridMode: v }); } catch (_) {} }
+        return;
+      }
+      if (event.target.closest('[data-pro-ev-reset]')) { pro.ev = 0; savePro(); renderPro(); if (st.running) CP.setExposureCompensation({ value: 0 }).catch(function () {}); }
+    });
+    panel.addEventListener('input', function (event) {
+      var ev = event.target.closest('[data-pro-ev]'); if (!ev) return;
+      pro.ev = Math.round(Number(ev.value) * 10) / 10; renderPro();
+      clearTimeout(evTimer); evTimer = setTimeout(function () { savePro(); if (st.running) CP.setExposureCompensation({ value: pro.ev }).catch(function () {}); }, 60);
+    });
+    panel.addEventListener('change', async function (event) {
+      var lock = event.target.closest('[data-pro-lock]'); if (!lock) return;
+      pro.lock = lock.checked; savePro(); renderPro();
+      if (st.running) { try { await CP.setExposureMode({ mode: pro.lock ? 'LOCK' : 'CONTINUOUS' }); if (!pro.lock && pro.ev) await CP.setExposureCompensation({ value: pro.ev }); } catch (_) { feedback('Camera này chưa khóa được phơi sáng.'); } }
+    });
+  })();
 
   /* Chạm vào khung hình để lấy nét (và đo sáng) tại điểm chạm, có vòng báo vị trí. */
   var focusFailNotified = false;
@@ -11671,7 +11764,7 @@ window.TascoNavigationMotion = (() => {
     var fx = document.getElementById('cameraFlashEffect');
     if (fx && cameraAppearance.shutterFlash) { fx.classList.add('flash-active'); setTimeout(function () { fx.classList.remove('flash-active'); }, 80); }
     try {
-      var shot = await CP.capture({ quality: 92, photoQualityPrioritization: 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront });
+      var shot = await CP.capture({ quality: 92, photoQualityPrioritization: pro.priority, mirrorFrontCamera: !!cameraAppearance.mirrorFront });
       if (session !== cameraUiState.session) return;
       feedback('Đang đóng dấu ảnh…', 0);
       var blob = await (await fetch('data:image/jpeg;base64,' + shot.value)).blob();
@@ -11720,7 +11813,9 @@ window.TascoNavigationMotion = (() => {
     try {
       if (!st.recording) {
         st.recMeta = createCameraPhotoMetadata();
-        await CP.startRecordVideo({ videoStabilizationMode: 'standard', videoBitrate: 12000000, videoCodec: 'avc1', maxDuration: window.TascoVideoCapture.maxSeconds, mirrorFrontCamera: !!cameraAppearance.mirrorFront });
+        var recOpts = { videoStabilizationMode: pro.stab, videoBitrate: 12000000, videoCodec: 'avc1', maxDuration: window.TascoVideoCapture.maxSeconds, mirrorFrontCamera: !!cameraAppearance.mirrorFront };
+        try { await CP.startRecordVideo(recOpts); }
+        catch (first) { if (pro.stab === 'off') throw first; recOpts.videoStabilizationMode = 'off'; await CP.startRecordVideo(recOpts); feedback('Máy chưa hỗ trợ chế độ chống rung này, đang quay không chống rung.', 3000); }
         st.recording = true; st.recStart = Date.now();
         st.recTimer = setInterval(updateModeUI, 500);
       } else {
@@ -11769,6 +11864,56 @@ html.tasco-native-cam #customCameraModal .camera-focus-ring { z-index: 5; }
 html.tasco-native-cam #customCameraVideo,
 html.tasco-native-cam #customCameraModal .camera-grid-overlay,
 html.tasco-native-cam #customCameraModal .camera-target-crosshair { display: none !important; }
+</style>
+<style id="tascoCameraSettingsPremium">
+/* Bảng cài đặt camera: bảng trượt từ dưới lên, nền kính mờ, điều khiển dạng phân đoạn. */
+#customCameraModal #cameraSettingsPanel.camera-settings-v2{left:0;right:0;bottom:0;width:100%;max-width:560px;margin:0 auto;max-height:min(82%,calc(100% - var(--camera-safe-top,0px) - 56px));border:1px solid rgba(157,207,214,.14);border-bottom:0;border-radius:28px 28px 0 0;background:linear-gradient(180deg,rgba(24,48,86,.93),rgba(8,19,33,.97) 42%);-webkit-backdrop-filter:blur(26px) saturate(150%);backdrop-filter:blur(26px) saturate(150%);box-shadow:0 -24px 70px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);padding-bottom:var(--camera-safe-bottom,env(safe-area-inset-bottom,0px));animation:camSheetIn .32s cubic-bezier(.2,.85,.25,1)}
+@keyframes camSheetIn{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+#cameraSettingsPanel.camera-settings-v2::before{content:'';display:block;flex:none;width:42px;height:5px;margin:9px auto 0;border-radius:3px;background:rgba(237,245,247,.22)}
+#cameraSettingsPanel.camera-settings-v2 header{padding:14px 20px 14px}
+#cameraSettingsPanel.camera-settings-v2 header span{font-size:10px;letter-spacing:.16em;color:#9dcfd6}
+#cameraSettingsPanel.camera-settings-v2 h2{font-size:23px;font-weight:700;letter-spacing:-.6px;color:#f4f8fa}
+#cameraSettingsPanel.camera-settings-v2 header button{width:38px;height:38px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.07);color:#daecf0}
+#cameraSettingsPanel .camera-settings-tabs{margin:0 16px 16px;padding:4px;gap:3px;border:0;border-radius:14px;background:rgba(0,0,0,.28);box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
+#customCameraModal #cameraSettingsPanel .camera-settings-tabs button{min-height:38px;border-radius:10px;color:#93a9b8;font-size:12px;font-weight:650;letter-spacing:-.1px}
+#customCameraModal #cameraSettingsPanel .camera-settings-tabs button[aria-selected=true]{color:#071423;background:linear-gradient(180deg,#a9dbe1,#84bfc7);box-shadow:0 4px 14px rgba(132,191,199,.28)}
+#cameraSettingsPanel .camera-settings-body{padding:2px 16px 22px}
+#cameraSettingsPanel .camera-section-heading h3,#cameraSettingsPanel .cam-pro-head h3{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9dcfd6;margin:0}
+#customCameraModal #cameraSettingsPanel .camera-quality-options button,#customCameraModal #cameraSettingsPanel .camera-ratio-options button{border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.045)}
+#customCameraModal #cameraSettingsPanel .camera-quality-options button[aria-checked=true],#customCameraModal #cameraSettingsPanel .camera-ratio-options button[aria-checked=true]{border-color:rgba(132,191,199,.75);background:linear-gradient(135deg,rgba(132,191,199,.22),rgba(132,191,199,.08));box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#cameraSettingsPanel .camera-toggle-list,#cameraSettingsPanel .camera-focus-card,#cameraSettingsPanel .camera-settings-group{margin-top:14px;padding:4px 14px;border:1px solid rgba(255,255,255,.07);border-radius:18px;background:rgba(255,255,255,.04)}
+#cameraSettingsPanel .camera-focus-card{padding:14px}
+#cameraSettingsPanel .camera-toggle-list .camera-setting-check:last-child{border-bottom:0}
+#customCameraModal #cameraSettingsPanel .camera-setting-check input,#cameraSettingsPanel .cam-pro-switch input{appearance:none;-webkit-appearance:none;position:relative;flex:0 0 46px;width:46px;height:28px;margin:0;border:0;border-radius:14px;background:rgba(255,255,255,.14);transition:background .2s ease}
+#customCameraModal #cameraSettingsPanel .camera-setting-check input:before,#cameraSettingsPanel .cam-pro-switch input:before{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35);transition:transform .2s ease}
+#customCameraModal #cameraSettingsPanel .camera-setting-check input:checked,#cameraSettingsPanel .cam-pro-switch input:checked{background:#63adb6}
+#customCameraModal #cameraSettingsPanel .camera-setting-check input:checked:before,#cameraSettingsPanel .cam-pro-switch input:checked:before{transform:translateX(18px);background:#fff}
+#cameraSettingsPanel.camera-settings-v2 footer{border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.18)}
+/* Tab Chuyên sâu */
+.cam-pro-web-note{margin:4px 0 0;padding:14px;border:1px dashed rgba(157,207,214,.3);border-radius:16px;font-size:12px;line-height:1.7;color:#a7c3d0}
+html.tasco-native-camera-ready .cam-pro-web-note{display:none}
+html:not(.tasco-native-camera-ready) .cam-pro{display:none}
+html.tasco-native-camera-ready #cameraSettingsPanel label:has([data-camera-pref="showGrid"]){display:none}
+.cam-pro-card{margin-bottom:12px;padding:15px 15px 14px;border:1px solid rgba(255,255,255,.07);border-radius:18px;background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.025))}
+.cam-pro-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cam-pro-head output{font:700 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#edf5f7;padding:5px 9px;border-radius:8px;background:rgba(0,0,0,.3)}
+.cam-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;padding:3px;border-radius:13px;background:rgba(0,0,0,.3);box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
+#customCameraModal .cam-seg button{min-height:38px;padding:0 6px;border:0;border-radius:10px;background:transparent;color:#a7c3d0;font-size:12px;font-weight:650}
+#customCameraModal .cam-seg button[aria-checked=true]{background:linear-gradient(180deg,#a9dbe1,#84bfc7);color:#071423;box-shadow:0 3px 10px rgba(132,191,199,.25)}
+#customCameraModal .cam-seg button:disabled{opacity:.35}
+.cam-pro input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;margin:0;background:transparent}
+.cam-pro input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,#1b3a63,#84bfc7 50%,#f4e3a1)}
+.cam-pro input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.45),0 0 0 4px rgba(132,191,199,.25)}
+.cam-pro input[type=range]:disabled{opacity:.4}
+.cam-pro-scale{display:flex;align-items:center;justify-content:space-between;margin:2px 0 6px;font-size:10px;color:#7d9aad}
+#customCameraModal .cam-pro-scale button{min-height:26px;padding:0 10px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:transparent;color:#daecf0;font-size:11px}
+.cam-pro-switch{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);cursor:pointer}
+.cam-pro-switch strong{display:block;font-size:13px;font-weight:600;color:#e6eef1}
+.cam-pro-switch small{display:block;font-size:10px;line-height:1.6;color:#8fa7b6}
+.cam-pro-hint{margin:10px 2px 0;font-size:10.5px;line-height:1.6;color:#8fa7b6}
+.cam-pro-info{margin:4px 2px 0;font-size:10.5px;color:#7d9aad;text-align:center}
+#btnToggleCameraFlash[data-flash="auto"]::after{content:'A';position:absolute;right:6px;bottom:4px;font-size:9px;font-weight:800;color:#84bfc7}
+#btnToggleCameraFlash{position:relative}
 </style>
 <script id="tascoAppUpdate">
 /* Dự phòng khi trình duyệt không có ngày triển khai. Phiên bản hiển thị lấy từ document.lastModified. */
