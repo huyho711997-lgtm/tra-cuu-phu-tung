@@ -2777,6 +2777,135 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 /* Render at 14px while retaining 16px intrinsic input text for iOS focus. */
 .tasco-workspace #traCuuSection .ws-search-input-wrap #searchInput { position: absolute; top: 0; left: 0; width: 114.285714%; max-width: none; height: 52px; padding: 0 !important; margin: 0; font-size: 16px !important; transform: scale(.875); transform-origin: left center; }
 </style>
+<style id="tascoPremiumHomeActions">
+/* Shared surfaces and illustration materials across the home screen. */
+.tasco-workspace #homeSection {
+  --home-radius: 24px;
+  --home-surface-end: #f5fafb;
+  --home-icon-surface: var(--ws-soft);
+  --home-line: var(--ws-line);
+  --home-shadow: 0 7px 22px -15px #18305630;
+  --home-art-light: #edf5f7;
+  --home-art-mid: #b8dce2;
+  --home-art-ice: #daecf0;
+  --home-art-teal: #63adb6;
+  --home-art-shade: #39747e;
+  --home-art-ink: #183056;
+}
+.tasco-workspace #homeSection .ws-home-grid { gap: 16px; }
+.tasco-workspace #homeSection .ws-shortcuts { gap: 12px; }
+.tasco-workspace #homeSection .ws-feature {
+  border: 1px solid #335b764d;
+  border-radius: var(--home-radius);
+  background: linear-gradient(135deg,var(--app-navy) 8%,#203f61 100%);
+  box-shadow: var(--home-shadow);
+  color: var(--home-art-light);
+}
+.tasco-workspace #homeSection .ws-feature::after {
+  background: radial-gradient(ellipse at 94% 36%,#63adb61a,transparent 66%);
+}
+.tasco-workspace #homeSection .ws-feature h2 { color: var(--home-art-light); }
+.tasco-workspace #homeSection .ws-feature .ws-eyebrow,
+.tasco-workspace #homeSection .ws-feature p,
+.tasco-workspace #homeSection .ws-feature-foot { color: var(--home-art-ice); }
+.tasco-workspace #homeSection .ws-feature .ws-primary {
+  border-radius: 12px; font-weight: 600; letter-spacing: -.1px;
+}
+.tasco-workspace #homeSection .ws-mechanical {
+  filter: drop-shadow(0 10px 14px #0b1b3038);
+}
+.tasco-workspace #homeSection .ws-shortcut {
+  border: 1px solid var(--home-line);
+  border-radius: var(--home-radius);
+  background: linear-gradient(145deg,var(--ws-surface) 45%,var(--home-surface-end));
+  box-shadow: var(--home-shadow);
+  color: var(--ws-text);
+  transition: transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.tasco-workspace #homeSection .home-action-card {
+  position: relative; isolation: isolate; overflow: hidden; display: flex;
+  flex-direction: column; align-items: stretch; justify-content: space-between;
+  min-height: 150px; min-width: 0; padding: 17px; gap: 17px; text-align: left;
+}
+.tasco-workspace #homeSection .home-action-card::before,
+.tasco-workspace #homeSection .home-action-card::after { display: none; }
+.tasco-workspace #homeSection .hc-top {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; width: 100%;
+}
+.tasco-workspace #homeSection .hc-art {
+  display: grid; place-items: center; width: 54px; height: 54px; flex: 0 0 54px;
+  border: 1px solid var(--ws-accent); border-radius: 16px; background: var(--home-icon-surface);
+}
+.tasco-workspace #homeSection .hc-art svg { display: block; width: 46px; height: 46px; overflow: visible; }
+.tasco-workspace #homeSection .hc-open {
+  display: grid; place-items: center; width: 26px; height: 26px; flex: 0 0 26px;
+  border: 1px solid var(--home-line); border-radius: 50%; margin-top: 1px;
+  background: transparent; color: var(--ws-accent-text);
+}
+.tasco-workspace #homeSection .hc-open svg {
+  display: block; width: 13px; height: 13px; fill: none; stroke: currentColor;
+  stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+}
+.tasco-workspace #homeSection .hc-copy { display: block; position: relative; z-index: 1; min-width: 0; }
+.tasco-workspace #homeSection .home-action-card strong {
+  display: block; margin: 0; font-size: 13px; font-weight: 650;
+  letter-spacing: -.25px; line-height: 1.4; color: var(--ws-text);
+}
+.tasco-workspace #homeSection .home-action-card small {
+  display: block; margin-top: 5px; font-size: 9px; line-height: 1.6;
+  font-weight: 450; letter-spacing: .02em; color: var(--ws-muted);
+}
+.tasco-workspace #homeSection .ws-shortcut--wide { gap: 14px; }
+.tasco-workspace #homeSection .ws-shortcut--wide > .ws-icon:not(.ws-arrow) {
+  width: 44px; height: 44px; padding: 10px; border: 1px solid var(--ws-accent);
+  border-radius: 14px; background: var(--home-icon-surface); color: var(--ws-accent-text);
+}
+.tasco-workspace #homeSection .ws-shortcut--wide .ws-arrow {
+  position: static; transform: none; width: 26px; height: 26px; padding: 6px;
+  border: 1px solid var(--home-line); border-radius: 50%; color: var(--ws-accent-text);
+}
+.tasco-workspace #homeSection .ws-shortcut:focus-visible {
+  outline: 2px solid var(--ws-accent-text); outline-offset: 4px;
+}
+.tasco-workspace #homeSection .ws-shortcut:active:not(:disabled) { transform: translateY(1px); }
+@media(hover:hover) {
+  .tasco-workspace #homeSection .ws-shortcut:hover:not(:disabled) {
+    transform: translateY(-2px); border-color: var(--app-teal);
+    box-shadow: 0 10px 24px -15px #18305645;
+  }
+}
+html.dark .tasco-workspace #homeSection {
+  --home-surface-end: #1c3856;
+  --home-shadow: 0 7px 22px -15px #0005;
+}
+@media(max-width:767px) {
+  .tasco-workspace #homeSection .ws-feature { min-height: 276px; padding: 24px; }
+  .tasco-workspace #homeSection .ws-feature h2 {
+    margin: 18px 0 10px; font-size: 34px; line-height: 1.14; letter-spacing: -1.4px;
+  }
+  .tasco-workspace #homeSection .ws-feature p { max-width: 59%; font-size: 10.5px; line-height: 1.75; }
+  .tasco-workspace #homeSection .ws-feature .ws-primary { margin-top: 22px; font-size: 11px; }
+  .tasco-workspace #homeSection .ws-mechanical { width: 198px; height: 198px; top: 42px; right: -43px; }
+  .tasco-workspace #homeSection .ws-feature-foot { right: 22px; bottom: 23px; font-size: 7px; letter-spacing: .13em; }
+  .tasco-workspace #homeSection .ws-shortcut--wide { min-height: 94px; padding: 18px; }
+  .tasco-workspace #homeSection .ws-shortcut--wide strong { font-size: 13px; }
+  .tasco-workspace #homeSection .ws-shortcut--wide small { font-size: 9px; }
+}
+@media(max-width:360px) {
+  .tasco-workspace #homeSection { --home-radius: 22px; }
+  .tasco-workspace #homeSection .ws-feature { padding: 22px; min-height: 268px; }
+  .tasco-workspace #homeSection .ws-feature h2 { font-size: 32px; }
+  .tasco-workspace #homeSection .ws-mechanical { width: 183px; height: 183px; right: -50px; }
+  .tasco-workspace #homeSection .home-action-card { min-height: 145px; padding: 15px; gap: 15px; }
+  .tasco-workspace #homeSection .home-action-card strong { font-size: 12px; }
+  .tasco-workspace #homeSection .ws-shortcut--wide { padding: 16px; gap: 11px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .tasco-workspace #homeSection .ws-shortcut { transition: none; }
+}
+
+</style>
 <!-- Lucian UX/UI Prompt #021 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#021 -->
 <style id="tascoDayNightSwitch">
 /* Theme tokens inherit the app's light/dark palette; sky artwork keeps the supplied colors. */
@@ -3161,57 +3290,67 @@ window.TascoBootSplash = (() => {
 
     <div id="mainApp" class="main-container" data-shell="premium-v6" data-page="login" style="display: none;">
         <!-- NEW HEADER -->
-<header id="mainHeader" class="th-topbar">
-  <button type="button" class="th-brand" onclick="tascoGo('home')" aria-label="TASCO DLK · Trang chủ"><span class="th-logo"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="m10 15 1.5-4h9l1.5 4M9 15h14v6H9v-6ZM11 21v2m10-2v2m-9-5h1m6 0h1"/></g></svg></span><span><strong>TASCO DLK</strong><small>Bảo hiểm xe cơ giới</small></span></button>
-  <div class="th-header-actions">
-    <button type="button" id="tascoUpdatePill" class="th-update" data-update-short hidden onclick="tascoUpdateApp(this)" aria-label="Có phiên bản mới, chạm để cập nhật"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 20h14"/></svg><span data-update-status>Cập nhật</span></button>
-    <button type="button" class="th-theme" data-theme-toggle onclick="toggleTheme()" aria-pressed="false" aria-label="Chuyển sang chế độ tối"><svg class="ws-theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg class="ws-theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 13.3A8.9 8.9 0 0 1 10.7 3.2 9 9 0 1 0 20.8 13.3Z"/></svg></button>
-    <button type="button" id="headerAvatar" class="th-avatar" data-shell-avatar onclick="openUserProfileModal()" aria-label="Mở tài khoản">HQ</button>
-  </div>
+<header id="mainHeader" class="ws-topbar">
+  <button type="button" class="ws-brand ws-focus" onclick="updateView('home')" aria-label="TASCO DLK · Trang chủ"><span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="m10 15 1.5-4h9l1.5 4M9 15h14v6H9v-6ZM11 21v2m10-2v2m-9-5h1m6 0h1"/></g></svg></span><span><strong>TASCO DLK</strong><small>Insurance workspace</small></span></button>
+  <div class="ws-top-actions"><span id="headerDate" data-shell-date class="ws-date"></span><button type="button" id="tascoUpdatePill" class="ws-update-pill" data-update-short hidden onclick="tascoUpdateApp(this)" aria-label="Có phiên bản mới, chạm để cập nhật"><i aria-hidden="true"></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.2-4.2M12 15l4.2-4.2"/><path d="M5 19.5h14"/></svg><span data-update-status>Cập nhật</span></button><button type="button" id="headerAvatar" data-shell-avatar class="ws-avatar" onclick="openUserProfileModal()" aria-label="Mở tài khoản">HQ</button></div>
 </header>
 <header id="wsChildbar" class="ws-childbar" hidden><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><small>TASCO DLK</small><h1 id="wsPageTitle" tabindex="-1"></h1></div><button type="button" class="ws-home-return" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button></header>
 <section id="homeSection" data-shell-page="home" hidden aria-label="Trang chủ">
-  <div class="th-welcome">
-    <div class="th-welcome-meta"><span>Không gian làm việc của bạn</span><time id="headerDate" class="th-date" data-shell-date></time></div>
-    <h1>Chào <span id="userEmail">bạn</span>.</h1>
-    <p data-home-greeting>Chúc bạn một ngày làm việc hiệu quả.</p>
-  </div>
-  <div class="th-grid">
-    <div class="th-main">
-      <section class="th-search-card" aria-labelledby="homeSearchTitle">
-        <div class="th-search-heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 10 1.7-5h10.6l1.7 5M3.5 10h17v8h-17zM6 18v2m12-2v2M6.5 14h2m7 0h2"/></svg><h2 id="homeSearchTitle">Tra cứu phụ tùng</h2></div>
-        <p>Tìm thông tin phụ tùng cho hồ sơ của bạn.</p>
-        <form id="homeSearchForm" class="th-search-form" role="search" aria-label="Tra cứu nhanh phụ tùng">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></svg><input type="search" id="homeSearchInput" aria-label="Tên phụ tùng cần tìm" placeholder="Tên phụ tùng cần tìm…" autocomplete="off" enterkeyhint="search" maxlength="200">
-          <button type="submit" aria-label="Tra cứu phụ tùng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
-        </form>
-        <button type="button" class="th-filter-link" onclick="tascoGo('lookup')" aria-label="Mở bộ lọc tra cứu theo xe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 17h16M8 4v6M16 14v6"/></svg><span data-home-filters>Chọn hãng xe, dòng xe và năm sản xuất</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-        <p class="th-home-error" data-home-error role="status" hidden></p>
-      </section>
-      <section class="th-quick-section" data-cloud-only hidden aria-labelledby="homeQuickTitle">
-        <div class="th-section-heading"><h2 id="homeQuickTitle">Ảnh hồ sơ</h2></div>
-        <div class="th-quick-grid">
-          <button type="button" class="th-quick-card" data-home-camera disabled onclick="TascoAppShell.camera()"><span class="th-quick-top"><span class="th-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6 9.5 4h5L16 6h3a2 2 0 0 1 2 2v11H3V8a2 2 0 0 1 2-2Z"/><circle cx="12" cy="12.5" r="3.5"/></svg></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span><span class="th-quick-copy"><strong>Chụp ảnh hồ sơ</strong><small data-home-camera-status>Đang kết nối Cloud…</small></span></button>
-          <button type="button" class="th-quick-card" onclick="tascoGo('cloud')"><span class="th-quick-top"><span class="th-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.2 18.5h10.3a4 4 0 0 0 .5-8 6 6 0 0 0-11.4-1.4 4.7 4.7 0 0 0 .6 9.4Z"/></svg></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span><span class="th-quick-copy"><strong>Cloud của tôi</strong><small data-cloud-caption>Thư viện ảnh cá nhân</small></span></button>
-        </div>
-      </section>
+  <div class="ws-greeting"><div><p data-home-greeting>Không gian làm việc của bạn</p><h1>Chào <span id="userEmail">bạn</span>.</h1></div><button type="button" class="ws-day ws-focus" data-theme-toggle onclick="toggleTheme()" aria-pressed="false" aria-label="Chuyển sang chế độ tối" title="Chuyển sang chế độ tối"><svg class="ws-icon ws-theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg class="ws-icon ws-theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 13.3A8.9 8.9 0 0 1 10.7 3.2 9 9 0 1 0 20.8 13.3Z"/></svg></button></div>
+  <div class="ws-home-grid">
+    <article class="ws-feature"><span class="ws-eyebrow"><i></i>TRA CỨU PHỤ TÙNG</span><h2>Tìm đúng.<br>Làm tốt.</h2><p>Thông tin phụ tùng theo hãng xe, dòng xe và năm sản xuất.</p><button type="button" class="ws-primary" onclick="tascoGo('lookup')">Tra cứu ngay <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><svg class="ws-mechanical" viewBox="0 0 280 280" fill="none" aria-hidden="true"><defs><linearGradient id="rotorMetal" x1="42" y1="10" x2="230" y2="242" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-light)"/><stop offset=".26" stop-color="var(--home-art-mid)"/><stop offset=".51" stop-color="var(--home-art-ice)"/><stop offset=".76" stop-color="var(--home-art-teal)"/><stop offset="1" stop-color="#84bfc7"/></linearGradient><linearGradient id="rotorRim" x1="45" y1="50" x2="230" y2="250"><stop stop-color="var(--home-art-ice)"/><stop offset="1" stop-color="var(--home-art-shade)"/></linearGradient></defs><ellipse cx="141" cy="166" rx="108" ry="104" fill="#0b1b30" opacity=".45"/><g transform="translate(16 0) rotate(12 140 140) scale(.9 1)"><circle cx="140" cy="151" r="113" fill="#244861" stroke="var(--home-art-teal)" stroke-width="4"/><circle cx="140" cy="140" r="113" fill="url(#rotorMetal)" stroke="url(#rotorRim)" stroke-width="2.5"/><circle cx="140" cy="140" r="106" stroke="var(--home-art-light)" stroke-opacity=".4"/><circle cx="140" cy="140" r="92" stroke="#244861" stroke-opacity=".5"/><circle cx="140" cy="140" r="67" fill="#335b76" stroke="var(--home-art-ice)" stroke-width="2"/><circle cx="140" cy="140" r="48" fill="url(#rotorMetal)" stroke="var(--home-art-ice)" stroke-width="2"/><circle cx="140" cy="140" r="20" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="2.5"/><circle cx="220.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="219.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="212.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="200.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="183.3" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="162.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="60.0" cy="140.0" r="3.2" fill="#244861" opacity=".85"/><circle cx="63.2" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="72.7" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="87.6" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="106.8" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="128.6" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="151.4" cy="60.8" r="3.2" fill="#244861" opacity=".85"/><circle cx="173.2" cy="67.2" r="3.2" fill="#244861" opacity=".85"/><circle cx="192.4" cy="79.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="207.3" cy="96.7" r="3.2" fill="#244861" opacity=".85"/><circle cx="216.8" cy="117.5" r="3.2" fill="#244861" opacity=".85"/><circle cx="140.0" cy="106.0" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="172.3" cy="129.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="160.0" cy="167.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="120.0" cy="167.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/><circle cx="107.7" cy="129.5" r="4.2" fill="var(--home-art-ink)" stroke="var(--home-art-ice)" stroke-width="1.3"/></g></svg><span class="ws-feature-foot">TASCO INSURANCE</span></article>
+    <div class="ws-shortcuts">
+      <button type="button" class="ws-shortcut ws-shortcut--camera home-action-card home-action-card--camera" data-home-camera data-cloud-only hidden onclick="TascoAppShell.camera()" disabled>
+  <span class="hc-top" aria-hidden="true">
+    <span class="hc-art"><svg viewBox="0 0 62 56" fill="none">
+      <defs><linearGradient id="hcCameraBody" x1="9" y1="12" x2="55" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-light)"/><stop offset="1" stop-color="var(--home-art-mid)"/></linearGradient><linearGradient id="hcCameraRim" x1="20" y1="19" x2="43" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-light)"/><stop offset=".36" stop-color="var(--home-art-mid)"/><stop offset=".65" stop-color="var(--home-art-ice)"/><stop offset="1" stop-color="var(--home-art-shade)"/></linearGradient><linearGradient id="hcCameraGlass" x1="25" y1="23" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#335b76"/><stop offset="1" stop-color="#071423"/></linearGradient></defs>
+      <rect x="7" y="21" width="49" height="30" rx="9" fill="var(--home-art-ink)" opacity=".08"/>
+      <path d="M13 16h8l3-5h16l3 5h7a6 6 0 0 1 6 6v21a6 6 0 0 1-6 6H13a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6Z" fill="url(#hcCameraBody)" stroke="#84bfc7" stroke-width="1.1"/>
+      <path d="M14 18h7m5-5h11" stroke="var(--home-art-ice)" stroke-opacity=".6" stroke-linecap="round"/>
+      <rect x="44" y="21" width="7" height="4" rx="1.5" fill="var(--home-art-teal)"/>
+      <circle cx="31" cy="32" r="13" fill="#0b1b30" stroke="#52798d" stroke-width="1.2"/>
+      <circle cx="31" cy="31" r="12" fill="url(#hcCameraRim)" stroke="var(--home-art-ice)" stroke-width=".6"/>
+      <circle cx="31" cy="31" r="8.7" fill="url(#hcCameraGlass)" stroke="var(--home-art-shade)" stroke-width="1.2"/>
+      <circle cx="31" cy="31" r="5.5" stroke="var(--home-art-teal)" stroke-opacity=".5"/>
+      <ellipse cx="28.5" cy="27.5" rx="2.3" ry="1.4" transform="rotate(-32 28.5 27.5)" fill="var(--home-art-mid)" opacity=".68"/>
+      <path d="M11 39v4a2 2 0 0 0 2 2h5" stroke="var(--home-art-shade)" stroke-opacity=".35" stroke-linecap="round"/>
+    </svg></span>
+    <span class="hc-open"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+  </span>
+  <span class="hc-copy"><strong>Chụp ảnh hồ sơ</strong><small>Ngày giờ &amp; địa điểm</small></span>
+</button>
+      <button type="button" class="ws-shortcut home-action-card home-action-card--cloud" data-cloud-only hidden onclick="tascoGo('cloud')">
+  <span class="hc-top" aria-hidden="true">
+    <span class="hc-art"><svg viewBox="0 0 62 56" fill="none">
+      <defs><linearGradient id="hcCloudBack" x1="12" y1="13" x2="49" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-mid)"/><stop offset="1" stop-color="var(--home-art-teal)"/></linearGradient><linearGradient id="hcCloudFront" x1="13" y1="21" x2="48" y2="53" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="var(--home-art-ice)"/></linearGradient><linearGradient id="hcCloudSurface" x1="26" y1="15" x2="53" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="var(--home-art-light)"/><stop offset="1" stop-color="#9dcfd6"/></linearGradient></defs>
+      <ellipse cx="32" cy="50" rx="23" ry="3" fill="var(--home-art-ink)" opacity=".08"/>
+      <rect x="8" y="12" width="35" height="29" rx="5" transform="rotate(-12 8 12)" fill="url(#hcCloudBack)" stroke="#84bfc7"/>
+      <rect x="14" y="14" width="35" height="29" rx="5" transform="rotate(6 14 14)" fill="var(--home-art-light)" stroke="#a7c3d0"/>
+      <rect x="10" y="23" width="38" height="27" rx="6" fill="url(#hcCloudFront)" stroke="#84bfc7"/>
+      <path d="m15 42 9-10 7 7 6-4 6 7" stroke="var(--home-art-teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="37" cy="30" r="2.2" fill="#9dcfd6"/>
+      <path d="M47 15h-.8a8.2 8.2 0 0 0-16.2 2.1 5.8 5.8 0 0 0 1.1 11.5H47a6.8 6.8 0 0 0 0-13.6Z" fill="var(--home-art-shade)" opacity=".16" transform="translate(1 2)"/>
+      <path d="M47 15h-.8a8.2 8.2 0 0 0-16.2 2.1 5.8 5.8 0 0 0 1.1 11.5H47a6.8 6.8 0 0 0 0-13.6Z" fill="url(#hcCloudSurface)" stroke="var(--home-art-teal)" stroke-width="1.1"/>
+      <path d="M35 16a4.5 4.5 0 0 1 7-2" stroke="#fff" stroke-opacity=".8" stroke-width="1.3" stroke-linecap="round"/>
+    </svg></span>
+    <span class="hc-open"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+  </span>
+  <span class="hc-copy"><strong>Cloud của tôi</strong><small data-cloud-caption>Thư viện ảnh cá nhân</small></span>
+</button>
+      <div class="ws-tools" role="group" aria-labelledby="wsToolsTitle"><div class="ws-tools-head"><span id="wsToolsTitle">Công cụ nghiệp vụ</span></div><div class="ws-tool-list">
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('rescue')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M3 8.6A1.6 1.6 0 0 1 4.6 7H13v9.6H3ZM13 10h3.7a1.6 1.6 0 0 1 1.26.62l2.4 3.08a1.6 1.6 0 0 1 .34.98v1.92H13Z"/><path d="M13 16.6V7H4.6A1.6 1.6 0 0 0 3 8.6v8"/><path d="M13 10h3.7a1.6 1.6 0 0 1 1.26.62l2.4 3.08a1.6 1.6 0 0 1 .34.98v1.92"/><path d="M15 10v3.2h4.6M9.3 16.6h6.1"/><circle cx="7" cy="17.4" r="2.1"/><circle cx="17.6" cy="17.4" r="2.1"/></svg><span><strong>Chi phí cứu hộ</strong><small>Tra cứu đơn giá, tính nhanh kéo &amp; cẩu xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('garage')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M3.5 9.2 12 4.5l8.5 4.7v11.3H17V13H7v7.5H3.5Z"/><path d="M3.5 20.5V9.2L12 4.5l8.5 4.7v11.3"/><path d="M7 20.5V13h10v7.5M7 15.6h10M7 18.1h10"/></svg><span><strong>Quản lý gara</strong><small>Danh sách gara &amp; điểm đến kéo xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('forms')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5V8h4.5M8.8 12.4h6.4M8.8 15.9h4.2"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Word &amp; PDF xem ngay trong ứng dụng.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('account')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="i-fill" cx="12" cy="9.3" r="3.5"/><path class="i-fill" d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0A8.9 8.9 0 0 1 12 20.9a8.9 8.9 0 0 1-5.9-2.6Z"/><circle cx="12" cy="12" r="8.9"/><circle cx="12" cy="9.3" r="3.5"/><path d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0"/></svg><span><strong>Tài khoản &amp; thiết lập</strong><small>Không gian riêng, theo cách của bạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      </div></div>
     </div>
-    <section class="th-side" aria-labelledby="homeToolsTitle">
-      <div class="th-section-heading"><h2 id="homeToolsTitle">Công cụ nghiệp vụ</h2></div>
-      <div class="th-tools"><button type="button" class="th-tool" onclick="tascoGo('rescue')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.5V6.5h11v10M14 10h3.4l3.6 4v2.5h-1.5M9.5 16.5h5M14 10v4h7M3 16.5h1.5"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/></svg><span><strong>Chi phí cứu hộ</strong><small>Tính chi phí kéo và cẩu xe</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-<button type="button" class="th-tool" onclick="tascoGo('garage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 20V9L12 4l8.5 5v11M7 20V12h10v8M7 15h10M7 18h10"/></svg><span><strong>Quản lý gara</strong><small>Danh sách gara và điểm đến</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-<button type="button" class="th-tool" onclick="tascoGo('forms')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7zM14 3v5h4M9 12h6M9 16h6"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Xem tài liệu Word và PDF</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
-      <button type="button" class="th-account-link" onclick="tascoGo('account')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1.5A5.5 5.5 0 0 1 10.5 13h3a5.5 5.5 0 0 1 5.5 5.5V20"/></svg><span>Tài khoản và thiết lập</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-    </section>
   </div>
-  <section class="th-recent-section" data-cloud-only hidden aria-labelledby="homeRecentTitle">
-    <div class="th-section-heading"><h2 id="homeRecentTitle" data-recent-title>Ảnh gần đây</h2><button type="button" class="th-section-link" onclick="tascoGo('cloud')">Xem thư viện<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
-    <div class="th-cloud-meta"><span class="th-cloud-status" data-home-cloud-state data-state="loading" role="status"><span data-cloud-connection>Đang kết nối thư viện…</span></span><button type="button" class="th-pending" data-home-pending hidden onclick="tascoGo('cloud')"></button></div>
-    <div id="homeRecentPhotos" class="th-recent-grid" hidden></div>
-    <div id="homeRecentEmpty" class="th-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 6"/></svg><div><strong data-empty-title>Đang kết nối thư viện</strong><p data-empty-copy>Ảnh của tài khoản này sẽ hiển thị khi kết nối hoàn tất.</p></div></div>
-  </section>
-  <button type="button" class="th-admin" data-admin-only hidden onclick="tascoGo('admin')"><span><strong>Quản lý hệ thống</strong><small>Tài khoản và quyền truy cập</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-  <p class="th-footer">TASCO INSURANCE · ĐẮK LẮK</p>
+  <div data-cloud-only hidden><div class="ws-section-heading"><h2 data-recent-title>Ảnh gần đây</h2><button type="button" class="ws-text-button" onclick="tascoGo('cloud')">Xem thư viện <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div>
+  <div id="homeRecentPhotos" class="ws-recent-grid" hidden></div>
+  <div id="homeRecentEmpty" class="ws-recent-empty"><span class="ws-empty-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 6"/></svg></span><div><strong data-empty-title>Đang kết nối thư viện</strong><p data-empty-copy>Ảnh của tài khoản này sẽ hiển thị khi kết nối hoàn tất.</p></div></div>
+  </div>
+  <button type="button" class="ws-admin-card" data-admin-only hidden onclick="updateView('admin')"><span><strong>Quản lý hệ thống</strong><small>Tài khoản và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+  <p class="ws-bottom-note"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span data-cloud-only hidden><span data-cloud-connection>Đang kết nối thư viện…</span> · </span><span>TASCO INSURANCE</span></p>
 </section>
 <section id="accountSection" data-shell-page="account" hidden aria-label="Tài khoản và thiết lập">
   <div class="ws-account-layout"><div><article class="ws-account-card"><span class="ws-avatar" data-shell-avatar>HQ</span><div><h2 data-account-name>Tài khoản</h2><p data-account-email></p><span class="ws-role" data-account-role>Thành viên</span></div></article></div>
@@ -3762,8 +3901,6 @@ window.TascoAppShell=(()=>{
     const name=user?.fullName||user?.email||'bạn';const short=user?.fullName&&!name.includes('@')?name.trim().split(/\s+/).at(-1):name.split('@')[0];
     const hour=new Date().getHours();setText('[data-home-greeting]',hour<11?'Một buổi sáng tốt lành':hour<17?'Chúc bạn một buổi chiều hiệu quả':'Chúc bạn một buổi tối tốt lành');
     setText('#userEmail',short);const now=new Date();setText('[data-shell-date]',now.toLocaleDateString('vi-VN',{weekday:'short',day:'2-digit',month:'2-digit'}));
-    document.querySelectorAll('time[data-shell-date]').forEach(node=>node.dateTime=now.toISOString());
-    window.TascoHome?.syncFilters();
   }
   const canCloud=()=>Boolean(user&&window.TascoCloudAccess?.allowedFor(user));
   let pendingView='';
@@ -3825,21 +3962,13 @@ window.TascoAppShell=(()=>{
     const connected=relevant&&summary.ready!==false&&!summary.error,photos=connected?summary.photos||[]:[],container=document.getElementById('homeRecentPhotos'),empty=document.getElementById('homeRecentEmpty'),capture=document.querySelector('[data-home-camera]');
     if(!container)return;container.replaceChildren();
     photos.forEach(row=>{
-      const card=document.createElement('button');card.type='button';card.className='th-recent-card';card.setAttribute('aria-label','Mở thư viện để xem '+(row.title||'ảnh hồ sơ'));card.onclick=()=>window.updateView('cloud');
-      const media=document.createElement('span');media.className='th-recent-media';
-      media.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 6"/></svg>';
-      const image=document.createElement('img');image.alt='';image.loading='lazy';image.decoding='async';image.onerror=()=>{image.hidden=true;};if(row.url)image.src=row.url;else image.hidden=true;media.append(image);
-      if(row.video){const badge=document.createElement('span');badge.className='th-media-badge';badge.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 12 7-12 7Z"/></svg>';media.append(badge);}
-      const title=document.createElement('span');title.textContent=row.title||'Ảnh hồ sơ';const date=document.createElement('small'),captured=new Date(row.capturedAt);date.textContent=Number.isNaN(captured.getTime())?'':captured.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'});card.append(media,title,date);container.append(card);
+      const card=document.createElement('button');card.type='button';card.className='ws-recent-photo';card.setAttribute('aria-label','Mở thư viện để xem '+row.title);card.onclick=()=>window.updateView('cloud');
+      const image=document.createElement('img');image.src=row.url;image.alt=row.title||'Ảnh hồ sơ';image.loading='lazy';image.decoding='async';image.onerror=()=>{image.remove();};const title=document.createElement('span');title.textContent=row.title||'Ảnh hồ sơ';const date=document.createElement('small');date.textContent=new Date(row.capturedAt).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'});card.append(image,title,date);container.append(card);
     });
     container.hidden=!photos.length;empty.hidden=Boolean(photos.length);
     setText('[data-recent-title]',summary?.albumName?'Ảnh trong album':summary?.filtered?'Ảnh trong bộ lọc':'Ảnh gần đây');
     setText('[data-cloud-caption]',connected?summary.busy?'Đang tải thư viện…':summary.filtered?summary.count+' ảnh đang lọc':summary.count+' ảnh đã lưu':'Thư viện ảnh cá nhân');
     setText('[data-cloud-connection]',connected?'Đã kết nối Cloud':summary?.error?'Chưa kết nối Cloud':'Đang kết nối thư viện…');
-    setText('[data-home-camera-status]',connected?summary.busy?'Đang tải thư viện…':'Ngày giờ và địa điểm':summary?.error?'Kiểm tra kết nối Cloud':'Đang kết nối Cloud…');
-    document.querySelectorAll('[data-home-cloud-state]').forEach(node=>node.dataset.state=connected?summary.busy?'loading':'ready':summary?.error?'error':'loading');
-    const pending=document.querySelector('[data-home-pending]'),pendingCount=Math.max(0,Number(summary?.pending)||0);
-    if(pending){pending.hidden=!connected||!pendingCount;pending.textContent=pendingCount+' mục chờ gửi';}
     setText('[data-empty-title]',connected&&!summary.busy?'Bắt đầu lưu ảnh hồ sơ':summary?.error?'Thư viện đang tạm gián đoạn':'Đang kết nối thư viện');
     setText('[data-empty-copy]',connected&&!summary.busy?'Chụp ảnh có ngày giờ và địa điểm. Ảnh sẽ xuất hiện tại đây.':summary?.error?'Mở Cloud của tôi để kiểm tra kết nối và thử lại.':'Ảnh của tài khoản này sẽ hiển thị khi kết nối hoàn tất.');
     if(capture){capture.disabled=!connected||summary.busy;capture.setAttribute('aria-label',capture.disabled?'Camera đang chờ kết nối Cloud':'Chụp ảnh hồ sơ');}
@@ -8444,7 +8573,7 @@ window.TascoCloud = (() => {
      const all=root.querySelector('[data-action="all"]'),more=root.querySelector('[data-action="more"]');all.disabled=more.disabled=Boolean(state.loadingAll)||state.busy;
      all.querySelector('[data-cloud-all-label]').textContent=state.loadingAll?'Đang tải '+state.rows.length+'/'+state.count+'…':'Xem tất cả ('+state.count+')';more.hidden=left<=48;}
     paintSelection();paintAlbums();paintStorage();
-    window.dispatchEvent(new CustomEvent('tasco:cloud-summary',{detail:{email:state.user?.email||state.config.expectedEmail?.()||'',ready:cloudReady(),count:state.count,pending:state.pending.length,busy:state.busy,error:state.error||(!state.user&&!state.busy?'Chưa kết nối tài khoản Cloud':''),filtered:Boolean(state.query||state.date||state.activeAlbumId),albumName:activeAlbum()?.name||'',photos:state.rows.slice(0,3).map(row=>({id:row.id,title:row.title,url:previewURL(thumbnail(row),280),capturedAt:row.captured_at,video:window.tascoIsVideo(row)}))}}));
+    window.dispatchEvent(new CustomEvent('tasco:cloud-summary',{detail:{email:state.user?.email||state.config.expectedEmail?.()||'',ready:cloudReady(),count:state.count,pending:state.pending.length,busy:state.busy,error:state.error||(!state.user&&!state.busy?'Chưa kết nối tài khoản Cloud':''),filtered:Boolean(state.query||state.date||state.activeAlbumId),albumName:activeAlbum()?.name||'',photos:state.rows.slice(0,3).map(row=>({id:row.id,title:row.title,url:previewURL(thumbnail(row),280),capturedAt:row.captured_at}))}}));
   }
   async function refresh(append=false,opts={}) {
     if(!visible()||state.deleting||state.albumSaving)return;
@@ -10137,8 +10266,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const dark = document.documentElement.classList.contains('dark');
-    const color = ['lookup','results','cloud','rescue','garage','forms'].includes(view) ? '#183056' : view === 'home' ? (dark ? '#0b1524' : '#f4f6f9') : (dark ? '#0b1b30' : '#edf5f7');
+    const color = ['lookup','results','cloud','rescue','garage','forms'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -11803,7 +11931,7 @@ window.tascoGo=function(view){
   try{var t=document.startViewTransition(go);t.finished.then(done,done);}catch(_){done();go();}
 };
 </script>
-<style id="tascoPageTransitionStyles">
+<style id="tascoHomePremium">
 /* ===== Chuyển trang ===== */
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.36s;animation-timing-function:cubic-bezier(.2,.8,.2,1);animation-fill-mode:both}
 html[data-vt-dir=fwd]::view-transition-old(root){animation-name:tvtOutL}
@@ -11817,159 +11945,82 @@ html[data-vt-dir=back]::view-transition-new(root){animation-name:tvtInL}
 @keyframes tvtInR{from{opacity:0;transform:translate3d(32px,0,0)}}
 @keyframes tvtOutR{to{opacity:0;transform:translate3d(32px,0,0) scale(.985)}}
 @keyframes tvtInL{from{opacity:0;transform:translate3d(-32px,0,0)}}
-@media(prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none!important}}
+/* ===== Trang chủ ===== */
+.tasco-workspace #homeSection .ws-greeting p{font-size:13px;letter-spacing:.01em}
+.tasco-workspace #homeSection .ws-day{transition:transform .25s cubic-bezier(.3,1.4,.5,1)}
+.tasco-workspace #homeSection .ws-day:active{transform:scale(.9) rotate(-20deg)}
+.tasco-workspace #homeSection .ws-feature{isolation:isolate;box-shadow:0 22px 44px -26px rgba(24,48,86,.75),inset 0 1px 0 rgba(255,255,255,.08)}
+.tasco-workspace #homeSection .ws-feature::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;background:radial-gradient(80% 60% at 0% 0%,rgba(132,191,199,.16),transparent 60%);pointer-events:none}
+.tasco-workspace #homeSection .ws-feature .ws-primary{min-height:46px;padding:0 20px;border-radius:14px;font-size:13px;box-shadow:0 10px 22px -10px rgba(99,173,182,.7);transition:transform .18s ease,box-shadow .18s ease}
+.tasco-workspace #homeSection .ws-feature .ws-primary svg{transition:transform .25s ease}
+.tasco-workspace #homeSection .ws-feature .ws-primary:active{transform:scale(.96)}
+.tasco-workspace #homeSection .ws-feature .ws-primary:active svg{transform:translateX(3px)}
+.tasco-workspace #homeSection .ws-feature p{font-size:12px!important}
+.tasco-workspace #homeSection .home-action-card{min-height:148px;border-radius:24px;transition:transform .22s cubic-bezier(.3,1.3,.5,1),box-shadow .2s ease,border-color .2s ease}
+.tasco-workspace #homeSection .home-action-card strong{font-size:15px;letter-spacing:-.3px}
+.tasco-workspace #homeSection .home-action-card small{font-size:11.5px;margin-top:3px}
+.tasco-workspace #homeSection .hc-open{transition:transform .25s ease,background .2s ease}
+.tasco-workspace #homeSection .home-action-card:active:not(:disabled){transform:scale(.97)}
+.tasco-workspace #homeSection .home-action-card:active:not(:disabled) .hc-open{transform:translate(2px,-2px);background:var(--ws-accent)}
+/* Nhóm công cụ: một khối danh sách gọn thay cho 4 thẻ rời */
+.tasco-workspace #homeSection .ws-tools{grid-column:1/-1;min-width:0}
+.tasco-workspace #homeSection .ws-tools-head{margin:6px 6px 10px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ws-muted)}
+.tasco-workspace #homeSection .ws-tool-list{overflow:hidden;border:1px solid var(--home-line);border-radius:24px;background:linear-gradient(160deg,var(--ws-surface) 55%,var(--home-surface-end));box-shadow:var(--home-shadow)}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide{position:relative;display:flex;flex-direction:row;align-items:center;gap:14px;width:100%;min-height:70px!important;padding:13px 16px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;transition:background .15s ease}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide+.ws-shortcut--wide::before{content:'';position:absolute;top:0;left:72px;right:16px;height:1px;background:var(--home-line)}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide:active{background:var(--ws-soft)!important}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide>.ws-icon:not(.ws-arrow){flex:0 0 42px;width:42px;height:42px;padding:10px;border-radius:13px;transition:transform .2s cubic-bezier(.3,1.4,.5,1)}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide:active>.ws-icon:not(.ws-arrow){transform:scale(.9)}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide strong{display:block;font-size:14.5px!important;font-weight:650;letter-spacing:-.2px;line-height:1.35}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide small{display:block;margin-top:2px;font-size:11.5px!important;line-height:1.45;color:var(--ws-muted)}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide .ws-arrow{flex:0 0 18px;width:18px;height:18px;padding:0;border:0;border-radius:0;color:var(--ws-muted);transition:transform .2s ease}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide:active .ws-arrow{transform:translateX(3px)}
+@media(hover:hover){.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide:hover{background:var(--ws-soft)!important}}
+/* ===== Bộ icon duotone (thanh dưới + công cụ) ===== */
+.tasco-di .i-fill{fill:currentColor;fill-opacity:.12;stroke:none;transition:fill-opacity .25s ease}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide>.tasco-di{flex:0 0 44px;width:44px!important;height:44px!important;padding:9.5px!important;border:1px solid rgba(132,191,199,.45)!important;border-radius:14px!important;background:linear-gradient(150deg,#f1f8f9,#d6ebee)!important;color:#22566a!important;box-shadow:inset 0 1px 0 #fff,0 4px 10px -6px rgba(57,116,126,.45)}
+.tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide>.tasco-di .i-fill{fill:#63adb6;fill-opacity:.32}
+html.dark .tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide>.tasco-di{border-color:rgba(132,191,199,.22)!important;background:linear-gradient(150deg,#244861,#1a3550)!important;color:#b8e0e5!important;box-shadow:inset 0 1px 0 rgba(218,236,240,.08),0 4px 12px -6px rgba(0,0,0,.5)}
+html.dark .tasco-workspace #homeSection .ws-tool-list .ws-shortcut--wide>.tasco-di .i-fill{fill:#84bfc7;fill-opacity:.26}
+/* ===== Nút cập nhật gọn cạnh ảnh đại diện ===== */
+.tasco-workspace #mainHeader .ws-top-actions{display:flex;align-items:center;gap:8px;min-width:0}
+.tasco-workspace #mainHeader .ws-brand{min-width:0}
+.tasco-workspace #mainHeader .ws-brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws-update-pill[hidden]{display:none!important}
+.tasco-workspace .ws-update-pill{position:relative;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 13px 0 11px;border:0;border-radius:99px;background:linear-gradient(160deg,#24476b,#183056 70%);color:#edf5f7;font:inherit;font-size:12.5px;font-weight:650;white-space:nowrap;box-shadow:0 8px 18px -8px rgba(24,48,86,.6),inset 0 1px 0 rgba(255,255,255,.14);animation:wsPillIn .45s cubic-bezier(.3,1.4,.5,1) backwards;transition:transform .15s ease}
+.tasco-workspace .ws-update-pill:active{transform:scale(.95)}
+.tasco-workspace .ws-update-pill svg{width:16px;height:16px;flex:none}
+.tasco-workspace .ws-update-pill i{position:absolute;top:-1px;right:-1px;width:10px;height:10px;border:2px solid var(--ws-bg,#edf5f7);border-radius:50%;background:#e8c77a}
+.tasco-workspace .ws-update-pill i::after{content:'';position:absolute;inset:-2px;border-radius:50%;background:#e8c77a;animation:wsPillPing 1.8s ease-out infinite}
+.tasco-workspace .ws-update-pill{overflow:visible}
+.tasco-workspace .ws-update-pill[data-busy]{pointer-events:none;background-size:200% 100%;background-image:linear-gradient(110deg,#183056 0%,#183056 35%,#3b6a8f 50%,#183056 65%,#183056 100%);animation:wsPillSheen 1.4s linear infinite}
+html.dark .tasco-workspace .ws-update-pill[data-busy]{background-image:linear-gradient(110deg,#7fc0c9 0%,#7fc0c9 35%,#d4f0f3 50%,#7fc0c9 65%,#7fc0c9 100%)}
+.tasco-workspace .ws-update-pill[data-busy] svg path:first-child{animation:wsArrowDrop 1s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes wsPillSheen{from{background-position:150% 0}to{background-position:-50% 0}}
+@keyframes wsArrowDrop{0%{transform:translateY(-6px);opacity:0}35%{transform:translateY(0);opacity:1}70%{transform:translateY(2px);opacity:1}100%{transform:translateY(6px);opacity:0}}
+.tasco-workspace .ws-update-pill[data-busy] i{display:none}
+html.dark .tasco-workspace .ws-update-pill{background:linear-gradient(160deg,#a6dbe1,#7fc0c9);color:#0b1b30}
+@keyframes wsPillIn{from{opacity:0;transform:scale(.7)}}
+@keyframes wsPillPing{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(2.4);opacity:0}}
+@keyframes wsPillSpin{to{transform:rotate(360deg)}}
+@media(max-width:370px){.tasco-workspace .ws-update-pill{width:38px;padding:0;justify-content:center}.tasco-workspace .ws-update-pill span{display:none}}
+@media(prefers-reduced-motion:reduce){.tasco-workspace .ws-update-pill,.tasco-workspace .ws-update-pill i::after{animation:none!important}}
+/* Hiện lần lượt khi vào trang chủ */
+@keyframes wsRise{from{opacity:0;transform:translate3d(0,16px,0)}}
+@keyframes wsRotorIn{from{opacity:0;transform:rotate(-125deg) scale(.86)}to{transform:rotate(-17deg)}}
+.tasco-workspace #homeSection:not([hidden]) :is(.ws-greeting,.ws-feature,.home-action-card,.ws-tools,.ws-section-heading,#homeRecentPhotos,#homeRecentEmpty,.ws-bottom-note){animation:wsRise .55s cubic-bezier(.2,.8,.2,1) backwards}
+.tasco-workspace #homeSection:not([hidden]) .ws-feature{animation-delay:.05s}
+.tasco-workspace #homeSection:not([hidden]) .home-action-card--camera{animation-delay:.11s}
+.tasco-workspace #homeSection:not([hidden]) .home-action-card--cloud{animation-delay:.15s}
+.tasco-workspace #homeSection:not([hidden]) .ws-tools{animation-delay:.2s}
+.tasco-workspace #homeSection:not([hidden]) :is(.ws-section-heading,#homeRecentPhotos,#homeRecentEmpty){animation-delay:.25s}
+.tasco-workspace #homeSection:not([hidden]) .ws-bottom-note{animation-delay:.3s}
+.tasco-workspace #homeSection:not([hidden]) .ws-mechanical{animation:wsRotorIn 1.1s cubic-bezier(.16,.84,.24,1) .12s backwards}
+@media(prefers-reduced-motion:reduce){
+  .tasco-workspace #homeSection *{animation:none!important}
+  ::view-transition-old(root),::view-transition-new(root){animation:none!important}
+}
 </style>
-<style id="tascoHomeStyles">
-/* Trang chủ: một hệ bề mặt, kiểu chữ và khoảng cách; không dùng minh hoạ giả vật liệu. */
-.tasco-workspace{
-  --th-bg:#f4f6f9;--th-surface:#fff;--th-soft:#eff4f7;--th-line:#e2e8ef;
-  --th-ink:#183056;--th-muted:#63748a;--th-accent:#326e79;
-}
-html.dark .tasco-workspace{
-  --th-bg:#0b1524;--th-surface:#121f32;--th-soft:#1b2b40;--th-line:#28374b;
-  --th-ink:#edf5f7;--th-muted:#a0b0c3;--th-accent:#a7d5dc;
-}
-.tasco-workspace:has(#mainApp[data-page=home]){background:var(--th-bg)!important}
-.tasco-workspace #mainApp[data-page=home]{max-width:1040px;padding:0 max(20px,env(safe-area-inset-right,0px)) calc(96px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px))!important;background:var(--th-bg)}
-html[data-tasco-page=home]{--tasco-top-color:#f4f6f9}
-html.dark[data-tasco-page=home]{--tasco-top-color:#0b1524}
-.tasco-workspace #mainHeader.th-topbar{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:calc(20px + env(safe-area-inset-top,0px)) 0 22px;
-}
-.th-brand{display:flex;align-items:center;gap:10px;min-width:0;min-height:44px;padding:0;border:0;background:transparent;color:var(--th-ink);text-align:left}
-.th-logo{display:grid;place-items:center;flex:0 0 36px;width:36px;height:40px;border-radius:11px;background:#183056}
-.th-logo svg{width:28px;height:28px;stroke-width:1.6}
-.th-brand>span:last-child{min-width:0}
-.th-brand strong{display:block;font-size:15px;font-weight:750;letter-spacing:.06em;line-height:1.3}
-.th-brand small{display:block;margin-top:3px;font-size:10px;font-weight:500;line-height:1.4;color:var(--th-muted)}
-.th-header-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.th-theme,.th-avatar{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--th-muted)}
-.th-theme svg{width:20px;height:20px;stroke-width:1.7}
-.th-theme .ws-theme-moon{display:none}
-html.dark .th-theme .ws-theme-sun{display:none}
-html.dark .th-theme .ws-theme-moon{display:block}
-.th-avatar{border:1px solid var(--th-line);background:var(--th-surface);color:var(--th-ink);font-size:12px;font-weight:700}
-.th-update{display:flex;align-items:center;justify-content:center;gap:5px;min-width:44px;max-width:104px;min-height:44px;margin-right:2px;padding:0 9px;border:0;border-radius:10px;background:var(--th-soft);color:var(--th-accent);font-size:11px;font-weight:650;white-space:nowrap}
-.th-update span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.th-update svg{width:16px;height:16px;flex:none}
-.th-update[data-busy]{opacity:.65;pointer-events:none}
-.tasco-workspace #homeSection{color:var(--th-ink)}
-#homeSection .th-welcome{margin:0 0 24px}
-.th-welcome-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;color:var(--th-muted);font-size:11px;font-weight:500;line-height:1.5}
-.th-date{font-variant-numeric:tabular-nums;white-space:nowrap}
-#homeSection .th-welcome h1{margin:0;font-size:30px;font-weight:650;letter-spacing:-1px;line-height:1.25;overflow-wrap:anywhere}
-#homeSection .th-welcome p{margin:8px 0 0;color:var(--th-muted);font-size:12px;line-height:1.6}
-.th-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:24px}
-.th-main,.th-side{min-width:0}
-#homeSection .th-search-card{padding:22px;border:1px solid #294467;border-radius:20px;background:#183056;color:#fff}
-.th-search-heading{display:flex;align-items:center;gap:10px}
-.th-search-heading>svg{width:22px;height:22px;color:#a7d5dc;flex:none}
-#homeSection .th-search-card h2{margin:0;font-size:19px;font-weight:650;letter-spacing:-.4px;line-height:1.4;color:#fff}
-#homeSection .th-search-card p{margin:8px 0 18px;font-size:12px;line-height:1.65;color:#c5d5e4}
-.th-search-form{display:flex;align-items:center;gap:8px;min-height:54px;padding:5px 6px 5px 13px;border:1px solid transparent;border-radius:12px;background:#fff}
-.th-search-form>svg{width:19px;height:19px;flex:none;color:#6a7b8e}
-#homeSection .th-search-form input{
-  display:block;flex:1;min-width:0;width:100%;height:42px;padding:0;border:0;border-radius:0;
-  background:transparent!important;color:#183056!important;border:0!important;font-family:inherit;font-size:16px;line-height:1.4;outline:none;box-shadow:none!important;
-}
-#homeSection .th-search-form input::placeholder{color:#6a7b8e;font-size:14px}
-.th-search-form:focus-within{outline:3px solid #84bfc7;outline-offset:3px}
-.th-search-form button{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;padding:0;border:0;border-radius:9px;background:#183056;color:#fff}
-.th-search-form button svg{width:19px;height:19px}
-.th-search-form button:disabled{opacity:.5}
-.th-filter-link{display:flex;align-items:center;gap:8px;max-width:100%;min-height:44px;margin:7px 0 -8px;padding:4px 0;border:0;background:transparent;color:#d7e7eb;font-size:11px;line-height:1.5;text-align:left}
-.th-filter-link>svg{width:15px;height:15px;flex:none}
-.th-filter-link span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.th-filter-link>svg:last-child{width:12px;height:12px}
-#homeSection .th-home-error{margin:12px 0 0;color:#ffe0d9;font-size:12px}
-.th-section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 12px}
-#homeSection .th-section-heading h2{margin:0;font-size:16px;font-weight:650;letter-spacing:-.3px;line-height:1.5}
-.th-quick-section{margin-top:24px}
-.th-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.th-quick-card{display:flex;flex-direction:column;align-items:flex-start;gap:15px;min-width:0;min-height:132px;padding:17px;border:1px solid var(--th-line);border-radius:17px;background:var(--th-surface);color:var(--th-ink);text-align:left}
-.th-quick-top{display:flex;align-items:center;justify-content:space-between;width:100%}
-.th-action-icon{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:11px;background:var(--th-soft);color:var(--th-accent)}
-.th-action-icon svg{width:22px;height:22px}
-.th-quick-top>svg{width:16px;height:16px;color:var(--th-muted)}
-.th-quick-copy{display:block;min-width:0}
-.th-quick-copy strong{display:block;font-size:14px;font-weight:650;letter-spacing:-.15px;line-height:1.45}
-.th-quick-copy small{display:block;margin-top:4px;color:var(--th-muted);font-size:11px;font-weight:450;line-height:1.5}
-.th-quick-card:disabled .th-action-icon{color:var(--th-muted)}
-.th-quick-card:disabled{opacity:.65}
-.th-tools{overflow:hidden;border:1px solid var(--th-line);border-radius:17px;background:var(--th-surface)}
-.th-tool{display:flex;align-items:center;gap:13px;position:relative;width:100%;min-height:76px;padding:14px 16px;border:0;background:transparent;color:var(--th-ink);text-align:left}
-.th-tool+.th-tool::before{content:'';position:absolute;top:0;left:57px;right:16px;height:1px;background:var(--th-line)}
-.th-tool>svg:first-child{width:23px;height:23px;flex:none;color:var(--th-accent)}
-.th-tool>span{flex:1;min-width:0}
-.th-tool strong{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.1px;line-height:1.5}
-.th-tool small{display:block;margin-top:3px;color:var(--th-muted);font-size:11px;line-height:1.5}
-.th-tool>svg:last-child{width:15px;height:15px;flex:none;color:var(--th-muted)}
-.th-account-link{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;margin-top:10px;padding:9px 10px;border:0;border-radius:10px;background:transparent;color:var(--th-muted);font-size:12px;text-align:left}
-.th-account-link svg{width:18px;height:18px;flex:none}
-.th-account-link span{flex:1}
-.th-account-link>svg:last-child{width:14px;height:14px}
-.th-recent-section{margin-top:28px}
-.th-section-link{display:flex;align-items:center;gap:5px;flex-shrink:0;min-height:44px;margin:-6px -6px -6px 0;padding:6px;border:0;border-radius:8px;background:transparent;color:var(--th-accent);font-size:11px;font-weight:600}
-.th-section-link svg{width:14px;height:14px}
-.th-cloud-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:-2px 0 14px;min-height:18px}
-.th-cloud-status{display:flex;align-items:center;gap:6px;color:var(--th-muted);font-size:10px;line-height:1.4}
-.th-cloud-status::before{content:'';width:5px;height:5px;flex:none;border-radius:50%;background:var(--th-muted)}
-.th-cloud-status[data-state=ready]::before{background:#3d8879}
-.th-cloud-status[data-state=error]::before{background:#c17467}
-.th-pending{min-height:44px;padding:4px 8px;border:1px solid var(--th-line);border-radius:7px;background:var(--th-surface);color:var(--th-accent);font-size:10px;white-space:nowrap}
-.th-recent-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.th-recent-card{display:block;min-width:0;padding:0;overflow:hidden;border:1px solid var(--th-line);border-radius:13px;background:var(--th-surface);color:var(--th-ink);text-align:left}
-.th-recent-media{position:relative;display:grid;place-items:center;aspect-ratio:1.25;background:var(--th-soft);overflow:hidden}
-.th-recent-media>svg{width:26px;height:26px;color:var(--th-muted);opacity:.5}
-.th-recent-media img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
-.th-recent-card>span:not(.th-recent-media){display:block;padding:9px 10px 0;font-size:11px;font-weight:600;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.th-recent-card>small{display:block;padding:3px 10px 10px;color:var(--th-muted);font-size:10px;line-height:1.5}
-.th-recent-media .th-media-badge{position:absolute;right:7px;bottom:7px;display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:#183056d9;color:#fff}
-.th-media-badge svg{width:12px;height:12px}
-.th-empty{display:flex;align-items:center;gap:13px;min-height:96px;padding:18px;border:1px solid var(--th-line);border-radius:15px;background:var(--th-surface)}
-.th-empty>svg{width:28px;height:28px;flex:none;color:var(--th-muted)}
-.th-empty strong{display:block;font-size:13px;font-weight:600;line-height:1.5}
-.th-empty p{margin:4px 0 0;color:var(--th-muted);font-size:11px;line-height:1.6}
-.th-admin{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:64px;margin-top:24px;padding:14px 16px;border:1px solid var(--th-line);border-radius:14px;background:var(--th-surface);color:var(--th-ink);text-align:left}
-.th-admin strong{display:block;font-size:13px;font-weight:600}
-.th-admin small{display:block;margin-top:4px;color:var(--th-muted);font-size:11px}
-.th-admin svg{width:17px;height:17px}
-.th-footer{margin:26px 0 0;color:var(--th-muted);font-size:9px;font-weight:500;letter-spacing:.08em;text-align:center;line-height:1.7}
-#homeSection button,#mainHeader button{transition:background-color 120ms ease,border-color 120ms ease}
-#homeSection button:focus-visible,#mainHeader button:focus-visible{outline:2px solid var(--th-accent);outline-offset:3px}
-#homeSection .th-search-form button:focus-visible,#homeSection .th-filter-link:focus-visible{outline-color:#a7d5dc}
-#homeSection :is(.th-quick-card,.th-tool,.th-account-link,.th-recent-card,.th-admin):active{background:var(--th-soft)}
-@media(hover:hover){
-  #homeSection :is(.th-quick-card,.th-recent-card,.th-admin):not(:disabled):hover{border-color:#a7bfca}
-  #homeSection :is(.th-tool,.th-account-link):hover,#mainHeader .th-theme:hover{background:var(--th-soft)}
-}
-@media(min-width:900px){
-  .tasco-workspace #mainApp[data-page=home]{padding-left:32px!important;padding-right:32px!important}
-  .tasco-workspace #mainHeader.th-topbar{padding-top:28px;padding-bottom:30px}
-  #homeSection .th-welcome{margin-bottom:30px}
-  #homeSection .th-welcome h1{font-size:34px}
-  .th-grid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
-  #homeSection .th-search-card{padding:24px}
-  .th-quick-card{min-height:138px;padding:19px}
-  .th-tool{min-height:88px;padding-left:20px;padding-right:20px}
-  .th-tool+.th-tool::before{left:61px;right:20px}
-  .th-recent-grid{gap:16px}
-  .th-recent-media{aspect-ratio:1.9}
-}
-@media(max-width:370px){
-  .tasco-workspace #mainApp[data-page=home]{padding-left:16px!important;padding-right:16px!important}
-  .th-brand{gap:8px}.th-brand strong{font-size:13px}.th-brand small{font-size:9px}
-  .th-logo{width:32px;flex-basis:32px;height:36px}.th-header-actions{gap:0}
-  .th-update{max-width:94px}
-  #homeSection .th-search-card{padding:18px}
-  .th-quick-card{padding:14px}.th-quick-copy strong{font-size:13px}
-  .th-welcome-meta{font-size:10px}
-}
-@media(max-width:410px){.th-header-actions:has(.th-update:not([hidden])) .th-theme{display:none}}
-@media(prefers-reduced-motion:reduce){#homeSection *,#mainHeader *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-</style>
-
 <style id="tascoBottomBars">
 /* Thanh điều hướng và thanh chọn ảnh dùng chung hệ màu, kích thước và safe area. */
 body.tasco-workspace{
@@ -12967,44 +13018,6 @@ window.TascoVersion = (function () {
   setTimeout(check, 4000);
   render();
   return { check: check, current: function () { return fmt(loaded); }, latest: function () { return latest ? fmt(latest) : ''; } };
-})();
-</script>
-<script id="tascoHomeController">
-window.TascoHome=(()=>{
-  const form=document.getElementById('homeSearchForm'),input=document.getElementById('homeSearchInput'),error=document.querySelector('[data-home-error]');
-  let busy=false;
-  function syncFilters(){
-    const parts=[];
-    for(const [valueId,labelId] of [['filterHang','labelHang'],['labelHieu','labelHieu'],['labelNam','labelNam'],['filterType','labelType']]){
-      const valueNode=document.getElementById(valueId),label=document.getElementById(labelId)?.textContent.trim();
-      const value=valueNode?.value??label;
-      if(value&&value!=='all'&&label&&label!=='Tất cả')parts.push(label);
-    }
-    if(document.getElementById('exactPartName')?.value==='1')parts.push('Khớp tên chính xác');
-    document.querySelectorAll('[data-home-filters]').forEach(node=>{node.textContent=parts.length?parts.join(' · '):'Chọn hãng xe, dòng xe và năm sản xuất';node.title=node.textContent;});
-  }
-  async function search(event){
-    event?.preventDefault();if(busy)return;
-    const target=document.getElementById('searchInput'),query=input.value.trim();
-    error.hidden=true;
-    if(!target||typeof window.updateView!=='function'||query&&typeof window.searchData!=='function'){
-      error.textContent='Tra cứu chưa sẵn sàng. Vui lòng thử lại sau.';error.hidden=false;return;
-    }
-    if(!query){window.updateView('lookup');target.focus({preventScroll:true});return;}
-    busy=true;form.setAttribute('aria-busy','true');form.querySelector('button').disabled=true;
-    try{
-      target.value=query;target.dispatchEvent(new Event('input',{bubbles:true}));
-      window.updateView('lookup');
-      await window.searchData();
-    }catch(problem){
-      const message=problem?.message||'Chưa tra cứu được. Vui lòng thử lại.';
-      if(typeof window.customAlert==='function')window.customAlert(message);else{error.textContent=message;error.hidden=false;window.updateView('home');}
-    }finally{busy=false;form.setAttribute('aria-busy','false');form.querySelector('button').disabled=false;}
-  }
-  form.addEventListener('submit',search);
-  input.addEventListener('keydown',event=>{if(event.key==='Enter'&&event.isComposing)event.preventDefault();});
-  syncFilters();
-  return {search,syncFilters};
 })();
 </script>
 <script id="tascoPwaInstall">
