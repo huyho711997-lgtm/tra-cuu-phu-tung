@@ -9,12 +9,13 @@
     "preferredContentMode": "mobile"
   },
   "server": {
-    "url": "https://huyho711997-lgtm.github.io/tra-cuu-phu-tung/mobile",
+    "url": "https://huyho711997-lgtm.github.io",
     "allowNavigation": [
       "huyho711997-lgtm.github.io"
     ],
     "cleartext": false,
-    "errorPath": "offline.html"
+    "errorPath": "offline.html",
+    "appStartPath": "tra-cuu-phu-tung/mobile"
   },
-  "appendUserAgent": "TascoApp/2"
+  "appendUserAgent": "TascoApp/3"
 }

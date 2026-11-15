@@ -11285,6 +11285,7 @@ window.TascoNavigationMotion = (() => {
   function setNote(t) { panel.querySelector('[data-video-note]').textContent = t; }
   function setProgress(p) { var box = panel.querySelector('.camera-video-progress'); box.hidden = false; box.querySelector('progress').value = p; panel.querySelector('[data-video-pct]').textContent = Math.round(p) + '%'; }
   function closePanel() {
+    if (session && session.cleanup) { try { session.cleanup(); } catch (_) {} }
     panel.hidden = true; panel.querySelector('.camera-video-progress').hidden = true;
     panel.querySelector('[data-video-action="start"]').disabled = false;
     session = null; cameraUiState.captureBusy = false;
@@ -11292,8 +11293,9 @@ window.TascoNavigationMotion = (() => {
     if (modal() && modal().style.display !== 'none') { try { startCustomCameraStream(); } catch (_) {} }
   }
 
-  async function burn(file, lines, appearance, onProgress, signal) {
-    var url = URL.createObjectURL(file), video = document.createElement('video');
+  async function burn(source, lines, appearance, onProgress, signal) {
+    var isUrl = typeof source === 'string', url = isUrl ? source : URL.createObjectURL(source), video = document.createElement('video');
+    if (isUrl) video.crossOrigin = 'anonymous';  // giữ canvas sạch để ghi lại được
     video.playsInline = true; video.setAttribute('playsinline', ''); video.preload = 'auto'; video.src = url;
     var audioCtx = null, recorder = null, stopDraw = false;
     try {
@@ -11343,12 +11345,12 @@ window.TascoNavigationMotion = (() => {
       try { if (recorder && recorder.state !== 'inactive') recorder.stop(); } catch (_) {}
       try { audioCtx && audioCtx.close(); } catch (_) {}
       try { video.pause(); video.removeAttribute('src'); video.load(); } catch (_) {}
-      URL.revokeObjectURL(url);
+      if (!isUrl) URL.revokeObjectURL(url);
     }
   }
 
   async function start() {
-    var s = session; if (!s || !s.file) return;
+    var s = session; if (!s || !(s.file || s.src)) return;
     var startBtn = panel.querySelector('[data-video-action="start"]'); startBtn.disabled = true;
     var abort = new AbortController(); s.cancel = function () { abort.abort(); };
     setNote('Đang in dấu lên video… Giữ màn hình sáng, không thoát app.'); setProgress(0);
@@ -11356,7 +11358,8 @@ window.TascoNavigationMotion = (() => {
       var location = await s.metadata.locationPromise;
       var appearance = s.metadata.appearance;
       var lines = cameraWatermarkLines(location, s.metadata.capturedAt, 'camera', appearance);
-      var out = await burn(s.file, lines, appearance, setProgress, abort.signal);
+      var out = await burn(s.src || s.file, lines, appearance, setProgress, abort.signal);
+      if (s.cleanup) { try { s.cleanup(); } catch (_) {} s.cleanup = null; }
       if (session !== s) return;
       var name = 'video_' + s.metadata.capturedAt + '.' + out.ext;
       var file = new File([out.blob], name, { type: out.blob.type, lastModified: s.metadata.capturedAt });
@@ -11411,7 +11414,18 @@ window.TascoNavigationMotion = (() => {
       if (document.hasFocus()) { window.addEventListener('focus', function once() { setTimeout(function () { if (session && !session.file && !input.files.length) closePanel(); }, 1200); }, { once: true }); }
     }, 600);
   };
-  window.TascoVideoCapture = { supported: supported, busy: function () { return !!session; } };
+  /* Camera native gọi khi quay xong: src là URL capacitor:// của tệp video trong máy. */
+  async function processRecorded(opts) {
+    session = { metadata: opts.metadata, title: mobileCameraTitle, album: mobileCameraAlbum, owner: mobileCameraOwner, file: null, src: opts.src, cleanup: opts.cleanup || null, cancel: null };
+    cameraUiState.captureBusy = true;
+    mountPanel(); panel.hidden = false;
+    var probe = document.createElement('video'); probe.crossOrigin = 'anonymous'; probe.preload = 'metadata'; probe.src = opts.src;
+    var dur = await new Promise(function (ok) { probe.onloadedmetadata = function () { ok(probe.duration); }; probe.onerror = function () { ok(NaN); }; setTimeout(function () { ok(NaN); }, 5000); });
+    probe.removeAttribute('src'); try { probe.load(); } catch (_) {}
+    setInfo((isFinite(dur) ? 'Thời lượng ' + fmt(dur) : 'Video mới') + ' · quay bằng camera iPhone');
+    setNote('App sẽ phát lại video để in dấu ngày giờ và vị trí lên hình (mất khoảng ' + fmt(Math.min(dur || MAX_SECONDS, MAX_SECONDS)) + '). Giữ màn hình sáng, không thoát app trong lúc xử lý.');
+  }
+  window.TascoVideoCapture = { supported: supported, busy: function () { return !!session; }, processRecorded: processRecorded, maxSeconds: MAX_SECONDS };
 })();
 </script>
 <style id="tascoVideoCaptureStyles">
@@ -11448,7 +11462,9 @@ window.TascoNavigationMotion = (() => {
   if (!CP) return;
   window.TASCO_NATIVE_CAMERA = true;
 
-  var st = { running: false, starting: null, gen: 0, rect: null, zooms: [1], zoom: 1, position: 'rear', flashModes: [], flash: 'off' };
+  var st = { running: false, starting: null, gen: 0, rect: null, zooms: [1], zoom: 1, position: 'rear', flashModes: [], flash: 'off', mode: 'photo', recording: false, recBusy: false, recStart: 0, recTimer: null, recMeta: null };
+  /* Quay video bằng camera native cần bản app có server.url đúng tên miền (đọc tệp video qua CORS): 'TascoApp/3'. */
+  var canNativeVideo = /TascoApp\/([3-9]|\d\d)/.test(navigator.userAgent);
   var root = document.documentElement;
   var MAX_SIDE = { economy: 2048, high: 3024, maximum: 4032 };
   /* CSS của trang có nền !important độ ưu tiên cao (html[data-tasco-page] body...), nên ép trong suốt bằng style inline. */
@@ -11487,6 +11503,7 @@ window.TascoNavigationMotion = (() => {
     st.gen++;
     var wasActive = st.running || st.starting;
     st.running = false; st.rect = null;
+    if (st.recording) { st.recording = false; clearInterval(st.recTimer); var mm = cameraModal(); if (mm) mm.dataset.recording = 'false'; }
     root.classList.remove('tasco-native-cam'); setTransparent(false); clearPlane();
     var m = cameraModal(); if (m) delete m.dataset.nativeTurn;
     if (wasActive) CP.stop({ force: true }).catch(function () {});
@@ -11505,6 +11522,8 @@ window.TascoNavigationMotion = (() => {
     if (!modalOpen()) return Promise.resolve(null);
     if (st.starting) return st.starting;
     var gen = ++st.gen;
+    // Mỗi lần mở camera mới bắt đầu ở chế độ chụp ảnh.
+    if (st.session !== cameraUiState.session) { st.session = cameraUiState.session; st.mode = 'photo'; }
     st.starting = (async function () {
       root.classList.add('tasco-native-cam'); setTransparent(true);
       window.syncCameraViewport();   // bỏ xoay giao diện trước khi đo
@@ -11516,9 +11535,10 @@ window.TascoNavigationMotion = (() => {
       try {
         result = await CP.start({
           position: st.position, toBack: true, aspectRatio: '4:3', aspectMode: 'contain', y: y,
-          disableAudio: true, rotateWhenOrientationChanged: false, force: true,
+          rotateWhenOrientationChanged: false, force: true,
           gridMode: cameraAppearance.showGrid ? '3x3' : 'none',
-          captureResolution: { width: 4032, height: 3024 }
+          captureResolution: { width: 4032, height: 3024 },
+          enableVideoMode: st.mode === 'video', disableAudio: st.mode !== 'video', videoQuality: '1080p'
         });
       } catch (error) {
         if (gen === st.gen) {
@@ -11534,7 +11554,7 @@ window.TascoNavigationMotion = (() => {
       customCameraFacingMode = st.position === 'front' ? 'user' : 'environment';
       await refreshCapabilities();
       if (gen !== st.gen) return null;
-      placePlane(); renderCameraLensChoices(); syncCameraViewport();
+      placePlane(); renderCameraLensChoices(); syncCameraViewport(); updateModeUI();
       return true;
     })();
     var task = st.starting;
@@ -11597,7 +11617,7 @@ window.TascoNavigationMotion = (() => {
   };
 
   window.switchCustomCamera = async function () {
-    if (!st.running || mobileCameraSaving || cameraControlsState.busy || cameraUiState.captureBusy) return;
+    if (!st.running || st.recording || mobileCameraSaving || cameraControlsState.busy || cameraUiState.captureBusy) return;
     cameraControlsState.busy = true; renderCameraLensChoices();
     try {
       await CP.flip();
@@ -11630,6 +11650,7 @@ window.TascoNavigationMotion = (() => {
 
   window.triggerCustomCameraCapture = async function () {
     if (!TascoAppShell.canCloud()) { feedback('Chưa có quyền Cloud để chụp ảnh.'); return; }
+    if (st.mode === 'video') { toggleRecording(); return; }
     if (!st.running || cameraUiState.captureBusy || cameraControlsState.busy || cameraControlsState.settingsOpen || mobileCameraSaving) return;
     var session = cameraUiState.session, metadata = createCameraPhotoMetadata();
     cameraUiState.captureBusy = true; syncCameraViewport();
@@ -11657,6 +11678,60 @@ window.TascoNavigationMotion = (() => {
     }
   };
 
+  /* ---- Quay video bằng camera native: 1080p, chống rung, có tiếng ---- */
+  function fmtTime(sec) { return Math.floor(sec / 60) + ':' + String(Math.floor(sec % 60)).padStart(2, '0'); }
+  function updateModeUI() {
+    var m = cameraModal(); if (!m) return;
+    m.dataset.nativeMode = st.mode; m.dataset.recording = st.recording ? 'true' : 'false';
+    var btn = m.querySelector('.camera-video-btn'); if (btn && btn.lastChild) btn.lastChild.textContent = st.mode === 'video' ? 'Ảnh' : 'Video';
+    if (btn) btn.disabled = st.recording || cameraControlsState.busy;
+    var count = document.getElementById('cameraPhotoCount');
+    if (count && st.mode === 'video') count.textContent = st.recording ? '● ' + fmtTime((Date.now() - st.recStart) / 1000) + ' / 3:00' : 'Bấm nút đỏ để quay';
+    else if (count && st.mode === 'photo') { try { syncCameraPhotoTray(); } catch (_) {} }
+  }
+  function finishRecording(path) {
+    if (!st.recording) return;
+    st.recording = false; clearInterval(st.recTimer); updateModeUI();
+    if (!path) { feedback('Chưa lưu được video. Thử quay lại.'); return; }
+    var meta = st.recMeta; st.recMeta = null;
+    stopNative();  // giải phóng camera trong lúc in dấu
+    window.TascoVideoCapture.processRecorded({
+      src: cap.convertFileSrc(path), metadata: meta,
+      cleanup: function () { CP.deleteFile({ path: path }).catch(function () {}); }
+    });
+  }
+  async function toggleRecording() {
+    if (!st.running || st.recBusy || cameraControlsState.busy) return;
+    st.recBusy = true;
+    try {
+      if (!st.recording) {
+        st.recMeta = createCameraPhotoMetadata();
+        await CP.startRecordVideo({ videoStabilizationMode: 'standard', videoBitrate: 12000000, videoCodec: 'avc1', maxDuration: window.TascoVideoCapture.maxSeconds, mirrorFrontCamera: !!cameraAppearance.mirrorFront });
+        st.recording = true; st.recStart = Date.now();
+        st.recTimer = setInterval(updateModeUI, 500);
+      } else {
+        var res = await CP.stopRecordVideo();
+        finishRecording(res && res.videoFilePath);
+      }
+    } catch (error) {
+      if (st.recording) { st.recording = false; clearInterval(st.recTimer); }
+      feedback('Chưa quay được video: ' + String((error && error.message) || error || ''), 4000);
+    } finally { st.recBusy = false; updateModeUI(); }
+  }
+  // Tự dừng khi đủ 3 phút.
+  try { CP.addListener('recordingFinished', function (e) { if (e && e.reason && e.reason !== 'manual') finishRecording(e.videoFilePath); }); } catch (_) {}
+
+  var webRecordVideo = window.tascoRecordVideo;
+  window.tascoRecordVideo = async function () {
+    if (!canNativeVideo) return webRecordVideo();
+    if (st.recording || st.recBusy || cameraControlsState.busy || cameraUiState.captureBusy || mobileCameraSaving) return;
+    if (!window.TascoVideoCapture.supported()) { feedback('Thiết bị này chưa hỗ trợ in dấu lên video. Cập nhật iOS rồi thử lại.', 3500); return; }
+    st.mode = st.mode === 'video' ? 'photo' : 'video';
+    cameraControlsState.busy = true; updateModeUI();
+    try { await startNative(); } finally { cameraControlsState.busy = false; updateModeUI(); renderCameraLensChoices(); syncCameraViewport(); }
+    feedback(st.mode === 'video' ? 'Chế độ quay video. Bấm nút đỏ để quay, bấm lại để dừng (tối đa 3 phút).' : 'Chế độ chụp ảnh.', 2600);
+  };
+
   window.addEventListener('pagehide', stopNative);
 })();
 </script>
@@ -11673,6 +11748,9 @@ html.tasco-native-cam #customCameraModal :is(.camera-action-btn svg, #cameraLens
 html.tasco-native-cam #customCameraModal[data-native-turn="90"] :is(.camera-action-btn svg, #cameraLensBar button) { transform: rotate(90deg); }
 html.tasco-native-cam #customCameraModal[data-native-turn="-90"] :is(.camera-action-btn svg, #cameraLensBar button) { transform: rotate(-90deg); }
 html.tasco-native-cam #customCameraModal[data-native-turn="180"] :is(.camera-action-btn svg, #cameraLensBar button) { transform: rotate(180deg); }
+html.tasco-native-cam #customCameraModal[data-native-mode="video"] .camera-capture-inner { background: #e5484d; transition: all .2s ease; }
+html.tasco-native-cam #customCameraModal[data-recording="true"] .camera-capture-inner { width: 30px; height: 30px; border-radius: 8px; }
+html.tasco-native-cam #customCameraModal[data-recording="true"] #cameraPhotoCount { color: #ff6b6b; font-weight: 700; }
 html.tasco-native-cam #customCameraVideo,
 html.tasco-native-cam #customCameraModal .camera-grid-overlay,
 html.tasco-native-cam #customCameraModal .camera-target-crosshair { display: none !important; }
