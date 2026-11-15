@@ -36,6 +36,15 @@ jobs:
           npm ci
           npm run sync
 
+      - name: Kiểm tra cấu hình khởi động (tránh app văng khi mở)
+        run: |
+          START=$(node -p "require('./capacitor.config.json').server?.appStartPath || ''")
+          test -f ios/App/App/public/index.html || { echo "::error::Thiếu public/index.html"; exit 1; }
+          if [ -n "$START" ]; then
+            test -e "ios/App/App/public/$START" || { echo "::error::Thiếu public/$START: Capacitor sẽ fatalLoadError (văng app) khi mở"; exit 1; }
+          fi
+          plutil -lint ios/App/App/Info.plist
+
       - name: Build không ký
         run: |
           xcodebuild build \
