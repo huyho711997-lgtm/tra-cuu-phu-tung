@@ -4347,7 +4347,7 @@ window.TascoForms=(()=>{
 
   /* PDF: dựng từng trang bằng PDF.js, chỉ vẽ các trang đang gần màn hình */
   async function runPdf(st,buffer){
-    const lib=await pdfLib(),pdf=await lib.getDocument({data:new Uint8Array(buffer)}).promise;
+    const lib=await pdfLib(),pdf=await lib.getDocument({data:new Uint8Array(buffer.slice(0))}).promise;  // PDF.js chuyển (detach) buffer sang worker → đưa bản sao để giữ st.buffer nguyên vẹn cho ký số MySign
     st.pdf=pdf;st.total=pdf.numPages;st.pageObjs=[];
     for(let i=1;i<=st.total;i+=24){
       const batch=await Promise.all(Array.from({length:Math.min(24,st.total-i+1)},(_,k)=>pdf.getPage(i+k)));
@@ -4578,13 +4578,15 @@ window.TascoForms=(()=>{
       if(event.key==='Escape'){event.preventDefault();closeDialog();}
     });
 
+    const shareBtn=dialog.querySelector('[data-mysign="share"]');
+    if(!st.signingFile)shareBtn.disabled=true;
     st.overlay.append(dialog);
     dialog.querySelector('[data-mysign="close"]').focus({preventScroll:true});
 
     // Chuẩn bị tệp ký
     try{
       if(!st.signingFile){
-        let buffer=st.buffer;
+        let buffer=st.buffer&&st.buffer.byteLength>0?st.buffer:null;  // buffer đã bị detach (0 byte) thì tải lại
         if(!buffer){
           statusEl.textContent='Đang tải nội dung tệp…';
           if(config?.apiKey){
@@ -4617,11 +4619,13 @@ window.TascoForms=(()=>{
           finalMime='application/msword';
         }
 
+        if(!buffer.byteLength)throw new Error('Tệp rỗng');
         st.signingFile=new File([buffer],finalName,{type:finalMime,lastModified:Date.now()});
       }
 
       if(!closed){
         statusEl.textContent=`Sẵn sàng chuyển (${bytes(st.signingFile.size)}) · ${st.signingFile.name}`;
+        shareBtn.disabled=false;
       }
     }catch(err){
       if(!closed){
