@@ -9877,7 +9877,12 @@ async function closeCustomCameraModal(savePhotos=false){
   if(savePhotos&&mobileCameraSaving)return;
   if(savePhotos&&!window.TascoAppShell.canCloud()){TascoCloud.notify('Chưa có quyền Cloud. Ảnh chưa lưu vẫn được giữ ở đây.');return;}
   if(savePhotos&&cameraUiState.captureBusy){cameraFeedback('Đợi ảnh đang xử lý xong rồi lưu Cloud.');return;}
-  if(savePhotos){const missing=cameraPlanMissing();if(missing.length&&!confirm('Còn '+missing.length+' mục chưa chụp:\n• '+missing.slice(0,8).join('\n• ')+(missing.length>8?'\n…':'')+'\n\nVẫn lưu và đóng camera?'))return;}
+  if(savePhotos){const missing=cameraPlanMissing();
+    if(missing.length){  // còn mục chưa chụp: hỏi bằng bảng riêng, chạm một mục để chụp tiếp mục đó
+      const answer=await TascoCategories.missing({missing,total:cameraPlan().length,photos:customCameraPhotos.length});
+      if(answer.action!=='save'){if(answer.name)setCameraCategory(answer.name);return;}
+      if(mobileCameraSaving||cameraUiState.captureBusy)return;
+    }}
   const unsentPhotos=customCameraPhotos.filter(file=>!cameraQueueState.has(file));
   if(!savePhotos&&unsentPhotos.length&&!confirm('Đóng camera và bỏ '+unsentPhotos.length+' ảnh chưa lưu?'))return;
   if(savePhotos){
@@ -11533,6 +11538,7 @@ window.TascoCategories = (function () {
     x: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg>',
     cam: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.4-2h5l1.4 2h1.6A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.4"/></svg>',
     list: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg>',
+    alert: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17.2v.1"/></svg>',
     tag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12.2V5a1.5 1.5 0 0 1 1.5-1.5h7.2l8.3 8.3a1.5 1.5 0 0 1 0 2.1l-7.1 7.1a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.4"/></svg>'
   };
   /* open({ current, extra: [tên trong album], title, subtitle, onPick(name|''),
@@ -11634,7 +11640,10 @@ window.TascoCategories = (function () {
         var drop = function () { plan = plan.filter(function (x) { return x !== n; }); if (same(selected, n)) selected = plan.find(function (x) { return !isDone(x); }) || ''; savePlan(); render(); };
         if (li) { li.classList.add('is-removing'); setTimeout(drop, 160); } else drop();
       }
-      if (a === 'clearplan' && confirm('Xoá cả danh sách cần chụp của album này?')) { plan = []; selected = ''; savePlan(); render(); }
+      if (a === 'clearplan') {
+        if (!b.classList.contains('is-armed')) { b.classList.add('is-armed'); b.textContent = 'Chạm lần nữa để xoá'; setTimeout(function () { if (b.isConnected) { b.classList.remove('is-armed'); b.textContent = 'Xoá hết'; } }, 3000); return; }
+        plan = []; selected = ''; savePlan(); render();
+      }
     });
     /* Bàn phím iOS: giữ bảng nằm trọn trong vùng nhìn thấy */
     var vv = window.visualViewport;
@@ -11644,7 +11653,41 @@ window.TascoCategories = (function () {
     (document.getElementById('customCameraModal')?.style.display === 'flex' ? document.getElementById('customCameraModal') : document.body).append(wrap);
     setTimeout(function () { if (planMode ? !plan.length : !opts.current) input.focus(); }, 80);
   }
-  return { open: open, recent: recent, remember: remember, clean: clean };
+  /* Bảng nhắc khi bấm Xong mà danh sách còn mục chưa chụp (thay hộp thoại hệ thống).
+     missing({ missing: [..], total, photos }) -> Promise<{ action: 'save' } | { action: 'shoot', name }> */
+  function missing(opts) {
+    return new Promise(function (resolve) {
+      document.querySelector('.tasco-cat-sheet')?.remove();
+      var list = (opts.missing || []).slice(), total = Math.max(opts.total || 0, list.length), done = total - list.length, photos = opts.photos || 0, settled = false;
+      var wrap = document.createElement('div'); wrap.className = 'tasco-cat-sheet is-plan is-missing'; wrap.setAttribute('role', 'alertdialog'); wrap.setAttribute('aria-modal', 'true'); wrap.setAttribute('aria-labelledby', 'tcsMissingTitle');
+      wrap.innerHTML = '<div class="tasco-cat-panel">' +
+        '<i class="tcs-grab" aria-hidden="true"></i>' +
+        '<header class="tcs-head"><span class="tcs-badge">' + ICON.alert + '</span><div><h3 id="tcsMissingTitle">Còn ' + list.length + ' mục chưa chụp</h3><p>' + photos + ' ảnh đã chụp sẵn sàng lưu</p></div>' +
+        '<button type="button" class="tcs-close" data-cat="back" aria-label="Quay lại chụp">' + ICON.x + '</button></header>' +
+        '<div class="tcs-progress"><div><span>Đã chụp ' + done + ' / ' + total + ' mục</span><b>' + Math.round(done / (total || 1) * 100) + '%</b></div><i><em style="width:' + Math.round(done / (total || 1) * 100) + '%"></em></i></div>' +
+        '<div class="tcs-body"><div class="tcs-sec"><strong>Chạm để chụp tiếp mục đó</strong></div><ol class="tcs-rows">' +
+        list.map(function (n) { return '<li class="tcs-row"><button type="button" class="tcs-row-main" data-cat="pick" data-name="' + esc(n) + '"><span class="tcs-dot">!</span><span class="tcs-name"><strong>' + esc(n) + '</strong><small>Chưa chụp</small></span><span class="tcs-cam" aria-hidden="true">' + ICON.cam + '</span></button></li>'; }).join('') +
+        '</ol></div>' +
+        '<footer class="tcs-foot"><button type="button" class="tcs-none" data-cat="back">' + ICON.cam + '<span>Chụp tiếp</span></button><button type="button" class="tcs-go tcs-save" data-cat="save">' + ICON.check + '<span>Vẫn lưu ' + photos + ' ảnh</span></button></footer></div>';
+      function finish(v) {
+        if (settled) return; settled = true;
+        document.removeEventListener('keydown', onKey, true);
+        wrap.classList.add('is-leaving'); setTimeout(function () { wrap.remove(); }, 180);
+        resolve(v);
+      }
+      function onKey(e) { if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); finish({ action: 'shoot', name: list[0] }); } }
+      document.addEventListener('keydown', onKey, true);
+      wrap.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-cat]');
+        if (!b) { if (e.target === wrap) finish({ action: 'shoot', name: list[0] }); return; }
+        if (b.dataset.cat === 'pick') finish({ action: 'shoot', name: b.dataset.name });
+        if (b.dataset.cat === 'back') finish({ action: 'shoot', name: list[0] });
+        if (b.dataset.cat === 'save') finish({ action: 'save' });
+      });
+      (document.getElementById('customCameraModal')?.style.display === 'flex' ? document.getElementById('customCameraModal') : document.body).append(wrap);
+    });
+  }
+  return { open: open, missing: missing, recent: recent, remember: remember, clean: clean };
 })();
 </script>
 <style id="tascoCategoryStyles">
@@ -11741,6 +11784,14 @@ window.TascoCategories = (function () {
 .tcs-go b{font-weight:800}
 .tcs-go:active{transform:scale(.98)}
 .tasco-cat-sheet button{-webkit-tap-highlight-color:transparent;cursor:pointer}
+.tcs-sec button.is-armed{padding:4px 10px;border-radius:99px;background:rgba(255,120,110,.16);color:#ffb3ab}
+.tasco-cat-sheet.is-missing .tcs-badge{border-color:rgba(242,217,141,.34);background:linear-gradient(145deg,rgba(242,217,141,.26),rgba(242,217,141,.06));color:var(--tcs-gold)}
+.tasco-cat-sheet.is-missing .tcs-dot{border-style:solid;border-color:rgba(242,217,141,.55);background:rgba(242,217,141,.1)}
+.tasco-cat-sheet.is-missing .tcs-row-main{padding-right:12px}
+.tasco-cat-sheet.is-missing .tcs-cam{background:rgba(143,208,216,.14);color:var(--tcs-accent)}
+.tasco-cat-sheet.is-missing .tcs-foot .tcs-none{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border-color:rgba(143,208,216,.45);color:var(--tcs-accent)}
+.tasco-cat-sheet.is-missing .tcs-save{background:rgba(255,255,255,.08);color:var(--tcs-ink);box-shadow:none;border:1px solid rgba(255,255,255,.14)}
+.tasco-cat-sheet.is-missing .tcs-save svg{color:var(--tcs-accent)}
 @keyframes tcsUp{from{transform:translateY(100%)}to{transform:none}}
 @keyframes tcsDown{to{transform:translateY(100%)}}
 @keyframes tcsFade{from{opacity:0}}
