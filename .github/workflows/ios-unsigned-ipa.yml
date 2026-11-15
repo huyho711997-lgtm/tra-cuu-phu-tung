@@ -1,0 +1,85 @@
+name: iOS IPA miễn phí (nạp bằng Sideloadly/AltStore)
+
+# Tạo file TASCO-DLK.ipa CHƯA KÝ để bạn tự ký bằng Apple ID thường (miễn phí) qua Sideloadly hoặc AltStore.
+# Không cần tài khoản Apple Developer trả phí. File được đưa lên mục Releases (thẻ ios-latest).
+# Cách chạy: tab Actions -> "iOS IPA miễn phí" -> Run workflow.
+# Hướng dẫn nạp vào iPhone: native/HUONG-DAN-MIEN-PHI.md
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ios-unsigned-ipa
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # cần để cập nhật Release ios-latest
+
+jobs:
+  ipa:
+    runs-on: macos-26
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: native
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: native/package-lock.json
+
+      - name: Cài thư viện và đồng bộ web vào app iOS
+        run: |
+          npm ci
+          npm run sync
+
+      - name: Build không ký
+        run: |
+          xcodebuild build \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/dd" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" \
+            | tail -25
+          test ${PIPESTATUS[0]} -eq 0
+        shell: bash
+
+      - name: Đóng gói .ipa
+        run: |
+          APP="$RUNNER_TEMP/dd/Build/Products/Release-iphoneos/App.app"
+          test -d "$APP" || { echo "::error::Không thấy App.app sau khi build"; exit 1; }
+          rm -rf "$RUNNER_TEMP/ipa" && mkdir -p "$RUNNER_TEMP/ipa/Payload"
+          cp -R "$APP" "$RUNNER_TEMP/ipa/Payload/"
+          (cd "$RUNNER_TEMP/ipa" && zip -qry TASCO-DLK.ipa Payload)
+          ls -lh "$RUNNER_TEMP/ipa/TASCO-DLK.ipa"
+          echo "IPA_PATH=$RUNNER_TEMP/ipa/TASCO-DLK.ipa" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TASCO-DLK-ipa
+          path: ${{ env.IPA_PATH }}
+          retention-days: 30
+
+      - name: Cập nhật Release ios-latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        working-directory: ${{ github.workspace }}
+        run: |
+          NOTES="Bản app iOS chưa ký, build số ${GITHUB_RUN_NUMBER} (commit ${GITHUB_SHA::7}). Nạp bằng Sideloadly hoặc AltStore, xem native/HUONG-DAN-MIEN-PHI.md."
+          if gh release view ios-latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release edit ios-latest --repo "$GITHUB_REPOSITORY" --notes "$NOTES" --prerelease
+          else
+            gh release create ios-latest --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease \
+              --title "App iOS mới nhất (nạp thủ công, miễn phí)" --notes "$NOTES"
+          fi
+          gh release upload ios-latest "$IPA_PATH" --repo "$GITHUB_REPOSITORY" --clobber
+          echo "### File .ipa: https://github.com/${GITHUB_REPOSITORY}/releases/tag/ios-latest" >> "$GITHUB_STEP_SUMMARY"
