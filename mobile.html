@@ -11249,6 +11249,14 @@ window.TascoNavigationMotion = (() => {
   var st = { running: false, starting: null, gen: 0, rect: null, zooms: [1], zoom: 1, position: 'rear', flashModes: [], flash: 'off' };
   var root = document.documentElement;
   var MAX_SIDE = { economy: 2048, high: 3024, maximum: 4032 };
+  /* CSS của trang có nền !important độ ưu tiên cao (html[data-tasco-page] body...), nên ép trong suốt bằng style inline. */
+  function setTransparent(on) {
+    [root, document.body].forEach(function (el) {
+      if (!el) return;
+      if (on) { el.style.setProperty('transition', 'none', 'important'); el.style.setProperty('background', 'transparent', 'important'); el.style.setProperty('background-color', 'transparent', 'important'); }
+      else { el.style.removeProperty('background'); el.style.removeProperty('background-color'); el.style.removeProperty('transition'); }
+    });
+  }
 
   function modalOpen() { var m = document.getElementById('customCameraModal'); return !!m && m.style.display !== 'none'; }
   function feedback(text, ms) { try { cameraFeedback(text, ms); } catch (_) {} }
@@ -11268,7 +11276,7 @@ window.TascoNavigationMotion = (() => {
     st.gen++;
     var wasActive = st.running || st.starting;
     st.running = false; st.rect = null;
-    root.classList.remove('tasco-native-cam');
+    root.classList.remove('tasco-native-cam'); setTransparent(false);
     if (wasActive) CP.stop({ force: true }).catch(function () {});
   }
 
@@ -11286,7 +11294,7 @@ window.TascoNavigationMotion = (() => {
     if (st.starting) return st.starting;
     var gen = ++st.gen;
     st.starting = (async function () {
-      root.classList.add('tasco-native-cam');
+      root.classList.add('tasco-native-cam'); setTransparent(true);
       var box = document.querySelector('#customCameraModal .camera-stream-container').getBoundingClientRect();
       var height43 = innerWidth * 4 / 3, y = Math.round(box.top + Math.max(0, (box.height - height43) / 2));
       var result;
@@ -11299,7 +11307,7 @@ window.TascoNavigationMotion = (() => {
         });
       } catch (error) {
         if (gen === st.gen) {
-          root.classList.remove('tasco-native-cam');
+          root.classList.remove('tasco-native-cam'); setTransparent(false);
           var msg = String((error && error.message) || error || '');
           feedback(/denied|permission|authoriz/i.test(msg) ? 'Chưa cấp quyền camera. Vào Cài đặt > TASCO DLK > bật Camera.' : 'Chưa mở được camera. Thử đóng rồi mở lại.', 0);
         }
