@@ -11848,47 +11848,50 @@ window.TascoCategories = (function () {
 </style>
 <style id="tascoCloudAlbumPremium">
 /* Trang Cloud / album (mobile) — gọn, ưu tiên ảnh, giữ màu & kiểu nút của app */
-.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-journey-top{margin-bottom:16px}
-.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-journey-top>button{width:40px;height:40px;border-radius:13px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-journey-top{margin-bottom:12px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-journey-top>button{width:38px;height:38px;border-radius:12px}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-journey-top>button:active{background:rgba(255,255,255,.12)}
 /* — Album đang mở: phần đầu gọn — */
-.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero{padding-bottom:46px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero{padding-bottom:42px}
 .tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-icon,
 .tasco-workspace #personalCloudSection .personal-cloud[data-album-view] [data-cloud-intro]{display:none!important}
 .tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-usage-card{display:none!important}
-.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-copy h1{margin:6px 0 0;font-size:30px;letter-spacing:-.8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-album-title{display:flex;align-items:center;gap:10px;min-width:0}
-.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-album-rename-button{margin-top:6px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-copy h1{margin:4px 0 0;font-size:23px;font-weight:650;line-height:1.3;letter-spacing:-.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-album-title{display:flex;align-items:center;gap:8px;min-width:0}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-album-rename-button{flex:0 0 32px;width:32px;height:32px;min-width:32px;min-height:32px;margin-top:3px;padding:0;border-radius:10px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-album-rename-button svg{width:16px;height:16px}
 .cloud-hero-meta[hidden]{display:none!important}
-.tasco-workspace #personalCloudSection .cloud-hero-meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
-.tasco-workspace #personalCloudSection .cloud-hero-meta span{display:inline-flex;align-items:center;gap:0;min-height:28px;padding:0 11px;border:1px solid rgba(218,236,240,.16);border-radius:99px;background:rgba(255,255,255,.06);color:#daecf0;font-size:12px;font-weight:500;line-height:1}
+.tasco-workspace #personalCloudSection .cloud-hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 0;margin:8px 0 0}
+.tasco-workspace #personalCloudSection .cloud-hero-meta span{display:inline-flex;align-items:center;gap:0;min-height:0;padding:0;border:0;border-radius:0;background:none;color:#b7cde0;font-size:11.5px;font-weight:450;line-height:1.5}
+.tasco-workspace #personalCloudSection .cloud-hero-meta span+span{margin-left:10px;padding-left:10px;border-left:1px solid rgba(218,236,240,.2)}
 .tasco-workspace #personalCloudSection .cloud-hero-meta b{font-weight:700;color:#fff}
-.tasco-workspace #personalCloudSection .cloud-hero-meta .is-synced::before,.tasco-workspace #personalCloudSection .cloud-hero-meta .is-local::before{content:'';width:7px;height:7px;margin-right:7px;border-radius:50%;background:#84bfc7;box-shadow:0 0 0 3px rgba(132,191,199,.22)}
+.tasco-workspace #personalCloudSection .cloud-hero-meta .is-synced::before,.tasco-workspace #personalCloudSection .cloud-hero-meta .is-local::before{content:'';width:6px;height:6px;margin-right:6px;border-radius:50%;background:#84bfc7;box-shadow:0 0 0 3px rgba(132,191,199,.2)}
 .tasco-workspace #personalCloudSection .cloud-hero-meta .is-local::before{background:#e8c77a;box-shadow:0 0 0 3px rgba(232,199,122,.22)}
-.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions{display:flex!important;gap:10px;margin-top:18px}
-.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions .cloud-primary{flex:1;min-width:0;min-height:52px;font-size:15px;box-shadow:0 10px 26px rgba(0,0,0,.22)}
-.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions .cloud-primary svg{width:20px;height:20px}
-.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions .cloud-upload-button{flex:0 0 52px;width:52px;min-width:52px;min-height:52px;padding:0;justify-content:center;border-radius:50%}
-.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions .cloud-upload-button svg{width:20px;height:20px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions{display:flex!important;gap:8px;margin-top:16px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions .cloud-primary{flex:1;min-width:0;min-height:46px;padding:10px 16px;font-size:13.5px;font-weight:600;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions .cloud-primary svg{width:18px;height:18px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions .cloud-upload-button{flex:0 0 46px;width:46px;min-width:46px;min-height:46px;padding:0;justify-content:center;border-radius:50%}
+.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions .cloud-upload-button svg{width:18px;height:18px}
 .tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-actions .cloud-upload-button>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .tasco-workspace #personalCloudSection .cloud-hero-actions .cloud-button:active:not(:disabled){transform:scale(.97)}
 /* — Ô tìm + ngày + làm mới: một hàng — */
-.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-control-panel{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:'head head head' 'search date refresh';column-gap:8px;row-gap:0;margin:-28px 14px 0;padding:10px;border-radius:24px;box-shadow:0 14px 34px rgba(12,28,52,.12)}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-control-panel{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:'head head head' 'search date refresh';column-gap:8px;row-gap:0;margin:-26px 16px 0;padding:8px;border-radius:22px;box-shadow:0 12px 28px rgba(12,28,52,.11)}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-control-panel:has(.cloud-date-trigger[data-value]:not([data-value=""])){grid-template-areas:'head head head' 'search search refresh' 'date date date'}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-panel-heading{grid-area:head;display:none;min-height:0;margin:0 4px 8px}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-panel-heading:has(.cloud-clear-filters:not([hidden])){display:flex}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-panel-heading h2{font-size:12px;font-weight:600;color:var(--ws-muted)}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-panel-heading h2::after{content:' · đang lọc'}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-toolbar{grid-area:search;min-width:0}
-.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-search{min-height:48px;border-radius:16px}
-.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-search input{height:46px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-search{min-height:44px;padding:0 12px;border-radius:14px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-search input{height:42px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-search>svg{width:17px;height:17px}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-details-row{display:contents}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date{grid-area:date;min-width:0}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date>span{display:none}
-.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger{width:48px;min-height:48px;height:48px;padding:0;justify-content:center;border-radius:16px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger{width:44px;min-height:44px;height:44px;padding:0;justify-content:center;border-radius:14px}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger:not([data-value]) [data-cloud-date-label],.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger[data-value=""] [data-cloud-date-label]{display:none}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-date-trigger[data-value]:not([data-value=""]){width:100%;height:auto;min-height:44px;margin-top:8px;padding:8px 14px;justify-content:space-between;flex-direction:row-reverse;color:var(--ws-text)!important;font-weight:600}
-.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-details-row>[data-action=refresh]{grid-area:refresh;width:48px;min-height:48px;height:48px;border-radius:16px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-details-row>[data-action=refresh]{grid-area:refresh;width:44px;min-height:44px;height:44px;border-radius:14px}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] :is(.cloud-date-trigger,.cloud-details-row>[data-action=refresh]):active{transform:scale(.95)}
 /* — Trạng thái đồng bộ (chỉ hiện khi album chưa lên Cloud) — */
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] [data-album-status]{margin:14px 22px 0;font-size:12px;color:var(--ws-muted)}
@@ -11913,9 +11916,21 @@ html.dark .tasco-workspace #personalCloudSection .personal-cloud[data-album-view
 .tasco-workspace #personalCloudSection .personal-cloud[data-album-view=home] .cloud-gallery-heading{margin-top:26px}
 /* — Tiêu đề thư viện — */
 .tasco-workspace #personalCloudSection .personal-cloud[data-album-view=open] .cloud-gallery-heading{margin-top:22px}
-.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-gallery-heading :is([data-action=selection],[data-action=gallery-settings]){min-height:38px;padding:7px 13px;font-size:12.5px;font-weight:600}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-gallery-heading :is([data-action=selection],[data-action=gallery-settings]){min-height:34px;padding:6px 12px;gap:6px;font-size:12px;font-weight:600}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-gallery-heading :is([data-action=selection],[data-action=gallery-settings]) svg{width:15px;height:15px}
 .tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-gallery-heading :is([data-action=selection],[data-action=gallery-settings]):active{transform:scale(.96)}
-@media(max-width:360px){.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-copy h1{font-size:26px}}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-gallery-heading h2{font-size:15.5px;font-weight:650;letter-spacing:-.3px;line-height:1.35}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-gallery-heading [data-cloud-total]{padding:0;background:none;color:var(--ws-muted);font-size:11.5px;font-weight:500}
+/* — Hạng mục + trạng thái trống — */
+.cloud-category-bar button{min-height:32px;padding:0 12px;font-size:11.5px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-empty{gap:6px;min-height:0;padding:26px 20px 22px;border-radius:22px}
+.cloud-empty-symbol{width:46px;height:46px;margin-bottom:2px;border-radius:15px}
+.cloud-empty-symbol svg{width:22px;height:22px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-empty h2{font-size:14.5px;font-weight:650}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-empty p{max-width:260px;font-size:11.5px;line-height:1.65}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-empty .cloud-button{min-height:40px;margin-top:8px;padding:9px 16px;gap:7px;font-size:12.5px}
+.tasco-workspace #personalCloudSection .personal-cloud[data-cloud-theme=mobile] .cloud-empty .cloud-button svg{width:16px;height:16px}
+@media(max-width:360px){.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-copy h1{font-size:21px}.tasco-workspace #personalCloudSection .personal-cloud[data-album-view] .cloud-hero-meta span{font-size:11px}}
 </style>
 <script id="tascoPageTransitions">
 /* Chuyển trang có hiệu ứng trượt + mờ (View Transitions, iOS 18+). Chỉ dùng cho thao tác chạm của người dùng;
