@@ -8855,6 +8855,14 @@ window.TascoCloud = (() => {
       return {secure_url:data.secure_url,public_id:data.public_id,bytes:data.bytes||record.blob.size,width:data.width||0,height:data.height||0};
     }finally{clearTimeout(timeout);}
   }
+  /* Ảnh chụp lúc mất mạng chỉ có tọa độ: khi có mạng, tra tên địa điểm rồi mới ghi lên Cloud (ảnh giữ nguyên dấu tọa độ đã in). */
+  async function fillAddress(record,persist){
+    const geo=record&&record.geo;if(!geo||navigator.onLine===false||typeof window.reverseGeocodeAddress!=='function')return;
+    try{
+      const found=await window.reverseGeocodeAddress(geo.latitude,geo.longitude),address=typeof found==='string'?found:found?.address;
+      if(address){record.address=address;record.location_status=typeof found==='object'&&found?.hasWard===false?'partial':'ready';record.geo=null;if(persist)await localStore('put',record).catch(()=>{});}
+    }catch(_){}
+  }
   async function processQueue() {
     if(state.uploading){state.rerun=true;return;}
     if(state.deleting||state.albumSaving||state.deleteDialog||state.albumDialog)return;state.uploading=true;state.rerun=false;let failed=false;state.syncedCount=state.syncedCount||0;
@@ -8865,6 +8873,7 @@ window.TascoCloud = (() => {
         try{
           if((await account()).id!==owner.id)break;
           await verifyUploadTarget(record);
+          await fillAddress(record,true);
           if(!record.upload){record.upload=await upload(record);record.error='';record.upload_error_code='';await localStore('put',record);}
           if((await account()).id!==owner.id)break;
           const api=await client(),row={id:record.id,owner_id:record.owner_id,title:record.title,address:record.address,location_status:record.location_status,captured_at:record.captured_at,source:'mobile_camera',cloud_name:record.cloud.cloudName,secure_url:record.upload.secure_url,public_id:record.upload.public_id,bytes:record.upload.bytes,width:record.upload.width,height:record.upload.height};
@@ -8912,6 +8921,7 @@ window.TascoCloud = (() => {
         report(index,'Đang tải…');
         if(!record.upload)record.upload=await upload(record);
         report(index,'Đang xác nhận…');
+        await fillAddress(record);
         const row={id:record.id,owner_id:record.owner_id,album_id:record.album_id,title:record.title,address:record.address,location_status:record.location_status,captured_at:record.captured_at,source:'mobile_camera',cloud_name:record.cloud.cloudName,...record.upload,...(record.category?{category:record.category}:{})};
         if(record.origin)row.upload_origin=record.origin;
         const result=await cloudRequest(api.from(table).upsert(row,{onConflict:'id',ignoreDuplicates:true}).select('id,owner_id,album_id'),'lưu ảnh trực tiếp vào Cloud');
@@ -8961,7 +8971,7 @@ window.TascoCloud = (() => {
     }
     for(const file of files){
       const key=owner.id+':'+(album?.id||'');let cached=direct?directRecords.get(file)?.get(key):null;
-      if(!cached){const info=await metadata(file);cached={id:crypto.randomUUID(),owner_id:owner.id,title:String(info.title||title||album?.name||'Ảnh của tôi').slice(0,160),album_id:album?.id||null,album_name:album?.name||'',blob:file,file_name:file.name,captured_at:new Date(info.capturedAt).toISOString(),address:info.location?.address||'',location_status:info.location?.addressStatus||info.location?.status||'unavailable',category:String(info.category||'').trim().slice(0,120)||null,origin:info.origin==='device_upload'?'device_upload':null,cloud,upload:null,error:''};if(direct){let saved=directRecords.get(file);if(!saved){saved=new Map();directRecords.set(file,saved);}saved.set(key,cached);}}
+      if(!cached){const info=await metadata(file);cached={id:crypto.randomUUID(),owner_id:owner.id,title:String(info.title||title||album?.name||'Ảnh của tôi').slice(0,160),album_id:album?.id||null,album_name:album?.name||'',blob:file,file_name:file.name,captured_at:new Date(info.capturedAt).toISOString(),address:info.location?.address||window.cameraGpsText?.(info.location)||'',geo:info.location?.address?null:(window.cameraGpsPoint?.(info.location)||null),location_status:info.location?.addressStatus||info.location?.status||'unavailable',category:String(info.category||'').trim().slice(0,120)||null,origin:info.origin==='device_upload'?'device_upload':null,cloud,upload:null,error:''};if(direct){let saved=directRecords.get(file);if(!saved){saved=new Map();directRecords.set(file,saved);}saved.set(key,cached);}}
       records.push(cached);if(direct&&!cached.confirmed)unsavedDirect.add(cached);
     }
     if((await account()).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Hãy đăng nhập lại trước khi lưu ảnh.');
@@ -9271,13 +9281,19 @@ window.TascoCloud = (() => {
   /* Quay lại app (iOS mở lại từ nền): tiếp tục gửi ảnh còn trong hàng đợi trên máy. */
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.pending.length&&!state.uploading&&hasAccess()&&state.localReady)processQueue();});
   window.addEventListener('pagehide',()=>{cancelDownloads();state.albumDialog?.cancel();window.TascoPhotoViewer?.close();clearURLs();});
-  return {downloadAlbum:id=>startCloudDownload({albumId:id}),downloadSelected:()=>startCloudDownload({ids:[...state.selected]}),cancelDownloads,isDownloading:()=>Boolean(cloudDownload),configure,mount,revokeAccess,refresh,queuePhotos,processQueue,notify,errorMessage:message,categories:()=>(state.categories||[]).map(c=>c.name),categoryCountsNow,categoryCounts,isReady:cloudReady,isUploadReady:uploadReady,queueReady:()=>state.localReady===true&&state.storageStatus==='ready',isUploading:()=>state.uploading,account,icon,createAlbum,renameAlbum,deleteAlbum,openAlbum,captureContext,releaseCapture,importPhotos,captureNotice:()=>state.storageStatus==='unavailable'?'Cần có mạng để lưu ảnh. Giữ màn hình chụp đến khi Lưu Cloud thành công.':'',capture:captureAlbum};
+  return {fillAddress,downloadAlbum:id=>startCloudDownload({albumId:id}),downloadSelected:()=>startCloudDownload({ids:[...state.selected]}),cancelDownloads,isDownloading:()=>Boolean(cloudDownload),configure,mount,revokeAccess,refresh,queuePhotos,processQueue,notify,errorMessage:message,categories:()=>(state.categories||[]).map(c=>c.name),categoryCountsNow,categoryCounts,isReady:cloudReady,isUploadReady:uploadReady,queueReady:()=>state.localReady===true&&state.storageStatus==='ready',isUploading:()=>state.uploading,account,icon,createAlbum,renameAlbum,deleteAlbum,openAlbum,captureContext,releaseCapture,importPhotos,captureNotice:()=>state.storageStatus==='unavailable'?'Cần có mạng để lưu ảnh. Giữ màn hình chụp đến khi Lưu Cloud thành công.':'',capture:captureAlbum};
 })();
 
 let lastFetchedGpsCoords=null,lastFetchedAddress=null,gpsPermissionDenied=false;
 const cameraLocationState={positionRequest:null,latest:null,latestPosition:null,addressCache:[],addressRequests:new Map(),nominatimQueue:Promise.resolve(),lastNominatimAt:0,uiRevision:0,watchId:null,positionWaiters:new Set(),lastTrackingLookupAt:0};
 const cameraPhotoMetadata=new WeakMap();
 
+function cameraGpsPoint(location){
+  const lat=Number(location?.coords?.latitude),lon=Number(location?.coords?.longitude);
+  return Number.isFinite(lat)&&Number.isFinite(lon)&&Math.abs(lat)<=90&&Math.abs(lon)<=180?{latitude:lat,longitude:lon}:null;
+}
+function cameraGpsText(location){const point=cameraGpsPoint(location);return point?'GPS '+point.latitude.toFixed(6)+', '+point.longitude.toFixed(6):'';}
+window.cameraGpsPoint=cameraGpsPoint;window.cameraGpsText=cameraGpsText;
 function cameraLocationError(status) {
   return {address:null,coords:null,status,timestamp:Date.now()};
 }
@@ -9285,6 +9301,7 @@ function cameraLocationMessage(location) {
   const messages={denied:'Chưa cấp quyền vị trí. Bật quyền vị trí cho trang rồi thử lại.',timeout:'Lấy vị trí quá thời gian. Bật định vị trên thiết bị rồi thử lại.',unavailable:'Chưa lấy được vị trí. Kiểm tra định vị trên thiết bị.',unsupported:'Thiết bị không hỗ trợ định vị.',insecure:'Định vị cần mở trang qua HTTPS.',invalid:'Thiết bị trả về vị trí không hợp lệ.'};
   if(!location?.coords)return messages[location?.status]||messages.unavailable;
   const accuracy=location.coords.accuracy;
+  if(!location.address&&navigator.onLine===false)return 'Đã có GPS'+(Number.isFinite(accuracy)?' · ±'+Math.ceil(accuracy)+' m':'')+' · Chưa có mạng: ảnh ghi tọa độ, tên địa điểm sẽ bổ sung khi có mạng';
   return location.address?(location.hasWard===false?location.address+' · Chưa xác định phường/xã':location.address):`Đã có GPS${Number.isFinite(accuracy)?' · ±'+Math.ceil(accuracy)+' m':''} · ${location.addressStatus==='resolving'?'Đang tra tên địa điểm…':'Chưa tra được tên địa điểm'}`;
 }
 function updateCameraLocationUI(location,pending=false) {
@@ -9375,6 +9392,7 @@ async function reverseGeocodeAddress(lat,lon,options={}) {
   lat=Number(lat);lon=Number(lon);
   if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return null;
   const coords={latitude:lat,longitude:lon},now=Date.now();
+  if(navigator.onLine===false)return null;   // chắc chắn không có mạng: bỏ qua ngay, đỡ chờ ~5 giây mỗi ảnh
   const findCache=()=>!options.force&&cameraLocationState.addressCache.find(entry=>Date.now()-entry.at<(entry.result.complete?180000:15000)&&cameraPositionDistance(coords,entry.coords)<=8);
   const cached=findCache();if(cached)return cached.result;
   const key=lat.toFixed(6)+','+lon.toFixed(6);
@@ -9641,19 +9659,22 @@ function tascoPickCameraCategory(){TascoCategories.open({current:mobileCameraCat
   box.addEventListener('click',e=>{if(Date.now()-Number(box.dataset.swiped||0)<400){e.stopImmediatePropagation();e.preventDefault();}},true);
 })();
 function cameraWatermarkLines(location,time,source,settings=cameraAppearance) {
-  const when=new Date(time),pad=value=>String(value).padStart(2,'0'),lines=[];
+  const when=new Date(time),pad=value=>String(value).padStart(2,'0'),lines=[];let coordsShown=false;
   if(settings.showTitle&&settings.title.trim())lines.push(settings.title.trim());
   if(settings.showDate)lines.push(pad(when.getDate())+'/'+pad(when.getMonth()+1)+'/'+when.getFullYear()+' '+pad(when.getHours())+':'+pad(when.getMinutes())+(settings.showSeconds?':'+pad(when.getSeconds()):''));
   if(settings.showLocation){
     if(location?.address)lines.push((source==='gallery'?'Vị trí tải ảnh: ':'')+location.address);
-    else if(location?.coords)lines.push('Chưa tra được tên địa điểm');
+    else if(location?.coords){
+      /* Chưa tra được tên (mất mạng hoặc dịch vụ bận): ghi tọa độ GPS thật lên ảnh để vẫn có bằng chứng vị trí. */
+      const gps=cameraGpsText(location);lines.push(gps||'Chưa tra được tên địa điểm');if(gps)coordsShown=true;
+    }
     if(location?.address&&location.hasWard===false)lines.push('Chưa xác định phường/xã');
     if(!location?.coords){
       const labels={pending:'Đang xác định địa điểm…',denied:'Chưa cấp quyền vị trí',timeout:'Định vị quá thời gian',insecure:'Trang chưa hỗ trợ quyền định vị',unsupported:'Thiết bị không hỗ trợ định vị',invalid:'Vị trí không hợp lệ',unavailable:'Chưa lấy được vị trí'};
       lines.push(labels[location?.status]||labels.unavailable);
     }
   }
-  if(settings.showCoordinates&&location?.coords){const lat=Number(location.coords.latitude),lon=Number(location.coords.longitude);if(Number.isFinite(lat)&&Number.isFinite(lon))lines.push('GPS '+lat.toFixed(6)+', '+lon.toFixed(6));}
+  if(settings.showCoordinates&&location?.coords&&!coordsShown){const lat=Number(location.coords.latitude),lon=Number(location.coords.longitude);if(Number.isFinite(lat)&&Number.isFinite(lon))lines.push('GPS '+lat.toFixed(6)+', '+lon.toFixed(6));}
   return settings.layout==='compact'&&lines.length?[lines.join(' · ')]:lines;
 }
 function wrapCameraWatermarkText(ctx,text,maxWidth) {
