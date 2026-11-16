@@ -13782,6 +13782,7 @@ window.TascoPhotoFX = (function () {
 
   function cameraModal() { return document.getElementById('customCameraModal'); }
   function isLandscape() { var vv = window.visualViewport; return (vv ? vv.width : innerWidth) > (vv ? vv.height : innerHeight); }
+  function ifaceAngle() { var a = typeof window.orientation === 'number' ? window.orientation : (screen.orientation && screen.orientation.angle); return Number.isFinite(a) ? ((a % 360) + 360) % 360 : 0; }
   function nativeTurn() { var m = cameraModal(); return Number(m && m.dataset.nativeTurn) || 0; }
   /* Đặt khung dấu ngày giờ trùng khung hình camera thật. Khi cầm ngang, khung xoay theo để dấu
      định vị nằm đúng góc dưới-phải của ảnh ngang (giống ảnh được lưu). */
@@ -13840,7 +13841,7 @@ window.TascoPhotoFX = (function () {
       var box = document.querySelector('#customCameraModal .camera-stream-container').getBoundingClientRect();
       var head = document.querySelector('#customCameraModal .camera-overlay-header'), headBottom = head ? head.getBoundingClientRect().bottom : box.top;
       var width = (window.visualViewport && visualViewport.width) || innerWidth, isVideo = st.mode === 'video';
-      var land = isLandscape(); st.land = land;
+      var land = isLandscape(); st.land = land; st.ang = ifaceAngle();
       var previewH = width * (isVideo ? 16 / 9 : 4 / 3), room = box.bottom - headBottom;
       /* Ảnh: khung 4:3 tràn ngang, ngay dưới tiêu đề. Video: khung 16:9 tràn màn hình, đáy sát thanh nút (tiêu đề nổi trên hình như app Camera). */
       var y = Math.round(isVideo ? Math.max(box.top, box.bottom - previewH) : previewH <= room ? headBottom + (room - previewH) / 2 : box.top + Math.max(0, (box.height - previewH) / 2));
@@ -13893,16 +13894,39 @@ window.TascoPhotoFX = (function () {
     return startNative();
   };
   window.stopCustomCameraStream = function () { stopNative(); try { origStop(); } catch (_) {} };
-  /* Màn hình vừa xoay (dọc <-> ngang): mở lại camera để lớp hình live theo hướng mới và đặt lại khung. */
+  /* Màn hình vừa xoay (dọc <-> ngang, hoặc lật 180°): giữ camera chạy, chỉ báo plugin tính lại hướng hình live và đặt lại khung.
+     Cách này không dừng/mở lại camera nên không bị đen hình hay giật; nếu plugin báo lỗi mới mở lại hẳn. */
   var rotTimer = null;
+  async function relayout() {
+    var land = isLandscape(), ang = ifaceAngle(), isVideo = st.mode === 'video';
+    await CP.setAspectRatio({ aspectRatio: isVideo ? '16:9' : '4:3' });
+    var area = document.querySelector('#customCameraModal .camera-stream-container').getBoundingClientRect();
+    var box;
+    if (land) box = { x: Math.round(area.left), y: Math.round(area.top), width: Math.round(area.width), height: Math.round(area.height) };
+    else {
+      var w = (window.visualViewport && visualViewport.width) || innerWidth, h = Math.round(w * (isVideo ? 16 / 9 : 4 / 3));
+      var head = document.querySelector('#customCameraModal .camera-overlay-header'), headBottom = head ? head.getBoundingClientRect().bottom : area.top, room = area.bottom - headBottom;
+      box = { x: 0, y: Math.round(isVideo ? Math.max(area.top, area.bottom - h) : h <= room ? headBottom + (room - h) / 2 : area.top + Math.max(0, (area.height - h) / 2)), width: Math.round(w), height: h };
+    }
+    var fit = await CP.setPreviewSize(box);
+    if (fit && fit.width > 0 && fit.height > 0) st.rect = { x: fit.x, y: fit.y, width: fit.width, height: fit.height };
+    st.land = land; st.ang = ang;
+    placePlane(); syncCameraViewport();
+    applyPro().catch(function () {});   // đặt lại phơi sáng/đèn sau khi plugin cấu hình lại
+  }
   function onRotated() {
     clearTimeout(rotTimer);
-    rotTimer = setTimeout(function () {
-      if (!modalOpen() || !st.running || st.starting || st.recording || st.land === null || st.land === isLandscape()) return;
+    rotTimer = setTimeout(async function () {
+      if (!modalOpen() || !st.running || st.starting || st.recording || st.land === null || (st.land === isLandscape() && st.ang === ifaceAngle())) return;
       cameraControlsState.busy = true;
-      stopNative(true);
-      startNative(true).catch(function () {}).finally(function () { cameraControlsState.busy = false; try { renderCameraLensChoices(); syncCameraViewport(); } catch (_) {} });
-    }, 350);
+      try { await relayout(); }
+      catch (_) {
+        stopNative(true);
+        try { await startNative(true); } catch (__) {}
+      }
+      cameraControlsState.busy = false;
+      try { renderCameraLensChoices(); syncCameraViewport(); } catch (_) {}
+    }, 300);
   }
   window.addEventListener('resize', onRotated);
   window.addEventListener('orientationchange', onRotated);
