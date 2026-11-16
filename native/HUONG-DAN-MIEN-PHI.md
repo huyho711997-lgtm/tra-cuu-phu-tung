@@ -54,3 +54,11 @@ App chỉ là "vỏ" iOS, mỗi lần mở nó tải trang web mới nhất từ
 - Bản IPA mới có thêm plugin xoay màn hình. Ngoài camera app luôn giữ dọc; khi mở camera, cầm ngang thì màn hình camera tự xoay ngang, hình live thẳng đứng, khung 4:3 nằm bên cạnh cột nút chụp.
 - Nút **khoá chụp ngang** (icon điện thoại ngang + ổ khoá): bật thì camera luôn ngang, cầm máy sang bên ngang kia khung tự lật theo; ảnh chụp ra đúng như khung đang xem. Rời camera thì app về dọc.
 - Nếu cài bản app cũ (chưa có plugin) camera vẫn dọc như trước, chỉ xoay biểu tượng.
+
+## Mở app và chụp ảnh khi không có mạng (cần cài IPA mới)
+
+- Mở app lúc mất mạng sẽ hiện màn hình "Chưa kết nối được" kèm nút **Chụp ảnh offline**. Đây là trang `offline.html` nằm sẵn trong app (IPA).
+- Ảnh được đóng dấu ngày giờ + tọa độ GPS (GPS không cần mạng), lưu trong bộ nhớ máy (`offline-queue/`).
+- Lần sau mở app có mạng và đã đăng nhập, app tự nhận ảnh vào hàng đợi Cloud (đúng album, hạng mục) và bổ sung tên địa điểm.
+- Cần mở app có mạng ít nhất một lần sau khi cài IPA mới để app ghi nhớ danh sách album/hạng mục cho chế độ offline.
+- Chỉ nhận ảnh của đúng tài khoản đang đăng nhập; ảnh của tài khoản khác được giữ nguyên trên máy.

@@ -9281,7 +9281,7 @@ window.TascoCloud = (() => {
   /* Quay lại app (iOS mở lại từ nền): tiếp tục gửi ảnh còn trong hàng đợi trên máy. */
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.pending.length&&!state.uploading&&hasAccess()&&state.localReady)processQueue();});
   window.addEventListener('pagehide',()=>{cancelDownloads();state.albumDialog?.cancel();window.TascoPhotoViewer?.close();clearURLs();});
-  return {fillAddress,downloadAlbum:id=>startCloudDownload({albumId:id}),downloadSelected:()=>startCloudDownload({ids:[...state.selected]}),cancelDownloads,isDownloading:()=>Boolean(cloudDownload),configure,mount,revokeAccess,refresh,queuePhotos,processQueue,notify,errorMessage:message,categories:()=>(state.categories||[]).map(c=>c.name),categoryCountsNow,categoryCounts,isReady:cloudReady,isUploadReady:uploadReady,queueReady:()=>state.localReady===true&&state.storageStatus==='ready',isUploading:()=>state.uploading,account,icon,createAlbum,renameAlbum,deleteAlbum,openAlbum,captureContext,releaseCapture,importPhotos,captureNotice:()=>state.storageStatus==='unavailable'?'Cần có mạng để lưu ảnh. Giữ màn hình chụp đến khi Lưu Cloud thành công.':'',capture:captureAlbum};
+  return {fillAddress,downloadAlbum:id=>startCloudDownload({albumId:id}),downloadSelected:()=>startCloudDownload({ids:[...state.selected]}),cancelDownloads,isDownloading:()=>Boolean(cloudDownload),configure,mount,revokeAccess,refresh,queuePhotos,processQueue,notify,errorMessage:message,categories:()=>(state.categories||[]).map(c=>c.name),categoryCountsNow,categoryCounts,isReady:cloudReady,isUploadReady:uploadReady,queueReady:()=>state.localReady===true&&state.storageStatus==='ready',albumsNow:()=>(state.albums||[]).filter(row=>row.owner_id===state.user?.id).map(row=>({id:row.id,name:row.name,ownerId:row.owner_id})),userIdNow:()=>state.user?.id||'',isUploading:()=>state.uploading,account,icon,createAlbum,renameAlbum,deleteAlbum,openAlbum,captureContext,releaseCapture,importPhotos,captureNotice:()=>state.storageStatus==='unavailable'?'Cần có mạng để lưu ảnh. Giữ màn hình chụp đến khi Lưu Cloud thành công.':'',capture:captureAlbum};
 })();
 
 let lastFetchedGpsCoords=null,lastFetchedAddress=null,gpsPermissionDenied=false;
@@ -13736,6 +13736,87 @@ window.TascoPhotoFX = (function () {
     return canvas;
   }
   return { presets: presets, fromPro: fromPro, apply: apply };
+})();
+</script>
+<script id="tascoOfflineBridge">
+/* Cầu nối chụp offline (chỉ app iPhone). Trang offline.html trong app (khi mở app không có mạng) không đọc được dữ liệu của app chính
+   vì khác origin, nên hai bên trao đổi qua thư mục Data của máy bằng plugin Filesystem:
+   - app chính ghi offline-meta.json (tài khoản, album, hạng mục) mỗi khi có mạng để trang offline biết cho chọn;
+   - trang offline ghi ảnh đã đóng dấu vào offline-queue/<id>.jpg + <id>.json; ở đây nhận vào hàng đợi Cloud khi app mở lại có mạng. */
+(function () {
+  'use strict';
+  var cap = window.Capacitor, FS = null;
+  try { if (window.TASCO_NATIVE && cap && cap.isPluginAvailable && cap.isPluginAvailable('Filesystem')) FS = cap.Plugins.Filesystem; } catch (_) {}
+  if (!FS) return;
+  var DIR = 'DATA', QUEUE = 'offline-queue', META = 'offline-meta.json', running = false, lastMeta = '';
+  function cloud() { return window.TascoCloud || null; }
+  function email() { return String((window.mobileCloudEmail && window.mobileCloudEmail()) || '').toLowerCase(); }
+  function cameraOpen() { var m = document.getElementById('customCameraModal'); return !!m && m.style.display === 'flex'; }
+
+  async function writeMeta() {
+    var c = cloud(), mail = email();
+    if (!c || !mail || !c.queueReady || !c.queueReady()) return;
+    var cats = [];
+    try { (c.categories() || []).concat(window.TascoCategories && TascoCategories.recent ? TascoCategories.recent() : []).forEach(function (n) { n = String(n || '').trim(); if (n && cats.indexOf(n) < 0) cats.push(n); }); } catch (_) {}
+    var title = 'TASCO DLK'; try { if (typeof cameraAppearance !== 'undefined' && cameraAppearance.title) title = String(cameraAppearance.title); } catch (_) {}
+    var data = { v: 1, email: mail, ownerId: c.userIdNow ? c.userIdNow() : '', title: title, albums: c.albumsNow ? c.albumsNow() : [], categories: cats.slice(0, 80), at: Date.now() };
+    var text = JSON.stringify(data); if (text.replace(/"at":\d+/, '') === lastMeta) return;
+    try { await FS.writeFile({ path: META, data: text, directory: DIR, encoding: 'utf8', recursive: true }); lastMeta = text.replace(/"at":\d+/, ''); } catch (_) {}
+  }
+
+  async function listQueue() {
+    try { var r = await FS.readdir({ path: QUEUE, directory: DIR }); return (r.files || []).map(function (f) { return typeof f === 'string' ? f : f.name; }); }
+    catch (_) { return []; }
+  }
+  function toFile(b64, name, when) {
+    var bin = atob(b64), n = bin.length, a = new Uint8Array(n); for (var i = 0; i < n; i++) a[i] = bin.charCodeAt(i);
+    return new File([a], name, { type: 'image/jpeg', lastModified: when });
+  }
+  async function del(path) { try { await FS.deleteFile({ path: path, directory: DIR }); } catch (_) {} }
+
+  /* Nhận ảnh chụp offline vào hàng đợi Cloud. Ảnh chỉ bị xoá khỏi máy sau khi đã vào hàng đợi (IndexedDB) thành công. */
+  async function importOffline() {
+    if (running) return 0;
+    var c = cloud(), mail = email();
+    if (!c || !mail || !c.queueReady || !c.queueReady() || navigator.onLine === false || cameraOpen()) return 0;
+    running = true;
+    try {
+      var names = await listQueue(), jsons = names.filter(function (n) { return /\.json$/.test(n); });
+      if (!jsons.length) return 0;
+      var albums = c.albumsNow ? c.albumsNow() : [], uid = c.userIdNow ? c.userIdNow() : '', done = 0, skipped = 0;
+      for (var j = 0; j < jsons.length; j++) {
+        var rec = null, jp = QUEUE + '/' + jsons[j];
+        try { var rj = await FS.readFile({ path: jp, directory: DIR, encoding: 'utf8' }); rec = JSON.parse(rj.data); } catch (_) { rec = null; }
+        if (!rec || !rec.file || !/^[\w.-]+$/.test(String(rec.file))) { await del(jp); continue; }   // tệp hỏng: bỏ
+        if (rec.email && String(rec.email).toLowerCase() !== mail) { skipped++; continue; }      // ảnh của tài khoản khác: giữ nguyên
+        var ip = QUEUE + '/' + rec.file, data = null;
+        try { data = (await FS.readFile({ path: ip, directory: DIR })).data; } catch (_) { data = null; }
+        if (!data) { await del(jp); continue; }                                                    // mất ảnh: bỏ bản ghi mồ côi
+        var when = Number(rec.capturedAt) || Date.now(), file = toFile(String(data), 'offline-' + rec.id + '.jpg', when);
+        var coords = rec.coords && isFinite(rec.coords.latitude) && isFinite(rec.coords.longitude) ? rec.coords : null;
+        var info = { capturedAt: when, category: String(rec.category || ''), location: coords ? { coords: { latitude: coords.latitude, longitude: coords.longitude, accuracy: coords.accuracy }, address: '', addressStatus: 'unavailable', status: 'ready' } : null };
+        var meta = async function () { return info; };
+        var album = rec.albumId && albums.some(function (a) { return a.id === rec.albumId; }) ? { albumId: rec.albumId, albumName: rec.albumName || '', ownerId: uid } : null;
+        var title = String(rec.title || 'TASCO DLK');
+        try {
+          try { await c.queuePhotos([file], title, meta, album, { silent: true }); }
+          catch (e1) { if (!album) throw e1; await c.queuePhotos([file], title, meta, null, { silent: true }); }   // album đã bị xoá: lưu vào Tất cả ảnh
+          await del(ip); await del(jp); done++;
+        } catch (e2) { break; }                                                                    // lỗi mạng/tài khoản: giữ lại, thử ở lần sau
+      }
+      if (done) { try { c.notify('Đã nhận ' + done + ' ảnh chụp offline, đang gửi lên Cloud.'); } catch (_) {} }
+      return done;
+    } finally { running = false; }
+  }
+  window.TascoOfflineBridge = { writeMeta: writeMeta, importOffline: importOffline };
+
+  var timer = null;
+  function soon() { clearTimeout(timer); timer = setTimeout(tick, 1500); }
+  async function tick() { try { await writeMeta(); await importOffline(); } catch (_) {} }
+  window.addEventListener('online', soon);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) soon(); });
+  setInterval(function () { if (!document.hidden) tick(); }, 30000);   // Cloud sẵn sàng muộn hơn lúc tải trang: kiểm tra định kỳ (rất nhẹ)
+  soon();
 })();
 </script>
 <script id="tascoNativeCamera">

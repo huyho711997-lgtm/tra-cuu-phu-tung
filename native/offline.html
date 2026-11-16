@@ -2,21 +2,327 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>TASCO DLK</title>
 <style>
-  html,body{margin:0;height:100%;background:#0b1b30;color:#edf5f7;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-  main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:max(32px,env(safe-area-inset-top)) 28px max(32px,env(safe-area-inset-bottom))}
-  h1{margin:0 0 10px;font-size:22px;font-weight:650}
-  p{margin:0 0 26px;color:#a7c3d0;font-size:14px;max-width:320px}
-  button{min-height:48px;padding:0 28px;border:0;border-radius:14px;background:#63adb6;color:#071423;font:inherit;font-weight:650}
+  :root{--navy:#0b1b30;--navy2:#183056;--teal:#84bfc7;--teal2:#63adb6;--ink:#edf5f7;--muted:#a7c3d0}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--navy);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
+  html.cam,html.cam body{background:transparent!important}
+  button{font:inherit;color:inherit;border:0;margin:0;padding:0;background:none}
+  button:disabled{opacity:.4}
+  /* Màn hình chính khi chưa vào được app */
+  #home{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:max(32px,env(safe-area-inset-top)) 26px max(32px,env(safe-area-inset-bottom))}
+  #home h1{margin:0 0 8px;font-size:22px;font-weight:650}
+  #home p{margin:0 0 22px;color:var(--muted);font-size:14px;max-width:320px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:320px;min-height:52px;padding:0 24px;border-radius:15px;font-weight:650}
+  .btn.primary{background:var(--teal2);color:#071423}
+  .btn.ghost{margin-top:12px;border:1px solid rgba(132,191,199,.4);color:var(--ink)}
+  .btn svg{width:22px;height:22px}
+  #queueNote{margin:18px 0 0;min-height:20px;font-size:13px;color:var(--teal)}
+  #netBanner{display:none;margin:0 0 18px;padding:12px 16px;border-radius:14px;background:rgba(99,173,182,.18);border:1px solid rgba(132,191,199,.5);font-size:14px}
+  #netBanner b{display:block;margin-bottom:2px}
+  #netBanner button{margin-top:8px;min-height:40px;padding:0 18px;border-radius:12px;background:var(--teal2);color:#071423;font-weight:650}
+  /* Màn hình camera (camera thật của iPhone chạy phía sau trang) */
+  #cam{position:fixed;inset:0;display:none}
+  html.cam #home{display:none}
+  html.cam #cam{display:block}
+  #camTop{position:absolute;left:0;right:0;top:0;padding:max(10px,env(safe-area-inset-top)) 14px 10px;background:var(--navy);display:flex;align-items:center;gap:10px;z-index:3}
+  #camTop .x{flex:none;width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center}
+  #camTop .lbl{flex:1;min-width:0;line-height:1.25}
+  #camTop .lbl small{display:block;font-size:11px;letter-spacing:.12em;color:var(--teal);font-weight:700}
+  #camTop .lbl strong{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #flashBtn{flex:none;width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center}
+  #flashBtn[aria-pressed=true]{background:var(--teal);color:#183056;border-color:var(--teal)}
+  #frame{position:absolute;z-index:1;pointer-events:none;box-shadow:0 0 0 200vmax var(--navy)}
+  #gps{position:absolute;z-index:2;left:12px;padding:5px 10px;border-radius:999px;background:rgba(7,20,35,.66);font-size:12px;font-weight:600}
+  #gps[data-s=ok]{color:#8fe0a8}#gps[data-s=wait]{color:#f4e3a1}#gps[data-s=off]{color:#ff9d9d}
+  #camBottom{position:absolute;left:0;right:0;bottom:0;padding:10px 18px max(14px,env(safe-area-inset-bottom));background:var(--navy);z-index:3}
+  #zoomBar{display:flex;justify-content:center;gap:8px;min-height:40px;margin-bottom:8px}
+  #zoomBar button{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.18);font-size:12px;font-weight:750}
+  #zoomBar button[aria-pressed=true]{background:var(--teal);color:#183056;border-color:var(--teal)}
+  #ctrl{display:grid;grid-template-columns:1fr 84px 1fr;align-items:center;gap:10px}
+  #catBtn{justify-self:start;max-width:100%;min-height:48px;padding:0 14px 0 10px;border-radius:15px;border:1px solid rgba(132,191,199,.5);display:flex;align-items:center;gap:8px;text-align:left;overflow:hidden}
+  #catBtn[data-empty=true]{border-style:dashed}
+  #catBtn svg{flex:none;width:20px;height:20px;color:var(--teal)}
+  #catBtn span{min-width:0;display:block;font-size:13px;font-weight:700;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #catBtn small{display:block;font-size:11px;font-weight:600;color:var(--muted)}
+  #shutter{width:76px;height:76px;border-radius:50%;border:3px solid var(--teal);display:grid;place-items:center;justify-self:center}
+  #shutter i{display:block;width:60px;height:60px;border-radius:50%;background:#fff;transition:transform .08s}
+  #shutter:active i{transform:scale(.9)}
+  #doneBtn{justify-self:end;min-height:48px;padding:0 16px;border-radius:15px;background:var(--navy2);border:1px solid rgba(132,191,199,.4);font-weight:650;font-size:14px}
+  #toast{position:fixed;left:50%;top:max(110px,calc(env(safe-area-inset-top) + 96px));transform:translateX(-50%);z-index:9;max-width:86%;padding:10px 16px;border-radius:14px;background:rgba(7,20,35,.88);font-size:14px;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+  #toast.on{opacity:1}
+  /* Bảng chọn album / hạng mục */
+  #sheet{position:fixed;inset:0;z-index:10;display:none;background:rgba(0,0,0,.5);align-items:flex-end}
+  #sheet.on{display:flex}
+  #sheet .panel{width:100%;max-height:82%;overflow:auto;padding:18px 16px max(18px,env(safe-area-inset-bottom));border-radius:24px 24px 0 0;background:#10233d;border:1px solid rgba(132,191,199,.18)}
+  #sheet h2{margin:0 0 10px;font-size:17px}
+  #sheet h3{margin:16px 0 8px;font-size:11px;letter-spacing:.12em;color:var(--teal);text-transform:uppercase}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.18);font-size:14px;font-weight:600}
+  .chip[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#183056}
+  .addrow{display:flex;gap:8px;margin-top:10px}
+  .addrow input{flex:1;min-width:0;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:var(--ink);font:inherit;-webkit-user-select:text;user-select:text}
+  .addrow button{min-height:44px;padding:0 16px;border-radius:12px;background:var(--teal2);color:#071423;font-weight:650}
+  #sheetClose{margin-top:18px;width:100%;min-height:48px;border-radius:14px;background:var(--navy2);font-weight:650}
+  .hint{margin:10px 0 0;font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
-<main>
+<main id="home">
+  <div id="netBanner"><b>Đã có mạng trở lại</b>Mở app để đồng bộ ảnh và tiếp tục như bình thường.<br><button type="button" id="openApp">Mở app ngay</button></div>
   <h1>Chưa kết nối được</h1>
-  <p>TASCO DLK cần mạng để tải phiên bản mới nhất. Kiểm tra Wi-Fi hoặc 4G rồi thử lại.</p>
-  <button type="button" onclick="location.replace('https://huyho711997-lgtm.github.io/tra-cuu-phu-tung/mobile')">Thử lại</button>
+  <p>TASCO DLK cần mạng để tải phiên bản mới nhất. Bạn vẫn chụp được ảnh hiện trường: ảnh được lưu trên máy, có ngày giờ và tọa độ GPS, lần sau mở app có mạng sẽ tự đưa lên Cloud.</p>
+  <button type="button" class="btn primary" id="startCam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg>Chụp ảnh offline</button>
+  <button type="button" class="btn ghost" id="retry">Thử lại kết nối</button>
+  <div id="queueNote" role="status"></div>
 </main>
+
+<section id="cam" aria-label="Chụp ảnh offline">
+  <div id="camTop">
+    <button type="button" class="x" id="closeCam" aria-label="Đóng camera"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div class="lbl"><small>CHỤP OFFLINE</small><strong id="albumLbl">Chưa chọn album</strong></div>
+    <button type="button" id="flashBtn" aria-pressed="false" aria-label="Đèn flash" hidden><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M13 3 5 13h6l-1 8 8-10h-6l1-8Z"/></svg></button>
+  </div>
+  <div id="frame"></div>
+  <div id="gps" data-s="wait">Đang tìm GPS…</div>
+  <div id="camBottom">
+    <div id="zoomBar"></div>
+    <div id="ctrl">
+      <button type="button" id="catBtn" data-empty="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l9 9-8 8-9-9Z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span><strong id="catTxt" style="display:block;font-size:13px">Chưa phân loại</strong><small id="catSub">0 ảnh</small></span></button>
+      <button type="button" id="shutter" aria-label="Chụp ảnh"><i></i></button>
+      <button type="button" id="doneBtn">Xong (0)</button>
+    </div>
+  </div>
+</section>
+
+<div id="sheet" role="dialog" aria-modal="true" aria-label="Album và hạng mục">
+  <div class="panel">
+    <h2>Album và hạng mục</h2>
+    <h3>Album</h3><div class="chips" id="albumChips"></div>
+    <p class="hint" id="albumHint"></p>
+    <h3>Hạng mục</h3><div class="chips" id="catChips"></div>
+    <div class="addrow"><input id="catInput" type="text" placeholder="Thêm hạng mục mới" maxlength="60" autocomplete="off"><button type="button" id="catAdd">Thêm</button></div>
+    <button type="button" id="sheetClose">Xong</button>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+  var APP_URL = 'https://huyho711997-lgtm.github.io/tra-cuu-phu-tung/mobile';
+  var QUEUE_DIR = 'offline-queue', META_FILE = 'offline-meta.json', DIR = 'DATA';
+  var cap = window.Capacitor || {};
+  function plugin(name) { try { return cap.isPluginAvailable && cap.isPluginAvailable(name) ? cap.Plugins[name] : null; } catch (_) { return null; } }
+  var CP = plugin('CameraPreview'), FS = plugin('Filesystem'), GEO = plugin('Geolocation'), SO = plugin('ScreenOrientation');
+  var $ = function (id) { return document.getElementById(id); };
+  var root = document.documentElement;
+  var meta = { email: '', ownerId: '', title: 'TASCO DLK', albums: [], categories: [] };
+  var sel = { albumId: '', category: '' };
+  var counts = {};            // số ảnh chụp offline trong phiên theo hạng mục
+  var total = 0, pending = 0, busy = false, running = false, zoomLevel = 1, flashOn = false;
+  var gps = null;             // {latitude, longitude, accuracy, at}
+  var watchId = null;
+
+  /* ---- Tiện ích ---- */
+  var toastTimer = null;
+  function toast(text, ms) { var t = $('toast'); t.textContent = text; t.classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('on'); }, ms || 2200); }
+  function store(key, value) { try { if (value === undefined) return localStorage.getItem(key); localStorage.setItem(key, value); } catch (_) {} return null; }
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function stampDate(d) { return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()); }
+  function uid() { return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8); }
+  function fail(error) { return String((error && (error.message || error.errorMessage)) || error || ''); }
+
+  /* Giữ màn hình dọc (app mở ngang được chỉ khi camera chính chạy). */
+  if (SO) { try { SO.lock({ orientation: 'portrait' }); } catch (_) {} }
+
+  /* ---- Bộ nhớ chung với app chính (Filesystem, thư mục Data) ---- */
+  async function readMeta() {
+    if (!FS) return;
+    try {
+      var r = await FS.readFile({ path: META_FILE, directory: DIR, encoding: 'utf8' });
+      var data = JSON.parse(typeof r.data === 'string' ? r.data : '{}');
+      if (data && typeof data === 'object') {
+        meta.email = String(data.email || ''); meta.ownerId = String(data.ownerId || '');
+        meta.title = String(data.title || 'TASCO DLK').slice(0, 64);
+        meta.albums = Array.isArray(data.albums) ? data.albums.filter(function (a) { return a && a.id && a.name; }).slice(0, 60) : [];
+        meta.categories = Array.isArray(data.categories) ? data.categories.map(String).filter(Boolean).slice(0, 80) : [];
+      }
+    } catch (_) {}
+    sel.albumId = store('off_album') || ''; sel.category = store('off_category') || '';
+    if (sel.albumId && !meta.albums.some(function (a) { return a.id === sel.albumId; })) sel.albumId = '';
+  }
+  async function countPending() {
+    if (!FS) { pending = 0; return 0; }
+    try { var r = await FS.readdir({ path: QUEUE_DIR, directory: DIR }); pending = (r.files || []).filter(function (f) { return /\.json$/.test(f.name || f); }).length; }
+    catch (_) { pending = 0; }
+    renderQueue(); return pending;
+  }
+  function renderQueue() {
+    $('queueNote').textContent = pending ? pending + ' ảnh chụp offline đang chờ gửi. Mở app khi có mạng, ảnh sẽ tự lên Cloud.' : '';
+    $('doneBtn').textContent = 'Xong (' + total + ')';
+  }
+
+  /* ---- Vị trí GPS (không cần mạng) ---- */
+  async function startGps() {
+    var set = function (s, text) { var g = $('gps'); g.dataset.s = s; g.textContent = text; };
+    function onPos(p) {
+      if (!p || !p.coords) return;
+      gps = { latitude: p.coords.latitude, longitude: p.coords.longitude, accuracy: p.coords.accuracy, at: Date.now() };
+      set('ok', 'GPS ±' + Math.max(1, Math.round(gps.accuracy || 0)) + ' m');
+    }
+    try {
+      if (GEO) {
+        var perm = await GEO.checkPermissions();
+        if (perm.location === 'prompt' || perm.location === 'prompt-with-rationale') perm = await GEO.requestPermissions();
+        if (perm.location === 'denied') { set('off', 'Chưa cấp quyền vị trí'); return; }
+        watchId = await GEO.watchPosition({ enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }, function (p, err) { if (err) set('wait', 'Đang tìm GPS…'); else onPos(p); });
+      } else if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(onPos, function () { set('wait', 'Đang tìm GPS…'); }, { enableHighAccuracy: true, maximumAge: 0, timeout: 20000 });
+      } else set('off', 'Máy không có GPS');
+    } catch (error) { set('off', 'Chưa lấy được GPS'); }
+  }
+  function stopGps() {
+    try { if (GEO && watchId != null) GEO.clearWatch({ id: watchId }); else if (watchId != null && navigator.geolocation) navigator.geolocation.clearWatch(watchId); } catch (_) {}
+    watchId = null;
+  }
+
+  /* ---- Camera ---- */
+  function albumName() { var a = meta.albums.filter(function (x) { return x.id === sel.albumId; })[0]; return a ? a.name : ''; }
+  function renderLabels() {
+    $('albumLbl').textContent = albumName() ? 'Album ' + albumName() : (meta.albums.length ? 'Chưa chọn album' : 'Tất cả ảnh');
+    var c = sel.category;
+    $('catTxt').textContent = c || 'Chưa phân loại';
+    $('catSub').textContent = (counts[c] || 0) + ' ảnh';
+    $('catBtn').dataset.empty = c ? 'false' : 'true';
+  }
+  async function openCam() {
+    if (!CP || !FS) { toast('Bản app này chưa có camera offline. Cài lại app bản mới nhất khi có mạng.', 4200); return; }
+    if (running) return;
+    await readMeta(); renderLabels();
+    root.classList.add('cam');
+    var topEl = $('camTop'), bottom = $('camBottom');
+    var y = Math.round(topEl.getBoundingClientRect().bottom), w = innerWidth, h = Math.round(w * 4 / 3);
+    var room = innerHeight - y - bottom.offsetHeight;
+    if (h > room) y = Math.max(y, Math.round(y + (room - h) / 2));   // máy thấp: lùi khung ra giữa vùng trống
+    try {
+      var result = await CP.start({ position: 'rear', toBack: true, aspectRatio: '4:3', aspectMode: 'contain', y: y, rotateWhenOrientationChanged: false, force: true, gridMode: '3x3', captureResolution: { width: 4032, height: 3024 }, enableVideoMode: false, disableAudio: true, videoQuality: 'high' });
+      running = true;
+      var f = $('frame'); f.style.left = (result.x || 0) + 'px'; f.style.top = (result.y || y) + 'px'; f.style.width = (result.width || w) + 'px'; f.style.height = (result.height || h) + 'px';
+      var g = $('gps'); g.style.top = ((result.y || y) + 10) + 'px';
+      try { var zv = (await CP.getZoomButtonValues()).values || [1]; buildZoom(zv.filter(function (v) { return v > 0; })); } catch (_) { buildZoom([1]); }
+      try { var fm = (await CP.getSupportedFlashModes()).result || []; $('flashBtn').hidden = fm.indexOf('on') < 0; } catch (_) { $('flashBtn').hidden = true; }
+      startGps();
+    } catch (error) {
+      root.classList.remove('cam'); running = false;
+      toast(/denied|permission|authoriz/i.test(fail(error)) ? 'Chưa cấp quyền camera. Vào Cài đặt > TASCO DLK > bật Camera.' : 'Chưa mở được camera. Thử đóng rồi mở lại.', 4200);
+    }
+  }
+  async function closeCam() {
+    if (busy) return;
+    stopGps();
+    try { if (running) await CP.stop({ force: true }); } catch (_) {}
+    running = false; root.classList.remove('cam'); flashOn = false; $('flashBtn').setAttribute('aria-pressed', 'false');
+    countPending();
+  }
+  function buildZoom(values) {
+    var bar = $('zoomBar'); bar.replaceChildren(); zoomLevel = 1;
+    if (values.length < 2) return;
+    values.forEach(function (v) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = (v < 1 ? String(v).replace(/^0/, '') : String(v)) + '×';
+      b.setAttribute('aria-pressed', String(v === 1));
+      b.onclick = async function () {
+        try { await CP.setZoom({ level: v }); zoomLevel = v; bar.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); }
+        catch (_) { toast('Máy chưa đổi được góc này.'); }
+      };
+      bar.appendChild(b);
+    });
+  }
+  $('flashBtn').onclick = async function () {
+    flashOn = !flashOn;
+    try { await CP.setFlashMode({ flashMode: flashOn ? 'on' : 'off' }); $('flashBtn').setAttribute('aria-pressed', String(flashOn)); }
+    catch (_) { flashOn = !flashOn; }
+  };
+
+  /* ---- Đóng dấu + lưu ---- */
+  function b64ToBlob(b64) { var bin = atob(b64), n = bin.length, a = new Uint8Array(n); for (var i = 0; i < n; i++) a[i] = bin.charCodeAt(i); return new Blob([a], { type: 'image/jpeg' }); }
+  async function stampImage(b64, info) {
+    var bitmap = await createImageBitmap(b64ToBlob(b64));
+    var scale = Math.min(1, 3024 / Math.max(bitmap.width, bitmap.height)), W = Math.round(bitmap.width * scale), H = Math.round(bitmap.height * scale);
+    var canvas = document.createElement('canvas'); canvas.width = W; canvas.height = H;
+    var ctx = canvas.getContext('2d'); ctx.drawImage(bitmap, 0, 0, W, H); if (bitmap.close) bitmap.close();
+    var lines = [];
+    if (info.title) lines.push(info.title);
+    lines.push(stampDate(new Date(info.capturedAt)));
+    lines.push(info.coords ? 'GPS ' + info.coords.latitude.toFixed(6) + ', ' + info.coords.longitude.toFixed(6) + (info.coords.accuracy ? ' (±' + Math.round(info.coords.accuracy) + ' m)' : '') : 'Chưa có vị trí GPS');
+    if (info.category) lines.push(info.category);
+    var size = Math.max(12, Math.min(64, Math.round(Math.min(W, H) / 28)));
+    var face = function (n) { return '700 ' + n + 'px -apple-system,Arial,sans-serif'; };
+    ctx.font = face(size);
+    var widest = Math.max.apply(null, lines.map(function (t) { return ctx.measureText(t).width; }));
+    if (widest > W * 0.92) size = Math.max(10, Math.floor(size * (W * 0.92) / widest));   // dòng dài vẫn nằm gọn trong ảnh
+    var lh = Math.round(size * 1.3), margin = Math.round(size * 0.9);
+    ctx.font = face(size); ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic';
+    ctx.shadowColor = 'rgba(0,0,0,.85)'; ctx.shadowBlur = Math.round(size / 4); ctx.shadowOffsetX = 0; ctx.shadowOffsetY = Math.round(size / 14); ctx.fillStyle = '#fff';
+    for (var i = lines.length - 1, y = H - margin; i >= 0; i--, y -= lh) ctx.fillText(lines[i], W - margin, y);
+    return { b64: canvas.toDataURL('image/jpeg', 0.92).split(',')[1], width: W, height: H };
+  }
+  async function saveShot(shot, info) {
+    var id = uid(), stamped = await stampImage(shot, info);
+    await FS.writeFile({ path: QUEUE_DIR + '/' + id + '.jpg', data: stamped.b64, directory: DIR, recursive: true });
+    var record = { v: 1, id: id, file: id + '.jpg', capturedAt: info.capturedAt, email: meta.email, ownerId: meta.ownerId, title: info.title, albumId: sel.albumId || '', albumName: albumName(), category: info.category || '', coords: info.coords || null, width: stamped.width, height: stamped.height };
+    // Tệp .json ghi sau cùng: có nó thì ảnh mới được tính là đã lưu xong.
+    await FS.writeFile({ path: QUEUE_DIR + '/' + id + '.json', data: JSON.stringify(record), directory: DIR, encoding: 'utf8', recursive: true });
+    return id;
+  }
+  $('shutter').onclick = async function () {
+    if (busy || !running) return;
+    busy = true; $('shutter').disabled = true;
+    var capturedAt = Date.now(), coords = gps && Date.now() - gps.at < 90000 ? { latitude: gps.latitude, longitude: gps.longitude, accuracy: gps.accuracy } : null;
+    var category = sel.category;
+    try {
+      var shot = await CP.capture({ quality: 92, photoQualityPrioritization: 'balanced' });
+      await saveShot(shot.value, { capturedAt: capturedAt, coords: coords, title: meta.title, category: category });
+      total++; pending++; counts[category] = (counts[category] || 0) + 1;
+      renderLabels(); renderQueue();
+      toast('Đã lưu ảnh ' + total + (coords ? '' : ' · chưa có GPS'), 1400);
+    } catch (error) { toast('Chưa lưu được ảnh: ' + (fail(error) || 'thử lại'), 3500); }
+    finally { busy = false; $('shutter').disabled = false; }
+  };
+  $('closeCam').onclick = closeCam;
+  $('doneBtn').onclick = closeCam;
+
+  /* ---- Bảng album / hạng mục ---- */
+  function chip(text, pressed, onTap) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = text; b.setAttribute('aria-pressed', String(pressed)); b.onclick = onTap; return b; }
+  function renderSheet() {
+    var al = $('albumChips'); al.replaceChildren();
+    al.appendChild(chip('Tất cả ảnh', !sel.albumId, function () { sel.albumId = ''; store('off_album', ''); renderSheet(); renderLabels(); }));
+    meta.albums.forEach(function (a) { al.appendChild(chip(a.name, sel.albumId === a.id, function () { sel.albumId = a.id; store('off_album', a.id); renderSheet(); renderLabels(); })); });
+    $('albumHint').textContent = meta.albums.length ? '' : 'Chưa có danh sách album. Mở app có mạng một lần để app ghi nhớ album của bạn.';
+    var ca = $('catChips'); ca.replaceChildren();
+    ca.appendChild(chip('Chưa phân loại', !sel.category, function () { sel.category = ''; store('off_category', ''); renderSheet(); renderLabels(); }));
+    var names = meta.categories.slice(); if (sel.category && names.indexOf(sel.category) < 0) names.push(sel.category);
+    names.forEach(function (c) { ca.appendChild(chip(c, sel.category === c, function () { sel.category = c; store('off_category', c); renderSheet(); renderLabels(); })); });
+  }
+  $('catBtn').onclick = function () { renderSheet(); $('sheet').classList.add('on'); };
+  $('sheetClose').onclick = function () { $('sheet').classList.remove('on'); };
+  $('catAdd').onclick = function () {
+    var v = $('catInput').value.replace(/\s+/g, ' ').trim().slice(0, 60); if (!v) return;
+    if (meta.categories.indexOf(v) < 0) meta.categories.push(v);
+    sel.category = v; store('off_category', v); $('catInput').value = ''; renderSheet(); renderLabels();
+  };
+
+  /* ---- Màn hình chính ---- */
+  $('startCam').onclick = openCam;
+  $('retry').onclick = function () { location.replace(APP_URL); };
+  $('openApp').onclick = function () { location.replace(APP_URL); };
+  function net() { $('netBanner').style.display = navigator.onLine ? 'block' : 'none'; }
+  window.addEventListener('online', net); window.addEventListener('offline', net); net();
+  readMeta().then(function () { renderLabels(); countPending(); });
+})();
+</script>
 </body>
 </html>
