@@ -12432,8 +12432,71 @@ window.TascoCategories = (function () {
     cam: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.4-2h5l1.4 2h1.6A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.4"/></svg>',
     list: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg>',
     alert: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17.2v.1"/></svg>',
+    mic: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg>',
     tag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12.2V5a1.5 1.5 0 0 1 1.5-1.5h7.2l8.3 8.3a1.5 1.5 0 0 1 0 2.1l-7.1 7.1a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.4"/></svg>'
   };
+  /* Nói để nhập: app iPhone dùng plugin SpeechRecognition (nhận dạng giọng nói của iOS); trình duyệt dùng Web Speech API nếu có.
+     Chỉ điền chữ vào ô nhập để người dùng kiểm tra rồi bấm Thêm. Nói "phẩy" giữa các mục (hoặc "xuống dòng"). */
+  var Voice = (function () {
+    var session = null;
+    function isApp() { return /TascoApp\//.test(navigator.userAgent) || !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); }
+    function plugin() { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SpeechRecognition || null; }
+    function webApi() { return isApp() ? null : (window.SpeechRecognition || window.webkitSpeechRecognition || null); }
+    /* hiện nút: app (kể cả bản cũ chưa có plugin, để báo cần cập nhật) hoặc trình duyệt có hỗ trợ */
+    function visible() { return isApp() || !!webApi(); }
+    function available() { return !!(plugin() || webApi()); }
+    /* "cản trước phẩy đèn pha trái xuống dòng tai xe" -> "Cản trước, Đèn pha trái, Tai xe" */
+    function tidy(text, multi) {
+      var t = String(text || '').replace(/\s+/g, ' ').trim();
+      if (!t) return '';
+      if (!multi) return t.charAt(0).toUpperCase() + t.slice(1);
+      t = t.replace(/\s*(?:^|\s)(?:dấu phẩy|chấm phẩy|phẩy|xuống dòng)(?=\s|$)\s*/gi, ', ');
+      return t.split(/[\n,;]+/).map(function (x) { x = x.replace(/\s+/g, ' ').trim(); return x ? x.charAt(0).toUpperCase() + x.slice(1) : ''; }).filter(Boolean).join(', ');
+    }
+    function stop() { if (session) session.stop(); }
+    function start(ui) {
+      if (session) { session.stop(); return; }
+      var native = plugin(), Web = webApi();
+      if (!native && !Web) { ui.error(isApp() ? 'Cần cập nhật app bản mới để nói nhập (cài lại file IPA mới nhất).' : 'Trình duyệt này chưa hỗ trợ nhập bằng giọng nói.'); return; }
+      var done = false, handles = [], rec = null, last = '', timer = 0;
+      function finish(text) {
+        if (done) return; done = true; clearTimeout(timer); session = null;
+        handles.forEach(function (h) { try { h && h.remove && h.remove(); } catch (_) {} });
+        ui.end(tidy(text !== undefined ? text : last, ui.multi));
+      }
+      function fail(message) { if (done) return; done = true; clearTimeout(timer); session = null; handles.forEach(function (h) { try { h && h.remove && h.remove(); } catch (_) {} }); ui.end(''); ui.error(message); }
+      session = {
+        stop: function () {
+          ui.stopping();
+          if (native) { try { native.stop().catch(function () {}); } catch (_) {} timer = setTimeout(function () { finish(); }, 1500); }
+          else if (rec) { try { rec.stop(); } catch (_) { finish(); } }
+        }
+      };
+      ui.begin();
+      if (native) {
+        (async function () {
+          try {
+            var perm = await native.checkPermissions();
+            if (perm.speechRecognition !== 'granted') perm = await native.requestPermissions();
+            if (perm.speechRecognition !== 'granted') { fail('Chưa cấp quyền micro / nhận dạng giọng nói. Vào Cài đặt iPhone → TASCO DLK để bật.'); return; }
+            handles.push(await native.addListener('partialResults', function (e) { var t = e && ((e.matches && e.matches[0]) || e.accumulatedText || ''); if (t) { last = t; ui.live(tidy(t, ui.multi)); } }));
+            handles.push(await native.addListener('listeningState', function (e) { if (e && (e.status === 'stopped' || e.state === 'stopped')) finish(); }));
+            handles.push(await native.addListener('error', function (e) { if (last) finish(); else fail('Không nghe được. Thử lại gần micro hơn.'); }));
+            await native.start({ language: 'vi-VN', maxResults: 1, partialResults: true, popup: false });
+          } catch (error) { fail((error && error.message) || 'Chưa bật được nhận dạng giọng nói.'); }
+        })();
+      } else {
+        try {
+          rec = new Web(); rec.lang = 'vi-VN'; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+          rec.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; last = t; ui.live(tidy(t, ui.multi)); };
+          rec.onerror = function (e) { if (last) finish(); else fail(e && e.error === 'not-allowed' ? 'Chưa cấp quyền micro cho trình duyệt.' : 'Không nghe được. Thử lại.'); };
+          rec.onend = function () { finish(); };
+          rec.start();
+        } catch (error) { fail('Chưa bật được nhận dạng giọng nói.'); }
+      }
+    }
+    return { visible: visible, available: available, start: start, stop: stop, tidy: tidy, active: function () { return !!session; } };
+  })();
   /* open({ current, extra: [tên trong album], title, subtitle, onPick(name|''),
            plan: [danh sách cần chụp], onPlanChange(list), counts(name) -> số ảnh, done(name) -> đã chụp? })
      Có plan: danh sách dạng checklist; ô nhập "Thêm" nhiều mục (dấu phẩy / chấm phẩy / xuống dòng), bảng vẫn mở.
@@ -12452,7 +12515,9 @@ window.TascoCategories = (function () {
       '<div class="tcs-composer"><span class="tcs-lead" aria-hidden="true">' + (planMode ? ICON.plus : ICON.tag) + '</span>' +
       '<input name="name" maxlength="400" autocomplete="off" autocapitalize="sentences" enterkeyhint="' + (planMode ? 'enter' : 'done') + '" placeholder="' + (planMode ? 'Thêm mục cần chụp…' : 'Tên hạng mục…') + '" value="' + (planMode ? '' : esc(selected)) + '">' +
       '<button type="button" class="tcs-clear" data-cat="clear" aria-label="Xoá chữ đã nhập" hidden>' + ICON.x + '</button>' +
+      '<button type="button" class="tcs-mic" data-cat="mic" aria-label="Nói để nhập hạng mục" aria-pressed="false" hidden>' + ICON.mic + '</button>' +
       '<button type="submit" class="tcs-submit" aria-label="' + (planMode ? 'Thêm vào danh sách' : 'Dùng hạng mục này') + '" disabled>' + (planMode ? 'Thêm' : 'Dùng') + '</button></div>' +
+      '<p class="tcs-voice" role="status" aria-live="polite" hidden></p>' +
       (planMode ? '<p class="tcs-hint">Gõ nhiều mục một lần, ngăn cách bằng dấu phẩy</p>' : '') +
       '<div class="tcs-body"></div>' +
       '<footer class="tcs-foot"><button type="button" class="tcs-none" data-cat="none">Không phân loại</button>' + (planMode ? '<button type="button" class="tcs-go" data-cat="done"></button>' : '') + '</footer></form>';
@@ -12504,7 +12569,7 @@ window.TascoCategories = (function () {
     }
     function syncInput() { var has = !!input.value.trim(); clearBtn.hidden = !input.value; submitBtn.disabled = !has; wrap.classList.toggle('is-typing', has); }
     function savePlan() { if (opts.onPlanChange) opts.onPlanChange(plan.slice()); }
-    function close() { wrap.classList.add('is-leaving'); setTimeout(function () { wrap.remove(); }, 180); }
+    function close() { Voice.stop(); wrap.classList.add('is-leaving'); setTimeout(function () { wrap.remove(); }, 180); }
     function finish(name) { name = clean(name); close(); if (name) remember(name); if (opts.onPick) opts.onPick(name); }
     function add(items) {
       var added = 0;
@@ -12522,6 +12587,25 @@ window.TascoCategories = (function () {
       add(items); input.value = ''; syncInput(); input.focus();
     });
     input.addEventListener('input', syncInput);
+    /* Nói để nhập: chữ nghe được hiện trực tiếp trong ô nhập, người dùng kiểm tra rồi bấm Thêm/Dùng. */
+    var micBtn = wrap.querySelector('.tcs-mic'), voiceNote = wrap.querySelector('.tcs-voice');
+    micBtn.hidden = !Voice.visible();
+    function dictate() {
+      var base = input.value.trim();
+      var join = function (t) { return base && t ? base + (planMode ? ', ' : ' ') + t : (base || t); };
+      Voice.start({
+        multi: planMode,
+        begin: function () { micBtn.classList.add('is-live'); micBtn.setAttribute('aria-pressed', 'true'); voiceNote.classList.remove('is-error'); voiceNote.hidden = false; voiceNote.textContent = planMode ? 'Đang nghe… đọc tên các mục, nói "phẩy" giữa các mục' : 'Đang nghe… đọc tên hạng mục'; input.blur(); },
+        live: function (t) { input.value = join(t); syncInput(); if (t) voiceNote.textContent = 'Đang nghe: ' + t; },
+        stopping: function () { voiceNote.textContent = 'Đang xử lý…'; },
+        end: function (t) {
+          micBtn.classList.remove('is-live'); micBtn.setAttribute('aria-pressed', 'false');
+          if (t) { input.value = join(t); syncInput(); voiceNote.hidden = false; voiceNote.textContent = 'Kiểm tra lại rồi bấm ' + (planMode ? 'Thêm' : 'Dùng') + '.'; }
+          else voiceNote.hidden = true;
+        },
+        error: function (message) { voiceNote.hidden = false; voiceNote.textContent = message; voiceNote.classList.add('is-error'); setTimeout(function () { voiceNote.classList.remove('is-error'); }, 4000); }
+      });
+    }
     wrap.addEventListener('click', function (e) {
       var b = e.target.closest('[data-cat]'); if (!b) { if (e.target === wrap) planMode ? finish(selected) : close(); return; }
       var a = b.dataset.cat, n = b.dataset.name;
@@ -12531,6 +12615,7 @@ window.TascoCategories = (function () {
       if (a === 'none') finish('');
       if (a === 'add') { add([n]); }
       if (a === 'clear') { input.value = ''; syncInput(); input.focus(); }
+      if (a === 'mic') { dictate(); }
       if (a === 'forget') { forget(n); render(); }
       if (a === 'unplan') {
         var li = b.closest('.tcs-row');
@@ -12647,6 +12732,16 @@ window.TascoCategories = (function () {
 .tcs-submit:disabled{opacity:.35;box-shadow:none}
 .tcs-submit:not(:disabled):active{transform:scale(.96)}
 .tcs-hint{margin:8px 4px 0;font-size:11.5px;color:var(--tcs-mute);transition:opacity .2s}
+.tcs-mic{display:grid;place-items:center;width:38px;height:38px;flex:none;padding:0;border:0;border-radius:50%;background:rgba(143,208,216,.16);color:var(--tcs-accent);transition:background .2s,color .2s}
+.tcs-mic svg{width:19px;height:19px;stroke-width:1.9}
+.tcs-mic[hidden]{display:none}
+.tcs-mic:active{transform:scale(.94)}
+.tcs-mic.is-live{background:#e5484d;color:#fff;animation:tcsMic 1.2s ease-in-out infinite}
+@keyframes tcsMic{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.45)}50%{box-shadow:0 0 0 9px rgba(229,72,77,0)}}
+.tcs-voice{margin:8px 4px 0;font-size:12.5px;font-weight:600;color:var(--tcs-accent)}
+.tcs-voice[hidden]{display:none}
+.tcs-voice.is-error{color:#f4a3a6}
+@media(prefers-reduced-motion:reduce){.tcs-mic.is-live{animation:none}}
 .tasco-cat-sheet:not(.is-typing) .tcs-hint{opacity:.75}
 .tcs-body{flex:1;min-height:60px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;margin:14px -18px 0;padding:0 18px 14px}
 .tcs-body section+section{margin-top:18px}

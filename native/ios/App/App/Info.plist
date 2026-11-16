@@ -34,6 +34,8 @@
 	<string>TASCO DLK cần vị trí của bạn để ghi nhận địa điểm khi chụp ảnh hồ sơ.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>TASCO DLK cần micro để ghi tiếng khi quay video hồ sơ.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>TASCO DLK dùng nhận dạng giọng nói để bạn đọc tên các hạng mục thay vì gõ.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>TASCO DLK cần quyền lưu để bạn lưu ảnh và video hồ sơ vào thư viện Ảnh.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

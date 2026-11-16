@@ -44,3 +44,8 @@ App chỉ là "vỏ" iOS, mỗi lần mở nó tải trang web mới nhất từ
 - Chọn **Khoá lại sau** 30 giây / 2 phút / 10 phút: rời app lâu hơn mức này thì khi quay lại phải mở khoá.
 - Face ID lỗi sẽ có mật mã máy làm phương án dự phòng. Nếu iPhone tắt hẳn Face ID và mật mã, app tự tắt khoá để không bị kẹt.
 - Dòng cài đặt chỉ hiện trong app iOS; bản IPA cũ (chưa có plugin) hiển thị "Cần cài bản app mới".
+
+## Nói để nhập hạng mục (cần cài IPA mới)
+- Bản IPA mới có thêm plugin nhận dạng giọng nói của iOS (miễn phí, không cần mạng bên thứ ba) và quyền `NSSpeechRecognitionUsageDescription`.
+- Trong ô thêm hạng mục (camera / đổi hạng mục) bấm biểu tượng micro, đọc tên các mục, nói "phẩy" giữa các mục, rồi bấm Thêm.
+- Lần đầu iOS hỏi quyền Micro và Nhận dạng giọng nói: chọn Cho phép. Nếu lỡ từ chối, vào Cài đặt iPhone → TASCO DLK để bật lại.
