@@ -72,13 +72,31 @@ svg{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-wi
 .sec-note{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);display:flex;gap:9px;font-size:12px;line-height:1.5;color:#8aa3b9}
 .sec-note svg{margin-top:2px;color:var(--teal-400)}
 @media(max-width:560px){.qr-wrap{grid-template-columns:1fr;justify-items:center}.login-card{padding:28px 22px}}
-.sec{display:grid;gap:8px;margin-bottom:12px}
-.sec-row{display:flex;gap:8px;align-items:center}
-.lock-btn{flex:1;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;font-weight:700;color:#d6e6f2;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);transition:background .15s}
+.sec{display:grid;gap:10px;margin-bottom:12px}
+.sec-row{position:relative;display:flex;gap:8px;align-items:center}
+.lock-btn{flex:1;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;font-weight:700;color:#d6e6f2;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);transition:background .15s,border-color .15s}
 .lock-btn:hover{background:rgba(255,255,255,.12)}
-.sec select{height:36px;border-radius:11px;padding:0 8px;font-size:12px;font-weight:700;color:#d6e6f2;background:#0e2036;border:1px solid rgba(255,255,255,.1)}
-.sec label.tg{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;color:#7f9ab2;cursor:pointer;user-select:none}
-.sec label.tg input{accent-color:var(--teal-500)}
+.dd-btn{height:38px;padding:0 10px 0 11px;border-radius:12px;display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:#d6e6f2;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);transition:background .15s,border-color .15s,box-shadow .15s;white-space:nowrap}
+.dd-btn:hover{background:rgba(255,255,255,.12)}
+.dd-btn svg{width:15px;height:15px;color:var(--teal-400)}
+.dd-btn .chev{width:13px;height:13px;color:#7f9ab2;transition:transform .2s}
+.dd-btn[aria-expanded=true]{border-color:rgba(143,208,216,.55);background:rgba(143,208,216,.1);box-shadow:0 0 0 3px rgba(143,208,216,.12)}
+.dd-btn[aria-expanded=true] .chev{transform:rotate(180deg)}
+.dd-menu{position:absolute;right:0;bottom:calc(100% + 10px);width:236px;padding:8px;border-radius:18px;background:rgba(12,29,51,.97);backdrop-filter:blur(20px) saturate(1.4);border:1px solid rgba(143,208,216,.24);box-shadow:0 2px 6px rgba(0,0,0,.3),0 28px 60px -16px rgba(0,0,0,.75);z-index:40;animation:pop .16s ease-out}
+.dd-menu h6{margin:6px 10px 8px;font-size:10px;font-weight:800;letter-spacing:.16em;color:#58748f;text-transform:uppercase}
+.dd-item{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:7px 10px;border-radius:12px;text-align:left;color:#b9cfe1;font-size:13px;font-weight:600;transition:background .12s,color .12s}
+.dd-item .t{flex:1;min-width:0}.dd-item .t small{display:block;margin-top:1px;font-size:10.5px;font-weight:600;color:#c79b4a}
+.dd-item:hover,.dd-item:focus-visible{background:rgba(255,255,255,.07);color:#fff;outline:0}
+.dd-item .ck{width:16px;height:16px;color:var(--teal-300);opacity:0;transform:scale(.6);transition:opacity .15s,transform .15s}
+.dd-item[aria-selected=true]{background:rgba(143,208,216,.14);color:#fff}.dd-item[aria-selected=true] .ck{opacity:1;transform:none}
+.dd-sep{height:1px;margin:6px 8px;background:rgba(255,255,255,.08)}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 2px 0 4px;font-size:12px;font-weight:600;color:#8fa9bf;cursor:pointer;user-select:none}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw i{position:relative;flex:none;width:38px;height:22px;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.1);transition:background .2s,border-color .2s}
+.sw i::after{content:'';position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#dbe8f2;box-shadow:0 2px 5px rgba(0,0,0,.4);transition:transform .22s cubic-bezier(.3,1.3,.5,1),background .2s}
+.sw input:checked+i{background:linear-gradient(180deg,var(--teal-400),var(--teal-600));border-color:rgba(167,224,230,.6)}
+.sw input:checked+i::after{transform:translateX(16px);background:#fff}
+.sw input:focus-visible+i{outline:2px solid var(--teal-500);outline-offset:2px}
 body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-events:none}
 #app,#viewer{transition:filter .2s}
 
@@ -319,9 +337,10 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
       <div class="sec">
         <div class="sec-row">
           <button class="lock-btn" id="lockNow" type="button" title="Khoá ngay (xoá ảnh khỏi màn hình)"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="3"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>Khoá ngay</button>
-          <select id="idleSel" title="Tự khoá khi không thao tác" aria-label="Tự khoá sau"><option value="5">Tự khoá 5′</option><option value="10">Tự khoá 10′</option><option value="30">Tự khoá 30′</option><option value="60">Tự khoá 60′</option></select>
+          <button class="dd-btn" id="idleBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="idleMenu" title="Tự khoá khi không thao tác"><svg viewBox="0 0 24 24"><circle cx="12" cy="12.5" r="7.5"/><path d="M12 8.5v4l2.5 1.5M9.5 3h5"/></svg><span id="idleLabel">10 phút</span><svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="dd-menu" id="idleMenu" role="listbox" aria-label="Tự khoá sau" hidden></div>
         </div>
-        <label class="tg"><input type="checkbox" id="shieldTg"> Che màn hình khi rời cửa sổ này</label>
+        <label class="sw"><span>Che màn hình khi rời cửa sổ</span><input type="checkbox" id="shieldTg" role="switch"><i></i></label>
       </div>
       <div class="who"><span class="avatar" id="avatar">?</span><div><b id="whoEmail">—</b><small id="whoSync">Chưa đồng bộ</small></div><button class="icon-btn" id="logout" title="Đăng xuất" aria-label="Đăng xuất"><svg viewBox="0 0 24 24"><path d="M9 4H6.5A2.5 2.5 0 0 0 4 6.5v11A2.5 2.5 0 0 0 6.5 20H9M15 8l4 4-4 4M19 12H9"/></svg></button></div>
     </div>
@@ -865,7 +884,7 @@ async function enter(user) {
   ssSet('tasco_cloud_last_email', user.email || '');
   $('#whoEmail').textContent = user.email || '—'; $('#avatar').textContent = (user.email || '?').slice(0, 2).toUpperCase();
   let row = 210, caps = false; try { row = Number(localStorage.getItem('tasco_cloud_desktop_row')) || 210; caps = localStorage.getItem('tasco_cloud_desktop_caps') === '1'; } catch (_) {}
-  $('#idleSel').value = String(idleMin()); $('#shieldTg').checked = lsGet(SHIELD_KEY) === '1';
+  paintIdle(); $('#shieldTg').checked = lsGet(SHIELD_KEY) === '1';
   setRow(row); setCaps(caps); paintDate();
   loadAll();
 }
@@ -901,14 +920,40 @@ function closeViewerSafe() { if (S.viewer.open) closeViewer(); }
 sb.auth.onAuthStateChange(ev => { if (ev === 'SIGNED_OUT' && S.user) lockNow('Phiên đăng nhập đã hết. Đăng nhập lại.'); });
 
 /* --- Tự khoá khi không thao tác / quá 8 giờ / che màn hình khi rời cửa sổ --- */
-const idleMin = () => [5, 10, 30, 60].includes(Number(lsGet(IDLE_KEY))) ? Number(lsGet(IDLE_KEY)) : 10;
-$('#idleSel').addEventListener('change', e => { lsSet(IDLE_KEY, e.target.value); lastActive = Date.now(); toast('Tự khoá sau ' + e.target.value + ' phút không thao tác.'); });
+const IDLE_OPTS = [[5, '5 phút'], [10, '10 phút'], [30, '30 phút'], [60, '1 giờ'], [0, 'Không tự khoá']];
+const idleMin = () => { const v = lsGet(IDLE_KEY); if (v === null) return 10; const n = Number(v); return IDLE_OPTS.some(o => o[0] === n) ? n : 10; };   // 0 = không tự khoá
+const idleText = m => (IDLE_OPTS.find(o => o[0] === m) || IDLE_OPTS[1])[1];
+const CHECK = '<svg class="ck" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+function paintIdle() {
+  const m = idleMin(); $('#idleLabel').textContent = m ? idleText(m) : 'Không khoá';
+  $('#idleMenu').innerHTML = '<h6>Tự khoá sau</h6>' + IDLE_OPTS.map(([v, t]) => (v === 0 ? '<div class="dd-sep"></div>' : '') + `<button class="dd-item" type="button" role="option" data-v="${v}" aria-selected="${v === m}"><span class="t">${t}${v === 0 ? '<small>Chỉ nên dùng trên máy cá nhân</small>' : ''}</span>${CHECK}</button>`).join('');
+}
+function idleMenu(open) {
+  const menu = $('#idleMenu'); menu.hidden = !open; $('#idleBtn').setAttribute('aria-expanded', String(open));
+  if (open) (menu.querySelector('[aria-selected=true]') || menu.querySelector('.dd-item')).focus();
+}
+$('#idleBtn').addEventListener('click', e => { e.stopPropagation(); idleMenu($('#idleMenu').hidden); });
+$('#idleMenu').addEventListener('click', e => {
+  const it = e.target.closest('.dd-item'); if (!it) return; const v = Number(it.dataset.v);
+  lsSet(IDLE_KEY, String(v)); lastActive = Date.now(); paintIdle(); idleMenu(false); $('#idleBtn').focus();
+  toast(v ? 'Tự khoá sau ' + idleText(v) + ' không thao tác.' : 'Đã tắt tự khoá. Phiên vẫn kết thúc khi bạn đóng trình duyệt.');
+});
+$('#idleMenu').addEventListener('keydown', e => {
+  const items = [...$('#idleMenu').querySelectorAll('.dd-item')], i = items.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+  else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); idleMenu(false); $('#idleBtn').focus(); }
+  else if (e.key === 'Tab') idleMenu(false);
+});
+document.addEventListener('click', e => { if (!$('#idleMenu').hidden && !e.target.closest('#idleMenu')) idleMenu(false); });
+paintIdle();
 $('#shieldTg').addEventListener('change', e => { lsSet(SHIELD_KEY, e.target.checked ? '1' : '0'); document.body.classList.remove('shielded'); });
 ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart', 'scroll'].forEach(ev => addEventListener(ev, () => { lastActive = Date.now(); }, { passive: true, capture: true }));
 function idleCheck() {
   if (!S.user) return; const now = Date.now();
   if ([...document.querySelectorAll('video')].some(v => !v.paused && !v.ended)) lastActive = now;      // đang xem video thì không khoá
-  if (now - lastActive >= idleMin() * 60000) return lockNow('Đã tự khoá vì ' + idleMin() + ' phút không thao tác.');
+  const m = idleMin(); if (!m) return;                                                        // 0 = người dùng chọn không tự khoá
+  if (now - lastActive >= m * 60000) return lockNow('Đã tự khoá vì ' + idleText(m) + ' không thao tác.');
   if (now - loginAt >= MAX_SESSION_MS) lockNow('Phiên đã quá 8 giờ. Đăng nhập lại để tiếp tục.');
 }
 setInterval(idleCheck, 15000);
