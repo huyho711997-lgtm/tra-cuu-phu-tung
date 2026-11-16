@@ -12484,7 +12484,11 @@ window.TascoCategories = (function () {
   /* Nói để nhập: app iPhone dùng plugin SpeechRecognition (nhận dạng giọng nói của iOS); trình duyệt dùng Web Speech API nếu có.
      Chỉ điền chữ vào ô nhập để người dùng kiểm tra rồi bấm Thêm. Nói "phẩy" giữa các mục (hoặc "xuống dòng"). */
   var Voice = (function () {
-    var session = null;
+    var session = null, winding = false;
+    /* Từ gợi ý thêm cho bộ nhận dạng (chuyên ngành giám định xe), dùng khi người dùng chưa có hạng mục riêng. */
+    var SEED = ['Cản trước', 'Cản sau', 'Đèn pha trái', 'Đèn pha phải', 'Đèn hậu trái', 'Đèn hậu phải', 'Ca pô', 'Cốp sau', 'Cửa trước trái', 'Cửa trước phải', 'Cửa sau trái', 'Cửa sau phải',
+      'Chắn bùn trước trái', 'Chắn bùn trước phải', 'Chắn bùn sau trái', 'Chắn bùn sau phải', 'Gương chiếu hậu trái', 'Gương chiếu hậu phải', 'Kính chắn gió', 'Kính hậu', 'Mâm xe', 'Lốp xe',
+      'Tai xe', 'Ốp hông', 'Biển số', 'Số khung', 'Số máy', 'Đồng hồ công tơ mét', 'Toàn cảnh', 'Khoang máy', 'Nội thất', 'Túi khí', 'Táp lô', 'Ba đờ sốc', 'Lazang', 'Mặt calang', 'Trụ A', 'Trụ B', 'Trụ C'];
     function isApp() { return /TascoApp\//.test(navigator.userAgent) || !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); }
     function plugin() { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SpeechRecognition || null; }
     function webApi() { return isApp() ? null : (window.SpeechRecognition || window.webkitSpeechRecognition || null); }
@@ -12499,49 +12503,143 @@ window.TascoCategories = (function () {
       t = t.replace(/\s*(?:^|\s)(?:dấu phẩy|chấm phẩy|phẩy|xuống dòng)(?=\s|$)\s*/gi, ', ');
       return t.split(/[\n,;]+/).map(function (x) { x = x.replace(/\s+/g, ' ').trim(); return x ? x.charAt(0).toUpperCase() + x.slice(1) : ''; }).filter(Boolean).join(', ');
     }
+    /* So khớp không dấu: "can truoc" == "Cản trước" */
+    function norm(s) { return String(s || '').toLowerCase().replace(/đ/g, 'd').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+    function dist(a, b) {
+      if (a === b) return 0; if (Math.abs(a.length - b.length) > 2) return 9;
+      var prev = [], cur = [], i, j;
+      for (j = 0; j <= b.length; j++) prev[j] = j;
+      for (i = 1; i <= a.length; i++) { cur = [i]; for (j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1)); prev = cur; }
+      return prev[b.length];
+    }
+    /* Mục nghe được trùng (hoặc sai 1-2 ký tự) với tên đã có thì dùng đúng tên đã có: giữ nguyên dấu, không sinh bản trùng. */
+    function snapOne(item, known) {
+      var n = norm(item); if (!n) return item;
+      var best = null, bestD = 99, tie = false;
+      for (var i = 0; i < known.length; i++) {
+        var k = norm(known[i]); if (!k) continue;
+        var d = dist(n, k), limit = k.length >= 10 ? 2 : k.length >= 5 ? 1 : 0;
+        if (d <= limit) { if (d < bestD) { best = known[i]; bestD = d; tie = false; } else if (d === bestD && norm(best) !== k) tie = true; }
+      }
+      return best && !tie ? best : item;
+    }
+    function snap(text, multi, known) {
+      if (!text || !known || !known.length) return text;
+      if (!multi) return snapOne(text, known);
+      return text.split(', ').map(function (x) { return snapOne(x, known); }).join(', ');
+    }
+    /* Lỗi iOS -> câu tiếng Việt nói rõ cần làm gì */
+    function explain(code, message) {
+      var c = String(code || '').toUpperCase(), m = String(message || '');
+      if (/dictation|siri/i.test(m) || /KLSRERRORDOMAIN_201|KAFASSISTANTERRORDOMAIN_1700/.test(c)) return 'iPhone đang tắt Đọc chính tả. Vào Cài đặt → Cài đặt chung → Bàn phím → bật Đọc chính tả, rồi thử lại.';
+      if (/1110|KLSRERRORDOMAIN_203/.test(c)) return 'Không nghe thấy tiếng nói. Bấm mic rồi nói ngay, gần micro hơn.';
+      if (/MICROPHONE_PERMISSION_DENIED/.test(c)) return 'Chưa cấp quyền micro. Vào Cài đặt iPhone → TASCO DLK để bật.';
+      if (/UNSUPPORTED_LOCALE|RECOGNIZER_UNAVAILABLE|ON_DEVICE/.test(c) || /unavailable|unsupported/i.test(m)) return navigator.onLine === false ? 'Chưa có mạng nên chưa nói nhập được. Bạn gõ tên hạng mục nhé.' : 'Dịch vụ nhận dạng giọng nói đang bận. Thử lại sau ít giây.';
+      if (/KAFASSISTANTERRORDOMAIN|NSURLERRORDOMAIN|KLSRERRORDOMAIN/.test(c)) return navigator.onLine === false ? 'Chưa có mạng nên chưa nói nhập được. Bạn gõ tên hạng mục nhé.' : 'Chưa kết nối được dịch vụ nhận dạng. Kiểm tra mạng rồi thử lại.';
+      if (/AUDIO_SESSION|AUDIO_ENGINE/.test(c)) return 'Micro đang được app khác dùng. Đóng app đó rồi thử lại.';
+      return 'Không nghe được. Thử lại gần micro hơn.';
+    }
     function stop() { if (session) session.stop(); }
+    function hints(known) {
+      var out = [], seen = {};
+      (known || []).concat(SEED).forEach(function (n) { n = String(n || '').trim(); var k = norm(n); if (!k || seen[k] || n.split(' ').length > 4) return; seen[k] = 1; out.push(n); });
+      return out.slice(0, 100);   // iOS chỉ nhận tối đa ~100 cụm gợi ý
+    }
+    var SILENCE_MS = 2200, NO_SPEECH_MS = 9000, MAX_MS = 52000, STOP_WAIT_MS = 4200, MAX_RESTARTS = 3;
     function start(ui) {
+      if (winding) { ui.error('Đang kết thúc lần nói trước. Thử lại sau một giây.'); return; }
       if (session) { session.stop(); return; }
       var native = plugin(), Web = webApi();
       if (!native && !Web) { ui.error(isApp() ? 'Cần cập nhật app bản mới để nói nhập (cài lại file IPA mới nhất).' : 'Trình duyệt này chưa hỗ trợ nhập bằng giọng nói.'); return; }
-      var done = false, handles = [], rec = null, last = '', timer = 0;
-      function finish(text) {
-        if (done) return; done = true; clearTimeout(timer); session = null;
-        handles.forEach(function (h) { try { h && h.remove && h.remove(); } catch (_) {} });
-        ui.end(tidy(text !== undefined ? text : last, ui.multi));
+      var known = (ui.known || []).filter(Boolean);
+      var done = false, handles = [], rec = null, parts = [], last = '', stopRequested = false, restarts = 0, startedAt = Date.now(), lastChange = 0, tick = 0, stopTimer = 0, onDevice = false;
+      function text() { return parts.concat(last ? [last] : []).join(ui.multi ? ', ' : ' '); }
+      function cleanUp() {
+        clearInterval(tick); clearTimeout(stopTimer); session = null;
+        handles.forEach(function (h) { try { h && h.remove && h.remove(); } catch (_) {} }); handles = [];
       }
-      function fail(message) { if (done) return; done = true; clearTimeout(timer); session = null; handles.forEach(function (h) { try { h && h.remove && h.remove(); } catch (_) {} }); ui.end(''); ui.error(message); }
-      session = {
-        stop: function () {
-          ui.stopping();
-          if (native) { try { native.stop().catch(function () {}); } catch (_) {} timer = setTimeout(function () { finish(); }, 1500); }
-          else if (rec) { try { rec.stop(); } catch (_) { finish(); } }
-        }
-      };
+      function finish() {
+        if (done) return; done = true; cleanUp();
+        ui.end(snap(tidy(text(), ui.multi), ui.multi, known.concat(SEED)));
+      }
+      function fail(message) { if (done) return; done = true; cleanUp(); winding = false; ui.end(''); ui.error(message); }
+      function show() { var t = tidy(text(), ui.multi); if (t) ui.live(t); }
+      function requestStop() {
+        if (stopRequested) return; stopRequested = true; ui.stopping();
+        if (native) {
+          winding = true;
+          try { native.stop().catch(function () {}); } catch (_) {}
+          /* Chờ iOS trả kết quả cuối (tối đa ~2 giây phía plugin); hết giờ thì lấy chữ nghe được gần nhất. */
+          stopTimer = setTimeout(async function () {
+            try { var r = await native.getLastPartialResult(); if (r && r.available && r.text && !last) last = r.text; } catch (_) {}
+            try { await native.forceStop(); } catch (_) {}
+            winding = false; finish();
+          }, STOP_WAIT_MS);
+        } else if (rec) { try { rec.stop(); } catch (_) { finish(); } }
+      }
+      session = { stop: requestStop };
       ui.begin();
+      function watch() {
+        clearInterval(tick);
+        tick = setInterval(function () {
+          var now = Date.now();
+          if (stopRequested) return;
+          if (now - startedAt > MAX_MS) { requestStop(); return; }                          // iOS cắt mỗi lần nghe sau ~1 phút
+          if (last && lastChange && now - lastChange > SILENCE_MS) { requestStop(); return; }  // nói xong, im lặng: tự dừng
+          if (!last && !parts.length && now - startedAt > NO_SPEECH_MS) { requestStop(); }     // không nói gì: tự dừng
+        }, 300);
+      }
       if (native) {
         (async function () {
           try {
             var perm = await native.checkPermissions();
             if (perm.speechRecognition !== 'granted') perm = await native.requestPermissions();
             if (perm.speechRecognition !== 'granted') { fail('Chưa cấp quyền micro / nhận dạng giọng nói. Vào Cài đặt iPhone → TASCO DLK để bật.'); return; }
-            handles.push(await native.addListener('partialResults', function (e) { var t = e && ((e.matches && e.matches[0]) || e.accumulatedText || ''); if (t) { last = t; ui.live(tidy(t, ui.multi)); } }));
-            handles.push(await native.addListener('listeningState', function (e) { if (e && (e.status === 'stopped' || e.state === 'stopped')) finish(); }));
-            handles.push(await native.addListener('error', function (e) { if (last) finish(); else fail('Không nghe được. Thử lại gần micro hơn.'); }));
-            await native.start({ language: 'vi-VN', maxResults: 1, partialResults: true, popup: false });
-          } catch (error) { fail((error && error.message) || 'Chưa bật được nhận dạng giọng nói.'); }
+            /* Không có mạng: chỉ nghe được nếu máy có sẵn bộ nhận dạng tiếng Việt chạy trong máy. */
+            var opts = { language: 'vi-VN', maxResults: 5, partialResults: true, popup: false, addPunctuation: false, contextualStrings: hints(known) };
+            if (navigator.onLine === false) {
+              var ok = false;
+              try { ok = !!(await native.isOnDeviceRecognitionAvailable({ language: 'vi-VN', preferLegacyRecognizer: true })).available; } catch (_) {}
+              if (!ok) { fail('Chưa có mạng nên chưa nói nhập được. Bạn gõ tên hạng mục nhé.'); return; }
+              opts.useOnDeviceRecognition = true; opts.preferLegacyRecognizer = true; onDevice = true;
+            }
+            handles.push(await native.addListener('partialResults', function (e) {
+              var t = e && ((e.matches && e.matches[0]) || e.accumulatedText || '');
+              if (t && t !== last) { last = t; lastChange = Date.now(); show(); }
+            }));
+            handles.push(await native.addListener('audioLevel', function (e) { try { ui.level && ui.level(Math.max(0, Math.min(1, Number(e && e.level) || 0))); } catch (_) {} }));
+            handles.push(await native.addListener('error', function (e) { if (done) return; if (last || parts.length) { winding = false; finish(); } else fail(explain(e && e.code, e && e.message)); }));
+            handles.push(await native.addListener('listeningState', async function (e) {
+              if (!e || e.state !== 'stopped' || done) return;
+              winding = false;
+              /* iOS tự kết thúc khi người nói ngừng lâu: nếu chưa bấm dừng thì nghe tiếp, ghép chữ lại. */
+              if (!stopRequested && e.reason !== 'error' && restarts < MAX_RESTARTS && Date.now() - startedAt < MAX_MS) {
+                restarts++; if (last) { parts.push(last); last = ''; }
+                try { await native.start(opts); lastChange = 0; return; } catch (_) {}
+              }
+              finish();
+            }));
+            await native.start(opts);
+            if (done) { try { await native.forceStop(); } catch (_) {} return; }          // người dùng đã đóng bảng trong lúc xin quyền
+            startedAt = Date.now(); watch();
+            if (stopRequested) { try { await native.stop(); } catch (_) {} }
+          } catch (error) {
+            var msg = String((error && error.message) || '');
+            if (/already running/i.test(msg)) { try { await native.forceStop(); } catch (_) {} fail('Micro đang bận. Bấm lại lần nữa.'); }
+            else fail(explain(error && error.code, msg));
+          }
         })();
       } else {
         try {
           rec = new Web(); rec.lang = 'vi-VN'; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
-          rec.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; last = t; ui.live(tidy(t, ui.multi)); };
-          rec.onerror = function (e) { if (last) finish(); else fail(e && e.error === 'not-allowed' ? 'Chưa cấp quyền micro cho trình duyệt.' : 'Không nghe được. Thử lại.'); };
+          rec.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; last = t.trim(); lastChange = Date.now(); show(); };
+          rec.onerror = function (e) { if (last) finish(); else fail(e && e.error === 'not-allowed' ? 'Chưa cấp quyền micro cho trình duyệt.' : e && e.error === 'no-speech' ? 'Không nghe thấy tiếng nói. Thử lại gần micro hơn.' : 'Không nghe được. Thử lại.'); };
           rec.onend = function () { finish(); };
-          rec.start();
+          rec.start(); watch();
         } catch (error) { fail('Chưa bật được nhận dạng giọng nói.'); }
       }
     }
-    return { visible: visible, available: available, start: start, stop: stop, tidy: tidy, active: function () { return !!session; } };
+    return { visible: visible, available: available, start: start, stop: stop, tidy: tidy, snap: snap, norm: norm, explain: explain, active: function () { return !!session; } };
   })();
   /* open({ current, extra: [tên trong album], title, subtitle, onPick(name|''),
            plan: [danh sách cần chụp], onPlanChange(list), counts(name) -> số ảnh, done(name) -> đã chụp? })
@@ -12641,13 +12739,15 @@ window.TascoCategories = (function () {
     function dictate() {
       var base = input.value.trim();
       var join = function (t) { return base && t ? base + (planMode ? ', ' : ' ') + t : (base || t); };
+      var known = plan.concat(opts.extra || [], recent());
       Voice.start({
-        multi: planMode,
+        multi: planMode, known: known,
+        level: function (v) { micBtn.style.setProperty('--lvl', v.toFixed(2)); },
         begin: function () { micBtn.classList.add('is-live'); micBtn.setAttribute('aria-pressed', 'true'); voiceNote.classList.remove('is-error'); voiceNote.hidden = false; voiceNote.textContent = planMode ? 'Đang nghe… đọc tên các mục, nói "phẩy" giữa các mục' : 'Đang nghe… đọc tên hạng mục'; input.blur(); },
         live: function (t) { input.value = join(t); syncInput(); if (t) voiceNote.textContent = 'Đang nghe: ' + t; },
         stopping: function () { voiceNote.textContent = 'Đang xử lý…'; },
         end: function (t) {
-          micBtn.classList.remove('is-live'); micBtn.setAttribute('aria-pressed', 'false');
+          micBtn.style.removeProperty('--lvl'); micBtn.classList.remove('is-live'); micBtn.setAttribute('aria-pressed', 'false');
           if (t) { input.value = join(t); syncInput(); voiceNote.hidden = false; voiceNote.textContent = 'Kiểm tra lại rồi bấm ' + (planMode ? 'Thêm' : 'Dùng') + '.'; }
           else voiceNote.hidden = true;
         },
@@ -12787,7 +12887,7 @@ window.TascoCategories = (function () {
 .tcs-mic svg{width:19px;height:19px;stroke-width:1.9}
 .tcs-mic[hidden]{display:none}
 .tcs-mic:active{transform:scale(.94)}
-.tcs-mic.is-live{background:#e5484d;color:#fff;animation:tcsMic 1.2s ease-in-out infinite}
+.tcs-mic.is-live{background:#e5484d;color:#fff;animation:tcsMic 1.2s ease-in-out infinite;transform:scale(calc(1 + var(--lvl,0) * .22))}
 @keyframes tcsMic{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.45)}50%{box-shadow:0 0 0 9px rgba(229,72,77,0)}}
 .tcs-voice{margin:8px 4px 0;font-size:12.5px;font-weight:600;color:var(--tcs-accent)}
 .tcs-voice[hidden]{display:none}
