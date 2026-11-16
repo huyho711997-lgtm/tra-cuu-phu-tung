@@ -10173,7 +10173,7 @@ let cameraOrientLock=(()=>{try{return localStorage.getItem('tasco_camera_orient_
 function cameraDevicePose(){
   let angle=cameraUiState.physicalOrientation?.angle??cameraScreenAngle();
   if(angle%180===90)cameraUiState.lastLandscapeAngle=angle;
-  else if(cameraOrientLock==='landscape')angle=cameraUiState.lastLandscapeAngle??90;
+  else if(cameraOrientLock==='landscape'){const screen=cameraScreenAngle();angle=screen%180===90?screen:(cameraUiState.lastLandscapeAngle??90);}
   return {angle,orientation:angle%180===90?'landscape':'portrait'};
 }
 function syncCameraOrientationLockUi(){
@@ -10185,6 +10185,7 @@ function toggleCameraOrientationLock(){
   cameraOrientLock=cameraOrientLock==='landscape'?'auto':'landscape';
   try{localStorage.setItem('tasco_camera_orient_lock_v1',cameraOrientLock);}catch(_){}
   syncCameraOrientationLockUi();syncCameraViewport();
+  try{window.tascoCameraOrientChanged&&window.tascoCameraOrientChanged();}catch(_){}
   cameraFeedback(cameraOrientLock==='landscape'?'Đã khoá chụp ngang: ảnh luôn là ảnh ngang.':'Đã mở khoá: ảnh theo chiều cầm máy.',2200);
 }
 function cameraHandleDeviceOrientation(event) {
@@ -13733,6 +13734,34 @@ window.TascoPhotoFX = (function () {
   function savePro() { try { localStorage.setItem(PRO_KEY, JSON.stringify(pro)); } catch (_) {} }
   var evRange = { min: -2, max: 2, step: 0.1 };
   var root = document.documentElement;
+  /* Xoay màn hình: ngoài camera app luôn dọc. Mở camera thì cho xoay theo tay cầm (iPhone xoay thật nên hình live
+     luôn thẳng đứng); bật "khoá chụp ngang" thì ép màn hình ngang. Cần IPA có plugin ScreenOrientation, không có thì giữ nguyên như cũ. */
+  var Orient = (function () {
+    var SO = null;
+    try { if (cap.isPluginAvailable('ScreenOrientation')) SO = cap.Plugins.ScreenOrientation; } catch (_) {}
+    var active = false, side = 'landscape-primary', hooked = false;
+    function run(name, arg) { if (!SO) return Promise.resolve(); try { return Promise.resolve(arg ? SO[name](arg) : SO[name]()).catch(function () {}); } catch (_) { return Promise.resolve(); } }
+    function lockedLandscape() { try { return cameraOrientLock === 'landscape'; } catch (_) { return false; } }
+    function apply() {
+      if (!SO) return Promise.resolve();
+      if (!active) return run('lock', { orientation: 'portrait' });
+      return lockedLandscape() ? run('lock', { orientation: side }) : run('unlock');
+    }
+    function hook() {
+      if (hooked || !SO || typeof SO.addListener !== 'function') return;
+      hooked = true;
+      try {
+        SO.addListener('screenOrientationChange', function (event) {
+          var type = event && event.type;
+          if (!active || !lockedLandscape() || !/^landscape/.test(type || '') || type === side) return;
+          side = type; apply();   // đang khoá ngang: cầm máy sang bên ngang kia thì khung lật theo
+        });
+      } catch (_) {}
+    }
+    hook(); apply();   // lúc mở app: khoá dọc
+    return { available: !!SO, enter: function () { active = true; hook(); return apply(); }, leave: function () { active = false; return apply(); }, refresh: function () { return apply(); } };
+  })();
+  window.tascoCameraOrientChanged = function () { Orient.refresh(); };
   var MAX_SIDE = { economy: 2048, high: 3024, maximum: 4032 };
   /* CSS của trang có nền !important độ ưu tiên cao (html[data-tasco-page] body...), nên ép trong suốt bằng style inline. */
   function setTransparent(on) {
@@ -13748,6 +13777,7 @@ window.TascoPhotoFX = (function () {
   function zoomLabel(v) { return (v < 1 ? String(v).replace(/^0/, '') : String(v)) + '×'; }
 
   function cameraModal() { return document.getElementById('customCameraModal'); }
+  function isLandscape() { var vv = window.visualViewport; return (vv ? vv.width : innerWidth) > (vv ? vv.height : innerHeight); }
   function nativeTurn() { var m = cameraModal(); return Number(m && m.dataset.nativeTurn) || 0; }
   /* Đặt khung dấu ngày giờ trùng khung hình camera thật. Khi cầm ngang, khung xoay theo để dấu
      định vị nằm đúng góc dưới-phải của ảnh ngang (giống ảnh được lưu). */
@@ -13766,13 +13796,15 @@ window.TascoPhotoFX = (function () {
     ['left', 'top', 'transform', 'width', 'height'].forEach(function (k) { plane.style[k] = ''; });
   }
 
-  function stopNative() {
+  function stopNative(keepOrient) {
+    if (!keepOrient) Orient.leave();
     st.gen++;
     var wasActive = st.running || st.starting;
     st.running = false; st.rect = null;
     if (st.recording) { st.recording = false; clearInterval(st.recTimer); var mm = cameraModal(); if (mm) mm.dataset.recording = 'false'; }
     root.classList.remove('tasco-native-cam'); setTransparent(false); clearPlane();
     var m = cameraModal(); if (m) delete m.dataset.nativeTurn;
+    st.land = null;
     if (wasActive) CP.stop({ force: true }).catch(function () {});
   }
 
@@ -13786,7 +13818,7 @@ window.TascoPhotoFX = (function () {
     if (flash) flash.disabled = st.flashModes.indexOf('on') < 0;
   }
 
-  function startNative() {
+  function startNative(keepOrient) {
     if (!modalOpen()) return Promise.resolve(null);
     if (st.starting) return st.starting;
     var gen = ++st.gen;
@@ -13794,13 +13826,17 @@ window.TascoPhotoFX = (function () {
     if (st.session !== cameraUiState.session) { st.session = cameraUiState.session; st.mode = 'photo'; }
     st.starting = (async function () {
       root.classList.add('tasco-native-cam'); setTransparent(true);
+      if (!keepOrient) await Orient.enter();
+      if (gen !== st.gen || !modalOpen()) return null;
       window.syncCameraViewport();   // bỏ xoay giao diện trước khi đo
       var box = document.querySelector('#customCameraModal .camera-stream-container').getBoundingClientRect();
       var head = document.querySelector('#customCameraModal .camera-overlay-header'), headBottom = head ? head.getBoundingClientRect().bottom : box.top;
       var width = (window.visualViewport && visualViewport.width) || innerWidth, isVideo = st.mode === 'video';
+      var land = isLandscape(); st.land = land;
       var previewH = width * (isVideo ? 16 / 9 : 4 / 3), room = box.bottom - headBottom;
       /* Ảnh: khung 4:3 tràn ngang, ngay dưới tiêu đề. Video: khung 16:9 tràn màn hình, đáy sát thanh nút (tiêu đề nổi trên hình như app Camera). */
       var y = Math.round(isVideo ? Math.max(box.top, box.bottom - previewH) : previewH <= room ? headBottom + (room - previewH) / 2 : box.top + Math.max(0, (box.height - previewH) / 2));
+      if (land) y = 0;   // màn hình ngang: khung ngang nằm giữa vùng camera, đặt chính xác sau khi mở
       var result;
       try {
         result = await CP.start({
@@ -13821,6 +13857,14 @@ window.TascoPhotoFX = (function () {
       if (gen !== st.gen || !modalOpen()) { CP.stop({ force: true }).catch(function () {}); return null; }
       st.running = true;
       st.rect = { x: result.x, y: result.y, width: result.width, height: result.height };
+      if (land) {
+        /* Khung 4:3 ngang vừa khít vùng camera (bên trái cột nút), căn giữa trong đó. */
+        try {
+          var area = document.querySelector('#customCameraModal .camera-stream-container').getBoundingClientRect();
+          var fit = await CP.setPreviewSize({ x: Math.round(area.left), y: Math.round(area.top), width: Math.round(area.width), height: Math.round(area.height) });
+          if (fit && fit.width > 0 && fit.height > 0) st.rect = { x: fit.x, y: fit.y, width: fit.width, height: fit.height };
+        } catch (_) {}
+      }
       customCameraFacingMode = st.position === 'front' ? 'user' : 'environment';
       await refreshCapabilities();
       if (gen !== st.gen) return null;
@@ -13841,6 +13885,19 @@ window.TascoPhotoFX = (function () {
     return startNative();
   };
   window.stopCustomCameraStream = function () { stopNative(); try { origStop(); } catch (_) {} };
+  /* Màn hình vừa xoay (dọc <-> ngang): mở lại camera để lớp hình live theo hướng mới và đặt lại khung. */
+  var rotTimer = null;
+  function onRotated() {
+    clearTimeout(rotTimer);
+    rotTimer = setTimeout(function () {
+      if (!modalOpen() || !st.running || st.starting || st.recording || st.land === null || st.land === isLandscape()) return;
+      cameraControlsState.busy = true;
+      stopNative(true);
+      startNative(true).catch(function () {}).finally(function () { cameraControlsState.busy = false; try { renderCameraLensChoices(); syncCameraViewport(); } catch (_) {} });
+    }, 350);
+  }
+  window.addEventListener('resize', onRotated);
+  window.addEventListener('orientationchange', onRotated);
 
   /* Camera thật không xoay theo giao diện, nên giữ màn hình camera đứng yên (như app Camera của iPhone)
      và chỉ xoay biểu tượng + dấu định vị theo hướng cầm máy. */
@@ -13848,12 +13905,14 @@ window.TascoPhotoFX = (function () {
     try { origSync(); } catch (_) {}
     var modal = cameraModal();
     if (!modal || modal.style.display === 'none' || !root.classList.contains('tasco-native-cam')) return;
-    var turn = Number(modal.dataset.uiRotation) || 0, vv = window.visualViewport;
+    var land = isLandscape(), turn = land ? 0 : (Number(modal.dataset.uiRotation) || 0), vv = window.visualViewport;
     modal.style.transform = 'none'; modal.style.left = '0px'; modal.style.top = (vv ? vv.offsetTop : 0) + 'px';
     modal.style.setProperty('--camera-viewport-width', (vv ? vv.width : innerWidth) + 'px');
     modal.style.setProperty('--camera-viewport-height', (vv ? vv.height : innerHeight) + 'px');
     ['top', 'right', 'bottom', 'left'].forEach(function (side) { modal.style.setProperty('--camera-safe-' + side, 'env(safe-area-inset-' + side + ',0px)'); });
-    modal.dataset.orientation = 'portrait'; modal.dataset.uiRotation = '0'; modal.dataset.nativeTurn = String(turn);
+    /* Màn hình iPhone xoay thật nên không xoay giao diện bằng CSS nữa; chỉ khi màn còn dọc mà máy đã nghiêng thì xoay biểu tượng. */
+    modal.dataset.orientation = land ? 'landscape' : 'portrait'; modal.dataset.uiRotation = '0'; modal.dataset.nativeTurn = String(turn);
+    modal.dataset.compact = String((vv ? vv.height : innerHeight) <= 380);
     if (!st.running) return;
     placePlane();
     var shutter = document.getElementById('cameraCaptureButton');
@@ -14015,7 +14074,7 @@ window.TascoPhotoFX = (function () {
     var fx = document.getElementById('cameraFlashEffect');
     if (fx && cameraAppearance.shutterFlash) { fx.classList.add('flash-active'); setTimeout(function () { fx.classList.remove('flash-active'); }, 80); }
     try {
-      var shot = await CP.capture({ quality: 92, photoQualityPrioritization: pro.priority === 'speed' ? 'speed' : 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront });
+      var shot = await CP.capture({ quality: 92, orientation: Orient.available && cameraOrientLock === 'landscape' && isLandscape() ? 'preview' : 'device', photoQualityPrioritization: pro.priority === 'speed' ? 'speed' : 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront });
       if (session !== cameraUiState.session) return;
       feedback('Đang đóng dấu ảnh…', 0);
       var blob = await (await fetch('data:image/jpeg;base64,' + shot.value)).blob();

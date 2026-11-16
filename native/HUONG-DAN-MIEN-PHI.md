@@ -49,3 +49,8 @@ App chỉ là "vỏ" iOS, mỗi lần mở nó tải trang web mới nhất từ
 - Bản IPA mới có thêm plugin nhận dạng giọng nói của iOS (miễn phí, không cần mạng bên thứ ba) và quyền `NSSpeechRecognitionUsageDescription`.
 - Trong ô thêm hạng mục (camera / đổi hạng mục) bấm biểu tượng micro, đọc tên các mục, nói "phẩy" giữa các mục, rồi bấm Thêm.
 - Lần đầu iOS hỏi quyền Micro và Nhận dạng giọng nói: chọn Cho phép. Nếu lỡ từ chối, vào Cài đặt iPhone → TASCO DLK để bật lại.
+
+## Camera xoay ngang thật (cần cài IPA mới)
+- Bản IPA mới có thêm plugin xoay màn hình. Ngoài camera app luôn giữ dọc; khi mở camera, cầm ngang thì màn hình camera tự xoay ngang, hình live thẳng đứng, khung 4:3 nằm bên cạnh cột nút chụp.
+- Nút **khoá chụp ngang** (icon điện thoại ngang + ổ khoá): bật thì camera luôn ngang, cầm máy sang bên ngang kia khung tự lật theo; ảnh chụp ra đúng như khung đang xem. Rời camera thì app về dọc.
+- Nếu cài bản app cũ (chưa có plugin) camera vẫn dọc như trước, chỉ xoay biểu tượng.
