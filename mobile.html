@@ -3866,7 +3866,7 @@ window.TascoPersonalStorage=(()=>{
 /* Device originals enter the same owned album/manifest path as camera photos. */
 window.TascoCloudImport=(()=>{
   let active=null;
-  const MAX_FILES=40,MAX_BYTES=20*1024*1024;
+  const MAX_FILES=300,MAX_BYTES=20*1024*1024;
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const icon=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({upload:'<path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',folder:'<path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>',image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 6-6 5 5 3-3 4 4"/>',check:'<path d="m5 12 4 4L19 6"/>'}[name]||'')+'</svg>';
   function validate(files){
@@ -3894,7 +3894,7 @@ window.TascoCloudImport=(()=>{
     const ownerId=options.owner.id,focus=document.activeElement,overflow=document.body.style.overflow,urls=new Map(),overlay=document.createElement('div');let busy=false,closed=false,album=options.album?{...options.album}:null,started=false;
     const albums=(options.albums||[]).filter(row=>row.owner_id===ownerId);
     overlay.className='storage-overlay cloud-import-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','importTitle');
-    overlay.innerHTML=`<section class="storage-panel"><header class="storage-header"><span class="storage-symbol">${icon('upload')}</span><div><small>THƯ VIỆN CÁ NHÂN</small><h2 id="importTitle">Tải ảnh lên Cloud</h2></div><button type="button" class="storage-icon-button" data-import-action="close" aria-label="Đóng tải ảnh">${icon('close')}</button></header><div class="storage-body"><p class="storage-lead">${files.length} ảnh · ${(files.reduce((sum,file)=>sum+file.size,0)/1024/1024).toLocaleString('vi-VN',{maximumFractionDigits:1})} MB</p><div class="import-target"><small>LƯU VÀO</small><button type="button" data-import-action="destination" aria-expanded="false">${icon('folder')}<strong data-import-album></strong><span>Thay đổi</span></button><div class="import-album-options" data-import-albums hidden role="group" aria-label="Chọn nơi lưu ảnh"><button type="button" data-import-action="album" data-id="">Tất cả ảnh</button>${albums.map(row=>`<button type="button" data-import-action="album" data-id="${esc(row.id)}">${icon('folder')}${esc(row.name)}</button>`).join('')}</div><span class="import-provider">Cloudinary · ${esc(options.cloud.cloudName)}</span></div><div class="import-file-list">${files.map((file,index)=>{const url=URL.createObjectURL(file);urls.set(index,url);return `<article class="import-file"><span class="import-preview">${icon('image')}<img src="${esc(url)}" alt="" loading="lazy" onerror="this.hidden=true"></span><span><strong>${esc(file.name)}</strong><small>${(file.size/1024/1024).toLocaleString('vi-VN',{maximumFractionDigits:1})} MB</small></span><span class="import-file-state" data-import-state="${index}">Chờ tải</span></article>`;}).join('')}</div><p class="storage-footnote">Giữ nguyên ảnh gốc. Ngày hiển thị theo thời gian của tệp; địa điểm không được thêm tự động.</p><div class="import-progress" hidden><progress max="${files.length}" value="0" aria-label="Số ảnh đã lưu"></progress><span role="status" aria-live="polite" data-import-progress></span></div><p class="storage-error" data-import-error role="alert" hidden></p><footer class="storage-footer"><button type="button" class="storage-primary" data-import-action="upload">${icon('upload')}Tải ${files.length} ảnh lên</button></footer></div></section>`;
+    overlay.innerHTML=`<section class="storage-panel"><header class="storage-header"><span class="storage-symbol">${icon('upload')}</span><div><small>THƯ VIỆN CÁ NHÂN</small><h2 id="importTitle">Tải ảnh lên Cloud</h2></div><button type="button" class="storage-icon-button" data-import-action="close" aria-label="Đóng tải ảnh">${icon('close')}</button></header><div class="storage-body"><p class="storage-lead">${files.length} ảnh · ${(files.reduce((sum,file)=>sum+file.size,0)/1024/1024).toLocaleString('vi-VN',{maximumFractionDigits:1})} MB</p><div class="import-target"><small>LƯU VÀO</small><button type="button" data-import-action="destination" aria-expanded="false">${icon('folder')}<strong data-import-album></strong><span>Thay đổi</span></button><div class="import-album-options" data-import-albums hidden role="group" aria-label="Chọn nơi lưu ảnh"><button type="button" data-import-action="album" data-id="">Tất cả ảnh</button>${albums.map(row=>`<button type="button" data-import-action="album" data-id="${esc(row.id)}">${icon('folder')}${esc(row.name)}</button>`).join('')}</div><span class="import-provider">Cloudinary · ${esc(options.cloud.cloudName)}</span></div><div class="import-file-list">${files.map((file,index)=>{return `<article class="import-file"><span class="import-preview">${icon('image')}<img alt="" data-import-thumb="${index}" decoding="async"></span><span><strong>${esc(file.name)}</strong><small>${(file.size/1024/1024).toLocaleString('vi-VN',{maximumFractionDigits:1})} MB</small></span><span class="import-file-state" data-import-state="${index}">Chờ tải</span></article>`;}).join('')}</div><p class="storage-footnote">Giữ nguyên ảnh gốc. Ngày hiển thị theo thời gian của tệp; địa điểm không được thêm tự động.</p><div class="import-progress" hidden><progress max="${files.length}" value="0" aria-label="Số ảnh đã lưu"></progress><span role="status" aria-live="polite" data-import-progress></span></div><p class="storage-error" data-import-error role="alert" hidden></p><footer class="storage-footer"><button type="button" class="storage-primary" data-import-action="upload">${icon('upload')}Tải ${files.length} ảnh lên</button></footer></div></section>`;
     const uploadButton=overlay.querySelector('[data-import-action=upload]'),errorNode=overlay.querySelector('[data-import-error]'),targetButton=overlay.querySelector('[data-import-action=destination]'),list=overlay.querySelector('[data-import-albums]'),progress=overlay.querySelector('.import-progress'),bar=overlay.querySelector('progress');
     function destination(){overlay.querySelector('[data-import-album]').textContent=album?.name||'Tất cả ảnh';list.querySelectorAll('[data-import-action=album]').forEach(button=>button.setAttribute('aria-pressed',String((button.dataset.id||null)===(album?.id||null))));}
     function close(force=false){if(closed||busy&&!force)return;closed=true;overlay.remove();urls.forEach(url=>URL.revokeObjectURL(url));document.body.style.overflow=overflow;if(focus?.isConnected)focus.focus({preventScroll:true});if(active?.close===close)active=null;}
@@ -3914,7 +3914,30 @@ window.TascoCloudImport=(()=>{
       }
     };
     overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();}if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button')].filter(node=>!node.disabled&&!node.hidden&&node.getClientRects().length),first=nodes[0],last=nodes.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}}});
-    destination();document.body.append(overlay);document.body.style.overflow='hidden';uploadButton.focus({preventScroll:true});active={close,busy:false,ownerId};
+    /* Ảnh xem trước: chỉ giải mã khi cuộn tới và thu nhỏ còn ~112px, để chọn hàng trăm ảnh vẫn không tràn bộ nhớ. */
+    function thumbs(){
+      const queue=[];let running=0;
+      async function make(file){
+        try{const bitmap=await createImageBitmap(file,{resizeWidth:112,resizeQuality:'low'});return bitmap;}catch(_){}
+        const url=URL.createObjectURL(file);
+        try{const image=new Image();image.decoding='async';image.src=url;await image.decode();return image;}finally{setTimeout(()=>URL.revokeObjectURL(url),0);}
+      }
+      async function pump(){
+        while(running<2&&queue.length&&!closed){
+          const node=queue.shift();running++;
+          make(files[Number(node.dataset.importThumb)]).then(source=>{
+            const w=source.width||source.naturalWidth,h=source.height||source.naturalHeight;if(!w||!h||closed)return;
+            const scale=Math.min(1,112/Math.max(w,h)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(w*scale));canvas.height=Math.max(1,Math.round(h*scale));
+            canvas.getContext('2d').drawImage(source,0,0,canvas.width,canvas.height);source.close?.();
+            node.src=canvas.toDataURL('image/jpeg',.6);
+          }).catch(()=>{}).finally(()=>{running--;pump();});
+        }
+      }
+      const watcher='IntersectionObserver' in window?new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){watcher.unobserve(entry.target);queue.push(entry.target);}pump();},{root:overlay.querySelector('.import-file-list'),rootMargin:'200px'}):null;
+      overlay.querySelectorAll('[data-import-thumb]').forEach(node=>watcher?watcher.observe(node):queue.push(node));
+      if(!watcher)pump();
+    }
+    destination();document.body.append(overlay);document.body.style.overflow='hidden';uploadButton.focus({preventScroll:true});active={close,busy:false,ownerId};thumbs();
   }
   window.addEventListener('tasco:cloud-access',event=>{if(active&&(!event.detail.allowed||event.detail.user?.id!==active.ownerId))active.close(true);});
   return {open,validate,metadata,isBusy:()=>active?.busy===true,close:()=>active?.close()};
@@ -8807,8 +8830,10 @@ window.TascoCloud = (() => {
       }
     };
   }
+  const UPLOAD_PARALLEL=4;   // số ảnh tải lên Cloudinary cùng lúc
   async function upload(record) {
-    const isVideo=window.tascoIsVideo({blob:record.blob,file_name:record.file_name}),controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),isVideo?600000:90000);
+    // Thời gian chờ tăng theo dung lượng vì các ảnh dùng chung đường truyền khi tải song song.
+    const isVideo=window.tascoIsVideo({blob:record.blob,file_name:record.file_name}),controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),isVideo?600000:90000+Math.ceil((record.blob?.size||0)/1048576)*30000);
     try{
       const form=new FormData();form.append('file',record.blob,record.file_name);form.append('upload_preset',record.cloud.preset);const folder=(record.cloud.folder?record.cloud.folder+'/':'')+'cloud_cua_toi/'+record.owner_id;form.append('folder',folder);form.append('asset_folder',folder);form.append('tags','tasco_cloud_cua_toi');
       const response=await fetch('https://api.cloudinary.com/v1_1/'+encodeURIComponent(record.cloud.cloudName)+(isVideo?'/video/upload':'/image/upload'),{method:'POST',body:form,signal:controller.signal});
@@ -8855,16 +8880,25 @@ window.TascoCloud = (() => {
   async function saveDirect(records,owner,options={}) {
     if(state.uploading||state.deleting||state.albumSaving)throw new Error('Đợi thao tác Cloud hiện tại hoàn tất rồi thử lại.');
     state.uploading=true;
+    let wake=null;
+    /* Giữ màn hình sáng trong lúc tải: iOS tạm dừng mạng khi màn hình tắt. */
+    try{wake=await navigator.wakeLock?.request?.('screen');}catch(_){wake=null;}
+    const total=records.length,savedCount=()=>records.filter(row=>row.confirmed).length;
+    const report=(index,label,done=false)=>options.onProgress?.({index,saved:savedCount(),total,label,done});
     try{
-      for(const [index,record] of records.entries()){
-        const progress=(label,done=false)=>options.onProgress?.({index,saved:records.filter(row=>row.confirmed).length,total:records.length,label,done});
-        if(record.confirmed){progress('Đã lưu',true);continue;}
-        if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
-        await verifyUploadTarget(record);progress('Đang tải…');
+      // Kiểm tra đăng nhập + kết nối lưu trữ MỘT lần cho cả loạt (trước đây lặp lại ở từng ảnh, mỗi lần 2–3 lượt gọi máy chủ).
+      if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
+      records.forEach((row,index)=>{if(row.confirmed)report(index,'Đã lưu',true);});
+      const todo=records.filter(row=>!row.confirmed);
+      if(todo.length)await verifyUploadTarget(todo.find(row=>!row.upload)||todo[0]);
+      const api=await client();
+      async function saveOne(index){
+        const record=records[index];
+        if((await account({verify:false})).id!==owner)throw new Error('CLOUD_ACCOUNT');   // đối chiếu cục bộ, không gọi mạng
+        report(index,'Đang tải…');
         if(!record.upload)record.upload=await upload(record);
-        progress('Đang xác nhận…');
-        if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
-        const api=await client(),row={id:record.id,owner_id:record.owner_id,album_id:record.album_id,title:record.title,address:record.address,location_status:record.location_status,captured_at:record.captured_at,source:'mobile_camera',cloud_name:record.cloud.cloudName,...record.upload,...(record.category?{category:record.category}:{})};
+        report(index,'Đang xác nhận…');
+        const row={id:record.id,owner_id:record.owner_id,album_id:record.album_id,title:record.title,address:record.address,location_status:record.location_status,captured_at:record.captured_at,source:'mobile_camera',cloud_name:record.cloud.cloudName,...record.upload,...(record.category?{category:record.category}:{})};
         if(record.origin)row.upload_origin=record.origin;
         const result=await cloudRequest(api.from(table).upsert(row,{onConflict:'id',ignoreDuplicates:true}).select('id,owner_id,album_id'),'lưu ảnh trực tiếp vào Cloud');
         if(result.error)throw result.error;
@@ -8875,13 +8909,27 @@ window.TascoCloud = (() => {
           if(existing.error)throw existing.error;confirmed=existing.data;
         }
         if(!Array.isArray(confirmed)||!confirmed.some(matches))throw new Error('Cloud chưa xác nhận ảnh trong album. Giữ màn hình chụp và thử lưu lại.');
-        record.confirmed=true;unsavedDirect.delete(record);progress('Đã lưu',true);
-        if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
+        record.confirmed=true;unsavedDirect.delete(record);report(index,'Đã lưu',true);
       }
+      // Tải song song vài ảnh một lúc; gặp lỗi thì không nhận thêm ảnh mới, đợi các ảnh đang chạy xong rồi báo lỗi đầu tiên.
+      let cursor=0,failure=null;
+      const workers=Array.from({length:Math.min(UPLOAD_PARALLEL,todo.length)},async()=>{
+        for(;;){
+          if(failure)return;
+          const index=records.findIndex((row,i)=>i>=cursor&&!row.confirmed&&!row.claimed);
+          if(index<0)return;
+          cursor=index+1;records[index].claimed=true;
+          try{await saveOne(index);}catch(error){failure=failure||error;}
+          finally{delete records[index].claimed;}
+        }
+      });
+      await Promise.all(workers);
+      if(failure)throw failure;
+      if((await account()).id!==owner)throw new Error('CLOUD_ACCOUNT');
     }catch(error){
       const saved=records.filter(row=>row.confirmed).length;
       throw new Error('Đã lưu '+saved+'/'+records.length+' ảnh. '+message(error)+(options.direct?' Giữ màn hình này để thử tải các ảnh còn lại.':' Giữ màn hình chụp rồi thử Lưu Cloud lại.'));
-    }finally{state.uploading=false;}
+    }finally{state.uploading=false;try{wake?.release?.();}catch(_){}}
   }
   async function queuePhotos(files,title,metadata,albumContext=null,options={}) {
     if(state.albumSaving)throw new Error('Đợi đổi tên album hoàn tất rồi lưu ảnh.');
