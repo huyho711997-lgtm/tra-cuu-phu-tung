@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script id="tascoLockEarly">
+/* Khoá ứng dụng bằng Face ID: quyết định trước khi giao diện kịp hiện ra (chỉ trong app iOS TASCO). */
+(function(){try{
+  if(!/TascoApp/.test(navigator.userAgent))return;
+  var c=JSON.parse(localStorage.getItem('tasco_applock_v1')||'null');
+  if(!c||!c.on)return;
+  var grace=Number(c.grace)>0?Number(c.grace):120,seen=Number(sessionStorage.getItem('tasco_applock_seen')||0);
+  if(seen&&Date.now()-seen<grace*1000)return;   /* tải lại trang trong thời gian ân hạn: không hỏi lại */
+  document.documentElement.classList.add('tasco-locked');
+}catch(_){}})();
+</script>
 <script id="tascoBootEarly">
 /* Nhận biết video trong thư viện Cloud (URL Cloudinary /video/upload/, blob video, hoặc đuôi tệp). */
 window.tascoIsVideo = function (row) { row = row || {}; var u = String(row.url || row.secure_url || (row.upload && row.upload.secure_url) || ""); return /\/video\/upload\//.test(u) || /^video\//.test((row.blob && row.blob.type) || "") || /\.(mp4|mov|m4v|webm)$/i.test(row.file_name || ""); };
@@ -1148,8 +1159,9 @@ html.dark .search-btn { background: var(--app-teal); color: var(--app-navy); }
 /* Automotive insurance mark and the working home theme control. */
 .tasco-workspace .ws-mark .ws-brand-emblem { width: 27px; height: 27px; stroke-width: 1.65; }
 .tasco-workspace .ws-login-heading .ws-mark .ws-brand-emblem { width: 32px; height: 32px; }
-.ws-brand-emblem .ws-emblem-shield { fill: rgba(99, 173, 182, .18); stroke: #daecf0; }
-.ws-brand-emblem .ws-emblem-car { stroke: #84bfc7; stroke-width: 1.8; }
+.ws-brand-emblem .ws-emblem-shield { fill: url(#tascoEmblemGrad); stroke: rgba(255, 255, 255, .75); stroke-width: .7; filter: drop-shadow(0 1.2px 1.6px rgba(0, 0, 0, .35)); }
+.ws-brand-emblem .ws-emblem-car { fill: #16345f; stroke: none; }
+.ws-brand-emblem .ws-emblem-car .ws-emblem-lamp { fill: #bdeff3; }
 .tasco-workspace .ws-greeting .ws-day { flex-shrink: 0; padding: 0; cursor: pointer; touch-action: manipulation; transition: background .18s, border-color .18s; }
 .tasco-workspace .ws-greeting .ws-day:hover { background: var(--ws-accent); border-color: var(--app-teal); }
 .tasco-workspace .ws-greeting .ws-day:active { transform: scale(.96); }
@@ -3118,7 +3130,7 @@ html.dark .tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data
     <!-- Tailwind + Flowbite đã biên dịch sẵn (tools/css). Đặt cuối head để giữ thứ tự ưu tiên CSS cũ. -->
     <link rel="stylesheet" href="tailwind.css">
 </head>
-<body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300">
+<body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300"><div id="tascoLock" role="dialog" aria-modal="true" aria-label="TASCO DLK đang khoá" aria-hidden="true"><div class="al-inner"><img class="al-logo" src="icons/icon-192.png" alt="" width="96" height="96" decoding="async"><h1>TASCO DLK</h1><p class="al-sub">Ứng dụng đang khoá để bảo vệ hồ sơ</p><button type="button" class="al-btn" data-al-unlock><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1.5M15 10v1.5M12 10v4h-1M9 16.2c1.7 1.2 4.3 1.2 6 0"/></svg><span data-al-btn-text>Mở khoá bằng Face ID</span></button><p class="al-msg" data-al-msg role="status" aria-live="polite"></p></div></div><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="tascoEmblemGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4fdfe"/><stop offset=".45" stop-color="#b6e4ea"/><stop offset="1" stop-color="#4f9fac"/></linearGradient></defs></svg>
 <div id="tascoStatusBackdrop" aria-hidden="true"></div>
 <section id="tascoBootSplash" aria-labelledby="bootTitle" aria-busy="true">
   <div class="boot-content">
@@ -3252,7 +3264,7 @@ window.TascoBootSplash = (() => {
       <div class="login-card ws-login-card">
         <div class="ws-login-heading">
           <div class="ws-login-brand-row">
-            <span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="m10 15 1.5-4h9l1.5 4M9 15h14v6H9v-6ZM11 21v2m10-2v2m-9-5h1m6 0h1"/></g></svg></span>
+            <span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="M11 15.2 12.3 11.4Q12.5 10.8 13.2 10.8H18.8Q19.5 10.8 19.7 11.4L21 15.2Z"/><rect x="9.4" y="14.6" width="13.2" height="6.2" rx="2.3"/><rect x="11" y="20.2" width="3" height="2.8" rx="1.1"/><rect x="18" y="20.2" width="3" height="2.8" rx="1.1"/><circle class="ws-emblem-lamp" cx="12.7" cy="17.5" r="1.05"/><circle class="ws-emblem-lamp" cx="19.3" cy="17.5" r="1.05"/></g></svg></span>
             <div><span class="ws-login-brand">TASCO DLK</span><small>Insurance workspace</small></div>
           </div>
           <h2 id="loginTitle">Chào mừng trở lại.</h2>
@@ -3292,7 +3304,7 @@ window.TascoBootSplash = (() => {
     <div id="mainApp" class="main-container" data-shell="premium-v6" data-page="login" style="display: none;">
         <!-- NEW HEADER -->
 <header id="mainHeader" class="ws-topbar">
-  <button type="button" class="ws-brand ws-focus" onclick="updateView('home')" aria-label="TASCO DLK · Trang chủ"><span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="m10 15 1.5-4h9l1.5 4M9 15h14v6H9v-6ZM11 21v2m10-2v2m-9-5h1m6 0h1"/></g></svg></span><span><strong>TASCO DLK</strong><small>Insurance workspace</small></span></button>
+  <button type="button" class="ws-brand ws-focus" onclick="updateView('home')" aria-label="TASCO DLK · Trang chủ"><span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="M11 15.2 12.3 11.4Q12.5 10.8 13.2 10.8H18.8Q19.5 10.8 19.7 11.4L21 15.2Z"/><rect x="9.4" y="14.6" width="13.2" height="6.2" rx="2.3"/><rect x="11" y="20.2" width="3" height="2.8" rx="1.1"/><rect x="18" y="20.2" width="3" height="2.8" rx="1.1"/><circle class="ws-emblem-lamp" cx="12.7" cy="17.5" r="1.05"/><circle class="ws-emblem-lamp" cx="19.3" cy="17.5" r="1.05"/></g></svg></span><span><strong>TASCO DLK</strong><small>Insurance workspace</small></span></button>
   <div class="ws-top-actions"><span id="headerDate" data-shell-date class="ws-date"></span><button type="button" id="tascoUpdatePill" class="ws-update-pill" data-update-short hidden onclick="tascoUpdateApp(this)" aria-label="Có phiên bản mới, chạm để cập nhật"><i aria-hidden="true"></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.2-4.2M12 15l4.2-4.2"/><path d="M5 19.5h14"/></svg><span data-update-status>Cập nhật</span></button><button type="button" id="headerAvatar" data-shell-avatar class="ws-avatar" onclick="openUserProfileModal()" aria-label="Mở tài khoản">HQ</button></div>
 </header>
 <header id="wsChildbar" class="ws-childbar" hidden><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><small>TASCO DLK</small><h1 id="wsPageTitle" tabindex="-1"></h1></div><button type="button" class="ws-home-return" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button></header>
@@ -3361,6 +3373,8 @@ window.TascoBootSplash = (() => {
   <div class="ws-account-body">
     <div class="ws-settings-list"><span class="ws-settings-label">Thiết lập cá nhân</span>
     <button type="button" class="ws-setting-row" data-theme-toggle onclick="toggleTheme()" aria-pressed="false"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span><strong>Giao diện sáng / tối</strong><small>Chọn giao diện phù hợp với bạn</small></span><span class="ws-theme-pill" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg></span></button>
+    <button type="button" class="ws-setting-row al-row" data-applock-row hidden aria-pressed="false"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1.5M15 10v1.5M12 10v4h-1M9 16.2c1.7 1.2 4.3 1.2 6 0"/></svg><span><strong data-applock-title>Mở khoá bằng Face ID</strong><small data-applock-sub>Khoá ứng dụng khi mở lại</small></span><span class="al-switch" aria-hidden="true"><i></i></span></button>
+    <div class="ws-setting-row al-grace" data-applock-grace hidden role="group" aria-label="Khoá lại sau"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9 2.5h6"/></svg><span><strong>Khoá lại sau</strong><small>Thời gian rời app trước khi cần mở khoá</small></span><div class="al-chips"><button type="button" data-al-grace="30">30 giây</button><button type="button" data-al-grace="120">2 phút</button><button type="button" data-al-grace="600">10 phút</button></div></div>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="TascoPersonalStorage.open()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/><path d="m9 14 2 2 4-4"/></svg><span><strong>Tài khoản lưu trữ</strong><small data-storage-setting-status>Thêm tài khoản lưu trữ</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" onclick="openChangePasswordModal()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span><strong>Đổi mật khẩu</strong><small>Cập nhật mật khẩu tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-admin-only hidden onclick="updateView('admin')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span><strong>Quản lý hệ thống</strong><small>Người dùng và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
@@ -11824,6 +11838,144 @@ async function send(btn){
   btn.disabled=false;sp.textContent=old;
 }
 window.TascoRescueGuide={open:open,close:close,makePdf:makePdf};
+})();
+</script>
+<style id="tascoAppLockStyles">
+/* Khoá ứng dụng bằng Face ID */
+html.tasco-locked body,html.tasco-cover body{overflow:hidden!important}
+html.tasco-locked :is(#loginOverlay,#mainApp,#bottomNav,#tascoBootSplash),html.tasco-cover :is(#loginOverlay,#mainApp,#bottomNav,#tascoBootSplash){visibility:hidden!important}
+#tascoLock{display:none;position:fixed;inset:0;z-index:2147483600;align-items:center;justify-content:center;box-sizing:border-box;padding:max(32px,env(safe-area-inset-top)) 28px max(32px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 38%,#1f4f63 0,transparent 58%),linear-gradient(160deg,#16396b 0%,#0b1b30 55%,#050f1f 100%);color:#fff;text-align:center}
+html.tasco-locked #tascoLock,html.tasco-cover #tascoLock{display:flex}
+#tascoLock .al-inner{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px}
+#tascoLock .al-logo{width:96px;height:96px;border-radius:26px;box-shadow:0 22px 48px -14px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.1)}
+#tascoLock h1{margin:24px 0 0;font-size:26px;font-weight:700;letter-spacing:-.6px}
+#tascoLock .al-sub{margin:8px 0 0;font-size:13px;line-height:1.6;color:#b9d6dd}
+#tascoLock .al-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;margin-top:38px;padding:0 20px;border:0;border-radius:18px;background:#84bfc7;color:#0b1b30;font:inherit;font-size:15px;font-weight:700;box-shadow:0 14px 30px -12px rgba(132,191,199,.65)}
+#tascoLock .al-btn svg{width:22px;height:22px;flex:none}
+#tascoLock .al-btn:active{transform:scale(.98)}
+#tascoLock .al-btn:disabled{opacity:.65}
+#tascoLock .al-msg{min-height:18px;margin:14px 0 0;font-size:12px;line-height:1.6;color:#f2c7c3}
+html.tasco-cover:not(.tasco-locked) #tascoLock .al-btn,html.tasco-cover:not(.tasco-locked) #tascoLock .al-msg,html.tasco-cover:not(.tasco-locked) #tascoLock .al-sub{visibility:hidden}
+.al-row .al-switch,.al-switch{position:relative;flex:none;width:52px;height:32px;border-radius:99px;background:var(--ws-line);transition:background .22s}
+.al-switch i{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 3px 8px -2px rgba(24,48,86,.4);transition:transform .25s cubic-bezier(.3,.9,.3,1)}
+.al-row[aria-pressed=true] .al-switch{background:var(--ws-accent-text,#39747e)}
+.al-row[aria-pressed=true] .al-switch i{transform:translateX(20px)}
+.al-row[data-disabled]{opacity:.6}
+.al-grace{align-items:flex-start;flex-wrap:wrap}
+.al-grace[hidden]{display:none}
+.al-chips{display:flex;gap:6px;width:100%;margin:2px 0 0 0;padding-left:34px;box-sizing:border-box}
+.al-chips button[type=button]{flex:1;min-height:36px;padding:0 6px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-soft);color:var(--ws-muted);font:inherit;font-size:11.5px;font-weight:650}
+.al-chips button[type=button][aria-pressed=true]{border-color:var(--ws-accent-text,#39747e);background:var(--ws-accent);color:var(--ws-accent-text,#39747e)}
+.al-toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:2147483601;max-width:calc(100vw - 40px);padding:12px 18px;border-radius:14px;background:#183056;color:#fff;font-size:12.5px;line-height:1.5;text-align:center;transform:translateX(-50%);box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
+</style>
+<script id="tascoAppLock">
+/* Khoá ứng dụng bằng Face ID / Touch ID / mã khoá máy (plugin native NativeBiometric, chỉ có trong app iOS TASCO). */
+(function(){
+'use strict';
+var KEY='tasco_applock_v1',SEEN='tasco_applock_seen',DEF_GRACE=120;
+var root=document.documentElement;
+var native=/TascoApp/.test(navigator.userAgent);
+var cfg=load(),info=null,busy=false,hiddenAt=0,seenTimer=0;
+function load(){try{var c=JSON.parse(localStorage.getItem(KEY)||'null')||{};return {on:!!c.on,grace:[30,120,600].indexOf(Number(c.grace))>=0?Number(c.grace):DEF_GRACE};}catch(_){return {on:false,grace:DEF_GRACE};}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(cfg));}catch(_){}}
+function stamp(){try{sessionStorage.setItem(SEEN,String(Date.now()));}catch(_){}}
+function plugin(){return window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.NativeBiometric||null;}
+function $(s,r){return (r||document).querySelector(s);}
+function toast(t){var e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove();},3600);}
+function kind(){return info&&info.type===2?'Face ID':info&&info.type===1?'Touch ID':info&&info.type===0?'mật mã máy':'Face ID';}
+async function probe(){
+  var p=plugin();if(!p)return (info={ok:false,missing:true});
+  try{var r=await p.isAvailable({useFallback:true});info={ok:!!r.isAvailable,type:Number(r.biometryType)||0,secure:!!r.deviceIsSecure};}
+  catch(_){info={ok:false};}
+  return info;
+}
+async function verify(reason){
+  var p=plugin();if(!p)return false;
+  try{await p.verifyIdentity({reason:reason||'Mở khoá TASCO DLK',title:'TASCO DLK',useFallback:true,maxAttempts:3});return true;}catch(_){return false;}
+}
+function msg(t){var m=$('[data-al-msg]');if(m)m.textContent=t||'';}
+function setBtn(){var t=$('[data-al-btn-text]');if(t)t.textContent='Mở khoá bằng '+kind();}
+function lock(){
+  if(!native||!cfg.on)return;
+  root.classList.remove('tasco-cover');root.classList.add('tasco-locked');
+  var l=$('#tascoLock');if(l)l.setAttribute('aria-hidden','false');
+  msg('');setBtn();
+  setTimeout(function(){tryUnlock(true);},350);
+}
+function unlock(){
+  root.classList.remove('tasco-locked','tasco-cover');
+  var l=$('#tascoLock');if(l)l.setAttribute('aria-hidden','true');
+  hiddenAt=0;stamp();msg('');
+}
+async function tryUnlock(auto){
+  if(busy||!root.classList.contains('tasco-locked'))return;
+  busy=true;var btn=$('[data-al-unlock]');if(btn)btn.disabled=true;
+  try{
+    var i=await probe();
+    if(i.missing){unlock();return;}   /* bản app cũ không có plugin: không khoá để khỏi kẹt */
+    if(!i.ok){   /* máy đã tắt Face ID/mã khoá: không thể xác thực nữa, tắt khoá thay vì để kẹt */
+      cfg.on=false;save();unlock();refreshRow();toast('Đã tắt khoá vì máy chưa bật Face ID hoặc mật mã.');return;
+    }
+    setBtn();
+    var ok=await verify('Mở khoá TASCO DLK');
+    if(ok)unlock();else msg(auto?'Chạm nút phía trên để thử lại.':'Chưa xác thực được. Hãy thử lại.');
+  }finally{busy=false;if(btn)btn.disabled=false;}
+}
+document.addEventListener('click',function(e){if(e.target.closest('[data-al-unlock]'))tryUnlock(false);});
+
+/* Khoá lại khi quay về app sau thời gian ân hạn; che nội dung khi app xuống nền */
+document.addEventListener('visibilitychange',function(){
+  if(!native||!cfg.on)return;
+  if(document.visibilityState==='hidden'){
+    hiddenAt=Date.now();stamp();
+    if(!root.classList.contains('tasco-locked'))root.classList.add('tasco-cover');
+  }else{
+    var away=hiddenAt?Date.now()-hiddenAt:0;
+    if(root.classList.contains('tasco-locked'))return tryUnlock(true);
+    if(hiddenAt&&away>=cfg.grace*1000)lock();
+    else{root.classList.remove('tasco-cover');stamp();}
+  }
+});
+window.addEventListener('pagehide',function(){if(native&&cfg.on)stamp();});
+function beat(){if(native&&cfg.on&&document.visibilityState==='visible'&&!root.classList.contains('tasco-locked'))stamp();}
+seenTimer=setInterval(beat,8000);
+
+/* Dòng cài đặt trong trang Tài khoản */
+function refreshRow(){
+  var row=$('[data-applock-row]'),gr=$('[data-applock-grace]');if(!row)return;
+  if(!native){row.hidden=true;if(gr)gr.hidden=true;return;}
+  row.hidden=false;
+  var title=$('[data-applock-title]',row),sub=$('[data-applock-sub]',row);
+  var missing=!plugin();
+  if(title)title.textContent='Mở khoá bằng '+kind();
+  row.setAttribute('aria-pressed',String(cfg.on&&!missing));
+  if(missing){row.dataset.disabled='1';if(sub)sub.textContent='Cần cài bản app mới (IPA) để dùng tính năng này';}
+  else{delete row.dataset.disabled;if(sub)sub.textContent=cfg.on?'Đang bật · khoá app khi mở lại':'Khoá ứng dụng khi mở lại';}
+  if(gr){gr.hidden=!(cfg.on&&!missing);gr.querySelectorAll('[data-al-grace]').forEach(function(b){b.setAttribute('aria-pressed',String(Number(b.dataset.alGrace)===cfg.grace));});}
+}
+document.addEventListener('click',async function(e){
+  var g=e.target.closest('[data-al-grace]');
+  if(g){cfg.grace=Number(g.dataset.alGrace);save();refreshRow();return;}
+  var row=e.target.closest('[data-applock-row]');if(!row||busy)return;
+  if(!plugin()){toast('Cần cài bản app mới (IPA) để dùng Face ID.');return;}
+  busy=true;
+  try{
+    var i=await probe();
+    if(!cfg.on){
+      if(!i.ok){toast('iPhone chưa bật Face ID hoặc mật mã khoá máy. Vào Cài đặt iPhone để bật.');return;}
+      var ok=await verify('Xác nhận để bật khoá bằng '+kind());
+      if(ok){cfg.on=true;save();stamp();toast('Đã bật khoá bằng '+kind()+'.');}else toast('Chưa xác thực được nên chưa bật khoá.');
+    }else{
+      var ok2=i.ok?await verify('Xác nhận để tắt khoá ứng dụng'):true;
+      if(ok2){cfg.on=false;save();toast('Đã tắt khoá ứng dụng.');}else toast('Chưa xác thực được nên chưa tắt khoá.');
+    }
+  }finally{busy=false;refreshRow();}
+});
+document.addEventListener('DOMContentLoaded',function(){refreshRow();});
+window.addEventListener('load',function(){probe().then(function(){refreshRow();setBtn();});
+  if(root.classList.contains('tasco-locked')){var l=$('#tascoLock');if(l)l.setAttribute('aria-hidden','false');setBtn();setTimeout(function(){tryUnlock(true);},300);}
+  else if(native&&cfg.on)stamp();});
+window.TascoAppLock={lock:lock,unlock:unlock,config:function(){return {on:cfg.on,grace:cfg.grace};},refresh:refreshRow};
 })();
 </script>
 <script id="tascoPartDetailPremium">

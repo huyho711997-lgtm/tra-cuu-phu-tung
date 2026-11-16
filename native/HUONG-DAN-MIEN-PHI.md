@@ -37,3 +37,10 @@ App chỉ là "vỏ" iOS, mỗi lần mở nó tải trang web mới nhất từ
 - "Developer Mode required": làm lại bước 4 phần Chuẩn bị.
 - Báo đạt giới hạn 3 app hoặc giới hạn số App ID trong tuần: xóa bớt app nạp ngoài, hoặc đợi vài ngày, hoặc dùng Apple ID khác.
 - Chụp màn hình lỗi và gửi lại để được sửa.
+
+## Khoá ứng dụng bằng Face ID (từ bản IPA có plugin NativeBiometric)
+
+- Vào **Tài khoản → Thiết lập cá nhân → Mở khoá bằng Face ID** để bật. Cần iPhone đã bật Face ID (hoặc ít nhất mật mã khoá máy).
+- Chọn **Khoá lại sau** 30 giây / 2 phút / 10 phút: rời app lâu hơn mức này thì khi quay lại phải mở khoá.
+- Face ID lỗi sẽ có mật mã máy làm phương án dự phòng. Nếu iPhone tắt hẳn Face ID và mật mã, app tự tắt khoá để không bị kẹt.
+- Dòng cài đặt chỉ hiện trong app iOS; bản IPA cũ (chưa có plugin) hiển thị "Cần cài bản app mới".

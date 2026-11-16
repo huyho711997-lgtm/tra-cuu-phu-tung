@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>TASCO DLK cần dùng camera để chụp ảnh hồ sơ và phụ tùng của gara.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>TASCO DLK dùng Face ID để mở khoá ứng dụng, bảo vệ hồ sơ và ảnh của bạn.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>TASCO DLK cần vị trí của bạn để ghi nhận địa điểm khi chụp ảnh hồ sơ.</string>
 	<key>NSMicrophoneUsageDescription</key>
