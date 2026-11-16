@@ -13967,6 +13967,7 @@ html.tasco-native-camera-ready #cameraSettingsPanel label:has([data-camera-pref=
 <script id="tascoAppUpdate">
 /* Dự phòng khi trình duyệt không có ngày triển khai. Phiên bản hiển thị lấy từ document.lastModified. */
 window.TASCO_APP_VERSION = '2026.11.15-92ccbd0';
+try { if (/[?&]_u=\d+/.test(location.search)) history.replaceState(history.state, '', location.pathname + location.search.replace(/([?&])_u=\d+&?/, '$1').replace(/[?&]$/, '') + location.hash); } catch (_) {}
 /* Nút "Cập nhật ứng dụng": làm mới trang, CSS và bộ nhớ đệm để lấy bản mới nhất ngay.
  * GitHub Pages giữ cache ~10 phút nên sau khi có bản mới có thể cần bấm nút này. */
 async function tascoUpdateApp(button) {
@@ -13990,7 +13991,8 @@ async function tascoUpdateApp(button) {
     const css = new URL('tailwind.css', base).href;
     await Promise.all([base, css].map(function (u) { return fetch(u, { cache: 'reload' }).catch(function () {}); }));
     try { sessionStorage.setItem('tasco_quick_boot', String(Date.now())); } catch (_) {}  // mở lại thẳng trang đang dùng, không chạy màn chào
-    location.reload();
+    // Nạp lại bằng URL có tham số mới (khoá cache khác) để WebView/CDN chắc chắn trả bản mới; tham số được gỡ ngay khi trang mở.
+    location.replace(base + '?_u=' + Date.now() + location.hash);
   } catch (error) {
     delete button.dataset.busy;
     if (status) status.textContent = button.hasAttribute('data-update-short') ? 'Thử lại' : 'Chưa cập nhật được. Kiểm tra mạng rồi thử lại.';
