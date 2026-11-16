@@ -3389,6 +3389,7 @@ window.TascoBootSplash = (() => {
     <button type="button" class="ws-setting-row al-row" data-applock-row hidden aria-pressed="false"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1.5M15 10v1.5M12 10v4h-1M9 16.2c1.7 1.2 4.3 1.2 6 0"/></svg><span><strong data-applock-title>Mở khoá bằng Face ID</strong><small data-applock-sub>Khoá ứng dụng khi mở lại</small></span><span class="al-switch" aria-hidden="true"><i></i></span></button>
     <div class="ws-setting-row al-grace" data-applock-grace hidden role="group" aria-label="Khoá lại sau"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9 2.5h6"/></svg><span><strong>Khoá lại sau</strong><small>Thời gian rời app trước khi cần mở khoá</small></span><div class="al-chips"><button type="button" data-al-grace="30">30 giây</button><button type="button" data-al-grace="120">2 phút</button><button type="button" data-al-grace="600">10 phút</button></div></div>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="TascoPersonalStorage.open()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/><path d="m9 14 2 2 4-4"/></svg><span><strong>Tài khoản lưu trữ</strong><small data-storage-setting-status>Thêm tài khoản lưu trữ</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+    <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="TascoDesktopLogin.open()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2.5"/><path d="M8 20h8M12 16v4"/></svg><span><strong>Đăng nhập máy tính</strong><small>Quét mã QR để xem Cloud trên máy tính</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" onclick="openChangePasswordModal()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span><strong>Đổi mật khẩu</strong><small>Cập nhật mật khẩu tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-admin-only hidden onclick="updateView('admin')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span><strong>Quản lý hệ thống</strong><small>Người dùng và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-admin-only hidden onclick="TascoForms.openSettings()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span><strong>Kho lưu trữ biểu mẫu</strong><small data-forms-setting-status>Kết nối thư mục Google Drive</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
@@ -4909,6 +4910,120 @@ window.TascoPartKind=(()=>{
   return Object.freeze({classify,badge,decorate,matches});
 })();
 </script>
+<script>
+/* Đăng nhập trang Cloud trên máy tính: quét QR, nhập mã 4 số, bấm Cho phép (Edge Function tasco-qr-login). */
+window.TascoDesktopLogin=(()=>{
+  const FN='https://yxwmcpoklxpzlikxojez.supabase.co/functions/v1/tasco-qr-login';
+  const ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4d21jcG9rbHhwemxpa3hvamV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njk0MDEsImV4cCI6MjA5NjE0NTQwMX0.dmyjtDDo_KTlUFyxQgoCGqEt5Bsq2krEEYg2BCyXeFc';
+  const PAYLOAD=/^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.([A-Za-z0-9_-]{20,100})$/i;
+  let options={},overlay=null,stream=null,raf=0,countdown=0,jsqrP=null,pending=null,busy=false,scanGen=0;
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const svg=p=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
+  const ICON={monitor:svg('<rect x="3" y="4" width="18" height="12" rx="2.5"/><path d="M8 20h8M12 16v4"/>'),close:svg('<path d="m6 6 12 12M18 6 6 18"/>'),check:svg('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),warn:svg('<path d="M12 8v5M12 16.5v.01"/><circle cx="12" cy="12" r="9"/>')};
+  function toast(t){const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3800);}
+  function injectStyle(){
+    if(document.getElementById('dlStyle'))return;const s=document.createElement('style');s.id='dlStyle';
+    s.textContent='.dl-cam{position:relative;aspect-ratio:1/1;border-radius:22px;overflow:hidden;background:#0b1b30}.dl-cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}'
+    +'.dl-frame{position:absolute;inset:14%;border-radius:22px;box-shadow:0 0 0 999px rgba(8,18,31,.42);border:2px solid rgba(167,224,230,.9)}'
+    +'.dl-hint{margin:14px 2px 0;font-size:13px;line-height:1.55;color:var(--st-muted)}.dl-hint b{color:var(--st-navy)}'
+    +'.dl-who{display:grid;gap:10px;margin:2px 0 16px}.dl-who>div{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:14px;background:var(--st-soft);font-size:13px}.dl-who span{color:var(--st-muted)}.dl-who b{text-align:right;overflow-wrap:anywhere}'
+    +'.dl-pin{width:100%;height:62px;border-radius:16px;border:1.5px solid var(--st-line);background:var(--st-bg);color:var(--st-navy);text-align:center;font-size:32px;font-weight:700;letter-spacing:.5em;text-indent:.5em;font-variant-numeric:tabular-nums}.dl-pin:focus{outline:0;border-color:var(--st-teal);box-shadow:0 0 0 4px rgba(99,173,182,.2)}'
+    +'.dl-label{display:block;margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--st-muted)}'
+    +'.dl-warn{margin:14px 0 0;padding:12px 14px;border-radius:14px;background:rgba(229,171,86,.14);border:1px solid rgba(229,171,86,.4);font-size:12.5px;line-height:1.55}'
+    +'.dl-time{margin-top:10px;font-size:12px;color:var(--st-muted);text-align:center;font-variant-numeric:tabular-nums}'
+    +'.dl-row{display:flex;gap:10px;margin-top:16px}.dl-row button{flex:1;height:50px;border:0;border-radius:15px;font-weight:700;font-size:14px}.dl-ghost{background:var(--st-soft);color:var(--st-navy)}.dl-ok{background:var(--st-teal);color:#06202a}.dl-row button:disabled{opacity:.45}'
+    +'.dl-result{display:grid;justify-items:center;gap:12px;text-align:center;padding:14px 4px 4px}.dl-result .dl-big{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--st-ice);color:#2f7f88}.dl-result .dl-big svg{width:30px;height:30px}.dl-result.is-bad .dl-big{background:rgba(229,86,109,.16);color:#d1495f}.dl-result h3{font-size:18px}.dl-result p{font-size:13.5px;line-height:1.6;color:var(--st-muted)}';
+    document.head.appendChild(s);
+  }
+  async function sessionInfo(){const c=options.client?.();if(!c)throw new Error('no_client');const r=await c.auth.getSession();const s=r.data?.session;if(!s?.access_token)throw new Error('no_session');return s;}
+  async function call(body){
+    const s=await sessionInfo();
+    const res=await fetch(FN,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:'Bearer '+s.access_token},body:JSON.stringify(body)});
+    let data={};try{data=await res.json();}catch(_){}return {http:res.status,data,user:s.user};
+  }
+  function parse(text){
+    const raw=String(text||'').trim();const m=raw.match(/#qrlogin=([^#&\s]+)$/i);const v=(m?m[1]:raw).match(PAYLOAD);
+    return v?{id:v[1],code:v[2]}:null;
+  }
+  const loadJsQR=()=>window.jsQR?Promise.resolve(window.jsQR):(jsqrP||(jsqrP=new Promise((ok,fail)=>{const s=document.createElement('script');s.src='vendor/jsQR.min.js';s.onload=()=>window.jsQR?ok(window.jsQR):fail(new Error('jsqr'));s.onerror=()=>{jsqrP=null;fail(new Error('jsqr'));};document.head.appendChild(s);})));
+  function stopCamera(){scanGen++;cancelAnimationFrame(raf);raf=0;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+  function body(html){overlay.querySelector('[data-dl-body]').innerHTML=html;}
+  function setTitle(t){overlay.querySelector('[data-dl-title]').textContent=t;}
+  function result(ok,title,text,again){
+    stopCamera();clearInterval(countdown);setTitle('Đăng nhập máy tính');
+    body('<div class="dl-result'+(ok?'':' is-bad')+'"><div class="dl-big">'+(ok?ICON.check:ICON.warn)+'</div><h3>'+esc(title)+'</h3><p>'+esc(text)+'</p></div><div class="dl-row">'+(again?'<button type="button" class="dl-ghost" data-dl="close">Đóng</button><button type="button" class="dl-ok" data-dl="rescan">Quét lại</button>':'<button type="button" class="dl-ok" data-dl="close">Xong</button>')+'</div>');
+    if(ok)setTimeout(()=>{if(overlay&&overlay.querySelector('.dl-result:not(.is-bad)'))close();},2600);
+  }
+  async function scan(){
+    stopCamera();clearInterval(countdown);const gen=scanGen;setTitle('Quét mã QR');
+    body('<div class="dl-cam"><video playsinline muted></video><div class="dl-frame"></div></div><p class="dl-hint">Trên máy tính, mở trang <b>Cloud</b> rồi đưa camera vào <b>mã QR</b> hiển thị ở màn hình.</p><p class="storage-error" data-dl-err role="alert" hidden></p><div class="dl-row"><button type="button" class="dl-ghost" data-dl="close">Đóng</button></div>');
+    const err=t=>{const n=overlay?.querySelector('[data-dl-err]');if(n){n.hidden=!t;n.textContent=t||'';}};
+    if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)return err('Không mở được camera. Hãy cho phép app dùng camera trong Cài đặt rồi thử lại.');
+    let jsQR;try{jsQR=await loadJsQR();}catch(_){return err('Chưa tải được bộ đọc mã QR. Kiểm tra mạng rồi thử lại.');}
+    if(gen!==scanGen||!overlay)return;
+    const video=overlay.querySelector('video');
+    try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});}
+    catch(e){return err(['NotAllowedError','SecurityError'].includes(e?.name)?'App chưa được cấp quyền camera. Vào Cài đặt iPhone → TASCO DLK → bật Camera.':'Không mở được camera trên thiết bị này.');}
+    if(gen!==scanGen||!overlay){stream.getTracks().forEach(t=>t.stop());stream=null;return;}
+    video.srcObject=stream;video.muted=true;video.setAttribute('playsinline','');try{await video.play();}catch(_){}
+    const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});let last=0;
+    const loop=ts=>{
+      if(gen!==scanGen)return;raf=requestAnimationFrame(loop);if(ts-last<140||video.readyState<2||!video.videoWidth)return;last=ts;
+      const w=Math.min(720,video.videoWidth),h=Math.round(video.videoHeight*w/video.videoWidth);canvas.width=w;canvas.height=h;ctx.drawImage(video,0,0,w,h);
+      const hit=jsQR(ctx.getImageData(0,0,w,h).data,w,h,{inversionAttempts:'dontInvert'});const p=hit&&parse(hit.data);
+      if(p){stopCamera();confirmView(p);}
+    };
+    raf=requestAnimationFrame(loop);
+  }
+  async function confirmView(p){
+    setTitle('Xác nhận đăng nhập');body('<p class="storage-lead">Đang kiểm tra mã…</p>');let r;
+    try{r=await call({action:'info',id:p.id,code:p.code});}catch(e){return result(false,e.message==='no_session'?'Cần đăng nhập app':'Không kết nối được','Hãy đăng nhập app và kiểm tra mạng rồi quét lại.',true);}
+    const d=r.data||{};
+    if(r.http!==200||!d.ok){const m={bad_qr:'Mã QR không hợp lệ.',used:'Mã này đã được dùng hoặc đã bị từ chối.',expired:'Mã QR đã hết hạn.',unauthorized:'Phiên đăng nhập của app đã hết. Hãy đăng nhập lại app.'}[d.error]||'Không kiểm tra được mã QR.';return result(false,'Không thể dùng mã này',m+' Hãy tạo mã mới trên máy tính.',true);}
+    const email=r.user?.email||'';let left=Number(d.left)||0,end=Date.now()+left*1000;
+    body('<div class="dl-who"><div><span>Tài khoản</span><b>'+esc(email)+'</b></div><div><span>Thiết bị xin đăng nhập</span><b>'+esc(d.ua||'Máy tính')+'</b></div><div><span>Mạng (IP)</span><b>'+esc(d.ip||'—')+'</b></div></div>'
+      +'<label class="dl-label" for="dlPin">Nhập 4 số đang hiện trên máy tính</label><input id="dlPin" class="dl-pin" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="one-time-code" placeholder="••••" aria-describedby="dlWarn">'
+      +'<p class="storage-error" data-dl-err role="alert" hidden></p>'
+      +'<div class="dl-row"><button type="button" class="dl-ghost" data-dl="deny">Từ chối</button><button type="button" class="dl-ok" data-dl="approve" disabled>Cho phép</button></div>'
+      +'<p class="dl-warn" id="dlWarn"><b>Chỉ cho phép nếu chính bạn vừa mở trang Cloud trên máy tính của mình</b> và 4 số trùng khớp. Không bao giờ cho phép khi người khác nhờ.</p><p class="dl-time" data-dl-time></p>');
+    const pin=overlay.querySelector('#dlPin'),ok=overlay.querySelector('[data-dl=approve]'),tm=overlay.querySelector('[data-dl-time]');
+    pending=p;pin.addEventListener('input',()=>{pin.value=pin.value.replace(/\D/g,'').slice(0,4);ok.disabled=busy||pin.value.length!==4;});
+    pin.addEventListener('keydown',e=>{if(e.key==='Enter'&&!ok.disabled)ok.click();});
+    const tick=()=>{const s=Math.max(0,Math.ceil((end-Date.now())/1000));if(!tm.isConnected)return;tm.textContent='Hết hạn sau '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');if(s<=0){clearInterval(countdown);result(false,'Mã đã hết hạn','Hãy bấm “Tạo mã mới” trên máy tính rồi quét lại.',true);}};
+    clearInterval(countdown);tick();countdown=setInterval(tick,500);setTimeout(()=>pin.focus(),60);
+  }
+  async function act(kind){
+    if(busy||!pending)return;busy=true;const p=pending,pin=overlay.querySelector('#dlPin');
+    overlay.querySelectorAll('button,input').forEach(n=>{n.disabled=true;});
+    const err=t=>{const n=overlay.querySelector('[data-dl-err]');if(n){n.hidden=!t;n.textContent=t||'';}};
+    try{
+      if(kind==='deny'){await call({action:'deny',id:p.id,code:p.code});busy=false;close();toast('Đã từ chối đăng nhập trên máy tính.');return;}
+      const r=await call({action:'approve',id:p.id,code:p.code,pin:pin.value}),d=r.data||{};busy=false;
+      if(d.ok)return result(true,'Đã cho phép','Máy tính sẽ tự đăng nhập trong vài giây. Bạn có thể đóng màn hình này.',false);
+      if(d.error==='wrong_pin'){overlay.querySelectorAll('button,input').forEach(n=>{n.disabled=false;});pin.value='';overlay.querySelector('[data-dl=approve]').disabled=true;err('Sai mã. Còn '+d.attempts_left+' lần thử.');pin.focus();return;}
+      const m={locked:['Mã bị huỷ','Đã nhập sai quá 5 lần. Hãy tạo mã mới trên máy tính.'],expired:['Mã đã hết hạn','Hãy tạo mã mới trên máy tính rồi quét lại.'],used:['Mã không còn dùng được','Mã đã được dùng hoặc bị từ chối.'],bad_qr:['Mã QR không hợp lệ','Hãy tạo mã mới trên máy tính.'],unauthorized:['Cần đăng nhập app','Phiên đăng nhập của app đã hết. Đăng nhập lại app rồi quét lại.']}[d.error]||['Chưa thực hiện được','Có lỗi xảy ra. Thử lại.'];
+      result(false,m[0],m[1],d.error!=='unauthorized');
+    }catch(_){busy=false;if(overlay){overlay.querySelectorAll('button,input').forEach(n=>{n.disabled=false;});err('Không kết nối được máy chủ. Thử lại.');}}
+  }
+  function close(){stopCamera();clearInterval(countdown);pending=null;busy=false;if(!overlay)return;overlay.remove();overlay=null;document.body.style.overflow=prevOverflow;document.removeEventListener('keydown',onKey,true);}
+  let prevOverflow='';
+  function onKey(e){if(e.key==='Escape'&&overlay){e.stopPropagation();close();}}
+  function open(payload){
+    if(overlay)return;injectStyle();prevOverflow=document.body.style.overflow;document.body.style.overflow='hidden';
+    overlay=document.createElement('div');overlay.className='storage-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','dlTitle');
+    overlay.innerHTML='<section class="storage-panel"><header class="storage-header"><span class="storage-symbol">'+ICON.monitor+'</span><div><small>BẢO MẬT TÀI KHOẢN</small><h2 id="dlTitle" data-dl-title>Quét mã QR</h2></div><button type="button" class="storage-icon-button" data-dl="close" aria-label="Đóng">'+ICON.close+'</button></header><div class="storage-body" data-dl-body></div></section>';
+    overlay.addEventListener('click',e=>{const b=e.target.closest('[data-dl]');if(!b){return;}const k=b.dataset.dl;if(k==='close')close();else if(k==='rescan')scan();else if(k==='approve'||k==='deny')act(k);});
+    document.body.appendChild(overlay);document.addEventListener('keydown',onKey,true);
+    if(payload&&payload.id&&payload.code)confirmView(payload);else scan();
+  }
+  // Mở bằng liên kết trong mã QR (#qrlogin=<id>.<code>), ví dụ khi quét bằng camera iPhone và mở bản web.
+  (function fromHash(){
+    const m=location.hash.match(/^#qrlogin=([^#&\s]+)$/i);if(!m)return;const p=parse(m[1]);try{history.replaceState(history.state,'',location.pathname+location.search);}catch(_){}
+    if(!p)return;let tries=0;const wait=()=>{tries++;sessionInfo().then(()=>open(p)).catch(()=>{if(tries<24)setTimeout(wait,700);else toast('Hãy đăng nhập app trước, rồi quét lại mã QR trên máy tính.');});};setTimeout(wait,1200);
+  })();
+  return {configure:v=>{options=v;},open:()=>open(),scan,close};
+})();
+</script>
     <script type="module">
         import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
         const SUPABASE_PROJECT_URL = "https://yxwmcpoklxpzlikxojez.supabase.co";
@@ -5453,6 +5568,7 @@ window.TascoPartKind=(()=>{
         let currentUserProfile = null;
         window.TascoCloudAccess.configure({client:()=>supabase});
         window.TascoPersonalStorage.configure({client:()=>supabase});
+        window.TascoDesktopLogin.configure({client:()=>supabase});
         window.TascoGarageDB.configure({client:supabase});
         window.TascoForms.configure({client:supabase});
         let lastLoggedUid = null;

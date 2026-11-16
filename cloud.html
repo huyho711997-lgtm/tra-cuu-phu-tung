@@ -6,6 +6,8 @@
 <title>TASCO DLK · Cloud trên máy tính</title>
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://esm.sh https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://res.cloudinary.com; media-src blob: https://res.cloudinary.com; connect-src 'self' https://yxwmcpoklxpzlikxojez.supabase.co https://res.cloudinary.com https://esm.sh https://cdn.jsdelivr.net; base-uri 'none'; form-action 'none'; object-src 'none'">
+<script src="vendor/qrcode.min.js"></script>
 <link rel="icon" href="icons/icon-192.png" type="image/png" onerror="this.remove()">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,7 +33,7 @@ svg{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-wi
 
 /* ---------- Đăng nhập ---------- */
 .login{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(900px 500px at 15% 10%,rgba(99,173,182,.28),transparent 60%),radial-gradient(800px 600px at 90% 100%,rgba(29,53,88,.9),transparent 60%),linear-gradient(160deg,var(--navy-900),var(--navy-950));z-index:50;padding:24px}
-.login-card{width:min(420px,100%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:34px 32px 30px;color:#e9f6f8;backdrop-filter:blur(22px) saturate(1.3);box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
+.login-card{width:min(600px,100%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:34px 32px 30px;color:#e9f6f8;backdrop-filter:blur(22px) saturate(1.3);box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
 .brand{display:flex;align-items:center;gap:13px}
 .brand-mark{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,var(--teal-400),var(--teal-600));color:#07202a;box-shadow:0 10px 24px -8px rgba(99,173,182,.7)}
 .brand-mark svg{width:24px;height:24px;stroke-width:2}
@@ -46,6 +48,39 @@ svg{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-wi
 .btn-primary{width:100%;height:50px;border-radius:15px;margin-top:8px;font-weight:800;font-size:15px;color:#06141f;background:linear-gradient(180deg,var(--teal-300),#7fc2cb);box-shadow:0 12px 26px -10px rgba(127,194,203,.7);transition:transform .15s,filter .15s}
 .btn-primary:hover{filter:brightness(1.05)}.btn-primary:active{transform:scale(.985)}.btn-primary:disabled{opacity:.6;cursor:wait}
 .login-error{margin-top:14px;padding:11px 13px;border-radius:12px;background:rgba(229,86,109,.14);border:1px solid rgba(229,86,109,.35);color:#ffc2cb;font-size:13px;line-height:1.5}
+
+.tabs{display:inline-grid;grid-auto-flow:column;gap:4px;padding:4px;border-radius:14px;background:rgba(8,18,31,.55);border:1px solid rgba(255,255,255,.1);margin-bottom:20px}
+.tabs button{height:36px;padding:0 16px;border-radius:10px;font-size:13px;font-weight:700;color:#9bb3c8;transition:background .15s,color .15s}
+.tabs button:hover{color:#fff}.tabs button[aria-selected=true]{background:rgba(143,208,216,.18);color:#fff;box-shadow:inset 0 0 0 1px rgba(143,208,216,.35)}
+.qr-wrap{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center}
+.qr-box{position:relative;width:236px;height:236px;border-radius:20px;background:#fff;display:grid;place-items:center;box-shadow:0 18px 40px -16px rgba(0,0,0,.6);overflow:hidden}
+.qr-box canvas{width:216px;height:216px;image-rendering:pixelated;transition:opacity .25s,filter .25s}
+.qr-box.is-dim canvas{opacity:.12;filter:blur(3px)}
+.qr-cover{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px;text-align:center;color:#12243a;font-size:13px;font-weight:600;line-height:1.5;background:rgba(255,255,255,.86)}
+.qr-cover .spin{width:26px;height:26px;border-radius:50%;border:3px solid #cfe3e7;border-top-color:var(--teal-600);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-ghost{height:38px;padding:0 18px;border-radius:12px;font-weight:800;font-size:13px;color:#06141f;background:linear-gradient(180deg,var(--teal-300),#7fc2cb)}
+.pin-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9bb3c8;margin-bottom:8px}
+.pin{display:flex;gap:8px;margin-bottom:16px}
+.pin i{font-style:normal;width:44px;height:56px;border-radius:14px;display:grid;place-items:center;font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;color:#fff;background:rgba(8,18,31,.6);border:1px solid rgba(143,208,216,.35);box-shadow:inset 0 -3px 0 rgba(143,208,216,.15)}
+.qr-steps{list-style:none;counter-reset:s;display:grid;gap:8px;margin-bottom:16px}
+.qr-steps li{counter-increment:s;position:relative;padding-left:28px;font-size:13px;line-height:1.45;color:#c4d6e5}
+.qr-steps li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;color:#06141f;background:var(--teal-400)}
+.qr-steps b{color:#fff}
+.qr-timer{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:#9bb3c8;font-variant-numeric:tabular-nums}
+.qr-timer .bar{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden}.qr-timer .bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--teal-500),var(--teal-300));transform-origin:left;transition:transform .3s linear}
+.sec-note{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);display:flex;gap:9px;font-size:12px;line-height:1.5;color:#8aa3b9}
+.sec-note svg{margin-top:2px;color:var(--teal-400)}
+@media(max-width:560px){.qr-wrap{grid-template-columns:1fr;justify-items:center}.login-card{padding:28px 22px}}
+.sec{display:grid;gap:8px;margin-bottom:12px}
+.sec-row{display:flex;gap:8px;align-items:center}
+.lock-btn{flex:1;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;font-weight:700;color:#d6e6f2;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);transition:background .15s}
+.lock-btn:hover{background:rgba(255,255,255,.12)}
+.sec select{height:36px;border-radius:11px;padding:0 8px;font-size:12px;font-weight:700;color:#d6e6f2;background:#0e2036;border:1px solid rgba(255,255,255,.1)}
+.sec label.tg{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;color:#7f9ab2;cursor:pointer;user-select:none}
+.sec label.tg input{accent-color:var(--teal-500)}
+body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-events:none}
+#app,#viewer{transition:filter .2s}
 
 /* ---------- Khung ứng dụng ---------- */
 .app{display:grid;grid-template-columns:var(--side) 1fr;height:100vh}
@@ -231,15 +266,40 @@ svg{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-wi
 
 <!-- Đăng nhập -->
 <section class="login" id="login" hidden>
-  <form class="login-card" id="loginForm" autocomplete="on">
+  <div class="login-card" id="loginCard">
     <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.3l1-1.6A1.5 1.5 0 0 1 10 3.7h4a1.5 1.5 0 0 1 1.2.7l1 1.6h1.3A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5Z"/><circle cx="12" cy="12.3" r="3.3"/></svg></span><div><b>TASCO DLK</b><small>CLOUD TRÊN MÁY TÍNH</small></div></div>
     <h1>Xem ảnh Cloud</h1>
-    <p class="sub">Đăng nhập bằng đúng tài khoản đang dùng trên điện thoại để xem, lọc và tải ảnh, video đã chụp.</p>
-    <label class="field"><span>Email</span><input id="email" type="email" name="email" autocomplete="username" required></label>
-    <label class="field"><span>Mật khẩu</span><input id="password" type="password" name="password" autocomplete="current-password" required></label>
-    <button class="btn-primary" id="loginBtn" type="submit">Đăng nhập</button>
+    <p class="sub" id="loginSub">Đăng nhập an toàn bằng app trên điện thoại, không cần gõ mật khẩu trên máy tính.</p>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tabQr" aria-selected="true">Quét QR bằng app</button>
+      <button type="button" role="tab" id="tabPw" aria-selected="false">Email &amp; mật khẩu</button>
+    </div>
+    <div id="qrPane">
+      <div class="qr-wrap">
+        <div class="qr-box is-dim" id="qrBox">
+          <canvas id="qrCanvas" width="216" height="216" aria-label="Mã QR đăng nhập"></canvas>
+          <div class="qr-cover" id="qrCover"><div class="spin"></div><p id="qrCoverText">Đang tạo mã…</p></div>
+        </div>
+        <div>
+          <div class="pin-label">Mã xác nhận 4 số</div>
+          <div class="pin" id="qrPin" aria-label="Mã xác nhận"><i>•</i><i>•</i><i>•</i><i>•</i></div>
+          <ol class="qr-steps">
+            <li>Mở app TASCO DLK trên điện thoại</li>
+            <li>Vào Cloud → <b>Đăng nhập máy tính</b> và quét mã QR</li>
+            <li>Nhập 4 số ở trên, kiểm tra thông tin rồi bấm <b>Cho phép</b></li>
+          </ol>
+          <div class="qr-timer"><span id="qrTime">2:00</span><div class="bar"><i id="qrBar"></i></div></div>
+        </div>
+      </div>
+    </div>
+    <form id="loginForm" autocomplete="on" hidden>
+      <label class="field"><span>Email</span><input id="email" type="email" name="email" autocomplete="username" required></label>
+      <label class="field"><span>Mật khẩu</span><input id="password" type="password" name="password" autocomplete="current-password" required></label>
+      <button class="btn-primary" id="loginBtn" type="submit">Đăng nhập</button>
+    </form>
     <div class="login-error" id="loginError" role="alert" hidden></div>
-  </form>
+    <p class="sec-note"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="3"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg><span>Phiên chỉ tồn tại trong tab này: đóng trình duyệt là phải đăng nhập lại. Tự khoá khi không thao tác, ảnh được xoá khỏi màn hình khi khoá.</span></p>
+  </div>
 </section>
 
 <!-- Ứng dụng -->
@@ -256,6 +316,13 @@ svg{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-wi
     </div>
     <div class="side-foot">
       <div class="stats" id="stats"></div>
+      <div class="sec">
+        <div class="sec-row">
+          <button class="lock-btn" id="lockNow" type="button" title="Khoá ngay (xoá ảnh khỏi màn hình)"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="3"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>Khoá ngay</button>
+          <select id="idleSel" title="Tự khoá khi không thao tác" aria-label="Tự khoá sau"><option value="5">Tự khoá 5′</option><option value="10">Tự khoá 10′</option><option value="30">Tự khoá 30′</option><option value="60">Tự khoá 60′</option></select>
+        </div>
+        <label class="tg"><input type="checkbox" id="shieldTg"> Che màn hình khi rời cửa sổ này</label>
+      </div>
       <div class="who"><span class="avatar" id="avatar">?</span><div><b id="whoEmail">—</b><small id="whoSync">Chưa đồng bộ</small></div><button class="icon-btn" id="logout" title="Đăng xuất" aria-label="Đăng xuất"><svg viewBox="0 0 24 24"><path d="M9 4H6.5A2.5 2.5 0 0 0 4 6.5v11A2.5 2.5 0 0 0 6.5 20H9M15 8l4 4-4 4M19 12H9"/></svg></button></div>
     </div>
   </aside>
@@ -315,7 +382,9 @@ svg{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-wi
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = "https://yxwmcpoklxpzlikxojez.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4d21jcG9rbHhwemxpa3hvamV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njk0MDEsImV4cCI6MjA5NjE0NTQwMX0.dmyjtDDo_KTlUFyxQgoCGqEt5Bsq2krEEYg2BCyXeFc";
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'tasco_dlk_supabase_auth' } });
+/* Phiên máy tính chỉ nằm trong sessionStorage của tab này: đóng tab/trình duyệt là hết (khác app điện thoại, vốn nhớ đăng nhập). */
+const authStore = (() => { try { const t = '__tasco_t'; sessionStorage.setItem(t, '1'); sessionStorage.removeItem(t); return sessionStorage; } catch (_) { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k) }; } })();
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storage: authStore, storageKey: 'tasco_cloud_desktop_auth' } });
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -697,25 +766,158 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Escape' && S.selected.size) { S.selected.clear(); paintSel(); }
 });
 
-/* ---------- Đăng nhập / phiên ---------- */
-function showLogin(msg) { $('#app').hidden = true; $('#login').hidden = false; const er = $('#loginError'); er.hidden = !msg; er.textContent = msg || ''; $('#email').focus(); }
+/* ---------- Đăng nhập / phiên / bảo mật ---------- */
+const FN_URL = SUPABASE_URL + '/functions/v1/tasco-qr-login';
+const IDLE_KEY = 'tasco_cloud_idle_min', SHIELD_KEY = 'tasco_cloud_shield', MAX_SESSION_MS = 8 * 3600 * 1000;
+const lsGet = k => { try { return localStorage.getItem(k); } catch (_) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (_) {} };
+const ssGet = k => { try { return sessionStorage.getItem(k); } catch (_) { return null; } };
+const ssSet = (k, v) => { try { sessionStorage.setItem(k, v); } catch (_) {} };
+// Bản cũ lưu phiên lâu dài ở localStorage: xoá 1 lần để không còn token tồn đọng trên máy.
+if (!lsGet('tasco_cloud_v2_migrated')) { try { localStorage.removeItem('tasco_dlk_supabase_auth'); } catch (_) {} lsSet('tasco_cloud_v2_migrated', '1'); }
+let loginAt = 0, lastActive = Date.now(), activeTab = 'qr';
+
+async function qrApi(body) {
+  const r = await fetch(FN_URL, { method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }, body: JSON.stringify(body) });
+  let data = {}; try { data = await r.json(); } catch (_) {}
+  return { http: r.status, data };
+}
+
+/* --- Đăng nhập bằng QR --- */
+const Q = { id: null, verifier: null, expAt: 0, poll: 0, tick: 0, busy: false, gen: 0 };
+function qrStop() { clearInterval(Q.poll); clearInterval(Q.tick); Q.poll = Q.tick = 0; Q.gen++; Q.verifier = null; Q.id = null; Q.busy = false; }
+function setPin(pin) { [...$('#qrPin').children].forEach((el, i) => { el.textContent = pin ? pin[i] : '•'; }); }
+function setQr(state, text) {
+  const box = $('#qrBox'), cover = $('#qrCover'); box.classList.toggle('is-dim', state !== 'ready'); cover.hidden = state === 'ready'; cover.replaceChildren();
+  if (state === 'ready') return;
+  if (state === 'loading') { const sp = document.createElement('div'); sp.className = 'spin'; const p = document.createElement('p'); p.textContent = text || 'Đang tạo mã…'; cover.append(sp, p); return; }
+  const p = document.createElement('p'); p.textContent = text; const b = document.createElement('button'); b.className = 'btn-ghost'; b.type = 'button'; b.textContent = 'Tạo mã mới'; b.addEventListener('click', qrStart); cover.append(p, b);
+  setPin(null);
+}
+function drawQr(text) {
+  const qr = qrcode(0, 'M'); qr.addData(text); qr.make();
+  const n = qr.getModuleCount(), q = 3, scale = Math.max(3, Math.floor(432 / (n + 2 * q))), size = (n + 2 * q) * scale, c = $('#qrCanvas');
+  c.width = c.height = size; const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, size, size); g.fillStyle = '#0b1b30';
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (qr.isDark(y, x)) g.fillRect((x + q) * scale, (y + q) * scale, scale, scale);
+}
+async function qrStart() {
+  qrStop(); const gen = Q.gen; setQr('loading'); setPin(null); $('#loginError').hidden = true;
+  let res;
+  try { res = await qrApi({ action: 'create' }); } catch (_) { if (gen === Q.gen) setQr('error', 'Không kết nối được máy chủ. Kiểm tra mạng rồi tạo mã mới.'); return; }
+  if (gen !== Q.gen) return;
+  const d = res.data || {};
+  if (res.http === 429) return setQr('error', 'Tạo mã quá nhiều lần. Đợi 1–2 phút rồi thử lại, hoặc dùng Email & mật khẩu.');
+  if (res.http !== 200 || !d.id || !d.code || !d.verifier || !d.pin) return setQr('error', 'Chưa tạo được mã QR. Thử lại hoặc dùng Email & mật khẩu.');
+  try { drawQr(new URL('mobile.html', location.href).href + '#qrlogin=' + d.id + '.' + d.code); } catch (_) { return setQr('error', 'Không tạo được hình QR trên trình duyệt này. Dùng Email & mật khẩu.'); }
+  Q.id = d.id; Q.verifier = d.verifier; Q.expAt = Date.now() + (Number(d.ttl) || 120) * 1000;
+  setPin(String(d.pin)); setQr('ready');
+  const tick = () => {
+    const left = Math.max(0, Math.ceil((Q.expAt - Date.now()) / 1000)); $('#qrTime').textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+    $('#qrBar').style.transform = 'scaleX(' + Math.min(1, left / (Number(d.ttl) || 120)) + ')';
+    if (left <= 0 && gen === Q.gen) { qrStop(); setQr('expired', 'Mã đã hết hạn để đảm bảo an toàn.'); }
+  };
+  tick(); Q.tick = setInterval(tick, 250);
+  Q.poll = setInterval(async () => {
+    if (Q.busy || gen !== Q.gen) return; Q.busy = true;
+    try {
+      const r = await qrApi({ action: 'poll', id: Q.id, verifier: Q.verifier }); if (gen !== Q.gen) return; const st = r.data?.status;
+      if (st === 'approved' && r.data.token_hash) return qrFinish(r.data.token_hash);
+      if (st === 'denied') { qrStop(); setQr('error', 'Điện thoại đã từ chối hoặc nhập sai mã 4 số quá 5 lần.'); }
+      else if (st === 'expired' || st === 'invalid') { qrStop(); setQr('expired', 'Mã đã hết hạn để đảm bảo an toàn.'); }
+    } catch (_) { /* mất mạng thoáng qua: lần hỏi sau sẽ thử lại */ }
+    finally { if (gen === Q.gen) Q.busy = false; }
+  }, 2000);
+}
+async function qrFinish(tokenHash) {
+  qrStop(); setQr('loading', 'Đang đăng nhập…');
+  let res = await sb.auth.verifyOtp({ type: 'magiclink', token_hash: tokenHash });
+  if (res.error || !res.data?.user) res = await sb.auth.verifyOtp({ type: 'email', token_hash: tokenHash });
+  if (res.error || !res.data?.user) { setQr('error', 'Đăng nhập bằng QR chưa thành công. Tạo mã mới và thử lại.'); return; }
+  ssSet('tasco_cloud_fail', '{}'); await enter(res.data.user);
+}
+
+/* --- Đăng nhập bằng mật khẩu (có giới hạn thử sai) --- */
+const failState = () => { try { return JSON.parse(ssGet('tasco_cloud_fail') || '{}'); } catch (_) { return {}; } };
+let lockTimer = 0;
+function paintLockout() {
+  clearInterval(lockTimer); const btn = $('#loginBtn'); if (((failState().until || 0) - Date.now()) <= 0) { btn.disabled = false; btn.textContent = 'Đăng nhập'; return; }
+  const tick = () => { const l = Math.ceil(((failState().until || 0) - Date.now()) / 1000); if (l <= 0) { clearInterval(lockTimer); btn.disabled = false; btn.textContent = 'Đăng nhập'; $('#loginError').hidden = true; } else { btn.disabled = true; btn.textContent = 'Thử lại sau ' + l + ' giây'; } };
+  tick(); lockTimer = setInterval(tick, 1000);
+}
+function setTab(tab) {
+  activeTab = tab; const qr = tab === 'qr';
+  $('#tabQr').setAttribute('aria-selected', String(qr)); $('#tabPw').setAttribute('aria-selected', String(!qr));
+  $('#qrPane').hidden = !qr; $('#loginForm').hidden = qr; $('#loginError').hidden = true;
+  $('#loginSub').textContent = qr ? 'Đăng nhập an toàn bằng app trên điện thoại, không cần gõ mật khẩu trên máy tính.' : 'Đăng nhập bằng đúng tài khoản đang dùng trên điện thoại.';
+  if (qr) { if (!Q.id) qrStart(); } else { qrStop(); paintLockout(); $('#email').focus(); }
+}
+$('#tabQr').addEventListener('click', () => setTab('qr'));
+$('#tabPw').addEventListener('click', () => setTab('pw'));
+
+function showLogin(msg) {
+  $('#app').hidden = true; $('#login').hidden = false; document.body.classList.remove('shielded');
+  const er = $('#loginError'); er.hidden = !msg; er.textContent = msg || '';
+  const last = ssGet('tasco_cloud_last_email'); if (last && !$('#email').value) $('#email').value = last;
+  setTab(activeTab); if (msg) { er.hidden = false; er.textContent = msg; }
+}
 async function enter(user) {
-  S.user = user; $('#login').hidden = true; $('#app').hidden = false;
+  qrStop(); S.user = user; loginAt = lastActive = Date.now(); $('#login').hidden = true; $('#app').hidden = false; $('#email').value = ''; $('#password').value = '';
+  ssSet('tasco_cloud_last_email', user.email || '');
   $('#whoEmail').textContent = user.email || '—'; $('#avatar').textContent = (user.email || '?').slice(0, 2).toUpperCase();
   let row = 210, caps = false; try { row = Number(localStorage.getItem('tasco_cloud_desktop_row')) || 210; caps = localStorage.getItem('tasco_cloud_desktop_caps') === '1'; } catch (_) {}
+  $('#idleSel').value = String(idleMin()); $('#shieldTg').checked = lsGet(SHIELD_KEY) === '1';
   setRow(row); setCaps(caps); paintDate();
   loadAll();
 }
 $('#loginForm').addEventListener('submit', async e => {
-  e.preventDefault(); const btn = $('#loginBtn'); btn.disabled = true; btn.textContent = 'Đang đăng nhập…'; $('#loginError').hidden = true;
-  try { const { data, error } = await sb.auth.signInWithPassword({ email: $('#email').value.trim(), password: $('#password').value }); if (error) throw error; $('#password').value = ''; await enter(data.user); }
-  catch (err) { showLogin(friendly(err)); }
-  finally { btn.disabled = false; btn.textContent = 'Đăng nhập'; }
+  e.preventDefault(); if (((failState().until || 0) - Date.now()) > 0) return;
+  const btn = $('#loginBtn'); btn.disabled = true; btn.textContent = 'Đang đăng nhập…'; $('#loginError').hidden = true;
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email: $('#email').value.trim(), password: $('#password').value }); if (error) throw error;
+    ssSet('tasco_cloud_fail', '{}'); await enter(data.user);
+  } catch (err) {
+    const er = $('#loginError'); er.hidden = false; er.textContent = friendly(err); $('#password').value = '';
+    if (/Invalid login credentials/i.test(String(err?.message || ''))) {
+      const f = failState(), n = (f.n || 0) + 1; ssSet('tasco_cloud_fail', JSON.stringify({ n, until: n >= 5 ? Date.now() + Math.min(30 * 2 ** (n - 5), 900) * 1000 : 0 }));
+      if (n >= 5) er.textContent = 'Sai quá nhiều lần. Tạm khoá đăng nhập bằng mật khẩu, hãy đợi rồi thử lại hoặc dùng QR.';
+    }
+  } finally { paintLockout(); if (((failState().until || 0) - Date.now()) <= 0) { btn.disabled = false; btn.textContent = 'Đăng nhập'; } }
 });
-$('#logout').addEventListener('click', async () => { loadToken++; try { await sb.auth.signOut(); } catch (_) {} S.rows = []; S.albums = []; S.selected.clear(); S.user = null; closeViewerSafe(); showLogin(); });
+
+/* --- Khoá / đăng xuất: xoá ảnh khỏi màn hình và kết thúc phiên của máy tính này (không đụng tới phiên điện thoại) --- */
+function wipe() {
+  loadToken++; S.loading = false; closeViewerSafe(); S.rows = []; S.albums = []; S.view = []; S.selected.clear(); S.error = ''; S.lastSync = 0;
+  $('#vMedia')?.remove(); $('#vFilm').replaceChildren(); $('#vInfo').replaceChildren(); $('#toasts').replaceChildren();
+  try { refresh(); } catch (_) { $('#content').replaceChildren(); }
+}
+async function lockNow(msg) {
+  if (!S.user) return; S.user = null; wipe();
+  try { await sb.auth.signOut({ scope: 'local' }); } catch (_) {}
+  showLogin(msg || '');
+}
+$('#logout').addEventListener('click', () => lockNow(''));
+$('#lockNow').addEventListener('click', () => lockNow('Đã khoá. Quét QR hoặc đăng nhập lại để tiếp tục.'));
 function closeViewerSafe() { if (S.viewer.open) closeViewer(); }
-sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT' && S.user) { S.user = null; showLogin('Phiên đăng nhập đã hết. Đăng nhập lại.'); } });
-document.addEventListener('visibilitychange', () => { if (!document.hidden && S.user && !S.loading && Date.now() - S.lastSync > 3 * 60 * 1000) loadAll({ silent: true }); });
+sb.auth.onAuthStateChange(ev => { if (ev === 'SIGNED_OUT' && S.user) lockNow('Phiên đăng nhập đã hết. Đăng nhập lại.'); });
+
+/* --- Tự khoá khi không thao tác / quá 8 giờ / che màn hình khi rời cửa sổ --- */
+const idleMin = () => [5, 10, 30, 60].includes(Number(lsGet(IDLE_KEY))) ? Number(lsGet(IDLE_KEY)) : 10;
+$('#idleSel').addEventListener('change', e => { lsSet(IDLE_KEY, e.target.value); lastActive = Date.now(); toast('Tự khoá sau ' + e.target.value + ' phút không thao tác.'); });
+$('#shieldTg').addEventListener('change', e => { lsSet(SHIELD_KEY, e.target.checked ? '1' : '0'); document.body.classList.remove('shielded'); });
+['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart', 'scroll'].forEach(ev => addEventListener(ev, () => { lastActive = Date.now(); }, { passive: true, capture: true }));
+function idleCheck() {
+  if (!S.user) return; const now = Date.now();
+  if ([...document.querySelectorAll('video')].some(v => !v.paused && !v.ended)) lastActive = now;      // đang xem video thì không khoá
+  if (now - lastActive >= idleMin() * 60000) return lockNow('Đã tự khoá vì ' + idleMin() + ' phút không thao tác.');
+  if (now - loginAt >= MAX_SESSION_MS) lockNow('Phiên đã quá 8 giờ. Đăng nhập lại để tiếp tục.');
+}
+setInterval(idleCheck, 15000);
+addEventListener('blur', () => { if (S.user && $('#shieldTg').checked) document.body.classList.add('shielded'); });
+addEventListener('focus', () => document.body.classList.remove('shielded'));
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) return; idleCheck();
+  if (S.user && !S.loading && Date.now() - S.lastSync > 3 * 60 * 1000) loadAll({ silent: true });
+});
 addEventListener('resize', () => { if (S.viewer.open) $('#viewer').style.gridTemplateColumns = V.info && innerWidth > 820 ? '1fr 372px' : '1fr'; });
 (async () => {
   try { const { data } = await sb.auth.getSession(); if (data?.session?.user) { const u = await sb.auth.getUser(); if (!u.error && u.data?.user) return enter(u.data.user); } } catch (_) {}
