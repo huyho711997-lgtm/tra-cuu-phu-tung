@@ -8570,15 +8570,20 @@ window.TascoCloud = (() => {
   async function refreshCloudinaryUsage(owner,force){
     const prev=state.cloudinaryUsage;
     if(!force&&prev&&prev.ownerId===owner.id&&Date.now()-prev.at<600000)return;
-    let result={available:false};
+    if(state.cldPending===owner.id)return;   /* đang gọi dở: không gọi chồng */
+    state.cldPending=owner.id;
+    let result={available:false},transient=true;   /* transient: lỗi mạng/401/5xx -> giữ số liệu tốt trước đó */
     try{
       const api=await client(),session=(await api.auth.getSession()).data?.session;
       if(session?.access_token){
         const res=await fetch(CLD_FN,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:CLD_ANON,Authorization:'Bearer '+session.access_token},body:'{}',signal:typeof AbortSignal.timeout==='function'?AbortSignal.timeout(12000):undefined});
-        const data=await res.json().catch(()=>null);if(res.ok&&data&&data.available===true)result=data;
+        const data=await res.json().catch(()=>null);
+        if(res.ok&&data&&typeof data.available==='boolean'){transient=false;if(data.available===true)result=data;}
       }
     }catch(_){}
+    if(state.cldPending===owner.id)state.cldPending=null;
     if(!hasAccess()||state.user?.id!==owner.id)return;
+    if(transient&&prev&&prev.ownerId===owner.id&&prev.available){state.cloudinaryUsage={...prev,at:Date.now()};return;}
     state.cloudinaryUsage={...result,ownerId:owner.id,at:Date.now()};
     paintStorageUsage();
   }
