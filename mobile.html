@@ -13528,6 +13528,34 @@ window.TascoCameraRescue = (function () {
     if (modal() && modal().style.display !== 'none') { try { startCustomCameraStream(); } catch (_) {} }
   }
 
+  /* Tìm thời điểm video gốc bắt đầu có hình: camera đôi khi ghi vài khung đen đầu tiên. Trả 0 nếu khung đầu đã có hình
+     (đường thường, chỉ tốn một lần tua) hoặc cả đoạn đầu đều tối (cảnh quay thật sự tối). */
+  async function firstLiveTime(video) {
+    var c = document.createElement('canvas'); c.width = 24; c.height = 24;
+    var x = c.getContext('2d', { willReadFrequently: true });
+    function ready() { return new Promise(function (ok) { if (video.readyState >= 2) { ok(); return; } var t = setTimeout(ok, 1500); video.addEventListener('loadeddata', function f() { clearTimeout(t); video.removeEventListener('loadeddata', f); ok(); }); }); }
+    function seek(t) {
+      return new Promise(function (ok) {
+        if (Math.abs(video.currentTime - t) < 0.001 && video.readyState >= 2) { ok(); return; }
+        var tm = setTimeout(end, 1500);
+        function end() { clearTimeout(tm); video.removeEventListener('seeked', end); ok(); }
+        video.addEventListener('seeked', end); video.currentTime = t;
+      });
+    }
+    function luma() {
+      try { x.drawImage(video, 0, 0, 24, 24); var d = x.getImageData(0, 0, 24, 24).data, sum = 0; for (var i = 0; i < d.length; i += 4) sum += d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114; return sum / (d.length / 4); }
+      catch (_) { return -1; }
+    }
+    try {
+      await ready();
+      for (var t = 0; t <= 1.8; t += 0.15) {
+        await seek(t); await new Promise(function (r) { setTimeout(r, 30); });
+        var l = luma(); if (l < 0 || l >= 6) return t > 0 ? Math.max(0, t - 0.05) : 0;
+      }
+    } catch (_) {}
+    return 0;
+  }
+
   async function burn(source, lines, appearance, onProgress, signal) {
     var isUrl = typeof source === 'string', url = isUrl ? source : URL.createObjectURL(source), video = document.createElement('video');
     if (isUrl) video.crossOrigin = 'anonymous';  // giữ canvas sạch để ghi lại được
@@ -13537,7 +13565,8 @@ window.TascoCameraRescue = (function () {
       await new Promise(function (ok, fail) { video.onloadedmetadata = ok; video.onerror = function () { fail(new Error('Không đọc được video. Thử quay lại.')); }; });
       var vw = video.videoWidth, vh = video.videoHeight; if (!vw || !vh) throw new Error('Video không có hình.');
       var scale = Math.min(1, LONG_SIDE / Math.max(vw, vh)), w = Math.round(vw * scale / 2) * 2, h = Math.round(vh * scale / 2) * 2;
-      var duration = Math.min(isFinite(video.duration) ? video.duration : MAX_SECONDS, MAX_SECONDS);
+      var skip = await firstLiveTime(video);   // bỏ đoạn đen đầu video gốc (nếu có)
+      var duration = Math.min((isFinite(video.duration) ? video.duration : MAX_SECONDS) - skip, MAX_SECONDS);
       var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
       var ctx = canvas.getContext('2d', { alpha: false });
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';  // thu nhỏ không vỡ chi tiết
@@ -13561,17 +13590,24 @@ window.TascoCameraRescue = (function () {
         if (stopDraw) return;
         ctx.drawImage(video, 0, 0, w, h);
         ctx.drawImage(stampLayer, 0, 0);
-        var now = performance.now(); if (now - lastProgress > 250) { lastProgress = now; onProgress(Math.min(100, video.currentTime / duration * 100)); }
-        if (video.currentTime >= duration - 0.05 || video.ended) { finish(); return; }
+        var now = performance.now(); if (now - lastProgress > 250) { lastProgress = now; onProgress(Math.max(0, Math.min(100, (video.currentTime - skip) / duration * 100))); }
+        if (video.currentTime >= skip + duration - 0.05 || video.ended) { finish(); return; }
         if (video.requestVideoFrameCallback) video.requestVideoFrameCallback(draw); else requestAnimationFrame(draw);
       }
       function finish() { if (stopDraw) return; stopDraw = true; try { video.pause(); } catch (_) {} if (recorder.state !== 'inactive') recorder.stop(); }
       video.onended = finish;
       signal.addEventListener('abort', finish);
-      // Khung đầu tiên trước khi ghi để video không bắt đầu bằng màn đen.
-      video.currentTime = 0;
-      await video.play();
+      /* Đặt khung đầu có hình lên canvas TRƯỚC khi bộ ghi chạy, rồi giữ khung đó một chút cho bộ mã hóa khởi động xong mới phát tiếp.
+         Trước đây bộ ghi chạy khi canvas còn trống nên đoạn đầu video bị đen. */
+      video.pause();
+      await new Promise(function (ok) { if (Math.abs(video.currentTime - skip) < 0.001 && video.readyState >= 2) { ok(); return; } var tm = setTimeout(ok, 1500); video.addEventListener('seeked', function f() { clearTimeout(tm); video.removeEventListener('seeked', f); ok(); }); video.currentTime = skip; });
+      function paintFirst() { ctx.drawImage(video, 0, 0, w, h); ctx.drawImage(stampLayer, 0, 0); }
+      paintFirst();
+      var started = new Promise(function (ok) { var tm = setTimeout(ok, 900); recorder.addEventListener('start', function () { clearTimeout(tm); ok(); }, { once: true }); });
       recorder.start(1000);
+      await started;
+      for (var warm = performance.now() + 250; performance.now() < warm;) { paintFirst(); await new Promise(function (r) { requestAnimationFrame(r); }); }
+      await video.play();
       draw();
       await done;
       if (signal.aborted) throw new DOMException('Đã hủy', 'AbortError');
@@ -14091,6 +14127,13 @@ window.TascoPhotoFX = (function () {
       await refreshCapabilities();
       if (gen !== st.gen) return null;
       await applyPro();
+      /* 60 khung/giây nếu máy hỗ trợ. Đặt ngay lúc mở chế độ video (lúc xem trước) để camera đổi định dạng xong trước khi bấm quay;
+         đặt đúng lúc bấm quay thì những khung đầu bị đen. */
+      st.fps = 0;
+      if (isVideo) {
+        try { var rr = (await CP.getSupportedVideoFrameRates()).frameRates || []; if (rr.indexOf(60) >= 0) { await CP.setVideoFrameRate({ frameRate: 60 }); st.fps = 60; } } catch (_) {}
+        if (gen !== st.gen) return null;
+      }
       placePlane(); renderCameraLensChoices(); syncCameraViewport(); updateModeUI();
       return true;
     })();
@@ -14354,18 +14397,9 @@ window.TascoPhotoFX = (function () {
       if (!st.recording) {
         st.recMeta = createCameraPhotoMetadata();
         var recOpts = { videoStabilizationMode: pro.stab, videoBitrate: 12000000, videoCodec: 'avc1', maxDuration: window.TascoVideoCapture.maxSeconds, mirrorFrontCamera: !!cameraAppearance.mirrorFront };
-        /* 60 khung/giây nếu máy hỗ trợ (mượt hơn hẳn mặc định 30); không hỗ trợ hoặc lỗi thì quay như cũ. */
-        try { var rates = (await CP.getSupportedVideoFrameRates()).frameRates || []; if (rates.indexOf(60) >= 0) { recOpts.frameRate = 60; recOpts.videoBitrate = 16000000; } } catch (_) {}
+        if (st.fps === 60) recOpts.videoBitrate = 16000000;   // 60 khung/giây cần bitrate cao hơn
         try { await CP.startRecordVideo(recOpts); }
-        catch (first) {
-          var retry = Object.assign({}, recOpts);
-          if (retry.frameRate) { delete retry.frameRate; retry.videoBitrate = 12000000; }
-          try { await CP.startRecordVideo(retry); }
-          catch (second) {
-            if (pro.stab === 'off') throw second;
-            retry.videoStabilizationMode = 'off'; await CP.startRecordVideo(retry); feedback('Máy chưa hỗ trợ chế độ chống rung này, đang quay không chống rung.', 3000);
-          }
-        }
+        catch (first) { if (pro.stab === 'off') throw first; recOpts.videoStabilizationMode = 'off'; await CP.startRecordVideo(recOpts); feedback('Máy chưa hỗ trợ chế độ chống rung này, đang quay không chống rung.', 3000); }
         st.recording = true; st.recStart = Date.now();
         st.recTimer = setInterval(updateModeUI, 500);
       } else {
