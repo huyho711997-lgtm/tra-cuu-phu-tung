@@ -13195,6 +13195,35 @@ window.TascoCategories = (function () {
 .cloud-category-bar button[aria-pressed="true"]{border-color:#39747e;background:#183056;color:#edf5f7}
 .cloud-tile-cat{display:inline-block;max-width:100%;margin-bottom:3px;padding:2px 8px;border-radius:999px;background:rgba(132,191,199,.22);color:#20434f;font-size:10.5px;font-style:normal;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dark .cloud-tile-cat{color:#9dcfd6}
+/* ===== Đồng bộ màu hộp thoại album / xoá ảnh: navy · teal · crimson (một tông nguy hiểm duy nhất) ===== */
+:root{--app-danger:#c23b52;--app-danger-deep:#a92f45;--app-danger-soft:#fff0f2;--app-danger-line:#f3c6cf}
+.dark{--app-danger:#f08a9a;--app-danger-deep:#e0707f;--app-danger-soft:rgba(240,138,154,.12);--app-danger-line:rgba(240,138,154,.3)}
+.cloud-album-overlay,.cloud-delete-overlay{background:rgba(11,27,48,.62);-webkit-backdrop-filter:blur(10px) saturate(1.2);backdrop-filter:blur(10px) saturate(1.2)}
+.cloud-album-dialog,.cloud-delete-dialog{border-color:var(--ws-line);box-shadow:0 2px 6px rgba(11,27,48,.08),0 32px 90px -24px rgba(11,27,48,.6)}
+.cloud-album-dialog-icon{border-color:var(--ws-line);background:var(--ws-accent);color:var(--ws-accent-text)}
+.cloud-album-sheet-handle{background:var(--app-teal)!important;opacity:.45}
+/* Danh sách thao tác: ô biểu tượng đồng nhất */
+.cloud-album-menu-actions button{border-color:var(--ws-line);background:var(--ws-surface);transition:background .15s,border-color .15s,transform .12s}
+.cloud-album-menu-actions button>svg:first-child{flex:none;width:38px;height:38px;padding:9px;border-radius:12px;background:var(--ws-accent);color:var(--ws-accent-text)}
+.cloud-album-menu-actions button>svg:last-child{color:var(--app-teal)}
+.cloud-album-menu-actions button strong{color:var(--ws-text);font-weight:650}
+.cloud-album-menu-actions button:active:not(:disabled){transform:scale(.985);background:var(--ws-soft);border-color:var(--app-teal)}
+.cloud-album-menu-actions button:disabled{opacity:.5}
+.cloud-album-menu-actions [data-album-remove]{color:var(--app-danger)}
+.cloud-album-menu-actions [data-album-remove] strong{color:var(--app-danger)}
+.cloud-album-menu-actions [data-album-remove]>svg:first-child{background:var(--app-danger-soft);color:var(--app-danger)}
+.cloud-album-menu-actions [data-album-remove]>svg:last-child{color:var(--app-danger);opacity:.7}
+.cloud-album-menu-actions [data-album-remove]:hover,.cloud-album-menu-actions [data-album-remove]:active:not(:disabled){background:var(--app-danger-soft);border-color:var(--app-danger-line)}
+/* Xác nhận xoá */
+.cloud-album-manage-dialog .cloud-album-danger-icon,.cloud-delete-symbol{border:1px solid var(--app-danger-line);background:var(--app-danger-soft);color:var(--app-danger)}
+.cloud-album-manage-dialog footer{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
+.cloud-album-manage-dialog [data-album-close],.cloud-album-manage-dialog footer [data-album-close],.cloud-delete-dialog [data-delete-cancel]{background:var(--ws-surface);border-color:var(--ws-line);color:var(--ws-text);font-weight:650}
+.cloud-album-manage-dialog [data-album-delete-confirm],.cloud-delete-dialog [data-delete-confirm]{min-height:48px;border:1px solid var(--app-danger-deep);border-radius:14px;background:linear-gradient(180deg,var(--app-danger),var(--app-danger-deep));color:#fff;font-weight:700;box-shadow:0 14px 28px -14px var(--app-danger),inset 0 1px 0 rgba(255,255,255,.2)}
+.dark .cloud-album-manage-dialog [data-album-delete-confirm],.dark .cloud-delete-dialog [data-delete-confirm]{color:#2a0b12}
+.cloud-album-manage-dialog [data-album-delete-confirm]:hover,.cloud-album-manage-dialog [data-album-delete-confirm]:active,.cloud-delete-dialog [data-delete-confirm]:hover{background:linear-gradient(180deg,var(--app-danger),var(--app-danger-deep));filter:brightness(.94)}
+.cloud-album-dialog [data-album-error],.cloud-delete-dialog .cloud-delete-error,.tasco-workspace #personalCloudSection .cloud-feedback[data-error=true],.cloud-download-dialog .cloud-download-error{color:var(--app-danger)}
+.cloud-download-dialog .cloud-download-error{border-color:var(--app-danger-line);background:var(--app-danger-soft)}
+.tasco-workspace #personalCloudSection .cloud-selection-bar .cloud-delete-selected,.tasco-workspace #personalCloudSection .cloud-selection-bar .cloud-delete-selected.cloud-button[data-action=delete-selected]{color:var(--app-danger);border-color:var(--app-danger-line);background:var(--app-danger-soft)}
 </style>
 <style id="tascoCloudAlbumPremium">
 /* Trang Cloud / album (mobile) — gọn, ưu tiên ảnh, giữ màu & kiểu nút của app */
