@@ -13739,13 +13739,16 @@ window.TascoPhotoFX = (function () {
   var Orient = (function () {
     var SO = null;
     try { if (cap.isPluginAvailable('ScreenOrientation')) SO = cap.Plugins.ScreenOrientation; } catch (_) {}
-    var active = false, side = 'landscape-primary', hooked = false;
+    var active = false, side = 'landscape-primary', hooked = false, cur = '', leaveTimer = null;
     function run(name, arg) { if (!SO) return Promise.resolve(); try { return Promise.resolve(arg ? SO[name](arg) : SO[name]()).catch(function () {}); } catch (_) { return Promise.resolve(); } }
     function lockedLandscape() { try { return cameraOrientLock === 'landscape'; } catch (_) { return false; } }
+    /* Chỉ gọi iOS khi chính sách thật sự đổi: mỗi lệnh khoá/mở khoá làm iOS bố trí lại màn hình nên gọi thừa sẽ làm camera trễ, giật. */
     function apply() {
       if (!SO) return Promise.resolve();
-      if (!active) return run('lock', { orientation: 'portrait' });
-      return lockedLandscape() ? run('lock', { orientation: side }) : run('unlock');
+      var want = !active ? 'portrait' : lockedLandscape() ? side : 'free';
+      if (want === cur) return Promise.resolve();
+      cur = want;
+      return want === 'free' ? run('unlock') : run('lock', { orientation: want });
     }
     function hook() {
       if (hooked || !SO || typeof SO.addListener !== 'function') return;
@@ -13759,7 +13762,8 @@ window.TascoPhotoFX = (function () {
       } catch (_) {}
     }
     hook(); apply();   // lúc mở app: khoá dọc
-    return { available: !!SO, enter: function () { active = true; hook(); return apply(); }, leave: function () { active = false; return apply(); }, refresh: function () { return apply(); } };
+    /* Thoát chậm 0,5 giây: mở camera hay gọi dừng rồi mở lại ngay, không để màn hình khoá dọc rồi mở khoá liên tục. */
+    return { available: !!SO, enter: function () { clearTimeout(leaveTimer); active = true; hook(); return apply(); }, leave: function () { active = false; clearTimeout(leaveTimer); leaveTimer = setTimeout(apply, 500); }, refresh: function () { return apply(); } };
   })();
   window.tascoCameraOrientChanged = function () { Orient.refresh(); };
   var MAX_SIDE = { economy: 2048, high: 3024, maximum: 4032 };
@@ -13826,7 +13830,11 @@ window.TascoPhotoFX = (function () {
     if (st.session !== cameraUiState.session) { st.session = cameraUiState.session; st.mode = 'photo'; }
     st.starting = (async function () {
       root.classList.add('tasco-native-cam'); setTransparent(true);
-      if (!keepOrient) await Orient.enter();
+      if (!keepOrient) {
+        var needTurn = Orient.available && typeof cameraOrientLock !== 'undefined' && cameraOrientLock === 'landscape' && !isLandscape();
+        var turning = Orient.enter();   // không chờ: máy đang cầm dọc thì mở camera ngay, không đợi iOS
+        if (needTurn) { await turning; for (var w = 0; w < 12 && !isLandscape(); w++) await new Promise(function (r) { setTimeout(r, 50); }); }
+      }
       if (gen !== st.gen || !modalOpen()) return null;
       window.syncCameraViewport();   // bỏ xoay giao diện trước khi đo
       var box = document.querySelector('#customCameraModal .camera-stream-container').getBoundingClientRect();
