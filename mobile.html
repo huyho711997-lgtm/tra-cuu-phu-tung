@@ -14455,6 +14455,31 @@ window.TascoPhotoFX = (function () {
     plane.style.transform = 'translate(-50%,-50%) rotate(' + turn + 'deg)';
     plane.style.setProperty('--camera-stamp-size', Math.max(10, Math.min(18, w / 56)) + 'px');
   }
+  /* Vùng đặt khung camera thật trong vùng nhìn (đo lại theo kích thước hiện tại của vùng camera). */
+  function previewArea(isVideo) {
+    var boxEl = document.querySelector('#customCameraModal .camera-stream-container'); if (!boxEl) return null;
+    var box = boxEl.getBoundingClientRect(); if (box.width < 10 || box.height < 10) return null;
+    if (isLandscape()) return { x: Math.round(box.left), y: Math.round(box.top), width: Math.round(box.width), height: Math.round(box.height) };
+    var head = document.querySelector('#customCameraModal .camera-overlay-header'), headBottom = head ? head.getBoundingClientRect().bottom : box.top;
+    var width = (window.visualViewport && visualViewport.width) || innerWidth, previewH = width * (isVideo ? 16 / 9 : 4 / 3), room = box.bottom - headBottom;
+    var y = Math.round(isVideo ? Math.max(box.top, box.bottom - previewH) : previewH <= room ? headBottom + (room - previewH) / 2 : box.top + Math.max(0, (box.height - previewH) / 2));
+    return { x: 0, y: y, width: Math.round(width), height: Math.round(previewH) };
+  }
+  function areaKey(a) { return a ? [a.x, a.y, a.width, a.height].join(',') : ''; }
+  /* Vùng camera đổi cỡ sau khi mở (vd. thanh ảnh vừa chụp trồi lên làm chân trang cao hơn) -> dời khung camera thật cho khỏi bị chân trang che mất, kể cả dấu ngày giờ. */
+  var refitRaf = 0;
+  function refitPreview() {
+    if (!st.running || st.starting || st.recording || !modalOpen()) return;
+    var area = previewArea(st.mode === 'video'); if (!area) return;
+    var key = areaKey(area); if (key === st.fitKey) return;
+    var gen = st.gen; st.fitKey = key;
+    CP.setPreviewSize(area).then(function (fit) {
+      if (gen !== st.gen || !st.running) return;
+      st.rect = fit && fit.width > 0 && fit.height > 0 ? { x: fit.x, y: fit.y, width: fit.width, height: fit.height } : { x: area.x, y: area.y, width: area.width, height: area.height };
+      placePlane();
+    }).catch(function () { st.fitKey = ''; });
+  }
+  function scheduleRefit() { if (refitRaf) return; refitRaf = requestAnimationFrame(function () { refitRaf = 0; refitPreview(); }); }
   function clearPlane() {
     var plane = document.getElementById('cameraImagePlane'); if (!plane) return;
     ['left', 'top', 'transform', 'width', 'height'].forEach(function (k) { plane.style[k] = ''; });
@@ -14464,7 +14489,7 @@ window.TascoPhotoFX = (function () {
     if (!keepOrient) Orient.leave();
     st.gen++;
     var wasActive = st.running || st.starting;
-    st.running = false; st.rect = null;
+    st.running = false; st.rect = null; st.fitKey = '';
     if (st.recording) { st.recording = false; clearInterval(st.recTimer); var mm = cameraModal(); if (mm) mm.dataset.recording = 'false'; }
     root.classList.remove('tasco-native-cam'); setTransparent(false); clearPlane();
     var m = cameraModal(); if (m) delete m.dataset.nativeTurn;
@@ -14505,6 +14530,7 @@ window.TascoPhotoFX = (function () {
       /* Ảnh: khung 4:3 tràn ngang, ngay dưới tiêu đề. Video: khung 16:9 tràn màn hình, đáy sát thanh nút (tiêu đề nổi trên hình như app Camera). */
       var y = Math.round(isVideo ? Math.max(box.top, box.bottom - previewH) : previewH <= room ? headBottom + (room - previewH) / 2 : box.top + Math.max(0, (box.height - previewH) / 2));
       if (land) y = 0;   // màn hình ngang: khung ngang nằm giữa vùng camera, đặt chính xác sau khi mở
+      var startKey = areaKey(previewArea(isVideo));
       var result;
       try {
         result = await CP.start({
@@ -14525,6 +14551,7 @@ window.TascoPhotoFX = (function () {
       if (gen !== st.gen || !modalOpen()) { CP.stop({ force: true }).catch(function () {}); return null; }
       st.running = true;
       st.rect = { x: result.x, y: result.y, width: result.width, height: result.height };
+      st.fitKey = startKey;
       if (land) {
         /* Khung 4:3 ngang vừa khít vùng camera (bên trái cột nút), căn giữa trong đó. */
         try {
@@ -14580,6 +14607,10 @@ window.TascoPhotoFX = (function () {
   }
   window.addEventListener('resize', onRotated);
   window.addEventListener('orientationchange', onRotated);
+  (function () {
+    var box = document.querySelector('#customCameraModal .camera-stream-container');
+    if (box && typeof ResizeObserver === 'function') new ResizeObserver(scheduleRefit).observe(box);
+  })();
 
   /* Camera thật không xoay theo giao diện, nên giữ màn hình camera đứng yên (như app Camera của iPhone)
      và chỉ xoay biểu tượng + dấu định vị theo hướng cầm máy. */
