@@ -7553,8 +7553,11 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
           <div class="camera-style-presets" role="group" aria-label="Kiểu chữ nhanh"><button type="button" data-camera-preset="standard" aria-pressed="true">Tiêu chuẩn</button><button type="button" data-camera-preset="contrast" aria-pressed="false">Nền tối</button><button type="button" data-camera-preset="minimal" aria-pressed="false">Tối giản</button></div>
           <label class="camera-setting-field camera-field-spaced"><span>Cỡ chữ <output data-camera-output="textSize">100%</output></span><input type="range" aria-label="Cỡ chữ" data-camera-pref="textSize" min="0.7" max="1.8" step="0.05" value="1"></label>
           <label class="camera-setting-field camera-field-spaced"><span>Font chữ</span><select aria-label="Font chữ" data-camera-pref="font"><option value="sans">Arial</option><option value="jakarta">Plus Jakarta Sans</option><option value="serif">Georgia</option><option value="mono">Courier New</option><option value="tahoma">Tahoma</option></select></label>
-          <div class="camera-color-row"><span>Màu dòng tiêu đề</span><div class="camera-color-options"><button type="button" data-camera-title-color="#183056" style="--swatch:#183056" aria-label="Tiêu đề xanh than"></button><button type="button" data-camera-title-color="#ffffff" style="--swatch:#ffffff" aria-label="Tiêu đề trắng"></button><button type="button" data-camera-title-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Tiêu đề xanh ngọc"></button><button type="button" data-camera-title-color="#e8c582" style="--swatch:#e8c582" aria-label="Tiêu đề vàng"></button><label class="camera-custom-color" title="Chọn màu khác"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M16 3l5 5-3 3-1-1-9 9H4v-4l9-9-1-1Z"/></svg><input type="color" data-camera-pref="titleColor" value="#183056" aria-label="Màu tiêu đề tùy chọn"></label></div></div>
-          <div class="camera-color-row"><span>Màu chữ</span><div class="camera-color-options"><button type="button" data-camera-color="#ffffff" style="--swatch:#ffffff" aria-label="Chữ trắng"></button><button type="button" data-camera-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Chữ xanh ngọc"></button><button type="button" data-camera-color="#e8c582" style="--swatch:#e8c582" aria-label="Chữ vàng"></button><button type="button" data-camera-color="#ff927a" style="--swatch:#ff927a" aria-label="Chữ cam"></button><label class="camera-custom-color" title="Chọn màu khác"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M16 3l5 5-3 3-1-1-9 9H4v-4l9-9-1-1Z"/></svg><input type="color" data-camera-pref="color" value="#ffffff" aria-label="Màu chữ tùy chọn"></label></div></div>
+          <div class="camera-section-heading camera-field-spaced"><h3>Dòng tiêu đề</h3><span>Chữ, cỡ, màu</span></div>
+          <label class="camera-setting-field"><span>Chữ tiêu đề</span><input type="text" data-camera-pref="title" aria-label="Chữ tiêu đề" maxlength="64" autocomplete="off" value="TASCO DLK"></label>
+          <label class="camera-setting-field camera-field-spaced"><span>Cỡ tiêu đề <output data-camera-output="titleSize">100%</output></span><input type="range" aria-label="Cỡ chữ dòng tiêu đề" data-camera-pref="titleSize" min="0.8" max="2" step="0.05" value="1"></label>
+          <div class="camera-color-row"><span>Màu tiêu đề</span><div class="camera-color-options"><button type="button" data-camera-title-color="#183056" style="--swatch:#183056" aria-label="Tiêu đề xanh than"></button><button type="button" data-camera-title-color="#ffffff" style="--swatch:#ffffff" aria-label="Tiêu đề trắng"></button><button type="button" data-camera-title-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Tiêu đề xanh ngọc"></button><button type="button" data-camera-title-color="#e8c582" style="--swatch:#e8c582" aria-label="Tiêu đề vàng"></button><label class="camera-custom-color" title="Chọn màu khác"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M16 3l5 5-3 3-1-1-9 9H4v-4l9-9-1-1Z"/></svg><input type="color" data-camera-pref="titleColor" value="#183056" aria-label="Màu tiêu đề tùy chọn"></label></div></div>
+          <div class="camera-color-row"><span>Màu ngày giờ, địa chỉ</span><div class="camera-color-options"><button type="button" data-camera-color="#ffffff" style="--swatch:#ffffff" aria-label="Chữ trắng"></button><button type="button" data-camera-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Chữ xanh ngọc"></button><button type="button" data-camera-color="#e8c582" style="--swatch:#e8c582" aria-label="Chữ vàng"></button><button type="button" data-camera-color="#ff927a" style="--swatch:#ff927a" aria-label="Chữ cam"></button><label class="camera-custom-color" title="Chọn màu khác"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M16 3l5 5-3 3-1-1-9 9H4v-4l9-9-1-1Z"/></svg><input type="color" data-camera-pref="color" value="#ffffff" aria-label="Màu chữ tùy chọn"></label></div></div>
           <details class="camera-settings-group"><summary><span>Tinh chỉnh kiểu chữ</span><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></summary><div class="camera-settings-fields">
             <label class="camera-setting-check"><span>Chữ đậm</span><input type="checkbox" data-camera-pref="bold" checked></label>
             <label class="camera-setting-field"><span>Nền chữ</span><select aria-label="Kiểu nền chữ" data-camera-pref="style"><option value="shadow">Bóng nhẹ</option><option value="panel">Nền tối</option><option value="plain">Không nền</option></select></label>
@@ -9788,7 +9791,7 @@ const cameraAspectRatios={native:null,'3:4':[3,4],'4:3':[4,3],'1:1':[1,1],'9:16'
 window.tascoShutterHaptic=function(){try{if(!cameraAppearance||cameraAppearance.shutterHaptic===false)return;var H=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Haptics;if(H&&typeof H.impact==='function'){var r=H.impact({style:'LIGHT'});if(r&&r.catch)r.catch(function(){});return;}if(navigator.vibrate&&navigator.vibrate(10))return;/* iOS 17.4+ (WebKit): bật/tắt <input switch> tạo haptic hệ thống, không cần plugin native */var l=window.__tascoHapticEl;if(!l){l=document.createElement('label');l.setAttribute('aria-hidden','true');l.style.cssText='position:fixed;left:-99px;top:0;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden';var c=document.createElement('input');c.type='checkbox';c.setAttribute('switch','');c.tabIndex=-1;l.appendChild(c);document.body.appendChild(l);window.__tascoHapticEl=l;}l.click();}catch(e){}};
 /* Dòng tiêu đề (TASCO DLK) mặc định xanh than của giao diện app (--app-navy); ngày giờ và địa chỉ trắng. */
 const cameraStampNavy='#183056';
-const cameraAppearanceDefaults={aspectRatio:'native',title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',titleColor:cameraStampNavy,opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true,shutterHaptic:true,autoSaveDevice:false};
+const cameraAppearanceDefaults={aspectRatio:'native',title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',titleColor:cameraStampNavy,titleSize:1,opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true,shutterHaptic:true,autoSaveDevice:false};
 const cameraStampFonts={sans:'Arial, sans-serif',jakarta:'"Plus Jakarta Sans", Arial, sans-serif',serif:'Georgia, serif',mono:'"Courier New", monospace',tahoma:'Tahoma, sans-serif'};
 function sanitizeCameraAppearance(value={}){
   const result={...cameraAppearanceDefaults};
@@ -9797,7 +9800,7 @@ function sanitizeCameraAppearance(value={}){
   if(typeof value.title==='string')result.title=value.title.replace(/[\r\n\t]/g,' ').slice(0,64);
   const enums={aspectRatio:Object.keys(cameraAspectRatios),layout:['lines','compact'],position:['bottom-right','bottom-left','bottom-center','top-right','top-left','top-center'],font:Object.keys(cameraStampFonts),style:['shadow','panel','plain']};
   for(const [key,allowed] of Object.entries(enums))if(allowed.includes(value[key]))result[key]=value[key];
-  for(const [key,min,max] of [['textSize',.7,1.8],['opacity',50,100],['lineHeight',1.1,1.8],['textWidth',50,94],['margin',1,8]])if(Number.isFinite(value[key]))result[key]=Math.min(max,Math.max(min,value[key]));
+  for(const [key,min,max] of [['textSize',.7,1.8],['titleSize',.8,2],['opacity',50,100],['lineHeight',1.1,1.8],['textWidth',50,94],['margin',1,8]])if(Number.isFinite(value[key]))result[key]=Math.min(max,Math.max(min,value[key]));
   for(const key of ['color','titleColor'])if(typeof value[key]==='string'&&/^#[0-9a-f]{6}$/i.test(value[key]))result[key]=value[key];
   return result;
 }
@@ -9844,7 +9847,7 @@ function renderCameraAppearanceControls(){
   }
   for(const output of panel.querySelectorAll('[data-camera-output]')){
     const key=output.dataset.cameraOutput,value=cameraAppearance[key];
-    output.value=key==='textSize'?Math.round(value*100)+'%':key==='lineHeight'?value.toFixed(2)+'×':value+'%';
+    output.value=key==='textSize'||key==='titleSize'?Math.round(value*100)+'%':key==='lineHeight'?value.toFixed(2)+'×':value+'%';
   }
   for(const button of panel.querySelectorAll('[data-camera-ratio]')){const selected=button.dataset.cameraRatio===cameraAppearance.aspectRatio;button.setAttribute('aria-checked',String(selected));button.tabIndex=selected?0:-1;button.disabled=cameraUiState.captureBusy;}
   const badge=document.getElementById('cameraRatioBadge');if(badge){
@@ -9865,21 +9868,30 @@ function cameraStampHaloCss(fontSize){
 function cameraStampLayout(ctx,lines,width,height,settings){
   const shortSide=Math.min(width,height),inset=shortSide*settings.margin/100,boxPadding=settings.style==='panel'?shortSide*.012:0;
   const maxWidth=Math.max(1,Math.min(width*settings.textWidth/100,width-2*(inset+boxPadding)));
-  let fontSize=shortSide/42*settings.textSize,wrapped=[],lineHeight=0;
+  /* Dòng tiêu đề (dòng đầu, bố cục nhiều dòng) có thể to/nhỏ hơn phần còn lại; bố cục gọn giữ cỡ chung. */
+  const title=settings.showTitle?String(settings.title||'').trim():'';
+  const titleScale=settings.layout!=='compact'&&title&&lines[0]===title?Math.min(2,Math.max(.8,Number(settings.titleSize)||1)):1;
+  const family=cameraStampFonts[settings.font],weight=settings.bold?'700':'400';
+  let fontSize=shortSide/42*settings.textSize,wrapped=[],scales=[],lineHeight=0,textHeight=0;
   // Keep even long addresses inside a short landscape frame.
   for(let attempt=0;attempt<5;attempt++){
-    ctx.font=(settings.bold?'700':'400')+' '+fontSize+'px '+cameraStampFonts[settings.font];
-    wrapped=lines.flatMap(line=>wrapCameraWatermarkText(ctx,line,maxWidth));lineHeight=fontSize*settings.lineHeight;
+    wrapped=[];scales=[];
+    lines.forEach((line,index)=>{const scale=index===0?titleScale:1;ctx.font=weight+' '+fontSize*scale+'px '+family;wrapCameraWatermarkText(ctx,line,maxWidth).forEach(part=>{wrapped.push(part);scales.push(scale);});});
+    lineHeight=fontSize*settings.lineHeight;textHeight=scales.reduce((sum,scale)=>sum+lineHeight*scale,0);
     const available=Math.max(1,height-2*(inset+boxPadding));
-    if(wrapped.length*lineHeight<=available)break;
-    fontSize*=Math.min(.9,available/(wrapped.length*lineHeight));
+    if(textHeight<=available)break;
+    fontSize*=Math.min(.9,available/textHeight);
   }
-  const textHeight=wrapped.length*lineHeight,textWidth=wrapped.length?Math.min(maxWidth,Math.max(...wrapped.map(line=>ctx.measureText(line).width))):0;
+  const fontAt=scale=>weight+' '+fontSize*scale+'px '+family;
+  let widest=0;wrapped.forEach((part,index)=>{ctx.font=fontAt(scales[index]);widest=Math.max(widest,ctx.measureText(part).width);});
+  ctx.font=fontAt(1);
+  const tops=[];let run=0;scales.forEach(scale=>{tops.push(run);run+=lineHeight*scale;});
+  const textWidth=wrapped.length?Math.min(maxWidth,widest):0;
   const align=settings.position.endsWith('left')?'left':settings.position.endsWith('center')?'center':'right';
   const x=align==='left'?inset+boxPadding:align==='center'?width/2:width-inset-boxPadding;
   const y=settings.position.startsWith('top')?inset+boxPadding:height-inset-boxPadding-textHeight;
   const left=align==='left'?x:align==='center'?x-textWidth/2:x-textWidth;
-  return {lines:wrapped,font:ctx.font,fontSize,lineHeight,textWidth,textHeight,align,x,y,left,boxPadding};
+  return {lines:wrapped,scales,tops,fontAt,font:fontAt(1),fontSize,lineHeight,textWidth,textHeight,align,x,y,left,boxPadding};
 }
 /* Vẽ một đoạn chữ: chữ tối có viền sáng (đọc được trên ảnh tối), chữ sáng giữ bóng đen như cũ. */
 function cameraStampSegment(ctx,text,x,y,color,style,fontSize,lightPanel){
@@ -9909,12 +9921,12 @@ function drawCameraStamp(ctx,lines,width,height,settings){
   }
   ctx.globalAlpha=settings.opacity/100;ctx.font=stamp.font;ctx.textBaseline='top';
   stamp.lines.forEach((line,index)=>{
-    const y=stamp.y+index*stamp.lineHeight,parts=index===0?cameraStampSplitTitle(line,settings):null;
-    ctx.textAlign='left';
+    const y=stamp.y+stamp.tops[index],scale=stamp.scales[index],size=stamp.fontSize*scale,parts=index===0?cameraStampSplitTitle(line,settings):null;
+    ctx.font=stamp.fontAt(scale);ctx.textAlign='left';
     const total=ctx.measureText(line).width,startX=stamp.align==='left'?stamp.x:stamp.align==='center'?stamp.x-total/2:stamp.x-total;
-    if(!parts){cameraStampSegment(ctx,line,startX,y,settings.color,settings.style,stamp.fontSize,lightPanel);return;}
-    cameraStampSegment(ctx,parts[0],startX,y,settings.titleColor,settings.style,stamp.fontSize,lightPanel);
-    cameraStampSegment(ctx,parts[1],startX+ctx.measureText(parts[0]).width,y,settings.color,settings.style,stamp.fontSize,lightPanel);
+    if(!parts){cameraStampSegment(ctx,line,startX,y,settings.color,settings.style,size,lightPanel);return;}
+    cameraStampSegment(ctx,parts[0],startX,y,settings.titleColor,settings.style,size,lightPanel);
+    cameraStampSegment(ctx,parts[1],startX+ctx.measureText(parts[0]).width,y,settings.color,settings.style,size,lightPanel);
   });
   ctx.restore();
 }
@@ -10185,6 +10197,7 @@ function updateCameraLiveStamp(location){
   const shadowFor=color=>cameraStampIsDark(color)&&!lightPanel?cameraStampHaloCss(stamp.fontSize):settings.style==='shadow'?`${stamp.fontSize*.07}px ${stamp.fontSize*.07}px ${stamp.fontSize*.23}px rgba(0,0,0,.9)`:'none';
   box.style.textShadow=shadowFor(settings.color);
   Array.from(box.children).forEach((node,index)=>{
+    const scale=stamp.scales[index]||1;node.style.fontSize=scale===1?'':stamp.fontSize*scale+'px';node.style.lineHeight=scale===1?'':stamp.lineHeight*scale+'px';
     const parts=index===0?cameraStampSplitTitle(stamp.lines[0]||'',settings):null;
     if(!parts){if(node.children.length)node.textContent=node.textContent;return;}
     const head=document.createElement('span');head.textContent=parts[0];head.style.color=settings.titleColor;head.style.textShadow=shadowFor(settings.titleColor);
