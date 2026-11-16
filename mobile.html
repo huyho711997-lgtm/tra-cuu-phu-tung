@@ -3476,6 +3476,7 @@ window.TascoBootSplash = (() => {
       <div class="ws-search-actions"><button type="button" class="ws-primary" id="rcCalcBtn"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg><span>Tính chi phí</span></button><button type="button" class="ws-secondary" id="rcResetBtn" aria-label="Đặt lại" title="Đặt lại"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/></svg><span>Đặt lại</span></button></div>
 
       <div id="rcResult" class="rc-result" aria-live="polite" hidden></div>
+      <button type="button" class="rgd-card" data-rg-open aria-haspopup="dialog"><span class="rgd-card-icon"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></svg></span><span class="rgd-card-copy"><strong>Hướng dẫn chụp hồ sơ thanh toán</strong><small>5 nhóm ảnh bắt buộc + chứng từ chi phí, có hình minh hoạ</small></span><svg class="ws-icon rgd-card-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     </div>
 
     <div data-rc-pane="ref" hidden>
@@ -10659,7 +10660,7 @@ function render(){
  w.push('Nhiều tiêu chí (chỗ ngồi/tải trọng) cùng áp dụng: chọn nhóm có mức rủi ro cao hơn. Không cộng dồn nhiều hệ số vùng.');
  w.push('Phụ phí không tính phí BOT, cẩu, phà/phao, bãi đỗ; các khoản này theo chứng từ.');
  h+='<div class="rc-box-note" data-tone="'+((r.capped||r.special)?'warn':'')+'"><h4>LƯU Ý</h4><ul>'+w.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
- h+='<div class="rc-box-note"><h4>HỒ SƠ BẮT BUỘC</h4><ul>'+EVIDENCE.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
+ h+='<div class="rc-box-note"><h4>HỒ SƠ BẮT BUỘC</h4><ul>'+EVIDENCE.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul><button type="button" class="rgd-inline" data-rg-open>Xem hình hướng dẫn chụp ảnh →</button></div>';
  if(window.TascoRescueRoute&&window.TascoRescueRoute.noteHtml)h+=window.TascoRescueRoute.noteHtml(i.svc);
  openResult(h);
 }
@@ -11631,7 +11632,196 @@ async function exportPdf(en){
   var d=new Date(en.at),name='Phieu-cuu-ho_'+(sanitize(en.plate)||'khong-bien-so')+'_'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'.pdf';
   return sharePdf(await makePdf(en),name);
 }
-return {show:show,actionsHtml:actionsHtml,onSheetClick:onSheetClick,load:load,makePdf:makePdf,_pdf:exportPdf};
+return {show:show,actionsHtml:actionsHtml,onSheetClick:onSheetClick,load:load,makePdf:makePdf,_pdf:exportPdf,pdfFromJpegs:pdfFromJpegs,sharePdf:sharePdf,wrap:wrap};
+})();
+</script>
+<style id="tascoRescueGuideStyles">
+/* Hướng dẫn chụp hồ sơ thanh toán cứu hộ */
+button.rgd-card[type=button]{display:flex;align-items:center;gap:13px;width:100%;margin-top:16px;padding:14px 15px;border:1px solid var(--ws-line);border-radius:20px;background:var(--ws-soft);color:var(--ws-text);text-align:left;font-family:inherit}
+.rgd-card:active{transform:scale(.985)}
+.rgd-card-icon{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:14px;background:var(--ws-accent);color:var(--ws-accent-text)}
+.rgd-card-icon .ws-icon{width:22px;height:22px}
+.rgd-card-copy{flex:1;min-width:0}
+.rgd-card-copy strong{display:block;font-size:13px;font-weight:650;line-height:1.4}
+.rgd-card-copy small{display:block;margin-top:2px;font-size:10.5px;line-height:1.5;color:var(--ws-muted)}
+.rgd-card-chev{flex:none;width:18px;height:18px;color:var(--ws-muted)}
+button.rgd-inline[type=button]{display:block;margin:12px 0 0;padding:0;border:0;background:none;color:var(--ws-accent-text);font:inherit;font-size:11.5px;font-weight:650;text-align:left}
+.rgd-modal{z-index:10000}
+.rgd-sheet{max-height:min(90dvh,820px)}
+@media(max-width:767px){.rgd-sheet{max-height:calc(92dvh - env(safe-area-inset-top,0px))}}
+.rgd-intro{margin:2px 0 16px;font-size:12px;line-height:1.7;color:var(--ws-muted)}
+.rgd-step{margin:0 0 14px;padding:12px;border:1px solid var(--ws-line);border-radius:22px;background:var(--ws-surface)}
+.rgd-art{position:relative;overflow:hidden;border-radius:16px;background:#e4f0f3;line-height:0}
+.rgd-art svg{display:block;width:100%;height:auto}
+.rgd-num{position:absolute;left:10px;top:10px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#183056;color:#fff;font-size:12px;font-weight:700;line-height:1;box-shadow:0 2px 6px rgba(11,27,48,.25)}
+.rgd-copy{padding:13px 4px 4px}
+.rgd-copy h4{margin:0;font-size:14px;font-weight:650;letter-spacing:-.2px;line-height:1.4;color:var(--ws-text)}
+.rgd-copy>p{margin:3px 0 0;font-size:11px;line-height:1.55;color:var(--ws-muted)}
+.rgd-tips{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:7px}
+.rgd-tips li{position:relative;padding-left:20px;font-size:11.5px;line-height:1.6;color:var(--ws-text)}
+.rgd-tips li::before{content:"";position:absolute;left:1px;top:5px;width:11px;height:6px;border-left:2px solid var(--ws-accent-text);border-bottom:2px solid var(--ws-accent-text);transform:rotate(-45deg)}
+.rgd-h{margin:22px 2px 10px;font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--ws-accent-text)}
+.rgd-docs{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rgd-doc{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:12px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-surface)}
+.rgd-doc svg{width:38px;height:38px;flex:none;padding:7px;box-sizing:border-box;border-radius:12px;background:#e4f0f3}
+.rgd-doc strong{font-size:12px;font-weight:650;line-height:1.4;color:var(--ws-text)}
+.rgd-doc small{font-size:10.5px;line-height:1.5;color:var(--ws-muted)}
+.rgd-note{margin:10px 2px 0;font-size:10.5px;line-height:1.6;color:var(--ws-muted)}
+.rgd-dd{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rgd-dd>div{padding:13px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-surface)}
+.rgd-dd h5{margin:0 0 8px;font-size:11.5px;font-weight:700}
+.rgd-dd .ok h5{color:var(--ws-accent-text)}
+.rgd-dd .no h5{color:#b1514d}
+html.dark .rgd-dd .no h5{color:#f0a09b}
+.rgd-dd ul{margin:0;padding:0;list-style:none;display:grid;gap:7px}
+.rgd-dd li{font-size:11px;line-height:1.55;color:var(--ws-text)}
+.rgd-actions{display:grid;gap:9px;margin-top:20px}
+.rgd-actions .ws-primary{min-height:50px;border-radius:16px;font-size:13px;gap:8px}
+.rgd-actions .ws-primary:disabled{opacity:.65}
+.rg-msg{min-height:16px;margin:2px 2px 0;text-align:center;font-size:10.5px;font-weight:600;color:var(--ws-accent-text)}
+.rg-msg[data-tone=err]{color:#b1514d}
+</style>
+<script id="tascoRescueGuide">
+/* Cứu hộ · Hướng dẫn chụp hồ sơ thanh toán (hình minh hoạ SVG, có thể gửi khách dạng PDF) */
+(function(){
+'use strict';
+var NS=' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 170"';
+var NAVY='#183056',TEAL='#39747e',LT='#84bfc7',SKY='#e4f0f3',ROAD='#c9d9df',RED='#d9645f',AMB='#f2b84b';
+function car(x,y,sc,body){return '<g transform="translate('+x+' '+y+') scale('+sc+')"><path d="M4 38V30Q4 24 10 23L26 21 40 6Q43 3 48 3H88Q93 3 96 7L108 21 124 24Q130 26 130 32V38Z" fill="'+body+'"/><path d="M45 20 54 8H70V20ZM75 20V8H88L98 20Z" fill="#dcecef"/><circle cx="32" cy="40" r="10" fill="#1c2b44"/><circle cx="32" cy="40" r="4" fill="#9fb3c8"/><circle cx="102" cy="40" r="10" fill="#1c2b44"/><circle cx="102" cy="40" r="4" fill="#9fb3c8"/></g>';}
+function frame(x1,y1,x2,y2,c,l){l=l||14;c=c||NAVY;return '<path d="M'+x1+' '+(y1+l)+'V'+y1+'H'+(x1+l)+'M'+(x2-l)+' '+y1+'H'+x2+'V'+(y1+l)+'M'+x2+' '+(y2-l)+'V'+y2+'H'+(x2-l)+'M'+(x1+l)+' '+y2+'H'+x1+'V'+(y2-l)+'" fill="none" stroke="'+c+'" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>';}
+function ground(y){return '<path d="M0 '+y+'H320V154Q320 170 304 170H16Q0 170 0 154Z" fill="'+ROAD+'"/><path d="M20 '+(y+26)+'H300" stroke="#fff" stroke-width="3" stroke-dasharray="16 12" opacity=".85"/>';}
+var ART={
+scene:'<svg'+NS+'><rect width="320" height="170" fill="'+SKY+'"/><circle cx="272" cy="36" r="16" fill="#f6d98a"/><path d="M0 120Q60 78 120 108T240 98T320 110V124H0Z" fill="#b8d6d9"/>'+ground(120)+'<path d="M40 130 56 102 72 130Z" fill="#fff" stroke="'+RED+'" stroke-width="5" stroke-linejoin="round"/><path d="M56 112v9" stroke="'+RED+'" stroke-width="3" stroke-linecap="round"/><circle cx="56" cy="125" r="1.8" fill="'+RED+'"/>'+car(100,92,1.15,TEAL)+frame(84,56,262,152,NAVY)+'<rect x="196" y="34" width="62" height="18" rx="9" fill="'+NAVY+'"/><text x="227" y="47" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" font-family="sans-serif">Toàn cảnh</text></svg>',
+truck:'<svg'+NS+'><rect width="320" height="170" fill="'+SKY+'"/><circle cx="48" cy="34" r="14" fill="#f6d98a"/><path d="M0 112Q70 74 140 104T320 100V120H0Z" fill="#b8d6d9"/>'+ground(120)+'<rect x="14" y="96" width="288" height="10" rx="3" fill="#26406b"/><path d="M14 106V66Q14 58 22 58H50L66 80V106Z" fill="'+NAVY+'"/><path d="M24 66H46L56 80H24Z" fill="#9ed0d8"/><rect x="70" y="88" width="232" height="8" rx="2" fill="'+TEAL+'"/>'+car(134,38,1,LT)+'<circle cx="40" cy="116" r="12" fill="#1c2b44"/><circle cx="40" cy="116" r="5" fill="#9fb3c8"/><circle cx="196" cy="116" r="12" fill="#1c2b44"/><circle cx="196" cy="116" r="5" fill="#9fb3c8"/><circle cx="228" cy="116" r="12" fill="#1c2b44"/><circle cx="228" cy="116" r="5" fill="#9fb3c8"/><rect x="250" y="100" width="48" height="16" rx="3" fill="#fff" stroke="'+NAVY+'" stroke-width="1.5"/><text x="274" y="112" font-size="8.5" font-weight="700" fill="'+NAVY+'" text-anchor="middle" font-family="sans-serif">47C-123.45</text>'+frame(242,92,306,124,AMB,9)+'<rect x="196" y="136" width="108" height="20" rx="10" fill="'+NAVY+'"/><text x="250" y="150" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" font-family="sans-serif">Biển số xe cứu hộ</text></svg>',
+handover:'<svg'+NS+'><rect width="320" height="170" fill="'+SKY+'"/>'+ground(124)+'<path d="M178 124V62L238 34 298 62V124Z" fill="#fff"/><path d="M170 64 238 28 306 64Z" fill="'+NAVY+'"/><rect x="198" y="82" width="80" height="42" rx="3" fill="#cfe1e6"/><path d="M198 94H278M198 106H278" stroke="#fff" stroke-width="3"/><rect x="214" y="60" width="48" height="12" rx="6" fill="'+LT+'"/>'+car(34,86,1.05,TEAL)+'<circle cx="58" cy="60" r="16" fill="'+TEAL+'"/><path d="M50 60l6 6 11-12" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>'+frame(20,76,176,140,NAVY)+'<rect x="196" y="140" width="96" height="18" rx="9" fill="'+NAVY+'"/><text x="244" y="153" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="sans-serif">Điểm trả xe</text></svg>',
+gps:'<svg'+NS+'><rect width="320" height="170" fill="'+SKY+'"/><rect x="108" y="6" width="104" height="158" rx="18" fill="'+NAVY+'"/><rect x="116" y="18" width="88" height="134" rx="8" fill="#dcecef"/><path d="M116 52H204M116 96H204M146 18V152M178 18V152" stroke="#fff" stroke-width="5"/><path d="M134 136C134 104 190 112 178 80S148 60 172 42" fill="none" stroke="'+TEAL+'" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 8"/><path d="M134 136C134 104 190 112 178 80S148 60 172 42" fill="none" stroke="'+TEAL+'" stroke-width="4" stroke-linecap="round" opacity=".35"/><circle cx="134" cy="138" r="7" fill="#fff" stroke="'+TEAL+'" stroke-width="3.5"/><path d="M172 42c-8 0-13 6-13 13 0 9 13 21 13 21s13-12 13-21c0-7-5-13-13-13Z" fill="'+RED+'"/><circle cx="172" cy="55" r="4.5" fill="#fff"/><rect x="18" y="52" width="76" height="42" rx="12" fill="#fff"/><rect x="28" y="62" width="30" height="7" rx="3.5" fill="'+LT+'"/><rect x="28" y="76" width="52" height="9" rx="4.5" fill="'+NAVY+'" opacity=".85"/><rect x="226" y="86" width="76" height="42" rx="12" fill="#fff"/><circle cx="244" cy="107" r="9" fill="none" stroke="'+TEAL+'" stroke-width="3"/><path d="M244 101v6l4 3" fill="none" stroke="'+TEAL+'" stroke-width="2.6" stroke-linecap="round"/><rect x="259" y="102" width="32" height="9" rx="4.5" fill="'+NAVY+'" opacity=".85"/></svg>',
+confirm:'<svg'+NS+'><rect width="320" height="170" fill="'+SKY+'"/><rect x="92" y="14" width="140" height="146" rx="10" fill="#fff"/><rect x="92" y="14" width="140" height="26" rx="10" fill="'+NAVY+'"/><rect x="92" y="30" width="140" height="10" fill="'+NAVY+'"/><rect x="106" y="22" width="60" height="7" rx="3.5" fill="'+LT+'"/><path d="M106 56H218M106 70H218M106 84H190" stroke="#cfe1e6" stroke-width="5" stroke-linecap="round"/><path d="M110 128c10-22 16-22 14-4s6 14 12-4 8-6 14 2 10-2 14-8" fill="none" stroke="'+TEAL+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M106 138H206" stroke="'+NAVY+'" stroke-width="1.6" opacity=".5"/><circle cx="226" cy="140" r="17" fill="'+TEAL+'"/><path d="M218 140l6 6 11-12" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M262 40l22 22-8 26-12-30z" fill="'+AMB+'"/><path d="M262 40l22 22" stroke="#d29a2c" stroke-width="3"/>'+frame(80,6,244,164,NAVY)+'</svg>'
+};
+var ICO={
+receipt:'<svg viewBox="0 0 24 24" fill="none" stroke="'+TEAL+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>',
+bot:'<svg viewBox="0 0 24 24" fill="none" stroke="'+TEAL+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 0 0 3V15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1.5a1.5 1.5 0 0 0 0-3z"/><path d="M14 7v10" stroke-dasharray="2 2.4"/></svg>',
+ferry:'<svg viewBox="0 0 24 24" fill="none" stroke="'+TEAL+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h18l-2.5 4h-13z"/><path d="M7 15v-4h10v4M10 11V8h4v3"/><path d="M2 21c2 0 2-1 4-1s2 1 4 1 2-1 4-1 2 1 4 1 2-1 4-1" opacity=".6"/></svg>',
+park:'<svg viewBox="0 0 24 24" fill="none" stroke="'+TEAL+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M10 17V8h3a2.5 2.5 0 0 1 0 5h-3"/></svg>'
+};
+var STEPS=[
+ {k:'scene',t:'Ảnh hiện trường trước khi cứu hộ',s:'Chụp ngay khi xe chưa được di chuyển.',tips:['Toàn cảnh xe và khu vực xung quanh, thấy rõ vị trí đỗ','Đủ 4 góc xe và biển số xe','Cận cảnh vị trí hư hỏng hoặc nguyên nhân phải cứu hộ','Nên chụp bằng camera TASCO để ảnh có tem thông tin']},
+ {k:'truck',t:'Ảnh phương tiện cứu hộ',s:'Xe kéo/cẩu trực tiếp thực hiện dịch vụ.',tips:['Toàn bộ xe cứu hộ cùng xe khách đang được kéo hoặc cẩu','Thấy rõ biển số xe cứu hộ, không bị che khuất','Thêm 1 ảnh lúc bốc hoặc cẩu xe lên sàn']},
+ {k:'handover',t:'Ảnh bàn giao xe sau cứu hộ',s:'Chụp tại điểm trả xe.',tips:['Xe đã hạ xuống tại gara hoặc nơi khách chỉ định','Thấy rõ biển số xe và biển hiệu/địa điểm','Chụp ngay sau khi hạ xe, trước khi rời đi']},
+ {k:'gps',t:'Định vị GPS / lộ trình di chuyển',s:'Bằng chứng quãng đường kéo thực tế.',tips:['Chụp màn hình bản đồ có điểm đi và điểm đến','Hiện rõ số km và thời gian di chuyển','Lưu lại lộ trình ngay sau khi hoàn tất']},
+ {k:'confirm',t:'Xác nhận của khách hàng/chủ xe',s:'Khách đồng ý sử dụng dịch vụ cứu hộ.',tips:['Giấy xác nhận có họ tên, chữ ký và ngày giờ','Chụp trọn tờ giấy, thấy đủ 4 mép','Nếu xác nhận bằng hình thức khác (tin nhắn…), hỏi lại cán bộ bồi thường trước']}
+];
+var DOCS=[
+ {i:'receipt',t:'Hóa đơn dịch vụ cứu hộ',s:'Thấy rõ đơn vị cung cấp, số tiền, ngày'},
+ {i:'bot',t:'Vé / biên lai BOT',s:'Chụp từng vé, thấy rõ số tiền và giờ'},
+ {i:'ferry',t:'Phí phà / phao',s:'Biên lai hoặc vé của từng lượt qua'},
+ {i:'park',t:'Phí bãi đỗ / trông giữ',s:'Phiếu thu, có số ngày và đơn giá'}
+];
+var DO=['Chụp đủ sáng, cầm chắc tay, giữ ảnh nét','Thấy đủ 4 mép giấy tờ và toàn bộ biển số','Chụp từ xa vào gần: toàn cảnh rồi chi tiết'];
+var DONT=['Chụp ngược sáng, mờ hoặc rung tay','Cắt mép, che số tiền hay biển số','Chỉnh sửa, ghép hoặc dùng ảnh cũ'];
+var NOTE='Phí BOT, phà/phao, bãi đỗ và phần cẩu tính theo chứng từ thực tế nên cần chụp chứng từ gốc.';
+function $(s,r){return (r||document).querySelector(s);}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+var sheet=null,prevOv='',lastFocus=null;
+function close(){if(!sheet)return;sheet.remove();sheet=null;document.body.style.overflow=prevOv;if(lastFocus&&lastFocus.isConnected)try{lastFocus.focus({preventScroll:true});}catch(_){}}
+function body(){
+  var h='<p class="rgd-intro">Chụp đủ 5 nhóm ảnh dưới đây và giữ lại chứng từ chi phí để hồ sơ thanh toán cẩu, kéo được duyệt nhanh, không phải bổ sung nhiều lần.</p>';
+  STEPS.forEach(function(st,n){
+    h+='<article class="rgd-step"><div class="rgd-art">'+ART[st.k]+'<span class="rgd-num">'+(n+1)+'</span></div><div class="rgd-copy"><h4>'+esc(st.t)+'</h4><p>'+esc(st.s)+'</p><ul class="rgd-tips">'+st.tips.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul></div></article>';
+  });
+  h+='<h4 class="rgd-h">CHỨNG TỪ CHI PHÍ PHÁT SINH</h4><div class="rgd-docs">'+DOCS.map(function(d){return '<div class="rgd-doc">'+ICO[d.i]+'<strong>'+esc(d.t)+'</strong><small>'+esc(d.s)+'</small></div>';}).join('')+'</div><p class="rgd-note">'+esc(NOTE)+'</p>';
+  h+='<h4 class="rgd-h">MẸO CHỤP ẢNH</h4><div class="rgd-dd"><div class="ok"><h5>Nên</h5><ul>'+DO.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul></div><div class="no"><h5>Không nên</h5><ul>'+DONT.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul></div></div>';
+  h+='<div class="rgd-actions"><button type="button" class="ws-primary" data-rg-send><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6m0 0-2.5-2.5M12 17l2.5-2.5"/></svg><span>Gửi hướng dẫn cho khách (PDF)</span></button><p class="rg-msg" data-rg-msg role="status" aria-live="polite"></p><button type="button" class="rc-result-close" data-rg-close>Đóng</button></div>';
+  return h;
+}
+function open(){
+  lastFocus=document.activeElement;close();
+  sheet=document.createElement('div');sheet.className='rc-modal rgd-modal';
+  sheet.innerHTML='<div class="ws-filter-backdrop" data-rg-close aria-hidden="true"></div><div class="rc-sheet rgd-sheet" role="dialog" aria-modal="true" aria-label="Hướng dẫn chụp hồ sơ thanh toán"><div class="ws-sheet-handle" aria-hidden="true"></div><header class="ws-sheet-heading"><div><span class="ws-panel-eyebrow">CỨU HỘ PHƯƠNG TIỆN</span><h3>Hướng dẫn chụp hồ sơ</h3></div><button type="button" class="ws-sheet-close" data-rg-close aria-label="Đóng"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header><div class="rc-sheet-list">'+body()+'</div></div>';
+  prevOv=document.body.style.overflow;document.body.style.overflow='hidden';document.body.appendChild(sheet);
+  sheet.addEventListener('click',function(e){if(e.target.closest('[data-rg-close]'))close();else if(e.target.closest('[data-rg-send]'))send(e.target.closest('[data-rg-send]'));});
+  sheet.addEventListener('keydown',function(e){if(e.key==='Escape'){e.stopPropagation();close();}});
+  var cb=$('.ws-sheet-close',sheet);if(cb)cb.focus({preventScroll:true});
+}
+document.addEventListener('click',function(e){if(e.target.closest('[data-rg-open]')){e.preventDefault();open();}});
+
+/* ---------- PDF gửi khách ---------- */
+var PW=794,PH=1123,SC=2.0831,MG=48;
+function loadSvg(svg){return new Promise(function(res,rej){var im=new Image();im.onload=function(){res(im);};im.onerror=function(){rej(new Error('Không dựng được hình minh hoạ'));};im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});}
+function rr(g,x,y,w,h,r){g.beginPath();if(g.roundRect)g.roundRect(x,y,w,h,r);else g.rect(x,y,w,h);}
+async function makePdf(){
+  var H=window.TascoRescueHistory;if(!H||!H.pdfFromJpegs)throw new Error('Thiếu bộ tạo PDF');
+  var FF='sans-serif';try{FF=getComputedStyle(document.body).fontFamily||FF;}catch(_){}
+  try{await Promise.all(['400 12px','600 12px','700 12px'].map(function(f){return document.fonts.load(f+' '+FF);}));}catch(_){}
+  var F=function(w,sz){return w+' '+sz+'px '+FF;};
+  var imgs={};for(var k=0;k<STEPS.length;k++)imgs[STEPS[k].k]=await loadSvg(ART[STEPS[k].k]);
+  var pages=[],cur,y=0;
+  function newPage(first){
+    var cv=document.createElement('canvas');cv.width=Math.round(PW*SC);cv.height=Math.round(PH*SC);
+    var g=cv.getContext('2d');g.scale(SC,SC);g.fillStyle='#fff';g.fillRect(0,0,PW,PH);g.textBaseline='alphabetic';cur={cv:cv,g:g};pages.push(cur);
+    if(first){g.fillStyle=NAVY;g.fillRect(0,0,PW,104);g.fillStyle=LT;g.font=F(700,10);g.fillText('TASCO INSURANCE  ·  CỨU HỘ PHƯƠNG TIỆN',MG,38);g.fillStyle='#fff';g.font=F(700,23);g.fillText('HƯỚNG DẪN CHỤP HỒ SƠ THANH TOÁN',MG,70);y=124;}
+    else{g.fillStyle=NAVY;g.font=F(700,10.5);g.fillText('HƯỚNG DẪN CHỤP HỒ SƠ THANH TOÁN (tiếp theo)',MG,MG-6);y=MG+22;}
+  }
+  function need(h){if(y+h>PH-52)newPage(false);}
+  function section(t,extra){need(44+(extra||0));var g=cur.g;g.fillStyle=TEAL;g.font=F(700,10);g.fillText(t,MG,y);g.fillStyle='#c7dde3';g.fillRect(MG,y+8,PW-2*MG,1);y+=28;}
+  newPage(true);
+  var g0=cur.g;g0.fillStyle='#526c81';g0.font=F(400,12);
+  H.wrap(g0,'Chụp đủ 5 nhóm ảnh dưới đây và giữ lại chứng từ chi phí để hồ sơ thanh toán cẩu, kéo được duyệt nhanh, không phải bổ sung nhiều lần.',PW-2*MG).forEach(function(l){g0.fillText(l,MG,y);y+=18;});
+  y+=6;
+  var AW=196,AH=Math.round(AW*170/320),TX=MG+AW+22,TW=PW-MG-TX;
+  STEPS.forEach(function(st,n){
+    var g=cur.g;g.font=F(400,11.5);
+    var tipLines=st.tips.map(function(t){return H.wrap(g,t,TW-18);});
+    var textH=46+tipLines.reduce(function(a,l){return a+l.length*16+2;},0);
+    var bh=Math.max(AH,textH)+12;need(bh);g=cur.g;
+    g.save();rr(g,MG,y,AW,AH,12);g.clip();g.drawImage(imgs[st.k],MG,y,AW,AH);g.restore();
+    g.fillStyle=NAVY;g.beginPath();g.arc(MG+18,y+18,11,0,Math.PI*2);g.fill();g.fillStyle='#fff';g.font=F(700,12);g.textAlign='center';g.fillText(String(n+1),MG+18,y+22.5);g.textAlign='left';
+    var ty=y+14;g.fillStyle=NAVY;g.font=F(700,13.5);H.wrap(g,st.t,TW).forEach(function(l){g.fillText(l,TX,ty);ty+=18;});
+    g.fillStyle='#526c81';g.font=F(400,10.5);g.fillText(st.s,TX,ty);ty+=18;
+    tipLines.forEach(function(ls){g.fillStyle=TEAL;g.fillRect(TX,ty-7,5,5);g.fillStyle=NAVY;g.font=F(400,11.5);ls.forEach(function(l,m){g.fillText(l,TX+14,ty+m*16);});ty+=ls.length*16+2;});
+    y+=bh;
+  });
+  section('CHỨNG TỪ CHI PHÍ PHÁT SINH',110);
+  var cw=(PW-2*MG-14)/2;
+  for(var di=0;di<DOCS.length;di+=2){
+    need(56);var gx=cur.g;
+    [DOCS[di],DOCS[di+1]].forEach(function(d,c){
+      if(!d)return;var x=MG+c*(cw+14);
+      gx.fillStyle='#f3f8fa';rr(gx,x,y-14,cw,48,10);gx.fill();gx.fillStyle=NAVY;gx.font=F(700,12);gx.fillText(d.t,x+14,y+6);gx.fillStyle='#526c81';gx.font=F(400,10);
+      H.wrap(gx,d.s,cw-28).slice(0,1).forEach(function(l){gx.fillText(l,x+14,y+22);});
+    });
+    y+=56;
+  }
+  var gn=cur.g;gn.fillStyle='#526c81';gn.font=F(400,10.5);H.wrap(gn,NOTE,PW-2*MG).forEach(function(l){gn.fillText(l,MG,y+2);y+=15;});y+=8;
+  section('MẸO CHỤP ẢNH',80);
+  var colW=(PW-2*MG-24)/2,gd=cur.g;gd.font=F(400,11.5);
+  var dl=DO.map(function(t){return H.wrap(gd,t,colW-16);}),nl=DONT.map(function(t){return H.wrap(gd,t,colW-16);});
+  var hh=function(a){return a.reduce(function(s,l){return s+l.length*16+4;},0);};
+  var bh2=Math.max(hh(dl),hh(nl))+30;need(bh2+6);var gb=cur.g;
+  [['Nên',dl,TEAL],['Không nên',nl,RED]].forEach(function(c,i){
+    var x=MG+i*(colW+24),yy=y,t=c[1];
+    gb.fillStyle='#f3f8fa';rr(gb,x,yy-14,colW,bh2,10);gb.fill();gb.fillStyle=c[2];gb.font=F(700,11.5);gb.fillText(c[0],x+12,yy+4);
+    var ty=yy+24;t.forEach(function(ls){gb.fillStyle=c[2];gb.fillRect(x+12,ty-7,5,5);gb.fillStyle=NAVY;gb.font=F(400,11.5);ls.forEach(function(l,m){gb.fillText(l,x+24,ty+m*16);});ty+=ls.length*16+4;});
+  });
+  y+=bh2+10;
+  pages.forEach(function(pg,n){var g=pg.g;g.fillStyle='#c7dde3';g.fillRect(MG,PH-44,PW-2*MG,1);g.fillStyle='#526c81';g.font=F(400,9);g.fillText('Tạo từ ứng dụng TASCO DLK',MG,PH-28);g.textAlign='right';g.fillText('Trang '+(n+1)+'/'+pages.length,PW-MG,PH-28);g.textAlign='left';});
+  var items=[];
+  for(var q=0;q<pages.length;q++){
+    var blob=await new Promise(function(res){pages[q].cv.toBlob(res,'image/jpeg',.9);});
+    if(!blob)throw new Error('Không tạo được trang '+(q+1));
+    items.push({bytes:new Uint8Array(await blob.arrayBuffer()),w:pages[q].cv.width,h:pages[q].cv.height});pages[q].cv.width=pages[q].cv.height=0;
+  }
+  return H.pdfFromJpegs(items);
+}
+async function send(btn){
+  var msg=$('[data-rg-msg]',sheet),sp=btn.querySelector('span'),old=sp.textContent;
+  btn.disabled=true;sp.textContent='Đang tạo PDF…';if(msg){msg.textContent='';delete msg.dataset.tone;}
+  try{
+    var blob=await makePdf(),r=await window.TascoRescueHistory.sharePdf(blob,'Huong-dan-chup-ho-so-cuu-ho.pdf');
+    if(msg)msg.textContent=r==='cancelled'?'':r==='download'?'Đã tải PDF về máy, gửi cho khách qua Zalo/Mail.':'Đã mở bảng chia sẻ.';
+  }catch(err){if(msg){msg.textContent='Chưa tạo được PDF: '+((err&&err.message)||'lỗi không rõ');msg.dataset.tone='err';}}
+  btn.disabled=false;sp.textContent=old;
+}
+window.TascoRescueGuide={open:open,close:close,makePdf:makePdf};
 })();
 </script>
 <script id="tascoPartDetailPremium">
