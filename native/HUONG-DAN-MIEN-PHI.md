@@ -62,3 +62,10 @@ App chỉ là "vỏ" iOS, mỗi lần mở nó tải trang web mới nhất từ
 - Lần sau mở app có mạng và đã đăng nhập, app tự nhận ảnh vào hàng đợi Cloud (đúng album, hạng mục) và bổ sung tên địa điểm.
 - Cần mở app có mạng ít nhất một lần sau khi cài IPA mới để app ghi nhớ danh sách album/hạng mục cho chế độ offline.
 - Chỉ nhận ảnh của đúng tài khoản đang đăng nhập; ảnh của tài khoản khác được giữ nguyên trên máy.
+
+## Video 60 khung/giây (cần cài IPA mới)
+
+- Quay video trong camera của app: tự dùng 60 fps nếu máy hỗ trợ (không hỗ trợ thì giữ 30 fps như cũ), giữ độ phân giải 1080p.
+- In dấu lên video giữ nguyên số khung hình của video gốc (tối đa 60). Chữ in dấu dựng sẵn một lần nên không bị rớt khung.
+- `native/scripts/patch-plugins.mjs` (chạy trong `npm run sync`) vá plugin camera để đổi fps không làm tụt xuống 720p.
+- Video 60 fps nặng hơn, thời gian in dấu vẫn bằng thời lượng video. Máy đời cũ có thể in dấu ra ít khung hơn 60.

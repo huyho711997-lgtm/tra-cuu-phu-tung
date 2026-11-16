@@ -13493,7 +13493,7 @@ window.TascoCameraRescue = (function () {
   /* Chất lượng: giữ tới 1080p. Bitrate tự chọn theo thời lượng để file luôn dưới ~95 MB
      (giới hạn 100 MB/video của Cloudinary miễn phí): video ngắn rất nét (tối đa 12 Mbps), video 3 phút ~4 Mbps. */
   var MAX_SECONDS = 180, LONG_SIDE = 1920, AUDIO_BPS = 192000, MAX_BYTES = 95 * 1024 * 1024;
-  function videoBitrate(seconds) { return Math.round(Math.max(3e6, Math.min(12e6, MAX_BYTES * 8 * 0.92 / Math.max(seconds, 1) - AUDIO_BPS))); }
+  function videoBitrate(seconds) { return Math.round(Math.max(3e6, Math.min(16e6, MAX_BYTES * 8 * 0.92 / Math.max(seconds, 1) - AUDIO_BPS))); }
   var input = document.createElement('input');
   input.type = 'file'; input.accept = 'video/*'; input.setAttribute('capture', 'environment'); input.hidden = true;
   document.body.append(input);
@@ -13541,7 +13541,11 @@ window.TascoCameraRescue = (function () {
       var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
       var ctx = canvas.getContext('2d', { alpha: false });
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';  // thu nhỏ không vỡ chi tiết
-      var stream = canvas.captureStream(30);
+      var stream = canvas.captureStream(60);  // trần 60 fps; video gốc 30 thì ra 30, gốc 60 thì giữ 60 (chỉ vẽ khi có khung mới)
+      /* Chữ in dấu không đổi suốt video: dựng một lần ra lớp riêng rồi dán lên mỗi khung (nhẹ hơn nhiều so với vẽ lại chữ + bóng mỗi khung). */
+      var stampLayer = document.createElement('canvas'); stampLayer.width = w; stampLayer.height = h;
+      drawCameraStamp(stampLayer.getContext('2d'), lines, w, h, appearance);
+      var lastProgress = 0;
       try {
         var AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC(); await audioCtx.resume();
@@ -13556,8 +13560,8 @@ window.TascoCameraRescue = (function () {
       function draw() {
         if (stopDraw) return;
         ctx.drawImage(video, 0, 0, w, h);
-        drawCameraStamp(ctx, lines, w, h, appearance);
-        onProgress(Math.min(100, video.currentTime / duration * 100));
+        ctx.drawImage(stampLayer, 0, 0);
+        var now = performance.now(); if (now - lastProgress > 250) { lastProgress = now; onProgress(Math.min(100, video.currentTime / duration * 100)); }
         if (video.currentTime >= duration - 0.05 || video.ended) { finish(); return; }
         if (video.requestVideoFrameCallback) video.requestVideoFrameCallback(draw); else requestAnimationFrame(draw);
       }
@@ -14350,8 +14354,18 @@ window.TascoPhotoFX = (function () {
       if (!st.recording) {
         st.recMeta = createCameraPhotoMetadata();
         var recOpts = { videoStabilizationMode: pro.stab, videoBitrate: 12000000, videoCodec: 'avc1', maxDuration: window.TascoVideoCapture.maxSeconds, mirrorFrontCamera: !!cameraAppearance.mirrorFront };
+        /* 60 khung/giây nếu máy hỗ trợ (mượt hơn hẳn mặc định 30); không hỗ trợ hoặc lỗi thì quay như cũ. */
+        try { var rates = (await CP.getSupportedVideoFrameRates()).frameRates || []; if (rates.indexOf(60) >= 0) { recOpts.frameRate = 60; recOpts.videoBitrate = 16000000; } } catch (_) {}
         try { await CP.startRecordVideo(recOpts); }
-        catch (first) { if (pro.stab === 'off') throw first; recOpts.videoStabilizationMode = 'off'; await CP.startRecordVideo(recOpts); feedback('Máy chưa hỗ trợ chế độ chống rung này, đang quay không chống rung.', 3000); }
+        catch (first) {
+          var retry = Object.assign({}, recOpts);
+          if (retry.frameRate) { delete retry.frameRate; retry.videoBitrate = 12000000; }
+          try { await CP.startRecordVideo(retry); }
+          catch (second) {
+            if (pro.stab === 'off') throw second;
+            retry.videoStabilizationMode = 'off'; await CP.startRecordVideo(retry); feedback('Máy chưa hỗ trợ chế độ chống rung này, đang quay không chống rung.', 3000);
+          }
+        }
         st.recording = true; st.recStart = Date.now();
         st.recTimer = setInterval(updateModeUI, 500);
       } else {
