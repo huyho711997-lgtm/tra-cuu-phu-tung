@@ -7471,6 +7471,18 @@ window.TascoPhotoViewer=(()=>{
       catch(_){notice('Chưa tải thêm được ảnh. Hãy thử lại.');}
       finally{loadingMore=false;if(!closed){controls();const button=actionButton('load-more');if(button)button.disabled=false;}}
     }
+    /* Ảnh vừa xoá: bỏ khỏi danh sách và chuyển sang ảnh kế tiếp (nếu xoá ảnh cuối thì lùi về ảnh trước); hết ảnh mới đóng. */
+    function dropItems(ids){
+      if(closed)return;const gone=items.filter(item=>ids.has(item.id));if(!gone.length)return;
+      const wasId=current().id,wasIndex=index,currentGone=ids.has(wasId);
+      items=items.filter(item=>!ids.has(item.id));
+      options.total=Math.max(0,(options.total||0)-gone.length);
+      if(!items.length){close();return;}
+      for(const item of gone){rotations.delete(item.id);dimensions.delete(item.id);}
+      paintFilm();
+      if(currentGone){show(Math.min(wasIndex,items.length-1));notice('Đã xoá ảnh.');}
+      else{index=items.findIndex(item=>item.id===wasId);controls();}
+    }
     async function move(delta){
       if(loadingMore||closed)return;let next=index+delta;
       if(next>=items.length&&options.hasMore?.()){const token=loadToken;notice('Đang tải thêm ảnh…');await additional();if(closed||token!==loadToken)return;next=index+delta;}
@@ -7608,9 +7620,9 @@ window.TascoPhotoViewer=(()=>{
     },{signal});
     const observer=new ResizeObserver(()=>{if(!closed)fit();});
     window.addEventListener('resize',updateViewport,{signal});window.visualViewport?.addEventListener('resize',updateViewport,{signal});window.visualViewport?.addEventListener('scroll',updateViewport,{signal});
-    document.body.append(overlay);updateViewport();observer.observe(stage);paintFilm();show(index);actionButton('close').focus({preventScroll:true});active={close};
+    document.body.append(overlay);updateViewport();observer.observe(stage);paintFilm();show(index);actionButton('close').focus({preventScroll:true});active={close,dropItems};
   }
-  return {open,close:()=>active?.close()};
+  return {open,close:()=>active?.close(),removeItems:ids=>active?.dropItems?.(new Set(ids))};
 })();
 
 /* App-owned date/time filter; capture timestamps remain generated at the shutter. */
@@ -8757,7 +8769,7 @@ window.TascoCloud = (() => {
           state.rows=state.rows.filter(row=>!removed.has(row.id));state.pending=state.pending.filter(row=>!removed.has(row.id));
           state.count=Math.max(0,state.count-[...removed].filter(id=>!pendingIds.has(id)).length);
           try{await removeAlbumPhotoIds(removed,owner);}catch(_){notify('Ảnh đã xoá; số ảnh trong album sẽ cập nhật khi tải lại.');}
-          if(!failure){state.selecting=false;state.selected.clear();close(true);window.TascoPhotoViewer?.close();notify('Đã xoá '+removed.size+' ảnh'+(physical?' khỏi Cloud.':' khỏi thư viện.'));}
+          if(!failure){state.selecting=false;state.selected.clear();close(true);window.TascoPhotoViewer?.removeItems([...removed]);notify('Đã xoá '+removed.size+' ảnh'+(physical?' khỏi Cloud.':' khỏi thư viện.'));}
           else{if(removed.size&&document.querySelector('#cloudLightbox')){window.TascoPhotoViewer?.close();bodyOverflow=document.body.style.overflow;document.body.style.overflow='hidden';}errorNode.textContent=(removed.size?'Đã xoá '+removed.size+' ảnh. ':'')+failure;errorNode.hidden=false;const remaining=chosen.filter(id=>!removed.has(id));chosen.splice(0,chosen.length,...remaining);confirmButton.disabled=!chosen.length||setupRequired||denied;cancelButton.disabled=false;confirmButton.textContent=setupRequired||denied?'Chưa có quyền xoá':'Thử xoá lại ('+chosen.length+')';if(!chosen.length||setupRequired||denied)cancelButton.textContent='Đóng';}
           paint();
           if(!failure)await refresh();
