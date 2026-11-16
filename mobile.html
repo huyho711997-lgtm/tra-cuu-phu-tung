@@ -984,6 +984,21 @@ body.tasco-workspace,html.dark body.tasco-workspace{background:var(--ws-bg)!impo
 #mainApp[data-shell] *{box-sizing:border-box}#mainApp[data-shell] button,#bottomNav button{font-family:inherit;cursor:pointer;touch-action:manipulation}#mainApp[data-shell] button:disabled{cursor:default}
 .ws-icon{display:block;width:22px;height:22px;flex-shrink:0;stroke-width:1.7}.ws-mark{display:grid;place-items:center;width:35px;height:35px;border-radius:11px;background:#183056;color:#daecf0;box-shadow:inset 0 0 0 1px #fff1}.ws-mark svg{width:20px;height:20px}
 .ws-greeting-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}.ws-qr svg{width:20px;height:20px}.ws-qr:active{transform:scale(.9) rotate(0)}
+/* Xem lại ảnh vừa chụp trong camera */
+.camera-photo-viewer{position:fixed;inset:0;z-index:100075;display:flex;flex-direction:column;background:rgba(7,17,36,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#fff;animation:cpvIn .16s ease-out}
+@keyframes cpvIn{from{opacity:0}to{opacity:1}}
+.camera-photo-viewer .cpv-top{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 8px;flex-shrink:0}
+.camera-photo-viewer .cpv-count{font-size:13px;font-weight:700;letter-spacing:.02em;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}
+.camera-photo-viewer .cpv-close,.camera-photo-viewer .cpv-nav{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent}
+.camera-photo-viewer .cpv-close svg{width:18px;height:18px}.camera-photo-viewer .cpv-nav svg{width:20px;height:20px}
+.camera-photo-viewer .cpv-close:active,.camera-photo-viewer .cpv-nav:active{background:rgba(99,173,182,.45)}
+.camera-photo-viewer button:focus-visible{outline:2px solid #84bfc7;outline-offset:2px}
+.camera-photo-viewer .cpv-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:4px 10px calc(env(safe-area-inset-bottom,0px) + 18px);touch-action:pan-x pan-y pinch-zoom}
+.camera-photo-viewer .cpv-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.45);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.camera-photo-viewer .cpv-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(7,17,36,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.camera-photo-viewer .cpv-prev{left:10px}.camera-photo-viewer .cpv-next{right:10px}
+.camera-photo-viewer .cpv-nav[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){.camera-photo-viewer{animation:none}}
 #mainHeader.ws-topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:calc(22px + env(safe-area-inset-top,0px)) 0 24px}
 .ws-brand{display:flex;align-items:center;gap:10px;border:0;padding:0;background:transparent;color:var(--ws-text);text-align:left}.ws-brand strong{display:block;font-size:15px;letter-spacing:.13em;line-height:1.2;font-weight:800}.ws-brand small{display:block;margin-top:4px;color:var(--ws-muted);font-size:8px;letter-spacing:.14em;font-weight:650;text-transform:uppercase}
 .ws-top-actions{display:flex;align-items:center;gap:12px}.ws-date{font-size:11px;color:var(--ws-muted);font-weight:500}.ws-avatar{display:grid;place-items:center;width:40px;height:40px;flex-shrink:0;border:1px solid var(--ws-line);border-radius:50%;background:var(--ws-surface);color:var(--ws-text);font-size:12px;font-weight:700;box-shadow:var(--ws-shadow)}
@@ -10511,6 +10526,7 @@ function onCustomCameraOpen() {
   document.querySelector('#customCameraModal .btn-close-cam')?.focus({preventScroll:true});
 }
 function onCustomCameraClose() {
+  try{closeCameraPhotoViewer();}catch(_){}
   cameraUiState.session++;cameraUiState.captureBusy=false;
   try{window.removeEventListener('deviceorientation',cameraHandleDeviceOrientation);}catch(_){}
   clearTimeout(cameraUiState.sensorFallbackTimer);cameraUiState.sensorFallbackTimer=null;cameraUiState.physicalOrientation=null;
@@ -10535,11 +10551,63 @@ function renderCustomCameraPreviewStrip() {
     const badge=document.createElement('span');badge.className='camera-thumb-badge';badge.textContent=String(index+1);
     const remove=document.createElement('button');remove.type='button';remove.className='camera-thumb-delete';remove.setAttribute('aria-label','Bỏ ảnh '+(index+1));remove.innerHTML=SVGS.CLOSE;remove.onclick=event=>{event.stopPropagation();deleteCapturedPhotoFromCamera(index);};
     const sendState=cameraQueueState.get(file);
+    wrapper.setAttribute('role','button');wrapper.tabIndex=0;wrapper.setAttribute('aria-label','Xem lại ảnh '+(index+1));wrapper.style.cursor='zoom-in';wrapper.onclick=()=>openCameraPhotoViewer(index);wrapper.onkeydown=event=>{if(event.target===wrapper&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openCameraPhotoViewer(index);}};
     wrapper.append(image,badge);
     if(sendState){wrapper.dataset.upload=sendState;const mark=document.createElement('span');mark.className='camera-thumb-upload';mark.textContent=sendState==='queued'?'✓':'↑';mark.setAttribute('role','img');mark.setAttribute('aria-label',sendState==='queued'?'Đã gửi lên Cloud':'Đang gửi lên Cloud');wrapper.append(mark);}else wrapper.append(remove);
     strip.append(wrapper);
   });
   strip.scrollLeft=strip.scrollWidth;
+}
+/* Xem lại ảnh vừa chụp ngay trong camera: chạm ảnh nhỏ -> xem cỡ lớn, vuốt/mũi tên để chuyển, không thoát camera */
+function closeCameraPhotoViewer(){
+  const v=document.getElementById('cameraPhotoViewer');if(!v)return;
+  if(v._url){try{URL.revokeObjectURL(v._url);}catch(_){}}
+  document.removeEventListener('keydown',cameraPhotoViewerKey,true);v.remove();
+  document.querySelector('#customCameraModal .camera-preview-strip .camera-preview-wrapper:nth-child('+((v._index||0)+1)+')')?.focus?.({preventScroll:true});
+}
+function cameraPhotoViewerStep(v,delta){
+  const n=customCameraPhotos.length;if(!n)return closeCameraPhotoViewer();
+  v._index=Math.min(n-1,Math.max(0,(v._index||0)+delta));cameraPhotoViewerShow(v);
+}
+function cameraPhotoViewerKey(event){
+  const v=document.getElementById('cameraPhotoViewer');if(!v)return;
+  if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeCameraPhotoViewer();}
+  else if(event.key==='ArrowLeft'){event.preventDefault();event.stopPropagation();cameraPhotoViewerStep(v,-1);}
+  else if(event.key==='ArrowRight'){event.preventDefault();event.stopPropagation();cameraPhotoViewerStep(v,1);}
+}
+function cameraPhotoViewerShow(v){
+  const n=customCameraPhotos.length,file=customCameraPhotos[v._index];
+  if(!file){closeCameraPhotoViewer();return;}
+  if(v._url){try{URL.revokeObjectURL(v._url);}catch(_){}}
+  v._url=URL.createObjectURL(file);
+  const img=v.querySelector('.cpv-img');img.src=v._url;img.alt='Ảnh đã chụp '+(v._index+1);
+  v.querySelector('.cpv-count').textContent=(v._index+1)+' / '+n;
+  v.querySelector('.cpv-prev').hidden=v._index<=0;v.querySelector('.cpv-next').hidden=v._index>=n-1;
+}
+function openCameraPhotoViewer(index){
+  if(!customCameraPhotos.length)return;
+  closeCameraPhotoViewer();
+  const v=document.createElement('div');v.id='cameraPhotoViewer';v.className='camera-photo-viewer';v.setAttribute('role','dialog');v.setAttribute('aria-modal','true');v.setAttribute('aria-label','Xem lại ảnh vừa chụp');
+  const chev=d=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"/></svg>';
+  v.innerHTML='<div class="cpv-top"><span class="cpv-count" aria-live="polite"></span><button type="button" class="cpv-close" aria-label="Đóng">'+SVGS.CLOSE+'</button></div>'
+    +'<div class="cpv-stage"><img class="cpv-img" decoding="async" draggable="false" alt=""></div>'
+    +'<button type="button" class="cpv-nav cpv-prev" aria-label="Ảnh trước">'+chev('M15 5l-7 7 7 7')+'</button>'
+    +'<button type="button" class="cpv-nav cpv-next" aria-label="Ảnh sau">'+chev('M9 5l7 7-7 7')+'</button>';
+  v._index=Math.min(customCameraPhotos.length-1,Math.max(0,index|0));
+  v.querySelector('.cpv-close').onclick=closeCameraPhotoViewer;
+  v.querySelector('.cpv-prev').onclick=()=>cameraPhotoViewerStep(v,-1);
+  v.querySelector('.cpv-next').onclick=()=>cameraPhotoViewerStep(v,1);
+  const stage=v.querySelector('.cpv-stage');
+  stage.addEventListener('click',event=>{if(event.target===stage)closeCameraPhotoViewer();});
+  let sx=0,sy=0,multi=false;
+  stage.addEventListener('touchstart',event=>{multi=event.touches.length>1;if(event.touches.length===1){sx=event.touches[0].clientX;sy=event.touches[0].clientY;}},{passive:true});
+  stage.addEventListener('touchend',event=>{
+    if(multi){if(!event.touches.length)multi=false;return;}
+    const t=event.changedTouches[0];if(!t)return;const dx=t.clientX-sx,dy=t.clientY-sy;
+    if(Math.abs(dx)>56&&Math.abs(dx)>Math.abs(dy)*1.4)cameraPhotoViewerStep(v,dx<0?1:-1);
+  },{passive:true});
+  document.body.appendChild(v);document.addEventListener('keydown',cameraPhotoViewerKey,true);
+  cameraPhotoViewerShow(v);v.querySelector('.cpv-close').focus({preventScroll:true});
 }
 async function triggerCustomCameraCapture() {
   if(!window.TascoAppShell.canCloud()){cameraFeedback('Chưa có quyền Cloud để chụp ảnh.');return;}
