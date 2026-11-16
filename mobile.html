@@ -7478,11 +7478,12 @@ window.TascoPhotoViewer=(()=>{
     }
     function reset(){zoom=1;x=0;y=0;render();}
     function rotate(){if(!ready)return;rotation=(rotation+90)%360;rotations.set(current().id,rotation);invalidateExport();zoom=1;x=0;y=0;fit();paintInfo();if(TascoPhotoExport.isIOS)prepareExport().catch(()=>{});}
+    const durations=new Map(),vcTime=t=>{t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');};
     function paintInfo(){
       const row=current(),dim=dimensions.get(row.id)||{width:row.width||0,height:row.height||0},turned=rotation%180!==0,width=turned?dim.height:dim.width,height=turned?dim.width:dim.height;
-      const format=row.blob?.type?.split('/')[1]?.toUpperCase()||(/\.(jpe?g|png|webp)(?:\?|$)/i.exec(row.url)?.[1]||'Ảnh').toUpperCase();
-      const pairs=[['Hạng mục',row.category||'Chưa phân hạng mục'],['Ngày giờ chụp',date(row.captured_at)],['Địa điểm',row.address||'Chưa xác định địa điểm'],['Kích thước',width&&height?`${width.toLocaleString('vi-VN')} × ${height.toLocaleString('vi-VN')} px`:'Đang đọc ảnh…'],['Dung lượng',size(row.bytes||row.upload?.bytes||row.blob?.size)],['Định dạng',format.replace('JPG','JPEG')],['Trạng thái',row.pending?'Chờ đồng bộ':'Đã lưu trên Cloud'],['Tài khoản',options.email],['Lưu trữ',row.cloud_name||row.cloud?.cloudName||'Cloudinary']];
-      overlay.querySelector('.viewer-info-content').innerHTML=`<div class="viewer-info-title">${glyph('image')}<strong>${escape(row.title||'Ảnh của tôi')}</strong></div><dl>${pairs.filter(([,value])=>value).map(([label,value])=>`<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>`;
+      const isVid=window.tascoIsVideo(row),format=row.blob?.type?.split('/')[1]?.toUpperCase()||(isVid?(/\.(mp4|mov|webm|m4v)(?:\?|$)/i.exec(row.url)?.[1]||'Video'):(/\.(jpe?g|png|webp)(?:\?|$)/i.exec(row.url)?.[1]||'Ảnh')).toUpperCase(),clip=durations.get(row.id);
+      const pairs=[['Hạng mục',row.category||'Chưa phân hạng mục'],['Ngày giờ chụp',date(row.captured_at)],['Địa điểm',row.address||'Chưa xác định địa điểm'],['Kích thước',width&&height?`${width.toLocaleString('vi-VN')} × ${height.toLocaleString('vi-VN')} px`:(isVid?'Đang đọc video…':'Đang đọc ảnh…')],...(isVid&&clip?[['Thời lượng',vcTime(clip)]]:[]),['Dung lượng',size(row.bytes||row.upload?.bytes||row.blob?.size)],['Định dạng',format.replace('JPG','JPEG')],['Trạng thái',row.pending?'Chờ đồng bộ':'Đã lưu trên Cloud'],['Tài khoản',options.email],['Lưu trữ',row.cloud_name||row.cloud?.cloudName||'Cloudinary']];
+      overlay.querySelector('.viewer-info-content').innerHTML=`<div class="viewer-info-title">${glyph('image')}<strong>${escape(row.title||(isVid?'Video của tôi':'Ảnh của tôi'))}</strong></div><dl>${pairs.filter(([,value])=>value).map(([label,value])=>`<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>`;
     }
     function setInfo(show){
       info.hidden=!show;backdrop.hidden=!show;actionButton('info').setAttribute('aria-expanded',String(show));
@@ -7499,19 +7500,67 @@ window.TascoPhotoViewer=(()=>{
       const selected=film.children[index];if(selected)film.scrollTo({left:Math.max(0,selected.offsetLeft-film.clientWidth/2+selected.clientWidth/2),behavior:'smooth'});
       paintInfo();render();
     }
+    function stopVideo(){
+      const old=stage.querySelector('.viewer-video');
+      if(old){try{old.pause();old.removeAttribute('src');old.load();}catch(_){}old.remove();}
+      stage.querySelector('.viewer-vc')?.remove();clearTimeout(vcIdle);
+    }
+    let vcIdle=0;
+    function mountVideoControls(video){
+      const PLAY='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.5 5.6v12.8a1 1 0 0 0 1.5.86l10.2-6.4a1 1 0 0 0 0-1.72L10 4.74a1 1 0 0 0-1.5.86Z"/></svg>',PAUSE='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>',REPLAY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4.5v4.6h4.6"/></svg>',VOL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.6L12 18.5v-13L7.6 9.5Z" fill="currentColor"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.6a7.6 7.6 0 0 1 0 10.8"/></svg>',MUTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.6L12 18.5v-13L7.6 9.5Z" fill="currentColor"/><path d="m16 9.5 5 5m0-5-5 5"/></svg>';
+      const root=document.createElement('div');root.className='viewer-vc';root.dataset.state='paused';
+      root.innerHTML='<button type="button" class="vc-big" data-vc="toggle" aria-label="Phát video"></button><div class="vc-bar"><button type="button" class="vc-btn" data-vc="toggle" aria-label="Phát video"></button><time class="vc-time" data-vc="cur">0:00</time><div class="vc-track" data-vc="track" role="slider" tabindex="0" aria-label="Tua video" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i class="vc-buf"></i><i class="vc-fill"></i><b class="vc-knob"></b></div><time class="vc-time" data-vc="dur">0:00</time><button type="button" class="vc-btn" data-vc="mute" aria-label="Tắt tiếng"></button></div>';
+      const big=root.querySelector('.vc-big'),toggles=root.querySelectorAll('[data-vc=toggle]'),track=root.querySelector('[data-vc=track]'),fill=root.querySelector('.vc-fill'),buf=root.querySelector('.vc-buf'),knob=root.querySelector('.vc-knob'),cur=root.querySelector('[data-vc=cur]'),dur=root.querySelector('[data-vc=dur]'),mute=root.querySelector('[data-vc=mute]');
+      const total=()=>isFinite(video.duration)&&video.duration>0?video.duration:0;
+      let scrubbing=false;
+      function wake(){root.classList.remove('is-idle');clearTimeout(vcIdle);if(!video.paused&&!scrubbing)vcIdle=setTimeout(()=>root.classList.add('is-idle'),2600);}
+      function paint(){
+        const t=total(),at=scrubbing?scrubbing.time:video.currentTime,pct=t?Math.min(100,at/t*100):0;
+        fill.style.width=pct+'%';knob.style.left=pct+'%';cur.textContent=vcTime(at);dur.textContent=vcTime(t);track.setAttribute('aria-valuenow',String(Math.round(pct)));track.setAttribute('aria-valuetext',vcTime(at)+' trên '+vcTime(t));
+        try{const b=video.buffered;buf.style.width=t&&b.length?Math.min(100,b.end(b.length-1)/t*100)+'%':'0%';}catch(_){}
+      }
+      function state(){
+        const st=video.ended?'ended':video.paused?'paused':'playing';root.dataset.state=st;
+        const label=st==='playing'?'Tạm dừng video':st==='ended'?'Phát lại video':'Phát video',icon=st==='playing'?PAUSE:st==='ended'?REPLAY:PLAY;
+        for(const b of toggles){b.setAttribute('aria-label',label);}big.innerHTML=icon;toggles[1].innerHTML=icon;
+        mute.innerHTML=video.muted?MUTE:VOL;mute.setAttribute('aria-label',video.muted?'Bật tiếng':'Tắt tiếng');mute.setAttribute('aria-pressed',String(video.muted));
+        wake();
+      }
+      function toggle(){if(video.ended){video.currentTime=0;video.play().catch(()=>{});return;}if(video.paused)video.play().catch(()=>{});else video.pause();}
+      function seekFrom(event){const r=track.getBoundingClientRect(),t=total();if(!t)return;const ratio=Math.max(0,Math.min(1,(event.clientX-r.left)/Math.max(1,r.width)));scrubbing={time:ratio*t};video.currentTime=scrubbing.time;paint();}
+      track.addEventListener('pointerdown',event=>{event.preventDefault();track.setPointerCapture?.(event.pointerId);root.classList.add('is-scrubbing');seekFrom(event);wake();});
+      track.addEventListener('pointermove',event=>{if(scrubbing)seekFrom(event);});
+      const endScrub=()=>{if(!scrubbing)return;scrubbing=false;root.classList.remove('is-scrubbing');paint();wake();};
+      track.addEventListener('pointerup',endScrub);track.addEventListener('pointercancel',endScrub);
+      track.addEventListener('keydown',event=>{const t=total();if(!t)return;const step=event.key==='ArrowRight'?5:event.key==='ArrowLeft'?-5:0;if(step){event.preventDefault();video.currentTime=Math.max(0,Math.min(t,video.currentTime+step));}});
+      root.addEventListener('click',event=>{const b=event.target.closest('[data-vc]');if(!b)return;event.stopPropagation();if(b.dataset.vc==='toggle')toggle();else if(b.dataset.vc==='mute'){video.muted=!video.muted;state();}});
+      /* Chạm vào hình = phát/tạm dừng (đồng thời hiện thanh điều khiển). */
+      video.addEventListener('click',event=>{event.stopPropagation();if(root.classList.contains('is-idle')&&!video.paused){wake();return;}toggle();});
+      for(const type of ['pointerdown','pointermove','pointerup','touchstart','touchmove','touchend','dblclick','wheel','click'])root.addEventListener(type,event=>event.stopPropagation());
+      for(const type of ['play','pause','ended','volumechange','loadedmetadata'])video.addEventListener(type,state);
+      for(const type of ['timeupdate','progress','durationchange','seeked'])video.addEventListener(type,()=>{if(!scrubbing)paint();});
+      state();paint();
+      return {root,sync(){state();paint();}};
+    }
     function show(next){
       invalidateExport(true);index=next;loadToken++;clearTimeout(tapTimer);lastTap=null;pointers.clear();gesture=null;stage.classList.remove('is-gesturing');zoom=1;x=0;y=0;rotation=rotations.get(current().id)||0;ready=false;naturalWidth=0;naturalHeight=0;image.style.visibility='hidden';
       overlay.dataset.loading='true';overlay.querySelector('.viewer-loading').hidden=false;overlay.querySelector('.viewer-error').hidden=true;controls();
       const token=loadToken;
-      stage.querySelector('.viewer-video')?.remove();
-      if(window.tascoIsVideo(current())){
-        /* Video: phát bằng trình phát của iPhone, không phóng to/xoay. */
+      stopVideo();
+      const isVid=window.tascoIsVideo(current()),loadingBox=overlay.querySelector('.viewer-loading'),errorText=overlay.querySelector('.viewer-error p'),reloadBtn=overlay.querySelector('.viewer-error button');
+      loadingBox.lastChild.textContent=isVid?'Đang tải video…':'Đang tải ảnh…';errorText.textContent=isVid?'Chưa tải được video. Kiểm tra kết nối rồi thử lại.':'Chưa tải được ảnh. Kiểm tra kết nối rồi thử lại.';reloadBtn.textContent=isVid?'Tải lại video':'Tải lại ảnh';
+      {const hd=overlay.querySelector('.viewer-info header');if(hd){hd.querySelector('span').textContent=isVid?'CHI TIẾT VIDEO':'CHI TIẾT ẢNH';hd.querySelector('h2').textContent=isVid?'Thông tin video':'Thông tin ảnh';}overlay.querySelector('.viewer-info').setAttribute('aria-label',isVid?'Thông tin video':'Thông tin ảnh');}
+      for(const [act,vid,img] of [['delete','Xoá video','Xoá ảnh'],['download','Tải video',TascoPhotoExport.label]]){const b=actionButton(act);if(b){b.setAttribute('aria-label',isVid?vid:img);const sp=b.querySelector('span');if(sp)sp.textContent=isVid?vid:img;}}
+      stage.setAttribute('aria-label',isVid?'Video. Chạm để phát hoặc tạm dừng, vuốt trái hoặc phải để chuyển mục.':'Ảnh. Vuốt trái hoặc phải để chuyển ảnh, chụm hai ngón hoặc chạm hai lần để phóng to.');
+      if(isVid){
+        /* Video: trình phát riêng (nút phát kính mờ + thanh tua), không phóng to/xoay. */
         overlay.dataset.media='video';image.removeAttribute('src');
-        const video=document.createElement('video');video.className='viewer-video';video.controls=true;video.playsInline=true;video.setAttribute('playsinline','');video.preload='metadata';
-        ['pointerdown','pointermove','pointerup','touchstart','touchmove','touchend','dblclick','click','wheel'].forEach(type=>video.addEventListener(type,event=>event.stopPropagation()));
-        video.onloadedmetadata=()=>{if(token!==loadToken||closed)return;ready=true;dimensions.set(current().id,{width:video.videoWidth,height:video.videoHeight});overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;paintInfo();render();};
-        video.onerror=()=>{if(token!==loadToken||closed)return;ready=false;overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;overlay.querySelector('.viewer-error').hidden=false;render();};
-        video.src=current().url;stage.prepend(video);return;
+        const video=document.createElement('video');video.className='viewer-video';video.controls=false;video.playsInline=true;video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');video.preload='metadata';
+        ['pointerdown','pointermove','pointerup','touchstart','touchmove','touchend','dblclick','wheel'].forEach(type=>video.addEventListener(type,event=>event.stopPropagation()));
+        const vc=mountVideoControls(video);
+        video.onloadedmetadata=()=>{if(token!==loadToken||closed)return;ready=true;if(isFinite(video.duration))durations.set(current().id,video.duration);dimensions.set(current().id,{width:video.videoWidth,height:video.videoHeight});overlay.dataset.loading='false';loadingBox.hidden=true;vc.sync();paintInfo();render();};
+        video.onerror=()=>{if(token!==loadToken||closed)return;ready=false;overlay.dataset.loading='false';loadingBox.hidden=true;overlay.querySelector('.viewer-error').hidden=false;vc.root.hidden=true;render();};
+        video.src=current().url;stage.prepend(video);stage.append(vc.root);return;
       }
       overlay.dataset.media='image';
       image.onload=()=>{
@@ -7587,7 +7636,7 @@ window.TascoPhotoViewer=(()=>{
       finally{downloading=false;if(!closed)render();}
     }
     function close(){
-      if(closed)return;closed=true;invalidateExport(true);TascoPhotoExport.close();controller.abort();observer.disconnect();cancelAnimationFrame(raf);clearTimeout(tapTimer);clearTimeout(noticeTimer);image.onload=image.onerror=null;overlay.remove();Object.assign(document.body.style,savedStyle);Object.assign(document.documentElement.style,savedHtmlStyle);window.scrollTo(scrollX,scrollY);if(focus?.isConnected)focus.focus({preventScroll:true});else options.restoreFocus?.();if(active?.close===close)active=null;
+      if(closed)return;closed=true;invalidateExport(true);TascoPhotoExport.close();controller.abort();observer.disconnect();cancelAnimationFrame(raf);clearTimeout(tapTimer);clearTimeout(noticeTimer);image.onload=image.onerror=null;stopVideo();overlay.remove();Object.assign(document.body.style,savedStyle);Object.assign(document.documentElement.style,savedHtmlStyle);window.scrollTo(scrollX,scrollY);if(focus?.isConnected)focus.focus({preventScroll:true});else options.restoreFocus?.();if(active?.close===close)active=null;
     }
     function midpoint(){const [a,b]=[...pointers.values()];return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,distance:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y))};}
     function beginPinch(){const mid=midpoint(),rect=stage.getBoundingClientRect();gesture={type:'pinch',distance:mid.distance,zoom,anchorX:(mid.x-rect.left-rect.width/2-x)/zoom,anchorY:(mid.y-rect.top-rect.height/2-y)/zoom};clearTimeout(tapTimer);lastTap=null;}
@@ -8427,6 +8476,9 @@ window.TascoCloud = (() => {
     if(!row.blob)return '';if(!state.urls.has(row.id))state.urls.set(row.id,URL.createObjectURL(row.blob));return state.urls.get(row.id);
   }
   function previewURL(url,size=360){if(/\/video\/upload\//.test(url))return url.replace(/\/video\/upload\/(?!s--)/,'/video/upload/so_0,c_fill,w_'+size+',h_'+size+',q_auto/').replace(/\.[a-z0-9]+(\?.*)?$/i,'.jpg');return url.replace(/\/image\/upload\/(?!s--)/,'/image/upload/c_fill,w_'+size+',h_'+size+',q_auto,f_auto/');}
+  /* Dấu hiệu video trên ô: nút phát kính mờ ở giữa + nhãn VIDEO góc trái (đồng bộ với bảng in dấu và trình xem). */
+  function videoMark(){return '<span class="cloud-video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 5.6v12.8a1 1 0 0 0 1.5.86l10.2-6.4a1 1 0 0 0 0-1.72L10 4.74a1 1 0 0 0-1.5.86Z"/></svg></span><span class="cloud-video-badge" aria-label="Video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="3"/><path d="m16 10.5 5-2.5v8l-5-2.5"/></svg>VIDEO</span>';}
+  function pendingVideoPoster(row,url){return window.tascoIsVideo(row)&&url&&!/^https:/.test(url)?`<video src="${esc(url)}#t=0.1" muted playsinline preload="metadata" tabindex="-1" aria-hidden="true"></video>${videoMark()}`:'';}
   function cardImage(row,url){return !url?'':!window.tascoIsVideo(row)?url:/^https:/.test(url)?previewURL(url):'';}
   function configure(options) {state.config=options;}
   function revokeAccess(){state.revision++;state.busy=false;clearAccount();if(state.root){state.root.innerHTML='';state.root.onclick=null;state.root.oninput=null;}state.root=null;}
@@ -8682,14 +8734,14 @@ window.TascoCloud = (() => {
   function card(row,pending=false) {
     if(state.config.mode==='mobile'&&!pending){
       const url=thumbnail(row),time=new Date(row.captured_at).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
-      return `<article class="cloud-photo-card cloud-photo-tile" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${esc(row.title)}, ${esc(stamp(row.captured_at))}, ${esc(row.address||'Chưa xác định địa điểm')}"><span class="cloud-tile-preview">${url?`<img src="${esc(previewURL(url))}" data-original="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.original" loading="lazy" decoding="async" alt="${esc(row.title)}">`:icon('camera')}${window.tascoIsVideo(row)?'<span class="cloud-video-badge" aria-label="Video">▶</span>':''}<time class="cloud-tile-time" datetime="${esc(row.captured_at)}">${esc(time)}</time></span><span class="cloud-tile-caption">${row.category?`<em class="cloud-tile-cat">${esc(row.category)}</em>`:''}<strong>${esc(row.title||'Ảnh của tôi')}</strong><span>${icon('pin')}<span>${esc(row.address||'Chưa có địa điểm')}</span></span></span></button></article>`;
+      return `<article class="cloud-photo-card cloud-photo-tile" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${esc(row.title)}, ${esc(stamp(row.captured_at))}, ${esc(row.address||'Chưa xác định địa điểm')}"><span class="cloud-tile-preview">${url?`<img src="${esc(previewURL(url))}" data-original="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.original" loading="lazy" decoding="async" alt="${esc(row.title)}">`:icon('camera')}${window.tascoIsVideo(row)?videoMark():''}<time class="cloud-tile-time" datetime="${esc(row.captured_at)}">${esc(time)}</time></span><span class="cloud-tile-caption">${row.category?`<em class="cloud-tile-cat">${esc(row.category)}</em>`:''}<strong>${esc(row.title||'Ảnh của tôi')}</strong><span>${icon('pin')}<span>${esc(row.address||'Chưa có địa điểm')}</span></span></span></button></article>`;
     }
     const issue=pending?presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud):null;
     const url=cardImage(row,thumbnail(row));return `<article class="cloud-photo-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(issue?.summary||row.error||'Đã giữ bản ảnh trên thiết bị này')}</span>${issue?`<button class="cloud-text-button cloud-fix-preset" type="button" data-action="storage-settings" data-id="${esc(row.id)}"${state.uploading?' disabled':''}>Sửa preset ${icon('check')}</button>`:''}<button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}</button>`:''}</div></article>`;
   }
   function pendingCard(row) {
     const issue=presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud),url=cardImage(row,thumbnail(row)),title=row.title||'Ảnh của tôi';
-    return `<article class="cloud-photo-card cloud-pending-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(title)}">${url?`<img src="${esc(url)}" loading="lazy" decoding="async" alt="${esc(title)}">`:icon('camera')}</button><div class="cloud-pending-copy"><strong>${esc(title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><span class="cloud-upload-error" title="${esc(issue?.message||row.error||'Bản ảnh được giữ trên thiết bị đến khi đồng bộ thành công.')}">${esc(issue?.summary||row.error||'Chờ đồng bộ')}</span></div><div class="cloud-pending-actions">${issue?`<button class="cloud-pending-fix" type="button" data-action="storage-settings" data-id="${esc(row.id)}"${state.uploading?' disabled':''}>Sửa preset</button>`:''}<button class="cloud-pending-save" type="button" data-action="download-pending" data-id="${esc(row.id)}" aria-label="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}: ${esc(title)}" title="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}">${icon('download')}</button></div></article>`;
+    return `<article class="cloud-photo-card cloud-pending-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${window.tascoIsVideo(row)?'video':'ảnh'} ${esc(title)}">${url?`<img src="${esc(url)}" loading="lazy" decoding="async" alt="${esc(title)}">`:pendingVideoPoster(row,thumbnail(row))||icon('camera')}</button><div class="cloud-pending-copy"><strong>${esc(title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><span class="cloud-upload-error" title="${esc(issue?.message||row.error||'Bản ảnh được giữ trên thiết bị đến khi đồng bộ thành công.')}">${esc(issue?.summary||row.error||'Chờ đồng bộ')}</span></div><div class="cloud-pending-actions">${issue?`<button class="cloud-pending-fix" type="button" data-action="storage-settings" data-id="${esc(row.id)}"${state.uploading?' disabled':''}>Sửa preset</button>`:''}<button class="cloud-pending-save" type="button" data-action="download-pending" data-id="${esc(row.id)}" aria-label="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}: ${esc(title)}" title="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}">${icon('download')}</button></div></article>`;
   }
   function paintPending() {
     const root=state.root;if(!visible())return;
@@ -13509,23 +13561,88 @@ window.TascoCameraRescue = (function () {
   function modal() { return document.getElementById('customCameraModal'); }
   function feedback(t, ms) { try { cameraFeedback(t, ms); } catch (_) {} }
 
-  /* Bảng xử lý video, nằm trên màn hình camera. */
+  /* Bảng in dấu video: sheet kéo từ dưới lên, có ảnh xem trước đúng như sẽ in dấu, thông tin nơi lưu và thanh tiến trình. */
+  var ICON_FILM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3.2"/><path d="m10.2 9.4 4.6 2.6-4.6 2.6z" fill="currentColor"/></svg>';
   var panel = document.createElement('div');
   panel.className = 'camera-video-panel'; panel.hidden = true;
-  panel.innerHTML = '<section><h3>Video hồ sơ</h3><p data-video-info></p><div class="camera-video-progress" hidden><progress max="100" value="0"></progress><span data-video-pct>0%</span></div>' +
-    '<p class="camera-video-note" data-video-note>App sẽ phát lại video để in dấu ngày giờ và vị trí lên hình. Giữ màn hình sáng, không thoát app trong lúc xử lý.</p>' +
-    '<div class="camera-video-actions"><button type="button" data-video-action="cancel">Hủy</button><button type="button" data-video-action="start" class="is-primary">In dấu &amp; lưu Cloud</button></div></section>';
+  panel.innerHTML = '<section class="cvp" role="dialog" aria-modal="true" aria-labelledby="cvpTitle" data-state="ready">' +
+    '<i class="cvp-grab" aria-hidden="true"></i>' +
+    '<header class="cvp-head"><span class="cvp-badge">' + ICON_FILM + '</span><div><h3 id="cvpTitle">In dấu &amp; lưu video</h3><p data-video-sub>Gắn ngày giờ và vị trí lên hình</p></div></header>' +
+    '<div class="cvp-preview is-empty"><canvas class="cvp-poster" aria-hidden="true"></canvas><span class="cvp-chips"><b data-chip="dur" hidden></b><b data-chip="res" hidden></b><b data-chip="size" hidden></b></span><span class="cvp-scan" aria-hidden="true"></span></div>' +
+    '<dl class="cvp-meta"><div><dt>Lưu vào</dt><dd data-meta="album"></dd></div><div><dt>Hạng mục</dt><dd data-meta="category"></dd></div><div><dt>Thời gian</dt><dd data-meta="time"></dd></div><div><dt>Vị trí</dt><dd data-meta="place"></dd></div></dl>' +
+    '<p class="cvp-note" data-video-note></p>' +
+    '<div class="cvp-progress" hidden><div class="cvp-bar"><i></i></div><div class="cvp-prog-row"><span data-video-step></span><em data-video-eta></em><b data-video-pct>0%</b></div></div>' +
+    '<footer class="camera-video-actions"><button type="button" data-video-action="cancel">Hủy</button><button type="button" data-video-action="start" class="is-primary">In dấu &amp; lưu Cloud</button></footer></section>';
+  function q(sel) { return panel.querySelector(sel); }
   function mountPanel() { var m = modal(); if (m && panel.parentNode !== m) m.append(panel); }
-  function setInfo(t) { panel.querySelector('[data-video-info]').textContent = t; }
-  function setNote(t) { panel.querySelector('[data-video-note]').textContent = t; }
-  function setProgress(p) { var box = panel.querySelector('.camera-video-progress'); box.hidden = false; box.querySelector('progress').value = p; panel.querySelector('[data-video-pct]').textContent = Math.round(p) + '%'; }
+  function setNote(t, isError) { var n = q('[data-video-note]'); n.textContent = t || ''; n.classList.toggle('is-error', !!isError); n.hidden = !t; }
+  function setState(st) { q('.cvp').dataset.state = st; }   // ready | working | saving
+  function setStep(t) { q('[data-video-step]').textContent = t; }
+  var workStart = 0;
+  function setProgress(p) {
+    var pct = Math.max(0, Math.min(100, p)), box = q('.cvp-progress'); box.hidden = false;
+    q('.cvp-bar i').style.width = pct + '%'; q('[data-video-pct]').textContent = Math.round(pct) + '%';
+    q('.cvp').style.setProperty('--p', (pct / 100).toFixed(3));
+    var eta = q('[data-video-eta]'); eta.textContent = pct > 4 && pct < 99 ? 'còn ~' + fmt((Date.now() - workStart) / 1000 * (100 - pct) / pct) : '';
+  }
+  function stampTime(ms) { try { return new Date(Number(ms) || Date.now()).toLocaleString('vi-VN', { hour12: false }); } catch (_) { return ''; } }
+  function resetPanel() {
+    var sec = q('.cvp'); sec.dataset.state = 'ready'; sec.style.removeProperty('--p');
+    q('.cvp-progress').hidden = true; q('.cvp-bar i').style.width = '0%'; q('[data-video-pct]').textContent = '0%'; q('[data-video-eta]').textContent = '';
+    var btn = q('[data-video-action="start"]'); btn.disabled = false; btn.textContent = 'In dấu & lưu Cloud';
+    var prev = q('.cvp-preview'); prev.classList.add('is-empty'); var c = q('.cvp-poster'); c.width = 1; c.height = 1;
+    panel.querySelectorAll('[data-chip]').forEach(function (n) { n.hidden = true; });
+    setNote('');
+  }
   function closePanel() {
     if (session && session.cleanup) { try { session.cleanup(); } catch (_) {} }
-    panel.hidden = true; panel.querySelector('.camera-video-progress').hidden = true;
-    panel.querySelector('[data-video-action="start"]').disabled = false;
+    panel.hidden = true; resetPanel();
     session = null; cameraUiState.captureBusy = false;
     try { syncCameraViewport(); } catch (_) {}
     if (modal() && modal().style.display !== 'none') { try { startCustomCameraStream(); } catch (_) {} }
+  }
+  function paintPoster(s) {
+    var base = s.poster; if (!base) return;
+    var c = q('.cvp-poster'); c.width = base.width; c.height = base.height;
+    var x = c.getContext('2d'); x.drawImage(base, 0, 0);
+    if (s.lines && s.lines.length) { try { drawCameraStamp(x, s.lines, c.width, c.height, s.metadata.appearance); } catch (_) {} }   // đúng dấu sẽ in lên video
+    var prev = q('.cvp-preview'); prev.style.setProperty('--ar', base.width + ' / ' + base.height); prev.classList.remove('is-empty');
+  }
+  function chip(name, text) { var n = q('[data-chip="' + name + '"]'); n.textContent = text; n.hidden = !text; }
+  /* Đọc thông tin video + dựng ảnh xem trước; không chặn người dùng bấm nút. */
+  async function describe(s, src, isUrl, size) {
+    var m = s.metadata;
+    q('[data-meta="album"]').textContent = (s.album && s.album.albumName) || 'Tất cả ảnh';
+    q('[data-meta="category"]').textContent = m.category || 'Chưa phân loại';
+    q('[data-meta="time"]').textContent = stampTime(m.capturedAt);
+    q('[data-meta="place"]').textContent = 'Đang xác định vị trí…';
+    Promise.resolve(m.locationPromise).then(function (loc) {
+      if (session !== s) return;
+      q('[data-meta="place"]').textContent = (loc && loc.address) || (window.cameraGpsText && cameraGpsText(loc)) || 'Chưa có vị trí';
+      try { s.lines = cameraWatermarkLines(loc, m.capturedAt, 'camera', m.appearance); } catch (_) {}
+      paintPoster(s);
+    }).catch(function () { if (session === s) q('[data-meta="place"]').textContent = 'Chưa có vị trí'; });
+    var video = document.createElement('video'), objUrl = isUrl ? '' : URL.createObjectURL(src);
+    video.muted = true; video.playsInline = true; video.setAttribute('playsinline', ''); video.preload = 'auto';
+    if (isUrl) video.crossOrigin = 'anonymous';
+    video.src = isUrl ? src : objUrl;
+    var ok = await new Promise(function (done) { video.onloadedmetadata = function () { done(true); }; video.onerror = function () { done(false); }; setTimeout(function () { done(false); }, 6000); });
+    var dur = ok ? video.duration : NaN, vw = ok ? video.videoWidth : 0, vh = ok ? video.videoHeight : 0;
+    if (session === s && ok) {
+      chip('dur', isFinite(dur) ? fmt(dur) : '');
+      chip('res', vw && vh ? (Math.min(vw, vh) >= 2000 ? '4K' : Math.min(vw, vh) + 'p') : '');
+      chip('size', size ? (size / 1048576).toFixed(1).replace('.', ',') + ' MB' : '');
+      var note = 'App phát lại video để in dấu (mất khoảng ' + fmt(Math.min(isFinite(dur) ? dur : MAX_SECONDS, MAX_SECONDS)) + '). Giữ màn hình sáng, không thoát app trong lúc xử lý.';
+      if (dur > MAX_SECONDS + 0.5) note = 'Video dài hơn 3 phút, chỉ giữ 3 phút đầu. ' + note;
+      setNote(note);
+      try {
+        await firstLiveTime(video);
+        var k = Math.min(1, 720 / Math.max(vw, vh)), c = document.createElement('canvas'); c.width = Math.round(vw * k); c.height = Math.round(vh * k);
+        c.getContext('2d').drawImage(video, 0, 0, c.width, c.height); s.poster = c; if (session === s) paintPoster(s);
+      } catch (_) {}
+    } else if (session === s) setNote('Không đọc được thông tin video, vẫn có thể in dấu và lưu.');
+    try { video.removeAttribute('src'); video.load(); } catch (_) {}
+    if (objUrl) URL.revokeObjectURL(objUrl);
   }
 
   /* Tìm thời điểm video gốc bắt đầu có hình: camera đôi khi ghi vài khung đen đầu tiên. Trả 0 nếu khung đầu đã có hình
@@ -13626,9 +13743,9 @@ window.TascoCameraRescue = (function () {
 
   async function start() {
     var s = session; if (!s || !(s.file || s.src)) return;
-    var startBtn = panel.querySelector('[data-video-action="start"]'); startBtn.disabled = true;
+    var startBtn = q('[data-video-action="start"]'); startBtn.disabled = true; startBtn.textContent = 'Đang xử lý…';
     var abort = new AbortController(); s.cancel = function () { abort.abort(); };
-    setNote('Đang in dấu lên video… Giữ màn hình sáng, không thoát app.'); setProgress(0);
+    workStart = Date.now(); setState('working'); setNote('Giữ màn hình sáng, không thoát app trong lúc xử lý.'); setStep('Đang in dấu lên video…'); setProgress(0);
     try {
       var location = await s.metadata.locationPromise;
       var appearance = s.metadata.appearance;
@@ -13639,7 +13756,7 @@ window.TascoCameraRescue = (function () {
       var name = 'video_' + s.metadata.capturedAt + '.' + out.ext;
       var file = new File([out.blob], name, { type: out.blob.type, lastModified: s.metadata.capturedAt });
       if (s.owner !== window.mobileCloudEmail?.()) throw new Error('Tài khoản đã thay đổi. Video chưa được lưu.');
-      setNote('Đang đưa video vào hàng đợi tải lên…');
+      setState('saving'); setStep('Đang đưa vào hàng đợi tải lên…'); setProgress(100); setNote('');
       await TascoCloud.queuePhotos([file], s.title, async function () { return { capturedAt: s.metadata.capturedAt, location: location, category: s.metadata.category || '' }; }, s.album);
       closePanel();
       try { window.tascoCountCategory && window.tascoCountCategory(s.metadata.category || ''); } catch (_) {}
@@ -13647,8 +13764,8 @@ window.TascoCameraRescue = (function () {
     } catch (error) {
       if (session !== s) return;
       if (error && error.name === 'AbortError') { closePanel(); feedback('Đã hủy video.'); return; }
-      startBtn.disabled = false;
-      setNote((error && error.message) || 'Chưa xử lý được video. Thử lại.');
+      setState('ready'); q('.cvp-progress').hidden = true; startBtn.disabled = false; startBtn.textContent = 'Thử lại';
+      setNote((error && error.message) || 'Chưa xử lý được video. Thử lại.', true);
     }
   }
 
@@ -13663,12 +13780,8 @@ window.TascoCameraRescue = (function () {
     if (!session) return;
     if (!file) { closePanel(); return; }
     session.file = file;
-    mountPanel(); panel.hidden = false;
-    var probe = document.createElement('video'), url = URL.createObjectURL(file); probe.preload = 'metadata'; probe.src = url;
-    var dur = await new Promise(function (ok) { probe.onloadedmetadata = function () { ok(probe.duration); }; probe.onerror = function () { ok(NaN); }; setTimeout(function () { ok(NaN); }, 5000); });
-    URL.revokeObjectURL(url);
-    setInfo((isFinite(dur) ? 'Thời lượng ' + fmt(dur) : 'Video mới') + ' · ' + (file.size / 1048576).toFixed(1) + ' MB' + (dur > MAX_SECONDS + 0.5 ? ' · sẽ cắt còn 3 phút đầu' : ''));
-    setNote('App sẽ phát lại video để in dấu ngày giờ và vị trí lên hình (mất khoảng ' + fmt(Math.min(dur || MAX_SECONDS, MAX_SECONDS)) + '). Giữ màn hình sáng, không thoát app trong lúc xử lý.');
+    mountPanel(); resetPanel(); panel.hidden = false;
+    describe(session, file, false, file.size);
   });
   input.addEventListener('cancel', function () { if (session && !session.file) closePanel(); });
 
@@ -13694,12 +13807,8 @@ window.TascoCameraRescue = (function () {
   async function processRecorded(opts) {
     session = { metadata: opts.metadata, title: mobileCameraTitle, album: mobileCameraAlbum, owner: mobileCameraOwner, file: null, src: opts.src, cleanup: opts.cleanup || null, cancel: null };
     cameraUiState.captureBusy = true;
-    mountPanel(); panel.hidden = false;
-    var probe = document.createElement('video'); probe.crossOrigin = 'anonymous'; probe.preload = 'metadata'; probe.src = opts.src;
-    var dur = await new Promise(function (ok) { probe.onloadedmetadata = function () { ok(probe.duration); }; probe.onerror = function () { ok(NaN); }; setTimeout(function () { ok(NaN); }, 5000); });
-    probe.removeAttribute('src'); try { probe.load(); } catch (_) {}
-    setInfo((isFinite(dur) ? 'Thời lượng ' + fmt(dur) : 'Video mới') + ' · quay bằng camera iPhone');
-    setNote('App sẽ phát lại video để in dấu ngày giờ và vị trí lên hình (mất khoảng ' + fmt(Math.min(dur || MAX_SECONDS, MAX_SECONDS)) + '). Giữ màn hình sáng, không thoát app trong lúc xử lý.');
+    mountPanel(); resetPanel(); panel.hidden = false;
+    describe(session, opts.src, true, 0);
   }
   window.TascoVideoCapture = { supported: supported, busy: function () { return !!session; }, processRecorded: processRecorded, maxSeconds: MAX_SECONDS };
 })();
@@ -13708,20 +13817,68 @@ window.TascoCameraRescue = (function () {
 .custom-camera-modal .camera-video-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;margin-bottom:6px;border:1px solid rgba(132,191,199,.45);border-radius:11px;background:rgba(132,191,199,.08);color:#daecf0;font-size:12px;font-weight:600}
 .custom-camera-modal .camera-video-btn svg{width:16px;height:16px}
 .custom-camera-modal .camera-control-left{display:flex;flex-direction:column;align-items:flex-start}
-.camera-video-panel{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(7,20,35,.88);visibility:visible}
+.camera-video-panel{position:absolute;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(4,12,22,.62);-webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1);visibility:visible;animation:cvpFade .2s ease}
 .camera-video-panel[hidden]{display:none}
-.camera-video-panel section{width:min(100%,360px);padding:22px;border:1px solid rgba(132,191,199,.25);border-radius:20px;background:#102440;color:#edf5f7}
-.camera-video-panel h3{margin:0 0 6px;font-size:17px;font-weight:650}
-.camera-video-panel p{margin:0 0 12px;font-size:12px;line-height:1.7;color:#a7c3d0}
-.camera-video-panel [data-video-info]{color:#edf5f7;font-weight:600}
-.camera-video-progress{display:flex;align-items:center;gap:10px;margin:4px 0 12px}
-.camera-video-progress progress{flex:1;height:8px;accent-color:#63adb6}
-.camera-video-progress span{min-width:40px;text-align:right;font-size:12px;font-weight:650}
-.camera-video-actions{display:flex;gap:10px;justify-content:flex-end}
-.camera-video-actions button{min-height:42px;padding:0 16px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:transparent;color:#edf5f7;font:inherit;font-size:13px;font-weight:600}
-.camera-video-actions .is-primary{border-color:#63adb6;background:#63adb6;color:#071423}
-.camera-video-actions button:disabled{opacity:.45}
-.cloud-video-badge{position:absolute;left:8px;top:8px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:rgba(7,20,35,.72);color:#fff;font-size:11px;pointer-events:none}
+@keyframes cvpFade{from{opacity:0}}@keyframes cvpUp{from{transform:translateY(28px);opacity:0}}
+.cvp{--cvp-accent:#8fd0d8;position:relative;width:min(100%,480px);max-height:94%;overflow:auto;padding:10px 18px calc(18px + env(safe-area-inset-bottom,0px));border:1px solid rgba(143,208,216,.2);border-bottom:0;border-radius:26px 26px 0 0;background:linear-gradient(180deg,#14284a 0%,#0d1d36 100%);box-shadow:0 -24px 60px -20px rgba(0,0,0,.65);color:#edf5f7;font-family:inherit;animation:cvpUp .3s cubic-bezier(.2,.85,.25,1);overscroll-behavior:contain}
+.cvp-grab{display:block;width:38px;height:4px;margin:0 auto 14px;border-radius:99px;background:rgba(255,255,255,.22)}
+.cvp-head{display:flex;align-items:center;gap:13px;margin-bottom:14px}
+.cvp-badge{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:15px;background:linear-gradient(145deg,rgba(143,208,216,.26),rgba(143,208,216,.08));border:1px solid rgba(143,208,216,.3);color:var(--cvp-accent)}
+.cvp-badge svg{width:23px;height:23px}
+.cvp-head h3{margin:0;font-size:18px;font-weight:700;letter-spacing:-.2px;line-height:1.25}
+.cvp-head p{margin:2px 0 0;font-size:12.5px;line-height:1.4;color:#9db8c6}
+.cvp-preview{position:relative;display:grid;place-items:center;width:100%;height:min(38vh,300px);min-height:170px;overflow:hidden;border-radius:18px;background:radial-gradient(circle at 50% 35%,#16304f,#07111f);border:1px solid rgba(255,255,255,.08)}
+.cvp-preview.is-empty .cvp-poster{display:none}
+.cvp-preview.is-empty::before{content:'';width:46px;height:46px;border-radius:50%;border:3px solid rgba(143,208,216,.2);border-top-color:var(--cvp-accent);animation:cvpSpin .8s linear infinite}
+@keyframes cvpSpin{to{transform:rotate(360deg)}}
+.cvp-poster{display:block;width:100%;height:100%;object-fit:contain}
+.cvp-chips{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.cvp-chips b{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:99px;background:rgba(7,17,31,.62);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:#f2f8fa}
+.cvp-chips b[hidden]{display:none}
+.cvp-scan{position:absolute;left:0;right:0;top:0;height:46%;pointer-events:none;opacity:0;background:linear-gradient(180deg,transparent,rgba(143,208,216,.28));border-bottom:2px solid rgba(143,208,216,.9);box-shadow:0 8px 24px rgba(143,208,216,.35);transform:translateY(-100%)}
+.cvp[data-state=working] .cvp-scan{opacity:1;animation:cvpScan 2.2s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes cvpScan{0%{transform:translateY(-100%)}100%{transform:translateY(220%)}}
+.cvp-meta{display:grid;margin:14px 0 0;padding:4px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.cvp-meta div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.cvp-meta div:last-child{border-bottom:0}
+.cvp-meta dt{flex:none;font-size:12px;color:#8fa9b8;font-weight:600}
+.cvp-meta dd{margin:0;min-width:0;text-align:right;font-size:13px;font-weight:650;color:#edf5f7;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.cvp-note{margin:12px 2px 0;font-size:12px;line-height:1.6;color:#9db8c6}
+.cvp-note[hidden]{display:none}
+.cvp-note.is-error{padding:10px 12px;border-radius:12px;background:rgba(229,72,77,.12);border:1px solid rgba(229,72,77,.3);color:#ffb4b6}
+.cvp-progress{margin-top:14px}
+.cvp-progress[hidden]{display:none}
+.cvp-bar{position:relative;height:8px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.1)}
+.cvp-bar i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:inherit;background:linear-gradient(90deg,#63adb6,#a7e0e6);box-shadow:0 0 14px rgba(143,208,216,.5);transition:width .25s linear}
+.cvp[data-state=working] .cvp-bar i::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:cvpShine 1.4s linear infinite}
+@keyframes cvpShine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.cvp-prog-row{display:flex;align-items:baseline;gap:10px;margin-top:9px;font-size:12.5px}
+.cvp-prog-row span{flex:1;min-width:0;font-weight:650;color:#dcecf0}
+.cvp-prog-row em{font-style:normal;color:#8fa9b8;font-variant-numeric:tabular-nums}
+.cvp-prog-row b{min-width:42px;text-align:right;font-size:15px;font-variant-numeric:tabular-nums;color:var(--cvp-accent)}
+.camera-video-actions{display:flex;gap:10px;margin-top:16px}
+.camera-video-actions button{min-height:50px;padding:0 18px;border:1px solid rgba(255,255,255,.16);border-radius:15px;background:rgba(255,255,255,.04);color:#edf5f7;font:inherit;font-size:14px;font-weight:650;transition:transform .12s,opacity .2s}
+.camera-video-actions button:active{transform:scale(.97)}
+.camera-video-actions [data-video-action=cancel]{flex:0 0 auto}
+.camera-video-actions .is-primary{flex:1;border:0;background:linear-gradient(180deg,#a7e0e6,#7fc2cb);color:#06141f;font-weight:750;box-shadow:0 8px 20px -6px rgba(127,194,203,.55)}
+.camera-video-actions button:disabled{opacity:.5;box-shadow:none}
+@media(prefers-reduced-motion:reduce){.cvp,.camera-video-panel,.cvp-scan,.cvp-bar i::after,.cvp-preview.is-empty::before{animation:none!important}}
+@media(orientation:landscape) and (max-height:520px){.cvp{max-height:100%}.cvp-preview{height:34vh;min-height:110px}}
+/* Ô video trong Cloud: nút phát kính mờ + nhãn VIDEO, cùng ngôn ngữ với bảng in dấu */
+.cloud-video-badge{position:absolute;z-index:2;left:6px;top:6px;display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 7px 0 5px;border-radius:999px;background:rgba(8,20,36,.62);border:1px solid rgba(255,255,255,.14);color:#e9f6f8;font-size:8.5px;font-weight:800;letter-spacing:.09em;backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4);pointer-events:none}
+.cloud-video-badge svg{width:11px;height:11px;color:#8fd0d8}
+.cloud-video-play{position:absolute;z-index:2;left:50%;top:50%;width:38px;height:38px;margin:-19px 0 0 -19px;display:grid;place-items:center;border-radius:50%;background:rgba(10,24,42,.5);border:1px solid rgba(255,255,255,.28);color:#fff;box-shadow:0 6px 18px -4px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.2);backdrop-filter:blur(12px) saturate(1.5);-webkit-backdrop-filter:blur(12px) saturate(1.5);pointer-events:none;transition:transform .18s ease,background .18s ease}
+.cloud-video-play svg{width:16px;height:16px;margin-left:2px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+.cloud-photo-image:active .cloud-video-play{transform:scale(.92);background:rgba(10,24,42,.68)}
+[data-gallery-columns="4"] .cloud-video-play,[data-gallery-columns="5"] .cloud-video-play{width:28px;height:28px;margin:-14px 0 0 -14px}
+[data-gallery-columns="4"] .cloud-video-play svg,[data-gallery-columns="5"] .cloud-video-play svg{width:12px;height:12px}
+[data-gallery-columns="4"] .cloud-video-badge,[data-gallery-columns="5"] .cloud-video-badge{font-size:0;gap:0;width:20px;padding:0;justify-content:center}
+[data-gallery-columns="4"] .cloud-video-badge svg,[data-gallery-columns="5"] .cloud-video-badge svg{margin:0}
+.cloud-pending-card .cloud-photo-image{position:relative;overflow:hidden}
+.cloud-pending-card .cloud-photo-image>video{display:block;width:100%;height:100%;object-fit:cover;background:#0b1b30;pointer-events:none}
+.cloud-pending-card .cloud-video-play{width:26px;height:26px;margin:-13px 0 0 -13px}
+.cloud-pending-card .cloud-video-play svg{width:11px;height:11px}
+.cloud-pending-card .cloud-video-badge{display:none}
 .cloud-photo-image,.cloud-tile-preview{position:relative}
 .cloud-photo-viewer .viewer-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
 </style>
@@ -13767,7 +13924,36 @@ window.TascoCameraRescue = (function () {
 [data-shell-nav="account"].has-update::after{content:'';position:absolute;top:6px;right:calc(50% - 16px);width:9px;height:9px;border-radius:50%;background:#ff6b5f;box-shadow:0 0 0 2px var(--ws-surface,#fff)}
 #btnUpdateApp.has-update strong::after{content:'Mới';margin-left:8px;padding:2px 7px;border-radius:999px;background:#ff6b5f;color:#fff;font-size:10px;font-weight:700;vertical-align:middle}
 </style>
-<style>.cloud-photo-viewer[data-media="video"] :is([data-viewer-action="zoom-in"],[data-viewer-action="zoom-out"],[data-viewer-action="rotate"],.viewer-image){display:none!important}</style>
+<style>.cloud-photo-viewer[data-media="video"] :is([data-viewer-action="zoom-in"],[data-viewer-action="zoom-out"],[data-viewer-action="rotate"],.viewer-image,.viewer-gesture-hint,.viewer-fit){display:none!important}
+.cloud-photo-viewer[data-media="video"] .viewer-tools{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cloud-photo-viewer[data-media="video"] .viewer-tools:has([data-viewer-action=delete]){grid-template-columns:repeat(3,minmax(0,1fr))}
+/* Trình phát video riêng: nút phát kính mờ + thanh tua, cùng ngôn ngữ với bảng in dấu và ô video */
+.viewer-vc{position:absolute;inset:0;z-index:3;pointer-events:none;-webkit-tap-highlight-color:transparent}
+.viewer-vc>*{pointer-events:auto}
+.viewer-vc .vc-big{position:absolute;left:50%;top:50%;width:68px;height:68px;margin:-34px 0 0 -34px;display:grid;place-items:center;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(10,24,42,.52);color:#fff;box-shadow:0 14px 38px -8px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.22);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);transition:opacity .22s ease,transform .22s cubic-bezier(.2,.8,.2,1)}
+.viewer-vc .vc-big svg{width:28px;height:28px}
+.viewer-vc[data-state=paused] .vc-big svg,.viewer-vc .vc-big svg[viewBox]{display:block}
+.viewer-vc[data-state=paused] .vc-big{animation:vcPop .28s cubic-bezier(.2,.8,.2,1)}
+.viewer-vc[data-state=playing] .vc-big{opacity:0;transform:scale(.8);pointer-events:none}
+.viewer-vc.is-idle[data-state=playing] .vc-bar{opacity:0;transform:translateY(8px);pointer-events:none}
+.viewer-vc .vc-bar{position:absolute;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px)*0);display:flex;align-items:center;gap:10px;height:48px;padding:0 8px 0 6px;border-radius:24px;background:rgba(10,24,42,.62);border:1px solid rgba(255,255,255,.12);box-shadow:0 12px 30px -10px rgba(0,0,0,.65);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);transition:opacity .25s ease,transform .25s ease}
+.viewer-vc .vc-btn{flex:0 0 36px;width:36px;height:36px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:#e6f3f6}
+.viewer-vc .vc-btn:active{background:rgba(255,255,255,.12)}
+.viewer-vc .vc-btn svg{width:20px;height:20px}
+.viewer-vc .vc-time{flex:0 0 auto;min-width:32px;font-size:11px;font-weight:650;font-variant-numeric:tabular-nums;color:#c4d4e6;text-align:center;letter-spacing:.01em}
+.viewer-vc .vc-track{position:relative;flex:1;height:36px;touch-action:none;cursor:pointer;outline:0}
+.viewer-vc .vc-track::before,.viewer-vc .vc-track i{content:'';position:absolute;left:0;top:50%;height:4px;margin-top:-2px;border-radius:2px}
+.viewer-vc .vc-track::before{right:0;background:rgba(255,255,255,.18)}
+.viewer-vc .vc-buf{width:0;background:rgba(255,255,255,.22)}
+.viewer-vc .vc-fill{width:0;background:linear-gradient(90deg,#63adb6,#a7e0e6)}
+.viewer-vc .vc-knob{position:absolute;top:50%;left:0;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.5),0 0 0 3px rgba(143,208,216,.28);transition:transform .15s ease}
+.viewer-vc.is-scrubbing .vc-knob{transform:scale(1.35)}
+.viewer-vc .vc-track:focus-visible .vc-knob{box-shadow:0 0 0 4px rgba(143,208,216,.6)}
+@keyframes vcPop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+@media(orientation:landscape) and (max-height:520px){.viewer-vc .vc-big{width:54px;height:54px;margin:-27px 0 0 -27px}.viewer-vc .vc-bar{bottom:8px;height:42px}}
+@media(prefers-reduced-motion:reduce){.viewer-vc .vc-big,.viewer-vc .vc-bar{transition:none;animation:none!important}}
+.cloud-photo-viewer[data-media="video"] .viewer-stage{background:#000}
+.cloud-photo-viewer[data-media="video"] .viewer-rotation-note{display:none}</style>
 <style id="tascoAccountPremium">
 /* Trang Tài khoản: cùng ngôn ngữ thiết kế với Biểu mẫu / Cứu hộ (hero navy + thẻ trắng bo lớn nổi lên). */
 .tasco-workspace #mainApp[data-shell][data-page=account]{max-width:760px;padding:0 0 calc(118px + env(safe-area-inset-bottom,0px))!important}
