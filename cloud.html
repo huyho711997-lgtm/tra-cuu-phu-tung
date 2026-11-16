@@ -609,7 +609,14 @@ $('#selZip').addEventListener('click', () => zipDownload(S.view.filter(r => S.se
 const V = { s: 1, x: 0, y: 0, rot: 0, drag: null, token: 0, info: true };
 try { V.info = localStorage.getItem('tasco_cloud_desktop_info') !== '0'; } catch (_) {}
 const stage = $('#vStage');
-function vTransform() { const el = $('#vMedia'); if (el && el.tagName === 'IMG') el.style.transform = `translate(${V.x}px,${V.y}px) scale(${V.s}) rotate(${V.rot}deg)`; $('#zFit').textContent = Math.round(V.s * 100) + '%'; }
+function clampPan() {
+  const el = $('#vMedia'); if (!el || el.tagName !== 'IMG' || !el.naturalWidth) return;
+  const r = stage.getBoundingClientRect(), fit = Math.min(r.width / el.naturalWidth, r.height / el.naturalHeight), turned = V.rot % 180 !== 0;
+  const w = (turned ? el.naturalHeight : el.naturalWidth) * fit * V.s, h = (turned ? el.naturalWidth : el.naturalHeight) * fit * V.s;
+  const mx = Math.max(0, (w - r.width) / 2) + 80, my = Math.max(0, (h - r.height) / 2) + 80;
+  V.x = Math.max(-mx, Math.min(mx, V.x)); V.y = Math.max(-my, Math.min(my, V.y));
+}
+function vTransform() { clampPan(); const el = $('#vMedia'); if (el && el.tagName === 'IMG') el.style.transform = `translate(${V.x}px,${V.y}px) scale(${V.s}) rotate(${V.rot}deg)`; $('#zFit').textContent = Math.round(V.s * 100) + '%'; }
 function vReset() { V.s = 1; V.x = 0; V.y = 0; vTransform(); }
 function openViewer(i) {
   S.viewer = { open: true, index: i }; $('#viewer').hidden = false; document.body.style.overflow = 'hidden';
@@ -653,12 +660,11 @@ function zoomAt(f, cx, cy) {
   const ns = Math.max(.2, Math.min(10, V.s * f)), k = ns / V.s; V.x = ox - (ox - V.x) * k; V.y = oy - (oy - V.y) * k; V.s = ns; if (ns <= 1.001) { V.x = 0; V.y = 0; } vTransform();
 }
 stage.addEventListener('wheel', e => { if (isVideo(S.view[S.viewer.index] || {})) return; e.preventDefault(); zoomAt(e.deltaY < 0 ? 1.18 : 1 / 1.18, e.clientX, e.clientY); }, { passive: false });
-stage.addEventListener('pointerdown', e => { if (e.target.closest('button,video,.v-zoom') || V.s <= 1) return; V.drag = { x: e.clientX - V.x, y: e.clientY - V.y }; stage.classList.add('drag'); stage.setPointerCapture(e.pointerId); });
-stage.addEventListener('pointermove', e => { if (!V.drag) return; V.x = e.clientX - V.drag.x; V.y = e.clientY - V.drag.y; vTransform(); });
-const endDrag = () => { V.drag = null; stage.classList.remove('drag'); };
-stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
+stage.addEventListener('pointerdown', e => { if (e.button !== 0 || e.target.closest('button,video,.v-zoom') || V.s <= 1) return; V.drag = { x: e.clientX - V.x, y: e.clientY - V.y, sx: e.clientX, sy: e.clientY, moved: false }; stage.classList.add('drag'); stage.setPointerCapture(e.pointerId); });
+stage.addEventListener('pointermove', e => { if (!V.drag) return; if (!V.drag.moved && Math.hypot(e.clientX - V.drag.sx, e.clientY - V.drag.sy) > 3) V.drag.moved = true; V.x = e.clientX - V.drag.x; V.y = e.clientY - V.drag.y; vTransform(); });
+const endDrag = e => { if (!V.drag) return; V.drag = null; stage.classList.remove('drag'); try { stage.releasePointerCapture(e.pointerId); } catch (_) {} };
+stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag); stage.addEventListener('lostpointercapture', () => { V.drag = null; stage.classList.remove('drag'); });
 stage.addEventListener('dblclick', e => { if (e.target.closest('button,video,.v-zoom')) return; if (V.s > 1.01) vReset(); else zoomAt(2.5, e.clientX, e.clientY); });
-stage.addEventListener('click', e => { if (e.target === stage) closeViewer(); });
 $('#zIn').onclick = () => { const r = stage.getBoundingClientRect(); zoomAt(1.3, r.left + r.width / 2, r.top + r.height / 2); };
 $('#zOut').onclick = () => { const r = stage.getBoundingClientRect(); zoomAt(1 / 1.3, r.left + r.width / 2, r.top + r.height / 2); };
 $('#zFit').onclick = vReset;
