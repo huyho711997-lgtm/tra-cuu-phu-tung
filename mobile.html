@@ -12513,7 +12513,7 @@ window.TascoCategories = (function () {
       '<button type="button" class="tcs-close" data-cat="close" aria-label="Đóng">' + ICON.x + '</button></header>' +
       '<div class="tcs-progress" hidden><div><span></span><b></b></div><i><em></em></i></div>' +
       '<div class="tcs-composer"><span class="tcs-lead" aria-hidden="true">' + (planMode ? ICON.plus : ICON.tag) + '</span>' +
-      '<input name="name" maxlength="400" autocomplete="off" autocapitalize="sentences" enterkeyhint="' + (planMode ? 'enter' : 'done') + '" placeholder="' + (planMode ? 'Thêm mục cần chụp…' : 'Tên hạng mục…') + '" value="' + (planMode ? '' : esc(selected)) + '">' +
+      '<textarea name="name" rows="1" maxlength="400" autocomplete="off" autocapitalize="sentences" spellcheck="false" enterkeyhint="' + (planMode ? 'enter' : 'done') + '" placeholder="' + (planMode ? 'Thêm mục cần chụp…' : 'Tên hạng mục…') + '">' + (planMode ? '' : esc(selected)) + '</textarea>' +
       '<button type="button" class="tcs-clear" data-cat="clear" aria-label="Xoá chữ đã nhập" hidden>' + ICON.x + '</button>' +
       '<button type="button" class="tcs-mic" data-cat="mic" aria-label="Nói để nhập hạng mục" aria-pressed="false" hidden>' + ICON.mic + '</button>' +
       '<button type="submit" class="tcs-submit" aria-label="' + (planMode ? 'Thêm vào danh sách' : 'Dùng hạng mục này') + '" disabled>' + (planMode ? 'Thêm' : 'Dùng') + '</button></div>' +
@@ -12521,7 +12521,7 @@ window.TascoCategories = (function () {
       (planMode ? '<p class="tcs-hint">Gõ nhiều mục một lần, ngăn cách bằng dấu phẩy</p>' : '') +
       '<div class="tcs-body"></div>' +
       '<footer class="tcs-foot"><button type="button" class="tcs-none" data-cat="none">Không phân loại</button>' + (planMode ? '<button type="button" class="tcs-go" data-cat="done"></button>' : '') + '</footer></form>';
-    var input = wrap.querySelector('input'), clearBtn = wrap.querySelector('.tcs-clear'), submitBtn = wrap.querySelector('.tcs-submit'), body = wrap.querySelector('.tcs-body'), go = wrap.querySelector('.tcs-go'), prog = wrap.querySelector('.tcs-progress');
+    var input = wrap.querySelector('textarea[name=name]'), clearBtn = wrap.querySelector('.tcs-clear'), submitBtn = wrap.querySelector('.tcs-submit'), body = wrap.querySelector('.tcs-body'), go = wrap.querySelector('.tcs-go'), prog = wrap.querySelector('.tcs-progress');
     function count(n) { return opts.counts ? opts.counts(n) || 0 : 0; }
     function isDone(n) { return opts.done ? !!opts.done(n) : count(n) > 0; }
     function inPlan(n) { return plan.some(function (x) { return same(x, n); }); }
@@ -12567,7 +12567,8 @@ window.TascoCategories = (function () {
       if (!planMode && !sug.length) html = '<div class="tcs-empty is-small"><p>Chưa có hạng mục nào. Gõ tên ở trên để tạo.</p></div>';
       body.innerHTML = html; fresh = {};
     }
-    function syncInput() { var has = !!input.value.trim(); clearBtn.hidden = !input.value; submitBtn.disabled = !has; wrap.classList.toggle('is-typing', has); }
+    function fitInput() { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 132) + 'px'; }
+    function syncInput() { var has = !!input.value.trim(); clearBtn.hidden = !input.value; submitBtn.disabled = !has; wrap.classList.toggle('is-typing', has); fitInput(); }
     function savePlan() { if (opts.onPlanChange) opts.onPlanChange(plan.slice()); }
     function close() { Voice.stop(); wrap.classList.add('is-leaving'); setTimeout(function () { wrap.remove(); }, 180); }
     function finish(name) { name = clean(name); close(); if (name) remember(name); if (opts.onPick) opts.onPick(name); }
@@ -12587,6 +12588,7 @@ window.TascoCategories = (function () {
       add(items); input.value = ''; syncInput(); input.focus();
     });
     input.addEventListener('input', syncInput);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (input.value.trim()) wrap.querySelector('form').requestSubmit(); } });
     /* Nói để nhập: chữ nghe được hiện trực tiếp trong ô nhập, người dùng kiểm tra rồi bấm Thêm/Dùng. */
     var micBtn = wrap.querySelector('.tcs-mic'), voiceNote = wrap.querySelector('.tcs-voice');
     micBtn.hidden = !Voice.visible();
@@ -12719,18 +12721,19 @@ window.TascoCategories = (function () {
 .tcs-progress em{display:block;height:100%;min-width:6px;border-radius:inherit;background:linear-gradient(90deg,#f2d98d,#8fd0d8);transition:width .45s cubic-bezier(.2,.9,.25,1)}
 .tcs-progress.is-full{background:rgba(143,208,216,.1);border-color:rgba(143,208,216,.3)}
 .tcs-progress.is-full span{color:var(--tcs-accent)}
-.tcs-composer{display:flex;align-items:center;gap:4px;min-height:54px;padding:5px 5px 5px 14px;border:1px solid rgba(170,215,224,.2);border-radius:18px;background:rgba(255,255,255,.055);transition:border-color .2s,box-shadow .2s,background .2s}
+.tcs-composer{display:flex;align-items:flex-end;gap:4px;min-height:54px;padding:5px 5px 5px 14px;border:1px solid rgba(170,215,224,.2);border-radius:18px;background:rgba(255,255,255,.055);transition:border-color .2s,box-shadow .2s,background .2s}
 .tcs-composer:focus-within{border-color:rgba(143,208,216,.65);background:rgba(255,255,255,.08);box-shadow:0 0 0 4px rgba(143,208,216,.12)}
 .tcs-lead{display:grid;place-items:center;color:var(--tcs-mute);transition:color .2s}
 .tcs-composer:focus-within .tcs-lead{color:var(--tcs-accent)}
-.tcs-composer input{flex:1;min-width:0;height:42px;padding:0 4px 0 8px;border:0!important;outline:none!important;box-shadow:none!important;background:transparent!important;color:var(--tcs-ink);font:inherit;font-size:16px;-webkit-appearance:none;appearance:none}
-.tcs-composer input::placeholder{color:rgba(174,196,208,.55)}
+.tcs-composer textarea{flex:1;min-width:0;height:42px;min-height:42px;max-height:132px;padding:9px 4px 9px 8px;resize:none;overflow-y:auto;line-height:24px;display:block;border:0!important;outline:none!important;box-shadow:none!important;background:transparent!important;color:var(--tcs-ink);font:inherit;font-size:16px;-webkit-appearance:none;appearance:none}
+.tcs-composer textarea::placeholder{color:rgba(174,196,208,.55)}
 .tcs-clear{display:grid;place-items:center;width:30px;height:30px;flex:none;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#dbe9ee}
 .tcs-clear svg{width:14px;height:14px;stroke-width:2.6}
 .tcs-clear[hidden]{display:none}
 .tcs-submit{height:42px;min-width:64px;flex:none;padding:0 16px;border:0;border-radius:13px;background:linear-gradient(180deg,#a7e0e6,#7fc2cb);color:#06141f;font:inherit;font-size:14px;font-weight:750;box-shadow:0 6px 16px rgba(127,194,203,.28);transition:opacity .2s,transform .12s}
 .tcs-submit:disabled{opacity:.35;box-shadow:none}
 .tcs-submit:not(:disabled):active{transform:scale(.96)}
+.tcs-composer .tcs-lead{height:42px}.tcs-composer .tcs-clear{margin-bottom:6px}.tcs-composer .tcs-mic{margin-bottom:2px}
 .tcs-hint{margin:8px 4px 0;font-size:11.5px;color:var(--tcs-mute);transition:opacity .2s}
 .tcs-mic{display:grid;place-items:center;width:38px;height:38px;flex:none;padding:0;border:0;border-radius:50%;background:rgba(143,208,216,.16);color:var(--tcs-accent);transition:background .2s,color .2s}
 .tcs-mic svg{width:19px;height:19px;stroke-width:1.9}
