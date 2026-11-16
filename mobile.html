@@ -9006,7 +9006,7 @@ window.TascoCloud = (() => {
     if(typeof window.JSZip!=='function')throw new Error('Chưa khởi tạo được tệp ZIP. Tải lại trang rồi thử lại.');
     const zip=new window.JSZip(),folder=downloadSafeName(job.album?.name||'Ảnh đã chọn');
     let bytes=0;
-    for(const entry of job.good.values()){bytes+=entry.bytes.byteLength;zip.file(folder+'/'+entry.name,entry.bytes,{binary:true,date:entry.date,compression:'STORE'});}
+    for(const entry of job.good.values()){bytes+=entry.bytes.byteLength;zip.file(folder+'/'+(entry.folder?entry.folder+'/':'')+entry.name,entry.bytes,{binary:true,date:entry.date,compression:'STORE'});}
     if(bytes>0xffffffff-1024*1024)throw new Error('Lượt tải vượt giới hạn 4 GB của tệp ZIP. Hãy chọn ảnh để tải thành các nhóm nhỏ hơn.');
     if(job.failed.size){
       const report='ẢNH CHƯA TẢI ĐƯỢC\n'+job.failed.size+' / '+job.rows.length+' ảnh. Có thể nhấn “Thử lại ảnh lỗi” trong ứng dụng.\n\n'+[...job.failed.values()].map(({row,error})=>(row.title||row.file_name||row.id)+' — '+error).join('\n');
@@ -9016,21 +9016,68 @@ window.TascoCloud = (() => {
     const archive=await zip.generateAsync({type:'blob',compression:'STORE',streamFiles:true},meta=>{job.check();job.update('Đang tạo tệp ZIP…',85+meta.percent*.15,job.good.size+' ảnh · '+formatStorageBytes(bytes));});
     job.check();job.releaseArchive();
     const date=new Intl.DateTimeFormat('sv-SE').format(new Date());
-    job.file=new File([archive],folder+'_'+date+(job.failed.size?'_chua-du':'')+'.zip',{type:'application/zip'});
+    job.file=new File([archive],folder+'_'+date+(job.byCategory?'_theo-hang-muc':'')+(job.failed.size?'_chua-du':'')+'.zip',{type:'application/zip'});
     job.url=URL.createObjectURL(job.file);
   }
-  function startCloudDownload({albumId=null,ids=[]}={}){
+  /* Chia ảnh vào thư mục theo hạng mục (chỉ cho ZIP): trùng tên không phân biệt hoa thường thì gộp, tên bị trùng sau khi làm sạch thì thêm (2), (3)… */
+  function planDownloadFolders(job){
+    job.plan=null;job.folders=0;if(!job.byCategory||!job.rows)return;
+    const byKey=new Map(),used=new Set(),counts=new Map(),plan=new Map();
+    for(const row of job.rows){
+      const label=String(row.category||'').normalize('NFC').replace(/\s+/g,' ').trim()||'Chưa phân hạng mục',key=label.toLocaleLowerCase('vi');
+      let folder=byKey.get(key);
+      if(!folder){
+        const base=downloadSafeName(label,'Chưa phân hạng mục');let name=base,n=2;
+        while(used.has(name.toLowerCase()))name=base.slice(0,92)+' ('+(n++)+')';
+        used.add(name.toLowerCase());byKey.set(key,name);folder=name;
+      }
+      const index=counts.get(key)||0;counts.set(key,index+1);plan.set(row.id,{folder,index});
+    }
+    job.plan=plan;job.folders=byKey.size;
+  }
+  const DL_PREF='tasco_download_bycat_v1';
+  function openDownloadChooser({album=null,count=0}={}){
+    return new Promise(resolve=>{
+      if(document.querySelector('.cloud-download-choose')){resolve(null);return;}
+      const canGallery=downloadUseGallery(),focus=document.activeElement,overflow=document.body.style.overflow;
+      let byCat=true;try{byCat=localStorage.getItem(DL_PREF)!=='0';}catch(_){}
+      const overlay=document.createElement('div');overlay.className='cloud-album-overlay cloud-download-overlay cloud-download-choose';
+      const svg=d=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>';
+      const zipIcon=svg('<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M10 9h2m-2 3h2m-2 3h2"/>');
+      const photoIcon=svg('<rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4 17 5-4.5 4 3.5 3-2.5 4 3.5"/>');
+      const folderIcon=svg('<path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>');
+      const subject=album?'Album “'+esc(album.name)+'”':count+' ảnh đã chọn';
+      overlay.innerHTML=`<section class="cloud-album-dialog cloud-download-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudDlChooseTitle"><span class="cloud-album-sheet-handle" aria-hidden="true"></span><header><span class="cloud-album-dialog-icon">${icon('download')}</span><button type="button" data-choose="cancel" aria-label="Đóng">${icon('close')}</button></header><h2 id="cloudDlChooseTitle">Tải xuống toàn bộ</h2><p>${subject} · giữ nguyên chất lượng ảnh gốc. Chọn cách bạn muốn nhận ảnh.</p>
+<div class="dlc-card"><button type="button" class="dlc-main" data-choose="zip"><span class="dlc-ico">${zipIcon}</span><span class="dlc-copy"><strong>Tải file ZIP</strong><small>Gộp mọi ảnh trong một tệp, giải nén để dùng hoặc gửi đi.</small></span></button>
+<button type="button" class="dlc-switch" role="switch" aria-checked="${byCat}" data-choose="toggle"><span class="dlc-ico dlc-ico--sm">${folderIcon}</span><span class="dlc-copy"><strong>Chia thư mục theo hạng mục</strong><small>Mỗi hạng mục đã chụp là một thư mục riêng; ảnh chưa gắn hạng mục vào “Chưa phân hạng mục”.</small></span><span class="dlc-track" aria-hidden="true"><i></i></span></button></div>
+<div class="dlc-card"><button type="button" class="dlc-main" data-choose="gallery"${canGallery?'':' disabled'}><span class="dlc-ico">${photoIcon}</span><span class="dlc-copy"><strong>Lưu toàn bộ ảnh vào thư viện iPhone</strong><small>${canGallery?'Ảnh vào thẳng ứng dụng Ảnh. Ảnh không chia được thư mục.':'Chỉ dùng được trên điện thoại có bảng chia sẻ ảnh.'}</small></span></button></div></section>`;
+      const done=value=>{overlay.remove();document.body.style.overflow=overflow;document.removeEventListener('keydown',onKey,true);if(focus?.isConnected)focus.focus({preventScroll:true});resolve(value);};
+      const onKey=e=>{if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();done(null);}};
+      overlay.addEventListener('click',e=>{
+        if(e.target===overlay){done(null);return;}
+        const action=e.target.closest('[data-choose]')?.dataset.choose;if(!action)return;
+        if(action==='cancel')done(null);
+        else if(action==='toggle'){byCat=!byCat;e.target.closest('[data-choose]').setAttribute('aria-checked',String(byCat));try{localStorage.setItem(DL_PREF,byCat?'1':'0');}catch(_){}}
+        else if(action==='zip')done({mode:'zip',byCategory:byCat});
+        else if(action==='gallery'&&canGallery)done({mode:'gallery',byCategory:false});
+      });
+      document.addEventListener('keydown',onKey,true);
+      document.body.style.overflow='hidden';document.body.append(overlay);overlay.querySelector('[data-choose="zip"]').focus({preventScroll:true});
+    });
+  }
+  function startCloudDownload({albumId=null,ids=[],mode=null,byCategory=true}={}){
     if(cloudDownload){notify('Đang có một lượt tải. Hoàn tất hoặc hủy lượt đó trước.');return;}
     if(!hasAccess()||!state.user||state.busy||state.deleting||state.albumSaving||state.uploading){notify('Đợi Cloud sẵn sàng rồi tải ảnh.');return;}
     const album=albumId?state.albums.find(row=>row.id===albumId&&row.owner_id===state.user.id):null;
     if(albumId&&!album){notify('Album chưa sẵn sàng. Tải lại thư viện rồi thử lại.');return;}
     const selectedIds=[...new Set(ids)];if(!album&&!selectedIds.length){notify('Chọn ít nhất một ảnh để tải.');return;}
+    if(!mode){openDownloadChooser({album,count:album?0:selectedIds.length}).then(choice=>{if(choice)startCloudDownload({albumId,ids,mode:choice.mode,byCategory:choice.byCategory});});return;}
     const all=new Map([...state.rows,...state.pending].filter(row=>row.owner_id===state.user.id).map(row=>[row.id,{...row}]));
     const overlay=document.createElement('div'),focus=document.activeElement,overflow=document.body.style.overflow,events=new AbortController();
-    const job={owner:state.user.id,authRevision:state.authRevision,root:state.root,album:album?{...album,photo_ids:[...album.photo_ids]}:null,albumMode:state.albumMode,selectedIds,selectedRows:selectedIds.map(id=>all.get(id)).filter(Boolean),pendingRows:state.pending.map(row=>({...row})),rows:null,good:new Map(),failed:new Map(),controller:new AbortController(),closed:false,busy:false,file:null,url:null,gallery:downloadUseGallery(),batches:null,next:0,totalBytes:0};
+    const job={owner:state.user.id,authRevision:state.authRevision,root:state.root,album:album?{...album,photo_ids:[...album.photo_ids]}:null,albumMode:state.albumMode,selectedIds,selectedRows:selectedIds.map(id=>all.get(id)).filter(Boolean),pendingRows:state.pending.map(row=>({...row})),rows:null,good:new Map(),failed:new Map(),controller:new AbortController(),closed:false,busy:false,file:null,url:null,gallery:mode==='gallery'&&downloadUseGallery(),byCategory:mode!=='gallery'&&byCategory!==false,plan:null,folders:0,batches:null,next:0,totalBytes:0};
     cloudDownload=job;
     overlay.className='cloud-album-overlay cloud-download-overlay';
-    overlay.innerHTML=`<section class="cloud-album-dialog cloud-download-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudDownloadTitle" aria-describedby="cloudDownloadCopy"><span class="cloud-album-sheet-handle" aria-hidden="true"></span><header><span class="cloud-album-dialog-icon">${icon('download')}</span><button type="button" data-download="close" aria-label="Đóng hoặc hủy lượt tải">${icon('close')}</button></header><h2 id="cloudDownloadTitle">${album?'Tải toàn bộ album':'Tải ảnh đã chọn'}</h2><p id="cloudDownloadCopy">Giữ nguyên chất lượng ảnh. ${job.gallery?'Ảnh được lưu thẳng vào thư viện Ảnh trên điện thoại.':'Gộp trong một tệp ZIP để tải về máy.'}</p><div class="cloud-download-summary">${albumIcon}<div><strong>${esc(album?.name||'Ảnh đã chọn')}</strong><small data-download-total>Đang chuẩn bị danh sách…</small></div><span class="cloud-download-tag">${job.gallery?'ẢNH':'ZIP'}</span></div><div class="cloud-download-progress" aria-live="polite"><div><strong data-download-phase>Đang kết nối…</strong><span data-download-percent>0%</span></div><progress max="100" value="0" aria-label="Tiến trình chuẩn bị ảnh"></progress><small data-download-detail>Đang kiểm tra tài khoản Cloud</small></div><p class="cloud-download-error" data-download-error role="alert" hidden></p><details class="cloud-download-failures" hidden><summary data-download-failures-label></summary><ul data-download-failures-list></ul></details><p class="cloud-download-help" data-download-help hidden>${job.gallery?'Nhấn nút bên dưới, rồi chọn “Lưu hình ảnh” trong bảng chia sẻ của điện thoại.':'Giải nén tệp ZIP để xem và sử dụng ảnh.'}</p><footer><button type="button" data-download="close" data-download-close-label>Hủy tải</button><button type="button" data-download="retry" hidden>Thử lại</button><a data-download-save hidden download>${icon('download')}<span>Tải tệp ZIP</span></a><button type="button" data-download="share" hidden>Lưu vào Tệp</button></footer></section>`;
+    overlay.innerHTML=`<section class="cloud-album-dialog cloud-download-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudDownloadTitle" aria-describedby="cloudDownloadCopy"><span class="cloud-album-sheet-handle" aria-hidden="true"></span><header><span class="cloud-album-dialog-icon">${icon('download')}</span><button type="button" data-download="close" aria-label="Đóng hoặc hủy lượt tải">${icon('close')}</button></header><h2 id="cloudDownloadTitle">${album?'Tải toàn bộ album':'Tải ảnh đã chọn'}</h2><p id="cloudDownloadCopy">Giữ nguyên chất lượng ảnh. ${job.gallery?'Ảnh được lưu thẳng vào thư viện Ảnh trên điện thoại.':job.byCategory?'Gộp trong một tệp ZIP, mỗi hạng mục chụp là một thư mục riêng.':'Gộp trong một tệp ZIP để tải về máy.'}</p><div class="cloud-download-summary">${albumIcon}<div><strong>${esc(album?.name||'Ảnh đã chọn')}</strong><small data-download-total>Đang chuẩn bị danh sách…</small></div><span class="cloud-download-tag">${job.gallery?'ẢNH':'ZIP'}</span></div><div class="cloud-download-progress" aria-live="polite"><div><strong data-download-phase>Đang kết nối…</strong><span data-download-percent>0%</span></div><progress max="100" value="0" aria-label="Tiến trình chuẩn bị ảnh"></progress><small data-download-detail>Đang kiểm tra tài khoản Cloud</small></div><p class="cloud-download-error" data-download-error role="alert" hidden></p><details class="cloud-download-failures" hidden><summary data-download-failures-label></summary><ul data-download-failures-list></ul></details><p class="cloud-download-help" data-download-help hidden>${job.gallery?'Nhấn nút bên dưới, rồi chọn “Lưu hình ảnh” trong bảng chia sẻ của điện thoại.':job.byCategory?'Giải nén tệp ZIP, ảnh đã được xếp sẵn vào từng thư mục hạng mục.':'Giải nén tệp ZIP để xem và sử dụng ảnh.'}</p><footer><button type="button" data-download="close" data-download-close-label>Hủy tải</button><button type="button" data-download="retry" hidden>Thử lại</button><a data-download-save hidden download>${icon('download')}<span>Tải tệp ZIP</span></a><button type="button" data-download="share" hidden>Lưu vào Tệp</button></footer></section>`;
     const q=selector=>overlay.querySelector(selector);
     job.releaseArchive=()=>{if(job.url)URL.revokeObjectURL(job.url);job.url=null;job.file=null;job.batches=null;job.next=0;};
     job.close=()=>{
@@ -9053,7 +9100,7 @@ window.TascoCloud = (() => {
     }
     function showResults(){
       job.check();const ready=Boolean(job.gallery?job.batches?.length:job.file),failed=job.failed.size;
-      job.update(ready?(failed?'Đã chuẩn bị '+job.good.size+' / '+job.rows.length+' ảnh':'Ảnh đã sẵn sàng'):'Chưa tải được ảnh',ready?100:0,ready?formatStorageBytes(job.gallery?job.totalBytes:job.file.size)+' · '+job.good.size+' ảnh':'Kiểm tra mạng rồi thử lại.');
+      job.update(ready?(failed?'Đã chuẩn bị '+job.good.size+' / '+job.rows.length+' ảnh':'Ảnh đã sẵn sàng'):'Chưa tải được ảnh',ready?100:0,ready?formatStorageBytes(job.gallery?job.totalBytes:job.file.size)+' · '+job.good.size+' ảnh'+(job.byCategory&&job.folders?' · '+new Set([...job.good.values()].map(e=>e.folder)).size+' thư mục':''):'Kiểm tra mạng rồi thử lại.');
       q('[data-download-error]').hidden=!failed;q('[data-download-error]').textContent=failed+' ảnh chưa tải được. Có thể thử lại hoặc tải phần ảnh đã sẵn sàng.';
       q('.cloud-download-failures').hidden=!failed;q('[data-download-failures-label]').textContent='Xem '+failed+' ảnh chưa tải được';
       q('[data-download-failures-list]').innerHTML=[...job.failed.values()].map(({row,error})=>'<li><strong>'+esc(row.title||row.file_name||'Ảnh')+'</strong><span>'+esc(error)+'</span></li>').join('');
@@ -9073,14 +9120,14 @@ window.TascoCloud = (() => {
       try{
         job.check();const owner=await account();job.check();if(owner.id!==job.owner){job.close();return;}
         if(!job.rows){job.update(album?'Đang lấy toàn bộ album…':'Đang lấy ảnh đã chọn…',0,album?'Đang tìm tất cả ảnh trong album':'Đang kiểm tra ảnh đã chọn');job.rows=await collectDownloadPhotos(job);job.check();}
-        q('[data-download-total]').textContent=job.rows.length+' ảnh'+(album?' trong album':' đã chọn');
+        planDownloadFolders(job);q('[data-download-total]').textContent=job.rows.length+' ảnh'+(album?' trong album':' đã chọn')+(job.folders?' · '+job.folders+' thư mục':'');
         if(!job.rows.length){job.update('Album chưa có ảnh để tải',0,'Thêm ảnh vào album rồi thử lại.');q('[data-download-close-label]').textContent='Đóng';overlay.dataset.working='false';return;}
         const work=job.rows.map((row,index)=>({row,index})).filter(({row})=>!job.good.has(row.id));job.failed.clear();let cursor=0;
         job.update('Đang chuẩn bị ảnh gốc…',job.good.size/job.rows.length*85,job.good.size+' / '+job.rows.length+' ảnh');
         async function worker(){
           while(cursor<work.length){
             job.check();const {row,index}=work[cursor++];
-            try{const entry=await downloadPhotoBytes(row,job,index);job.good.set(row.id,entry);}
+            try{const slot=job.plan?.get(row.id),entry=await downloadPhotoBytes(row,job,slot?slot.index:index);entry.folder=slot?.folder||'';job.good.set(row.id,entry);}
             catch(error){if(job.closed||job.controller.signal.aborted)throw error;job.failed.set(row.id,{row,error:error.message||'Chưa tải được ảnh. Thử lại.'});}
             job.check();const done=job.good.size+job.failed.size;job.update('Đang chuẩn bị ảnh gốc…',done/job.rows.length*85,done+' / '+job.rows.length+' ảnh'+(job.failed.size?' · '+job.failed.size+' ảnh lỗi':''));
           }
@@ -11978,6 +12025,27 @@ window.addEventListener('load',function(){probe().then(function(){refreshRow();s
 window.TascoAppLock={lock:lock,unlock:unlock,config:function(){return {on:cfg.on,grace:cfg.grace};},refresh:refreshRow};
 })();
 </script>
+<style id="tascoDownloadChoose">
+/* Chọn cách tải toàn bộ: ZIP (chia thư mục theo hạng mục) hoặc lưu vào thư viện iPhone */
+.cloud-download-choose .dlc-card{margin-top:12px;border:1px solid var(--ws-line);border-radius:20px;background:var(--ws-soft);overflow:hidden}
+.cloud-download-choose .cloud-album-dialog button.dlc-main,.cloud-download-choose .cloud-album-dialog button.dlc-switch{display:flex;align-items:center;justify-content:flex-start;gap:13px;width:100%;min-height:0;padding:16px 15px;border:0;border-radius:0;background:transparent;color:var(--ws-text);text-align:left;font-family:inherit}
+.cloud-download-choose .cloud-album-dialog button.dlc-main:active{background:var(--ws-accent)}
+.cloud-download-choose .cloud-album-dialog button.dlc-switch{border-top:1px solid var(--ws-line);padding-top:13px;padding-bottom:13px;background:var(--ws-surface)}
+.cloud-download-choose .dlc-ico{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:14px;background:var(--ws-accent);color:var(--ws-accent-text)}
+.cloud-download-choose .dlc-ico svg{width:22px;height:22px}
+.cloud-download-choose .dlc-ico--sm{width:36px;height:36px;border-radius:12px}
+.cloud-download-choose .dlc-ico--sm svg{width:18px;height:18px}
+.cloud-download-choose .dlc-copy{flex:1;min-width:0}
+.cloud-download-choose .dlc-copy strong{display:block;font-size:14px;font-weight:650;line-height:1.4}
+.cloud-download-choose .dlc-copy small{display:block;margin-top:3px;font-size:11px;font-weight:400;line-height:1.6;color:var(--ws-muted)}
+.cloud-download-choose .dlc-switch .dlc-copy strong{font-size:12.5px}
+.cloud-download-choose .dlc-track{position:relative;flex:none;width:48px;height:30px;border-radius:99px;background:var(--ws-line);transition:background .2s}
+.cloud-download-choose .dlc-track i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px -1px rgba(24,48,86,.4);transition:transform .22s cubic-bezier(.3,.9,.3,1)}
+.cloud-download-choose .dlc-switch[aria-checked=true] .dlc-track{background:var(--ws-accent-text,#39747e)}
+.cloud-download-choose .dlc-switch[aria-checked=true] .dlc-track i{transform:translateX(18px)}
+.cloud-download-choose .dlc-main:disabled{opacity:.55}
+.cloud-download-choose .cloud-album-dialog button.dlc-main:focus-visible,.cloud-download-choose .cloud-album-dialog button.dlc-switch:focus-visible{outline:none;background:var(--ws-accent)}
+</style>
 <script id="tascoPartDetailPremium">
 window.TascoPartDetail=(()=>{
   const modal=document.getElementById('modalDetail'),content=document.getElementById('detailContent');
