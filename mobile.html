@@ -8555,14 +8555,35 @@ window.TascoCloud = (() => {
     return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:index?2:0}).format(bytes/1000**index)+' '+units[index];
   }
   const capacityKey=owner=>'tasco-cloud-capacity-v1:'+owner;
-  function storageCapacity(){
-    if(!state.user)return null;
-    try{const saved=storageBytes(localStorage.getItem(capacityKey(state.user.id)));if(saved>0)return saved;}catch(_){}
-    const configured=storageBytes(state.config?.storageLimitBytes);return configured>0?configured:null;
+  /* Hạn mức: bạn tự nhập > tự lấy từ Cloudinary (Edge Function tasco-cloudinary-usage) > cấu hình mặc định. */
+  function cloudinaryUsage(){const c=state.cloudinaryUsage;return c&&c.ownerId===state.user?.id&&c.available?c:null;}
+  function storageCapacityInfo(){
+    if(!state.user)return {bytes:null,source:''};
+    try{const saved=storageBytes(localStorage.getItem(capacityKey(state.user.id)));if(saved>0)return {bytes:saved,source:'manual'};}catch(_){}
+    const auto=cloudinaryUsage();if(auto&&auto.limitBytes>0)return {bytes:auto.limitBytes,source:auto.limitIsCredits?'credits':'cloudinary'};
+    const configured=storageBytes(state.config?.storageLimitBytes);return configured>0?{bytes:configured,source:'config'}:{bytes:null,source:''};
+  }
+  function storageCapacity(){return storageCapacityInfo().bytes;}
+  const CLD_FN='https://yxwmcpoklxpzlikxojez.supabase.co/functions/v1/tasco-cloudinary-usage',CLD_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4d21jcG9rbHhwemxpa3hvamV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njk0MDEsImV4cCI6MjA5NjE0NTQwMX0.dmyjtDDo_KTlUFyxQgoCGqEt5Bsq2krEEYg2BCyXeFc';
+  async function refreshCloudinaryUsage(owner,force){
+    const prev=state.cloudinaryUsage;
+    if(!force&&prev&&prev.ownerId===owner.id&&Date.now()-prev.at<600000)return;
+    let result={available:false};
+    try{
+      const api=await client(),session=(await api.auth.getSession()).data?.session;
+      if(session?.access_token){
+        const res=await fetch(CLD_FN,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:CLD_ANON,Authorization:'Bearer '+session.access_token},body:'{}',signal:typeof AbortSignal.timeout==='function'?AbortSignal.timeout(12000):undefined});
+        const data=await res.json().catch(()=>null);if(res.ok&&data&&data.available===true)result=data;
+      }
+    }catch(_){}
+    if(!hasAccess()||state.user?.id!==owner.id)return;
+    state.cloudinaryUsage={...result,ownerId:owner.id,at:Date.now()};
+    paintStorageUsage();
   }
   async function refreshStorageUsage(owner){
     const token=++state.usageRevision;
     const current=()=>token===state.usageRevision&&hasAccess()&&state.user?.id===owner.id;
+    refreshCloudinaryUsage(owner,false);
     state.storageUsage={ownerId:owner.id,usedBytes:null,complete:false,loading:true,error:''};paintStorageUsage();
     try{
       const api=await client();let offset=0,expected=null,used=0,complete=true;const seen=new Set();
@@ -8594,12 +8615,15 @@ window.TascoCloud = (() => {
   }
   function paintStorageUsage(){
     const card=state.root?.querySelector('[data-cloud-usage]');if(!card)return;
-    const usage=state.storageUsage?.ownerId===state.user?.id?state.storageUsage:null,limit=storageCapacity();
+    let usage=state.storageUsage?.ownerId===state.user?.id?state.storageUsage:null;const capInfo=storageCapacityInfo(),limit=capInfo.bytes,cld=cloudinaryUsage(),fromCloudinary=Boolean(cld&&cld.storageBytes!=null);
+    if(fromCloudinary)usage={ownerId:state.user.id,usedBytes:cld.storageBytes,complete:true,loading:false,error:''};   // số thật của Cloudinary đúng với hạn mức của gói
     const known=Boolean(usage&&!usage.loading&&!usage.error&&usage.usedBytes!==null),exact=known&&usage.complete;
     const used=card.querySelector('[data-cloud-used]'),remaining=card.querySelector('[data-cloud-remaining]');
     storageAmount(used,known?(exact?'':'≥ ')+formatStorageBytes(usage.usedBytes):usage?.loading?'Đang tính…':'—');used.dataset.empty=String(!known);
     storageAmount(remaining,exact&&limit!==null?formatStorageBytes(Math.max(0,limit-usage.usedBytes)):limit===null?'Chưa có hạn mức':'—');remaining.dataset.empty=String(!(exact&&limit!==null));
-    card.dataset.limit=limit===null?'none':'set';const cap=card.querySelector('[data-cloud-cap]');if(cap)cap.textContent=limit===null?'':'/ '+formatStorageBytes(limit);
+    card.dataset.limit=limit===null?'none':'set';card.dataset.source=fromCloudinary?'cloudinary':'app';
+    const cap=card.querySelector('[data-cloud-cap]');if(cap){cap.textContent=limit===null?'':(capInfo.source==='credits'?'/ ≈ ':'/ ')+formatStorageBytes(limit);cap.title=capInfo.source==='credits'?'Ước tính từ credits của gói '+(cld?.plan||'Cloudinary')+': 1 credit ≈ 1 GB (credits dùng chung với băng thông và biến đổi ảnh)':capInfo.source==='cloudinary'?'Hạn mức lấy từ Cloudinary':'';}
+    const srcLabel=card.querySelector('.cv-label');if(srcLabel)srcLabel.textContent=fromCloudinary?'Đã dùng · Cloudinary':'Đã dùng';
     const percent=exact&&limit!==null?Math.min(100,usage.usedBytes/limit*100):null,track=card.querySelector('[data-cloud-usage-track]');
     track.dataset.unknown=String(percent===null);track.dataset.full=String(percent!==null&&usage.usedBytes>=limit);track.dataset.zero=String(!percent);track.style.setProperty('--p',String(percent??0));
     if(percent===null){track.removeAttribute('role');track.removeAttribute('aria-valuenow');track.removeAttribute('aria-valuetext');}
@@ -8608,7 +8632,7 @@ window.TascoCloud = (() => {
     const settingLabel=limit===null?'Thiết lập tổng dung lượng':'Tổng dung lượng: '+formatStorageBytes(limit)+'. Nhấn để chỉnh sửa';setting.title=settingLabel;setting.setAttribute('aria-label',settingLabel);
     card.querySelector('[data-cloud-usage-percent]').textContent=percent===null?'':percent>0&&percent<1?'<1%':Math.round(percent)+'%';
     const note=card.querySelector('[data-cloud-usage-note]');note.dataset.warning=String(Boolean(usage?.error||known&&!exact||known&&limit!==null&&usage.usedBytes>limit));
-    note.textContent=usage?.error?'Chưa tải được dung lượng. Nhấn tải lại thư viện để thử lại.':known&&!exact?'Một số ảnh thiếu kích thước; chưa tính được phần còn lại.':known&&limit!==null&&usage.usedBytes>limit?'Ảnh đã lưu trong ứng dụng vượt tổng dung lượng đã thiết lập.':'Tính theo ảnh đã lưu trong ứng dụng.';
+    note.textContent=usage?.error?'Chưa tải được dung lượng. Nhấn tải lại thư viện để thử lại.':known&&!exact?'Một số ảnh thiếu kích thước; chưa tính được phần còn lại.':known&&limit!==null&&usage.usedBytes>limit?(fromCloudinary?'Dung lượng đã dùng vượt hạn mức đang áp dụng.':'Ảnh đã lưu trong ứng dụng vượt tổng dung lượng đã thiết lập.'):'Tính theo ảnh đã lưu trong ứng dụng.';
     card.setAttribute('aria-busy',String(Boolean(usage?.loading)));
   }
   function showStorageCapacity(){
