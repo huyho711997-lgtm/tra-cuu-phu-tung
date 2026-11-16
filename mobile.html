@@ -2454,7 +2454,7 @@ html[data-tasco-page=garage]{background:var(--app-navy)}
 #garageSection .rg-card{position:relative;padding:16px;border-radius:18px;background:var(--ws-surface);border:1px solid var(--ws-line);box-shadow:0 3px 12px rgba(24,48,86,.025)}
 #garageSection .rg-card[data-active="0"]{opacity:1;background:var(--ws-bg)}
 .rg-top{display:flex;align-items:flex-start;gap:11px}
-.rg-icon{flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:var(--ws-accent);color:var(--ws-accent-text)}
+.rg-icon{flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:linear-gradient(145deg,var(--ws-accent),var(--ws-soft));box-shadow:inset 0 0 0 1px var(--ws-line);color:var(--ws-accent-text)}
 .rg-title strong{font-size:15px;font-weight:700;letter-spacing:-.3px;line-height:1.45}
 .rg-title small{margin-top:4px;font-size:11px;line-height:1.6}
 .rg-status-line{display:flex;align-items:center;gap:8px;margin:12px 0 0 51px}
@@ -2465,11 +2465,28 @@ html[data-tasco-page=garage]{background:var(--app-navy)}
 .rg-meta span{display:inline-flex;align-items:center;gap:5px}
 .rg-meta .ws-icon{width:12px;height:12px}
 .rg-note{margin:9px 0 0 51px;font-size:11px}
-#garageSection .rg-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:7px;margin:15px 0 0;padding-top:14px;border-top:1px solid var(--ws-line)}
+#garageSection .rg-actions{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 44px 44px;gap:7px;margin:15px 0 0;padding-top:14px;border-top:1px solid var(--ws-line)}
 #garageSection .rg-actions a,#garageSection .rg-actions button{justify-content:center;gap:6px;min-height:42px;padding:0 8px;border-radius:11px;font-size:11px;font-weight:650;white-space:nowrap}
 .rg-actions .ws-icon{width:15px;height:15px;flex-shrink:0}
 #garageSection .rg-actions .rg-primary{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
 #garageSection .rg-actions .rg-more{padding:0;font-size:19px;letter-spacing:2px}
+#garageSection .rg-actions .rg-iconbtn{padding:0}
+#garageSection .rg-actions :is(a,button){transition:transform .12s ease,border-color .15s ease,background-color .15s ease}
+#garageSection .rg-actions :is(a,button):active{transform:scale(.96)}
+/* Gửi nhanh qua Zalo: xanh Zalo nhạt, nổi bật hơn nút phụ nhưng không át nút chính */
+#garageSection .rg-actions .rg-zalo{background:rgba(0,104,255,.08);border-color:rgba(0,104,255,.3);color:#0a5bd8}
+#garageSection .rg-actions .rg-zalo:is(:hover,:focus-visible){border-color:#0068ff}
+.dark #garageSection .rg-actions .rg-zalo{background:rgba(96,165,255,.14);border-color:rgba(96,165,255,.4);color:#8fbfff}
+/* Thẻ gara: vạch trạng thái bên trái, hàng trạng thái + toạ độ gọn một dòng */
+#garageSection .rg-card::before{content:'';position:absolute;left:0;top:20px;bottom:20px;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,var(--app-teal),#4f9aa5)}
+#garageSection .rg-card[data-active="0"]::before{background:var(--ws-line)}
+@media(hover:hover){#garageSection .rg-card{transition:box-shadow .2s ease,border-color .2s ease}#garageSection .rg-card:hover{border-color:var(--app-teal);box-shadow:0 10px 26px rgba(24,48,86,.08)}}
+.rg-meta .rg-badge{margin-right:2px}
+.rg-meta .rg-tel{display:inline-flex;align-items:center;gap:5px;color:var(--ws-accent-text);font-weight:650;text-decoration:none}
+.rg-count{margin-left:6px;padding:1px 6px;border-radius:99px;background:rgba(24,48,86,.09);font-size:9px;font-weight:700;font-variant-numeric:tabular-nums}
+.rg-count:empty{display:none}
+.dark .rg-count{background:rgba(255,255,255,.14)}
+.rg-share-preview{margin:0 0 16px;padding:14px 16px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-bg);color:var(--ws-text);font:500 12.5px/1.65 'Plus Jakarta Sans',system-ui,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
 .rg-tools{display:flex;flex-wrap:wrap;gap:7px;padding-top:12px}
 .rg-tools[hidden]{display:none}
 #garageSection .rg-tools :is(a,button){display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 11px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-bg);color:var(--ws-text);font:600 11px 'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decoration:none}
@@ -2484,7 +2501,7 @@ html[data-tasco-page=garage]{background:var(--app-navy)}
 #garageSection button:disabled{cursor:wait;opacity:.55}
 .dark #garageSection :is(.rg-add,.rg-primary),.dark .rg-form-actions .rr-btn--primary{background:var(--app-teal);border-color:var(--app-teal);color:#0b1b30}
 @media(min-width:640px){#garageSection .rg-list{grid-template-columns:repeat(2,minmax(0,1fr))}#garageSection .rg-list>.rg-empty{grid-column:1/-1}.tasco-workspace #garageSection .rc-panel{padding:26px}}
-@media(max-width:359px){#garageSection .ws-journey-heading{max-width:100%}#garageSection .ws-journey-heading h2{font-size:28px;letter-spacing:-.9px}#garageSection .ws-journey-art{opacity:.22;width:110px}.tasco-workspace #garageSection .rc-panel{padding:15px;margin-left:10px;margin-right:10px}.rg-filter-row{align-items:flex-start;flex-direction:column}.rg-panel-head h3{font-size:15px}.rg-card{padding:13px!important}}
+@media(max-width:359px){#garageSection .rg-actions .rg-primary .ws-icon{display:none}#garageSection .ws-journey-heading{max-width:100%}#garageSection .ws-journey-heading h2{font-size:28px;letter-spacing:-.9px}#garageSection .ws-journey-art{opacity:.22;width:110px}.tasco-workspace #garageSection .rc-panel{padding:15px;margin-left:10px;margin-right:10px}.rg-filter-row{align-items:flex-start;flex-direction:column}.rg-panel-head h3{font-size:15px}.rg-card{padding:13px!important}}
 
 .rg-load-error{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-bg);color:var(--ws-muted);font-size:11px;line-height:1.6}
 .rg-load-error span{flex:1}
@@ -3589,7 +3606,7 @@ window.TascoBootSplash = (() => {
     <div class="rg" id="rgBox">
       <div class="rg-panel-head"><div><h3>Danh sách gara</h3><p>Đối tác &amp; điểm đến kéo xe</p></div><button type="button" id="rgAdd" class="rr-btn rg-add"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Thêm gara</button></div>
       <div class="rg-bar"><div class="ws-search-field rc-field"><svg class="ws-icon rg-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="rgSearch" type="search" autocomplete="off" placeholder="Tìm tên, địa chỉ, số điện thoại…" aria-label="Tìm gara"></div></div>
-      <div class="rg-filter-row"><div class="rg-filters" role="group" aria-label="Lọc trạng thái gara"><button type="button" data-rg-filter="all" aria-pressed="true">Tất cả</button><button type="button" data-rg-filter="active" aria-pressed="false">Hoạt động</button><button type="button" data-rg-filter="paused" aria-pressed="false">Tạm ngưng</button></div><div class="rg-stats" id="rgStats" aria-live="polite"></div></div>
+      <div class="rg-filter-row"><div class="rg-filters" role="group" aria-label="Lọc trạng thái gara"><button type="button" data-rg-filter="all" aria-pressed="true">Tất cả<span class="rg-count"></span></button><button type="button" data-rg-filter="active" aria-pressed="false">Hoạt động<span class="rg-count"></span></button><button type="button" data-rg-filter="paused" aria-pressed="false">Tạm ngưng<span class="rg-count"></span></button></div><div class="rg-stats" id="rgStats" aria-live="polite"></div></div>
       <div class="rg-list" id="rgList" aria-label="Danh sách gara"></div>
     </div>
   </div>
@@ -11717,10 +11734,55 @@ const IC={
   phone:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>',
   arrow:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>',map:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15"/></svg>',edit:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z"/></svg>',pause:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>',delete:'<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg>'
 };
+IC.send='<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7Z"/></svg>';
+IC.copy='<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
+
+/* --- Gửi nhanh định vị gara: mở bảng chia sẻ của iPhone (có Zalo), không có thì sao chép tin nhắn --- */
+function garageMessage(g){
+  const url='https://www.google.com/maps/search/?api=1&query='+g.lat.toFixed(6)+','+g.lon.toFixed(6);
+  const lines=['📍 '+g.name];
+  if(g.address)lines.push(g.address);
+  if(g.phone)lines.push('📞 '+g.phone);
+  if(g.note)lines.push('ℹ️ '+g.note);
+  lines.push('🗺️ '+url);   /* link để cuối: Zalo hiện thẻ bản đồ ngay dưới tin nhắn */
+  return {title:g.name,text:lines.join('\n'),url};
+}
+async function copyText(text){
+  /* writeText có thể treo khi chưa được cấp quyền: chờ tối đa 1,2 giây rồi dùng cách dự phòng */
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){const done=await Promise.race([navigator.clipboard.writeText(text).then(()=>true),new Promise(r=>setTimeout(()=>r(false),1200))]);if(done)return true;}}catch(_){}
+  try{
+    const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';
+    document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,text.length);const ok=document.execCommand('copy');ta.remove();return ok;
+  }catch(_){return false;}
+}
+function rgToast(t){const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3200);}
+async function copyGarageMessage(g){rgToast(await copyText(garageMessage(g).text)?'Đã sao chép. Dán vào Zalo để gửi.':'Chưa sao chép được. Hãy thử lại.');}
+function showShareFallback(m){
+  const sh=openSheet({eyebrow:'GỬI ĐỊNH VỊ',title:m.title,html:'<p class="rg-confirm-text">Thiết bị này chưa mở được bảng chia sẻ. Sao chép tin nhắn rồi dán vào Zalo.</p><pre class="rg-share-preview" tabindex="0">'+esc(m.text)+'</pre><div class="rg-form-actions"><button type="button" class="rr-btn" data-sh-close>Đóng</button><button type="button" class="rr-btn rr-btn--primary" data-copy>Sao chép tin nhắn</button></div>'});
+  const btn=sh.el.querySelector('[data-copy]');
+  btn.addEventListener('click',async()=>{btn.textContent=(await copyText(m.text))?'Đã sao chép ✓':'Chưa sao chép được';});
+  btn.focus({preventScroll:true});
+}
+let garageSharing=false;
+async function shareGarage(g){
+  if(garageSharing)return;
+  garageSharing=true;
+  const m=garageMessage(g);
+  try{
+    const cap=window.Capacitor,SH=cap&&cap.Plugins&&cap.Plugins.Share;
+    if(SH&&typeof cap.isNativePlatform==='function'&&cap.isNativePlatform()){await SH.share({title:m.title,text:m.text,dialogTitle:'Gửi định vị gara'});return;}
+    if(navigator.share){await navigator.share({title:m.title,text:m.text});return;}
+  }catch(error){
+    if(error&&(error.name==='AbortError'||/cancel/i.test(String(error.message||''))))return;   /* người dùng đóng bảng chia sẻ */
+  }finally{garageSharing=false;}
+  showShareFallback(m);
+}
 function renderGarages(){
   const all=store.all(),nq=norm(gui.search.value),info=store.info();
   const f=all.filter(g=>(garageFilter==='all'||(garageFilter==='active'?g.active:!g.active))&&(!nq||norm([g.name,g.address,g.phone,g.note].join(' ')).includes(nq))).sort((a,b)=>(b.active-a.active)||a.name.localeCompare(b.name,'vi'));
-  gui.stats.textContent=f.length+' gara';
+  gui.stats.textContent=nq?f.length+' kết quả':'';
+  const counts={all:all.length,active:all.filter(g=>g.active).length,paused:all.filter(g=>!g.active).length};
+  gbox.querySelectorAll('[data-rg-filter]').forEach(button=>{const c=button.querySelector('.rg-count');if(c)c.textContent=all.length?String(counts[button.dataset.rgFilter]):'';});
   gbox.querySelectorAll('[data-rg-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.rgFilter===garageFilter)));
   const disabled=!info.connected||info.busy||!info.lastSync;
   gui.add.disabled=disabled;
@@ -11737,12 +11799,13 @@ function renderGarages(){
     const tel=g.phone.replace(/[^\d+]/g,''),off=disabled?' disabled':'';
     const mapURL='https://www.google.com/maps/search/?api=1&query='+g.lat+','+g.lon;
     return '<article class="rg-card" data-id="'+esc(g.id)+'" data-active="'+(g.active?1:0)+'"><div class="rg-top"><span class="rg-icon">'+ICON_PIN+'</span><div class="rg-title"><strong>'+esc(g.name)+'</strong><small>'+esc(g.address||'Chưa cập nhật địa chỉ')+'</small></div></div>'
-      +'<div class="rg-status-line"><span class="rg-badge" data-on="'+(g.active?1:0)+'">'+(g.active?'Đang hoạt động':'Tạm ngưng hợp tác')+'</span></div>'
-      +'<div class="rg-meta">'+(g.phone?'<span>'+IC.phone+esc(g.phone)+'</span>':'')+'<span>'+ICON_PIN+g.lat.toFixed(5)+', '+g.lon.toFixed(5)+'</span></div>'
+      +'<div class="rg-meta"><span class="rg-badge" data-on="'+(g.active?1:0)+'">'+(g.active?'Đang hoạt động':'Tạm ngưng hợp tác')+'</span>'+(g.phone?(tel?'<a class="rg-tel" href="tel:'+esc(tel)+'">'+IC.phone+esc(g.phone)+'</a>':'<span>'+IC.phone+esc(g.phone)+'</span>'):'')+'<span class="rg-coord">'+ICON_PIN+g.lat.toFixed(5)+', '+g.lon.toFixed(5)+'</span></div>'
       +(g.note?'<p class="rg-note">'+esc(g.note)+'</p>':'')
       +'<div class="rg-actions">'+(g.active?'<button type="button" class="rg-primary" data-act="use">'+IC.arrow+'Tính lộ trình</button>':'<button type="button" class="rg-primary" data-act="toggle"'+off+'>Kích hoạt</button>')
-      +'<a href="'+mapURL+'" target="_blank" rel="noopener noreferrer">'+IC.map+'Bản đồ</a><button type="button" class="rg-more" data-act="more" aria-label="Thao tác với '+esc(g.name)+'" aria-expanded="false" aria-controls="rgtools-'+esc(g.id)+'">···</button></div>'
+      +'<button type="button" class="rg-zalo" data-act="zalo" aria-label="Gửi định vị '+esc(g.name)+' qua Zalo">'+IC.send+'Zalo</button>'
+      +'<a class="rg-iconbtn" href="'+mapURL+'" target="_blank" rel="noopener noreferrer" aria-label="Mở bản đồ" title="Bản đồ">'+IC.map+'</a><button type="button" class="rg-more" data-act="more" aria-label="Thao tác với '+esc(g.name)+'" aria-expanded="false" aria-controls="rgtools-'+esc(g.id)+'">···</button></div>'
       +'<div class="rg-tools" id="rgtools-'+esc(g.id)+'" hidden>'+(tel?'<a href="tel:'+esc(tel)+'">'+IC.phone+'Gọi gara</a>':'')
+      +'<button type="button" data-act="copy">'+IC.copy+'Sao chép tin nhắn</button>'
       +'<button type="button" data-act="edit"'+off+'>'+IC.edit+'Chỉnh sửa</button><button type="button" data-act="toggle"'+off+'>'+IC.pause+(g.active?'Tạm ngưng':'Kích hoạt')+'</button><button type="button" class="rg-danger" data-act="del"'+off+'>'+IC.delete+'Xóa gara</button></div></article>';
   }).join('');
 }
@@ -11756,6 +11819,8 @@ gui.list.addEventListener('click',async event=>{
   const g=store.find(card.dataset.id);if(!g)return;
   if(b.dataset.act==='more'){const tools=card.querySelector('.rg-tools');tools.hidden=!tools.hidden;b.setAttribute('aria-expanded',String(!tools.hidden));return;}
   if(b.dataset.act==='edit')return openEditor(g);
+  if(b.dataset.act==='zalo')return shareGarage(g);
+  if(b.dataset.act==='copy')return copyGarageMessage(g);
   if(b.dataset.act==='use'){goto('rescue');setMode('locate');selectGarageById(g.id);return;}
   try{
     if(b.dataset.act==='toggle')await store.upsert({...g,active:!g.active,updatedAt:Date.now()});
