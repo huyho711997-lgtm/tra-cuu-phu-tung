@@ -985,7 +985,7 @@ body.tasco-workspace,html.dark body.tasco-workspace{background:var(--ws-bg)!impo
 .ws-icon{display:block;width:22px;height:22px;flex-shrink:0;stroke-width:1.7}.ws-mark{display:grid;place-items:center;width:35px;height:35px;border-radius:11px;background:#183056;color:#daecf0;box-shadow:inset 0 0 0 1px #fff1}.ws-mark svg{width:20px;height:20px}
 .ws-greeting-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}.ws-qr svg{width:20px;height:20px}.ws-qr:active{transform:scale(.9) rotate(0)}
 /* Xem lại ảnh vừa chụp trong camera */
-.camera-photo-viewer{position:fixed;inset:0;z-index:100075;display:flex;flex-direction:column;background:rgba(7,17,36,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#fff;animation:cpvIn .16s ease-out}
+.camera-photo-viewer{position:fixed;inset:0;z-index:100075;visibility:visible;display:flex;flex-direction:column;background:rgba(7,17,36,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#fff;animation:cpvIn .16s ease-out}
 @keyframes cpvIn{from{opacity:0}to{opacity:1}}
 .camera-photo-viewer .cpv-top{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 8px;flex-shrink:0}
 .camera-photo-viewer .cpv-count{font-size:13px;font-weight:700;letter-spacing:.02em;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}
@@ -999,6 +999,7 @@ body.tasco-workspace,html.dark body.tasco-workspace{background:var(--ws-bg)!impo
 .camera-photo-viewer .cpv-prev{left:10px}.camera-photo-viewer .cpv-next{right:10px}
 .camera-photo-viewer .cpv-nav[hidden]{display:none}
 @media(prefers-reduced-motion:reduce){.camera-photo-viewer{animation:none}}
+html.tasco-native-cam .camera-photo-viewer{background:#071124}
 #mainHeader.ws-topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:calc(22px + env(safe-area-inset-top,0px)) 0 24px}
 .ws-brand{display:flex;align-items:center;gap:10px;border:0;padding:0;background:transparent;color:var(--ws-text);text-align:left}.ws-brand strong{display:block;font-size:15px;letter-spacing:.13em;line-height:1.2;font-weight:800}.ws-brand small{display:block;margin-top:4px;color:var(--ws-muted);font-size:8px;letter-spacing:.14em;font-weight:650;text-transform:uppercase}
 .ws-top-actions{display:flex;align-items:center;gap:12px}.ws-date{font-size:11px;color:var(--ws-muted);font-weight:500}.ws-avatar{display:grid;place-items:center;width:40px;height:40px;flex-shrink:0;border:1px solid var(--ws-line);border-radius:50%;background:var(--ws-surface);color:var(--ws-text);font-size:12px;font-weight:700;box-shadow:var(--ws-shadow)}
