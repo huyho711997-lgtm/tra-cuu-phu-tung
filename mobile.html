@@ -2442,6 +2442,8 @@ html[data-tasco-page=garage]{background:var(--app-navy)}
 #garageSection .rg-add{min-height:42px;flex-shrink:0;padding:0 13px;border-radius:12px;background:var(--app-navy);border-color:var(--app-navy);color:#fff;font-size:11px}
 .rg-add .ws-icon{width:15px;height:15px}
 #garageSection .rg-bar{display:block}
+#garageSection .rg-bar .ws-search-mic{margin-right:-5px}
+#garageSection .ws-search-voice{margin:8px 4px 0}
 #garageSection .rg-bar .rc-field{min-height:48px;border-radius:13px;background:var(--ws-bg);gap:9px;padding:0 13px}
 #garageSection .rg-bar input{min-height:46px;min-width:0!important;font-size:16px!important;background:transparent!important;padding:0!important;border-radius:0!important;box-shadow:none!important}
 .rg-search-icon{flex-shrink:0;width:17px;height:17px}
@@ -2449,7 +2451,8 @@ html[data-tasco-page=garage]{background:var(--app-navy)}
 .rg-filters{display:flex;flex-wrap:wrap;gap:5px}
 .rg-filters button{min-height:34px;padding:0 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--ws-muted);font:600 10px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
 .rg-filters button[aria-pressed=true]{background:var(--ws-accent);color:var(--ws-text);border-color:var(--ws-line)}
-.rg-stats{margin:0;font-size:10px;font-weight:500;white-space:nowrap}
+/* Số kết quả chỉ đọc cho trình đọc màn hình: tab lọc đã có số lượng, không để dòng lọc bị tràn xuống hàng */
+.rg-stats{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .rg-list{gap:12px}
 #garageSection .rg-card{position:relative;padding:16px;border-radius:18px;background:var(--ws-surface);border:1px solid var(--ws-line);box-shadow:0 3px 12px rgba(24,48,86,.025)}
 #garageSection .rg-card[data-active="0"]{opacity:1;background:var(--ws-bg)}
@@ -3605,7 +3608,8 @@ window.TascoBootSplash = (() => {
   <div class="ws-search-panel ws-search-panel--premium rc-panel">
     <div class="rg" id="rgBox">
       <div class="rg-panel-head"><div><h3>Danh sách gara</h3><p>Đối tác &amp; điểm đến kéo xe</p></div><button type="button" id="rgAdd" class="rr-btn rg-add"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Thêm gara</button></div>
-      <div class="rg-bar"><div class="ws-search-field rc-field"><svg class="ws-icon rg-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="rgSearch" type="search" autocomplete="off" placeholder="Tìm tên, địa chỉ, số điện thoại…" aria-label="Tìm gara"></div></div>
+      <div class="rg-bar"><div class="ws-search-field rc-field"><svg class="ws-icon rg-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="rgSearch" type="search" autocomplete="off" placeholder="Tìm tên, địa chỉ, số điện thoại…" aria-label="Tìm gara"><button type="button" class="ws-search-mic" id="rgMic" aria-label="Nói để tìm gara" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></div></div>
+      <p class="ws-search-voice" id="rgVoiceNote" role="status" aria-live="polite" hidden></p>
       <div class="rg-filter-row"><div class="rg-filters" role="group" aria-label="Lọc trạng thái gara"><button type="button" data-rg-filter="all" aria-pressed="true">Tất cả<span class="rg-count"></span></button><button type="button" data-rg-filter="active" aria-pressed="false">Hoạt động<span class="rg-count"></span></button><button type="button" data-rg-filter="paused" aria-pressed="false">Tạm ngưng<span class="rg-count"></span></button></div><div class="rg-stats" id="rgStats" aria-live="polite"></div></div>
       <div class="rg-list" id="rgList" aria-label="Danh sách gara"></div>
     </div>
@@ -13262,6 +13266,35 @@ window.TascoCategories = (function () {
       end: function (t) {
         mic.style.removeProperty('--lvl'); mic.classList.remove('is-live'); mic.setAttribute('aria-pressed', 'false'); mic.setAttribute('aria-label', 'Nói để nhập tên phụ tùng');
         if (t) { setValue(t); say('Kiểm tra lại rồi bấm Tra cứu.'); } else say('');
+      },
+      error: function (message) { say(message, true); }
+    });
+  });
+})();
+/* Quản lý gara: nói để tìm gara (dùng chung bộ nhận dạng giọng nói với hạng mục). Chỉ điền chữ và lọc danh sách. */
+(function () {
+  var input = document.getElementById('rgSearch'), mic = document.getElementById('rgMic'), note = document.getElementById('rgVoiceNote');
+  var V = window.TascoCategories && window.TascoCategories.voice;
+  if (!input || !mic || !note || !V) return;
+  mic.hidden = !V.visible();
+  var noteTimer = 0;
+  function say(text, error) {
+    clearTimeout(noteTimer); note.hidden = !text; note.textContent = text || ''; note.classList.toggle('is-error', !!error);
+    if (text) noteTimer = setTimeout(function () { note.hidden = true; note.classList.remove('is-error'); }, error ? 4000 : 5000);
+  }
+  function known() { return Array.prototype.map.call(document.querySelectorAll('#rgList .rg-title strong'), function (e) { return e.textContent; }); }
+  function setValue(text) { input.value = text; input.dispatchEvent(new Event('input', { bubbles: true })); }
+  mic.addEventListener('click', function () {
+    try { input.blur(); } catch (_) {}
+    V.start({
+      multi: false, known: known(),
+      level: function (v) { mic.style.setProperty('--lvl', v.toFixed(2)); },
+      begin: function () { clearTimeout(noteTimer); mic.classList.add('is-live'); mic.setAttribute('aria-pressed', 'true'); mic.setAttribute('aria-label', 'Dừng nghe'); note.hidden = false; note.classList.remove('is-error'); note.textContent = 'Đang nghe… đọc tên gara, địa chỉ hoặc số điện thoại'; },
+      live: function (t) { setValue(t); note.hidden = false; note.textContent = 'Đang nghe: ' + t; },
+      stopping: function () { note.hidden = false; note.textContent = 'Đang xử lý…'; },
+      end: function (t) {
+        mic.style.removeProperty('--lvl'); mic.classList.remove('is-live'); mic.setAttribute('aria-pressed', 'false'); mic.setAttribute('aria-label', 'Nói để tìm gara');
+        if (t) { setValue(t); say('Đang lọc theo “' + t + '”. Xóa ô tìm kiếm để xem tất cả.'); } else say('');
       },
       error: function (message) { say(message, true); }
     });
