@@ -3398,7 +3398,7 @@ window.TascoBootSplash = (() => {
 <section id="rescueSection" data-shell-page="rescue" class="ws-journey rc" hidden style="display:none" aria-labelledby="rescuePageTitle">
   <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · CỨU HỘ PHƯƠNG TIỆN</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">GĐBT-HD-CHCG-01 · BAREM NỘI BỘ</span><h2 id="rescuePageTitle" tabindex="-1">Chi phí cứu hộ.<br>Tính nhanh.</h2><p>Tra cứu đơn giá và tính trần chi phí kéo, cẩu xe theo hướng dẫn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="94" cy="70" r="59" stroke="currentColor" stroke-opacity=".18"/><circle cx="94" cy="70" r="47" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="3 7"/><path d="M40 92h72l8-24h26l10 24v12H40z" fill="#84bfc7" fill-opacity=".09" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M52 92 74 40l36-8M110 32v22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="62" cy="108" r="11" fill="#183056" stroke="#daecf0" stroke-width="2"/><circle cx="132" cy="108" r="11" fill="#183056" stroke="#daecf0" stroke-width="2"/><path d="M30 124h120" stroke="currentColor" stroke-opacity=".5" stroke-linecap="round"/></svg></header>
   <div class="ws-search-panel ws-search-panel--premium rc-panel">
-    <div class="ws-kind-tabs rc-tabs u056 u056-sw" role="group" aria-label="Chế độ"><span class="u056-knob" aria-hidden="true"></span><button type="button" data-rc-tab="calc" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h1m6 0h1M8 15h1m6 0h1M8 18h1m6 0h1"/></svg>Tính chi phí</button><button type="button" data-rc-tab="ref" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M15 9v11M3 14h18"/></svg>Bảng tra cứu</button></div>
+    <div class="ws-kind-tabs rc-tabs u056 u056-sw" role="group" aria-label="Chế độ"><span class="u056-knob" aria-hidden="true"></span><button type="button" data-rc-tab="calc" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h1m6 0h1M8 15h1m6 0h1M8 18h1m6 0h1"/></svg>Tính chi phí</button><button type="button" data-rc-tab="ref" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M15 9v11M3 14h18"/></svg>Bảng tra cứu</button><button type="button" data-rc-tab="hist" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg>Lịch sử</button></div>
 
     <div data-rc-pane="calc">
       <span class="rc-label">Hạng mục cứu hộ</span>
@@ -3482,6 +3482,7 @@ window.TascoBootSplash = (() => {
       <div class="rc-refnav" id="rcRefNav"></div>
       <div id="rcRefBody"></div>
     </div>
+    <div data-rc-pane="hist" hidden><div id="rcHistBody" class="rh"></div></div>
   </div>
   <p class="ws-journey-note"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>Đơn giá là trần nội bộ chưa VAT · thanh toán theo hóa đơn hợp lệ</span></p>
 </section>
@@ -4476,6 +4477,7 @@ window.TascoForms=(()=>{
   /* Chia sẻ file thật qua iOS (như app Tệp): ghi file vào bộ nhớ tạm của app rồi mở bảng chia sẻ.
      navigator.share của WKWebView đưa file qua WebKit nên MySign nhận xong tự đóng; plugin native thì đưa file:// thật.
      Trả về true nếu đã xử lý (kể cả người dùng bấm huỷ), false nếu app chưa có plugin → dùng cách web. */
+  window.TascoNativeShare=nativeShareFile;
   async function nativeShareFile(file){
     const cap=window.Capacitor;
     if(!(cap&&typeof cap.isNativePlatform==='function'&&cap.isNativePlatform()))return false;
@@ -10628,7 +10630,7 @@ function setSvc(v){svc=v;root.querySelectorAll('[data-rc-svc]').forEach(function
  $('[data-rc-block=tow]').hidden=v==='crane';$('[data-rc-block=crane]').hidden=v==='tow';$('#rcResult').hidden=true;}
 root.querySelectorAll('[data-rc-svc]').forEach(function(b){b.addEventListener('click',function(){setSvc(b.dataset.rcSvc);});});
 function setTab(t){root.querySelectorAll('[data-rc-tab]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.rcTab===t));});
- root.querySelectorAll('[data-rc-pane]').forEach(function(p){p.hidden=p.dataset.rcPane!==t;});if(t==='ref'&&!refBuilt)refShow('tow');}
+ root.querySelectorAll('[data-rc-pane]').forEach(function(p){p.hidden=p.dataset.rcPane!==t;});if(t==='ref'&&!refBuilt)refShow('tow');if(t==='hist'&&window.TascoRescueHistory)window.TascoRescueHistory.show();}
 root.querySelectorAll('[data-rc-tab]').forEach(function(b){b.addEventListener('click',function(){setTab(b.dataset.rcTab);});});
 function read(){var s={};root.querySelectorAll('[data-rc-sur]').forEach(function(c){s[c.dataset.rcSur]=c.checked;});
  return {svc:svc,towGroup:+$('#rcTowGroup').value,km:$('#rcKm').value,cranePos:+$('#rcCranePos').value,craneClass:+$('#rcCraneClass').value,region:+$('#rcRegion').value,sur:s,special:$('#rcSpecial').checked,over:$('#rcOver').checked};}
@@ -10636,7 +10638,7 @@ function openResult(h){
  lastFocus=document.activeElement;closeSheet();sheet=document.createElement('div');sheet.className='rc-modal';
  sheet.innerHTML='<div class="ws-filter-backdrop" data-rc-close aria-hidden="true"></div><div class="rc-sheet rc-sheet--result" role="dialog" aria-modal="true" aria-label="Kết quả tính chi phí"><div class="ws-sheet-handle" aria-hidden="true"></div><header class="ws-sheet-heading"><div><span class="ws-panel-eyebrow">CỨU HỘ PHƯƠNG TIỆN</span><h3>Kết quả tính chi phí</h3></div><button type="button" class="ws-sheet-close" data-rc-close aria-label="Đóng"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header><div class="rc-sheet-list rc-sheet-result">'+h+'<button type="button" class="rc-result-close" data-rc-close>Đóng</button></div></div>';
  sheet_ov=document.body.style.overflow;document.body.style.overflow='hidden';document.body.appendChild(sheet);
- sheet.addEventListener('click',function(e){if(e.target.closest('[data-rc-close]'))closeSheet();});
+ sheet.addEventListener('click',function(e){if(e.target.closest('[data-rc-close]'))closeSheet();else if(window.TascoRescueHistory)window.TascoRescueHistory.onSheetClick(e,sheet);});
  sheet.addEventListener('keydown',function(e){if(e.key==='Escape'){e.stopPropagation();closeSheet();}});
  var cb=sheet.querySelector('.ws-sheet-close');if(cb)cb.focus({preventScroll:true});}
 function render(){
@@ -10647,6 +10649,8 @@ function render(){
  if(!r.quote||r.rescue)h+='<li class="rc-sub"><span>Giá cứu hộ sau hệ số vùng</span><b>'+vnd(r.rescue)+'</b></li>';
  r.sur.forEach(function(x){h+='<li><span>'+esc(x.l)+'</span><b>+'+vnd(x.v)+'</b></li>';});
  h+='</ul>';
+ window.TascoRescue.last={input:i,result:r};
+ if(window.TascoRescueHistory)h+=window.TascoRescueHistory.actionsHtml();
  h+='<div class="rc-box-note"><h4>CẤP PHÊ DUYỆT</h4><span class="rc-chip">'+esc(r.approver)+'</span><div style="margin-top:8px;color:var(--ws-muted);font-size:10.5px">Căn cứ tổng chi phí một sự kiện cứu hộ, không tách nhỏ để giảm cấp duyệt.</div></div>';
  var w=[];
  if(r.capped)w.push('Tổng phụ phí điều kiện đã chạm trần 50% giá cứu hộ ('+vnd(r.cap)+'). Vượt mức này phải được Giám đốc Ban GĐBT phê duyệt.');
@@ -10663,6 +10667,13 @@ $('#rcCalcBtn').addEventListener('click',render);
 $('#rcKm').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing){e.preventDefault();render();}});
 $('#rcResetBtn').addEventListener('click',function(){['rcTowGroup','rcCraneClass','rcCranePos','rcRegion'].forEach(function(id){$('#'+id).value='0';});$('#rcKm').value='10';Object.keys(SHEETS).forEach(syncPick);
  root.querySelectorAll('input[type=checkbox]').forEach(function(c){c.checked=false;});setSvc('tow');});
+window.TascoRescue.apply=function(i){
+ ['rcTowGroup','rcCraneClass','rcCranePos','rcRegion'].forEach(function(id){var k={rcTowGroup:'towGroup',rcCraneClass:'craneClass',rcCranePos:'cranePos',rcRegion:'region'}[id];$('#'+id).value=String(i[k]||0);});
+ $('#rcKm').value=i.km==null||i.km===''?'10':String(i.km);
+ root.querySelectorAll('[data-rc-sur]').forEach(function(c){c.checked=!!(i.sur&&i.sur[c.dataset.rcSur]);});
+ $('#rcSpecial').checked=!!i.special;$('#rcOver').checked=!!i.over;
+ Object.keys(SHEETS).forEach(syncPick);setSvc(i.svc||'tow');setTab('calc');};
+window.TascoRescue.tab=setTab;
 var refBuilt=false,refTabs=[['tow','Kéo xe'],['crane','Cẩu xe'],['sur','Phụ phí & vùng'],['app','Phê duyệt'],['ev','Hồ sơ & kiểm soát']];
 function tbl(head,rows){return '<div class="rc-table-wrap"><table class="rc-table"><thead><tr>'+head.map(function(x){return '<th>'+esc(x)+'</th>';}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr>'+r.map(function(c){return '<td'+(c==='Báo giá'?' class="rc-q"':'')+'>'+esc(c)+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table></div>';}
 function list(a){return '<ul class="rc-ref-list">'+a.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';}
@@ -11320,6 +11331,309 @@ renderInfo('scene');renderInfo('garage');syncGaragePick();renderGarages();setMod
 })();
 </script>
 
+<style id="tascoRescueHistoryStyles">
+/* Lịch sử tính phí & phiếu PDF của trang Cứu hộ */
+.rc-save{padding-bottom:14px}
+.rc-save-fields{display:grid;gap:10px;margin:6px 0 12px}
+.rc-save-fields label{display:block;font-size:10px;font-weight:600;color:var(--ws-muted)}
+.rc-save-fields input{display:block;width:100%;box-sizing:border-box;min-height:44px;margin-top:5px;padding:0 13px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-soft);color:var(--ws-text);font:inherit;font-size:16px;font-weight:500;outline:none}
+.rc-save-fields input:focus{border-color:var(--ws-accent-text);box-shadow:0 0 0 3px rgba(57,116,126,.16)}
+.rc-save-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rc-save-actions button{min-height:46px;padding:0 10px;border-radius:14px;font-size:12px;font-weight:650;gap:7px}
+.rc-save-actions button .ws-icon{width:16px;height:16px}
+.rc-save-actions .ws-secondary{border:1px solid var(--ws-line);background:var(--ws-soft);color:var(--ws-text)}
+.rc-save-actions button:disabled{opacity:.6}
+.rc-save-msg{min-height:16px;margin:9px 2px 0;font-size:10.5px;font-weight:600;color:var(--ws-accent-text)}
+.rc-save-msg[data-tone=err]{color:#b1514d}
+html.dark .rc-save-msg[data-tone=err]{color:#f0a09b}
+.rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.rh-head h3{margin:0;font-size:17px;font-weight:650;letter-spacing:-.4px;color:var(--ws-text)}
+.rh-head p{margin:4px 0 0;font-size:11px;color:var(--ws-muted)}
+.rh-clear{min-height:36px!important;padding:0 13px!important;font-size:11px!important;border-radius:11px!important}
+.rh-clear[data-armed]{border-color:#e3b5b2!important;background:#fbeeed!important;color:#a3433f!important}
+.rh-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.rh-card{padding:15px 16px;border:1px solid var(--ws-line);border-radius:20px;background:var(--ws-surface)}
+.rh-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rh-plate{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--ws-text)}
+.rh-plate[data-empty]{font-weight:600;color:var(--ws-muted)}
+.rh-top time{flex:none;font-size:10.5px;color:var(--ws-muted)}
+.rh-amount{margin:9px 0 8px;font-size:23px;font-weight:700;letter-spacing:-.8px;color:var(--ws-text)}
+.rh-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:11px;color:var(--ws-muted)}
+.rh-chip{padding:4px 9px;border-radius:99px;background:var(--ws-accent);color:var(--ws-accent-text);font-size:10px;font-weight:650}
+.rh-note{margin:9px 0 0;font-size:11.5px;line-height:1.6;color:var(--ws-text);overflow-wrap:anywhere}
+.rh-appr{margin:9px 0 0;font-size:10.5px;color:var(--ws-muted)}
+.rh-appr b{color:var(--ws-accent-text);font-weight:650}
+.rh-actions{display:grid;grid-template-columns:1fr 1fr 46px;gap:8px;margin-top:13px}
+.rh-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:0 10px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-soft);color:var(--ws-text);font:inherit;font-size:11.5px;font-weight:650}
+.rh-actions button .ws-icon{width:15px;height:15px}
+.rh-actions button:active{transform:scale(.97)}
+.rh-actions button:disabled{opacity:.6}
+.rh-actions [data-rh=del]{padding:0;color:#a3433f}
+.rh-actions [data-rh=del][data-armed]{border-color:#e3b5b2;background:#fbeeed;font-size:10px}
+html.dark .rh-actions [data-rh=del]{color:#f0a09b}
+html.dark .rh-actions [data-rh=del][data-armed],html.dark .rh-clear[data-armed]{border-color:rgba(240,160,155,.35)!important;background:rgba(240,160,155,.12)!important;color:#f0a09b!important}
+.rh-empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:34px 18px;border:1px dashed var(--ws-line);border-radius:20px;text-align:center;color:var(--ws-muted)}
+.rh-empty .ws-icon{width:30px;height:30px;color:var(--ws-accent-text)}
+.rh-empty strong{font-size:14px;color:var(--ws-text)}
+.rh-empty p{margin:0;max-width:260px;font-size:11.5px;line-height:1.7}
+</style>
+<script id="tascoRescueHistory">
+/* Cứu hộ · Lịch sử tính phí (lưu trên máy) + Phiếu tính chi phí PDF */
+window.TascoRescueHistory=(function(){
+'use strict';
+var R=window.TascoRescue;if(!R||!R.calc)return {show:function(){},actionsHtml:function(){return '';},onSheetClick:function(){}};
+var MAX=100;
+function $(s,r){return (r||document).querySelector(s);}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function vnd(n){return Math.round(n).toLocaleString('vi-VN')+'đ';}
+function p2(n){return String(n).padStart(2,'0');}
+function fmtDate(t){var d=new Date(t);return p2(d.getDate())+'/'+p2(d.getMonth()+1)+'/'+d.getFullYear()+' '+p2(d.getHours())+':'+p2(d.getMinutes());}
+function key(){var e='';try{e=(window.mobileCloudEmail&&window.mobileCloudEmail())||'';}catch(_){}return 'tasco_rescue_history_v1:'+(e||'guest').toLowerCase();}
+function load(){try{var v=JSON.parse(localStorage.getItem(key())||'[]');return Array.isArray(v)?v:[];}catch(_){return [];}}
+function store(list){try{localStorage.setItem(key(),JSON.stringify(list.slice(0,MAX)));return true;}catch(_){return false;}}
+var SVC={tow:'Kéo xe',crane:'Cẩu xe',both:'Kéo & cẩu xe'};
+function routeSnap(svc){
+  try{var rt=window.TascoRescueRoute&&window.TascoRescueRoute.getState&&window.TascoRescueRoute.getState();
+    if(!rt||rt.mode!=='locate'||svc==='crane'||!rt.scene||!rt.garage||rt.km==null)return null;
+    return {scene:rt.scene.label||'Vị trí đã ghim',garage:rt.garage.label||'Vị trí đã ghim',km:rt.km,estimated:!!rt.estimated};}catch(_){return null;}
+}
+function makeEntry(last,plate,note,old){
+  var r=last.result;
+  return {id:old?old.id:'rh'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),at:old?old.at:Date.now(),
+    plate:String(plate||'').trim().slice(0,30),note:String(note||'').trim().slice(0,300),input:last.input,
+    total:r.total,quote:!!r.quote,approver:r.approver,route:old&&old.route!==undefined?old.route:routeSnap(last.input.svc)};
+}
+
+/* ---------- Bảng kết quả: ô nhập + nút Lưu / Xuất PDF ---------- */
+var ICON_SAVE='<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>';
+var ICON_PDF='<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6m0 0-2.5-2.5M12 17l2.5-2.5"/></svg>';
+function actionsHtml(){
+  return '<div class="rc-box-note rc-save"><h4>LƯU &amp; XUẤT PHIẾU</h4><div class="rc-save-fields">'
+   +'<label>Biển số xe<input data-rh-plate type="text" maxlength="30" autocomplete="off" autocapitalize="characters" enterkeyhint="next" placeholder="Ví dụ 47A-123.45"></label>'
+   +'<label>Số hồ sơ / ghi chú<input data-rh-note type="text" maxlength="300" autocomplete="off" enterkeyhint="done" placeholder="Không bắt buộc"></label></div>'
+   +'<div class="rc-save-actions"><button type="button" class="ws-primary" data-rh-save>'+ICON_SAVE+'<span>Lưu lịch sử</span></button><button type="button" class="ws-secondary" data-rh-pdf>'+ICON_PDF+'<span>Xuất phiếu PDF</span></button></div>'
+   +'<p class="rc-save-msg" data-rh-msg role="status" aria-live="polite"></p></div>';
+}
+function msg(sheet,text,tone){var m=$('[data-rh-msg]',sheet);if(m){m.textContent=text||'';if(tone)m.dataset.tone=tone;else delete m.dataset.tone;}}
+function setBtn(btn,text,busy){if(!btn)return;btn.disabled=!!busy;var sp=btn.querySelector('span');if(sp)sp.textContent=text;}
+function onSheetClick(e,sheet){
+  var save=e.target.closest('[data-rh-save]'),pdf=e.target.closest('[data-rh-pdf]');
+  if(!save&&!pdf)return;
+  var last=R.last;if(!last)return;
+  var plate=($('[data-rh-plate]',sheet)||{}).value||'',note=($('[data-rh-note]',sheet)||{}).value||'';
+  var list=load(),old=sheet.dataset.rhId?list.find(function(x){return x.id===sheet.dataset.rhId;}):null;
+  if(save){
+    var entry=makeEntry(last,plate,note,old);
+    list=list.filter(function(x){return x.id!==entry.id;});list.unshift(entry);
+    if(!store(list)){msg(sheet,'Chưa lưu được: bộ nhớ trình duyệt đầy hoặc đang bị chặn.','err');return;}
+    sheet.dataset.rhId=entry.id;setBtn(save,'Đã lưu',false);msg(sheet,'Đã lưu vào Lịch sử ('+list.length+' phiếu).');
+    return;
+  }
+  var entry2=old?makeEntry(last,plate,note,old):makeEntry(last,plate,note,null);
+  setBtn(pdf,'Đang tạo phiếu…',true);msg(sheet,'');
+  exportPdf(entry2).then(function(res){
+    msg(sheet,res==='cancelled'?'':res==='download'?'Đã tải phiếu PDF về máy.':'Đã tạo phiếu PDF.');
+  }).catch(function(err){msg(sheet,'Chưa tạo được phiếu: '+((err&&err.message)||'lỗi không rõ'),'err');})
+  .then(function(){setBtn(pdf,'Xuất phiếu PDF',false);});
+}
+
+/* ---------- Tab Lịch sử ---------- */
+var query='',armed=null,armTimer=0;
+function disarm(){armed=null;clearTimeout(armTimer);}
+function arm(what){armed=what;clearTimeout(armTimer);armTimer=setTimeout(function(){armed=null;show();},3500);}
+function summary(en){
+  var i=en.input,bits=[];
+  if(i.svc!=='crane'){bits.push('<span>'+esc(String(i.km||0).replace('.',','))+' km</span>');}
+  var reg=R.data.REGION[i.region||0];if(reg)bits.push('<span>'+esc(reg.l.split(' · ')[0])+'</span>');
+  return '<span class="rh-chip">'+esc(SVC[i.svc]||'Cứu hộ')+'</span>'+bits.join('');
+}
+var ICON_TRASH='<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+var ICON_REDO='<svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 4v4h-4M20 12a8 8 0 0 1-14 5.3M4 20v-4h4"/></svg>';
+function show(){
+  var box=$('#rcHistBody');if(!box)return;
+  var all=load(),q=query.trim().toLowerCase();
+  var list=q?all.filter(function(x){return (x.plate+' '+x.note).toLowerCase().indexOf(q)>=0;}):all;
+  var h='<div class="rh-head"><div><h3>Lịch sử tính phí</h3><p>'+(all.length?all.length+' phiếu · lưu trên máy này':'Chưa có phiếu nào')+'</p></div>'
+   +(all.length?'<button type="button" class="rr-btn rh-clear" data-rh="clear"'+(armed==='all'?' data-armed':'')+'>'+(armed==='all'?'Chạm lại để xoá hết':'Xoá hết')+'</button>':'')+'</div>';
+  if(all.length>3||q)h+='<div class="ws-search-field rc-field"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:18px;height:18px"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="rhSearch" type="search" autocomplete="off" placeholder="Tìm biển số, số hồ sơ, ghi chú…" aria-label="Tìm trong lịch sử" value="'+esc(query)+'"></div>';
+  if(!list.length){
+    h+='<div class="rh-empty"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg><strong>'+(q?'Không có phiếu phù hợp':'Chưa có lịch sử')+'</strong><p>'+(q?'Thử tìm theo biển số hoặc ghi chú khác.':'Sau khi bấm Tính chi phí, chọn “Lưu lịch sử” để lưu lại và xuất phiếu PDF bất cứ lúc nào.')+'</p></div>';
+  }else{
+    h+='<div class="rh-list">'+list.map(function(en){
+      var del=armed===en.id;
+      return '<article class="rh-card" data-id="'+esc(en.id)+'"><div class="rh-top"><div class="rh-plate"'+(en.plate?'':' data-empty')+'>'+esc(en.plate||'Chưa nhập biển số')+'</div><time>'+fmtDate(en.at)+'</time></div>'
+       +'<div class="rh-amount">'+(en.quote?(en.total?vnd(en.total)+' + báo giá':'Báo giá'):vnd(en.total))+'</div>'
+       +'<div class="rh-meta">'+summary(en)+'</div>'
+       +(en.note?'<p class="rh-note">'+esc(en.note)+'</p>':'')
+       +'<p class="rh-appr">Cấp duyệt: <b>'+esc(en.approver)+'</b></p>'
+       +'<div class="rh-actions"><button type="button" data-rh="open">'+ICON_REDO+'<span>Tính lại</span></button><button type="button" data-rh="pdf">'+ICON_PDF+'<span>Phiếu PDF</span></button>'
+       +'<button type="button" data-rh="del" aria-label="'+(del?'Chạm lại để xoá phiếu':'Xoá phiếu')+'"'+(del?' data-armed':'')+'>'+(del?'Xoá?':ICON_TRASH)+'</button></div></article>';
+    }).join('')+'</div>';
+  }
+  box.innerHTML=h;
+}
+document.addEventListener('click',function(e){
+  var box=$('#rcHistBody');if(!box||!box.contains(e.target))return;
+  var b=e.target.closest('[data-rh]');if(!b)return;
+  var act=b.dataset.rh,card=b.closest('.rh-card'),id=card&&card.dataset.id,list=load();
+  if(act==='clear'){if(armed==='all'){disarm();store([]);query='';show();}else{arm('all');show();}return;}
+  var en=list.find(function(x){return x.id===id;});if(!en)return;
+  if(act==='del'){if(armed===id){disarm();store(list.filter(function(x){return x.id!==id;}));show();}else{arm(id);show();}return;}
+  if(act==='open'){R.apply(en.input);try{window.scrollTo({top:0,behavior:'smooth'});}catch(_){}return;}
+  if(act==='pdf'){
+    var sp=b.querySelector('span');b.disabled=true;if(sp)sp.textContent='Đang tạo…';
+    exportPdf(en).catch(function(err){alert('Chưa tạo được phiếu: '+((err&&err.message)||'lỗi không rõ'));}).then(function(){b.disabled=false;if(sp)sp.textContent='Phiếu PDF';});
+  }
+});
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='rhSearch'){query=e.target.value;var pos=e.target.selectionStart;show();var n=$('#rhSearch');if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}}}});
+
+/* ---------- Phiếu PDF ---------- */
+var PW=794,PH=1123,SC=2.0831,MG=48;
+function fontFamily(){try{return getComputedStyle(document.body).fontFamily||'sans-serif';}catch(_){return 'sans-serif';}}
+function wrap(g,text,maxW){
+  var words=String(text).split(/\s+/),lines=[],line='';
+  words.forEach(function(w){var t=line?line+' '+w:w;if(g.measureText(t).width>maxW&&line){lines.push(line);line=w;}else line=t;});
+  if(line)lines.push(line);return lines.length?lines:[''];
+}
+function sanitize(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').replace(/[^A-Za-z0-9._-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40);}
+async function buildPages(en){
+  var FF=fontFamily(),pages=[],cur,y=0,calc=R.calc(en.input),D=R.data,i=en.input;
+  try{await Promise.all(['400 12px','600 12px','700 12px'].map(function(f){return document.fonts.load(f+' '+FF);}));}catch(_){}
+  var F=function(w,sz){return w+' '+sz+'px '+FF;};
+  function newPage(first){
+    var cv=document.createElement('canvas');cv.width=Math.round(PW*SC);cv.height=Math.round(PH*SC);
+    var g=cv.getContext('2d');g.scale(SC,SC);g.fillStyle='#fff';g.fillRect(0,0,PW,PH);g.textBaseline='alphabetic';
+    cur={cv:cv,g:g};pages.push(cur);
+    if(first){
+      g.fillStyle='#183056';g.fillRect(0,0,PW,104);
+      g.fillStyle='#84bfc7';g.font=F(700,10);g.fillText('TASCO INSURANCE  ·  CỨU HỘ PHƯƠNG TIỆN',MG,38);
+      g.fillStyle='#fff';g.font=F(700,23);g.fillText('PHIẾU TÍNH CHI PHÍ CỨU HỘ',MG,70);
+      g.textAlign='right';g.fillStyle='#b9d6dd';g.font=F(400,10.5);
+      g.fillText('Mã phiếu: CH-'+new Date(en.at).getFullYear()+p2(new Date(en.at).getMonth()+1)+p2(new Date(en.at).getDate())+'-'+String(en.id).slice(-4).toUpperCase(),PW-MG,38);
+      g.fillText(fmtDate(en.at),PW-MG,56);g.textAlign='left';y=134;
+    }else{
+      g.fillStyle='#183056';g.font=F(700,10.5);g.fillText('PHIẾU TÍNH CHI PHÍ CỨU HỘ (tiếp theo)',MG,MG-6);y=MG+22;
+    }
+  }
+  function need(h){if(y+h>PH-64)newPage(false);}
+  function section(t){need(40);var g=cur.g;g.fillStyle='#39747e';g.font=F(700,10);g.fillText(t,MG,y);g.fillStyle='#c7dde3';g.fillRect(MG,y+8,PW-2*MG,1);y+=26;}
+  newPage(true);
+  /* Thông tin hồ sơ */
+  var info=[['Biển số xe',en.plate||'—'],['Hạng mục',SVC[i.svc]||'Cứu hộ']];
+  if(i.svc!=='crane'){info.push(['Nhóm xe kéo',D.TOW[i.towGroup||0].l]);info.push(['Quãng đường kéo',String(i.km||0).replace('.',',')+' km']);}
+  if(i.svc!=='tow'){info.push(['Nhóm xe cẩu',D.CLS[i.craneClass||0]]);info.push(['Vị trí xe cần cẩu',D.CRANE[i.cranePos||0].l]);}
+  info.push(['Vùng địa lý',D.REGION[i.region||0].l.split(' (')[0]]);
+  var flags=[];if(i.special)flags.push('Xe đặc biệt / sự cố nghiêm trọng');if(i.over)flags.push('Chi phí đề xuất vượt barem');
+  info.push(['Tình huống',flags.length?flags.join('; '):'Thông thường']);
+  section('THÔNG TIN HỒ SƠ');
+  var colW=(PW-2*MG-24)/2;
+  for(var k=0;k<info.length;k+=2){
+    var pair=[info[k],info[k+1]],g=cur.g;g.font=F(600,12.5);
+    var ls=pair.map(function(it){return it?wrap(g,it[1],colW):[];}),rows=Math.max(ls[0].length,ls[1].length);
+    need(rows*17+30);g=cur.g;
+    pair.forEach(function(it,c){if(!it)return;var x=MG+c*(colW+24);g.fillStyle='#526c81';g.font=F(400,9.5);g.fillText(it[0].toUpperCase(),x,y);g.fillStyle='#183056';g.font=F(600,12.5);ls[c].forEach(function(l,n){g.fillText(l,x,y+17+n*17);});});
+    y+=rows*17+24;
+  }
+  if(en.note){
+    var g2=cur.g;g2.font=F(400,12);var nl=wrap(g2,en.note,PW-2*MG);need(nl.length*17+34);g2=cur.g;
+    g2.fillStyle='#526c81';g2.font=F(400,9.5);g2.fillText('SỐ HỒ SƠ / GHI CHÚ',MG,y);g2.fillStyle='#183056';g2.font=F(400,12);nl.forEach(function(l,n){g2.fillText(l,MG,y+17+n*17);});y+=nl.length*17+26;
+  }
+  /* Bảng chi phí */
+  section('CHI TIẾT CHI PHÍ');
+  var rows2=[];calc.lines.forEach(function(x){rows2.push([x.l,x.v==null?'Báo giá':vnd(x.v),0]);});
+  if(calc.region.pct)rows2.push(['Hệ số '+calc.region.l.split(' · ')[0]+' (+'+calc.region.pct+'%)','+'+vnd(calc.regionAmt),0]);
+  if(!calc.quote||calc.rescue)rows2.push(['Giá cứu hộ sau hệ số vùng',vnd(calc.rescue),1]);
+  calc.sur.forEach(function(x){rows2.push([x.l,'+'+vnd(x.v),0]);});
+  rows2.forEach(function(r,n){
+    var g=cur.g;g.font=F(r[2]?700:400,12);var ls=wrap(g,r[0],PW-2*MG-150),h=ls.length*17+12;need(h+4);g=cur.g;
+    if(n%2===0){g.fillStyle='#f3f8fa';g.fillRect(MG,y-14,PW-2*MG,h);}
+    g.fillStyle='#183056';g.font=F(r[2]?700:400,12);ls.forEach(function(l,m){g.fillText(l,MG+10,y+m*17);});
+    g.textAlign='right';g.font=F(700,12);g.fillText(r[1],PW-MG-10,y);g.textAlign='left';y+=h;
+  });
+  need(70);var gt=cur.g;y+=6;
+  gt.fillStyle='#183056';gt.beginPath();gt.roundRect?gt.roundRect(MG,y-14,PW-2*MG,46,10):gt.rect(MG,y-14,PW-2*MG,46);gt.fill();
+  gt.fillStyle='#b9d6dd';gt.font=F(700,9.5);gt.fillText('TỔNG TRẦN CHI PHÍ · CHƯA VAT',MG+16,y+3);
+  gt.fillStyle='#fff';gt.textAlign='right';gt.font=F(700,19);gt.fillText(calc.quote?(calc.total?vnd(calc.total)+' + báo giá':'Báo giá'):vnd(calc.total),PW-MG-16,y+16);gt.textAlign='left';y+=62;
+  /* Phê duyệt */
+  section('CẤP PHÊ DUYỆT');
+  var ga=cur.g;ga.font=F(600,12.5);var al=wrap(ga,calc.approver,PW-2*MG-24);need(al.length*17+24);ga=cur.g;
+  ga.fillStyle='#edf5f7';ga.fillRect(MG,y-14,PW-2*MG,al.length*17+14);ga.fillStyle='#183056';ga.font=F(600,12.5);al.forEach(function(l,n){ga.fillText(l,MG+12,y+n*17);});y+=al.length*17+22;
+  ga.fillStyle='#526c81';ga.font=F(400,10);ga.fillText('Căn cứ tổng chi phí một sự kiện cứu hộ, không tách nhỏ để giảm cấp duyệt.',MG,y);y+=24;
+  /* Lộ trình */
+  if(en.route){
+    section('LỘ TRÌNH KÉO XE');
+    [['Hiện trường',en.route.scene],['Gara',en.route.garage],['Quãng đường',String(en.route.km).replace('.',',')+' km'+(en.route.estimated?' (ước tính đường chim bay × 1,3)':' (bản đồ · đường bộ)')]].forEach(function(r){
+      var g=cur.g;g.font=F(400,11.5);var ls=wrap(g,r[1],PW-2*MG-90);need(ls.length*16+8);g=cur.g;
+      g.fillStyle='#526c81';g.font=F(400,10);g.fillText(r[0],MG,y);g.fillStyle='#183056';g.font=F(400,11.5);ls.forEach(function(l,n){g.fillText(l,MG+90,y+n*16);});y+=ls.length*16+6;
+    });y+=8;
+  }
+  /* Lưu ý + hồ sơ */
+  var warn=[];
+  if(calc.capped)warn.push('Tổng phụ phí điều kiện đã chạm trần 50% giá cứu hộ ('+vnd(calc.cap)+'). Vượt mức này phải được Giám đốc Ban GĐBT phê duyệt.');
+  if(calc.special)warn.push('Tình huống đặc biệt: cần báo giá/duyệt riêng, kết quả chỉ mang tính tham khảo.');
+  if(calc.quote)warn.push('Chưa tính chi phí cẩu >100 m hoặc >1 xe cẩu.');
+  warn.push('Phụ phí không tính phí BOT, cẩu, phà/phao, bãi đỗ; các khoản này theo chứng từ. Đơn giá là trần nội bộ chưa VAT.');
+  section('LƯU Ý');
+  warn.forEach(function(t){var g=cur.g;g.font=F(400,11);var ls=wrap(g,t,PW-2*MG-14);need(ls.length*16+8);g=cur.g;g.fillStyle='#39747e';g.fillRect(MG,y-8,4,4);g.fillStyle='#183056';g.font=F(400,11);ls.forEach(function(l,n){g.fillText(l,MG+14,y+n*16);});y+=ls.length*16+6;});
+  y+=8;section('HỒ SƠ BẮT BUỘC');
+  ['Ảnh hiện trường trước khi cứu hộ','Ảnh phương tiện cứu hộ (biển số xe cứu hộ)','Ảnh bàn giao xe sau cứu hộ','Định vị GPS / lộ trình di chuyển','Xác nhận sử dụng dịch vụ của khách hàng/chủ xe'].forEach(function(t){
+    need(22);var g=cur.g;g.strokeStyle='#39747e';g.lineWidth=1.2;g.strokeRect(MG,y-10,11,11);g.fillStyle='#183056';g.font=F(400,11.5);g.fillText(t,MG+22,y);y+=21;});
+  /* Chữ ký */
+  need(150);y+=14;var gs=cur.g,bw=(PW-2*MG-24)/2;
+  [['Người lập phiếu',''],['Cấp phê duyệt',calc.approver.split(' · ')[0]]].forEach(function(b,c){
+    var x=MG+c*(bw+24);gs.fillStyle='#183056';gs.font=F(700,11.5);gs.fillText(b[0],x,y);
+    if(b[1]){gs.fillStyle='#526c81';gs.font=F(400,9.5);var sl=wrap(gs,b[1],bw);gs.fillText(sl[0]+(sl.length>1?'…':''),x,y+14);}
+    gs.fillStyle='#526c81';gs.font=F(400,9.5);gs.fillText('(Ký, ghi rõ họ tên)',x,y+(b[1]?28:14));
+    gs.strokeStyle='#c7dde3';gs.lineWidth=1;gs.strokeRect(x,y+36,bw,70);
+  });
+  /* Chân trang */
+  pages.forEach(function(pg,n){var g=pg.g;g.fillStyle='#c7dde3';g.fillRect(MG,PH-44,PW-2*MG,1);g.fillStyle='#526c81';g.font=F(400,9);g.fillText('Tạo từ ứng dụng TASCO DLK · '+fmtDate(Date.now()),MG,PH-28);g.textAlign='right';g.fillText('Trang '+(n+1)+'/'+pages.length,PW-MG,PH-28);g.textAlign='left';});
+  return pages;
+}
+function pdfFromJpegs(items){
+  var enc=new TextEncoder(),parts=[],offs=[],len=0;
+  function push(x){var b=typeof x==='string'?enc.encode(x):x;parts.push(b);len+=b.length;}
+  push('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'.replace(/[\x80-\xFF]/g,'?'));
+  var n=items.length,kids=items.map(function(_,i){return (3+3*i)+' 0 R';}).join(' ');
+  offs[1]=len;push('1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n');
+  offs[2]=len;push('2 0 obj\n<</Type/Pages/Count '+n+'/Kids['+kids+']>>\nendobj\n');
+  items.forEach(function(it,i){
+    var pg=3+3*i,ct=4+3*i,im=5+3*i,content='q 595.28 0 0 841.89 0 0 cm /Im0 Do Q';
+    offs[pg]=len;push(pg+' 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 595.28 841.89]/Resources<</XObject<</Im0 '+im+' 0 R>>>>/Contents '+ct+' 0 R>>\nendobj\n');
+    offs[ct]=len;push(ct+' 0 obj\n<</Length '+content.length+'>>\nstream\n'+content+'\nendstream\nendobj\n');
+    offs[im]=len;push(im+' 0 obj\n<</Type/XObject/Subtype/Image/Width '+it.w+'/Height '+it.h+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length '+it.bytes.length+'>>\nstream\n');push(it.bytes);push('\nendstream\nendobj\n');
+  });
+  var total=3+3*n,xref=len;push('xref\n0 '+total+'\n0000000000 65535 f \n');
+  for(var o=1;o<total;o++)push(String(offs[o]).padStart(10,'0')+' 00000 n \n');
+  push('trailer\n<</Size '+total+'/Root 1 0 R>>\nstartxref\n'+xref+'\n%%EOF');
+  return new Blob(parts,{type:'application/pdf'});
+}
+async function makePdf(en){
+  var pages=await buildPages(en),items=[];
+  for(var k=0;k<pages.length;k++){
+    var blob=await new Promise(function(res){pages[k].cv.toBlob(res,'image/jpeg',.9);});
+    if(!blob)throw new Error('Không tạo được ảnh trang '+(k+1));
+    items.push({bytes:new Uint8Array(await blob.arrayBuffer()),w:pages[k].cv.width,h:pages[k].cv.height});
+    pages[k].cv.width=pages[k].cv.height=0;
+  }
+  return pdfFromJpegs(items);
+}
+async function sharePdf(blob,name){
+  var file=new File([blob],name,{type:'application/pdf'});
+  if(window.TascoNativeShare){try{var r=await window.TascoNativeShare(file);if(r)return r;}catch(_){}}
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:name});return true;}catch(err){if(err&&err.name==='AbortError')return 'cancelled';}
+  }
+  var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},30000);return 'download';
+}
+async function exportPdf(en){
+  var d=new Date(en.at),name='Phieu-cuu-ho_'+(sanitize(en.plate)||'khong-bien-so')+'_'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'.pdf';
+  return sharePdf(await makePdf(en),name);
+}
+return {show:show,actionsHtml:actionsHtml,onSheetClick:onSheetClick,load:load,makePdf:makePdf,_pdf:exportPdf};
+})();
+</script>
 <script id="tascoPartDetailPremium">
 window.TascoPartDetail=(()=>{
   const modal=document.getElementById('modalDetail'),content=document.getElementById('detailContent');
