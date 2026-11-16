@@ -7440,6 +7440,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
           <details class="camera-settings-group"><summary><span>Tùy chọn khác</span><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></summary><div class="camera-settings-fields">
             <label class="camera-setting-check"><span>Dấu căn giữa</span><input type="checkbox" data-camera-pref="showCrosshair" checked></label>
             <label class="camera-setting-check"><span>Nháy sáng khi chụp</span><input type="checkbox" data-camera-pref="shutterFlash" checked></label>
+            <label class="camera-setting-check"><span>Rung nhẹ khi chụp</span><input type="checkbox" data-camera-pref="shutterHaptic" checked></label>
             <div class="camera-setting-field"><span>Hiệu chỉnh hướng ảnh</span><div class="camera-rotation-controls"><button type="button" data-camera-image-rotate><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/></svg><span>Xoay 90°</span></button><button type="button" data-camera-image-reset><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5M12 8v4l3 2"/></svg><span>Đặt lại</span></button><span id="cameraImageRotation">0°</span></div></div>
           </div></details>
         </section>
@@ -9658,7 +9659,9 @@ function retryCameraLocation() {return ensureRealtimeGpsCoordinates({forceAddres
 
 /* The same immutable preferences drive the live preview and captured pixels. */
 const cameraAspectRatios={native:null,'3:4':[3,4],'4:3':[4,3],'1:1':[1,1],'9:16':[9,16],'16:9':[16,9],'2:3':[2,3],'3:2':[3,2]};
-const cameraAppearanceDefaults={aspectRatio:'native',title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true,autoSaveDevice:false};
+/* Rung nhẹ khi chụp: Capacitor Haptics (iOS app) -> navigator.vibrate (Android/Chrome); lỗi thì bỏ qua, không bao giờ chặn việc chụp */
+window.tascoShutterHaptic=function(){try{if(!cameraAppearance||cameraAppearance.shutterHaptic===false)return;var H=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Haptics;if(H&&typeof H.impact==='function'){var r=H.impact({style:'LIGHT'});if(r&&r.catch)r.catch(function(){});return;}if(navigator.vibrate)navigator.vibrate(10);}catch(e){}};
+const cameraAppearanceDefaults={aspectRatio:'native',title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true,shutterHaptic:true,autoSaveDevice:false};
 const cameraStampFonts={sans:'Arial, sans-serif',jakarta:'"Plus Jakarta Sans", Arial, sans-serif',serif:'Georgia, serif',mono:'"Courier New", monospace',tahoma:'Tahoma, sans-serif'};
 function sanitizeCameraAppearance(value={}){
   const result={...cameraAppearanceDefaults};
@@ -10552,7 +10555,7 @@ async function triggerCustomCameraCapture() {
     metadata.frame={...frame,width:canvas.width,height:canvas.height,nativeWidth:video.videoWidth,nativeHeight:video.videoHeight};metadata.quality=quality;
     const location=await metadata.locationPromise;if(session!==cameraUiState.session)return;
     try{await document.fonts?.load((metadata.appearance.bold?'700':'400')+' 20px '+cameraStampFonts[metadata.appearance.font]);}catch(_){}
-    const flash=document.getElementById('cameraFlashEffect');if(cameraAppearance.shutterFlash){flash.classList.add('flash-active');setTimeout(()=>flash.classList.remove('flash-active'),80);}
+    window.tascoShutterHaptic();const flash=document.getElementById('cameraFlashEffect');if(cameraAppearance.shutterFlash){flash.classList.add('flash-active');setTimeout(()=>flash.classList.remove('flash-active'),80);}
     drawCameraStamp(canvas.getContext('2d'),cameraWatermarkLines(location,metadata.capturedAt,'camera',metadata.appearance),canvas.width,canvas.height,metadata.appearance);
     const blob=await cameraCanvasBlob(canvas,'image/jpeg',quality.jpeg);metadata.thumbnailBlob=await cameraThumbnail(canvas);
     if(session!==cameraUiState.session)return;
@@ -14683,6 +14686,7 @@ window.TascoPhotoFX = (function () {
     var session = cameraUiState.session, metadata = createCameraPhotoMetadata();
     cameraUiState.captureBusy = true; syncCameraViewport();
     var fx = document.getElementById('cameraFlashEffect');
+    window.tascoShutterHaptic();
     if (fx && cameraAppearance.shutterFlash) { fx.classList.add('flash-active'); setTimeout(function () { fx.classList.remove('flash-active'); }, 80); }
     try {
       var shot = await CP.capture({ quality: 92, orientation: Orient.available && cameraOrientLock === 'landscape' && isLandscape() ? 'preview' : 'device', photoQualityPrioritization: pro.priority === 'speed' ? 'speed' : 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront });
