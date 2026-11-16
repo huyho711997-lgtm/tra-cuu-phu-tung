@@ -7553,7 +7553,8 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
           <div class="camera-style-presets" role="group" aria-label="Kiểu chữ nhanh"><button type="button" data-camera-preset="standard" aria-pressed="true">Tiêu chuẩn</button><button type="button" data-camera-preset="contrast" aria-pressed="false">Nền tối</button><button type="button" data-camera-preset="minimal" aria-pressed="false">Tối giản</button></div>
           <label class="camera-setting-field camera-field-spaced"><span>Cỡ chữ <output data-camera-output="textSize">100%</output></span><input type="range" aria-label="Cỡ chữ" data-camera-pref="textSize" min="0.7" max="1.8" step="0.05" value="1"></label>
           <label class="camera-setting-field camera-field-spaced"><span>Font chữ</span><select aria-label="Font chữ" data-camera-pref="font"><option value="sans">Arial</option><option value="jakarta">Plus Jakarta Sans</option><option value="serif">Georgia</option><option value="mono">Courier New</option><option value="tahoma">Tahoma</option></select></label>
-          <div class="camera-color-row"><span>Màu chữ</span><div class="camera-color-options"><button type="button" data-camera-color="#183056" style="--swatch:#183056" aria-label="Chữ xanh than"></button><button type="button" data-camera-color="#ffffff" style="--swatch:#ffffff" aria-label="Chữ trắng"></button><button type="button" data-camera-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Chữ xanh ngọc"></button><button type="button" data-camera-color="#e8c582" style="--swatch:#e8c582" aria-label="Chữ vàng"></button><button type="button" data-camera-color="#ff927a" style="--swatch:#ff927a" aria-label="Chữ cam"></button><label class="camera-custom-color" title="Chọn màu khác"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M16 3l5 5-3 3-1-1-9 9H4v-4l9-9-1-1Z"/></svg><input type="color" data-camera-pref="color" value="#ffffff" aria-label="Màu chữ tùy chọn"></label></div></div>
+          <div class="camera-color-row"><span>Màu dòng tiêu đề</span><div class="camera-color-options"><button type="button" data-camera-title-color="#183056" style="--swatch:#183056" aria-label="Tiêu đề xanh than"></button><button type="button" data-camera-title-color="#ffffff" style="--swatch:#ffffff" aria-label="Tiêu đề trắng"></button><button type="button" data-camera-title-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Tiêu đề xanh ngọc"></button><button type="button" data-camera-title-color="#e8c582" style="--swatch:#e8c582" aria-label="Tiêu đề vàng"></button><label class="camera-custom-color" title="Chọn màu khác"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M16 3l5 5-3 3-1-1-9 9H4v-4l9-9-1-1Z"/></svg><input type="color" data-camera-pref="titleColor" value="#183056" aria-label="Màu tiêu đề tùy chọn"></label></div></div>
+          <div class="camera-color-row"><span>Màu chữ</span><div class="camera-color-options"><button type="button" data-camera-color="#ffffff" style="--swatch:#ffffff" aria-label="Chữ trắng"></button><button type="button" data-camera-color="#86d1c5" style="--swatch:#86d1c5" aria-label="Chữ xanh ngọc"></button><button type="button" data-camera-color="#e8c582" style="--swatch:#e8c582" aria-label="Chữ vàng"></button><button type="button" data-camera-color="#ff927a" style="--swatch:#ff927a" aria-label="Chữ cam"></button><label class="camera-custom-color" title="Chọn màu khác"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5M16 3l5 5-3 3-1-1-9 9H4v-4l9-9-1-1Z"/></svg><input type="color" data-camera-pref="color" value="#ffffff" aria-label="Màu chữ tùy chọn"></label></div></div>
           <details class="camera-settings-group"><summary><span>Tinh chỉnh kiểu chữ</span><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></summary><div class="camera-settings-fields">
             <label class="camera-setting-check"><span>Chữ đậm</span><input type="checkbox" data-camera-pref="bold" checked></label>
             <label class="camera-setting-field"><span>Nền chữ</span><select aria-label="Kiểu nền chữ" data-camera-pref="style"><option value="shadow">Bóng nhẹ</option><option value="panel">Nền tối</option><option value="plain">Không nền</option></select></label>
@@ -9785,9 +9786,9 @@ function retryCameraLocation() {return ensureRealtimeGpsCoordinates({forceAddres
 const cameraAspectRatios={native:null,'3:4':[3,4],'4:3':[4,3],'1:1':[1,1],'9:16':[9,16],'16:9':[16,9],'2:3':[2,3],'3:2':[3,2]};
 /* Rung nhẹ khi chụp: Capacitor Haptics (iOS app) -> navigator.vibrate (Android/Chrome); lỗi thì bỏ qua, không bao giờ chặn việc chụp */
 window.tascoShutterHaptic=function(){try{if(!cameraAppearance||cameraAppearance.shutterHaptic===false)return;var H=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Haptics;if(H&&typeof H.impact==='function'){var r=H.impact({style:'LIGHT'});if(r&&r.catch)r.catch(function(){});return;}if(navigator.vibrate&&navigator.vibrate(10))return;/* iOS 17.4+ (WebKit): bật/tắt <input switch> tạo haptic hệ thống, không cần plugin native */var l=window.__tascoHapticEl;if(!l){l=document.createElement('label');l.setAttribute('aria-hidden','true');l.style.cssText='position:fixed;left:-99px;top:0;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden';var c=document.createElement('input');c.type='checkbox';c.setAttribute('switch','');c.tabIndex=-1;l.appendChild(c);document.body.appendChild(l);window.__tascoHapticEl=l;}l.click();}catch(e){}};
-/* Màu chữ dấu mặc định = xanh than của giao diện app (--app-navy). */
+/* Dòng tiêu đề (TASCO DLK) mặc định xanh than của giao diện app (--app-navy); ngày giờ và địa chỉ trắng. */
 const cameraStampNavy='#183056';
-const cameraAppearanceDefaults={aspectRatio:'native',title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:cameraStampNavy,opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true,shutterHaptic:true,autoSaveDevice:false};
+const cameraAppearanceDefaults={aspectRatio:'native',title:'TASCO DLK',showTitle:true,showDate:true,showSeconds:true,showLocation:true,showCoordinates:false,layout:'lines',position:'bottom-right',textSize:1,font:'sans',bold:true,color:'#ffffff',titleColor:cameraStampNavy,opacity:100,style:'shadow',lineHeight:1.35,textWidth:90,margin:2.5,mirrorFront:true,showGrid:true,showCrosshair:true,shutterFlash:true,shutterHaptic:true,autoSaveDevice:false};
 const cameraStampFonts={sans:'Arial, sans-serif',jakarta:'"Plus Jakarta Sans", Arial, sans-serif',serif:'Georgia, serif',mono:'"Courier New", monospace',tahoma:'Tahoma, sans-serif'};
 function sanitizeCameraAppearance(value={}){
   const result={...cameraAppearanceDefaults};
@@ -9797,7 +9798,7 @@ function sanitizeCameraAppearance(value={}){
   const enums={aspectRatio:Object.keys(cameraAspectRatios),layout:['lines','compact'],position:['bottom-right','bottom-left','bottom-center','top-right','top-left','top-center'],font:Object.keys(cameraStampFonts),style:['shadow','panel','plain']};
   for(const [key,allowed] of Object.entries(enums))if(allowed.includes(value[key]))result[key]=value[key];
   for(const [key,min,max] of [['textSize',.7,1.8],['opacity',50,100],['lineHeight',1.1,1.8],['textWidth',50,94],['margin',1,8]])if(Number.isFinite(value[key]))result[key]=Math.min(max,Math.max(min,value[key]));
-  if(typeof value.color==='string'&&/^#[0-9a-f]{6}$/i.test(value.color))result.color=value.color;
+  for(const key of ['color','titleColor'])if(typeof value[key]==='string'&&/^#[0-9a-f]{6}$/i.test(value[key]))result[key]=value[key];
   return result;
 }
 let cameraAppearance={...cameraAppearanceDefaults};
@@ -9880,20 +9881,42 @@ function cameraStampLayout(ctx,lines,width,height,settings){
   const left=align==='left'?x:align==='center'?x-textWidth/2:x-textWidth;
   return {lines:wrapped,font:ctx.font,fontSize,lineHeight,textWidth,textHeight,align,x,y,left,boxPadding};
 }
+/* Vẽ một đoạn chữ: chữ tối có viền sáng (đọc được trên ảnh tối), chữ sáng giữ bóng đen như cũ. */
+function cameraStampSegment(ctx,text,x,y,color,style,fontSize,lightPanel){
+  if(!text)return;
+  ctx.save();ctx.textAlign='left';
+  if(cameraStampIsDark(color)&&!lightPanel){
+    ctx.lineJoin='round';ctx.miterLimit=2;ctx.lineWidth=fontSize*.2;ctx.strokeStyle='rgba(255,255,255,.95)';
+    if(style==='shadow'){ctx.shadowColor='rgba(255,255,255,.55)';ctx.shadowBlur=fontSize*.2;}
+    ctx.strokeText(text,x,y);ctx.shadowColor='transparent';ctx.shadowBlur=0;
+  }else if(style==='shadow'){ctx.shadowColor='rgba(0,0,0,.9)';ctx.shadowBlur=fontSize*.23;ctx.shadowOffsetX=fontSize*.07;ctx.shadowOffsetY=fontSize*.07;}
+  ctx.fillStyle=color;ctx.fillText(text,x,y);ctx.restore();
+}
+/* Tách dòng đầu thành [tiêu đề | phần còn lại] để tiêu đề có màu riêng (cả khi bố cục gọn nối tiêu đề với ngày giờ). */
+function cameraStampSplitTitle(line,settings){
+  const title=settings.showTitle?String(settings.title||'').trim():'';
+  if(!title)return null;
+  if(line.startsWith(title))return [title,line.slice(title.length)];
+  if(title.startsWith(line.trim())&&line.trim())return [line,''];
+  return null;
+}
 function drawCameraStamp(ctx,lines,width,height,settings){
   if(!lines.length)return;
-  ctx.save();ctx.globalAlpha=settings.opacity/100;const stamp=cameraStampLayout(ctx,lines,width,height,settings),dark=cameraStampIsDark(settings.color);
+  ctx.save();ctx.globalAlpha=settings.opacity/100;const stamp=cameraStampLayout(ctx,lines,width,height,settings),lightPanel=settings.style==='panel'&&cameraStampIsDark(settings.color)&&cameraStampIsDark(settings.titleColor);
   if(settings.style==='panel'){
-    ctx.fillStyle=dark?'rgba(255,255,255,.82)':'rgba(0,0,0,.58)';const pad=stamp.boxPadding;
+    ctx.fillStyle=lightPanel?'rgba(255,255,255,.82)':'rgba(0,0,0,.58)';const pad=stamp.boxPadding;
     ctx.beginPath();if(ctx.roundRect)ctx.roundRect(stamp.left-pad,stamp.y-pad,stamp.textWidth+pad*2,stamp.textHeight+pad*2,pad*.7);else ctx.rect(stamp.left-pad,stamp.y-pad,stamp.textWidth+pad*2,stamp.textHeight+pad*2);ctx.fill();
   }
-  ctx.globalAlpha=settings.opacity/100;ctx.font=stamp.font;ctx.fillStyle=settings.color;ctx.textBaseline='top';ctx.textAlign=stamp.align;
-  if(settings.style==='shadow'&&dark){
-    ctx.lineJoin='round';ctx.miterLimit=2;ctx.lineWidth=stamp.fontSize*.2;ctx.strokeStyle='rgba(255,255,255,.95)';ctx.shadowColor='rgba(255,255,255,.55)';ctx.shadowBlur=stamp.fontSize*.2;
-    stamp.lines.forEach((line,index)=>ctx.strokeText(line,stamp.x,stamp.y+index*stamp.lineHeight));
-    ctx.shadowColor='transparent';ctx.shadowBlur=0;
-  }else if(settings.style==='shadow'){ctx.shadowColor='rgba(0,0,0,.9)';ctx.shadowBlur=stamp.fontSize*.23;ctx.shadowOffsetX=stamp.fontSize*.07;ctx.shadowOffsetY=stamp.fontSize*.07;}
-  stamp.lines.forEach((line,index)=>ctx.fillText(line,stamp.x,stamp.y+index*stamp.lineHeight));ctx.restore();
+  ctx.globalAlpha=settings.opacity/100;ctx.font=stamp.font;ctx.textBaseline='top';
+  stamp.lines.forEach((line,index)=>{
+    const y=stamp.y+index*stamp.lineHeight,parts=index===0?cameraStampSplitTitle(line,settings):null;
+    ctx.textAlign='left';
+    const total=ctx.measureText(line).width,startX=stamp.align==='left'?stamp.x:stamp.align==='center'?stamp.x-total/2:stamp.x-total;
+    if(!parts){cameraStampSegment(ctx,line,startX,y,settings.color,settings.style,stamp.fontSize,lightPanel);return;}
+    cameraStampSegment(ctx,parts[0],startX,y,settings.titleColor,settings.style,stamp.fontSize,lightPanel);
+    cameraStampSegment(ctx,parts[1],startX+ctx.measureText(parts[0]).width,y,settings.color,settings.style,stamp.fontSize,lightPanel);
+  });
+  ctx.restore();
 }
 function renderCameraStampSample(){
   const canvas=document.getElementById('cameraStampSample');if(!canvas||document.getElementById('cameraSettingsPanel')?.hidden||canvas.closest('[data-camera-settings-page]')?.hidden)return;const ctx=canvas.getContext('2d');if(!ctx)return;
@@ -10158,10 +10181,17 @@ function updateCameraLiveStamp(location){
   const stamp=cameraStampLayout(ctx,lines,width,height,settings);
   while(box.children.length>stamp.lines.length)box.lastElementChild.remove();stamp.lines.forEach((text,index)=>{let line=box.children[index];if(!line){line=document.createElement('div');box.append(line);}if(line.textContent!==text)line.textContent=text;});
   box.style.font=stamp.font;box.style.lineHeight=stamp.lineHeight+'px';box.style.height=stamp.textHeight+'px';box.style.width=stamp.textWidth+'px';box.style.color=settings.color;box.style.textAlign=stamp.align;box.style.opacity=String(settings.opacity/100);
-  const darkText=cameraStampIsDark(settings.color);
-  box.style.textShadow=settings.style==='shadow'?(darkText?cameraStampHaloCss(stamp.fontSize):`${stamp.fontSize*.07}px ${stamp.fontSize*.07}px ${stamp.fontSize*.23}px rgba(0,0,0,.9)`):'none';
+  const lightPanel=settings.style==='panel'&&cameraStampIsDark(settings.color)&&cameraStampIsDark(settings.titleColor);
+  const shadowFor=color=>cameraStampIsDark(color)&&!lightPanel?cameraStampHaloCss(stamp.fontSize):settings.style==='shadow'?`${stamp.fontSize*.07}px ${stamp.fontSize*.07}px ${stamp.fontSize*.23}px rgba(0,0,0,.9)`:'none';
+  box.style.textShadow=shadowFor(settings.color);
+  Array.from(box.children).forEach((node,index)=>{
+    const parts=index===0?cameraStampSplitTitle(stamp.lines[0]||'',settings):null;
+    if(!parts){if(node.children.length)node.textContent=node.textContent;return;}
+    const head=document.createElement('span');head.textContent=parts[0];head.style.color=settings.titleColor;head.style.textShadow=shadowFor(settings.titleColor);
+    node.replaceChildren(head,document.createTextNode(parts[1]));
+  });
   status.style.left=stamp.left+'px';status.style.top=stamp.y+'px';status.style.right='auto';status.style.bottom='auto';status.style.alignItems=stamp.align==='left'?'flex-start':stamp.align==='center'?'center':'flex-end';
-  const panelColor=darkText?'rgba(255,255,255,.82)':'rgba(0,0,0,.58)';box.style.background=settings.style==='panel'&&lines.length?panelColor:'transparent';box.style.boxShadow=settings.style==='panel'&&lines.length?'0 0 0 '+stamp.boxPadding+'px '+panelColor:'none';box.style.borderRadius=stamp.boxPadding*.7+'px';
+  const panelColor=lightPanel?'rgba(255,255,255,.82)':'rgba(0,0,0,.58)';box.style.background=settings.style==='panel'&&lines.length?panelColor:'transparent';box.style.boxShadow=settings.style==='panel'&&lines.length?'0 0 0 '+stamp.boxPadding+'px '+panelColor:'none';box.style.borderRadius=stamp.boxPadding*.7+'px';
   const retry=status.querySelector('.camera-location-retry');if(retry){retry.dataset.stampTop=String(settings.position.startsWith('top'));retry.style.left=stamp.align==='left'?'0':stamp.align==='center'?'calc(50% - 15px)':'auto';retry.style.right=stamp.align==='right'?'0':'auto';}
   applyCameraDisplayPreferences();
 }
@@ -10184,6 +10214,7 @@ function cameraApplyPreset(name){if(!cameraStylePresets[name])return;cameraAppea
 function cameraRenderStyleButtons(){
   for(const button of document.querySelectorAll('[data-camera-preset]'))button.setAttribute('aria-pressed',String(Object.entries(cameraStylePresets[button.dataset.cameraPreset]).every(([key,value])=>cameraAppearance[key]===value)));
   for(const button of document.querySelectorAll('[data-camera-color]'))button.setAttribute('aria-pressed',String(button.dataset.cameraColor===cameraAppearance.color.toLowerCase()));
+  for(const button of document.querySelectorAll('[data-camera-title-color]'))button.setAttribute('aria-pressed',String(button.dataset.cameraTitleColor===cameraAppearance.titleColor.toLowerCase()));
 }
 function cameraSupportsPointFocus(track=customCameraStream?.getVideoTracks()[0]){
   const supported=navigator.mediaDevices?.getSupportedConstraints?.()||{},caps=track?.getCapabilities?.()||{};
@@ -10338,7 +10369,7 @@ function cameraCanvasFromSource(source,frame,quality){
 }
 
 const cameraSettingsPanel=document.getElementById('cameraSettingsPanel');
-cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close')){window.TascoCameraPreferences?.flush();toggleCameraSettings(false);}if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.dataset.cameraRatio)selectCameraRatio(button.dataset.cameraRatio);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.dataset.cameraSettingsTab)cameraSetSettingsTab(button.dataset.cameraSettingsTab);if(button.dataset.cameraPreset)cameraApplyPreset(button.dataset.cameraPreset);if(button.dataset.cameraColor){cameraAppearance={...cameraAppearance,color:button.dataset.cameraColor};saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}if(button.hasAttribute('data-camera-native'))openCameraNative();if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
+cameraSettingsPanel?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-camera-settings-close')){window.TascoCameraPreferences?.flush();toggleCameraSettings(false);}if(button.dataset.cameraQuality)selectCameraQuality(button.dataset.cameraQuality);if(button.dataset.cameraRatio)selectCameraRatio(button.dataset.cameraRatio);if(button.hasAttribute('data-camera-image-rotate'))cameraRotateImage();if(button.hasAttribute('data-camera-image-reset'))cameraRotateImage(true);if(button.dataset.cameraSettingsTab)cameraSetSettingsTab(button.dataset.cameraSettingsTab);if(button.dataset.cameraPreset)cameraApplyPreset(button.dataset.cameraPreset);if(button.dataset.cameraColor){cameraAppearance={...cameraAppearance,color:button.dataset.cameraColor};saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}if(button.dataset.cameraTitleColor){cameraAppearance={...cameraAppearance,titleColor:button.dataset.cameraTitleColor};saveCameraAppearance();updateCameraLiveStamp();renderCameraAppearanceControls();}if(button.hasAttribute('data-camera-native'))openCameraNative();if(button.hasAttribute('data-camera-preferences-reset')){cameraAppearance={...cameraAppearanceDefaults};saveCameraAppearance();updateCameraLiveStamp();syncCameraViewport();renderCameraAppearanceControls();}});
 document.getElementById('cameraDeviceSelect')?.addEventListener('change',event=>selectCameraDevice(event.target.value));
 cameraSettingsPanel?.addEventListener('keydown',event=>{const ratio=event.target.closest('[data-camera-ratio]');if(ratio&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key)){event.preventDefault();const buttons=[...cameraSettingsPanel.querySelectorAll('[data-camera-ratio]')],index=buttons.indexOf(ratio),next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(['ArrowRight','ArrowDown'].includes(event.key)?1:buttons.length-1))%buttons.length;selectCameraRatio(buttons[next].dataset.cameraRatio);buttons[next].focus();return;}const tab=event.target.closest('[data-camera-settings-tab]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const pages=['capture','stamp','style','pro'],index=pages.indexOf(tab.dataset.cameraSettingsTab),next=event.key==='Home'?0:event.key==='End'?pages.length-1:(index+(event.key==='ArrowRight'?1:pages.length-1))%pages.length;cameraSetSettingsTab(pages[next],true);});
 cameraSettingsPanel?.addEventListener('input',event=>{if(event.target.matches('[data-camera-pref]'))changeCameraAppearance(event.target);});
@@ -10823,11 +10854,11 @@ window.TascoCameraPreferences=(()=>{
     state.blocked=['42P01','PGRST205','PGRST202','42883','42501'].includes(error?.code);state.status=state.blocked?'setup':'error';render();
     if(!state.blocked&&state.owner&&state.retries<4){clearTimeout(state.retry);state.retry=setTimeout(()=>{state.retry=null;retry();},[5000,15000,30000,60000][state.retries++]);}
   }
-  /* Một lần cho mỗi tài khoản: bản cũ mặc định chữ trắng, chuyển sang xanh than của app. Về sau người dùng đổi màu nào thì giữ màu đó. */
-  function stampNavyOnce(){
+  /* Một lần cho mỗi tài khoản: bản trước từng đổi cả khối chữ sang xanh than. Nay chỉ dòng tiêu đề xanh than, phần còn lại trả về trắng. */
+  function stampTitleOnce(){
     try{
-      const key='tasco-stamp-navy-v1:'+state.owner;if(localStorage.getItem(key))return;localStorage.setItem(key,'1');
-      if(state.settings.color==='#ffffff'&&!Object.hasOwn(state.pending,'color')){state.pending.color=cameraStampNavy;state.settings=normalize({...state.settings,color:cameraStampNavy});}
+      const key='tasco-stamp-title-v1:'+state.owner;if(localStorage.getItem(key))return;localStorage.setItem(key,'1');
+      if(state.settings.color===cameraStampNavy&&!Object.hasOwn(state.pending,'color')){state.pending.color='#ffffff';state.settings=normalize({...state.settings,color:'#ffffff'});}
     }catch(_){}
   }
   async function load(){
@@ -10838,7 +10869,7 @@ window.TascoCameraPreferences=(()=>{
         const result=await timed(state.api.from(table).select('user_id,settings,updated_at').eq('user_id',owner).maybeSingle());
         if(state.epoch!==epoch)return;if(result.error)throw result.error;
         if(result.data&&(result.data.user_id!==owner||!result.data.settings||typeof result.data.settings!=='object'||Array.isArray(result.data.settings)))throw new Error('Kết quả thiết lập không hợp lệ.');
-        if(result.data){state.initial=null;state.settings=normalize({...result.data.settings,...state.pending});stampNavyOnce();}
+        if(result.data){state.initial=null;state.settings=normalize({...result.data.settings,...state.pending});stampTitleOnce();}
         else{state.initial=clone(state.settings);state.settings=normalize({...state.settings,...state.pending});}
         state.loaded=true;state.blocked=false;if(!hasWork())state.retries=0;clearTimeout(state.retry);
         if(!cameraOpen())apply(state.settings);cache();state.status=hasWork()?'pending':'saved';
