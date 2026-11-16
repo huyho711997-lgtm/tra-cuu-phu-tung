@@ -9009,8 +9009,14 @@ window.TascoCloud = (() => {
   }
   async function queuePhotos(files,title,metadata,albumContext=null,options={}) {
     if(state.albumSaving)throw new Error('Đợi đổi tên album hoàn tất rồi lưu ảnh.');
-    const owner=await account();
-    if(state.config.personalStorage)await state.config.personalStorage.load({force:true});
+    /* Mất mạng giữa phiên: không gọi máy chủ xác thực/tải kết nối lưu trữ (sẽ treo ~10 giây rồi báo lỗi và ảnh không vào hàng đợi).
+       Dùng phiên + kết nối đã nạp sẵn trong máy; ảnh vào hàng đợi trên thiết bị và tự tải lên khi có mạng lại. */
+    const offline=()=>navigator.onLine===false||/^(CLOUD_TIMEOUT)$/.test(error?.code||'')||/Failed to fetch|NetworkError|Load failed|network/i.test(String(error?.message||''));
+    let error=null,owner;
+    if(navigator.onLine===false)owner=await account({verify:false});
+    else try{owner=await account();}catch(err){error=err;if(!offline()||['CLOUD_LOGIN','CLOUD_ACCOUNT','CLOUD_FORBIDDEN'].includes(err?.message))throw err;owner=await account({verify:false});}
+    const cachedOnly=navigator.onLine===false||Boolean(error);
+    if(state.config.personalStorage){try{await state.config.personalStorage.load({force:!cachedOnly});}catch(err){if(!cachedOnly)throw err;}}
     const cloud=config(owner),records=[];let album=null;
     if(options.cloud&&!sameTarget({owner_id:owner.id,cloud:options.cloud},cloud))throw new Error('Kết nối đã thay đổi. Mở lại phần tải ảnh để chọn nơi lưu mới.');
     const recordKey=owner.id+':'+(albumContext?.albumId||'');
@@ -9026,10 +9032,11 @@ window.TascoCloud = (() => {
       if(!cached){const info=await metadata(file);cached={id:crypto.randomUUID(),owner_id:owner.id,title:String(info.title||title||album?.name||'Ảnh của tôi').slice(0,160),album_id:album?.id||null,album_name:album?.name||'',blob:file,file_name:file.name,captured_at:new Date(info.capturedAt).toISOString(),address:info.location?.address||window.cameraGpsText?.(info.location)||'',geo:info.location?.address?null:(window.cameraGpsPoint?.(info.location)||null),location_status:info.location?.addressStatus||info.location?.status||'unavailable',category:String(info.category||'').trim().slice(0,120)||null,origin:info.origin==='device_upload'?'device_upload':null,cloud,upload:null,error:''};if(direct){let saved=directRecords.get(file);if(!saved){saved=new Map();directRecords.set(file,saved);}saved.set(key,cached);}}
       records.push(cached);if(direct&&!cached.confirmed)unsavedDirect.add(cached);
     }
-    if((await account()).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Hãy đăng nhập lại trước khi lưu ảnh.');
+    if((await account({verify:!cachedOnly})).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Hãy đăng nhập lại trước khi lưu ảnh.');
     if(direct){await saveDirect(records,owner.id,options);notify('Đã lưu '+records.length+' ảnh'+(album?' vào album “'+album.name+'”':' vào Cloud')+'.');await refresh();return;}
     await storeBatch(records,album);
-    if(options.silent){processQueue();return records.map(row=>row.id);}
+    if(options.silent){if(!cachedOnly)processQueue();else{state.pending=await pendingFor(owner.id);try{paintPending();}catch(_){}}return records.map(row=>row.id);}
+    if(cachedOnly){notify('Đang mất mạng: đã giữ '+files.length+' ảnh trên thiết bị, sẽ tự tải lên Cloud khi có mạng.');state.pending=await pendingFor(owner.id);try{paintPending();}catch(_){}return records.map(row=>row.id);}
     notify('Đã giữ '+files.length+' ảnh'+(album?' trong album “'+album.name+'”':' trên thiết bị')+', đang đưa lên Cloud.');await refresh();processQueue();return records.map(row=>row.id);
   }
   /* Batch export uses original assets and a single ZIP, with no database writes. */
