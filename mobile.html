@@ -14736,6 +14736,12 @@ window.TascoPhotoFX = (function () {
     if (!plane || !box || !st.rect) return;
     var c = box.getBoundingClientRect(), r = st.rect, turn = nativeTurn(), swap = Math.abs(turn) % 180 === 90;
     var w = swap ? r.height : r.width, h = swap ? r.width : r.height;
+    /* Khung xem trước = đúng vùng sẽ được lưu: ảnh sẽ cắt theo tỉ lệ đã chọn (vd. 9:16), nên khung và lớp che
+       phải cắt cùng tỉ lệ, nếu không thấy đủ nhưng ảnh lưu lại thiếu hai bên. */
+    try {
+      var crop = cameraCropFrame(w, h, cameraOrientedRatio(cameraAppearance.aspectRatio, w > h ? 'landscape' : 'portrait', w, h));
+      if (crop && crop.width > 0 && crop.height > 0) { w = crop.width; h = crop.height; }
+    } catch (_) {}
     plane.style.width = w + 'px'; plane.style.height = h + 'px';
     plane.style.left = (r.x - c.left + r.width / 2) + 'px'; plane.style.top = (r.y - c.top + r.height / 2) + 'px';
     plane.style.transform = 'translate(-50%,-50%) rotate(' + turn + 'deg)';
