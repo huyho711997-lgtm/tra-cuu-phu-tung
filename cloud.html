@@ -8,6 +8,7 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://esm.sh https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://res.cloudinary.com; media-src blob: https://res.cloudinary.com; connect-src 'self' https://yxwmcpoklxpzlikxojez.supabase.co https://res.cloudinary.com https://esm.sh https://cdn.jsdelivr.net; base-uri 'none'; form-action 'none'; object-src 'none'">
 <script src="vendor/qrcode.min.js"></script>
+<script src="assets/markup.js"></script>
 <link rel="icon" href="icons/icon-192.png" type="image/png" onerror="this.remove()">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -313,6 +314,11 @@ button.cp-row:hover{background:#eef5f7}
 .v-stage.drag{cursor:grabbing}
 .v-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;transform-origin:center;will-change:transform;animation:vin .28s cubic-bezier(.2,.8,.2,1)}
 @keyframes vin{from{opacity:.0;transform:scale(.985)}}
+.v-stage .mk-ov{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transform-origin:center;will-change:transform;overflow:visible}
+.v-stage .mk-ov[hidden]{display:none}
+.tile .mkb{position:absolute;right:9px;bottom:9px;z-index:2;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:rgba(8,18,31,.55);border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(10px);color:#fff}
+.tile .mkb svg{width:13px;height:13px;stroke-width:2.2}
+.tile:hover .meta ~ .mkb,.cap-on .tile .mkb{opacity:0}
 .v-stage video{max-width:100%;max-height:100%;border-radius:6px;background:#000;box-shadow:0 30px 80px -20px rgba(0,0,0,.8)}
 .v-nav{position:absolute;top:50%;width:48px;height:48px;margin-top:-24px;border-radius:50%;display:grid;place-items:center;background:rgba(10,24,42,.5);border:1px solid rgba(255,255,255,.14);color:#fff;backdrop-filter:blur(12px);transition:all .18s;z-index:2;opacity:.0}
 .v-stage:hover .v-nav{opacity:1}
@@ -458,7 +464,10 @@ button.cp-row:hover{background:#eef5f7}
     <div class="t"><b id="vTitle"></b><small id="vDate"></small></div>
     <span class="v-count" id="vCount"></span>
     <button class="v-btn" id="vInfoBtn" title="Thông tin (I)" aria-label="Thông tin"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/></svg></button>
+    <button class="v-btn" id="vMark" title="Đánh dấu ảnh (E)" aria-label="Đánh dấu ảnh"><svg viewBox="0 0 24 24"><path d="M4 20l4.2-1 10.5-10.5a2.1 2.1 0 0 0-3-3L5.2 16 4 20z"/><path d="M13.5 7.5l3 3"/></svg></button>
+    <button class="v-btn" id="vEye" title="Hiện/ẩn nét đánh dấu (M)" aria-label="Hiện hoặc ẩn đánh dấu" hidden><svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg></button>
     <button class="v-btn" id="vRotate" title="Xoay (R)" aria-label="Xoay"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4.5h-4.5"/></svg></button>
+    <button class="v-btn" id="vDlMark" title="Tải ảnh đã đánh dấu" aria-label="Tải ảnh đã đánh dấu" hidden><svg viewBox="0 0 24 24"><path d="M12 3.5v9M8.5 9 12 12.5 15.5 9"/><path d="M4 14.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3.5"/><circle cx="18.5" cy="5.5" r="2.5"/></svg></button>
     <button class="v-btn" id="vDl" title="Tải ảnh gốc (D)" aria-label="Tải"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/></svg></button>
     <button class="v-btn danger" id="vDel" title="Xoá ảnh (Delete)" aria-label="Xoá"><svg viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.8h5V7M6.8 7l.8 11.2a2 2 0 0 0 2 1.8h4.8a2 2 0 0 0 2-1.8L17.2 7M10 11v5M14 11v5"/></svg></button>
     <button class="v-btn" id="vClose" title="Đóng (Esc)" aria-label="Đóng"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
@@ -563,7 +572,7 @@ function toast(text, err = false, ms = 3800) {
 const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 
 /* ---------- Tải dữ liệu ---------- */
-const COLS = 'id,title,address,captured_at,created_at,source,cloud_name,secure_url,public_id,bytes,width,height,album_id,category';
+const COLS = 'id,title,address,captured_at,created_at,source,cloud_name,secure_url,public_id,bytes,width,height,album_id,category,annotations';
 function friendly(error) {
   const m = String(error?.message || error || ''), c = String(error?.code || '');
   if (c === '42501' || /row-level security|permission denied/i.test(m)) return 'Tài khoản này chưa được cấp quyền Cloud. Nhờ Admin cấp quyền rồi tải lại.';
@@ -693,10 +702,11 @@ function paintHeader() {
 }
 
 /* ---------- Lưới ảnh ---------- */
+const markCount = r => (!isVideo(r) && window.TascoMarkup && r.annotations) ? TascoMarkup.count(r.annotations) : 0;
 function tileHTML(r, i) {
   const sel = S.selected.has(r.id), src = tileThumb(r);
   const sub = [fmtTime(r), r.category, r.address].filter(Boolean).join(' · ');
-  return `<button class="tile${sel ? ' is-sel' : ''}" style="--ar:${aspect(r).toFixed(3)}" data-id="${esc(r.id)}" data-i="${i}" aria-label="${esc((r.title || 'Ảnh') + ', ' + fmtFull(r))}">${src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async">` : ''}${isVideo(r) ? `<span class="vb">${ICON.vid}VIDEO</span><span class="play">${ICON.play}</span>` : ''}<span class="chk" data-chk>${ICON.check}</span><span class="meta"><b>${esc(r.title || 'Ảnh của tôi')}</b><small>${esc(sub)}</small></span></button>`;
+  return `<button class="tile${sel ? ' is-sel' : ''}" style="--ar:${aspect(r).toFixed(3)}" data-id="${esc(r.id)}" data-i="${i}" aria-label="${esc((r.title || 'Ảnh') + ', ' + fmtFull(r))}">${src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async">` : ''}${isVideo(r) ? `<span class="vb">${ICON.vid}VIDEO</span><span class="play">${ICON.play}</span>` : ''}${markCount(r) ? `<span class="mkb" title="Có ${markCount(r)} nét đánh dấu"><svg viewBox="0 0 24 24"><path d="M4 20l4.2-1 10.5-10.5a2.1 2.1 0 0 0-3-3L5.2 16 4 20z"/></svg></span>` : ''}<span class="chk" data-chk>${ICON.check}</span><span class="meta"><b>${esc(r.title || 'Ảnh của tôi')}</b><small>${esc(sub)}</small></span></button>`;
 }
 const planKey = albumId => (!albumId || albumId === 'none' || albumId === 'all') ? 'all' : albumId;
 const cleanName = v => String(v || '').replace(/\s+/g, ' ').trim().slice(0, 120);
@@ -1000,7 +1010,7 @@ function clampPan() {
   const mx = Math.max(0, (w - r.width) / 2) + 80, my = Math.max(0, (h - r.height) / 2) + 80;
   V.x = Math.max(-mx, Math.min(mx, V.x)); V.y = Math.max(-my, Math.min(my, V.y));
 }
-function vTransform() { clampPan(); const el = $('#vMedia'); if (el && el.tagName === 'IMG') el.style.transform = `translate(${V.x}px,${V.y}px) scale(${V.s}) rotate(${V.rot}deg)`; $('#zFit').textContent = Math.round(V.s * 100) + '%'; }
+function vTransform() { clampPan(); const el = $('#vMedia'); if (el && el.tagName === 'IMG') { el.style.transform = `translate(${V.x}px,${V.y}px) scale(${V.s}) rotate(${V.rot}deg)`; const ov = stage.querySelector('.mk-ov'); if (ov) ov.style.transform = el.style.transform; } $('#zFit').textContent = Math.round(V.s * 100) + '%'; }
 function vReset() { V.s = 1; V.x = 0; V.y = 0; vTransform(); }
 function openViewer(i) {
   S.viewer = { open: true, index: i }; $('#viewer').hidden = false; document.body.style.overflow = 'hidden';
@@ -1008,7 +1018,7 @@ function openViewer(i) {
   paintFilm(); showItem(i); $('#viewer').focus?.();
 }
 function closeViewer() { S.viewer.open = false; $('#viewer').hidden = true; document.body.style.overflow = ''; stopMedia(); const cur = S.view[S.viewer.index]; const t = cur && document.querySelector(`.tile[data-id="${CSS.escape(cur.id)}"]`); t?.scrollIntoView({ block: 'nearest' }); t?.focus({ preventScroll: true }); }
-function stopMedia() { const m = $('#vMedia'); if (m) { if (m.tagName === 'VIDEO') { try { m.pause(); m.removeAttribute('src'); m.load(); } catch (_) {} } m.remove(); } }
+function stopMedia() { $('#vMark')?.blur(); stage.querySelector('.mk-ov')?.remove(); const m = $('#vMedia'); if (m) { if (m.tagName === 'VIDEO') { try { m.pause(); m.removeAttribute('src'); m.load(); } catch (_) {} } m.remove(); } }
 function paintFilm() {
   const around = []; const i = S.viewer.index; const from = Math.max(0, i - 40), to = Math.min(S.view.length, i + 41);
   for (let k = from; k < to; k++) around.push(`<button data-fi="${k}" class="${k === i ? 'is-cur' : ''}" aria-label="Mục ${k + 1}"><img src="${esc(thumbURL(S.view[k], 140))}" alt="" loading="lazy"></button>`);
@@ -1018,14 +1028,14 @@ function showItem(i) {
   if (i < 0 || i >= S.view.length) return; S.viewer.index = i; const r = S.view[i], token = ++V.token; stopMedia(); V.rot = 0; V.s = 1; V.x = 0; V.y = 0;
   $('#vTitle').textContent = r.title || 'Ảnh của tôi'; $('#vDate').textContent = fmtFull(r) + (r.address ? ' · ' + r.address : ''); $('#vCount').textContent = (i + 1) + ' / ' + S.view.length;
   $('#vPrev').disabled = i === 0; $('#vNext').disabled = i === S.view.length - 1;
-  const vid = isVideo(r); $('#vZoom').hidden = vid; $('#vRotate').hidden = vid; stage.style.cursor = vid ? 'default' : '';
+  const vid = isVideo(r); $('#vZoom').hidden = vid; $('#vRotate').hidden = vid; $('#vMark').hidden = vid || !window.TascoMarkup; $('#vEye').hidden = $('#vDlMark').hidden = true; stage.style.cursor = vid ? 'default' : '';
   $('#vLoad').hidden = false; $('#vLoad').textContent = vid ? 'Đang tải video…' : 'Đang tải bản đầy đủ…';
   const el = document.createElement(vid ? 'video' : 'img'); el.id = 'vMedia'; el.draggable = false;
   if (vid) { el.controls = true; el.playsInline = true; el.preload = 'metadata'; el.poster = tileThumb(r); el.onloadedmetadata = () => { if (token === V.token) { $('#vLoad').hidden = true; paintInfo(r, el); } }; el.onerror = () => { if (token === V.token) $('#vLoad').textContent = 'Chưa tải được video.'; }; el.src = viewURL(r); stage.prepend(el); paintInfo(r, el); }
   else {
     /* Hiện ngay ảnh nhỏ đã có trong lưới (mờ), rồi thay bằng bản lớn khi tải xong. */
-    el.alt = r.title || ''; el.src = tileThumb(r); stage.prepend(el); paintInfo(r, null);
-    const big = new Image(); big.onload = () => { if (token !== V.token) return; el.src = big.src; $('#vLoad').hidden = true; paintInfo(r, big); }; big.onerror = () => { if (token === V.token) $('#vLoad').textContent = 'Chưa tải được bản lớn.'; }; big.src = viewURL(r);
+    el.alt = r.title || ''; el.src = tileThumb(r); stage.prepend(el); paintInfo(r, null); paintMarks(r, r.width, r.height);
+    const big = new Image(); big.onload = () => { if (token !== V.token) return; el.src = big.src; $('#vLoad').hidden = true; paintInfo(r, big); paintMarks(r, big.naturalWidth, big.naturalHeight); }; big.onerror = () => { if (token === V.token) $('#vLoad').textContent = 'Chưa tải được bản lớn.'; }; big.src = viewURL(r);
   }
   for (const n of [S.view[i - 1], S.view[i + 1]]) if (n && !isVideo(n)) { const p = new Image(); p.src = viewURL(n); }
   for (const b of $('#vFilm').querySelectorAll('button')) b.classList.toggle('is-cur', Number(b.dataset.fi) === i);
@@ -1033,6 +1043,45 @@ function showItem(i) {
   if (Math.abs(i - Number($('#vFilm').querySelector('button:last-child')?.dataset.fi ?? i)) < 6 || Math.abs(i - Number($('#vFilm').querySelector('button')?.dataset.fi ?? i)) < 6) paintFilm();
   vTransform();
 }
+/* ---------- Đánh dấu ảnh ---------- */
+V.marks = (() => { try { return localStorage.getItem('tasco_cloud_marks') !== '0'; } catch (_) { return true; } })();
+function paintMarks(r, w, h) {
+  if (!window.TascoMarkup || isVideo(r) || S.view[S.viewer.index] !== r) return;
+  let ov = stage.querySelector('.mk-ov'); const n = r.annotations ? TascoMarkup.count(r.annotations) : 0;
+  $('#vEye').hidden = $('#vDlMark').hidden = !n; $('#vEye').classList.toggle('is-on', n && V.marks);
+  if (!n) { ov?.remove(); return; }
+  if (!ov) { ov = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); ov.setAttribute('class', 'mk-ov'); ov.setAttribute('aria-hidden', 'true'); $('#vMedia').after(ov); }
+  ov.hidden = !V.marks; TascoMarkup.mount(ov, r.annotations, Number(w) || Number(r.width), Number(h) || Number(r.height)); ov.style.transform = $('#vMedia').style.transform;
+}
+let marking = false;
+async function openMarkEditor() {
+  const r = S.view[S.viewer.index]; if (!r || isVideo(r) || marking || !window.TascoMarkup) return;
+  const url = viewURL(r); if (!url) return toast('Không có đường dẫn ảnh.', true);
+  marking = true;
+  try {
+    await TascoMarkup.edit({
+      url, title: r.title || 'Đánh dấu ảnh', annotations: r.annotations,
+      save: async (out) => {
+        const { data, error } = await sb.from('tasco_personal_photos').update({ annotations: out }).eq('id', r.id).eq('owner_id', S.user.id).select('id');
+        if (error) throw new Error(/row-level security|permission denied/i.test(String(error.message)) ? 'Tài khoản này chưa có quyền sửa ảnh. Nhờ Admin cấp quyền.' : friendly(error));
+        if (!data || !data.length) throw new Error('Không lưu được: ảnh không còn tồn tại hoặc không có quyền sửa.');
+        r.annotations = out; const live = S.rows.find(x => x.id === r.id); if (live) live.annotations = out;
+      }
+    });
+    if (S.view[S.viewer.index] === r) { const m = $('#vMedia'); paintMarks(r, m?.naturalWidth, m?.naturalHeight); }
+    render?.();
+    toast(r.annotations && TascoMarkup.count(r.annotations) ? 'Đã lưu nét đánh dấu. Ảnh gốc giữ nguyên.' : 'Đã xoá hết nét đánh dấu.');
+  } catch (e) { toast(friendly(e), true); }
+  finally { marking = false; }
+}
+$('#vMark').onclick = openMarkEditor;
+$('#vEye').onclick = () => { V.marks = !V.marks; try { localStorage.setItem('tasco_cloud_marks', V.marks ? '1' : '0'); } catch (_) {} const r = S.view[S.viewer.index], m = $('#vMedia'); if (r) paintMarks(r, m?.naturalWidth, m?.naturalHeight); };
+$('#vDlMark').onclick = async () => {
+  const r = S.view[S.viewer.index]; if (!r || !r.annotations) return; const b = $('#vDlMark'); b.disabled = true;
+  try { const blob = await TascoMarkup.flatten(viewURL(r), r.annotations); saveBlob(blob, fileName(r).replace(/\.[^.]+$/, '') + '_danh-dau.jpg'); }
+  catch (e) { toast('Chưa tạo được ảnh đánh dấu: ' + (e?.message || 'lỗi mạng'), true); }
+  b.disabled = false;
+};
 function paintInfo(r, el) {
   const w = el?.naturalWidth || el?.videoWidth || r.width, h = el?.naturalHeight || el?.videoHeight || r.height;
   const pairs = [['Hạng mục', r.category || 'Chưa phân hạng mục'], ['Album', albumName(r.album_id) || 'Chưa vào album'], ['Thời gian chụp', fmtFull(r)], ['Địa điểm', r.address || 'Chưa có địa điểm'], ['Kích thước', w && h ? `${Number(w).toLocaleString('vi-VN')} × ${Number(h).toLocaleString('vi-VN')} px` : ''], ['Dung lượng', r.bytes ? fmtSize(r.bytes) : ''], ['Định dạng', extOf(r).toUpperCase()], ['Nguồn', r.source === 'mobile_camera' ? 'Chụp từ app điện thoại' : r.source || '']];
@@ -1062,6 +1111,7 @@ function toggleInfo() { V.info = !V.info; try { localStorage.setItem('tasco_clou
 $('#vFilm').addEventListener('click', e => { const b = e.target.closest('[data-fi]'); if (b) showItem(Number(b.dataset.fi)); });
 
 document.addEventListener('keydown', e => {
+  if (document.querySelector('.mk')) return; /* trình đánh dấu đang mở: tự xử lý phím, tránh xoá/chuyển ảnh nhầm */
   if (dlgOpen()) { if (e.key === 'Escape') { e.preventDefault(); [...document.querySelectorAll('.dlg:not([hidden])')].pop()?._ui?.close(); } return; }
   const tag = (e.target.tagName || '').toLowerCase(), typing = ['input', 'textarea', 'select'].includes(tag);
   if (S.viewer.open) {
@@ -1073,6 +1123,8 @@ document.addEventListener('keydown', e => {
     else if (e.key === '0') vReset();
     else if (e.key.toLowerCase() === 'i') toggleInfo();
     else if (e.key.toLowerCase() === 'r') $('#vRotate').click();
+    else if (e.key.toLowerCase() === 'e' && !e.ctrlKey && !e.metaKey) { e.preventDefault(); $('#vMark').click(); }
+    else if (e.key.toLowerCase() === 'm' && !$('#vEye').hidden) $('#vEye').click();
     else if (e.key.toLowerCase() === 'd') downloadOne(S.view[S.viewer.index]);
     else if (e.key === 'Delete') { e.preventDefault(); $('#vDel').click(); }
     return;
