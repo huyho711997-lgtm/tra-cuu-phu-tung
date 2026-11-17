@@ -1051,7 +1051,7 @@ function paintMarks(r, w, h) {
   $('#vEye').hidden = $('#vDlMark').hidden = !n; $('#vEye').classList.toggle('is-on', n && V.marks);
   if (!n) { ov?.remove(); return; }
   if (!ov) { ov = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); ov.setAttribute('class', 'mk-ov'); ov.setAttribute('aria-hidden', 'true'); $('#vMedia').after(ov); }
-  ov.hidden = !V.marks; TascoMarkup.mount(ov, r.annotations, Number(w) || Number(r.width), Number(h) || Number(r.height)); ov.style.transform = $('#vMedia').style.transform;
+  ov.toggleAttribute('hidden', !V.marks); TascoMarkup.mount(ov, r.annotations, Number(w) || Number(r.width), Number(h) || Number(r.height)); ov.style.transform = $('#vMedia').style.transform;
 }
 let marking = false;
 async function openMarkEditor() {

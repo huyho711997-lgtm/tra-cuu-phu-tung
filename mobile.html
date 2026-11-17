@@ -870,6 +870,10 @@ html.tasco-quick-boot #tascoBootSplash > *, html.tasco-quick-boot #tascoBootSpla
 .viewer-counter{flex-shrink:0;padding:5px 9px;border:1px solid rgba(255,255,255,.08);border-radius:20px;color:#bfd0e6;background:rgba(255,255,255,.025);font-size:10px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
 .viewer-stage{grid-area:stage;position:relative;min-width:0;min-height:0;width:100%;height:100%;overflow:hidden;touch-action:none;overscroll-behavior:none;user-select:none;-webkit-user-select:none;background:radial-gradient(ellipse at center,#101b2c,#070d18 78%)}
 .viewer-stage.is-zoomed{cursor:grab}.viewer-stage.is-gesturing{cursor:grabbing}
+.viewer-markup{position:absolute;left:50%;top:50%;display:block;overflow:visible;transform-origin:center;transition:transform .18s cubic-bezier(.2,.65,.3,1);pointer-events:none;will-change:transform}.viewer-markup[hidden]{display:none}
+.viewer-stage.is-gesturing .viewer-markup{transition:none}
+.viewer-markbar{position:absolute;z-index:4;left:12px;bottom:12px;display:flex;gap:6px}.viewer-markbar[hidden]{display:none}.viewer-markbar button{min-height:34px;padding:5px 11px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(12,22,38,.82);color:#c2d2e7;font-size:11px;font-weight:700}
+.viewer-tools:has([data-viewer-action=mark]){grid-template-columns:repeat(6,minmax(0,1fr))}.viewer-tools:has([data-viewer-action=mark]):has([data-viewer-action=delete]){grid-template-columns:repeat(7,minmax(0,1fr))}.viewer-tool[data-viewer-action=mark]{color:#a7e0e6}.viewer-tool[hidden]{display:none}
 .viewer-image{position:absolute;left:50%;top:50%;display:block;max-width:none!important;max-height:none!important;object-fit:contain;transform-origin:center;transition:transform .18s cubic-bezier(.2,.65,.3,1);user-select:none;-webkit-user-select:none;-webkit-user-drag:none;pointer-events:none;will-change:transform}
 .viewer-stage.is-gesturing .viewer-image{transition:none}
 .viewer-loading,.viewer-error{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;color:#9fb0c8;font-size:12px}
@@ -3230,6 +3234,7 @@ html.dark .tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data
 </style>
     <!-- Tailwind + Flowbite đã biên dịch sẵn (tools/css). Đặt cuối head để giữ thứ tự ưu tiên CSS cũ. -->
     <link rel="stylesheet" href="tailwind.css">
+<script src="assets/markup.js"></script>
 </head>
 <body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300"><div id="tascoLock" role="dialog" aria-modal="true" aria-label="TASCO DLK đang khoá" aria-hidden="true"><div class="al-inner"><img class="al-logo" src="icons/icon-192.png" alt="" width="96" height="96" decoding="async"><h1>TASCO DLK</h1><p class="al-sub">Ứng dụng đang khoá để bảo vệ hồ sơ</p><button type="button" class="al-btn" data-al-unlock><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1.5M15 10v1.5M12 10v4h-1M9 16.2c1.7 1.2 4.3 1.2 6 0"/></svg><span data-al-btn-text>Mở khoá bằng Face ID</span></button><p class="al-msg" data-al-msg role="status" aria-live="polite"></p></div></div><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="tascoEmblemGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4fdfe"/><stop offset=".45" stop-color="#b6e4ea"/><stop offset="1" stop-color="#4f9fac"/></linearGradient></defs></svg>
 <div id="tascoStatusBackdrop" aria-hidden="true"></div>
@@ -7677,7 +7682,7 @@ window.TascoPhotoViewer=(()=>{
   let active=null;
   const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const glyph=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+({
-    trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',left:'<path d="m14 6-6 6 6 6"/>',right:'<path d="m10 6 6 6-6 6"/>',minus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m1 5 6 6"/>',plus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m-4-4v8m5 1 6 6"/>',rotate:'<path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/><path d="M9 11h6v6H9z"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1"/><path d="m3 16 5-5 4 4 3-3 6 6"/>'
+    pencil:'<path d="M4 20l4.2-1L18.7 8.5a2.1 2.1 0 0 0-3-3L5.2 16 4 20z"/><path d="M13.5 7.5l3 3"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',left:'<path d="m14 6-6 6 6 6"/>',right:'<path d="m10 6 6 6-6 6"/>',minus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m1 5 6 6"/>',plus:'<circle cx="10" cy="10" r="7"/><path d="M6 10h8m-4-4v8m5 1 6 6"/>',rotate:'<path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/><path d="M9 11h6v6H9z"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1"/><path d="m3 16 5-5 4 4 3-3 6 6"/>'
   }[name]||'')+'</svg>';
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
   const date=value=>new Date(value).toLocaleString('vi-VN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
@@ -7689,11 +7694,11 @@ window.TascoPhotoViewer=(()=>{
     const overlay=document.createElement('div');overlay.id='cloudLightbox';overlay.className='cloud-photo-viewer';overlay.dataset.cloudTheme=options.theme;overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Trình xem ảnh');
     const tool=(action,icon,label)=>`<button type="button" class="viewer-tool" data-viewer-action="${action}" aria-label="${label}">${glyph(icon)}<span>${label}</span></button>`;
     overlay.innerHTML=`<header class="viewer-header"><button type="button" class="viewer-icon-button" data-viewer-action="close" aria-label="Đóng trình xem ảnh">${glyph('close')}</button><div class="viewer-heading"><strong data-viewer-title></strong><time data-viewer-date></time></div><span class="viewer-counter" data-viewer-counter aria-live="polite"></span></header>
-      <div class="viewer-stage" tabindex="0" aria-label="Ảnh. Vuốt trái hoặc phải để chuyển ảnh, chụm hai ngón hoặc chạm hai lần để phóng to."><img class="viewer-image" draggable="false" alt=""><div class="viewer-loading" role="status"><span></span>Đang tải ảnh…</div><div class="viewer-error" hidden>${glyph('image')}<p>Chưa tải được ảnh. Kiểm tra kết nối rồi thử lại.</p><button type="button" data-viewer-action="reload">Tải lại ảnh</button></div><button type="button" class="viewer-nav viewer-prev" data-viewer-action="previous" aria-label="Ảnh trước">${glyph('left')}</button><button type="button" class="viewer-nav viewer-next" data-viewer-action="next" aria-label="Ảnh tiếp theo">${glyph('right')}</button><span class="viewer-gesture-hint">Vuốt chuyển ảnh · Chạm hai lần để zoom</span><button type="button" class="viewer-fit" data-viewer-action="fit" aria-label="Đưa ảnh về kích thước vừa màn hình">100%</button></div>
+      <div class="viewer-stage" tabindex="0" aria-label="Ảnh. Vuốt trái hoặc phải để chuyển ảnh, chụm hai ngón hoặc chạm hai lần để phóng to."><img class="viewer-image" draggable="false" alt=""><svg class="viewer-markup" aria-hidden="true" hidden></svg><div class="viewer-markbar" hidden><button type="button" data-viewer-action="marks-toggle" aria-pressed="true">Ẩn nét vẽ</button><button type="button" data-viewer-action="marks-save">Lưu ảnh có nét vẽ</button></div><div class="viewer-loading" role="status"><span></span>Đang tải ảnh…</div><div class="viewer-error" hidden>${glyph('image')}<p>Chưa tải được ảnh. Kiểm tra kết nối rồi thử lại.</p><button type="button" data-viewer-action="reload">Tải lại ảnh</button></div><button type="button" class="viewer-nav viewer-prev" data-viewer-action="previous" aria-label="Ảnh trước">${glyph('left')}</button><button type="button" class="viewer-nav viewer-next" data-viewer-action="next" aria-label="Ảnh tiếp theo">${glyph('right')}</button><span class="viewer-gesture-hint">Vuốt chuyển ảnh · Chạm hai lần để zoom</span><button type="button" class="viewer-fit" data-viewer-action="fit" aria-label="Đưa ảnh về kích thước vừa màn hình">100%</button></div>
       <div class="viewer-filmstrip" aria-label="Ảnh trong thư viện"></div>
-      <nav class="viewer-tools" aria-label="Công cụ xem ảnh">${tool('zoom-out','minus','Thu nhỏ')}${tool('zoom-in','plus','Phóng to')}${tool('rotate','rotate','Xoay')}${tool('info','info','Thông tin')}${tool('download','download',TascoPhotoExport.label)}${options.remove?tool('delete','trash','Xoá ảnh'):''}</nav>
+      <nav class="viewer-tools" aria-label="Công cụ xem ảnh">${tool('zoom-out','minus','Thu nhỏ')}${tool('zoom-in','plus','Phóng to')}${tool('rotate','rotate','Xoay')}${options.annotate?tool('mark','pencil','Đánh dấu'):''}${tool('info','info','Thông tin')}${tool('download','download',TascoPhotoExport.label)}${options.remove?tool('delete','trash','Xoá ảnh'):''}</nav>
       <div class="viewer-info-backdrop" hidden></div><aside class="viewer-info" hidden aria-label="Thông tin ảnh"><header><div><span>CHI TIẾT ẢNH</span><h2>Thông tin ảnh</h2></div><button type="button" class="viewer-icon-button" data-viewer-action="close-info" aria-label="Đóng thông tin ảnh">${glyph('close')}</button></header><div class="viewer-info-content"></div><p class="viewer-rotation-note">Xoay áp dụng khi xem ảnh. Lưu ảnh để giữ bản đã xoay vào thiết bị.</p></aside><div class="viewer-message" role="status" aria-live="polite" hidden></div>`;
-    const stage=overlay.querySelector('.viewer-stage'),image=overlay.querySelector('.viewer-image'),film=overlay.querySelector('.viewer-filmstrip'),info=overlay.querySelector('.viewer-info'),backdrop=overlay.querySelector('.viewer-info-backdrop'),controller=new AbortController(),signal=controller.signal;
+    const stage=overlay.querySelector('.viewer-stage'),image=overlay.querySelector('.viewer-image'),markup=overlay.querySelector('.viewer-markup'),markbar=overlay.querySelector('.viewer-markbar'),film=overlay.querySelector('.viewer-filmstrip'),info=overlay.querySelector('.viewer-info'),backdrop=overlay.querySelector('.viewer-info-backdrop'),controller=new AbortController(),signal=controller.signal;
     const focus=document.activeElement,scrollX=window.scrollX,scrollY=window.scrollY;
     const savedStyle=Object.fromEntries(['overflow','position','top','left','right','width','overscrollBehavior'].map(key=>[key,document.body.style[key]])),savedHtmlStyle=Object.fromEntries(['overflow','overscrollBehavior'].map(key=>[key,document.documentElement.style[key]]));
     Object.assign(document.body.style,{overflow:'hidden',position:'fixed',top:-scrollY+'px',left:'0',right:'0',width:'100%',overscrollBehavior:'none'});Object.assign(document.documentElement.style,{overflow:'hidden',overscrollBehavior:'none'});window.scrollTo(0,0);
@@ -7712,10 +7717,10 @@ window.TascoPhotoViewer=(()=>{
     function bounds(){const turned=rotation%180!==0;return {x:Math.max(0,((turned?baseHeight:baseWidth)*zoom-stage.clientWidth)/2),y:Math.max(0,((turned?baseWidth:baseHeight)*zoom-stage.clientHeight)/2)};}
     function constrain(){const limit=bounds();x=clamp(x,-limit.x,limit.x);y=clamp(y,-limit.y,limit.y);if(zoom<=1.001){x=0;y=0;}}
     function render(){
-      image.style.transform=`translate3d(${x}px,${y}px,0) rotate(${rotation}deg) scale(${zoom})`;
+      image.style.transform=markup.style.transform=`translate3d(${x}px,${y}px,0) rotate(${rotation}deg) scale(${zoom})`;
       overlay.dataset.zoom=zoom.toFixed(3);overlay.dataset.rotation=String(rotation);overlay.dataset.photoId=current().id;overlay.dataset.index=String(index);
       actionButton('fit').textContent=Math.round(zoom*100)+'%';actionButton('fit').title='Vừa màn hình · Chạm để đặt lại';
-      actionButton('zoom-out').disabled=!ready||zoom<=1.001;actionButton('zoom-in').disabled=!ready||zoom>=5.999;actionButton('rotate').disabled=!ready;actionButton('download').disabled=downloading||!ready;
+      actionButton('zoom-out').disabled=!ready||zoom<=1.001;actionButton('zoom-in').disabled=!ready||zoom>=5.999;actionButton('rotate').disabled=!ready;actionButton('download').disabled=downloading||!ready;{const mk=actionButton('mark');if(mk)mk.disabled=!ready||markingBusy;}
       actionButton('download').querySelector('span').textContent=downloading?'Đang chuẩn bị…':TascoPhotoExport.label;
       stage.classList.toggle('is-zoomed',zoom>1.01);
     }
@@ -7724,7 +7729,7 @@ window.TascoPhotoViewer=(()=>{
       if(!naturalWidth||!naturalHeight)return;
       const turned=rotation%180!==0,ratio=Math.min(Math.max(1,stage.clientWidth-16)/(turned?naturalHeight:naturalWidth),Math.max(1,stage.clientHeight-16)/(turned?naturalWidth:naturalHeight));
       baseWidth=naturalWidth*ratio;baseHeight=naturalHeight*ratio;
-      Object.assign(image.style,{width:baseWidth+'px',height:baseHeight+'px',marginLeft:-baseWidth/2+'px',marginTop:-baseHeight/2+'px'});
+      Object.assign(image.style,{width:baseWidth+'px',height:baseHeight+'px',marginLeft:-baseWidth/2+'px',marginTop:-baseHeight/2+'px'});Object.assign(markup.style,{width:baseWidth+'px',height:baseHeight+'px',marginLeft:-baseWidth/2+'px',marginTop:-baseHeight/2+'px'});
       constrain();render();
     }
     function zoomAt(value,clientX,clientY){
@@ -7732,6 +7737,36 @@ window.TascoPhotoViewer=(()=>{
       x=px-(px-x)*next/zoom;y=py-(py-y)*next/zoom;zoom=next;constrain();render();
     }
     function reset(){zoom=1;x=0;y=0;render();}
+    /* Đánh dấu ảnh: nét vẽ lưu riêng (JSON), vẽ chồng lên ảnh gốc, không sửa ảnh. */
+    let marksOn=true,markingBusy=false;
+    const markCount=row=>window.TascoMarkup&&row?.annotations&&!window.tascoIsVideo(row)?TascoMarkup.count(row.annotations):0;
+    function paintMarks(){
+      const row=current(),n=markCount(row),isVid=window.tascoIsVideo(row);
+      const mk=actionButton('mark');if(mk)mk.hidden=isVid;
+      markbar.hidden=!n;markup.toggleAttribute('hidden',!n||!marksOn);
+      const t=markbar.querySelector('[data-viewer-action=marks-toggle]');t.textContent=marksOn?'Ẩn nét vẽ':'Hiện nét vẽ ('+n+')';t.setAttribute('aria-pressed',String(marksOn));
+      if(n&&naturalWidth)TascoMarkup.mount(markup,row.annotations,naturalWidth,naturalHeight);else markup.replaceChildren();
+    }
+    async function editMarks(){
+      const row=current();if(!ready||markingBusy||!options.annotate||!window.TascoMarkup||window.tascoIsVideo(row))return;
+      if(row.pending||!/^https:/.test(row.url||'')){notice('Ảnh đang chờ tải lên Cloud. Hãy đợi đồng bộ xong rồi đánh dấu.');return;}
+      markingBusy=true;render();
+      try{
+        await TascoMarkup.edit({url:row.url,title:row.title||'Đánh dấu ảnh',annotations:row.annotations,save:async out=>{await options.annotate(row.id,out);row.annotations=out;}});
+        if(!closed&&current()===row){marksOn=true;paintMarks();notice(markCount(row)?'Đã lưu nét đánh dấu. Ảnh gốc giữ nguyên.':'Đã xoá hết nét đánh dấu.');}
+      }catch(error){if(!closed)notice(error?.message||'Chưa lưu được nét đánh dấu.');}
+      finally{markingBusy=false;if(!closed)render();}
+    }
+    async function saveMarked(){
+      const row=current();if(!markCount(row)||downloading)return;downloading=true;render();
+      try{
+        let blob=await TascoMarkup.flatten(row.url,row.annotations);if(rotation)blob=await rotatedBlob(blob,rotation);
+        const file=TascoPhotoExport.file(blob,'tasco_'+new Date(row.captured_at).getTime()+'_danh-dau.jpg');
+        if(TascoPhotoExport.isIOS)notice('Trong bảng của iPhone, chọn “Lưu hình ảnh” để thêm ảnh vào thư viện.');
+        const result=await TascoPhotoExport.save(file,{gesture:false});if(!closed&&result==='cancelled')notice('Đã hủy mở bảng lưu ảnh.');
+      }catch(error){if(!closed)notice(error?.name==='AbortError'?'Đã hủy.':'Chưa tạo được ảnh có nét vẽ: '+(error?.message||'lỗi mạng'));}
+      finally{downloading=false;if(!closed)render();}
+    }
     function rotate(){if(!ready)return;rotation=(rotation+90)%360;rotations.set(current().id,rotation);invalidateExport();zoom=1;x=0;y=0;fit();paintInfo();if(TascoPhotoExport.isIOS)prepareExport().catch(()=>{});}
     const durations=new Map(),vcTime=t=>{t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');};
     function paintInfo(){
@@ -7753,7 +7788,7 @@ window.TascoPhotoViewer=(()=>{
       actionButton('previous').disabled=index===0;actionButton('next').disabled=loadingMore||(index===items.length-1&&!options.hasMore?.());
       for(const node of film.querySelectorAll('[data-viewer-index]')){const selected=Number(node.dataset.viewerIndex)===index;node.classList.toggle('is-current',selected);node.setAttribute('aria-current',String(selected));}
       const selected=film.children[index];if(selected)film.scrollTo({left:Math.max(0,selected.offsetLeft-film.clientWidth/2+selected.clientWidth/2),behavior:'smooth'});
-      paintInfo();render();
+      paintInfo();render();paintMarks();
     }
     function stopVideo(){
       const old=stage.querySelector('.viewer-video');
@@ -7819,7 +7854,7 @@ window.TascoPhotoViewer=(()=>{
       }
       overlay.dataset.media='image';
       image.onload=()=>{
-        if(token!==loadToken||closed)return;naturalWidth=image.naturalWidth;naturalHeight=image.naturalHeight;ready=naturalWidth>0;dimensions.set(current().id,{width:naturalWidth,height:naturalHeight});overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;image.style.visibility='visible';fit();paintInfo();if(TascoPhotoExport.isIOS)prepareExport().catch(()=>{});
+        if(token!==loadToken||closed)return;naturalWidth=image.naturalWidth;naturalHeight=image.naturalHeight;ready=naturalWidth>0;dimensions.set(current().id,{width:naturalWidth,height:naturalHeight});overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;image.style.visibility='visible';fit();paintMarks();paintInfo();if(TascoPhotoExport.isIOS)prepareExport().catch(()=>{});
         for(const neighbor of [items[index-1],items[index+1]])if(neighbor){const preload=new Image();preload.src=neighbor.url;}
       };
       image.onerror=()=>{if(token!==loadToken||closed)return;ready=false;overlay.dataset.loading='false';overlay.querySelector('.viewer-loading').hidden=true;overlay.querySelector('.viewer-error').hidden=false;render();};
@@ -7963,12 +7998,12 @@ window.TascoPhotoViewer=(()=>{
       const thumb=event.target.closest('[data-viewer-index]');if(thumb){show(Number(thumb.dataset.viewerIndex));return;}
       const button=event.target.closest('[data-viewer-action]');if(!button||button.disabled)return;
       const action=button.dataset.viewerAction;
-      if(action==='close')close();if(action==='previous')move(-1);if(action==='next')move(1);if(action==='zoom-out')zoomAt(zoom/1.5);if(action==='zoom-in')zoomAt(zoom*1.5);if(action==='fit')reset();if(action==='rotate')rotate();if(action==='info')setInfo(info.hidden);if(action==='close-info')setInfo(false);if(action==='download')download();if(action==='delete')options.remove?.(current().id);if(action==='reload')show(index);if(action==='load-more')additional();
+      if(action==='close')close();if(action==='previous')move(-1);if(action==='next')move(1);if(action==='zoom-out')zoomAt(zoom/1.5);if(action==='zoom-in')zoomAt(zoom*1.5);if(action==='fit')reset();if(action==='rotate')rotate();if(action==='info')setInfo(info.hidden);if(action==='close-info')setInfo(false);if(action==='download')download();if(action==='delete')options.remove?.(current().id);if(action==='reload')show(index);if(action==='mark')editMarks();if(action==='marks-toggle'){marksOn=!marksOn;paintMarks();}if(action==='marks-save')saveMarked();if(action==='load-more')additional();
     },{signal});
     overlay.addEventListener('error',event=>{const node=event.target;if(node.matches?.('.viewer-film-thumb img')&&node.dataset.original&&!node.dataset.fallback){node.dataset.fallback='true';node.src=node.dataset.original;}},{capture:true,signal});
     backdrop.addEventListener('click',()=>setInfo(false),{signal});
     document.addEventListener('keydown',event=>{
-      if(closed||document.querySelector('.cloud-delete-overlay')||document.querySelector('.photo-save-overlay'))return;
+      if(closed||document.querySelector('.cloud-delete-overlay')||document.querySelector('.photo-save-overlay')||document.querySelector('.mk'))return;
       if(event.key==='Tab'){
         const scope=info.hidden?overlay:info,buttons=[...scope.querySelectorAll('button,[tabindex="0"]')].filter(node=>!node.disabled&&node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden');if(!buttons.length)return;
         const first=buttons[0],last=buttons[buttons.length-1];if(event.shiftKey&&(document.activeElement===first||!scope.contains(document.activeElement))){event.preventDefault();last.focus({preventScroll:true});}else if(!event.shiftKey&&(document.activeElement===last||!scope.contains(document.activeElement))){event.preventDefault();first.focus({preventScroll:true});}return;
@@ -8559,6 +8594,13 @@ window.TascoCloud = (() => {
     const list=state.categories||[];bar.hidden=!list.length&&!state.category;
     const btn=(value,label,count)=>`<button type="button" data-action="filter-category" data-category="${esc(value)}" aria-pressed="${String(state.category===value)}">${esc(label)}${count!=null?`<b>${count}</b>`:''}</button>`;
     bar.innerHTML=btn('','Tất cả hạng mục',null)+list.map(c=>btn(c.name,c.name,c.count)).join('')+(list.length&&state.categoriesNone?btn('__none__','Chưa phân hạng mục',state.categoriesNone):'');
+  }
+  async function saveAnnotations(id,annotations){
+    const row=state.rows.find(item=>item.id===id);if(!row)throw new Error('Không tìm thấy ảnh trong thư viện.');
+    const owner=await account(),api=await client();
+    const r=await cloudRequest(api.from(table).update({annotations:annotations||null}).eq('id',id).eq('owner_id',owner.id).select('id'),'lưu nét đánh dấu');
+    if(r.error)throw new Error(message(r.error));if(!r.data?.length)throw new Error('Cloud chưa xác nhận thay đổi. Hãy thử lại.');
+    row.annotations=annotations&&annotations.items?.length?annotations:null;
   }
   async function setPhotoCategory(row,name){
     name=TascoCategories.clean(name)||null;
@@ -9621,7 +9663,7 @@ window.TascoCloud = (() => {
   function openPhoto(row) {
     const owner=state.user?.id,root=state.root;
     const items=()=>[...new Map([...visiblePending().map(item=>({...item,pending:true})),...state.rows].map(item=>{const url=thumbnail(item);return [item.id,{...item,url,preview:previewURL(url,144)}];})).values()];
-    window.TascoPhotoViewer.open({items:items(),id:row.id,total:state.count+visiblePending().length,theme:state.config.mode,email:state.user?.email||'',download:downloadBlob,remove:id=>requestDelete([id]),restoreFocus:()=>root.querySelector('[data-action="open"][data-id="'+CSS.escape(row.id)+'"]')?.focus({preventScroll:true}),
+    window.TascoPhotoViewer.open({items:items(),id:row.id,total:state.count+visiblePending().length,theme:state.config.mode,email:state.user?.email||'',download:downloadBlob,remove:id=>requestDelete([id]),annotate:saveAnnotations,restoreFocus:()=>root.querySelector('[data-action="open"][data-id="'+CSS.escape(row.id)+'"]')?.focus({preventScroll:true}),
       hasMore:()=>state.user?.id===owner&&state.root===root&&state.rows.length<state.count,
       loadMore:async()=>{if(state.user?.id!==owner||state.root!==root)return [];if(state.busy)return items();state.page=Math.floor(state.rows.length/48);await refresh(true);if(state.error)throw new Error(state.error);return state.user?.id===owner&&state.root===root?items():[];}
     });
@@ -14687,7 +14729,7 @@ window.TascoCameraRescue = (function () {
 [data-shell-nav="account"].has-update::after{content:'';position:absolute;top:6px;right:calc(50% - 16px);width:9px;height:9px;border-radius:50%;background:#ff6b5f;box-shadow:0 0 0 2px var(--ws-surface,#fff)}
 #btnUpdateApp.has-update strong::after{content:'Mới';margin-left:8px;padding:2px 7px;border-radius:999px;background:#ff6b5f;color:#fff;font-size:10px;font-weight:700;vertical-align:middle}
 </style>
-<style>.cloud-photo-viewer[data-media="video"] :is([data-viewer-action="zoom-in"],[data-viewer-action="zoom-out"],[data-viewer-action="rotate"],.viewer-image,.viewer-gesture-hint,.viewer-fit){display:none!important}
+<style>.cloud-photo-viewer[data-media="video"] :is([data-viewer-action="mark"],.viewer-markup,.viewer-markbar,[data-viewer-action="zoom-in"],[data-viewer-action="zoom-out"],[data-viewer-action="rotate"],.viewer-image,.viewer-gesture-hint,.viewer-fit){display:none!important}
 .cloud-photo-viewer[data-media="video"] .viewer-tools{grid-template-columns:repeat(3,minmax(0,1fr))}
 .cloud-photo-viewer[data-media="video"] .viewer-tools:has([data-viewer-action=delete]){grid-template-columns:repeat(3,minmax(0,1fr))}
 /* Trình phát video riêng: nút phát kính mờ + thanh tua, cùng ngôn ngữ với bảng in dấu và ô video */
