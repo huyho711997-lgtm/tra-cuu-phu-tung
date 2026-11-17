@@ -14790,6 +14790,9 @@ window.TascoDocScan = (function () {
 .tasco-workspace #mainApp[data-page=assess]>#mainHeader,.tasco-workspace #mainApp[data-page=assess]>#wsChildbar{display:none!important}
 @media(max-width:767px){.tasco-workspace #mainApp[data-shell][data-page=assess]{padding-left:0!important;padding-right:0!important;max-width:600px}}
 #assessSection .ws-journey-hero{min-height:246px;padding-bottom:54px}
+/* Glow bắt đầu mờ dần từ dưới vùng an toàn: không còn đường cắt giữa thanh trạng thái (màu đặc) và hero */
+#assessSection .ws-journey-hero::before{-webkit-mask-image:linear-gradient(180deg,transparent env(safe-area-inset-top,0px),#000 calc(env(safe-area-inset-top,0px) + 90px));mask-image:linear-gradient(180deg,transparent env(safe-area-inset-top,0px),#000 calc(env(safe-area-inset-top,0px) + 90px))}
+#assessSection .ws-journey-hero::after{-webkit-mask-image:linear-gradient(90deg,transparent,#000),linear-gradient(180deg,transparent,#000 60px);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000),linear-gradient(180deg,transparent,#000 60px);mask-composite:intersect}
 #assessSection .ws-journey-heading{max-width:82%}
 #assessSection .ws-journey-heading h2{font-size:32px;font-weight:700;line-height:1.16;letter-spacing:-1.1px}
 #assessSection .ws-journey-heading p{max-width:280px;font-size:12px;line-height:1.65}
