@@ -14949,6 +14949,15 @@ html.dark .as-bar .m{background:#84bfc7}
 .as-actions .ws-icon{width:16px;height:16px}
 .as-actions .as-zalo{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
 html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var(--ws-accent-text);color:#0b1b30}
+.as-prev{position:fixed;inset:0;z-index:100080;display:grid;place-items:center;padding:16px;background:rgba(11,27,48,.72);animation:asFade .18s ease both}
+.as-prev-box{display:grid;gap:10px;width:min(100%,460px);max-height:94dvh;padding:14px;border-radius:22px;background:var(--ws-surface);color:var(--ws-text)}
+.as-prev-box p{margin:0;font-size:12px;font-weight:600;color:var(--ws-muted);text-align:center}
+.as-prev-img{overflow:auto;max-height:68dvh;border-radius:14px;border:1px solid var(--ws-line);-webkit-overflow-scrolling:touch}
+.as-prev-img img{display:block;width:100%;height:auto;-webkit-touch-callout:default;user-select:auto}
+.as-prev-act{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:8px}
+.as-prev-act button{min-height:46px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-bg);color:var(--ws-text);font:700 12px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.as-prev-act .as-zalo{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
+.as-actions button:disabled{opacity:.7;cursor:default}
 .as-toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0));z-index:100070;max-width:86vw;padding:11px 16px;border-radius:13px;background:#183056;color:#fff;font:600 12px/1.45 'Plus Jakarta Sans',sans-serif;text-align:center;transform:translateX(-50%);box-shadow:0 8px 28px rgba(11,27,48,.35);pointer-events:none;animation:asFade .18s ease both}
 @media(max-width:359px){.as-num strong{font-size:32px}}
 </style>
@@ -15313,8 +15322,8 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     sheet.innerHTML = '<div class="as-backdrop" data-as="close"></div><div class="as-panel"><div class="as-grab" aria-hidden="true"></div>' +
       '<div class="as-sh-head"><div><span class="as-eyebrow" id="asSheetEye"></span><h3 id="asSheetTitle"></h3></div><div class="as-ctrl"><button type="button" data-as="prev" aria-label="Tình huống trước">' + ICON_L + '</button><button type="button" data-as="next" aria-label="Tình huống sau">' + ICON_R + '</button><button type="button" class="as-x" data-as="close" aria-label="Đóng">' + ICON_X + '</button></div></div>' +
       '<div class="as-scroll" id="asSheetBody"></div>' +
-      '<div class="as-actions"><button type="button" data-as="copy"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>Sao chép</button>' +
-      '<button type="button" class="as-zalo" data-as="share"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 3-9.5 9.5M21 3l-6.2 18-3.3-8.5L3 9.2z"/></svg>Gửi Zalo</button></div></div>';
+      '<div class="as-actions"><button type="button" data-as="copy"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>Chép chữ</button>' +
+      '<button type="button" class="as-zalo" data-as="share"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m21 16-5-5-8 8"/></svg><span>Gửi ảnh Zalo</span></button></div></div>';
     document.body.appendChild(sheet);
     sheet.addEventListener('click', function (e) {
       var t = e.target.closest('[data-as],[data-ci]'); if (!t) return;
@@ -15369,15 +15378,192 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     });
   }
   function doCopy() { copyText(buildMessage()).then(function (ok) { toast(ok ? 'Đã sao chép. Dán vào Zalo hoặc hồ sơ.' : 'Chưa sao chép được. Hãy thử lại.'); }); }
+  /* ---------- Ảnh kết luận để gửi Zalo ---------- */
+  var CARD_FONT = "'Plus Jakarta Sans',-apple-system,'Segoe UI',Roboto,Arial,sans-serif";
+  function loadImg(src) {
+    return new Promise(function (res) { var im = new Image(); im.onload = function () { res(im); }; im.onerror = function () { res(null); }; im.src = src; });
+  }
+  function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  function wrapText(g, text, maxW) {
+    var out = [], paras = String(text || '').split('\n');
+    paras.forEach(function (para) {
+      var line = '';
+      para.split(' ').forEach(function (word) {
+        if (!word) return;
+        var test = line ? line + ' ' + word : word;
+        if (g.measureText(test).width <= maxW) { line = test; return; }
+        if (line) { out.push(line); line = ''; }
+        while (g.measureText(word).width > maxW && word.length > 1) {
+          var k = word.length; while (k > 1 && g.measureText(word.slice(0, k)).width > maxW) k--;
+          out.push(word.slice(0, k)); word = word.slice(k);
+        }
+        line = word;
+      });
+      out.push(line);
+    });
+    return out;
+  }
+  function fitFont(g, text, weight, size, minSize, maxW) {
+    var z = size; g.font = weight + ' ' + z + 'px ' + CARD_FONT;
+    while (z > minSize && g.measureText(text).width > maxW) { z -= 0.5; g.font = weight + ' ' + z + 'px ' + CARD_FONT; }
+    return z;
+  }
+  async function renderCard() {
+    var s = cur.s, c = caseOf(), swap = cur.swap, mS = swap ? 'Y' : 'X', oS = swap ? 'X' : 'Y', mn = who(s, mS, swap), on = who(s, oS, swap), multi = s.cases.length > 1;
+    try { await Promise.race([document.fonts.load('700 16px "Plus Jakarta Sans"'), new Promise(function (r) { setTimeout(r, 900); })]); } catch (_) {}
+    var img = await loadImg(IMG + pad(s.id) + '.png');
+    var W = 540, P = 22, SC = 2, IW = W - 2 * P;
+    var NAVY = '#183056', TEAL = '#63adb6', INK = '#183056', MUTED = '#526c81', LINE = '#d2e2e8', SOFT = '#eef5f7', ACC = '#dbeaef', HOT = '#b45335';
+    var mv = val(c, mS), ov = val(c, oS);
+    function paint(g, draw) {
+      var y = 0;
+      function font(w, z) { g.font = w + ' ' + z + 'px ' + CARD_FONT; }
+      function para(text, x, w, weight, size, color, lh, align) {
+        font(weight, size); var lines = wrapText(g, text, w);
+        if (draw) { g.fillStyle = color; g.textAlign = align || 'left'; lines.forEach(function (l, i) { g.fillText(l, align === 'center' ? x + w / 2 : align === 'right' ? x + w : x, y + size + i * lh); }); g.textAlign = 'left'; }
+        y += lines.length * lh; return lines.length;
+      }
+      /* Đầu thẻ */
+      var tl; font(700, 20); tl = wrapText(g, s.t, IW).length;
+      var hh = 50 + tl * 26 + 18;
+      if (draw) { g.fillStyle = NAVY; g.fillRect(0, 0, W, hh); g.fillStyle = '#8fd0d8'; font(800, 10); g.fillText('HƯỚNG DẪN PHÂN LỖI  ·  TÌNH HUỐNG ' + s.id, P, 30); }
+      y = 42; para(s.t, P, IW, 700, 20, '#ffffff', 26); y = hh + 16;
+      /* Hình minh họa */
+      var boxH = 228;
+      if (draw) { g.fillStyle = '#fff'; rr(g, P, y, IW, boxH, 16); g.fill(); g.strokeStyle = LINE; g.lineWidth = 1; g.stroke(); if (img) { var k = Math.min((IW - 24) / img.naturalWidth, (boxH - 24) / img.naturalHeight, 2); var dw = img.naturalWidth * k, dh = img.naturalHeight * k; g.drawImage(img, P + (IW - dw) / 2, y + (boxH - dh) / 2, dw, dh); } }
+      y += boxH + 12;
+      /* Hai xe */
+      var cw = (IW - 12) / 2, boxes = [[mS, mn, true], [oS, on, false]], descH = 0, lines2 = [];
+      boxes.forEach(function (b, i) { font(500, 11); var l = wrapText(g, sub(s, swap, b[0] === 'X' ? s.x : s.y), cw - 24).slice(0, 4); lines2[i] = l; descH = Math.max(descH, l.length * 15); });
+      var ch = 14 + 14 + 10 + 38 + 8 + descH + 14;
+      boxes.forEach(function (b, i) {
+        var side = b[0], n = b[1], mine = b[2], x = P + i * (cw + 12);
+        if (draw) {
+          g.fillStyle = mine ? '#fff' : SOFT; rr(g, x, y, cw, ch, 14); g.fill(); g.strokeStyle = mine ? NAVY : LINE; g.lineWidth = mine ? 2 : 1; g.stroke();
+          var sx = x + 12, sy = y + 14;
+          g.lineWidth = 1.5; g.strokeStyle = INK; if (side === 'X') { g.fillStyle = INK; rr(g, sx, sy, 10, 10, 2.5); g.fill(); } else { g.fillStyle = '#fff'; rr(g, sx, sy, 10, 10, 2.5); g.fill(); g.stroke(); }
+          g.fillStyle = MUTED; font(800, 9.5); g.fillText((n.party ? 'BÊN CÒN LẠI' : mine ? 'XE CỦA BẠN' : 'XE CÒN LẠI'), sx + 16, sy + 9);
+          g.textAlign = 'right'; font(700, 9.5); g.fillText(side === 'X' ? 'đen' : 'trắng', x + cw - 12, sy + 9); g.textAlign = 'left';
+          var by = y + 14 + 14 + 10;
+          if (n.party) { fitFont(g, n.text, 800, 16, 11, cw - 24); g.fillStyle = INK; g.textAlign = 'center'; g.fillText(n.text, x + cw / 2, by + 24); g.textAlign = 'left'; }
+          else {
+            g.fillStyle = '#fff'; rr(g, x + 12, by, cw - 24, 38, 9); g.fill(); g.strokeStyle = n.plate ? NAVY : LINE; g.lineWidth = 2; if (!n.plate) g.setLineDash([4, 3]); g.stroke(); g.setLineDash([]);
+            var label = n.plate || 'Chưa nhập biển số'; fitFont(g, label, 800, n.plate ? 18 : 11, 9, cw - 40); g.fillStyle = n.plate ? '#0b1b30' : MUTED; g.textAlign = 'center'; g.fillText(label, x + cw / 2, by + 25); g.textAlign = 'left';
+          }
+          font(500, 11); g.fillStyle = MUTED; lines2[i].forEach(function (l, j) { g.fillText(l, x + 12, y + 14 + 14 + 10 + 38 + 8 + 11 + j * 15); });
+        }
+      });
+      y += ch + 12;
+      if (s.z) { font(500, 11.5); var zl = wrapText(g, sub(s, swap, s.z), IW - 24), zh = zl.length * 16 + 20; if (draw) { g.strokeStyle = LINE; g.lineWidth = 1; g.setLineDash([4, 3]); rr(g, P, y, IW, zh, 12); g.stroke(); g.setLineDash([]); g.fillStyle = MUTED; zl.forEach(function (l, j) { g.fillText(l, P + 12, y + 10 + 12 + j * 16); }); } y += zh + 12; }
+      /* Điều kiện / trường hợp */
+      if (multi) { if (draw) { g.fillStyle = ACC; rr(g, P, y, 112, 24, 8); g.fill(); g.fillStyle = '#2b6f78'; font(800, 10.5); g.fillText('TRƯỜNG HỢP ' + (cur.ci + 1) + '/' + s.cases.length, P + 12, y + 16); } y += 34; }
+      if (c.c) { y += 0; para('Điều kiện: ' + sub(s, swap, c.c), P, IW, 500, 12, MUTED, 18); y += 10; }
+      /* Kết luận */
+      var vTop = y, vPad = 18, inner = IW - 2 * vPad, vy;
+      function verdictBody() {
+        y = vTop + vPad;
+        if (c.bar === false) { para(sub(s, swap, c.s), P + vPad, inner, 700, 15, INK, 22); }
+        else {
+          var big = 42;
+          if (draw) {
+            g.fillStyle = MUTED; font(800, 10); var a = mn.text.toUpperCase(), bq = on.text.toUpperCase();
+            fitFont(g, a, 800, 10, 7, inner / 2 - 6); g.fillText(a, P + vPad, y + 10);
+            fitFont(g, bq, 800, 10, 7, inner / 2 - 6); g.textAlign = 'right'; g.fillText(bq, P + IW - vPad, y + 10); g.textAlign = 'left';
+            font(800, big); g.fillStyle = mv != null && mv >= 80 ? HOT : NAVY; g.fillText(mv == null ? '—' : mv + '%', P + vPad, y + 12 + big);
+            g.fillStyle = ov != null && ov >= 80 ? HOT : NAVY; g.textAlign = 'right'; g.fillText(ov == null ? '—' : ov + '%', P + IW - vPad, y + 12 + big); g.textAlign = 'left';
+            font(600, 10); g.fillStyle = MUTED; g.fillText('mức lỗi', P + vPad, y + 12 + big + 16); g.textAlign = 'right'; g.fillText(ov == null ? 'không có tỷ lệ riêng' : 'mức lỗi', P + IW - vPad, y + 12 + big + 16); g.textAlign = 'left';
+          }
+          y += 12 + big + 16 + 12;
+          if (mv != null && ov != null) { if (draw) { g.fillStyle = LINE; rr(g, P + vPad, y, inner, 12, 6); g.fill(); g.save(); rr(g, P + vPad, y, inner, 12, 6); g.clip(); g.fillStyle = NAVY; g.fillRect(P + vPad, y, inner * mv / 100, 12); g.fillStyle = TEAL; g.fillRect(P + vPad + inner * (100 - ov) / 100, y, inner * ov / 100, 12); g.restore(); } y += 12 + 14; }
+        }
+        if (c.ex) { para(sub(s, swap, c.ex), P + vPad, inner, 600, 12, '#2b6f78', 18); y += 6; }
+        if (c.bar !== false) { if (draw) { g.fillStyle = LINE; g.fillRect(P + vPad, y, inner, 1); } y += 12; para(headline(s, c), P + vPad, inner, 800, 14, INK, 20); }
+        return y + vPad;
+      }
+      var vEnd = (function () { var d = draw; draw = false; var e = verdictBody(); draw = d; return e; })();
+      if (draw) { g.fillStyle = SOFT; rr(g, P, vTop, IW, vEnd - vTop, 18); g.fill(); g.strokeStyle = LINE; g.lineWidth = 1; g.stroke(); }
+      verdictBody(); y = vEnd + 16;
+      /* Căn cứ */
+      var laws = []; c.r.forEach(function (r) { var re = /Điều (\d+(?:\.\d+)?)/g, m; while ((m = re.exec(r))) if (laws.indexOf(m[1]) < 0) laws.push(m[1]); });
+      if (draw) { g.fillStyle = MUTED; font(800, 10); g.fillText('CĂN CỨ', P, y + 10); var lx = P + IW; font(800, 10); laws.slice().reverse().forEach(function (l) { var t = 'Điều ' + l, tw = g.measureText(t).width + 16; lx -= tw; g.fillStyle = ACC; rr(g, lx, y - 3, tw, 20, 7); g.fill(); g.fillStyle = '#2b6f78'; g.fillText(t, lx + 8, y + 11); lx -= 5; }); }
+      y += 24;
+      c.r.forEach(function (r) {
+        font(500, 12.5); var rl = wrapText(g, sub(s, swap, r), IW - 46), rh = rl.length * 19 + 20;
+        if (draw) { g.fillStyle = '#fff'; rr(g, P, y, IW, rh, 12); g.fill(); g.fillStyle = TEAL; g.beginPath(); g.arc(P + 17, y + 20, 3.5, 0, Math.PI * 2); g.fill(); g.fillStyle = INK; rl.forEach(function (l, j) { g.fillText(l, P + 32, y + 10 + 13 + j * 19); }); }
+        y += rh + 8;
+      });
+      if (s.n) { font(500, 11.5); var nl = wrapText(g, sub(s, swap, s.n), IW - 28), nh = nl.length * 17 + 22; if (draw) { g.fillStyle = ACC; rr(g, P, y, IW, nh, 12); g.fill(); g.fillStyle = INK; nl.forEach(function (l, j) { g.fillText(l, P + 14, y + 11 + 12 + j * 17); }); } y += nh + 8; }
+      /* Chân thẻ */
+      y += 8; if (draw) { g.fillStyle = LINE; g.fillRect(P, y, IW, 1); } y += 12;
+      para('Tham khảo theo CV 93/HHBH ngày 02/07/2021 của Hiệp hội Bảo hiểm Việt Nam. Kết luận chính thức theo cơ quan có thẩm quyền; ưu tiên tín hiệu, biển báo, làn đường thực tế. Số điều theo Luật GTĐB 2008 như văn bản gốc.', P, IW, 500, 10, MUTED, 15);
+      var d = new Date(), p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+      y += 6; if (draw) { font(800, 10); g.fillStyle = NAVY; g.fillText('TASCO DLK · Hướng dẫn phân lỗi', P, y + 10); g.fillStyle = MUTED; font(600, 10); g.textAlign = 'right'; g.fillText(p2(d.getDate()) + '/' + p2(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()), P + IW, y + 10); g.textAlign = 'left'; }
+      y += 14 + 18;
+      return y;
+    }
+    var m = document.createElement('canvas').getContext('2d');
+    var H = Math.ceil(paint(m, false));
+    var cv = document.createElement('canvas'); cv.width = W * SC; cv.height = H * SC;
+    var g = cv.getContext('2d'); g.scale(SC, SC); g.fillStyle = '#ffffff'; g.fillRect(0, 0, W, H); g.fillStyle = '#f7fafb'; g.fillRect(0, 0, W, H);
+    g.textBaseline = 'alphabetic'; paint(g, true);
+    var blob = await new Promise(function (res) { cv.toBlob(res, 'image/png'); });
+    cv.width = cv.height = 0;
+    if (!blob) throw new Error('Không tạo được ảnh');
+    return blob;
+  }
+  function cardFileName() {
+    var s = cur.s, mn = who(s, cur.swap ? 'Y' : 'X', cur.swap), on = who(s, cur.swap ? 'X' : 'Y', cur.swap);
+    function clean(t) { return String(t || '').replace(/[^A-Za-z0-9ĐđÀ-ỹ]+/g, '').slice(0, 14); }
+    var parts = ['Phan-loi-TH' + pad(s.id)]; if (mn.plate) parts.push(clean(mn.plate)); if (on.plate) parts.push(clean(on.plate));
+    return parts.join('_') + '.png';
+  }
+  function blobToBase64(blob) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result).split(',')[1] || ''); }; r.onerror = function () { rej(r.error); }; r.readAsDataURL(blob); }); }
+  function isCancel(e) { return /cancel|abort|dismiss/i.test(String(e && (e.message || e.errorMessage || e.name || e))); }
+  /* iPhone app: ghi file vào bộ nhớ tạm rồi mở bảng chia sẻ (có Zalo). Trình duyệt: navigator.share kèm file; không được thì xem trước ảnh. */
+  async function shareImage(blob, name) {
+    var cap = window.Capacitor, FS = cap && cap.Plugins && cap.Plugins.Filesystem, SH = cap && cap.Plugins && cap.Plugins.Share;
+    if (cap && cap.isNativePlatform && cap.isNativePlatform() && FS && SH) {
+      try {
+        var saved = await FS.writeFile({ path: 'phanloi/' + name, data: await blobToBase64(blob), directory: 'CACHE', recursive: true });
+        await SH.share({ files: [saved.uri], dialogTitle: 'Gửi ảnh phân lỗi' }); return 'shared';
+      } catch (e) { if (isCancel(e)) return 'cancelled'; }
+    }
+    var file = new File([blob], name, { type: 'image/png' });
+    try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return 'shared'; } }
+    catch (e) { if (e && e.name === 'AbortError') return 'cancelled'; }
+    showPreview(file); return 'preview';
+  }
+  function showPreview(file) {
+    var old = document.querySelector('.as-prev'); if (old) old.remove();
+    var url = URL.createObjectURL(file), el = document.createElement('div'); el.className = 'as-prev'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Ảnh phân lỗi');
+    el.innerHTML = '<div class="as-prev-box"><p>Nhấn giữ ảnh để lưu hoặc gửi. Hoặc chọn bên dưới.</p><div class="as-prev-img"><img alt="Ảnh kết luận phân lỗi"></div><div class="as-prev-act"><button type="button" data-p="close">Đóng</button><button type="button" data-p="dl">Tải ảnh</button><button type="button" data-p="share" class="as-zalo">Chia sẻ</button></div></div>';
+    el.querySelector('img').src = url;
+    function close() { el.remove(); URL.revokeObjectURL(url); }
+    el.addEventListener('click', async function (e) {
+      var b = e.target.closest('[data-p]'); if (e.target === el) return close(); if (!b) return;
+      if (b.dataset.p === 'close') close();
+      else if (b.dataset.p === 'dl') { var a = document.createElement('a'); a.href = url; a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); }
+      else { try { if (navigator.share) await navigator.share({ files: [file] }); else toast('Trình duyệt chưa hỗ trợ chia sẻ. Hãy tải ảnh.'); } catch (_) {} }
+    });
+    document.body.appendChild(el);
+  }
   async function doShare() {
     if (sharing) return; sharing = true;
-    var text = buildMessage();
+    var btn = sheet && sheet.querySelector('.as-zalo'), label = btn && btn.querySelector('span'), old = label && label.textContent;
+    if (btn) { btn.disabled = true; if (label) label.textContent = 'Đang tạo ảnh…'; }
     try {
-      var cap = window.Capacitor, P = cap && cap.Plugins && cap.Plugins.Share;
-      if (P && P.share) { try { await P.share({ title: 'Hướng dẫn phân lỗi', text: text, dialogTitle: 'Gửi nhận định' }); return; } catch (e) { if (/cancel|abort|dismiss/i.test(String(e && (e.message || e.name || e)))) return; } }
-      if (navigator.share) { try { await navigator.share({ title: 'Hướng dẫn phân lỗi', text: text }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
-      var ok = await copyText(text); toast(ok ? 'Đã sao chép. Mở Zalo và dán để gửi.' : 'Chưa gửi được. Hãy thử lại.');
-    } finally { sharing = false; }
+      var blob = await renderCard();
+      await shareImage(blob, cardFileName());
+    } catch (err) {
+      /* Không tạo được ảnh: gửi bằng chữ như trước */
+      var text = buildMessage();
+      try {
+        var cap = window.Capacitor, P = cap && cap.Plugins && cap.Plugins.Share;
+        if (P && P.share) { await P.share({ title: 'Hướng dẫn phân lỗi', text: text, dialogTitle: 'Gửi nhận định' }); }
+        else if (navigator.share) { await navigator.share({ title: 'Hướng dẫn phân lỗi', text: text }); }
+        else { var ok = await copyText(text); toast(ok ? 'Chưa tạo được ảnh, đã sao chép chữ. Mở Zalo và dán.' : 'Chưa gửi được. Hãy thử lại.'); }
+      } catch (e2) { if (!isCancel(e2)) toast('Chưa gửi được. Hãy thử lại.'); }
+    } finally { sharing = false; if (btn) { btn.disabled = false; if (label) label.textContent = old; } }
   }
 
   /* ---------- Sự kiện ---------- */
@@ -15404,7 +15590,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     window.addEventListener('pagehide', closeSheet);
   }
   load(); render(); bind(); setupMic();
-  window.TascoAssess = { open: openSheet, close: closeSheet, count: S.length, parsePlate: parsePlate };
+  window.TascoAssess = { open: openSheet, close: closeSheet, count: S.length, parsePlate: parsePlate, render: function () { return renderCard(); } };
 })();
 </script>
 <script id="tascoOfflineBridge">
