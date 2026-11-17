@@ -175,12 +175,12 @@
         q('[data-a=del]').disabled = !sel; q('[data-a=clear]').disabled = !items.length;
         root.querySelectorAll('[data-tool]').forEach(function (b) { b.classList.toggle('on', b.dataset.tool === tool); });
         root.querySelectorAll('[data-color]').forEach(function (b) { b.classList.toggle('on', b.dataset.color === color); b.setAttribute('aria-checked', String(b.dataset.color === color)); });
-        q('.mk-hint').textContent = HINTS[tool] || '';
+        q('.mk-hint').textContent = (sel && tool !== 'select') ? 'Đang chọn nét vừa vẽ: đổi màu hoặc độ dày sẽ áp cho nét này. Vẽ tiếp để bỏ chọn.' : (HINTS[tool] || '');
         var sv = q('.mk-sizeval'), d = Math.round(4 + (size - MIN_W) / (MAX_W - MIN_W) * 24); sv.innerHTML = '<b style="width:' + d + 'px;height:' + d + 'px"></b>'; var rg = q('.mk-size input'); if (+rg.value !== size) rg.value = size;
       }
       function selectionSVG() {
-        var it = items.find(function (i) { return i.id === sel; }); if (!it || tool !== 'select') return '';
-        var X = function (v) { return v * W; }, Y = function (v) { return v * H; }, dash = 'fill="none" stroke="#a7e0e6" stroke-width="3" stroke-dasharray="9 7" pointer-events="none"', hd = function (n, x, y) { return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="15" fill="#fff" stroke="#2a8c99" stroke-width="5" data-h="' + n + '" style="cursor:pointer"/>'; };
+        var it = items.find(function (i) { return i.id === sel; }); if (!it) return '';
+        var X = function (v) { return v * W; }, Y = function (v) { return v * H; }, dash = 'fill="none" stroke="#a7e0e6" stroke-width="3" stroke-dasharray="9 7" pointer-events="none"', hd = function (n, x, y) { if (tool !== 'select') return ''; return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="15" fill="#fff" stroke="#2a8c99" stroke-width="5" data-h="' + n + '" style="cursor:pointer"/>'; };
         if (it.t === 'a') return hd(1, X(it.x1), Y(it.y1)) + hd(2, X(it.x2), Y(it.y2));
         if (it.t === 'o' || it.t === 'r') { var lx = Math.min(it.x1, it.x2), rx = Math.max(it.x1, it.x2), ty = Math.min(it.y1, it.y2), by = Math.max(it.y1, it.y2); return '<rect x="' + (X(lx) - 6) + '" y="' + (Y(ty) - 6) + '" width="' + (X(rx) - X(lx) + 12) + '" height="' + (Y(by) - Y(ty) + 12) + '" ' + dash + '/>' + hd(1, X(it.x1), Y(it.y1)) + hd(2, X(it.x2), Y(it.y2)); }
         if (it.t === 'n') return '<circle cx="' + X(it.x) + '" cy="' + Y(it.y) + '" r="' + (36 * wOk(it.w) / DEF_W).toFixed(1) + '" ' + dash + '/>';
@@ -215,7 +215,7 @@
         }
         if (items.length >= MAX_ITEMS) { flash('Đã đủ ' + MAX_ITEMS + ' nét đánh dấu trên một ảnh.'); return; }
         sel = '';
-        if (tool === 'n') { push(); items.push({ id: uid(), t: 'n', c: color, w: size, x: p.x, y: p.y, n: nextNum() }); paint(); e.preventDefault(); return; }
+        if (tool === 'n') { push(); var nn = { id: uid(), t: 'n', c: color, w: size, x: p.x, y: p.y, n: nextNum() }; items.push(nn); sel = nn.id; paint(); e.preventDefault(); return; }
         if (tool === 'x') { e.preventDefault(); openText(p); return; }
         push(); draft = { id: 'draft', t: tool, c: color, w: size, x1: p.x, y1: p.y, x2: p.x, y2: p.y }; drag = { mode: 'draw' }; try { svg.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); paint();
       });
@@ -232,7 +232,7 @@
       });
       function endDrag() {
         if (!drag) return;
-        if (drag.mode === 'draw' && draft) { var tiny = Math.hypot((draft.x2 - draft.x1) * W, (draft.y2 - draft.y1) * H) < 18; if (tiny) undo.pop(); else { draft.id = uid(); items.push(draft); } draft = null; }
+        if (drag.mode === 'draw' && draft) { var tiny = Math.hypot((draft.x2 - draft.x1) * W, (draft.y2 - draft.y1) * H) < 18; if (tiny) undo.pop(); else { draft.id = uid(); items.push(draft); sel = draft.id; } draft = null; }
         else if (JSON.stringify(items) === undo[undo.length - 1]) undo.pop();   // không đổi gì thì không tính là một bước
         drag = null; paint();
       }
@@ -262,7 +262,7 @@
       }
       var rangeEl = q('.mk-size input');
       rangeEl.addEventListener('input', function () {
-        size = wOk(rangeEl.value); var it = tool === 'select' ? find(sel) : null;
+        size = wOk(rangeEl.value); var it = find(sel);
         if (it) { if (!sizePushed) { push(); sizePushed = true; } it.w = size; }
         paint();
       });
@@ -270,7 +270,7 @@
       root.addEventListener('click', function (e) {
         var b = e.target.closest('button'); if (!b) return;
         if (b.dataset.tool) { tool = b.dataset.tool; if (tool !== 'select') sel = ''; paint(); }
-        else if (b.dataset.color) { color = b.dataset.color; var it = find(sel); if (it && tool === 'select') { push(); it.c = color; } paint(); }
+        else if (b.dataset.color) { color = b.dataset.color; var it = find(sel); if (it) { push(); it.c = color; } paint(); }
         else if (b.dataset.a === 'close') tryClose();
         else if (b.dataset.a === 'undo') doUndo();
         else if (b.dataset.a === 'save') save();
