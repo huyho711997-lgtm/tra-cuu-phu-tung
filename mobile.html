@@ -7437,6 +7437,7 @@ window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mo
           <button type="button" class="camera-action-btn btn-settings-cam" id="btnCameraSettings" onclick="toggleCameraSettings()" aria-label="Cài đặt camera" aria-expanded="false" title="Cài đặt camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#121a25"/><circle cx="15" cy="17" r="3" fill="#121a25"/></svg></button>
           <button type="button" class="camera-action-btn" id="btnCameraOrientation" onclick="rotateCameraInterface()" aria-label="Bật tự xoay hoặc xoay camera 90 độ" title="Bật tự xoay / Xoay camera 90°" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M2 11a10 10 0 0 1 4-7M2 5v6h5M22 13a10 10 0 0 1-4 7m4-1v-6h-5"/></svg></button>
           <button type="button" class="camera-action-btn btn-orient-lock" id="btnCameraOrientLock" onclick="toggleCameraOrientationLock()" aria-label="Khoá chụp ngang" aria-pressed="false" title="Khoá chụp ngang"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.6"/><rect x="9.6" y="11.3" width="4.8" height="3.7" rx=".9"/><path d="M10.7 11.3v-.9a1.3 1.3 0 0 1 2.6 0v.9"/></svg></button>
+          <button type="button" class="camera-action-btn btn-doc-mode" id="btnCameraDocMode" onclick="toggleCameraDocMode()" aria-label="Chế độ chụp tài liệu" aria-pressed="false" title="Chụp tài liệu: tự cắt theo trang giấy, nền trắng, rõ chữ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7.5A1.5 1.5 0 0 0 6 4.5v15A1.5 1.5 0 0 0 7.5 21h9a1.5 1.5 0 0 0 1.5-1.5V7z"/><path d="M14 3v4h4M9 12h6M9 15.5h6"/></svg></button>
           <button type="button" class="camera-action-btn btn-flash-cam" id="btnToggleCameraFlash" onclick="toggleCustomCameraTorch()" aria-label="Bật hoặc tắt đèn flash" title="Bật/Tắt Flash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m13 2-9 12h7l-1 8 10-12h-7l1-8Z"/></svg></button>
           <button type="button" class="camera-action-btn btn-switch-cam" onclick="switchCustomCamera()" aria-label="Đổi camera trước hoặc sau" title="Đổi camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7v5h-5M4 17v-5h5M19.5 12a7.5 7.5 0 0 0-12.8-5.3L4 9M4.5 12a7.5 7.5 0 0 0 12.8 5.3L20 15"/></svg></button>
         </div>
@@ -9948,7 +9949,7 @@ function applyCameraDisplayPreferences(){
 
 function createCameraPhotoMetadata(capturedAt=Date.now()) {
   const pose=cameraOrientLock==='landscape'?cameraDevicePose():null;
-  return {capturedAt,source:'camera',appearance:cameraAppearanceSnapshot(),locationPromise:cameraCaptureLocation(),category:mobileCameraCategory||'',orientLock:pose&&pose.orientation==='landscape'?{angle:pose.angle}:null};
+  return {capturedAt,source:'camera',appearance:cameraAppearanceSnapshot(),locationPromise:cameraCaptureLocation(),category:mobileCameraCategory||'',doc:Boolean(cameraDocMode),orientLock:pose&&pose.orientation==='landscape'?{angle:pose.angle}:null};
 }
 /* Hạng mục đang chụp: nhớ theo album. Dải hạng mục trên nút chụp: chạm để đổi, vuốt ngang trên khung hình để chuyển nhanh,
    mỗi hạng mục hiện số ảnh đã chụp trong lần mở camera này. */
@@ -10050,16 +10051,19 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
   const task=(async()=>{
     let image,canvas;
     try{
-      const appearance=metadata.appearance||cameraAppearanceSnapshot(),location=await metadata.locationPromise;
+      let appearance=metadata.appearance||cameraAppearanceSnapshot();const location=await metadata.locationPromise;
       image=await cameraLoadImage(file);
+      /* Chế độ tài liệu: tìm trang giấy, nắn thẳng, làm trắng nền & rõ chữ trước khi đóng dấu; khung giữ nguyên tỉ lệ của trang. */
+      let docScanned=false;
+      if(metadata.doc&&window.TascoDocScan){try{const scanned=await TascoDocScan.process(image.source,{maxSide:(metadata.quality||cameraQuality()).maxSide||3024});if(scanned){image.release();image=scanned;docScanned=true;appearance={...appearance,aspectRatio:'native'};}}catch(_){}}
       const imageWidth=image.source.naturalWidth||image.source.width,imageHeight=image.source.naturalHeight||image.source.height;
       // Đang khoá ngang mà camera gốc trả ảnh dọc (máy đứng/nằm phẳng): xoay ảnh về ngang theo góc cảm biến lúc chụp.
-      const lockRotation=metadata.orientLock&&imageHeight>imageWidth?cameraAngleDifference(0,metadata.orientLock.angle):0,
+      const lockRotation=!docScanned&&metadata.orientLock&&imageHeight>imageWidth?cameraAngleDifference(0,metadata.orientLock.angle):0,
         orientation=lockRotation||imageWidth>imageHeight?'landscape':'portrait';
       const aspectRatio=cameraOrientedRatio(appearance.aspectRatio,orientation,lockRotation?imageHeight:imageWidth,lockRotation?imageWidth:imageHeight);
       canvas=cameraCanvasFromSource(image.source,{rotation:lockRotation,mirror:false,digitalZoom:1,aspectRatio},metadata.quality||cameraQuality());
       const ctx=canvas.getContext('2d',{alpha:false});image.release();image=null;
-      if(metadata.fx&&window.TascoPhotoFX){try{await TascoPhotoFX.apply(canvas,metadata.fx);}catch(_){}}
+      if(metadata.fx&&!docScanned&&window.TascoPhotoFX){try{await TascoPhotoFX.apply(canvas,metadata.fx);}catch(_){}}
       try{await document.fonts?.load((appearance.bold?'700':'400')+' 20px '+cameraStampFonts[appearance.font]);}catch(_){}
       drawCameraStamp(ctx,cameraWatermarkLines(location,metadata.capturedAt,metadata.source,appearance),canvas.width,canvas.height,appearance);
       const blob=await cameraCanvasBlob(canvas,'image/jpeg',metadata.quality?.jpeg||.92);
@@ -10558,6 +10562,18 @@ function cameraScreenAngle(){
 }
 /* Khoá chụp ngang: cảm biến báo máy đứng (hoặc nằm phẳng) thì vẫn giữ khung và ảnh ở hướng ngang, góc ngang trái/phải vẫn theo cảm biến. */
 let cameraOrientLock=(()=>{try{return localStorage.getItem('tasco_camera_orient_lock_v1')==='landscape'?'landscape':'auto';}catch(_){return 'auto';}})();
+/* Chế độ chụp tài liệu (chỉ camera native): ảnh được tự cắt theo trang giấy, làm trắng nền và rõ chữ. Nhớ trên máy. */
+let cameraDocMode=(()=>{try{return localStorage.getItem('tasco_camera_doc_mode_v1')==='1';}catch(_){return false;}})();
+function syncCameraDocModeUi(){
+  const button=document.getElementById('btnCameraDocMode');if(!button)return;
+  button.setAttribute('aria-pressed',String(cameraDocMode));button.setAttribute('aria-label',cameraDocMode?'Đang bật chế độ tài liệu. Chạm để tắt':'Chế độ chụp tài liệu');
+}
+function toggleCameraDocMode(){
+  cameraDocMode=!cameraDocMode;
+  try{localStorage.setItem('tasco_camera_doc_mode_v1',cameraDocMode?'1':'0');}catch(_){}
+  syncCameraDocModeUi();syncCameraViewport();
+  cameraFeedback(cameraDocMode?'Chế độ tài liệu: tự cắt theo trang giấy, nền trắng, rõ chữ. Đặt giấy trọn trong khung.':'Đã tắt chế độ tài liệu.',2800);
+}
 function cameraDevicePose(){
   let angle=cameraUiState.physicalOrientation?.angle??cameraScreenAngle();
   if(angle%180===90)cameraUiState.lastLandscapeAngle=angle;
@@ -10695,7 +10711,7 @@ function onCustomCameraOpen() {
   const modal=document.getElementById('customCameraModal');if(modal)modal.style.pointerEvents='';
   cameraRuntime.suspended=false;cameraRuntime.nativeOpen=false;cameraRuntime.focusBlocked=false;cameraRuntime.recoveryCount=0;cameraRuntime.lastRecovery=0;cameraRuntime.lastFrameSignature='';cameraRuntime.settingsTab='capture';cameraUiState.physicalOrientation=null;cameraControlsOpen();startCameraOrientationSensor();startCameraLocationTracking();
   document.body.style.overflow='hidden';
-  updateCameraLocationUI(null,true);syncCameraPhotoTray();syncCameraOrientationLockUi();syncCameraViewport();
+  updateCameraLocationUI(null,true);syncCameraPhotoTray();syncCameraOrientationLockUi();syncCameraDocModeUi();syncCameraViewport();
   document.querySelector('#customCameraModal .btn-close-cam')?.focus({preventScroll:true});
 }
 function onCustomCameraClose() {
@@ -13512,6 +13528,7 @@ window.TascoCategories = (function () {
 .custom-camera-modal #cameraAlbumLabel{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .custom-camera-modal .camera-current-category#cameraActiveCategoryText{font-size:16px;font-weight:750;line-height:1.25;color:#fff;letter-spacing:-.1px;text-shadow:0 1px 6px rgba(0,0,0,.45)}
 .custom-camera-modal .camera-current-category#cameraActiveCategoryText[data-empty="true"]{font-size:13px;font-weight:600;color:#a7c3d0}
+.custom-camera-modal button.camera-action-btn.btn-doc-mode[type=button]{display:none}html.tasco-native-cam .custom-camera-modal button.camera-action-btn.btn-doc-mode[type=button]{display:grid}.custom-camera-modal button.camera-action-btn.btn-doc-mode[type=button][aria-pressed="true"]{background:var(--cam-gold,#84bfc7);border-color:var(--cam-gold,#84bfc7);color:#183056}
 .custom-camera-modal button.camera-action-btn.btn-orient-lock[type=button][aria-pressed="true"]{background:var(--cam-gold,#84bfc7);border-color:var(--cam-gold,#84bfc7);color:#183056}
 /* Nút hạng mục ở góc trái, cạnh bộ chọn ống kính: chạm để mở danh sách hạng mục (kèm số ảnh) */
 .custom-camera-modal .camera-select-row{display:flex;align-items:center;gap:10px;min-width:0}
@@ -14574,6 +14591,169 @@ window.TascoPhotoFX = (function () {
   return { presets: presets, fromPro: fromPro, apply: apply };
 })();
 </script>
+<script id="tascoDocScan">
+/* Chế độ chụp tài liệu (camera native): tự tìm trang giấy, nắn thẳng theo phối cảnh, làm trắng nền (bù sáng không đều) và làm rõ chữ.
+   Chạy hoàn toàn trên máy, theo từng dải dòng để không tốn RAM với ảnh 12 MP. Không tìm được trang rõ ràng thì giữ nguyên khung, chỉ làm rõ chữ. */
+window.TascoDocScan = (function () {
+  'use strict';
+  function tick() { return new Promise(function (r) { setTimeout(r, 0); }); }
+  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+  function area(q) { var s = 0, i, a, b; for (i = 0; i < 4; i++) { a = q[i]; b = q[(i + 1) % 4]; s += a.x * b.y - b.x * a.y; } return Math.abs(s) / 2; }
+  function angle(a, b, c) {
+    var v1x = a.x - b.x, v1y = a.y - b.y, v2x = c.x - b.x, v2y = c.y - b.y, m = Math.hypot(v1x, v1y) * Math.hypot(v2x, v2y) || 1;
+    return Math.acos(Math.max(-1, Math.min(1, (v1x * v2x + v1y * v2y) / m))) * 180 / Math.PI;
+  }
+  function otsu(L, n) {
+    var h = new Uint32Array(256), i, sum = 0, sb = 0, wb = 0, best = 0, t = 128, wf, mb, mf, v;
+    for (i = 0; i < n; i++) h[L[i]]++;
+    for (i = 0; i < 256; i++) sum += i * h[i];
+    for (i = 0; i < 256; i++) {
+      wb += h[i]; if (!wb) continue; wf = n - wb; if (!wf) break;
+      sb += i * h[i]; mb = sb / wb; mf = (sum - sb) / wf; v = wb * wf * (mb - mf) * (mb - mf);
+      if (v > best) { best = v; t = i; }
+    }
+    return t;
+  }
+  /* Tìm 4 góc trang giấy (vùng sáng lớn nhất) trên bản thu nhỏ. Trả về [TL,TR,BR,BL] theo toạ độ ảnh gốc, hoặc null. */
+  function detect(src, sw, sh) {
+    var S = 240, sc = Math.min(1, S / Math.max(sw, sh)), w = Math.max(8, Math.round(sw * sc)), h = Math.max(8, Math.round(sh * sc));
+    var c = document.createElement('canvas'); c.width = w; c.height = h;
+    var x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(src, 0, 0, w, h);
+    var d = x.getImageData(0, 0, w, h).data, n = w * h, L = new Uint8Array(n), B = new Uint8Array(n), i, p, y, xx, dy, dx, s, k, yy, x2;
+    c.width = c.height = 0;
+    for (p = 0, i = 0; p < n; p++, i += 4) L[p] = (d[i] * 77 + d[i + 1] * 150 + d[i + 2] * 29) >> 8;
+    for (y = 0; y < h; y++) for (xx = 0; xx < w; xx++) {   // làm mờ 3x3: chữ viết/dấu mộc không đục thủng vùng giấy
+      s = 0; k = 0;
+      for (dy = -1; dy <= 1; dy++) { yy = y + dy; if (yy < 0 || yy >= h) continue; for (dx = -1; dx <= 1; dx++) { x2 = xx + dx; if (x2 < 0 || x2 >= w) continue; s += L[yy * w + x2]; k++; } }
+      B[y * w + xx] = s / k;
+    }
+    var t = otsu(B, n), mask = new Uint8Array(n), seen = new Uint8Array(n), stack = new Int32Array(n);
+    t = Math.round(t * 0.62);   // hạ ngưỡng: mép giấy thường tối dần (đèn flash, bóng đổ) nhưng vẫn sáng hơn nền xung quanh
+    for (p = 0; p < n; p++) mask[p] = B[p] > t ? 1 : 0;
+    var best = null, top, cur, q, px, py, nb, j, sSum, dSum;
+    for (p = 0; p < n; p++) {
+      if (!mask[p] || seen[p]) continue;
+      top = 0; stack[top++] = p; seen[p] = 1;
+      cur = { area: 0, tl: null, tr: null, br: null, bl: null, tlv: 1e9, brv: -1e9, trv: -1e9, blv: 1e9 };
+      while (top) {
+        q = stack[--top]; px = q % w; py = (q - px) / w; cur.area++;
+        sSum = px + py; dSum = px - py;
+        if (sSum < cur.tlv) { cur.tlv = sSum; cur.tl = { x: px, y: py }; }
+        if (sSum > cur.brv) { cur.brv = sSum; cur.br = { x: px, y: py }; }
+        if (dSum > cur.trv) { cur.trv = dSum; cur.tr = { x: px, y: py }; }
+        if (dSum < cur.blv) { cur.blv = dSum; cur.bl = { x: px, y: py }; }
+        if (px > 0) { nb = q - 1; if (mask[nb] && !seen[nb]) { seen[nb] = 1; stack[top++] = nb; } }
+        if (px < w - 1) { nb = q + 1; if (mask[nb] && !seen[nb]) { seen[nb] = 1; stack[top++] = nb; } }
+        if (py > 0) { nb = q - w; if (mask[nb] && !seen[nb]) { seen[nb] = 1; stack[top++] = nb; } }
+        if (py < h - 1) { nb = q + w; if (mask[nb] && !seen[nb]) { seen[nb] = 1; stack[top++] = nb; } }
+      }
+      if (!best || cur.area > best.area) best = cur;
+    }
+    if (!best || best.area < n * 0.18) return null;
+    var quad = [best.tl, best.tr, best.br, best.bl], qa = area(quad);
+    if (qa < n * 0.22 || best.area / qa < 0.6) return null;                      // không giống một tờ giấy
+    for (j = 0; j < 4; j++) { var ag = angle(quad[(j + 3) % 4], quad[j], quad[(j + 1) % 4]); if (ag < 55 || ag > 125) return null; }
+    var minEdge = Math.min(dist(quad[0], quad[1]), dist(quad[1], quad[2]), dist(quad[2], quad[3]), dist(quad[3], quad[0]));
+    if (minEdge < Math.max(w, h) * 0.18) return null;
+    /* Trang sát/tràn mép khung (một góc chạm biên ảnh): thấy không đủ 4 góc thật của trang nên nắn phối cảnh sẽ làm méo chữ -> chỉ làm rõ chữ. */
+    var m = Math.max(w, h) * 0.02;
+    for (j = 0; j < 4; j++) if (quad[j].x < m || quad[j].x > w - 1 - m || quad[j].y < m || quad[j].y > h - 1 - m) return null;
+    /* Co vào ~0.6% từ tâm để không lấy phải viền tối ngoài mép giấy; kẹp trong khung. */
+    var cx = (quad[0].x + quad[1].x + quad[2].x + quad[3].x) / 4, cy = (quad[0].y + quad[1].y + quad[2].y + quad[3].y) / 4, grow = 1 - 0.003;
+    return quad.map(function (pt) {
+      var nx = cx + (pt.x - cx) * grow, ny = cy + (pt.y - cy) * grow;
+      return { x: Math.max(0, Math.min(w - 1, nx)) / sc, y: Math.max(0, Math.min(h - 1, ny)) / sc };
+    });
+  }
+  /* Nắn trang giấy thành hình chữ nhật (phép chiếu phối cảnh), lấy mẫu song tuyến tính. */
+  async function warp(src, sw, sh, q, maxSide) {
+    var p0 = q[0], p1 = q[1], p2 = q[2], p3 = q[3];
+    var W = Math.max(dist(p0, p1), dist(p3, p2)), H = Math.max(dist(p0, p3), dist(p1, p2)), k = Math.min(1, maxSide / Math.max(W, H));
+    W = Math.max(16, Math.round(W * k)); H = Math.max(16, Math.round(H * k));
+    var sx = p0.x - p1.x + p2.x - p3.x, sy = p0.y - p1.y + p2.y - p3.y, dx1 = p1.x - p2.x, dx2 = p3.x - p2.x, dy1 = p1.y - p2.y, dy2 = p3.y - p2.y;
+    var den0 = dx1 * dy2 - dx2 * dy1, g = den0 ? (sx * dy2 - dx2 * sy) / den0 : 0, hh = den0 ? (dx1 * sy - sx * dy1) / den0 : 0;
+    var a = p1.x - p0.x + g * p1.x, b = p3.x - p0.x + hh * p3.x, c = p0.x, d = p1.y - p0.y + g * p1.y, e = p3.y - p0.y + hh * p3.y, f = p0.y;
+    var sc = document.createElement('canvas'); sc.width = sw; sc.height = sh;
+    var sctx = sc.getContext('2d', { willReadFrequently: true }); sctx.drawImage(src, 0, 0);
+    var sd = sctx.getImageData(0, 0, sw, sh).data; sc.width = sc.height = 0;
+    var out = document.createElement('canvas'); out.width = W; out.height = H;
+    var octx = out.getContext('2d'), STRIP = 96, y0, y1, img, od, x, y, uu, vv, dn, fx, fy, ix, iy, tx, ty, i00, i10, i01, i11, o, ch, w00, w10, w01, w11, mx = sw - 1, my = sh - 1;
+    for (y0 = 0; y0 < H; y0 += STRIP) {
+      y1 = Math.min(H, y0 + STRIP); img = octx.createImageData(W, y1 - y0); od = img.data; o = 0;
+      for (y = y0; y < y1; y++) {
+        vv = (y + 0.5) / H;
+        for (x = 0; x < W; x++, o += 4) {
+          uu = (x + 0.5) / W; dn = g * uu + hh * vv + 1;
+          fx = (a * uu + b * vv + c) / dn - 0.5; fy = (d * uu + e * vv + f) / dn - 0.5;
+          if (fx < 0) fx = 0; else if (fx > mx) fx = mx; if (fy < 0) fy = 0; else if (fy > my) fy = my;
+          ix = fx | 0; iy = fy | 0; tx = fx - ix; ty = fy - iy;
+          i00 = (iy * sw + ix) * 4; i10 = ix < mx ? i00 + 4 : i00; i01 = iy < my ? i00 + sw * 4 : i00; i11 = ix < mx ? i01 + 4 : i01;
+          w00 = (1 - tx) * (1 - ty); w10 = tx * (1 - ty); w01 = (1 - tx) * ty; w11 = tx * ty;
+          for (ch = 0; ch < 3; ch++) od[o + ch] = sd[i00 + ch] * w00 + sd[i10 + ch] * w10 + sd[i01 + ch] * w01 + sd[i11 + ch] * w11;
+          od[o + 3] = 255;
+        }
+      }
+      octx.putImageData(img, 0, y0); if (y1 < H) await tick();
+    }
+    return out;
+  }
+  /* Làm trắng nền giấy: ước lượng độ sáng giấy theo lưới (bù bóng đổ/đèn không đều), chia lại, kéo giãn tương phản; giữ màu mực. */
+  async function enhance(canvas) {
+    var W = canvas.width, H = canvas.height, ctx = canvas.getContext('2d', { willReadFrequently: true });
+    var gw = Math.max(5, Math.min(36, Math.round(W / 80))), gh = Math.max(5, Math.min(36, Math.round(H / 80))), CELL = 8;
+    var small = document.createElement('canvas'); small.width = gw * CELL; small.height = gh * CELL;
+    var sx = small.getContext('2d', { willReadFrequently: true }); sx.imageSmoothingEnabled = true; sx.drawImage(canvas, 0, 0, small.width, small.height);
+    var sd = sx.getImageData(0, 0, small.width, small.height).data, SW = small.width, grid = new Float32Array(gw * gh), vals = new Array(CELL * CELL), gx, gy, px, py, i, k;
+    for (gy = 0; gy < gh; gy++) for (gx = 0; gx < gw; gx++) {
+      k = 0;
+      for (py = 0; py < CELL; py++) for (px = 0; px < CELL; px++) { i = ((gy * CELL + py) * SW + gx * CELL + px) * 4; vals[k++] = (sd[i] * 77 + sd[i + 1] * 150 + sd[i + 2] * 29) >> 8; }
+      vals.sort(function (m, n) { return m - n; }); grid[gy * gw + gx] = vals[Math.floor(CELL * CELL * 0.8)];   // phân vị 80%: độ sáng của giấy, bỏ qua nét mực
+    }
+    small.width = small.height = 0;
+    var tmp = new Float32Array(gw * gh), v, m, yy, xx;
+    for (gy = 0; gy < gh; gy++) for (gx = 0; gx < gw; gx++) {   // max 3x3 rồi trung bình 3x3: lấp ô nhiều mực, làm mượt
+      m = 0; for (yy = Math.max(0, gy - 1); yy <= Math.min(gh - 1, gy + 1); yy++) for (xx = Math.max(0, gx - 1); xx <= Math.min(gw - 1, gx + 1); xx++) m = Math.max(m, grid[yy * gw + xx]);
+      tmp[gy * gw + gx] = m;
+    }
+    for (gy = 0; gy < gh; gy++) for (gx = 0; gx < gw; gx++) {
+      v = 0; k = 0; for (yy = Math.max(0, gy - 1); yy <= Math.min(gh - 1, gy + 1); yy++) for (xx = Math.max(0, gx - 1); xx <= Math.min(gw - 1, gx + 1); xx++) { v += tmp[yy * gw + xx]; k++; }
+      grid[gy * gw + gx] = Math.max(70, v / k);
+    }
+    var STRIP = 160, y0, y1, img, d, y, x, fy, fx, gy0, gy1, ty, gx0, gx1, tx, bg, inv, o, r, g2, b, LO = 0.3, SPAN = 0.58;   // v<=0.30 -> đen, v>=0.88 -> trắng
+    for (y0 = 0; y0 < H; y0 += STRIP) {
+      y1 = Math.min(H, y0 + STRIP); img = ctx.getImageData(0, y0, W, y1 - y0); d = img.data; o = 0;
+      for (y = y0; y < y1; y++) {
+        fy = Math.max(0, Math.min(gh - 1, (y + 0.5) / H * gh - 0.5)); gy0 = fy | 0; gy1 = Math.min(gh - 1, gy0 + 1); ty = fy - gy0;
+        for (x = 0; x < W; x++, o += 4) {
+          fx = Math.max(0, Math.min(gw - 1, (x + 0.5) / W * gw - 0.5)); gx0 = fx | 0; gx1 = Math.min(gw - 1, gx0 + 1); tx = fx - gx0;
+          bg = (grid[gy0 * gw + gx0] * (1 - tx) + grid[gy0 * gw + gx1] * tx) * (1 - ty) + (grid[gy1 * gw + gx0] * (1 - tx) + grid[gy1 * gw + gx1] * tx) * ty;
+          inv = 1 / bg;
+          r = ((d[o] * inv) - LO) / SPAN * 255; g2 = ((d[o + 1] * inv) - LO) / SPAN * 255; b = ((d[o + 2] * inv) - LO) / SPAN * 255;
+          d[o] = r; d[o + 1] = g2; d[o + 2] = b;
+        }
+      }
+      ctx.putImageData(img, 0, y0); if (y1 < H) await tick();
+    }
+    if (window.TascoPhotoFX) { try { await TascoPhotoFX.apply(canvas, { sat: 0, contrast: 0, warm: 0, sharp: 55 }); } catch (_) {} }
+    return canvas;
+  }
+  async function process(source, opts) {
+    var sw = source.videoWidth || source.naturalWidth || source.width, sh = source.videoHeight || source.naturalHeight || source.height;
+    if (!sw || !sh) return null;
+    var maxSide = (opts && opts.maxSide) || 3024, quad = null, canvas, warped = false;
+    try { quad = detect(source, sw, sh); } catch (_) { quad = null; }
+    if (quad) { try { canvas = await warp(source, sw, sh, quad, maxSide); warped = true; } catch (_) { canvas = null; } }
+    if (!canvas) {
+      var k = Math.min(1, maxSide / Math.max(sw, sh)); canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(sw * k)); canvas.height = Math.max(1, Math.round(sh * k));
+      var cx = canvas.getContext('2d'); cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = 'high'; cx.drawImage(source, 0, 0, canvas.width, canvas.height);
+    }
+    await enhance(canvas);
+    return { source: canvas, width: canvas.width, height: canvas.height, warped: warped, release: function () { canvas.width = canvas.height = 0; } };
+  }
+  return { process: process, detect: detect };
+})();
+</script>
 <script id="tascoOfflineBridge">
 /* Cầu nối chụp offline (chỉ app iPhone). Trang offline.html trong app (khi mở app không có mạng) không đọc được dữ liệu của app chính
    vì khác origin, nên hai bên trao đổi qua thư mục Data của máy bằng plugin Filesystem:
@@ -14739,7 +14919,7 @@ window.TascoPhotoFX = (function () {
     /* Khung xem trước = đúng vùng sẽ được lưu: ảnh sẽ cắt theo tỉ lệ đã chọn (vd. 9:16), nên khung và lớp che
        phải cắt cùng tỉ lệ, nếu không thấy đủ nhưng ảnh lưu lại thiếu hai bên. */
     try {
-      var crop = cameraCropFrame(w, h, cameraOrientedRatio(cameraAppearance.aspectRatio, w > h ? 'landscape' : 'portrait', w, h));
+      var crop = cameraCropFrame(w, h, cameraOrientedRatio(cameraDocMode ? 'native' : cameraAppearance.aspectRatio, w > h ? 'landscape' : 'portrait', w, h));
       if (crop && crop.width > 0 && crop.height > 0) { w = crop.width; h = crop.height; }
     } catch (_) {}
     plane.style.width = w + 'px'; plane.style.height = h + 'px';
