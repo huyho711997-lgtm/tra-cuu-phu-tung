@@ -3134,7 +3134,7 @@ html[data-tasco-page] body.tasco-workspace{margin:0;padding:0;background:var(--t
 #tascoStatusBackdrop{position:fixed;top:0;left:0;right:0;width:100%;height:12px;height:max(12px,env(safe-area-inset-top,0px));z-index:100;background-color:var(--tasco-top-color,var(--ws-bg));pointer-events:none;user-select:none}
 html[data-tasco-page] body.tasco-workspace::before{content:none;display:none}
 .tasco-workspace #mainApp[data-shell][data-page]{margin-top:0!important;padding-top:0!important}
-.tasco-workspace :is(#traCuuSection,#personalCloudSection,#rescueSection,#garageSection,#formsSection){margin-top:0;padding-top:0}
+.tasco-workspace :is(#traCuuSection,#personalCloudSection,#rescueSection,#garageSection,#assessSection,#formsSection){margin-top:0;padding-top:0}
 .tasco-workspace .ws-journey-hero,.tasco-workspace #personalCloudSection .cloud-hero{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0;padding-top:calc(18px + env(safe-area-inset-top,0px))}
 /* The results page keeps its measured space for the fixed header. */
 .tasco-workspace #resultsStickyHeader{top:0;margin-top:0}
@@ -3453,6 +3453,7 @@ window.TascoBootSplash = (() => {
       <div class="ws-tools" role="group" aria-labelledby="wsToolsTitle"><div class="ws-tools-head"><span id="wsToolsTitle">Công cụ nghiệp vụ</span></div><div class="ws-tool-list">
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('rescue')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M3 8.6A1.6 1.6 0 0 1 4.6 7H13v9.6H3ZM13 10h3.7a1.6 1.6 0 0 1 1.26.62l2.4 3.08a1.6 1.6 0 0 1 .34.98v1.92H13Z"/><path d="M13 16.6V7H4.6A1.6 1.6 0 0 0 3 8.6v8"/><path d="M13 10h3.7a1.6 1.6 0 0 1 1.26.62l2.4 3.08a1.6 1.6 0 0 1 .34.98v1.92"/><path d="M15 10v3.2h4.6M9.3 16.6h6.1"/><circle cx="7" cy="17.4" r="2.1"/><circle cx="17.6" cy="17.4" r="2.1"/></svg><span><strong>Chi phí cứu hộ</strong><small>Tra cứu đơn giá, tính nhanh kéo &amp; cẩu xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('garage')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M3.5 9.2 12 4.5l8.5 4.7v11.3H17V13H7v7.5H3.5Z"/><path d="M3.5 20.5V9.2L12 4.5l8.5 4.7v11.3"/><path d="M7 20.5V13h10v7.5M7 15.6h10M7 18.1h10"/></svg><span><strong>Quản lý gara</strong><small>Danh sách gara &amp; điểm đến kéo xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('assess')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M5 20.5h14M12 4v16.5M12 6.5H5.5l-2.5 6a3 3 0 0 0 5.9 0zM12 6.5h6.5l2.5 6a3 3 0 0 1-5.9 0z"/><path d="M5 20.5h14M12 4v16.5M12 6.5H5.5m6.5 0h6.5"/><path d="m5.5 6.5-2.5 6a3 3 0 0 0 5.9 0zM18.5 6.5l2.5 6a3 3 0 0 1-5.9 0z"/></svg><span><strong>Nhận định nhanh</strong><small>Phân lỗi tình huống tai nạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('forms')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5V8h4.5M8.8 12.4h6.4M8.8 15.9h4.2"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Word &amp; PDF xem ngay trong ứng dụng.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('account')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="i-fill" cx="12" cy="9.3" r="3.5"/><path class="i-fill" d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0A8.9 8.9 0 0 1 12 20.9a8.9 8.9 0 0 1-5.9-2.6Z"/><circle cx="12" cy="12" r="8.9"/><circle cx="12" cy="9.3" r="3.5"/><path d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0"/></svg><span><strong>Tài khoản &amp; thiết lập</strong><small>Không gian riêng, theo cách của bạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div></div>
@@ -3615,6 +3616,25 @@ window.TascoBootSplash = (() => {
     </div>
   </div>
   <p class="ws-journey-note"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>Gara đang hoạt động sẽ xuất hiện khi chọn điểm đến trong “Chi phí cứu hộ”.</span></p>
+</section>
+
+<section id="assessSection" data-shell-page="assess" class="ws-journey rc as-page" hidden style="display:none" aria-labelledby="assessPageTitle">
+  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · NHẬN ĐỊNH NHANH</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">PHÂN LỖI TAI NẠN · BẢNG THAM KHẢO</span><h2 id="assessPageTitle" tabindex="-1">Nhận định nhanh.<br>Phân lỗi tại hiện trường.</h2><p>42 tình huống kèm hình, tỷ lệ lỗi và điều luật.<br>Chọn hành vi hai xe, có ngay kết quả.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="94" cy="70" r="59" stroke="currentColor" stroke-opacity=".18"/><circle cx="94" cy="70" r="47" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="3 7"/><path d="M94 34v72M66 106h56M54 50h80" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M54 50 40 82a14 14 0 0 0 28 0zM134 50l-14 32a14 14 0 0 0 28 0z" fill="#84bfc7" fill-opacity=".1" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="94" cy="34" r="4" fill="currentColor"/><path d="M30 124h120" stroke="currentColor" stroke-opacity=".5" stroke-linecap="round"/></svg></header>
+  <div class="ws-search-panel ws-search-panel--premium rc-panel">
+    <div class="as" id="asBox">
+      <div class="as-head"><div><h3>Bảng phân lỗi tình huống</h3><p>Theo Công văn 93/HHBH ngày 02/07/2021 · Hiệp hội Bảo hiểm Việt Nam</p></div></div>
+      <div class="ws-search-field rc-field as-search"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="asSearch" type="search" autocomplete="off" placeholder="Tìm: rẽ trái, vượt xe, lùi xe, Điều 24…" aria-label="Tìm tình huống"></div>
+      <div class="as-pick" aria-label="Chọn hành vi hai xe">
+        <div class="as-pick-row"><span class="as-pick-label">Xe của bạn</span><div class="as-chips" id="asMine" role="group" aria-label="Hành vi xe của bạn"></div></div>
+        <div class="as-pick-row"><span class="as-pick-label">Xe còn lại</span><div class="as-chips" id="asOther" role="group" aria-label="Hành vi xe còn lại"></div></div>
+      </div>
+      <div class="as-groups" id="asGroups" role="group" aria-label="Lọc theo nhóm tình huống"></div>
+      <div class="as-meta"><span id="asCount" aria-live="polite"></span><button type="button" class="as-reset" id="asReset" hidden>Xóa lọc</button></div>
+      <div class="as-legend" aria-hidden="true"><span><i class="as-dot x"></i>Xe X (đen)</span><span><i class="as-dot y"></i>Xe Y (trắng)</span><span>theo hình minh họa</span></div>
+      <div class="as-list" id="asList" aria-label="Danh sách tình huống"></div>
+    </div>
+  </div>
+  <p class="ws-journey-note"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>Chỉ để tham khảo nhanh. Ưu tiên kết luận của cơ quan có thẩm quyền, tín hiệu đèn, biển báo, làn đường thực tế. Số điều theo Luật Giao thông đường bộ 2008 như văn bản gốc, cần đối chiếu luật mới.</span></p>
 </section>
 
         <div id="sysMgrSection" data-shell-page="admin" hidden class="px-4 pt-6" style="display: none;">
@@ -4036,8 +4056,8 @@ window.TascoCloudImport=(()=>{
 </script>
 <script id="tascoPremiumShell">
 window.TascoAppShell=(()=>{
-  const pages={home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',rescue:'Tính chi phí cứu hộ',garage:'Quản lý gara',account:'Tài khoản',admin:'Quản lý hệ thống',forms:'Biểu mẫu dùng chung'};
-  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',account:'accountSection',admin:'sysMgrSection',forms:'formsSection'};
+  const pages={home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',rescue:'Tính chi phí cứu hộ',garage:'Quản lý gara',assess:'Nhận định nhanh',account:'Tài khoản',admin:'Quản lý hệ thống',forms:'Biểu mẫu dùng chung'};
+  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',account:'accountSection',admin:'sysMgrSection',forms:'formsSection'};
   let user=null,current='login',mountedOwner='',lastCloud=null;
   const scrolls={};
   if ('scrollRestoration' in history) history.scrollRestoration='manual';
@@ -4085,7 +4105,7 @@ window.TascoAppShell=(()=>{
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
     login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
     Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id);node.hidden=page!==view;node.style.display=page===view?'block':'none';});
-    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','forms','account'].includes(view);
+    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','forms','account'].includes(view);
     setText('#wsPageTitle',pages[view]||'');
     document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
     window.TascoNavigationMotion?.sync(view,previous);
@@ -4095,10 +4115,10 @@ window.TascoAppShell=(()=>{
     if(view==='cloud')connectCloud();if(view==='home'){greeting();paintCloud(lastCloud);connectCloud();}
     if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
     window.TascoLookupFlow?.afterNavigate(view);
-    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
+    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
     const top=options.restore?scrolls[view]||0:0;
     window.scrollTo({left:0,top,behavior:'instant'});
-    if(previous!==view&&['lookup','results','cloud','rescue','garage'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
+    if(previous!==view&&['lookup','results','cloud','rescue','garage','assess'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
   }
   function paintCloud(summary){
     if(!canCloud()){document.getElementById('homeRecentPhotos')?.replaceChildren();return;}
@@ -11003,7 +11023,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const color = ['lookup','results','cloud','rescue','garage','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    const color = ['lookup','results','cloud','rescue','garage','assess','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -12772,7 +12792,7 @@ window.TascoNavigationMotion = (() => {
   const indicator = nav?.querySelector('.ws-nav-indicator');
   if (!nav || !indicator) return { sync() {} };
   const motionPreference = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-  const pageIds = {home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',account:'accountSection',forms:'formsSection',admin:'sysMgrSection'};
+  const pageIds = {home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',account:'accountSection',forms:'formsSection',admin:'sysMgrSection'};
   let positioned = false, frame = 0, pendingAnimated = true, pageAnimation = null, lastGeometry = null;
   nav.dataset.navMotion = 'true';
   function position(animate = true) {
@@ -13752,7 +13772,7 @@ window.tascoGo=function(view){
   var shell=window.TascoAppShell, cur=shell&&shell.page, root=document.documentElement;
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(!document.startViewTransition||!cur||cur==='login'||cur===view||reduce||root.dataset.vt)return go();
-  var order=['home','lookup','results','cloud','rescue','garage','forms','account','admin'];
+  var order=['home','lookup','results','cloud','rescue','garage','assess','forms','account','admin'];
   root.dataset.vtDir=order.indexOf(view)>=order.indexOf(cur)?'fwd':'back';root.dataset.vt='1';
   var done=function(){delete root.dataset.vt;delete root.dataset.vtDir;};
   try{var t=document.startViewTransition(go);t.finished.then(done,done);}catch(_){done();go();}
@@ -14752,6 +14772,433 @@ window.TascoDocScan = (function () {
     return { source: canvas, width: canvas.width, height: canvas.height, warped: warped, release: function () { canvas.width = canvas.height = 0; } };
   }
   return { process: process, detect: detect };
+})();
+</script>
+<style id="tascoAssessStyles">
+/* ===== Nhận định nhanh: bảng phân lỗi tình huống tai nạn ===== */
+.tasco-workspace :is(#assessSection){margin-top:0;padding-top:0}
+.as-head h3{margin:0;color:var(--ws-text);font-size:16px;font-weight:700;letter-spacing:-.4px}
+.as-head p{margin:4px 0 14px;color:var(--ws-muted);font-size:11px;line-height:1.5}
+#assessSection .as-search{min-height:48px;border-radius:13px;background:var(--ws-bg);gap:9px;padding:0 13px}
+#assessSection .as-search input{min-height:46px;min-width:0!important;font-size:16px!important;background:transparent!important;padding:0!important;border-radius:0!important;box-shadow:none!important}
+#assessSection .as-search .ws-icon{flex-shrink:0;width:17px;height:17px}
+.as-pick{display:grid;gap:10px;margin:14px 0 4px;padding:12px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-bg)}
+.as-pick-row{display:grid;gap:7px}
+.as-pick-label{color:var(--ws-muted);font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.as-chips{display:flex;gap:6px;overflow-x:auto;margin:0 -12px;padding:2px 12px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.as-chips::-webkit-scrollbar{display:none}
+.as-chips button,.as-groups button{flex:0 0 auto;min-height:36px;padding:0 12px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-surface);color:var(--ws-text);font:600 11px 'Plus Jakarta Sans',sans-serif;white-space:nowrap;cursor:pointer;transition:transform .12s ease,background-color .15s ease,border-color .15s ease}
+.as-chips button:active,.as-groups button:active{transform:scale(.96)}
+.as-chips button[aria-pressed=true]{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
+html.dark .as-chips button[aria-pressed=true]{background:var(--ws-accent-text);border-color:var(--ws-accent-text);color:#0b1b30}
+.as-groups{display:flex;gap:5px;overflow-x:auto;margin:12px -2px 0;padding:2px;scrollbar-width:none}
+.as-groups::-webkit-scrollbar{display:none}
+.as-groups button{min-height:34px;padding:0 10px;border-color:transparent;background:transparent;color:var(--ws-muted);font-size:10px}
+.as-groups button[aria-pressed=true]{background:var(--ws-accent);color:var(--ws-text);border-color:var(--ws-line)}
+.as-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 2px 0;min-height:22px;color:var(--ws-muted);font-size:11px}
+.as-reset{padding:4px 9px;border:0;border-radius:8px;background:var(--ws-accent);color:var(--ws-accent-text);font:700 10px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.as-reset[hidden]{display:none}
+.as-legend{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:6px 2px 12px;color:var(--ws-muted);font-size:10px}
+.as-legend span{display:inline-flex;align-items:center;gap:5px}
+.as-dot{display:inline-block;width:11px;height:11px;border-radius:3px;border:1.5px solid var(--ws-text)}
+.as-dot.x{background:var(--ws-text)}.as-dot.y{background:#fff}
+.as-list{display:grid;gap:11px}
+.as-card{position:relative;display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:center;padding:12px 14px 12px 12px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-surface);box-shadow:0 3px 12px rgba(24,48,86,.025);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s ease,border-color .15s ease,box-shadow .2s ease}
+.as-card:active{transform:scale(.985)}
+.as-card:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+@media(hover:hover){.as-card:hover{border-color:var(--app-teal);box-shadow:0 10px 26px rgba(24,48,86,.08)}}
+.as-pic{display:grid;place-items:center;width:96px;height:96px;border-radius:13px;background:#fff;box-shadow:inset 0 0 0 1px rgba(24,48,86,.1);overflow:hidden}
+.as-pic img{display:block;width:100%;height:100%;object-fit:contain;padding:4px}
+.as-body{min-width:0;display:grid;gap:5px}
+.as-tags{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.as-no{padding:2px 7px;border-radius:7px;background:var(--ws-accent);color:var(--ws-accent-text);font-size:9px;font-weight:800;letter-spacing:.3px}
+.as-grp{color:var(--ws-muted);font-size:9px;font-weight:600}
+.as-body strong{color:var(--ws-text);font-size:13.5px;font-weight:700;letter-spacing:-.25px;line-height:1.35}
+.as-roles-line{margin:0;color:var(--ws-muted);font-size:10.5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.as-res{display:flex;flex-wrap:wrap;gap:5px;margin-top:1px}
+.as-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:800;font-variant-numeric:tabular-nums}
+.as-chip.x{background:var(--app-navy);color:#fff}
+html.dark .as-chip.x{background:#335b76}
+.as-chip.y{background:#fff;color:var(--app-navy);box-shadow:inset 0 0 0 1.5px var(--app-navy)}
+html.dark .as-chip.y{box-shadow:inset 0 0 0 1.5px #84bfc7;color:#0b1b30}
+.as-chip.role{background:rgba(99,173,182,.18);color:var(--ws-accent-text)}
+.as-chip.mix{background:var(--ws-accent);color:var(--ws-accent-text)}
+.as-empty{display:grid;justify-items:center;gap:4px;min-height:160px;align-content:center;padding:18px;border:1px dashed var(--ws-line);border-radius:18px;background:var(--ws-bg);color:var(--ws-muted);font-size:11px;text-align:center}
+.as-empty strong{color:var(--ws-text);font-size:14px}
+@media(max-width:359px){.as-card{grid-template-columns:78px minmax(0,1fr)}.as-pic{width:78px;height:78px}}
+/* Bảng chi tiết (bottom sheet) */
+html.as-lock,html.as-lock body{overflow:hidden}
+.as-sheet{position:fixed;inset:0;z-index:100060;display:flex;align-items:flex-end;justify-content:center}
+.as-sheet[hidden]{display:none}
+.as-backdrop{position:absolute;inset:0;background:rgba(11,27,48,.56);animation:asFade .2s ease both}
+.as-panel{position:relative;display:flex;flex-direction:column;width:100%;max-width:560px;max-height:min(92vh,92dvh);border-radius:24px 24px 0 0;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 -12px 40px rgba(11,27,48,.28);animation:asUp .28s cubic-bezier(.2,.8,.2,1) both;padding-bottom:env(safe-area-inset-bottom,0)}
+@keyframes asUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes asFade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.as-panel,.as-backdrop{animation:none}}
+.as-grab{width:38px;height:4px;margin:9px auto 0;border-radius:4px;background:var(--ws-line)}
+.as-sh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 16px 8px 18px}
+.as-eyebrow{display:block;margin-bottom:3px;color:var(--ws-accent-text);font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.as-sh-head h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.4px;line-height:1.3}
+.as-x{flex:0 0 36px;width:36px;height:36px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-bg);color:var(--ws-text);font-size:20px;line-height:1;cursor:pointer}
+.as-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:4px 18px 14px}
+.as-fig{display:grid;place-items:center;margin:2px 0 14px;padding:10px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(24,48,86,.12)}
+.as-fig img{display:block;max-width:100%;max-height:230px;width:auto;height:auto;object-fit:contain}
+.as-actors{display:grid;gap:8px;margin:0 0 14px}
+.as-actor{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;font-size:12.5px;line-height:1.5}
+.as-actor b{display:grid;place-items:center;min-width:34px;height:26px;padding:0 8px;border-radius:8px;font-size:11px;font-weight:800}
+.as-actor b.x{background:var(--app-navy);color:#fff}
+html.dark .as-actor b.x{background:#335b76}
+.as-actor b.y{background:#fff;color:var(--app-navy);box-shadow:inset 0 0 0 1.5px var(--app-navy)}
+html.dark .as-actor b.y{color:#0b1b30;box-shadow:inset 0 0 0 1.5px #84bfc7}
+.as-tabs{display:flex;gap:6px;margin:0 0 12px;padding:4px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-bg)}
+.as-tabs button{flex:1 1 0;min-height:40px;padding:6px 8px;border:0;border-radius:10px;background:transparent;color:var(--ws-muted);font:700 11px/1.3 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.as-tabs button[aria-pressed=true]{background:var(--ws-surface);color:var(--ws-text);box-shadow:0 2px 8px rgba(24,48,86,.12)}
+.as-cond{margin:0 0 12px;color:var(--ws-muted);font-size:12px;line-height:1.55}
+.as-cond strong{color:var(--ws-text)}
+.as-verdict{padding:14px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-bg)}
+.as-nums{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.as-num{display:grid;gap:2px}
+.as-num small{color:var(--ws-muted);font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.as-num strong{font-size:34px;font-weight:800;letter-spacing:-1.2px;line-height:1.05;font-variant-numeric:tabular-nums}
+.as-num.y{text-align:right}
+.as-num[data-hot=true] strong{color:#b45335}
+html.dark .as-num[data-hot=true] strong{color:#f0a09b}
+.as-bar{display:flex;height:12px;margin-top:12px;border-radius:99px;overflow:hidden;background:var(--ws-line)}
+.as-bar i{display:block;height:100%;transition:width .3s ease}
+.as-bar .bx{background:var(--app-navy)}
+html.dark .as-bar .bx{background:#84bfc7}
+.as-bar .by{background:#63adb6}
+.as-summary{margin:0;font-size:14px;font-weight:700;line-height:1.5}
+.as-extra{margin:10px 0 0;font-size:12px;font-weight:600;color:var(--ws-accent-text)}
+.as-mine{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0 0;padding-top:12px;border-top:1px dashed var(--ws-line);font-size:12px}
+.as-mine>span{color:var(--ws-muted);font-weight:600}
+.as-mine .as-seg{display:inline-flex;gap:4px;padding:3px;border-radius:11px;background:var(--ws-surface);border:1px solid var(--ws-line)}
+.as-mine .as-seg button{min-width:48px;min-height:32px;border:0;border-radius:8px;background:transparent;color:var(--ws-muted);font:800 11px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.as-mine .as-seg button[aria-pressed=true]{background:var(--app-navy);color:#fff}
+html.dark .as-mine .as-seg button[aria-pressed=true]{background:var(--ws-accent-text);color:#0b1b30}
+.as-mine em{flex-basis:100%;font-style:normal;font-weight:700;font-size:13px}
+.as-sec{margin:16px 0 6px;font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--ws-muted)}
+.as-reasons{margin:0;padding:0 0 0 18px;display:grid;gap:7px;font-size:12.5px;line-height:1.6}
+.as-note{margin:14px 0 0;padding:11px 13px;border-radius:12px;background:var(--ws-accent);color:var(--ws-text);font-size:11.5px;line-height:1.6}
+.as-actions{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;padding:12px 18px 14px;border-top:1px solid var(--ws-line);background:var(--ws-surface)}
+.as-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-bg);color:var(--ws-text);font:700 12px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:transform .12s ease}
+.as-actions button:active{transform:scale(.97)}
+.as-actions .ws-icon{width:16px;height:16px}
+.as-actions .as-zalo{background:rgba(0,104,255,.08);border-color:rgba(0,104,255,.3);color:#0a5bd8}
+html.dark .as-actions .as-zalo{background:rgba(96,165,255,.14);border-color:rgba(96,165,255,.4);color:#8fbfff}
+.as-toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0));z-index:100070;max-width:86vw;padding:10px 16px;border-radius:12px;background:#183056;color:#fff;font:600 12px/1.45 'Plus Jakarta Sans',sans-serif;text-align:center;transform:translateX(-50%);box-shadow:0 8px 28px rgba(11,27,48,.35);pointer-events:none;animation:asFade .18s ease both}
+</style>
+<script id="tascoAssess">
+/* Nhận định nhanh: bảng tham khảo tỷ lệ phân lỗi các tình huống tai nạn (CV 93/HHBH ngày 02/07/2021, Hiệp hội Bảo hiểm Việt Nam).
+   Hình minh họa nằm ở assets/pl/. Tất cả chạy tại máy, không gọi mạng. */
+(function () {
+  'use strict';
+  if (!document.getElementById('assessSection')) return;
+  var SPEED = 'Chỉ coi xe Y đã giảm tốc độ khi có bằng chứng cụ thể (dấu phanh với xe tải, camera hành trình, camera giao thông tại khu vực xảy ra tai nạn) hoặc kết luận của CSGT. Các trường hợp còn lại áp dụng như xe Y không giảm tốc độ.';
+  var LANES = 'Trường hợp nhiều làn đường: nếu xe không đi đúng làn hay vạch kẻ đường thì lỗi là 100%.';
+  var YSLOW = 'Xe Y đã giảm tốc độ theo quy định (có bằng chứng hoặc kết luận của CSGT)', YFAST = 'Xe Y không giảm tốc độ theo quy định';
+  var GROUPS = { giaolo: 'Giao lộ & đường nhánh', quay: 'Quay đầu & vòng xuyến', lan: 'Làn đường', do: 'Đỗ, lùi, mở cửa', vuot: 'Vượt & khoảng cách', khac: 'Khác' };
+  var ACT = { thang: 'Đi thẳng', trai: 'Rẽ trái', phai: 'Rẽ phải', quay: 'Quay đầu', lui: 'Lùi / tiến lùi', do: 'Đang đỗ / dừng', lan: 'Chuyển / lấn làn', vuot: 'Vượt xe', nhanh: 'Từ đường nhánh ra', vx: 'Vòng xuyến' };
+  /* g: nhóm · t: tên · x/y: hành vi xe X/Y · xa/ya: nhãn hành vi để lọc · cases: các trường hợp (c: điều kiện, x/y: % lỗi, r: lý do/căn cứ) */
+  var S = [
+    { id: 1, g: 'giaolo', t: 'Từ đường nhánh ra đường chính', x: 'Từ đường nhánh đi ra đường chính', y: 'Đi thẳng', xa: ['nhanh'], ya: ['thang'], n: SPEED, cases: [
+      { c: YSLOW, x: 100, y: 0, r: ['Xe X không nhường đường khi chạy từ đường nhánh ra đường chính, vi phạm Điều 24 Luật GTĐB.'] },
+      { c: YFAST, x: 80, y: 20, r: ['Xe X không nhường đường khi chạy từ đường nhánh ra đường chính, vi phạm Điều 24 Luật GTĐB.', 'Xe Y không giảm tốc độ khi qua đường giao nhau, vi phạm Điều 24 Luật GTĐB.'] }] },
+    { id: 2, g: 'giaolo', t: 'Từ đường bên cạnh rẽ trái', x: 'Từ đường bên cạnh rẽ trái', y: 'Đi thẳng', xa: ['trai', 'nhanh'], ya: ['thang'], n: SPEED, cases: [
+      { c: YSLOW, x: 100, y: 0, r: ['Xe X chuyển hướng không nhường đường cho xe chạy ngược chiều, vi phạm Điều 15 Luật GTĐB.'] },
+      { c: YFAST, x: 80, y: 20, r: ['Xe X chuyển hướng không nhường đường cho xe chạy ngược chiều, vi phạm Điều 15 Luật GTĐB.', 'Xe Y không giảm tốc độ khi qua đường giao nhau, vi phạm Điều 24 Luật GTĐB.'] }] },
+    { id: 3, g: 'lan', t: 'Chạy làn thẳng định rẽ vào đường nhánh', x: 'Chạy dọc theo làn đường thẳng, đang định rẽ vào đường nhánh', y: 'Đang chạy trên làn đường rẽ vào đường nhánh', xa: ['lan'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X chuyển làn đường sai quy định, vi phạm Điều 13 Luật GTĐB.'] }] },
+    { id: 4, g: 'giaolo', t: 'Hai xe cùng đi thẳng qua giao lộ', x: 'Đi thẳng', y: 'Đi thẳng', xa: ['thang'], ya: ['thang'], n: SPEED, cases: [
+      { c: YSLOW, x: 100, y: 0, r: ['Khi qua đường giao nhau, xe X không nhường đường cho xe đi từ hướng bên phải tới, vi phạm Điều 24.1 Luật GTĐB.'] },
+      { c: YFAST, x: 80, y: 20, r: ['Khi qua đường giao nhau, xe X không nhường đường cho xe đi từ hướng bên phải tới, vi phạm Điều 24.1 Luật GTĐB.', 'Xe Y không giảm tốc độ khi qua đường giao nhau, vi phạm Điều 24 Luật GTĐB.'] }] },
+    { id: 5, g: 'giaolo', t: 'Rẽ trái gặp xe đi thẳng', x: 'Rẽ trái', y: 'Đi thẳng', xa: ['trai'], ya: ['thang'], n: SPEED, cases: [
+      { c: YSLOW, x: 100, y: 0, r: ['Xe X chuyển hướng không nhường đường cho xe chạy ngược chiều, vi phạm Điều 15.2 Luật GTĐB.'] },
+      { c: YFAST, x: 80, y: 20, r: ['Xe X chuyển hướng không nhường đường cho xe chạy ngược chiều, vi phạm Điều 15.2 Luật GTĐB.', 'Xe Y không giảm tốc độ khi qua đường giao nhau, vi phạm Điều 24 Luật GTĐB.'] }] },
+    { id: 6, g: 'giaolo', t: 'Rẽ trái — xe đối diện rẽ phải', x: 'Rẽ trái', y: 'Rẽ phải từ hướng đối diện', xa: ['trai'], ya: ['phai'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X chuyển hướng sang làn ngược chiều không nhường cho xe chạy ngược chiều, vi phạm Điều 15.2 Luật GTĐB.'] }] },
+    { id: 7, g: 'giaolo', t: 'Rẽ phải — xe khác rẽ trái', x: 'Rẽ phải', y: 'Rẽ trái', xa: ['phai'], ya: ['trai'], cases: [
+      { c: '', x: 80, y: 20, r: ['Khi qua đường giao nhau, xe X không nhường đường cho xe đi từ hướng bên phải tới, vi phạm Điều 24.1 Luật GTĐB.', 'Xe Y đi không đúng làn đường quy định.'] }] },
+    { id: 8, g: 'giaolo', t: 'Giao lộ đồng cấp: rẽ phải — đi thẳng', x: 'Rẽ phải', y: 'Đi thẳng (đường giao nhau đồng cấp)', xa: ['phai'], ya: ['thang'], cases: [
+      { c: '', x: 50, y: 50, r: ['Khi qua đường giao nhau, xe Y không nhường đường cho xe đi từ hướng bên phải tới, vi phạm Điều 24.1 Luật GTĐB.', 'Xe X chuyển hướng thiếu quan sát, vi phạm Điều 15.2.'] }] },
+    { id: 9, g: 'giaolo', t: 'Từ đường nhánh ra đường chính (hình 2)', x: 'Từ đường nhánh đi ra đường chính', y: 'Đi thẳng', xa: ['nhanh'], ya: ['thang'], n: SPEED, cases: [
+      { c: YSLOW, x: 100, y: 0, r: ['Xe X không nhường đường khi chạy từ đường nhánh ra đường chính, vi phạm Điều 24 Luật GTĐB.'] },
+      { c: YFAST, x: 80, y: 20, r: ['Xe X không nhường đường khi chạy từ đường nhánh ra đường chính, vi phạm Điều 24 Luật GTĐB.', 'Xe Y không giảm tốc độ khi qua đường giao nhau, vi phạm Điều 24 Luật GTĐB.'] }] },
+    { id: 10, g: 'quay', t: 'Quay đầu trong khu dân cư', x: 'Quay đầu (trong khu dân cư)', y: 'Đi thẳng', xa: ['quay'], ya: ['thang'], cases: [
+      { c: 'Điểm va chạm: phía đầu xe Y đến cánh cửa trước của xe X', x: 100, y: 0, r: ['Xe X quay đầu sai quy định, vi phạm Điều 15.3 Luật GTĐB.'] },
+      { c: 'Điểm va chạm: từ thân đến cánh cửa sau về góc đuôi xe X', x: 50, y: 50, r: ['Xe X quay đầu sai quy định, vi phạm Điều 15.3 Luật GTĐB.', 'Xe Y thiếu chú ý quan sát và giảm tốc độ.'] }] },
+    { id: 11, g: 'quay', t: 'Vào vòng xuyến', x: 'Vào vòng xuyến', y: 'Đang chạy trong vòng xuyến', xa: ['vx'], ya: ['vx'], cases: [
+      { c: '', x: 100, y: 0, r: ['Khi vào vòng xuyến, xe X phải nhường cho xe đi hướng bên trái tới, vi phạm Điều 24.2 Luật GTĐB.'] }] },
+    { id: 12, g: 'do', t: 'Dịch chuyển khỏi vị trí đang đỗ', x: 'Chuyển dịch khỏi vị trí đang đỗ', y: 'Đi thẳng', xa: ['do', 'lan'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe dịch chuyển phải chú ý nhiều hơn, chỉ chuyển làn khi thấy an toàn.'] }] },
+    { id: 13, g: 'lan', t: 'Chuyển làn đường', x: 'Chuyển làn', y: 'Chạy đúng làn đường', xa: ['lan'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe phải chạy đúng làn đường, chỉ được chuyển làn khi thấy an toàn, vi phạm Điều 13.1 Luật GTĐB.'] }] },
+    { id: 14, g: 'lan', t: 'Lấn làn đường', x: 'Lấn đường', y: 'Chạy đúng làn đường', xa: ['lan'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X phải chạy trong làn đường quy định, vi phạm Điều 13.1 Luật GTĐB.'] }] },
+    { id: 15, g: 'lan', t: 'Hai xe chạy sát vạch, tránh nhau', x: 'Chạy sát vạch làn đường', y: 'Chạy sát vạch làn đường', xa: ['thang'], ya: ['thang'], cases: [
+      { c: '', x: 50, y: 50, r: ['Hai xe tránh nhau sai quy định, vi phạm Điều 17 Luật GTĐB.'] }] },
+    { id: 16, g: 'lan', t: 'Cả hai áp sát vạch làn chung', x: 'Áp sát vạch làn đường chung', y: 'Áp sát vạch làn đường chung', xa: ['thang'], ya: ['thang'], cases: [
+      { c: '', x: 50, y: 50, r: ['Cả hai xe không đi đúng làn đường, vi phạm Điều 13.1 Luật GTĐB.'] }] },
+    { id: 17, g: 'lan', t: 'Cả hai cùng chuyển làn', x: 'Chuyển làn', y: 'Chuyển làn', xa: ['lan'], ya: ['lan'], cases: [
+      { c: '', x: 50, y: 50, r: ['Cả hai xe phải thận trọng khi chuyển làn, vi phạm Điều 13.1 Luật GTĐB.'] }] },
+    { id: 18, g: 'lan', t: 'Va hông khi cùng chạy trong làn', x: 'Chạy trong làn đường', y: 'Chạy trong làn đường', xa: ['thang'], ya: ['thang'], cases: [
+      { c: '', x: 50, y: 50, r: ['Cả hai xe không đi đúng làn đường, vi phạm Điều 13.1 Luật GTĐB.'] }] },
+    { id: 19, g: 'lan', t: 'Mất lái, lấn sang đường xe khác', x: 'Mất lái và lấn sang đường của xe khác', y: 'Kiểm soát được xe', xa: ['thang'], ya: ['thang'], k: 'mat lai', cases: [
+      { c: '', x: 100, y: 0, r: ['Lái xe phải luôn luôn làm chủ xe của mình.'] }] },
+    { id: 20, g: 'do', t: 'Xe đang chạy đâm vào xe đang đỗ', x: 'Đang đi thẳng', y: 'Đang đỗ', xa: ['thang'], ya: ['do'], cases: [
+      { c: 'Xe Y đỗ đúng quy định, hoặc không được dừng đỗ nhưng bất khả kháng (xe hỏng, chết máy… có cảnh báo chờ cứu hộ)', x: 100, y: 0, r: ['Xe X thiếu chú ý quan sát.'] },
+      { c: 'Xe Y không được phép dừng đỗ', x: 80, y: 20, r: ['Xe Y dừng đỗ ở nơi không được phép.'] }] },
+    { id: 21, g: 'do', t: 'Tiến/lùi trong ô đỗ, gặp xe đang đỗ', x: 'Tiến lùi trong ô để xe', y: 'Đang đỗ', xa: ['lui'], ya: ['do'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X thiếu chú ý quan sát.'] }] },
+    { id: 22, g: 'do', t: 'Tiến/lùi trong ô đỗ, gặp xe đi thẳng', x: 'Tiến/lùi trong ô đỗ xe', y: 'Đi thẳng', xa: ['lui'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X lùi xe thiếu quan sát, vi phạm Điều 16.1 Luật GTĐB.'] }] },
+    { id: 23, g: 'do', t: 'Hai xe cùng tiến/lùi trong ô đỗ', x: 'Tiến/lùi trong ô đỗ xe', y: 'Tiến/lùi trong ô đỗ xe', xa: ['lui'], ya: ['lui'], cases: [
+      { c: '', x: 50, y: 50, r: ['Cả hai xe thiếu chú ý quan sát, vi phạm Điều 16.1 Luật GTĐB.'] }] },
+    { id: 24, g: 'do', t: 'Mở cửa xe vào đường xe khác', x: 'Lái xe/hành khách (trong hoặc ngoài xe) mở cửa vào đường xe khác', y: 'Đang chạy', xa: ['do'], ya: ['thang'], k: 'mo cua', cases: [
+      { c: '', x: 100, y: 0, r: ['Lái xe không mở cửa xe, để cửa xe mở hoặc bước xuống xe khi chưa bảo đảm điều kiện an toàn, vi phạm Điều 18.3 Luật GTĐB.'] }] },
+    { id: 25, g: 'vuot', t: 'Không giữ khoảng cách an toàn', x: 'Chạy thẳng', y: 'Chạy thẳng (xe liền trước)', xa: ['thang'], ya: ['thang'], k: 'dam duoi', cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X không giữ khoảng cách an toàn với xe chạy liền trước, vi phạm Điều 12.1 Luật GTĐB.'] }] },
+    { id: 26, g: 'quay', t: 'Quay đầu — xe khác rẽ phải', x: 'Quay đầu', y: 'Rẽ phải', xa: ['quay'], ya: ['phai'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X phải nhường đường cho xe rẽ phải.'] }] },
+    { id: 27, g: 'giaolo', t: 'Rẽ trái nhường xe đi thẳng (giao lộ)', x: 'Rẽ trái', y: 'Đi thẳng', xa: ['trai'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe rẽ trái phải nhường đường cho xe đi thẳng, vi phạm Điều 24.1 Luật GTĐB.'] }] },
+    { id: 28, g: 'giaolo', t: 'Rẽ trái nhường xe đi thẳng (hình 2)', x: 'Rẽ trái', y: 'Đi thẳng', xa: ['trai'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe rẽ trái phải nhường đường cho xe đi thẳng, vi phạm Điều 15.2 Luật GTĐB.'] }] },
+    { id: 29, g: 'giaolo', t: 'Rẽ trái — xe rẽ phải từ bên phải tới', x: 'Rẽ trái', y: 'Rẽ phải', xa: ['trai'], ya: ['phai'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X phải nhường đường cho xe Y đi từ hướng bên phải tới, vi phạm Điều 24 Luật GTĐB.'] }] },
+    { id: 30, g: 'vuot', t: 'Vượt phải khi xe trước xi nhan rẽ phải', x: 'Vượt phải, rẽ phải hoặc vượt phải, đi thẳng (đường 1 làn)', y: 'Xi nhan rẽ phải', xa: ['vuot', 'phai'], ya: ['phai'], n: LANES, cases: [
+      { c: 'Đường có 1 làn', x: 100, y: 0, r: ['Xe Y phải chú ý quan sát; xe X tránh vượt sai quy định.'] }] },
+    { id: 31, g: 'vuot', t: 'Vượt xe đi thẳng', x: 'Vượt xe Y (đường 1 làn)', y: 'Đi thẳng', xa: ['vuot'], ya: ['thang'], n: LANES, cases: [
+      { c: 'Đường có 1 làn', x: 100, y: 0, r: ['Xe X vượt xe Y sai quy định, vi phạm Điều 14 Luật GTĐB.'] }] },
+    { id: 32, g: 'vuot', t: 'Vượt phải rồi đâm vào đuôi xe trước', x: 'Vượt phải xe Y, đâm vào phía sau xe Y', y: 'Đi thẳng', xa: ['vuot'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X vượt xe Y sai quy định, vi phạm Điều 14 Luật GTĐB.'] }] },
+    { id: 33, g: 'quay', t: 'Rẽ phải gặp xe trong vòng xuyến', x: 'Rẽ phải', y: 'Đi theo vòng xuyến', xa: ['phai'], ya: ['vx'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe rẽ phải phải nhường đường cho xe đi trong vòng xuyến, vi phạm Điều 24.2 Luật GTĐB.'] }] },
+    { id: 34, g: 'vuot', t: 'Va thành xe khi vượt ở đường cong', x: 'Chạy ngoài làn (vượt)', y: 'Chạy trong làn', xa: ['vuot'], ya: ['thang'], n: 'Nếu vạch kẻ đường là vạch liền (đối với đường cong) thì không được phép vượt: xe X lỗi 100%.', cases: [
+      { c: '', x: 100, y: 0, r: ['Vượt xe trong trường hợp cấm vượt, vi phạm Điều 14.5 Luật GTĐB.'] }] },
+    { id: 35, g: 'khac', t: 'Có chướng ngại vật, gặp xe ngược chiều', x: 'Có chướng ngại vật phía trước', y: 'Chạy ngược chiều, đi thẳng', xa: ['thang', 'lan'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X không nhường đường cho xe ngược chiều khi có chướng ngại vật bên phải theo hướng đi, vi phạm Điều 17.2 Luật GTĐB.'] }] },
+    { id: 36, g: 'quay', t: 'Quay đầu xe trên đường', x: 'Quay đầu xe trên đường', y: 'Đi thẳng ngược chiều', xa: ['quay'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Quay đầu xe sai quy định, vi phạm Điều 15.3 Luật GTĐB.'] }] },
+    { id: 37, g: 'vuot', t: 'Va chạm liên hoàn 3 xe (X, Y, Z)', x: 'Chạy thẳng', y: 'Chạy thẳng', z: 'Xe Z chạy thẳng (phía sau xe X)', xa: ['thang'], ya: ['thang'], k: 'lien hoan 3 xe dam duoi', cases: [
+      { c: 'Xe Z đâm vào xe X, đẩy xe X đâm vào xe Y', x: 0, y: 0, bar: false, s: 'Xe Z chịu 100% lỗi đối với cả hai xe X và Y.', r: ['Xe Z đâm xe X làm xe X đâm xe Y: lỗi 100% thuộc xe Z.'] },
+      { c: 'Xe X đâm vào xe Y, sau đó xe Z đâm vào xe X', x: 100, y: 0, r: ['Phân lỗi theo cặp: X/Y = 100%/0%; X/Z = 0%/50% (theo văn bản gốc).', 'Xe X và xe Z không giữ khoảng cách an toàn với xe chạy liền trước, vi phạm Điều 12.1 Luật GTĐB.'] }] },
+    { id: 38, g: 'khac', t: 'Xuống dốc — lên dốc', x: 'Xuống dốc', y: 'Lên dốc', xa: ['thang'], ya: ['thang'], k: 'doc', cases: [
+      { c: '', x: 100, y: 0, r: ['Xe xuống dốc phải nhường cho xe lên dốc, vi phạm Điều 17.2 Luật GTĐB.'] }] },
+    { id: 39, g: 'do', t: 'Dừng đỗ trên cầu', x: 'Dừng, đỗ trên cầu', y: 'Đi thẳng', xa: ['do'], ya: ['thang'], k: 'cau', cases: [
+      { c: 'Xe X dừng đỗ sai quy định', x: 80, y: 20, r: ['Xe X dừng đỗ xe sai quy định, vi phạm Điều 18.4 Luật GTĐB.', 'Xe Y thiếu chú ý quan sát, không giữ khoảng cách an toàn với xe chạy liền trước, vi phạm Điều 12.1 Luật GTĐB.'] },
+      { c: 'Xe X dừng đỗ do bất khả kháng, đã có cảnh báo chờ cứu hộ', x: 0, y: 100, r: ['Xe X dừng đỗ trong trường hợp bất khả kháng.', 'Xe Y thiếu chú ý quan sát, không giữ khoảng cách an toàn với xe chạy liền trước, vi phạm Điều 12.1 Luật GTĐB.'] }] },
+    { id: 40, g: 'khac', t: 'Giao cắt với đường sắt', x: 'Đi thẳng, đâm vào tàu', y: 'Đoàn tàu đi thẳng', xa: ['thang'], ya: [], k: 'duong sat tau hoa', cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X không tuân thủ quy tắc an toàn giao thông khi đi qua đoạn đường giao cắt với đường sắt, vi phạm Điều 25.3 Luật GTĐB.'] }] },
+    { id: 41, g: 'do', t: 'Lùi xe', x: 'Lùi xe', y: 'Đi thẳng', xa: ['lui'], ya: ['thang'], cases: [
+      { c: '', x: 100, y: 0, r: ['Xe X lùi xe không chú ý quan sát phía sau, hoặc lùi xe ở khu vực cấm lùi.'] }] },
+    { id: 42, g: 'khac', t: 'Người đi bộ qua đường', x: 'Đi thẳng', y: 'Người đi bộ qua đường', xa: ['thang'], ya: [], k: 'nguoi di bo', cases: [
+      { c: 'Người đi bộ qua đường tại nơi có vạch kẻ đường dành cho người đi bộ', x: 100, y: 0, r: ['Xe X thiếu chú ý quan sát, không giảm tốc độ và nhường đường cho người đi bộ, vi phạm khoản 4 Điều 11 Luật GTĐB.'] },
+      { c: 'Người đi bộ qua đường nơi không có vạch, dù gần đó có vạch kẻ dành cho người đi bộ mà không đi trên vạch', x: 0, y: null, ex: 'Giải quyết bồi thường về người 100%.', r: ['Người đi bộ qua đường không đúng nơi quy định, vi phạm khoản 3 Điều 32 Luật GTĐB (người đi bộ phải quan sát các xe đang đi tới, chỉ qua đường khi bảo đảm an toàn và chịu trách nhiệm bảo đảm an toàn khi qua đường).'] }] }
+  ];
+  /* ---------- Logic ---------- */
+  var IMG = 'assets/pl/pl-';
+  var state = { q: '', g: 'all', mine: '', other: '' }, sheet = null, cur = { s: null, ci: 0, role: 'X' }, lastFocus = null, toastTimer = 0;
+  function $(id) { return document.getElementById(id); }
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function norm(v) { return String(v || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd'); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function lawsOf(s) {
+    var seen = {}, out = [];
+    s.cases.forEach(function (c) { c.r.forEach(function (r) { var re = /Điều (\d+(?:\.\d+)?)/g, m; while ((m = re.exec(r))) if (!seen[m[1]]) { seen[m[1]] = 1; out.push(m[1]); } }); });
+    return out;
+  }
+  S.forEach(function (s) {
+    s.laws = lawsOf(s);
+    s.idx = norm([s.t, s.x, s.y, s.z || '', s.k || '', GROUPS[s.g], s.n || '', s.laws.map(function (l) { return 'dieu ' + l; }).join(' '), 'th ' + s.id, s.cases.map(function (c) { return [c.c, c.s, c.ex].concat(c.r).join(' '); }).join(' ')].join(' '));
+  });
+  function has(list, a) { return !a || list.indexOf(a) >= 0; }
+  /* Xe của bạn / xe còn lại khớp hướng nào: X-Y hay Y-X. role rỗng = khớp cả hai hướng (hai xe cùng hành vi). */
+  function match(s) {
+    if (!state.mine && !state.other) return { ok: true, role: '' };
+    var a = has(s.xa, state.mine) && has(s.ya, state.other), b = has(s.ya, state.mine) && has(s.xa, state.other);
+    if (!state.mine || !state.other) { var only = state.mine || state.other; a = s.xa.indexOf(only) >= 0 || s.ya.indexOf(only) >= 0; b = a; }
+    return { ok: a || b, role: a && !b ? (state.mine ? 'X' : 'Y') : b && !a ? (state.mine ? 'Y' : 'X') : '' };
+  }
+  function visible() {
+    var toks = norm(state.q).trim().split(/\s+/).filter(Boolean);
+    return S.filter(function (s) {
+      if (state.g !== 'all' && s.g !== state.g) return false;
+      if (!match(s).ok) return false;
+      return toks.every(function (t) { return s.idx.indexOf(t) >= 0; });
+    });
+  }
+  function range(s, k) {
+    var v = s.cases.filter(function (c) { return c.bar !== false && c[k] != null; }).map(function (c) { return c[k]; });
+    if (!v.length) return '';
+    var lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
+    return lo === hi ? lo + '%' : lo + '–' + hi + '%';
+  }
+  function chipsHtml(map, key, withAll) {
+    var h = '';
+    Object.keys(map).forEach(function (k) { h += '<button type="button" data-v="' + k + '" aria-pressed="' + (state[key] === k) + '">' + esc(map[k]) + '</button>'; });
+    return h;
+  }
+  function renderControls() {
+    $('asMine').innerHTML = chipsHtml(ACT, 'mine');
+    $('asOther').innerHTML = chipsHtml(ACT, 'other');
+    var g = '<button type="button" data-g="all" aria-pressed="' + (state.g === 'all') + '">Tất cả</button>';
+    Object.keys(GROUPS).forEach(function (k) { g += '<button type="button" data-g="' + k + '" aria-pressed="' + (state.g === k) + '">' + esc(GROUPS[k]) + '</button>'; });
+    $('asGroups').innerHTML = g;
+  }
+  function cardHtml(s) {
+    var m = match(s), special = s.cases.some(function (c) { return c.bar === false; }), x = range(s, 'x'), y = range(s, 'y'), chips = '';
+    if (special) chips += '<span class="as-chip mix">Tính theo từng trường hợp</span>';
+    else {
+      chips += '<span class="as-chip x">X ' + x + '</span>';
+      if (y) chips += '<span class="as-chip y">Y ' + y + '</span>';
+    }
+    if (m.role) chips += '<span class="as-chip role">Bạn = xe ' + m.role + '</span>';
+    return '<article class="as-card" role="button" tabindex="0" data-id="' + s.id + '" aria-label="Tình huống ' + s.id + ': ' + esc(s.t) + '">' +
+      '<div class="as-pic"><img src="' + IMG + pad(s.id) + '.png" alt="" loading="lazy" decoding="async"></div>' +
+      '<div class="as-body"><div class="as-tags"><span class="as-no">TH ' + s.id + '</span><span class="as-grp">' + esc(GROUPS[s.g]) + '</span></div>' +
+      '<strong>' + esc(s.t) + '</strong>' +
+      '<p class="as-roles-line"><b>X:</b> ' + esc(s.x) + ' · <b>Y:</b> ' + esc(s.y) + '</p>' +
+      '<div class="as-res">' + chips + '</div></div></article>';
+  }
+  function renderList() {
+    var list = visible(), box = $('asList');
+    box.innerHTML = list.length ? list.map(cardHtml).join('') : '<div class="as-empty"><strong>Chưa thấy tình huống phù hợp</strong>Thử bỏ bớt bộ lọc hoặc tìm bằng từ khác (ví dụ “rẽ trái”, “vượt”, “Điều 24”).</div>';
+    $('asCount').textContent = list.length === S.length ? S.length + ' tình huống' : list.length + ' / ' + S.length + ' tình huống';
+    $('asReset').hidden = !(state.q || state.g !== 'all' || state.mine || state.other);
+  }
+  function render() { renderControls(); renderList(); }
+
+  /* ---------- Chi tiết ---------- */
+  function caseOf() { return cur.s.cases[Math.min(cur.ci, cur.s.cases.length - 1)]; }
+  function mineLine(s, c) {
+    var role = cur.role, own = role === 'X' ? c.x : c.y;
+    if (c.bar === false) return 'Xe của bạn là xe ' + role + ': xem kết luận bên trên.';
+    if (own == null) return 'Xe của bạn là xe ' + role + ': không có tỷ lệ riêng cho bên này trong bảng.';
+    return 'Xe của bạn (xe ' + role + ') chịu ' + own + '% lỗi.';
+  }
+  function buildMessage() {
+    var s = cur.s, c = caseOf(), L = [];
+    L.push('📋 NHẬN ĐỊNH NHANH · Tình huống ' + s.id + ': ' + s.t);
+    L.push('Xe X: ' + s.x); L.push('Xe Y: ' + s.y); if (s.z) L.push(s.z);
+    if (c.c) L.push('Điều kiện: ' + c.c);
+    if (c.bar === false) L.push('➡ ' + c.s);
+    else {
+      L.push('➡ Xe X: ' + c.x + '%' + (c.y != null ? ' · Xe Y: ' + c.y + '%' : ' · bên còn lại: không có tỷ lệ riêng'));
+      L.push('Xe của tôi là xe ' + cur.role + (cur.role === 'X' ? ' (' + c.x + '%)' : c.y != null ? ' (' + c.y + '%)' : ''));
+    }
+    if (c.ex) L.push(c.ex);
+    L.push('Căn cứ:'); c.r.forEach(function (r) { L.push('- ' + r); });
+    if (s.n) L.push('Lưu ý: ' + s.n);
+    L.push('(Tham khảo theo CV 93/HHBH ngày 02/07/2021 của Hiệp hội Bảo hiểm VN; kết luận chính thức theo cơ quan có thẩm quyền.)');
+    return L.join('\n');
+  }
+  function sheetHtml() {
+    var s = cur.s, c = caseOf(), multi = s.cases.length > 1, h = '';
+    h += '<div class="as-fig"><img src="' + IMG + pad(s.id) + '.png" alt="Hình minh họa tình huống ' + s.id + '"></div>';
+    h += '<div class="as-actors"><div class="as-actor"><b class="x">Xe X</b><span>' + esc(s.x) + '</span></div><div class="as-actor"><b class="y">Xe Y</b><span>' + esc(s.y) + '</span></div>' + (s.z ? '<div class="as-actor"><b class="y">Xe Z</b><span>' + esc(s.z.replace(/^Xe Z /, '')) + '</span></div>' : '') + '</div>';
+    if (multi) {
+      h += '<div class="as-tabs" role="group" aria-label="Trường hợp">';
+      s.cases.forEach(function (cs, i) { h += '<button type="button" data-ci="' + i + '" aria-pressed="' + (i === cur.ci) + '">Trường hợp ' + (i + 1) + '</button>'; });
+      h += '</div>';
+    }
+    if (c.c) h += '<p class="as-cond"><strong>Điều kiện:</strong> ' + esc(c.c) + '</p>';
+    h += '<div class="as-verdict">';
+    if (c.bar === false) h += '<p class="as-summary">' + esc(c.s) + '</p>';
+    else {
+      var yv = c.y == null ? '—' : c.y + '%';
+      h += '<div class="as-nums"><div class="as-num x" data-hot="' + (c.x >= 80) + '"><small>Xe X</small><strong>' + c.x + '%</strong></div><div class="as-num y" data-hot="' + (c.y != null && c.y >= 80) + '"><small>' + (c.y == null ? 'Bên còn lại' : 'Xe Y') + '</small><strong>' + yv + '</strong></div></div>';
+      if (c.y != null) h += '<div class="as-bar" role="img" aria-label="Xe X ' + c.x + ' phần trăm, xe Y ' + c.y + ' phần trăm"><i class="bx" style="width:' + c.x + '%"></i><i class="by" style="width:' + c.y + '%"></i></div>';
+    }
+    if (c.ex) h += '<p class="as-extra">' + esc(c.ex) + '</p>';
+    h += '<div class="as-mine"><span>Xe của bạn là</span><div class="as-seg" role="group" aria-label="Xe của bạn"><button type="button" data-role="X" aria-pressed="' + (cur.role === 'X') + '">Xe X</button><button type="button" data-role="Y" aria-pressed="' + (cur.role === 'Y') + '">Xe Y</button></div><em id="asMineLine">' + esc(mineLine(s, c)) + '</em></div></div>';
+    h += '<h4 class="as-sec">Căn cứ</h4><ul class="as-reasons">' + c.r.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul>';
+    if (s.n) h += '<p class="as-note">' + esc(s.n) + '</p>';
+    return h;
+  }
+  function ensureSheet() {
+    if (sheet) return sheet;
+    sheet = document.createElement('div'); sheet.className = 'as-sheet'; sheet.hidden = true; sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-labelledby', 'asSheetTitle');
+    sheet.innerHTML = '<div class="as-backdrop" data-as="close"></div><div class="as-panel"><div class="as-grab" aria-hidden="true"></div>' +
+      '<div class="as-sh-head"><div><span class="as-eyebrow" id="asSheetEye"></span><h3 id="asSheetTitle"></h3></div><button type="button" class="as-x" data-as="close" aria-label="Đóng">×</button></div>' +
+      '<div class="as-scroll" id="asSheetBody"></div>' +
+      '<div class="as-actions"><button type="button" data-as="copy"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>Sao chép</button>' +
+      '<button type="button" class="as-zalo" data-as="share"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 3-9.5 9.5M21 3l-6.2 18-3.3-8.5L3 9.2z"/></svg>Gửi Zalo</button></div></div>';
+    document.body.appendChild(sheet);
+    sheet.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-as],[data-ci],[data-role]'); if (!t) return;
+      if (t.dataset.as === 'close') closeSheet();
+      else if (t.dataset.as === 'copy') doCopy();
+      else if (t.dataset.as === 'share') doShare();
+      else if (t.dataset.ci != null) { cur.ci = Number(t.dataset.ci) || 0; paintSheet(); }
+      else if (t.dataset.role) { cur.role = t.dataset.role; paintSheet(); }
+    });
+    return sheet;
+  }
+  function paintSheet() {
+    var s = cur.s, body = $('asSheetBody'), top = body.scrollTop;
+    $('asSheetEye').textContent = 'Tình huống ' + s.id + ' · ' + GROUPS[s.g]; $('asSheetTitle').textContent = s.t;
+    body.innerHTML = sheetHtml(); body.scrollTop = top;
+  }
+  function openSheet(id) {
+    var s = S.filter(function (x) { return x.id === id; })[0]; if (!s) return;
+    var m = match(s); cur = { s: s, ci: 0, role: m.role || 'X' };
+    ensureSheet(); lastFocus = document.activeElement; paintSheet(); $('asSheetBody').scrollTop = 0;
+    sheet.hidden = false; document.documentElement.classList.add('as-lock');
+    var x = sheet.querySelector('.as-x'); if (x) x.focus({ preventScroll: true });
+  }
+  function closeSheet() {
+    if (!sheet || sheet.hidden) return;
+    sheet.hidden = true; document.documentElement.classList.remove('as-lock');
+    if (lastFocus && lastFocus.focus) { try { lastFocus.focus({ preventScroll: true }); } catch (_) {} }
+  }
+  function toast(text) {
+    var t = document.querySelector('.as-toast'); if (t) t.remove();
+    t = document.createElement('div'); t.className = 'as-toast'; t.setAttribute('role', 'status'); t.textContent = text; document.body.appendChild(t);
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.remove(); }, 2200);
+  }
+  function copyText(text) {
+    return new Promise(function (resolve) {
+      var done = false, finish = function (ok) { if (!done) { done = true; resolve(ok); } };
+      function legacy() {
+        try { var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0'; document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length); var ok = document.execCommand('copy'); ta.remove(); finish(ok); } catch (_) { finish(false); }
+      }
+      try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(function () { finish(true); }, legacy); setTimeout(function () { if (!done) legacy(); }, 1200); return; } } catch (_) {}
+      legacy();
+    });
+  }
+  function doCopy() { copyText(buildMessage()).then(function (ok) { toast(ok ? 'Đã sao chép nhận định. Dán vào Zalo hoặc hồ sơ.' : 'Chưa sao chép được. Hãy thử lại.'); }); }
+  var sharing = false;
+  async function doShare() {
+    if (sharing) return; sharing = true;
+    var text = buildMessage();
+    try {
+      var cap = window.Capacitor, P = cap && cap.Plugins && cap.Plugins.Share;
+      if (P && P.share) { try { await P.share({ title: 'Nhận định nhanh', text: text, dialogTitle: 'Gửi nhận định' }); return; } catch (e) { if (/cancel|abort|dismiss/i.test(String(e && (e.message || e.name || e)))) return; } }
+      if (navigator.share) { try { await navigator.share({ title: 'Nhận định nhanh', text: text }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+      var ok = await copyText(text); toast(ok ? 'Đã sao chép. Mở Zalo và dán để gửi.' : 'Chưa gửi được. Hãy thử lại.');
+    } finally { sharing = false; }
+  }
+
+  /* ---------- Sự kiện ---------- */
+  function bind() {
+    var search = $('asSearch'), timer = 0;
+    search.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(function () { state.q = search.value; renderList(); }, 120); });
+    function toggleChip(key) { return function (e) { var b = e.target.closest('button[data-v]'); if (!b) return; state[key] = state[key] === b.dataset.v ? '' : b.dataset.v; render(); }; }
+    $('asMine').addEventListener('click', toggleChip('mine'));
+    $('asOther').addEventListener('click', toggleChip('other'));
+    $('asGroups').addEventListener('click', function (e) { var b = e.target.closest('button[data-g]'); if (!b) return; state.g = b.dataset.g; render(); });
+    $('asReset').addEventListener('click', function () { state = { q: '', g: 'all', mine: '', other: '' }; search.value = ''; render(); });
+    var list = $('asList');
+    list.addEventListener('click', function (e) { var c = e.target.closest('.as-card'); if (c) openSheet(Number(c.dataset.id)); });
+    list.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('as-card')) { e.preventDefault(); openSheet(Number(e.target.dataset.id)); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheet(); });
+    var shell = document.getElementById('mainApp');
+    if (shell) new MutationObserver(function () { if (shell.dataset.page !== 'assess') closeSheet(); }).observe(shell, { attributes: true, attributeFilter: ['data-page'] });
+    window.addEventListener('pagehide', closeSheet);
+  }
+  render(); bind();
+  window.TascoAssess = { open: openSheet, close: closeSheet, count: S.length };
 })();
 </script>
 <script id="tascoOfflineBridge">
