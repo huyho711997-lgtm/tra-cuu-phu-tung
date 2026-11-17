@@ -6982,6 +6982,17 @@ window.searchData = async function() {
             return new Intl.NumberFormat('vi-VN').format(num) + ' VNĐ';
         }
         
+        /* Học từ vựng cho giọng nói: tên phụ tùng / hãng / hiệu xe đang hiển thị (gom lại, ghi một lần sau 1,5s) */
+        var __voiceLearnBuf = [], __voiceLearnTimer = 0;
+        function learnQueue() {
+          for (var i = 0; i < arguments.length; i++) { var v = arguments[i]; if (typeof v === 'string' && v.trim().length > 1 && v.length < 60) __voiceLearnBuf.push(v.trim()); }
+          if (__voiceLearnTimer || !__voiceLearnBuf.length) return;
+          __voiceLearnTimer = setTimeout(function () {
+            __voiceLearnTimer = 0;
+            var b = __voiceLearnBuf.splice(0, 400);
+            try { var V = window.TascoCategories && window.TascoCategories.voice; if (V && V.learn) V.learn(b); } catch (_) {}
+          }, 1500);
+        }
         function renderTable() {
             const tableBody = document.getElementById('resultsTableBody');
             tableBody.replaceChildren();
@@ -6998,6 +7009,7 @@ window.searchData = async function() {
                 const set = (selector,value) => { card.querySelector(selector).textContent = value; };
                 const partName = typeof item.ten_phu_tung === 'string' ? item.ten_phu_tung.trim() : '';
                 set('[data-quote-name]',partName || 'Phụ tùng');
+                learnQueue(partName,item.hang_xe,item.hieu_xe);
                 window.TascoPartKind.decorate(card.querySelector('[data-quote-type]'),item.chinh_hang);
                 set('[data-quote-brand]',item.hang_xe || 'Chưa cập nhật');
                 set('[data-quote-model]',item.hieu_xe || 'Chưa cập nhật');
@@ -13007,9 +13019,16 @@ window.TascoCategories = (function () {
   var Voice = (function () {
     var session = null, winding = false;
     /* Từ gợi ý thêm cho bộ nhận dạng (chuyên ngành giám định xe), dùng khi người dùng chưa có hạng mục riêng. */
-    var SEED = ['Cản trước', 'Cản sau', 'Đèn pha trái', 'Đèn pha phải', 'Đèn hậu trái', 'Đèn hậu phải', 'Ca pô', 'Cốp sau', 'Cửa trước trái', 'Cửa trước phải', 'Cửa sau trái', 'Cửa sau phải',
-      'Chắn bùn trước trái', 'Chắn bùn trước phải', 'Chắn bùn sau trái', 'Chắn bùn sau phải', 'Gương chiếu hậu trái', 'Gương chiếu hậu phải', 'Kính chắn gió', 'Kính hậu', 'Mâm xe', 'Lốp xe',
-      'Tai xe', 'Ốp hông', 'Biển số', 'Số khung', 'Số máy', 'Đồng hồ công tơ mét', 'Toàn cảnh', 'Khoang máy', 'Nội thất', 'Túi khí', 'Táp lô', 'Ba đờ sốc', 'Lazang', 'Mặt calang', 'Trụ A', 'Trụ B', 'Trụ C'];
+    var SEED = ['Cản trước', 'Cản sau', 'Đèn pha', 'Đèn pha trái', 'Đèn pha phải', 'Đèn hậu', 'Đèn hậu trái', 'Đèn hậu phải', 'Đèn sương mù', 'Đèn xi nhan', 'Đèn phanh', 'Đèn gầm', 'Đèn ban ngày', 'Cụm đèn', 'Chóa đèn',
+      'Ca pô', 'Nắp capo', 'Cốp sau', 'Nắp cốp', 'Cửa trước', 'Cửa sau', 'Cửa trước trái', 'Cửa trước phải', 'Cửa sau trái', 'Cửa sau phải', 'Tay mở cửa', 'Ron cửa', 'Khóa cửa',
+      'Chắn bùn', 'Chắn bùn trước trái', 'Chắn bùn trước phải', 'Chắn bùn sau trái', 'Chắn bùn sau phải', 'Gương chiếu hậu', 'Gương chiếu hậu trái', 'Gương chiếu hậu phải', 'Ốp gương', 'Kính chiếu hậu',
+      'Kính chắn gió', 'Kính hậu', 'Kính cửa', 'Kính cánh gió', 'Mâm xe', 'Lốp xe', 'La zăng', 'Lazang', 'Tai xe', 'Ốp hông', 'Nẹp hông', 'Ốp cản', 'Ốp cản trước', 'Ốp cản sau', 'Ba đờ sốc', 'Mặt ca lăng', 'Mặt calang', 'Lưới tản nhiệt', 'Giá đỡ cản',
+      'Biển số', 'Số khung', 'Số máy', 'Đồng hồ công tơ mét', 'Toàn cảnh', 'Khoang máy', 'Nội thất', 'Túi khí', 'Dây đai an toàn', 'Táp lô', 'Vô lăng', 'Ghế lái', 'Ghế phụ', 'Thảm sàn', 'Trần xe', 'Trụ A', 'Trụ B', 'Trụ C', 'Cần số', 'Cần gạt mưa', 'Mô tơ gạt mưa',
+      'Két nước', 'Dàn nóng', 'Dàn lạnh', 'Lọc gió', 'Lọc dầu', 'Lọc điều hòa', 'Má phanh', 'Đĩa phanh', 'Giảm xóc', 'Rô tuyn', 'Thước lái', 'Càng A', 'Bình ắc quy', 'Máy phát', 'Củ đề', 'Bơm xăng', 'Bugi', 'Kim phun', 'Cảm biến', 'Hộp số', 'Ống xả', 'Bầu giảm thanh', 'Bi moay ơ', 'Cao su cân bằng', 'Phuộc nhún', 'Lò xo', 'Cốt máy', 'Cánh quạt', 'Mô tơ nâng kính', 'Logo', 'Tem xe', 'Tay lái', 'Camera lùi', 'Cảm biến lùi',
+      'Trái', 'Phải', 'Trước', 'Sau', 'Trên', 'Dưới', 'Chính hãng', 'Không chính hãng',
+      'Toyota', 'Honda', 'Hyundai', 'Kia', 'Mazda', 'Ford', 'Mitsubishi', 'Suzuki', 'VinFast', 'Mercedes', 'BMW', 'Audi', 'Lexus', 'Nissan', 'Isuzu', 'Chevrolet', 'Peugeot', 'Subaru', 'Volkswagen', 'Mini Cooper', 'Land Rover', 'Volvo', 'Porsche', 'Mitsubishi Xpander',
+      'Vios', 'Innova', 'Camry', 'Fortuner', 'Corolla Cross', 'Corolla Altis', 'Yaris', 'Wigo', 'Raize', 'Veloz', 'Hilux', 'Land Cruiser', 'City', 'Civic', 'Accord', 'CR-V', 'HR-V', 'Brio', 'Accent', 'Elantra', 'Grand i10', 'Tucson', 'Santa Fe', 'Creta', 'Stargazer', 'Venue', 'Morning', 'Cerato', 'Seltos', 'Sorento', 'Carnival', 'Sonet', 'Carens', 'Soluto',
+      'Mazda 3', 'Mazda 2', 'CX-5', 'CX-8', 'CX-3', 'BT-50', 'Ranger', 'Everest', 'Territory', 'Xpander', 'Attrage', 'Outlander', 'Pajero Sport', 'Triton', 'Xforce', 'Ertiga', 'Swift', 'Ciaz', 'VF 3', 'VF 5', 'VF 6', 'VF 7', 'VF 8', 'VF 9', 'Lux A', 'Lux SA', 'Fadil', 'Navara', 'Terra', 'Almera', 'Sunny', 'Sedona'];
     function isApp() { return /TascoApp\//.test(navigator.userAgent) || !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); }
     function plugin() { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SpeechRecognition || null; }
     function webApi() { return isApp() ? null : (window.SpeechRecognition || window.webkitSpeechRecognition || null); }
@@ -13026,29 +13045,130 @@ window.TascoCategories = (function () {
     }
     /* So khớp không dấu: "can truoc" == "Cản trước" */
     function norm(s) { return String(s || '').toLowerCase().replace(/đ/g, 'd').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
-    function dist(a, b) {
-      if (a === b) return 0; if (Math.abs(a.length - b.length) > 2) return 9;
-      var prev = [], cur = [], i, j;
+    /* ---------- Bộ chỉnh lỗi nhận dạng giọng nói ----------
+       1) iOS trả tối đa 5 phương án: chọn phương án khớp từ điển chuyên ngành nhất (không chỉ lấy phương án đầu).
+       2) Sửa lỗi hay gặp của tiếng Việt: sai dấu thanh, tr/ch, s/x, d/gi/r, tách/ghép từ ("ca pô" = "capô").
+       3) Tự học: tên phụ tùng, hãng, dòng xe đã tra cứu được dùng làm gợi ý cho lần nói sau. */
+    var STORE_KEY = 'tasco_voice_vocab_v1', learned = null, saveTimer = 0;
+    function loadLearned() {
+      if (learned) return learned; learned = {};
+      try { var o = JSON.parse(window.localStorage.getItem(STORE_KEY) || '{}'); if (o && typeof o === 'object') learned = o; } catch (_) {}
+      return learned;
+    }
+    function learn(list) {
+      var L = loadLearned(), now = Date.now(), changed = false;
+      [].concat(list || []).forEach(function (p) {
+        p = String(p || '').replace(/\s+/g, ' ').trim();
+        if (p.length < 3 || p.length > 60 || /[<>{}]/.test(p) || /^\d+$/.test(p)) return;
+        var e = L[p]; L[p] = [Math.min(((e && e[0]) || 0) + 1, 50), now]; changed = true;
+      });
+      if (!changed) return;
+      var keys = Object.keys(L);
+      if (keys.length > 500) {
+        keys.sort(function (a, b) { return (L[b][0] * 2 + L[b][1] / 8.64e7) - (L[a][0] * 2 + L[a][1] / 8.64e7); });
+        keys.slice(420).forEach(function (k) { delete L[k]; });
+      }
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(function () { try { window.localStorage.setItem(STORE_KEY, JSON.stringify(L)); } catch (_) {} }, 1500);
+    }
+    function learnedList() {
+      var L = loadLearned(), now = Date.now();
+      return Object.keys(L).sort(function (a, b) { return (L[b][0] + L[b][1] / 8.64e7 / 30) - (L[a][0] + L[a][1] / 8.64e7 / 30); });
+    }
+    /* Khóa ngữ âm của một từ: bỏ dấu, gộp các cặp phụ âm hay nghe nhầm */
+    function phonWord(w) {
+      w = norm(w).replace(/ /g, '');
+      return w.replace(/^ngh/, 'ng').replace(/^gh/, 'g').replace(/^tr/, 'ch').replace(/^gi/, 'd').replace(/^r/, 'd').replace(/^x/, 's')
+        .replace(/^ph/, 'f').replace(/^qu/, 'kw').replace(/^c(?!h)/, 'k').replace(/^q/, 'k').replace(/n[gh]$/, 'n');
+    }
+    function phonKey(tokens) { return tokens.map(phonWord).join(''); }
+    function boundedDist(a, b, max) {
+      if (a === b) return 0; if (Math.abs(a.length - b.length) > max) return max + 1;
+      var prev = [], cur, i, j, rowMin;
       for (j = 0; j <= b.length; j++) prev[j] = j;
-      for (i = 1; i <= a.length; i++) { cur = [i]; for (j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1)); prev = cur; }
+      for (i = 1; i <= a.length; i++) {
+        cur = [i]; rowMin = i;
+        for (j = 1; j <= b.length; j++) { cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1)); if (cur[j] < rowMin) rowMin = cur[j]; }
+        if (rowMin > max) return max + 1; prev = cur;
+      }
       return prev[b.length];
     }
-    /* Mục nghe được trùng (hoặc sai 1-2 ký tự) với tên đã có thì dùng đúng tên đã có: giữ nguyên dấu, không sinh bản trùng. */
-    function snapOne(item, known) {
-      var n = norm(item); if (!n) return item;
-      var best = null, bestD = 99, tie = false;
-      for (var i = 0; i < known.length; i++) {
-        var k = norm(known[i]); if (!k) continue;
-        var d = dist(n, k), limit = k.length >= 10 ? 2 : k.length >= 5 ? 1 : 0;
-        if (d <= limit) { if (d < bestD) { best = known[i]; bestD = d; tie = false; } else if (d === bestD && norm(best) !== k) tie = true; }
+    /* Chỉ mục từ điển: khóa ngữ âm -> cụm chuẩn (có dấu) */
+    function buildIndex(lists) {
+      var map = {}, byLen = {};
+      lists.forEach(function (list) {
+        (list || []).forEach(function (p) {
+          p = String(p || '').replace(/\s+/g, ' ').trim(); if (!p) return;
+          var toks = p.split(' ').filter(Boolean); if (toks.length > 5) return;
+          var key = phonKey(toks); if (key.length < 3 || map[key]) return;
+          map[key] = p; (byLen[key.length] = byLen[key.length] || []).push(key);
+        });
+      });
+      return { map: map, byLen: byLen };
+    }
+    function lookup(key, idx) {
+      var L = key.length; if (L < 3) return null;
+      if (idx.map[key]) return { phrase: idx.map[key], d: 0 };
+      var max = L <= 6 ? 0 : L <= 10 ? 1 : 2; if (!max) return null;
+      var best = null, bestD = max + 1, tie = false;
+      for (var l = L - max; l <= L + max; l++) {
+        var arr = idx.byLen[l]; if (!arr) continue;
+        for (var i = 0; i < arr.length; i++) {
+          var d = boundedDist(key, arr[i], max);
+          if (d < bestD) { best = arr[i]; bestD = d; tie = false; }
+          else if (d === bestD && d <= max && arr[i] !== best && idx.map[arr[i]] !== idx.map[best]) tie = true;
+        }
       }
-      return best && !tie ? best : item;
+      return best && bestD <= max && !tie ? { phrase: idx.map[best], d: bestD } : null;
     }
-    function snap(text, multi, known) {
-      if (!text || !known || !known.length) return text;
-      if (!multi) return snapOne(text, known);
-      return text.split(', ').map(function (x) { return snapOne(x, known); }).join(', ');
+    /* Từ quyết định nghĩa (trái/phải, trước/sau, trên/dưới, số) không được "sửa" thành từ khác */
+    var CRIT = {}; ['trái', 'phải', 'trước', 'sau', 'hậu', 'trên', 'dưới', 'giữa', 'trong', 'ngoài'].forEach(function (w) { CRIT[phonWord(w)] = 1; });
+    function critSig(tokens) {
+      return tokens.map(function (t) { var k = phonWord(t); return CRIT[k] ? k : (/\d/.test(t) ? t : ''); }).filter(Boolean).sort().join('|');
     }
+    /* Duyệt từng cụm 1-4 từ, thay bằng cụm chuẩn nếu khớp. cover = số từ khớp từ điển (đúng hẳn tính 1, sửa được tính 0.7) */
+    function analyze(text, idx) {
+      var toks = String(text || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean), out = [], cover = 0, exact = 0, i = 0, n = toks.length;
+      while (i < n) {
+        var hit = null, len;
+        for (len = Math.min(5, n - i); len >= 1 && !hit; len--) {
+          var win = toks.slice(i, i + len), key = phonKey(win);
+          var r = lookup(key, idx);
+          if (r && (len > 1 || key.length >= 4 || r.d === 0) && (r.d === 0 || critSig(win) === critSig(r.phrase.split(' ')))) { hit = { r: r, len: len }; }
+        }
+        if (hit) {
+          var cnt = hit.len, ph = hit.r.phrase, first = toks[i];
+          /* giữ kiểu viết hoa của câu gốc: giữa câu thì không viết hoa chữ đầu (trừ tên riêng như VinFast, CR-V) */
+          if (first && first === first.toLowerCase() && !/[A-ZĐ]/.test(ph.slice(1))) ph = ph.charAt(0).toLowerCase() + ph.slice(1);
+          cover += cnt * (hit.r.d === 0 ? 1 : 0.7);
+          if (hit.r.phrase.toLowerCase() === toks.slice(i, i + cnt).join(' ').toLowerCase()) exact += cnt;
+          out.push(ph); i += cnt;
+        } else { out.push(toks[i]); i++; }
+      }
+      return { text: out.join(' '), cover: cover, exact: exact };
+    }
+    function rerank(alts, idx) {
+      alts = (alts || []).filter(function (a) { return a && String(a).trim(); });
+      if (!alts.length) return '';
+      if (alts.length === 1 || !idx) return alts[0];
+      var best = 0, bestScore = -1e9;
+      alts.forEach(function (a, i) {
+        var an = analyze(String(a).replace(/\b(dấu phẩy|chấm phẩy|phẩy|xuống dòng)\b/gi, ' '), idx), s = an.cover + 0.5 * an.exact - 0.3 * i;
+        if (s > bestScore + 1e-9) { best = i; bestScore = s; }
+      });
+      return alts[best];
+    }
+    function fixText(text, multi, idx) {
+      if (!text || !idx) return text;
+      var cap = function (x) { return x ? x.charAt(0).toUpperCase() + x.slice(1) : x; };
+      if (!multi) return cap(analyze(text, idx).text);
+      return text.split(', ').map(function (x) { return cap(analyze(x, idx).text); }).join(', ');
+    }
+    function makeIndex(ui) {
+      var known = (ui && ui.known || []).filter(Boolean);
+      return buildIndex(ui && ui.onlyKnown ? [known] : [known, learnedList(), SEED]);
+    }
+    function snap(text, multi, known) { return fixText(text, multi, buildIndex([known || []])); }
     /* Lỗi iOS -> câu tiếng Việt nói rõ cần làm gì */
     function explain(code, message) {
       var c = String(code || '').toUpperCase(), m = String(message || '');
@@ -13061,9 +13181,9 @@ window.TascoCategories = (function () {
       return 'Không nghe được. Thử lại gần micro hơn.';
     }
     function stop() { if (session) session.stop(); }
-    function hints(known) {
+    function hints(known, onlyKnown) {
       var out = [], seen = {};
-      (known || []).concat(SEED).forEach(function (n) { n = String(n || '').trim(); var k = norm(n); if (!k || seen[k] || n.split(' ').length > 4) return; seen[k] = 1; out.push(n); });
+      (known || []).concat(onlyKnown ? [] : learnedList().slice(0, 60)).concat(onlyKnown ? [] : SEED).forEach(function (n) { n = String(n || '').trim(); var k = norm(n); if (!k || seen[k] || n.split(' ').length > 4) return; seen[k] = 1; out.push(n); });
       return out.slice(0, 100);   // iOS chỉ nhận tối đa ~100 cụm gợi ý
     }
     var SILENCE_MS = 2200, NO_SPEECH_MS = 9000, MAX_MS = 52000, STOP_WAIT_MS = 4200, MAX_RESTARTS = 3;
@@ -13073,15 +13193,22 @@ window.TascoCategories = (function () {
       var native = plugin(), Web = webApi();
       if (!native && !Web) { ui.error(isApp() ? 'Cần cập nhật app bản mới để nói nhập (cài lại file IPA mới nhất).' : 'Trình duyệt này chưa hỗ trợ nhập bằng giọng nói.'); return; }
       var known = (ui.known || []).filter(Boolean);
+      var idx = ui.plate ? null : makeIndex(ui), alts = [];
       var done = false, handles = [], rec = null, parts = [], last = '', stopRequested = false, restarts = 0, startedAt = Date.now(), lastChange = 0, tick = 0, stopTimer = 0, onDevice = false;
       function text() { return parts.concat(last ? [last] : []).join(ui.multi ? ', ' : ' '); }
+      /* Chọn phương án tốt nhất trong các phương án iOS trả về: theo bộ chọn riêng của tính năng (vd biển số) hoặc theo từ điển chuyên ngành */
+      function choose(list) {
+        list = (list || []).filter(function (x) { return x && String(x).trim(); }); if (!list.length) return '';
+        alts = list;
+        try { return ui.pick ? (ui.pick(list) || list[0]) : rerank(list, idx); } catch (_) { return list[0]; }
+      }
       function cleanUp() {
         clearInterval(tick); clearTimeout(stopTimer); session = null;
         handles.forEach(function (h) { try { h && h.remove && h.remove(); } catch (_) {} }); handles = [];
       }
       function finish() {
         if (done) return; done = true; cleanUp();
-        ui.end(snap(tidy(text(), ui.multi), ui.multi, known.concat(SEED)));
+        ui.end(ui.plate ? tidy(text(), false) : fixText(tidy(text(), ui.multi), ui.multi, idx));
       }
       function fail(message) { if (done) return; done = true; cleanUp(); winding = false; ui.end(''); ui.error(message); }
       function show() { var t = tidy(text(), ui.multi); if (t) ui.live(t); }
@@ -13092,7 +13219,7 @@ window.TascoCategories = (function () {
           try { native.stop().catch(function () {}); } catch (_) {}
           /* Chờ iOS trả kết quả cuối (tối đa ~2 giây phía plugin); hết giờ thì lấy chữ nghe được gần nhất. */
           stopTimer = setTimeout(async function () {
-            try { var r = await native.getLastPartialResult(); if (r && r.available && r.text && !last) last = r.text; } catch (_) {}
+            try { var r = await native.getLastPartialResult(); if (r && r.available && !last) { var rt = (r.matches && r.matches.length) ? choose(r.matches) : r.text; if (rt) last = rt; } } catch (_) {}
             try { await native.forceStop(); } catch (_) {}
             winding = false; finish();
           }, STOP_WAIT_MS);
@@ -13117,7 +13244,7 @@ window.TascoCategories = (function () {
             if (perm.speechRecognition !== 'granted') perm = await native.requestPermissions();
             if (perm.speechRecognition !== 'granted') { fail('Chưa cấp quyền micro / nhận dạng giọng nói. Vào Cài đặt iPhone → TASCO DLK để bật.'); return; }
             /* Không có mạng: chỉ nghe được nếu máy có sẵn bộ nhận dạng tiếng Việt chạy trong máy. */
-            var opts = { language: 'vi-VN', maxResults: 5, partialResults: true, popup: false, addPunctuation: false, contextualStrings: hints(known) };
+            var opts = { language: 'vi-VN', maxResults: 5, partialResults: true, popup: false, addPunctuation: false, contextualStrings: ui.plate ? [] : hints(known, ui.onlyKnown) };
             if (navigator.onLine === false) {
               var ok = false;
               try { ok = !!(await native.isOnDeviceRecognitionAvailable({ language: 'vi-VN', preferLegacyRecognizer: true })).available; } catch (_) {}
@@ -13125,7 +13252,7 @@ window.TascoCategories = (function () {
               opts.useOnDeviceRecognition = true; opts.preferLegacyRecognizer = true; onDevice = true;
             }
             handles.push(await native.addListener('partialResults', function (e) {
-              var t = e && ((e.matches && e.matches[0]) || e.accumulatedText || '');
+              var t = e && ((e.matches && e.matches.length) ? choose(e.matches) : (e.accumulatedText || ''));
               if (t && t !== last) { last = t; lastChange = Date.now(); show(); }
             }));
             handles.push(await native.addListener('audioLevel', function (e) { try { ui.level && ui.level(Math.max(0, Math.min(1, Number(e && e.level) || 0))); } catch (_) {} }));
@@ -13152,15 +13279,19 @@ window.TascoCategories = (function () {
         })();
       } else {
         try {
-          rec = new Web(); rec.lang = 'vi-VN'; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
-          rec.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; last = t.trim(); lastChange = Date.now(); show(); };
+          rec = new Web(); rec.lang = 'vi-VN'; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 5;
+          rec.onresult = function (e) {
+            var cand = [];
+            for (var k = 0; k < 5; k++) { var t = ''; for (var i = 0; i < e.results.length; i++) { var r = e.results[i]; t += (r[Math.min(k, r.length - 1)] || r[0]).transcript + ' '; } t = t.trim(); if (t && cand.indexOf(t) < 0) cand.push(t); }
+            last = choose(cand); lastChange = Date.now(); show();
+          };
           rec.onerror = function (e) { if (last) finish(); else fail(e && e.error === 'not-allowed' ? 'Chưa cấp quyền micro cho trình duyệt.' : e && e.error === 'no-speech' ? 'Không nghe thấy tiếng nói. Thử lại gần micro hơn.' : 'Không nghe được. Thử lại.'); };
           rec.onend = function () { finish(); };
           rec.start(); watch();
         } catch (error) { fail('Chưa bật được nhận dạng giọng nói.'); }
       }
     }
-    return { visible: visible, available: available, start: start, stop: stop, tidy: tidy, snap: snap, norm: norm, explain: explain, active: function () { return !!session; } };
+    return { visible: visible, available: available, start: start, stop: stop, tidy: tidy, snap: snap, norm: norm, explain: explain, learn: learn, fix: function (t, multi, known) { return fixText(t, multi, makeIndex({ known: known })); }, rerank: function (a, known) { return rerank(a, makeIndex({ known: known })); }, active: function () { return !!session; } };
   })();
   /* open({ current, extra: [tên trong album], title, subtitle, onPick(name|''),
            plan: [danh sách cần chụp], onPlanChange(list), counts(name) -> số ảnh, done(name) -> đã chụp? })
@@ -13404,7 +13535,7 @@ window.TascoCategories = (function () {
   mic.addEventListener('click', function () {
     try { input.blur(); } catch (_) {}
     V.start({
-      multi: false, known: known(),
+      multi: false, known: known(), onlyKnown: true,
       level: function (v) { mic.style.setProperty('--lvl', v.toFixed(2)); },
       begin: function () { clearTimeout(noteTimer); mic.classList.add('is-live'); mic.setAttribute('aria-pressed', 'true'); mic.setAttribute('aria-label', 'Dừng nghe'); note.hidden = false; note.classList.remove('is-error'); note.textContent = 'Đang nghe… đọc tên gara, địa chỉ hoặc số điện thoại'; },
       live: function (t) { setValue(t); note.hidden = false; note.textContent = 'Đang nghe: ' + t; },
@@ -15145,26 +15276,61 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
   });
 
   /* ---------- Nói để nhập biển số ---------- */
-  var DIGIT = { 'không': '0', 'khong': '0', 'một': '1', 'mot': '1', 'mốt': '1', 'hai': '2', 'ba': '3', 'bốn': '4', 'bon': '4', 'tư': '4', 'năm': '5', 'nam': '5', 'lăm': '5', 'sáu': '6', 'sau': '6', 'bảy': '7', 'bay': '7', 'tám': '8', 'tam': '8', 'chín': '9', 'chin': '9' };
-  var LETTER = { 'bê': 'B', 'be': 'B', 'xê': 'C', 'dê': 'D', 'đê': 'Đ', 'ê': 'E', 'hát': 'H', 'hắt': 'H', 'ca': 'K', 'lờ': 'L', 'mờ': 'M', 'nờ': 'N', 'pê': 'P', 'ét': 'S', 'tê': 'T', 'vê': 'V', 'ích': 'X', 'i': 'Y' };
-  var SKIP = { 'biển': 1, 'số': 1, 'xe': 1, 'là': 1, 'của': 1, 'dấu': 1, 'cách': 1, 'chấm': 1, 'gạch': 1, 'ngang': 1, 'phẩy': 1, 'và': 1 };
-  /* "bốn bảy A một hai ba bốn năm" / "47a 12345" / "47A-123.45" -> "47A-123.45" */
-  function parsePlate(text) {
-    var t = String(text || '').toLowerCase().replace(/[.,\-_/]/g, ' ').replace(/\s+/g, ' ').trim();
-    if (!t) return '';
-    var out = '';
-    t.split(' ').forEach(function (w) {
-      if (!w || SKIP[w]) return;
-      if (DIGIT[w] != null) out += DIGIT[w];
-      else if (LETTER[w]) out += LETTER[w];
-      else out += w.toUpperCase().replace(/[^A-ZĐ0-9]/g, '');
-    });
-    var m = out.match(/^(\d{2})([A-ZĐ]{1,2})(\d{4,6})$/);
-    if (!m) return plateNorm(out && /\d/.test(out) ? out : '');
+  var DIGIT = { 'không': '0', 'khong': '0', 'linh': '0', 'lẻ': '0', 'le': '0', 'một': '1', 'mot': '1', 'mốt': '1', 'hai': '2', 'ba': '3', 'bốn': '4', 'bon': '4', 'tư': '4', 'tu': '4', 'năm': '5', 'nam': '5', 'lăm': '5', 'lam': '5', 'sáu': '6', 'sau': '6', 'bảy': '7', 'bay': '7', 'bẩy': '7', 'tám': '8', 'tam': '8', 'chín': '9', 'chin': '9' };
+  var LETTER = { 'a': 'A', 'á': 'A', 'à': 'A', 'ây': 'A', 'bê': 'B', 'be': 'B', 'bờ': 'B', 'bi': 'B', 'xê': 'C', 'xe': 'C', 'sê': 'C', 'cờ': 'C', 'si': 'C', 'đê': 'Đ', 'đờ': 'Đ', 'dê': 'D', 'dờ': 'D', 'ê': 'E', 'e': 'E', 'ép': 'F', 'ếp': 'F', 'ép-phờ': 'F', 'gờ': 'G', 'giê': 'G', 'gie': 'G', 'hát': 'H', 'hắt': 'H', 'hat': 'H', 'hờ': 'H', 'ca': 'K', 'ka': 'K', 'cá': 'K', 'lờ': 'L', 'lo': 'L', 'eo': 'L', 'el': 'L', 'mờ': 'M', 'mo': 'M', 'em': 'M', 'nờ': 'N', 'no': 'N', 'en': 'N', 'pê': 'P', 'pe': 'P', 'pờ': 'P', 'rờ': 'R', 'ro': 'R', 'ét': 'S', 'et': 'S', 'ếch': 'S', 'tê': 'T', 'te': 'T', 'tờ': 'T', 'u': 'U', 'ư': 'U', 'vê': 'V', 've': 'V', 'vờ': 'V', 'ích': 'X', 'ich': 'X', 'ít': 'X', 'i': 'Y', 'y': 'Y', 'dét': 'Z', 'zét': 'Z', 'giét': 'Z', 'det': 'Z' };
+  var SKIP = { 'biển': 1, 'bien': 1, 'số': 1, 'so': 1, 'xe': 0, 'là': 1, 'của': 1, 'dấu': 1, 'cách': 1, 'chấm': 1, 'gạch': 1, 'ngang': 1, 'phẩy': 1, 'và': 1, 'dài': 1, 'dai': 1, 'trăm': 1, 'tram': 1, 'ký': 1, 'tự': 1, 'chữ': 1 };
+  var PROVINCE = (function () { var o = {}; [11, 12].concat(range(14, 41), [43, 47, 48, 49], range(50, 86), [88, 89, 90], range(92, 95), [97, 98, 99]).forEach(function (n) { o[n] = 1; }); return o; function range(a, b) { var r = []; for (var i = a; i <= b; i++) r.push(i); return r; } })();
+  /* Chuỗi nói -> chuỗi ký tự biển số liền nhau, vd "bốn mươi bảy a một trăm hai mươi ba bốn mươi lăm" -> "47A12345" */
+  function plateCompact(text) {
+    var toks = String(text || '').toLowerCase().replace(/[.,\-_/;:]/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+    var out = '', i, w, nxt;
+    for (i = 0; i < toks.length; i++) {
+      w = toks[i]; nxt = toks[i + 1];
+      if (!w) continue;
+      if (/^\d+$/.test(w)) { out += w; continue; }
+      if (w === 'mươi' || w === 'muoi' || w === 'mười') {
+        var prevDigit = /\d$/.test(out) && /^(hai|ba|bốn|bon|tư|tu|năm|nam|lăm|sáu|sau|bảy|bay|tám|tam|chín|chin|\d)$/.test(toks[i - 1] || '');
+        var nextIsDigit = nxt && (DIGIT[nxt] != null && !/^(linh|lẻ|le)$/.test(nxt) || /^\d$/.test(nxt));
+        if (prevDigit) { if (!nextIsDigit) out += '0'; } else { out += '1'; if (!nextIsDigit) out += '0'; }
+        continue;
+      }
+      if (SKIP[w]) continue;
+      if (DIGIT[w] != null) { out += DIGIT[w]; continue; }
+      if (LETTER[w]) { out += LETTER[w]; continue; }
+      var stripped = w.replace(/[^a-zA-Z0-9àáảãạăắằẳẵặâấầẩẫậđèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵ]/g, '');
+      /* chữ + số dính liền, vd "47a" "47a12345" */
+      if (/^[0-9]{2}[a-zđ][0-9]*$/i.test(stripped)) { out += stripped.toUpperCase(); continue; }
+      if (/^[a-zđ]$/i.test(stripped)) { out += stripped.toUpperCase(); continue; }
+      if (/^[0-9a-zđ]{3,}$/i.test(stripped) && /\d/.test(stripped)) { out += stripped.toUpperCase(); continue; }
+    }
+    return out;
+  }
+  function formatPlate(c) {
+    var m = c.match(/^(\d{2})([A-ZĐ]{1,2})(\d{4,6})$/);
+    if (!m) return '';
     var d = m[3], pre = m[1] + m[2];
     if (d.length === 5) return pre + '-' + d.slice(0, 3) + '.' + d.slice(3);
     if (d.length === 6) return pre + d[0] + '-' + d.slice(1, 4) + '.' + d.slice(4);
     return pre + '-' + d;
+  }
+  /* "bốn bảy A một hai ba bốn năm" / "47a 12345" / "47A-123.45" -> "47A-123.45" */
+  function parsePlate(text) {
+    var c = plateCompact(text);
+    if (!c) return '';
+    return formatPlate(c) || (/\d/.test(c) ? plateNorm(c) : '');
+  }
+  /* Điểm tin cậy của một cách đọc: biển số đủ cấu trúc, đầu số tỉnh hợp lệ thì cao nhất */
+  function plateScore(text) {
+    var c = plateCompact(text), m = c.match(/^(\d{2})([A-ZĐ]{1,2})(\d{4,6})$/);
+    if (m) return 100 + (PROVINCE[+m[1]] ? 30 : 0) + (m[3].length === 5 ? 15 : m[3].length === 4 ? 6 : 0) + (m[2].length === 1 ? 4 : 0);
+    var d = (c.match(/\d/g) || []).length, l = (c.match(/[A-ZĐ]/g) || []).length;
+    return Math.min(d, 7) + Math.min(l, 2) * 2;
+  }
+  /* Trong các phương án iOS trả về, chọn cách đọc giống một biển số hợp lệ nhất (hòa thì lấy phương án đầu) */
+  function pickPlate(alts) {
+    var best = alts[0], bs = -1e9;
+    alts.forEach(function (a, i) { var s = plateScore(a) - 0.3 * i; if (s > bs + 1e-9) { bs = s; best = a; } });
+    return best;
   }
   function voiceApi() { return window.TascoCategories && window.TascoCategories.voice || null; }
   function setupMic() {
@@ -15179,7 +15345,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
       try { input.blur(); } catch (_) {}
       V = voiceApi(); if (!V) return;
       V.start({
-        multi: false, known: [],
+        multi: false, known: [], plate: true, pick: pickPlate,
         level: function (v) { mic.style.setProperty('--lvl', v.toFixed(2)); },
         begin: function () { clearTimeout(noteTimer); mic.classList.add('is-live'); mic.setAttribute('aria-pressed', 'true'); mic.setAttribute('aria-label', 'Dừng nghe'); note.hidden = false; note.classList.remove('is-error'); note.textContent = 'Đang nghe… đọc từng số và chữ của biển số.'; },
         live: function (t) { var p = parsePlate(t); note.hidden = false; note.textContent = 'Đang nghe: ' + (p || t); },
