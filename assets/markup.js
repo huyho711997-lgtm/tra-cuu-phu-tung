@@ -12,9 +12,10 @@
   'use strict';
   if (window.TascoMarkup) return;
   var W = 1000, MAX_ITEMS = 80;
-  var COLORS = ['#ef3b4f', '#ff9f1c', '#ffd60a', '#2ec27e', '#2f80ed', '#ffffff'];
+  var DEF_W = 6.5, MIN_W = 2.5, MAX_W = 20, COLORS = ['#ef3b4f', '#ff9f1c', '#ffd60a', '#2ec27e', '#2f80ed', '#ffffff'];
   var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
   var num = function (v) { v = Number(v); return isFinite(v) ? clamp(v, -0.05, 1.05) : 0; };
+  var wOk = function (v) { v = Number(v); return isFinite(v) ? Math.round(clamp(v, MIN_W, MAX_W) * 2) / 2 : DEF_W; };
   var colorOk = function (c) { return /^#[0-9a-f]{6}$/i.test(String(c || '')) ? String(c).toLowerCase() : COLORS[0]; };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var uid = function () { return Math.random().toString(36).slice(2, 8); };
@@ -26,9 +27,9 @@
       a.items.slice(0, MAX_ITEMS).forEach(function (it) {
         if (!it || typeof it !== 'object') return;
         var t = it.t, c = colorOk(it.c), id = String(it.id || '').replace(/[^a-z0-9]/gi, '').slice(0, 12) || uid();
-        if (t === 'a' || t === 'o' || t === 'r') out.push({ id: id, t: t, c: c, x1: num(it.x1), y1: num(it.y1), x2: num(it.x2), y2: num(it.y2) });
-        else if (t === 'n') out.push({ id: id, t: t, c: c, x: num(it.x), y: num(it.y), n: clamp(parseInt(it.n, 10) || 1, 1, 999) });
-        else if (t === 'x' && typeof it.s === 'string' && it.s.trim()) out.push({ id: id, t: t, c: c, x: num(it.x), y: num(it.y), s: it.s.replace(/\s+/g, ' ').trim().slice(0, 120) });
+        if (t === 'a' || t === 'o' || t === 'r') out.push({ id: id, t: t, c: c, w: wOk(it.w), x1: num(it.x1), y1: num(it.y1), x2: num(it.x2), y2: num(it.y2) });
+        else if (t === 'n') out.push({ id: id, t: t, c: c, w: wOk(it.w), x: num(it.x), y: num(it.y), n: clamp(parseInt(it.n, 10) || 1, 1, 999) });
+        else if (t === 'x' && typeof it.s === 'string' && it.s.trim()) out.push({ id: id, t: t, c: c, w: wOk(it.w), x: num(it.x), y: num(it.y), s: it.s.replace(/\s+/g, ' ').trim().slice(0, 120) });
       });
     }
     return { v: 1, items: out };
@@ -38,14 +39,14 @@
   /* ---------- Vẽ một nét thành chuỗi SVG ---------- */
   function shapeSVG(it, H, edit) {
     var X = function (v) { return +(v * W).toFixed(1); }, Y = function (v) { return +(v * H).toFixed(1); }, c = it.c;
-    var attr = edit ? ' data-id="' + it.id + '"' : '';
-    var halo = 'fill="none" stroke="#fff" stroke-opacity=".92" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"';
-    var line = 'fill="none" stroke="' + c + '" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"';
-    var hit = function (d) { return edit ? '<path d="' + d + '" fill="none" stroke="#000" stroke-opacity="0" stroke-width="44" stroke-linecap="round" class="mk-hit"/>' : ''; };
+    var attr = edit ? ' data-id="' + it.id + '"' : '', sw = wOk(it.w), sc = sw / DEF_W;
+    var halo = 'fill="none" stroke="#fff" stroke-opacity=".92" stroke-width="' + (sw * 2) + '" stroke-linecap="round" stroke-linejoin="round"';
+    var line = 'fill="none" stroke="' + c + '" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round"';
+    var hit = function (d) { return edit ? '<path d="' + d + '" fill="none" stroke="#000" stroke-opacity="0" stroke-width="' + (36 + sw * 2) + '" stroke-linecap="round" class="mk-hit"/>' : ''; };
     var x1, y1, x2, y2, d;
     if (it.t === 'a') {
       x1 = X(it.x1); y1 = Y(it.y1); x2 = X(it.x2); y2 = Y(it.y2);
-      var ang = Math.atan2(y2 - y1, x2 - x1), len = Math.hypot(x2 - x1, y2 - y1), L = Math.min(52, Math.max(24, len * 0.38)), s = Math.PI * 0.87;
+      var ang = Math.atan2(y2 - y1, x2 - x1), len = Math.hypot(x2 - x1, y2 - y1), L = Math.min(52 * Math.max(.8, sc), Math.max(24 * Math.max(.8, sc), len * 0.38)), s = Math.PI * 0.87;
       d = 'M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2 + 'M' + (x2 + L * Math.cos(ang + s)).toFixed(1) + ' ' + (y2 + L * Math.sin(ang + s)).toFixed(1) + 'L' + x2 + ' ' + y2 + 'L' + (x2 + L * Math.cos(ang - s)).toFixed(1) + ' ' + (y2 + L * Math.sin(ang - s)).toFixed(1);
       return '<g' + attr + '><path d="' + d + '" ' + halo + '/><path d="' + d + '" ' + line + '/>' + hit(d) + '</g>';
     }
@@ -54,15 +55,15 @@
       var cx = X((lx + rx) / 2), cy = Y((ty + by) / 2), w = Math.max(6, X(rx) - X(lx)), h = Math.max(6, Y(by) - Y(ty));
       var shape = it.t === 'o' ? function (extra) { return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + (w / 2).toFixed(1) + '" ry="' + (h / 2).toFixed(1) + '" ' + extra + '/>'; }
         : function (extra) { return '<rect x="' + (cx - w / 2).toFixed(1) + '" y="' + (cy - h / 2).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="8" ' + extra + '/>'; };
-      return '<g' + attr + '>' + shape(halo) + shape(line) + (edit ? shape('fill="none" stroke="#000" stroke-opacity="0" stroke-width="40" class="mk-hit"') : '') + '</g>';
+      return '<g' + attr + '>' + shape(halo) + shape(line) + (edit ? shape('fill="none" stroke="#000" stroke-opacity="0" stroke-width="' + (32 + sw * 2) + '" class="mk-hit"') : '') + '</g>';
     }
     if (it.t === 'n') {
       var px = X(it.x), py = Y(it.y), dark = c === '#ffd60a' || c === '#ffffff';
-      return '<g' + attr + '><circle cx="' + px + '" cy="' + py + '" r="25" fill="' + c + '" stroke="' + (dark ? '#10233d' : '#fff') + '" stroke-width="4.5"/><text x="' + px + '" y="' + py + '" text-anchor="middle" dominant-baseline="central" font-family="' + FONT + '" font-weight="800" font-size="' + (it.n > 99 ? 20 : 27) + '" fill="' + (dark ? '#10233d' : '#fff') + '">' + it.n + '</text>' + (edit ? '<circle cx="' + px + '" cy="' + py + '" r="34" fill="#000" fill-opacity="0" stroke="none" class="mk-hit"/>' : '') + '</g>';
+      return '<g' + attr + '><circle cx="' + px + '" cy="' + py + '" r="' + (25 * sc).toFixed(1) + '" fill="' + c + '" stroke="' + (dark ? '#10233d' : '#fff') + '" stroke-width="' + (4.5 * Math.sqrt(sc)).toFixed(1) + '"/><text x="' + px + '" y="' + py + '" text-anchor="middle" dominant-baseline="central" font-family="' + FONT + '" font-weight="800" font-size="' + ((it.n > 99 ? 20 : 27) * sc).toFixed(1) + '" fill="' + (dark ? '#10233d' : '#fff') + '">' + it.n + '</text>' + (edit ? '<circle cx="' + px + '" cy="' + py + '" r="' + (34 * sc).toFixed(1) + '" fill="#000" fill-opacity="0" stroke="none" class="mk-hit"/>' : '') + '</g>';
     }
     if (it.t === 'x') {
-      var tx = X(it.x), ty2 = Y(it.y), tw = Math.max(40, it.s.length * 18), shadow = c === '#ffffff' ? '#10233d' : '#ffffff';
-      return '<g' + attr + '><text x="' + tx + '" y="' + ty2 + '" font-family="' + FONT + '" font-weight="800" font-size="34" fill="' + c + '" stroke="' + shadow + '" stroke-width="8" stroke-linejoin="round" paint-order="stroke" style="paint-order:stroke">' + esc(it.s) + '</text>' + (edit ? '<rect x="' + tx + '" y="' + (ty2 - 34) + '" width="' + tw + '" height="46" fill="#000" fill-opacity="0" stroke="none" class="mk-hit"/>' : '') + '</g>';
+      var tx = X(it.x), ty2 = Y(it.y), tw = Math.max(40, it.s.length * 18 * sc), shadow = c === '#ffffff' ? '#10233d' : '#ffffff';
+      return '<g' + attr + '><text x="' + tx + '" y="' + ty2 + '" font-family="' + FONT + '" font-weight="800" font-size="' + (34 * sc).toFixed(1) + '" fill="' + c + '" stroke="' + shadow + '" stroke-width="' + (8 * sc).toFixed(1) + '" stroke-linejoin="round" paint-order="stroke" style="paint-order:stroke">' + esc(it.s) + '</text>' + (edit ? '<rect x="' + tx + '" y="' + (ty2 - 34 * sc) + '" width="' + tw + '" height="' + (46 * sc).toFixed(1) + '" fill="#000" fill-opacity="0" stroke="none" class="mk-hit"/>' : '') + '</g>';
     }
     return '';
   }
@@ -124,6 +125,9 @@
       '.mk-tool:hover{background:rgba(255,255,255,.07);color:#fff}.mk-tool.on{background:rgba(143,208,216,.2);color:#a7e0e6}',
       '.mk-row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}',
       '.mk-colors{display:flex;gap:10px;align-items:center}',
+      '.mk-sizerow{gap:0}.mk-size{display:flex;align-items:center;gap:10px;width:100%;max-width:420px;font-size:12px;font-weight:700;color:#9fb6c9}.mk-size span{flex:none}',
+      '.mk-size input{flex:1;min-width:0;height:30px;accent-color:#8fd0d8;touch-action:pan-x;cursor:pointer}.mk-sizeval{flex:none;width:44px;height:30px;display:grid;place-items:center}',
+      '.mk-sizeval b{display:block;border-radius:50%;background:#e6f1f8;box-shadow:0 0 0 2px rgba(255,255,255,.25)}',
       '.mk-dot{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.35);box-shadow:0 0 0 0 rgba(143,208,216,.0);transition:transform .12s,box-shadow .12s}',
       '.mk-dot.on{transform:scale(1.15);border-color:#fff;box-shadow:0 0 0 3px rgba(143,208,216,.7)}',
       '.mk-acts{display:flex;gap:6px}.mk-act{height:36px;padding:0 12px;border-radius:11px;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#d6e6f2;background:rgba(255,255,255,.08)}',
@@ -145,16 +149,17 @@
     clear: '<svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.6-5.9M4 4v4.5h4.5"/></svg>'
   };
   var TOOLS = [['select', 'Chọn'], ['a', 'Mũi tên'], ['o', 'Vòng tròn'], ['r', 'Khung'], ['n', 'Đánh số'], ['x', 'Chữ']];
-  var HINTS = { select: 'Chạm một nét để chọn, kéo để di chuyển, kéo chấm tròn để chỉnh.', a: 'Kéo từ gốc đến chỗ cần chỉ.', o: 'Kéo để khoanh vùng hư hỏng.', r: 'Kéo để vẽ khung.', n: 'Chạm vào ảnh để đặt số thứ tự.', x: 'Chạm vào ảnh rồi gõ chú thích.' };
+  var HINTS = { select: 'Chạm một nét để chọn: kéo để dời, kéo chấm tròn để chỉnh, kéo thanh Độ dày để đổi cỡ.', a: 'Kéo từ gốc đến chỗ cần chỉ.', o: 'Kéo để khoanh vùng hư hỏng.', r: 'Kéo để vẽ khung.', n: 'Chạm vào ảnh để đặt số thứ tự.', x: 'Chạm vào ảnh rồi gõ chú thích.' };
 
   function edit(opt) {
     ensureStyle();
     return new Promise(function (resolve) {
-      var items = sanitize(opt.annotations).items, base = JSON.stringify(items), undo = [], sel = '', tool = 'a', color = COLORS[0], drag = null, draft = null, aspect = 0.75, H = W * aspect, closing = false, saving = false, discardTimer = 0, textBox = null;
+      var items = sanitize(opt.annotations).items, base = JSON.stringify(items), undo = [], sel = '', tool = 'a', color = COLORS[0], size = DEF_W, sizePushed = false, drag = null, draft = null, aspect = 0.75, H = W * aspect, closing = false, saving = false, discardTimer = 0, textBox = null;
       var root = document.createElement('div'); root.className = 'mk'; root.dataset.tool = tool; root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true'); root.setAttribute('aria-label', 'Đánh dấu ảnh');
       root.innerHTML = '<header class="mk-top"><button class="mk-ico" data-a="close" aria-label="Đóng">' + IC.close + '</button><div class="mk-title"></div><button class="mk-btn" data-a="undo" disabled>Hoàn tác</button><button class="mk-btn go" data-a="save" disabled>Lưu</button></header>' +
         '<div class="mk-stage"><div class="mk-frame" hidden><img alt="" draggable="false"><svg class="mk-svg" xmlns="http://www.w3.org/2000/svg"></svg></div><div class="mk-load">Đang tải ảnh…</div><div class="mk-msg" hidden role="alert"></div></div>' +
         '<footer class="mk-bar"><div class="mk-tools">' + TOOLS.map(function (t) { return '<button class="mk-tool" data-tool="' + t[0] + '" aria-label="' + t[1] + '">' + IC[t[0]] + '<span>' + t[1] + '</span></button>'; }).join('') + '</div>' +
+        '<div class="mk-row mk-sizerow"><label class="mk-size"><span>Độ dày / cỡ</span><input type="range" min="' + MIN_W + '" max="' + MAX_W + '" step="0.5" value="' + DEF_W + '" aria-label="Độ dày nét hoặc cỡ chữ, số"><i class="mk-sizeval"></i></label></div>' +
         '<div class="mk-row"><div class="mk-colors" role="radiogroup" aria-label="Màu nét">' + COLORS.map(function (c) { return '<button class="mk-dot" data-color="' + c + '" style="background:' + c + '" role="radio" aria-label="Màu ' + c + '"></button>'; }).join('') + '</div>' +
         '<div class="mk-acts"><button class="mk-act danger" data-a="del" disabled aria-label="Xoá nét đang chọn">' + IC.trash + '<span>Xoá nét</span></button><button class="mk-act" data-a="clear" disabled aria-label="Xoá tất cả">' + IC.clear + '<span>Xoá hết</span></button></div></div>' +
         '<div class="mk-hint"></div></footer>';
@@ -171,14 +176,15 @@
         root.querySelectorAll('[data-tool]').forEach(function (b) { b.classList.toggle('on', b.dataset.tool === tool); });
         root.querySelectorAll('[data-color]').forEach(function (b) { b.classList.toggle('on', b.dataset.color === color); b.setAttribute('aria-checked', String(b.dataset.color === color)); });
         q('.mk-hint').textContent = HINTS[tool] || '';
+        var sv = q('.mk-sizeval'), d = Math.round(4 + (size - MIN_W) / (MAX_W - MIN_W) * 24); sv.innerHTML = '<b style="width:' + d + 'px;height:' + d + 'px"></b>'; var rg = q('.mk-size input'); if (+rg.value !== size) rg.value = size;
       }
       function selectionSVG() {
         var it = items.find(function (i) { return i.id === sel; }); if (!it || tool !== 'select') return '';
         var X = function (v) { return v * W; }, Y = function (v) { return v * H; }, dash = 'fill="none" stroke="#a7e0e6" stroke-width="3" stroke-dasharray="9 7" pointer-events="none"', hd = function (n, x, y) { return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="15" fill="#fff" stroke="#2a8c99" stroke-width="5" data-h="' + n + '" style="cursor:pointer"/>'; };
         if (it.t === 'a') return hd(1, X(it.x1), Y(it.y1)) + hd(2, X(it.x2), Y(it.y2));
         if (it.t === 'o' || it.t === 'r') { var lx = Math.min(it.x1, it.x2), rx = Math.max(it.x1, it.x2), ty = Math.min(it.y1, it.y2), by = Math.max(it.y1, it.y2); return '<rect x="' + (X(lx) - 6) + '" y="' + (Y(ty) - 6) + '" width="' + (X(rx) - X(lx) + 12) + '" height="' + (Y(by) - Y(ty) + 12) + '" ' + dash + '/>' + hd(1, X(it.x1), Y(it.y1)) + hd(2, X(it.x2), Y(it.y2)); }
-        if (it.t === 'n') return '<circle cx="' + X(it.x) + '" cy="' + Y(it.y) + '" r="36" ' + dash + '/>';
-        if (it.t === 'x') return '<rect x="' + (X(it.x) - 8) + '" y="' + (Y(it.y) - 40) + '" width="' + (Math.max(40, it.s.length * 18) + 16) + '" height="56" rx="8" ' + dash + '/>';
+        if (it.t === 'n') return '<circle cx="' + X(it.x) + '" cy="' + Y(it.y) + '" r="' + (36 * wOk(it.w) / DEF_W).toFixed(1) + '" ' + dash + '/>';
+        if (it.t === 'x') { var k = wOk(it.w) / DEF_W; return '<rect x="' + (X(it.x) - 8) + '" y="' + (Y(it.y) - 40 * k) + '" width="' + (Math.max(40, it.s.length * 18 * k) + 16) + '" height="' + (56 * k).toFixed(1) + '" rx="8" ' + dash + '/>'; }
         return '';
       }
       function paint() { svg.innerHTML = allSVG(draft ? items.concat([draft]) : items, H, true) + selectionSVG(); refresh(); }
@@ -194,7 +200,7 @@
       function openText(p) {
         closeText(); var b = document.createElement('input'); b.className = 'mk-text'; b.maxLength = 120; b.placeholder = 'Gõ chú thích rồi Enter'; b.setAttribute('aria-label', 'Chú thích');
         var rect = frame.getBoundingClientRect(); b.style.left = clamp(p.x * rect.width, 0, Math.max(0, rect.width - 150)) + 'px'; b.style.top = clamp(p.y * rect.height - 20, 0, Math.max(0, rect.height - 42)) + 'px'; frame.appendChild(b); textBox = b;
-        var done = function (ok) { var v = b.value.replace(/\s+/g, ' ').trim(); closeText(); if (ok && v && items.length < MAX_ITEMS) { push(); var it = { id: uid(), t: 'x', c: color, x: p.x, y: Math.min(0.98, p.y + 0.03), s: v.slice(0, 120) }; items.push(it); sel = it.id; paint(); } };
+        var done = function (ok) { var v = b.value.replace(/\s+/g, ' ').trim(); closeText(); if (ok && v && items.length < MAX_ITEMS) { push(); var it = { id: uid(), t: 'x', c: color, w: size, x: p.x, y: Math.min(0.98, p.y + 0.03), s: v.slice(0, 120) }; items.push(it); sel = it.id; paint(); } };
         b.addEventListener('keydown', function (e) { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); done(true); } else if (e.key === 'Escape') { e.preventDefault(); done(false); } });
         b.onblur = function () { done(true); }; setTimeout(function () { b.focus(); }, 0);
       }
@@ -204,14 +210,14 @@
         flash('');
         if (tool === 'select' || hId) {
           if (hId && sel) { var it = find(sel); if (it) { push(); drag = { mode: 'h', it: it, h: hId }; try { svg.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); return; } }
-          if (g) { var it2 = find(g.getAttribute('data-id')); sel = it2 ? it2.id : ''; if (it2) { push(); drag = { mode: 'move', it: it2, start: p, orig: JSON.parse(JSON.stringify(it2)) }; try { svg.setPointerCapture(e.pointerId); } catch (_) {} } paint(); e.preventDefault(); return; }
+          if (g) { var it2 = find(g.getAttribute('data-id')); sel = it2 ? it2.id : ''; if (it2) size = wOk(it2.w); if (it2) { push(); drag = { mode: 'move', it: it2, start: p, orig: JSON.parse(JSON.stringify(it2)) }; try { svg.setPointerCapture(e.pointerId); } catch (_) {} } paint(); e.preventDefault(); return; }
           sel = ''; paint(); return;
         }
         if (items.length >= MAX_ITEMS) { flash('Đã đủ ' + MAX_ITEMS + ' nét đánh dấu trên một ảnh.'); return; }
         sel = '';
-        if (tool === 'n') { push(); items.push({ id: uid(), t: 'n', c: color, x: p.x, y: p.y, n: nextNum() }); paint(); e.preventDefault(); return; }
+        if (tool === 'n') { push(); items.push({ id: uid(), t: 'n', c: color, w: size, x: p.x, y: p.y, n: nextNum() }); paint(); e.preventDefault(); return; }
         if (tool === 'x') { e.preventDefault(); openText(p); return; }
-        push(); draft = { id: 'draft', t: tool, c: color, x1: p.x, y1: p.y, x2: p.x, y2: p.y }; drag = { mode: 'draw' }; try { svg.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); paint();
+        push(); draft = { id: 'draft', t: tool, c: color, w: size, x1: p.x, y1: p.y, x2: p.x, y2: p.y }; drag = { mode: 'draw' }; try { svg.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); paint();
       });
       svg.addEventListener('pointermove', function (e) {
         if (!drag) return; var p = pt(e);
@@ -254,6 +260,13 @@
         else if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === 's') { e.preventDefault(); e.stopPropagation(); save(); }
         else if ((k === 'Delete' || k === 'Backspace') && sel) { e.preventDefault(); e.stopPropagation(); remove(); }
       }
+      var rangeEl = q('.mk-size input');
+      rangeEl.addEventListener('input', function () {
+        size = wOk(rangeEl.value); var it = tool === 'select' ? find(sel) : null;
+        if (it) { if (!sizePushed) { push(); sizePushed = true; } it.w = size; }
+        paint();
+      });
+      rangeEl.addEventListener('change', function () { sizePushed = false; });
       root.addEventListener('click', function (e) {
         var b = e.target.closest('button'); if (!b) return;
         if (b.dataset.tool) { tool = b.dataset.tool; if (tool !== 'select') sel = ''; paint(); }
