@@ -3628,8 +3628,9 @@ window.TascoBootSplash = (() => {
         <button type="button" class="as-veh" role="tab" data-veh="other" aria-selected="false"><span class="as-veh-cap"><i class="as-av b">2</i>Xe còn lại</span><span class="as-plate-sm" id="asPlateOther"></span><small id="asActOther"></small></button>
       </div>
       <div class="as-edit" role="tabpanel">
-        <label class="as-plate-field" for="asPlate"><span class="as-field-cap" id="asPlateCap">Biển số xe của bạn</span><span class="as-plate-frame"><input id="asPlate" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="13" placeholder="47A-123.45" aria-describedby="asPlateHint"></span></label>
+        <label class="as-plate-field" for="asPlate"><span class="as-field-cap" id="asPlateCap">Biển số xe của bạn</span><span class="as-plate-frame"><input id="asPlate" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="13" placeholder="47A-123.45" aria-describedby="asPlateHint"><button type="button" class="ws-search-mic as-mic" id="asMic" aria-label="Nói để nhập biển số" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></span></label>
         <p class="as-hint" id="asPlateHint">Không bắt buộc. Biển số thay cho “xe X, xe Y” trong kết luận.</p>
+        <p class="ws-search-voice as-voice" id="asVoiceNote" role="status" aria-live="polite" hidden></p>
         <span class="as-field-cap" id="asActCap">Hành vi của xe này</span>
         <div class="as-chips" id="asActs" role="group" aria-labelledby="asActCap"></div>
       </div>
@@ -14816,10 +14817,14 @@ html.dark .as-veh[aria-selected=true]{border-color:var(--ws-accent-text)}
 .as-edit{margin-top:12px;padding:2px 2px 0}
 .as-field-cap{display:block;margin:0 0 7px 1px;color:var(--ws-muted);font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
 .as-plate-field{display:block}
-.as-plate-frame{display:block;padding:4px;border-radius:14px;background:#fff;border:2px solid var(--app-navy);box-shadow:0 6px 16px -10px rgba(24,48,86,.5)}
+.as-plate-frame{position:relative;display:block;padding:4px;border-radius:14px;background:#fff;border:2px solid var(--app-navy);box-shadow:0 6px 16px -10px rgba(24,48,86,.5)}
 html.dark .as-plate-frame{border-color:#84bfc7}
 .as-plate-frame:focus-within{box-shadow:0 0 0 3px rgba(99,173,182,.35),0 6px 16px -10px rgba(24,48,86,.5)}
-#assessSection .as-plate-frame input{display:block;width:100%;min-width:0;height:52px;padding:0 10px;border:1px solid rgba(24,48,86,.18)!important;border-radius:9px;background:#fff!important;color:#0b1b30!important;font-size:24px!important;font-weight:800;letter-spacing:.1em;text-align:center;text-transform:uppercase;outline:none;box-shadow:none!important;appearance:none;-webkit-appearance:none;font-variant-numeric:tabular-nums}
+#assessSection .as-plate-frame input{display:block;width:100%;min-width:0;height:52px;padding:0 10px;border:1px solid rgba(24,48,86,.18)!important;border-radius:9px;background:#fff!important;color:#0b1b30!important;font-weight:800;letter-spacing:.1em;text-align:center;text-transform:uppercase;outline:none;box-shadow:none!important;appearance:none;-webkit-appearance:none;font-variant-numeric:tabular-nums}
+#assessSection .as-plate-frame input{padding:0 50px 0 14px!important;font-size:clamp(18px,5.6vw,24px)!important;letter-spacing:.07em}
+#assessSection .as-plate-frame .as-mic{position:absolute;right:10px;top:50%;width:40px;height:40px;margin-top:-20px;z-index:1}
+#assessSection .as-plate-frame .as-mic.is-live{transform:scale(calc(1 + var(--lvl,0) * .22))}
+.as-voice{margin:-6px 1px 12px!important;line-height:1.5}
 #assessSection .as-plate-frame input::placeholder{color:#a7b3c2;font-weight:700;letter-spacing:.1em;opacity:1}
 .as-hint{margin:8px 1px 14px;color:var(--ws-muted);font-size:10.5px;line-height:1.55}
 
@@ -14866,7 +14871,7 @@ html.dark .as-split .m{background:#84bfc7}
 .as-split .o{background:var(--app-teal)}
 .as-empty{display:grid;justify-items:center;gap:4px;min-height:170px;align-content:center;padding:20px;border:1px dashed var(--ws-line);border-radius:20px;background:var(--ws-bg);color:var(--ws-muted);font-size:11px;line-height:1.6;text-align:center}
 .as-empty strong{color:var(--ws-text);font-size:14px}
-@media(max-width:359px){.tasco-workspace #assessSection .rc-panel{padding:15px;margin-left:10px;margin-right:10px}#assessSection .ws-journey-heading{max-width:100%}#assessSection .ws-journey-heading h2{font-size:28px;letter-spacing:-.9px}#assessSection .ws-journey-art{opacity:.22;width:110px}.as-card{grid-template-columns:72px minmax(0,1fr);gap:10px;padding:10px}.as-pic{width:72px;height:72px}#assessSection .as-plate-frame input{font-size:21px!important}}
+@media(max-width:359px){.tasco-workspace #assessSection .rc-panel{padding:15px;margin-left:10px;margin-right:10px}#assessSection .ws-journey-heading{max-width:100%}#assessSection .ws-journey-heading h2{font-size:28px;letter-spacing:-.9px}#assessSection .ws-journey-art{opacity:.22;width:110px}.as-card{grid-template-columns:72px minmax(0,1fr);gap:10px;padding:10px}.as-pic{width:72px;height:72px}}
 @media(min-width:640px){.as-list{grid-template-columns:repeat(2,minmax(0,1fr))}.as-list>.as-empty{grid-column:1/-1}.tasco-workspace #assessSection .rc-panel{padding:26px}}
 
 /* Bảng chi tiết (bottom sheet) */
@@ -15091,6 +15096,58 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     s.idx = norm([s.t, s.x, s.y, s.z || '', s.k || '', GROUPS[s.g], s.n || '', s.laws.map(function (l) { return 'dieu ' + l; }).join(' '), 'th ' + s.id, s.cases.map(function (c) { return [c.c, c.s, c.ex].concat(c.r).join(' '); }).join(' ')].join(' '));
   });
 
+  /* ---------- Nói để nhập biển số ---------- */
+  var DIGIT = { 'không': '0', 'khong': '0', 'một': '1', 'mot': '1', 'mốt': '1', 'hai': '2', 'ba': '3', 'bốn': '4', 'bon': '4', 'tư': '4', 'năm': '5', 'nam': '5', 'lăm': '5', 'sáu': '6', 'sau': '6', 'bảy': '7', 'bay': '7', 'tám': '8', 'tam': '8', 'chín': '9', 'chin': '9' };
+  var LETTER = { 'bê': 'B', 'be': 'B', 'xê': 'C', 'dê': 'D', 'đê': 'Đ', 'ê': 'E', 'hát': 'H', 'hắt': 'H', 'ca': 'K', 'lờ': 'L', 'mờ': 'M', 'nờ': 'N', 'pê': 'P', 'ét': 'S', 'tê': 'T', 'vê': 'V', 'ích': 'X', 'i': 'Y' };
+  var SKIP = { 'biển': 1, 'số': 1, 'xe': 1, 'là': 1, 'của': 1, 'dấu': 1, 'cách': 1, 'chấm': 1, 'gạch': 1, 'ngang': 1, 'phẩy': 1, 'và': 1 };
+  /* "bốn bảy A một hai ba bốn năm" / "47a 12345" / "47A-123.45" -> "47A-123.45" */
+  function parsePlate(text) {
+    var t = String(text || '').toLowerCase().replace(/[.,\-_/]/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!t) return '';
+    var out = '';
+    t.split(' ').forEach(function (w) {
+      if (!w || SKIP[w]) return;
+      if (DIGIT[w] != null) out += DIGIT[w];
+      else if (LETTER[w]) out += LETTER[w];
+      else out += w.toUpperCase().replace(/[^A-ZĐ0-9]/g, '');
+    });
+    var m = out.match(/^(\d{2})([A-ZĐ]{1,2})(\d{4,6})$/);
+    if (!m) return plateNorm(out && /\d/.test(out) ? out : '');
+    var d = m[3], pre = m[1] + m[2];
+    if (d.length === 5) return pre + '-' + d.slice(0, 3) + '.' + d.slice(3);
+    if (d.length === 6) return pre + d[0] + '-' + d.slice(1, 4) + '.' + d.slice(4);
+    return pre + '-' + d;
+  }
+  function voiceApi() { return window.TascoCategories && window.TascoCategories.voice || null; }
+  function setupMic() {
+    var mic = $('asMic'), note = $('asVoiceNote'), input = $('asPlate'), V = voiceApi(), noteTimer = 0;
+    if (!mic || !V) return;
+    mic.hidden = !V.visible();
+    function say(text, error) {
+      clearTimeout(noteTimer); note.hidden = !text; note.textContent = text || ''; note.classList.toggle('is-error', !!error);
+      if (text) noteTimer = setTimeout(function () { note.hidden = true; note.classList.remove('is-error'); }, error ? 5000 : 6000);
+    }
+    mic.addEventListener('click', function () {
+      try { input.blur(); } catch (_) {}
+      V = voiceApi(); if (!V) return;
+      V.start({
+        multi: false, known: [],
+        level: function (v) { mic.style.setProperty('--lvl', v.toFixed(2)); },
+        begin: function () { clearTimeout(noteTimer); mic.classList.add('is-live'); mic.setAttribute('aria-pressed', 'true'); mic.setAttribute('aria-label', 'Dừng nghe'); note.hidden = false; note.classList.remove('is-error'); note.textContent = 'Đang nghe… đọc từng số và chữ của biển số.'; },
+        live: function (t) { var p = parsePlate(t); note.hidden = false; note.textContent = 'Đang nghe: ' + (p || t); },
+        stopping: function () { note.hidden = false; note.textContent = 'Đang xử lý…'; },
+        end: function (t) {
+          mic.style.removeProperty('--lvl'); mic.classList.remove('is-live'); mic.setAttribute('aria-pressed', 'false'); mic.setAttribute('aria-label', 'Nói để nhập biển số');
+          var p = parsePlate(t);
+          if (p) { input.value = p; input.dispatchEvent(new Event('input', { bubbles: true })); say('Đã nhập ' + p + '. Kiểm tra lại nếu cần.'); }
+          else if (t) say('Chưa nghe rõ biển số. Hãy đọc chậm từng ký tự, ví dụ “bốn bảy A, một hai ba, bốn năm”.', true);
+          else say('');
+        },
+        error: function (message) { say(message, true); }
+      });
+    });
+  }
+
   /* ---------- Định danh xe theo biển số ---------- */
   function swapOf(s) {
     if (YNAME[s.id]) return false;
@@ -15145,7 +15202,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
   function renderCase() {
     ['mine', 'other'].forEach(function (k) {
       var K = k === 'mine' ? 'Mine' : 'Other', pl = $('asPlate' + K), ac = $('asAct' + K), has_ = !!state.plate[k];
-      pl.textContent = has_ ? state.plate[k] : 'Chưa nhập biển số'; pl.dataset.empty = has_ ? 'false' : 'true';
+      pl.textContent = has_ ? state.plate[k] : 'Nhập biển số'; pl.dataset.empty = has_ ? 'false' : 'true';
       ac.textContent = state.act[k] ? ACT[state.act[k]] : 'Chưa chọn hành vi'; ac.dataset.set = state.act[k] ? 'true' : 'false';
     });
     document.querySelectorAll('.as-veh').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.veh === state.veh)); });
@@ -15330,7 +15387,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     plate.addEventListener('input', function () {
       var v = plateNorm(plate.value); if (plate.value !== v) plate.value = v;
       state.plate[state.veh] = v; save();
-      var K = state.veh === 'mine' ? 'Mine' : 'Other', pl = $('asPlate' + K); pl.textContent = v || 'Chưa nhập biển số'; pl.dataset.empty = v ? 'false' : 'true';
+      var K = state.veh === 'mine' ? 'Mine' : 'Other', pl = $('asPlate' + K); pl.textContent = v || 'Nhập biển số'; pl.dataset.empty = v ? 'false' : 'true';
       $('asReset').hidden = false; renderList();
     });
     plate.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); plate.blur(); } });
@@ -15346,8 +15403,8 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     if (shell) new MutationObserver(function () { if (shell.dataset.page !== 'assess') closeSheet(); }).observe(shell, { attributes: true, attributeFilter: ['data-page'] });
     window.addEventListener('pagehide', closeSheet);
   }
-  load(); render(); bind();
-  window.TascoAssess = { open: openSheet, close: closeSheet, count: S.length };
+  load(); render(); bind(); setupMic();
+  window.TascoAssess = { open: openSheet, close: closeSheet, count: S.length, parsePlate: parsePlate };
 })();
 </script>
 <script id="tascoOfflineBridge">
