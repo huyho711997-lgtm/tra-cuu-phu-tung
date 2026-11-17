@@ -139,10 +139,10 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
 .main{position:relative;display:flex;flex-direction:column;min-width:0;min-height:0;background:radial-gradient(900px 380px at 80% -10%,rgba(143,208,216,.16),transparent 70%),var(--bg)}
 .top{position:relative;display:flex;align-items:center;gap:10px;padding:18px 30px 14px;z-index:6;transition:box-shadow .2s,background .2s}
 .top.scrolled{background:rgba(244,247,249,.86);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 1px 0 var(--line),0 10px 30px -18px rgba(11,27,48,.25)}
-.title{min-width:0;margin-right:auto}
+.title{flex:0 0 auto;max-width:36%;min-width:0;margin-right:auto}
 .title h2{font-size:24px;font-weight:800;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}
 .title small{display:block;margin-top:3px;font-size:12.5px;color:var(--ink-3);font-weight:600}
-.search{position:relative;width:min(340px,28vw);min-width:200px}
+.search{position:relative;flex:0 1 340px;width:auto;min-width:150px}
 .search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-3);width:17px;height:17px}
 .search input{width:100%;height:42px;border-radius:999px;border:1px solid transparent;background:#fff;box-shadow:0 1px 2px rgba(11,27,48,.06),0 6px 18px -10px rgba(11,27,48,.2);padding:0 40px 0 42px;font-size:14px;transition:box-shadow .2s,border-color .2s}
 .search input:focus{outline:0;border-color:var(--teal-500);box-shadow:0 0 0 4px rgba(99,173,182,.16)}
@@ -198,6 +198,13 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
 .fd-n{position:absolute;z-index:2;right:10px;bottom:9px;padding:3px 10px;border-radius:999px;background:rgba(8,18,31,.62);backdrop-filter:blur(6px);color:#fff;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
 .fd-name{margin:12px 8px 0;font-size:14.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fd-sub{margin:2px 8px 0;font-size:12.5px;color:var(--ink-3);font-weight:600}
+.catbar{flex:none;display:flex;gap:8px;padding:2px 30px 14px;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 24px,#000 calc(100% - 40px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 24px,#000 calc(100% - 40px),transparent)}
+.catbar::-webkit-scrollbar{display:none}.catbar[hidden]{display:none}
+.cat{flex:none;display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink-2);font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 1px 2px rgba(11,27,48,.04);transition:all .15s}
+.cat:hover{border-color:var(--teal-500);color:var(--ink)}
+.cat i{font-style:normal;font-size:11.5px;font-weight:800;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.cat.is-on{background:var(--navy-800);border-color:var(--navy-800);color:#fff}.cat.is-on i{color:var(--teal-300)}
+.cat.todo{background:transparent;border-style:dashed;color:var(--ink-3);box-shadow:none;cursor:default}.cat.todo:hover{border-color:var(--line);color:var(--ink-3)}
 .top .title small{white-space:nowrap}
 .dlg-card{max-height:calc(100vh - 44px);overflow:auto}.dlg-card.wide{width:min(560px,100%)}
 .dlg-ico.teal{background:#e3f3f5;color:var(--teal-600)}
@@ -383,8 +390,6 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
       <div id="navLib"></div>
       <h3><button class="ah" id="navAlbumHome" data-albums title="Xem tất cả album dạng thư mục">Album<svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></button></h3>
       <div id="navAlbums"></div>
-      <h3>Hạng mục</h3>
-      <div class="chips" id="navCats"></div>
     </div>
     <div class="side-foot">
       <div class="stats" id="stats"></div>
@@ -420,6 +425,7 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
       <button class="ctl sq" id="refresh" title="Tải lại" aria-label="Tải lại"><svg viewBox="0 0 24 24" id="refIcon"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4.5h-4.5"/></svg></button>
       <button class="ctl accent" id="zipAll" title="Tải ZIP các ảnh đang hiển thị"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/></svg><span>Tải ZIP</span></button>
     </header>
+    <div class="catbar" id="catBar" hidden role="toolbar" aria-label="Lọc theo hạng mục"></div>
     <div class="scroll" id="scroll"><div id="content"></div></div>
   </main>
 </div>
@@ -583,7 +589,7 @@ function scopeRows(skip) {
   return S.rows.filter(r => {
     if (skip !== 'album') { if (f.album === 'none' ? r.album_id : f.album !== 'all' && r.album_id !== f.album) return false; }
     if (skip !== 'kind') { if (f.kind === 'photo' && isVideo(r)) return false; if (f.kind === 'video' && !isVideo(r)) return false; }
-    if (skip !== 'category' && f.category && (r.category || '') !== f.category) return false;
+    if (skip !== 'category' && f.category && (r.category || '').trim().toLowerCase() !== f.category.toLowerCase()) return false;
     if (f.recent && dt(r).getTime() < since) return false;
     const d = dt(r); if ((from && d < from) || (to && d > to)) return false;
     if (q && !norm([r.title, r.address, r.category, albumName(r.album_id)].join(' ')).includes(q)) return false;
@@ -611,10 +617,27 @@ function paintSide() {
   $('#navAlbums').innerHTML = (albums || '') + nav(S.f.album === 'none', ICON.inbox, 'Chưa vào album', none, 'data-album="none"') || '';
   const cats = new Map(); for (const r of scopeRows('category')) { const c = r.category || ''; if (c) cats.set(c, (cats.get(c) || 0) + 1); }
   const list = [...cats].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'vi'));
-  $('#navCats').innerHTML = list.length ? list.map(([c, n]) => `<button class="chip${S.f.category === c ? ' is-on' : ''}" data-cat="${esc(c)}">${esc(c)}<i>${n}</i></button>`).join('') : '<span style="font-size:12px;color:#6f8aa5;padding:0 4px">Chưa có hạng mục</span>';
+  paintCatBar();
   const bytes = all.reduce((s, r) => s + (Number(r.bytes) || 0), 0);
   $('#stats').innerHTML = `<div class="stat"><b>${all.length - vids}</b><span>Ảnh</span></div><div class="stat"><b>${vids}</b><span>Video</span></div><div class="stat"><b>${fmtSize(bytes).replace(' ', '')}</b><span>Dung lượng</span></div>`;
 }
+function paintCatBar() {
+  const bar = $('#catBar'), f = S.f;
+  if (f.albums || !S.rows.length) { bar.hidden = true; return; }
+  const cats = new Map(); for (const r of scopeRows('category')) { const c = (r.category || '').trim(); if (c) cats.set(c.toLowerCase(), { name: c, n: (cats.get(c.toLowerCase())?.n || 0) + 1 }); }
+  const total = scopeRows('category').length, used = new Set(), out = [];
+  const plan = f.album !== 'all' ? planItems(planKey(f.album)) : [];
+  for (const n of plan) { const k = n.toLowerCase(); used.add(k); out.push({ name: cats.get(k)?.name || n, n: cats.get(k)?.n || 0, todo: !cats.has(k) }); }
+  [...cats].filter(([k]) => !used.has(k)).map(([, v]) => v).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name, 'vi')).forEach(v => out.push(v));
+  if (!out.length) { bar.hidden = true; return; }
+  bar.hidden = false;
+  const cur = (f.category || '').toLowerCase();
+  bar.innerHTML = `<button class="cat${!cur ? ' is-on' : ''}" data-cat="">Tất cả<i>${total}</i></button>` + out.map(c => c.todo
+    ? `<span class="cat todo" title="Chưa chụp hạng mục này">${esc(c.name)}<i>0</i></span>`
+    : `<button class="cat${cur === c.name.toLowerCase() ? ' is-on' : ''}" data-cat="${esc(c.name)}">${esc(c.name)}<i>${c.n}</i></button>`).join('');
+  bar.querySelector('.is-on')?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+}
+$('#catBar').addEventListener('wheel', e => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { e.currentTarget.scrollLeft += e.deltaY; e.preventDefault(); } }, { passive: false });
 function paintHeader() {
   const f = S.f; let name = 'Tất cả ảnh';
   $('#hBack').hidden = f.albums || f.album === 'all';
