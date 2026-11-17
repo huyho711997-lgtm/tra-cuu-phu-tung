@@ -7246,6 +7246,7 @@ async function deletePersonalCloudPhotos(ids,owner){
 // Optional default capacity in bytes; each account can set its own value in Cloud.
 TascoCloud.configure({mode:'mobile',storageLimitBytes:null,canAccess:()=>window.TascoCloudAccess.allowedFor(currentUserProfile),authorize:user=>window.TascoCloudAccess.check(user,{force:true}),client:()=>Promise.resolve(supabase),sessionUser:()=>auth.currentUser?{id:auth.currentUser.uid,email:auth.currentUser.email}:null,expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,personalStorage:window.TascoPersonalStorage,storageSettings:problem=>window.TascoPersonalStorage.open(problem),capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
 window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mobileCloudEmail});
+window.TascoPlanSync?.configure({client:supabase});
 </script>
 <!-- BOTTOM SHEET FILTER MODAL -->
     <div id="modalFilterSelection" class="fixed inset-0 hidden ws-filter-modal" style="display: none; z-index: 9999;">
@@ -10000,7 +10001,81 @@ function cameraCategoryKey(){return 'tasco_camera_category_v1:'+(window.mobileCl
 /* Danh sách cần chụp (nhập trước), lưu riêng cho từng album. */
 function cameraPlanKey(){return 'tasco_camera_plan_v1:'+(window.mobileCloudEmail?.()||'')+':'+(mobileCameraAlbum?.albumId||'all');}
 function cameraPlan(){try{const v=JSON.parse(localStorage.getItem(cameraPlanKey())||'[]');return Array.isArray(v)?v.map(n=>TascoCategories.clean(n)).filter(Boolean):[];}catch(_){return [];}}
-function setCameraPlan(list){try{localStorage.setItem(cameraPlanKey(),JSON.stringify(list.slice(0,60)));}catch(_){}}
+function setCameraPlan(list){try{localStorage.setItem(cameraPlanKey(),JSON.stringify(list.slice(0,60)));}catch(_){}try{window.TascoPlanSync?.push(mobileCameraAlbum?.albumId||'all',list.slice(0,60));}catch(_){}}
+/* Danh sách hạng mục cần chụp đồng bộ qua tài khoản: tạo sẵn trên máy tính (trang Cloud) là điện thoại tự có.
+   Bản mới hơn thắng; bản chỉ có trên máy này (chưa từng đồng bộ) được gộp rồi gửi lên. Lỗi mạng thì giữ lại và gửi lần sau. */
+window.TascoPlanSync=(()=>{
+  const st={api:null,timer:null,pending:new Set(),pulling:null,at:0},table='tasco_capture_plans';
+  const email=()=>String(window.mobileCloudEmail?.()||'').trim().toLowerCase();
+  const lsKey=k=>'tasco_camera_plan_v1:'+(window.mobileCloudEmail?.()||'')+':'+k;
+  const tsKey=k=>'tasco_camera_plan_ts_v1:'+(window.mobileCloudEmail?.()||'')+':'+k;
+  const pendKey=()=>'tasco_camera_plan_pending_v1:'+(window.mobileCloudEmail?.()||'');
+  const clean=n=>TascoCategories.clean(n);
+  const norm=list=>{const out=[],seen=new Set();for(const n of Array.isArray(list)?list:[]){const c=clean(n);if(c&&!seen.has(c.toLowerCase())){seen.add(c.toLowerCase());out.push(c);}}return out.slice(0,60);};
+  const readLocal=k=>{try{return norm(JSON.parse(localStorage.getItem(lsKey(k))||'[]'));}catch(_){return [];}};
+  const writeLocal=(k,list)=>{try{localStorage.setItem(lsKey(k),JSON.stringify(list));}catch(_){}};
+  const getTs=k=>{try{return Number(localStorage.getItem(tsKey(k)))||0;}catch(_){return 0;}};
+  const setTs=(k,v)=>{try{localStorage.setItem(tsKey(k),String(v));}catch(_){}};
+  const savePending=()=>{try{localStorage.setItem(pendKey(),JSON.stringify([...st.pending]));}catch(_){}};
+  const loadPending=()=>{try{for(const k of JSON.parse(localStorage.getItem(pendKey())||'[]'))if(typeof k==='string')st.pending.add(k);}catch(_){}};
+  const same=(a,b)=>a.length===b.length&&a.every((n,i)=>n===b[i]);
+  async function user(){
+    if(!st.api||!email())return null;
+    const r=await st.api.auth.getSession();const u=r.data?.session?.user;
+    return u&&String(u.email||'').trim().toLowerCase()===email()?u:null;
+  }
+  function validKey(k){return typeof k==='string'&&k.length>0&&k.length<=64;}
+  function push(key,list){
+    if(!validKey(key))return;setTs(key,Date.now());loadPending();st.pending.add(key);savePending();
+    clearTimeout(st.timer);st.timer=setTimeout(()=>{flush().catch(()=>{});},800);
+  }
+  async function flush(){
+    const u=await user();if(!u)return;loadPending();
+    for(const key of [...st.pending]){
+      const items=readLocal(key),at=new Date(getTs(key)||Date.now()).toISOString();
+      const r=await st.api.from(table).upsert({owner_id:u.id,plan_key:key,items,updated_at:at},{onConflict:'owner_id,plan_key'}).select('plan_key');
+      if(r.error)throw r.error;if(r.data?.length){st.pending.delete(key);savePending();}
+    }
+  }
+  /* true nếu danh sách trên máy vừa thay đổi theo bản trên tài khoản */
+  async function runPull(){
+    const u=await user();if(!u)return false;
+    try{await flush();}catch(_){}
+    const r=await st.api.from(table).select('plan_key,items,updated_at').eq('owner_id',u.id);if(r.error||!Array.isArray(r.data))return false;
+    let changed=false;const seen=new Set();
+    for(const row of r.data){
+      const k=row.plan_key;if(!validKey(k))continue;seen.add(k);
+      const server=norm(row.items),sts=Date.parse(row.updated_at)||0,lts=getTs(k),local=readLocal(k);
+      if(st.pending.has(k))continue;   // bản trên máy chưa gửi xong thì giữ
+      if(lts&&lts>=sts)continue;
+      if(!lts&&local.length){   // chưa từng đồng bộ: gộp, rồi gửi bản gộp lên
+        const merged=norm([...server,...local]);if(!same(merged,local)){writeLocal(k,merged);changed=true;}
+        setTs(k,sts);if(!same(merged,server))push(k,merged);continue;
+      }
+      if(!same(server,local)){writeLocal(k,server);changed=true;}
+      setTs(k,sts);
+    }
+    // Danh sách chỉ có trên máy này (chưa từng đồng bộ) -> gửi lên để máy tính cũng thấy
+    try{
+      const prefix=lsKey('');
+      for(let i=0;i<localStorage.length;i++){
+        const full=localStorage.key(i);if(!full||!full.startsWith(prefix))continue;const k=full.slice(prefix.length);
+        if(!validKey(k)||seen.has(k)||getTs(k)||!readLocal(k).length)continue;push(k,readLocal(k));
+      }
+    }catch(_){}
+    return changed;
+  }
+  function pull(force){
+    if(st.pulling)return st.pulling;if(!force&&Date.now()-st.at<30000)return Promise.resolve(false);
+    st.at=Date.now();st.pulling=runPull().catch(()=>false).finally(()=>{st.pulling=null;});return st.pulling;
+  }
+  function configure(o){
+    st.api=o.client;loadPending();
+    setTimeout(()=>pull(true).then(c=>{if(c)try{renderCameraCategory();}catch(_){}}),4000);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull().then(c=>{if(c)try{renderCameraCategory();}catch(_){}});});
+  }
+  return {configure,pull,push};
+})();
 /* Mục đã có ảnh: đã có trong album (từ thư viện) hoặc vừa chụp trong lần mở camera này. */
 /* Tổng ảnh của một hạng mục = ảnh đã có trong album lúc mở camera + ảnh vừa chụp trong lần mở này (không phân biệt hoa/thường). */
 function cameraCategoryTotal(name){
@@ -10485,7 +10560,7 @@ async function openMobileCamera(title,albumContext){
   {const label=document.getElementById('cameraAlbumLabel');if(label){const text='TASCO DLK · '+(mobileCameraAlbum?.albumName?'ALBUM '+mobileCameraAlbum.albumName:'ẢNH HỒ SƠ');label.textContent=text.toUpperCase();label.title=mobileCameraTitle;}}
   const modal=document.getElementById('customCameraModal');
   if(modal){modal.style.display='flex';modal.style.pointerEvents='';}
-  restoreCameraCategory();cameraSyncLocalPrefs();onCustomCameraOpen();renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();startCustomCameraStream();prefetchGpsCoordinates();
+  restoreCameraCategory();try{window.TascoPlanSync?.pull(true).then(changed=>{if(changed)renderCameraCategory();});}catch(_){}cameraSyncLocalPrefs();onCustomCameraOpen();renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();startCustomCameraStream();prefetchGpsCoordinates();
   const captureNotice=TascoCloud.captureNotice?.();if(captureNotice)TascoCloud.notify(captureNotice);
 }
 async function startCustomCameraStream(){

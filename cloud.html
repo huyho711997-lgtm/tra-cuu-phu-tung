@@ -198,6 +198,30 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
 .fd-n{position:absolute;z-index:2;right:10px;bottom:9px;padding:3px 10px;border-radius:999px;background:rgba(8,18,31,.62);backdrop-filter:blur(6px);color:#fff;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
 .fd-name{margin:12px 8px 0;font-size:14.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fd-sub{margin:2px 8px 0;font-size:12.5px;color:var(--ink-3);font-weight:600}
+.top .title small{white-space:nowrap}
+.dlg-card{max-height:calc(100vh - 44px);overflow:auto}.dlg-card.wide{width:min(560px,100%)}
+.dlg-ico.teal{background:#e3f3f5;color:var(--teal-600)}
+.dlg-card .sub{font-size:13px;color:var(--ink-3);font-weight:600;margin:-2px 0 12px}
+.fld{display:block;margin-top:14px}.fld>span{display:block;font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--ink-2);margin-bottom:6px}
+.fld input,.fld textarea,.pl-add input{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:#f6fafb;font:inherit;font-size:14px;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s}
+.fld input:focus,.fld textarea:focus,.pl-add input:focus{border-color:var(--teal-500);box-shadow:0 0 0 3px rgba(99,173,182,.2);background:#fff}
+.fld textarea{min-height:120px;resize:vertical;line-height:1.55}
+.linkbtn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 10px;border-radius:9px;font-size:12.5px;font-weight:700;color:var(--teal-600);background:#e8f4f6}.linkbtn:hover{background:#d9edf0}.linkbtn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pl-add{display:flex;gap:8px}.pl-add button{flex:none;height:42px;padding:0 16px;border-radius:12px;background:var(--navy-800);color:#fff;font-size:13.5px;font-weight:700}.pl-add button:hover{background:var(--navy-600)}
+.pl-list{margin-top:12px;max-height:min(44vh,380px);overflow:auto;display:grid;gap:6px;padding-right:2px}
+.pl-row{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 10px;border-radius:13px;background:#f3f8fa;border:1px solid #e3edf1}
+.pl-row i{flex:none;width:22px;font-style:normal;font-size:12px;font-weight:800;color:var(--ink-3);text-align:center;font-variant-numeric:tabular-nums}
+.pl-row input{flex:1;min-width:0;padding:7px 8px;border-radius:9px;border:1px solid transparent;background:transparent;font:inherit;font-size:14px;font-weight:700;color:var(--ink);outline:none}
+.pl-row input:hover{background:#fff}.pl-row input:focus{background:#fff;border-color:var(--teal-500)}
+.pl-badge{flex:none;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:800;background:#e6ecf0;color:var(--ink-3);font-variant-numeric:tabular-nums}.pl-badge.ok{background:#dff3ea;color:#237a55}
+.pl-row button{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--ink-3)}.pl-row button:hover:not(:disabled){background:#e1ebf0;color:var(--ink)}.pl-row button:disabled{opacity:.3;cursor:default}.pl-row button.x:hover{background:#fdecef;color:var(--danger)}
+.pl-row button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pl-empty{padding:26px 10px;text-align:center;color:var(--ink-3);font-size:13.5px;font-weight:600;line-height:1.6}
+.pl-state{margin-right:auto;align-self:center;font-size:12.5px;font-weight:700;color:var(--ink-3)}.pl-state.ok{color:#237a55}.pl-state.err{color:var(--danger)}
+.dlg-act .go{background:var(--navy-800);color:#fff}.dlg-act .go:hover{background:var(--navy-600)}
+.folder.new .fd-cover{background:transparent;border:2px dashed #a9c0cc;box-shadow:none;color:var(--teal-600)}.folder.new .fd-cover::after{display:none}.folder.new .fd-stack::before,.folder.new .fd-stack::after{display:none}.folder.new:hover .fd-cover{background:rgba(99,173,182,.08);border-color:var(--teal-500)}
+.fd-bar{height:4px;border-radius:4px;background:#d9e5eb;margin:8px 8px 0;overflow:hidden}.fd-bar b{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal-500),#3f9d8a)}
+
 .tile{position:relative;height:var(--row);flex-grow:calc(var(--ar)*100);flex-shrink:1;flex-basis:calc(var(--ar)*var(--row));min-width:0;border-radius:11px;overflow:hidden;background:linear-gradient(135deg,#d6e2e9,#e6eef2);isolation:isolate;text-align:left;transition:box-shadow .25s,transform .25s cubic-bezier(.2,.8,.2,1)}
 .tile:hover{box-shadow:0 18px 38px -16px rgba(11,27,48,.55);z-index:2}
 .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
@@ -388,6 +412,8 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
           <div class="range"><label><span>Từ ngày</span><input type="date" id="dFrom"></label><label><span>Đến ngày</span><input type="date" id="dTo"></label></div>
         </div>
       </div>
+      <button class="ctl" id="newAlbumBtn" hidden title="Tạo album mới và danh sách hạng mục cần chụp"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Album mới</span></button>
+      <button class="ctl" id="planBtn" hidden title="Danh sách hạng mục cần chụp của album này"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg><span id="planBtnLabel">Hạng mục chụp</span></button>
       <button class="ctl" id="sortBtn" title="Đổi thứ tự"><svg viewBox="0 0 24 24"><path d="M8 4v16M8 20l-3-3M8 20l3-3M16 20V4M16 4l-3 3M16 4l3 3"/></svg><span id="sortLabel">Mới nhất</span></button>
       <div class="seg" id="density" role="group" aria-label="Cỡ ảnh"><button data-row="150">S</button><button data-row="210">M</button><button data-row="300">L</button></div>
       <button class="ctl sq" id="capBtn" title="Hiện chú thích dưới ảnh" aria-label="Chú thích" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 15h8M8 12h5"/></svg></button>
@@ -422,6 +448,18 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
 </div>
 
 <div class="dlg" id="delDlg" hidden role="alertdialog" aria-modal="true" aria-labelledby="delTitle" aria-describedby="delDesc"><div class="dlg-card"><div class="dlg-ico"><svg viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.8h5V7M6.8 7l.8 11.2a2 2 0 0 0 2 1.8h4.8a2 2 0 0 0 2-1.8L17.2 7M10 11v5M14 11v5"/></svg></div><h3 id="delTitle"></h3><p id="delDesc"></p><div class="dlg-err" id="delErr" hidden role="alert"></div><div class="dlg-act"><button class="no" id="delNo" type="button">Huỷ</button><button class="yes" id="delYes" type="button">Xoá</button></div></div></div>
+<div class="dlg" id="albDlg" hidden role="dialog" aria-modal="true" aria-labelledby="albTitle"><div class="dlg-card wide"><div class="dlg-ico teal"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div><h3 id="albTitle">Tạo album mới</h3><p class="sub">Tạo sẵn album và danh sách hạng mục cần chụp. Mở app điện thoại là có ngay để chụp theo.</p>
+<label class="fld"><span>TÊN ALBUM</span><input id="albName" maxlength="100" placeholder="Ví dụ: 47A-123.45 hoặc tên hồ sơ" autocomplete="off"></label>
+<label class="fld"><span>HẠNG MỤC CẦN CHỤP (mỗi dòng một mục, có thể bỏ trống)</span><textarea id="albItems" placeholder="Toàn cảnh xe&#10;Biển số&#10;Số khung&#10;Cản trước"></textarea></label>
+<button class="linkbtn" id="albTpl" type="button"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Thêm mẫu giám định xe</button>
+<div class="dlg-err" id="albErr" hidden role="alert"></div>
+<div class="dlg-act"><button class="no" id="albNo" type="button">Huỷ</button><button class="go" id="albYes" type="button">Tạo album</button></div></div></div>
+<div class="dlg" id="planDlg" hidden role="dialog" aria-modal="true" aria-labelledby="planTitle"><div class="dlg-card wide"><div class="dlg-ico teal"><svg viewBox="0 0 24 24"><path d="M3.5 12.2V5a1.5 1.5 0 0 1 1.5-1.5h7.2l8.3 8.3a1.5 1.5 0 0 1 0 2.1l-7.1 7.1a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.4"/></svg></div><h3 id="planTitle">Hạng mục cần chụp</h3><p class="sub" id="planSub"></p>
+<div class="pl-add"><input id="planInput" placeholder="Thêm hạng mục rồi nhấn Enter (dán nhiều dòng cũng được)" maxlength="400" autocomplete="off"><button id="planAdd" type="button">Thêm</button></div>
+<button class="linkbtn" id="planTpl" type="button"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Thêm mẫu giám định xe</button>
+<div class="pl-list" id="planList"></div>
+<div class="dlg-err" id="planErr" hidden role="alert"></div>
+<div class="dlg-act"><span class="pl-state" id="planState"></span><button class="go" id="planDone" type="button">Xong</button></div></div></div>
 <div class="toast-wrap" id="toasts"></div>
 
 <script type="module">
@@ -439,6 +477,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSessio
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const PLUS_ICON = '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>';
 const ICON = {
   check: '<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
   play: '<svg viewBox="0 0 24 24"><path d="M8.5 5.6v12.8a1 1 0 0 0 1.5.86l10.2-6.4a1 1 0 0 0 0-1.72L10 4.74a1 1 0 0 0-1.5.86Z"/></svg>',
@@ -455,7 +494,7 @@ const ICON = {
 
 /* ---------- Trạng thái ---------- */
 const S = {
-  user: null, rows: [], albums: [], loading: false, loaded: 0, error: '', lastSync: 0,
+  user: null, rows: [], albums: [], plans: new Map(), loading: false, loaded: 0, error: '', lastSync: 0,
   f: { albums: false, album: 'all', kind: 'all', recent: false, category: '', q: '', from: '', to: '', sort: 'desc' },
   selected: new Set(), lastPick: -1, view: [], limit: 480,
   viewer: { open: false, index: 0 },
@@ -516,6 +555,7 @@ async function loadAll({ silent = false } = {}) {
     if (al.error && !silent) throw al.error;
     if (token !== loadToken) return;
     if (!al.error) S.albums = al.data || [];
+    try { const pl = await sb.from('tasco_capture_plans').select('plan_key,items,updated_at').eq('owner_id', S.user.id); if (!pl.error) S.plans = new Map((pl.data || []).map(r => [r.plan_key, { items: Array.isArray(r.items) ? r.items.map(String) : [], updated_at: r.updated_at }])); } catch (_) {}
     const rows = []; let from = 0;
     for (;;) {
       const r = await sb.from('tasco_personal_photos').select(COLS).eq('owner_id', S.user.id).order('captured_at', { ascending: false }).range(from, from + 999);
@@ -578,6 +618,7 @@ function paintSide() {
 function paintHeader() {
   const f = S.f; let name = 'Tất cả ảnh';
   $('#hBack').hidden = f.albums || f.album === 'all';
+  $('#newAlbumBtn').hidden = !f.albums; $('#planBtn').hidden = f.albums || f.album === 'all'; if (!$('#planBtn').hidden) { const n = (S.plans.get(planKey(f.album))?.items || []).length; $('#planBtnLabel').textContent = n ? `Hạng mục chụp (${n})` : 'Hạng mục chụp'; }
   if (f.albums) name = 'Album'; else if (f.album === 'none') name = 'Chưa vào album'; else if (f.album !== 'all') name = albumName(f.album) || 'Album';
   else if (f.recent) name = '7 ngày qua'; else if (f.kind === 'photo') name = 'Ảnh'; else if (f.kind === 'video') name = 'Video';
   if (f.category) name += ' · ' + f.category;
@@ -596,17 +637,28 @@ function tileHTML(r, i) {
   const sub = [fmtTime(r), r.category, r.address].filter(Boolean).join(' · ');
   return `<button class="tile${sel ? ' is-sel' : ''}" style="--ar:${aspect(r).toFixed(3)}" data-id="${esc(r.id)}" data-i="${i}" aria-label="${esc((r.title || 'Ảnh') + ', ' + fmtFull(r))}">${src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async">` : ''}${isVideo(r) ? `<span class="vb">${ICON.vid}VIDEO</span><span class="play">${ICON.play}</span>` : ''}<span class="chk" data-chk>${ICON.check}</span><span class="meta"><b>${esc(r.title || 'Ảnh của tôi')}</b><small>${esc(sub)}</small></span></button>`;
 }
+const planKey = albumId => (!albumId || albumId === 'none' || albumId === 'all') ? 'all' : albumId;
+const cleanName = v => String(v || '').replace(/\s+/g, ' ').trim().slice(0, 120);
+const planItems = key => S.plans.get(key)?.items || [];
+function shotCounts(albumId) {
+  const m = new Map(), key = planKey(albumId);
+  for (const r of S.rows) { if (key === 'all' ? r.album_id : r.album_id !== key) continue; const c = (r.category || '').trim().toLowerCase(); if (c) m.set(c, (m.get(c) || 0) + 1); }
+  return m;
+}
 function foldersHTML() {
   const q = norm(S.f.q), by = new Map(); let none = null;
   for (const r of S.rows) { if (r.album_id) { if (!by.has(r.album_id)) by.set(r.album_id, []); by.get(r.album_id).push(r); } else (none ||= []).push(r); }
   const list = S.albums.map(a => ({ id: a.id, name: a.name, rows: by.get(a.id) || [] }));
   if (none) list.push({ id: 'none', name: 'Chưa vào album', rows: none });
   const shown = list.filter(a => !q || norm(a.name).includes(q));
-  if (!shown.length) return `<div class="state"><div><div class="ico">${q ? ICON.search : ICON.folder}</div><h3>${q ? 'Không có album khớp' : 'Chưa có album nào'}</h3><p>${q ? 'Thử từ khoá khác.' : 'Tạo album trong app điện thoại để gom ảnh theo từng hồ sơ.'}</p></div></div>`;
-  return '<div class="folders">' + shown.map(a => {
+  const newCard = q ? '' : `<button class="folder new" id="newAlbumCard" title="Tạo album mới"><div class="fd-stack"><div class="fd-cover">${PLUS_ICON}</div></div><div class="fd-name">Album mới</div><div class="fd-sub">Tạo sẵn hạng mục cần chụp</div></button>`;
+  if (!shown.length && !newCard) return `<div class="state"><div><div class="ico">${ICON.search}</div><h3>Không có album khớp</h3><p>Thử từ khoá khác.</p></div></div>`;
+  return '<div class="folders">' + newCard + shown.map(a => {
     const cover = a.rows[0], vids = a.rows.filter(isVideo).length, photos = a.rows.length - vids;
-    const sub = a.rows.length ? `${photos} ảnh${vids ? ' · ' + vids + ' video' : ''}` : 'Trống';
-    return `<button class="folder" data-album="${esc(a.id)}" title="${esc(a.name)}"><div class="fd-stack"><div class="fd-cover">${cover ? `<img src="${esc(thumbURL(cover, 520, 390))}" alt="" loading="lazy">` : ICON.folder}</div><span class="fd-n">${a.rows.length}</span></div><div class="fd-name">${esc(a.name)}</div><div class="fd-sub">${esc(sub)}</div></button>`;
+    const plan = planItems(planKey(a.id)), counts = shotCounts(a.id), done = plan.filter(n => counts.get(n.toLowerCase())).length;
+    const sub = (a.rows.length ? `${photos} ảnh${vids ? ' · ' + vids + ' video' : ''}` : 'Trống') + (plan.length ? ` · ${done}/${plan.length} hạng mục` : '');
+    const bar = plan.length ? `<div class="fd-bar" title="Đã chụp ${done}/${plan.length} hạng mục"><b style="width:${Math.round(done / plan.length * 100)}%"></b></div>` : '';
+    return `<button class="folder" data-album="${esc(a.id)}" title="${esc(a.name)}"><div class="fd-stack"><div class="fd-cover">${cover ? `<img src="${esc(thumbURL(cover, 520, 390))}" alt="" loading="lazy">` : ICON.folder}</div><span class="fd-n">${a.rows.length}</span></div>${bar}<div class="fd-name">${esc(a.name)}</div><div class="fd-sub">${esc(sub)}</div></button>`;
   }).join('') + '</div>';
 }
 function render() {
@@ -745,7 +797,7 @@ $('#selZip').addEventListener('click', () => zipDownload(S.view.filter(r => S.se
 /* ---------- Xoá ảnh ---------- */
 /* Xoá dòng trong thư viện (giống app điện thoại): quyền xoá do Supabase RLS giữ, chỉ tính là đã xoá khi máy chủ trả lại id. */
 let deleting = false;
-const dlgOpen = () => !$('#delDlg').hidden;
+const dlgOpen = () => !!document.querySelector('.dlg:not([hidden])');
 function confirmDelete(rows) {
   return new Promise(resolve => {
     const dlg = $('#delDlg'), yes = $('#delYes'), no = $('#delNo'), err = $('#delErr'), n = rows.length, vids = rows.filter(isVideo).length;
@@ -786,6 +838,96 @@ function applyRemoved(removed) {
 async function deleteRows(rows) { if (!rows.length || deleting || dlgOpen()) return; await confirmDelete(rows); }
 $('#selDel').addEventListener('click', () => deleteRows(S.view.filter(r => S.selected.has(r.id))));
 $('#vDel').addEventListener('click', () => { const r = S.view[S.viewer.index]; if (r) deleteRows([r]); });
+
+/* ---------- Tạo sẵn album + hạng mục cần chụp ---------- */
+/* Danh sách hạng mục lưu theo từng album (plan_key = id album, 'all' = chụp không thuộc album). App điện thoại tự tải về khi mở camera. */
+const TEMPLATE = ['Toàn cảnh xe', 'Biển số', 'Số khung', 'Số máy', 'Đồng hồ công tơ mét', 'Giấy đăng ký xe', 'Giấy phép lái xe', 'Hiện trường', 'Vị trí va chạm', 'Chi tiết hư hỏng'];
+const splitNames = v => String(v || '').split(/[\n,;]+/).map(cleanName).filter(Boolean);
+function mergeNames(base, extra) { const out = base.slice(), seen = new Set(out.map(n => n.toLowerCase())); for (const n of extra) { if (!seen.has(n.toLowerCase())) { seen.add(n.toLowerCase()); out.push(n); } } return out.slice(0, 60); }
+function openDlg(id, onClose) { const d = $(id); d.hidden = false; d._ui = { close() { d.hidden = true; d.onclick = null; onClose?.(); } }; d.onclick = e => { if (e.target === d) d._ui.close(); }; return d; }
+function setErr(id, msg) { const e = $(id); e.textContent = msg || ''; e.hidden = !msg; }
+
+/* -- Album mới -- */
+function openAlbumDlg() {
+  $('#albName').value = ''; $('#albItems').value = ''; setErr('#albErr', ''); $('#albYes').disabled = false; $('#albYes').textContent = 'Tạo album';
+  const d = openDlg('#albDlg'); setTimeout(() => $('#albName').focus(), 30);
+  $('#albNo').onclick = () => d._ui.close();
+  $('#albTpl').onclick = () => { $('#albItems').value = mergeNames(splitNames($('#albItems').value), TEMPLATE).join('\n'); };
+  $('#albYes').onclick = createAlbum;
+}
+async function createAlbum() {
+  const name = cleanName($('#albName').value).slice(0, 100), items = mergeNames([], splitNames($('#albItems').value));
+  if (!name) return setErr('#albErr', 'Nhập tên album.');
+  if (S.albums.some(a => a.name.toLocaleLowerCase('vi-VN') === name.toLocaleLowerCase('vi-VN'))) return setErr('#albErr', 'Tên album này đã có. Chọn tên khác.');
+  const btn = $('#albYes'); btn.disabled = true; btn.textContent = 'Đang tạo…'; setErr('#albErr', '');
+  try {
+    const now = new Date().toISOString(), row = { id: crypto.randomUUID(), owner_id: S.user.id, name, created_at: now, updated_at: now };
+    const r = await sb.from('tasco_personal_photo_albums').insert(row).select('id,name,created_at'); if (r.error) throw r.error;
+    if (!r.data?.some(x => x.id === row.id)) throw new Error('Cloud chưa xác nhận album mới. Tải lại rồi kiểm tra.');
+    S.albums = [...S.albums, { id: row.id, name, created_at: now }].sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+    let planNote = '';
+    if (items.length) { try { await savePlan(row.id, items); } catch (e) { planNote = ' Album đã tạo nhưng chưa lưu được hạng mục — mở album và thêm lại.'; } }
+    $('#albDlg')._ui.close(); render();
+    toast(`Đã tạo album “${name}”${items.length && !planNote ? ` với ${items.length} hạng mục` : ''}.${planNote}`, !!planNote);
+  } catch (e) { setErr('#albErr', /row-level security|permission denied/i.test(String(e?.message)) || e?.code === '42501' ? 'Tài khoản này chưa có quyền tạo album.' : friendly(e)); btn.disabled = false; btn.textContent = 'Tạo album'; }
+}
+async function savePlan(key, items) {
+  const at = new Date().toISOString();
+  const r = await sb.from('tasco_capture_plans').upsert({ owner_id: S.user.id, plan_key: key, items, updated_at: at }, { onConflict: 'owner_id,plan_key' }).select('plan_key');
+  if (r.error) throw r.error; if (!r.data?.length) throw new Error('Cloud chưa xác nhận danh sách hạng mục.');
+  S.plans.set(key, { items: items.slice(), updated_at: at });
+}
+
+/* -- Danh sách hạng mục của một album -- */
+const P = { key: '', items: [], timer: 0, saving: false, dirty: false, album: '' };
+function planState(text, cls = '') { const e = $('#planState'); e.textContent = text; e.className = 'pl-state ' + cls; }
+function paintPlan(focusIdx) {
+  const counts = shotCounts(P.album), box = $('#planList');
+  box.innerHTML = P.items.length ? P.items.map((n, i) => {
+    const c = counts.get(n.toLowerCase()) || 0;
+    return `<div class="pl-row" data-i="${i}"><i>${i + 1}</i><input value="${esc(n)}" maxlength="120" aria-label="Tên hạng mục ${i + 1}"><span class="pl-badge${c ? ' ok' : ''}">${c ? '✓ ' + c + ' ảnh' : 'Chưa chụp'}</span><button data-act="up" ${i === 0 ? 'disabled' : ''} title="Lên" aria-label="Lên"><svg viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button><button data-act="down" ${i === P.items.length - 1 ? 'disabled' : ''} title="Xuống" aria-label="Xuống"><svg viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></svg></button><button class="x" data-act="del" title="Xoá" aria-label="Xoá"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>`;
+  }).join('') : '<div class="pl-empty">Chưa có hạng mục nào.<br>Thêm ở ô phía trên hoặc dùng mẫu giám định xe.</div>';
+  if (focusIdx != null) box.querySelectorAll('.pl-row')[focusIdx]?.scrollIntoView({ block: 'nearest' });
+}
+function planChanged() { P.dirty = true; planState('Đang lưu…'); clearTimeout(P.timer); P.timer = setTimeout(flushPlan, 500); }
+async function flushPlan() {
+  clearTimeout(P.timer); if (P.saving) { P.timer = setTimeout(flushPlan, 300); return; } if (!P.dirty) return;
+  P.saving = true; P.dirty = false; const key = P.key, items = P.items.slice(); setErr('#planErr', '');
+  try { await savePlan(key, items); if (!P.dirty) planState(`Đã lưu · ${items.length} hạng mục`, 'ok'); }
+  catch (e) { P.dirty = true; planState('Chưa lưu được', 'err'); setErr('#planErr', /row-level security|permission denied/i.test(String(e?.message)) || e?.code === '42501' ? 'Tài khoản này chưa có quyền lưu hạng mục.' : friendly(e)); }
+  finally { P.saving = false; if (!$('#planDlg').hidden) { paintHeader(); } }
+}
+function addNames(names) {
+  const before = P.items.length; P.items = mergeNames(P.items, names); if (P.items.length === before) return;
+  paintPlan(); $('#planList').scrollTop = 1e9; planChanged();
+}
+function openPlanDlg() {
+  const album = S.f.album; if (S.f.albums || album === 'all') return;
+  P.album = album; P.key = planKey(album); P.items = planItems(P.key).slice(); P.dirty = false; P.saving = false;
+  $('#planSub').textContent = (album === 'none' ? 'Chụp không chọn album' : 'Album “' + (albumName(album) || '') + '”') + ' · app điện thoại tự nhận danh sách này khi mở camera.';
+  planState(P.items.length ? `${P.items.length} hạng mục` : ''); setErr('#planErr', ''); $('#planInput').value = ''; paintPlan();
+  const d = openDlg('#planDlg', async () => { await flushPlan(); render(); });
+  const close = () => d._ui.close(); $('#planDone').onclick = close;
+  setTimeout(() => $('#planInput').focus(), 30);
+}
+$('#planBtn').addEventListener('click', openPlanDlg);
+$('#newAlbumBtn').addEventListener('click', openAlbumDlg);
+document.addEventListener('click', e => { if (e.target.closest('#newAlbumCard')) openAlbumDlg(); });
+$('#planAdd').addEventListener('click', () => { const v = $('#planInput').value; $('#planInput').value = ''; addNames(splitNames(v)); $('#planInput').focus(); });
+$('#planInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#planAdd').click(); } });
+$('#planInput').addEventListener('paste', e => { const t = e.clipboardData?.getData('text') || ''; if (/[\n;]/.test(t)) { e.preventDefault(); addNames(splitNames(t)); } });
+$('#planTpl').addEventListener('click', () => addNames(TEMPLATE));
+$('#planList').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return; const i = Number(b.closest('.pl-row').dataset.i), a = b.dataset.act;
+  if (a === 'del') P.items.splice(i, 1); else if (a === 'up' && i > 0) [P.items[i - 1], P.items[i]] = [P.items[i], P.items[i - 1]]; else if (a === 'down' && i < P.items.length - 1) [P.items[i + 1], P.items[i]] = [P.items[i], P.items[i + 1]]; else return;
+  paintPlan(); planChanged();
+});
+$('#planList').addEventListener('change', e => {
+  const inp = e.target.closest('.pl-row input'); if (!inp) return; const i = Number(inp.closest('.pl-row').dataset.i), v = cleanName(inp.value);
+  if (!v) P.items.splice(i, 1); else if (P.items.some((n, k) => k !== i && n.toLowerCase() === v.toLowerCase())) { inp.value = P.items[i]; return; } else P.items[i] = v;
+  paintPlan(); planChanged();
+});
+$('#planList').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('.pl-row input')) { e.preventDefault(); e.target.blur(); $('#planInput').focus(); } });
 
 /* ---------- Trình xem ---------- */
 const V = { s: 1, x: 0, y: 0, rot: 0, drag: null, token: 0, info: true };
@@ -860,7 +1002,7 @@ function toggleInfo() { V.info = !V.info; try { localStorage.setItem('tasco_clou
 $('#vFilm').addEventListener('click', e => { const b = e.target.closest('[data-fi]'); if (b) showItem(Number(b.dataset.fi)); });
 
 document.addEventListener('keydown', e => {
-  if (dlgOpen()) { if (e.key === 'Escape') { e.preventDefault(); $('#delDlg')._ui?.close(); } return; }
+  if (dlgOpen()) { if (e.key === 'Escape') { e.preventDefault(); [...document.querySelectorAll('.dlg:not([hidden])')].pop()?._ui?.close(); } return; }
   const tag = (e.target.tagName || '').toLowerCase(), typing = ['input', 'textarea', 'select'].includes(tag);
   if (S.viewer.open) {
     if (e.key === 'Escape') { closeViewer(); e.preventDefault(); }
