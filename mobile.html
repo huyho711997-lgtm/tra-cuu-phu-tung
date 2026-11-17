@@ -2419,6 +2419,7 @@ html.dark .tasco-workspace .part-kind-tag{box-shadow:inset 0 1px 0 rgba(255,255,
 .tasco-workspace #mainApp[data-shell][data-page=garage]{max-width:760px;padding:0 0 calc(118px + env(safe-area-inset-bottom,0px))!important}
 .tasco-workspace #mainApp[data-page=garage]>#mainHeader,.tasco-workspace #mainApp[data-page=garage]>#wsChildbar{display:none!important}
 html[data-tasco-page=garage]{background:var(--app-navy)}
+html[data-tasco-page=assess]{background:var(--app-navy)}
 @media(max-width:767px){.tasco-workspace #mainApp[data-shell][data-page=garage]{padding-left:0!important;padding-right:0!important;max-width:600px}}
 .rr-link{display:block;margin:10px 2px 0;padding:6px 0;border:0;background:transparent;color:var(--ws-accent-text);font-family:inherit;font-size:12px;font-weight:650;text-align:left;cursor:pointer}
 .rr-link:hover,.rr-link:focus-visible{text-decoration:underline;outline:none}
@@ -3126,7 +3127,7 @@ html.dark .u021 .u021-stars{opacity:1;transform:none}
 <style id="tascoTopEdgeStyles">
 /* Paint the safe area as part of the current header; inset controls, not the page. */
 html[data-tasco-page]{--tasco-top-color:var(--ws-bg);margin:0;padding:0;background:var(--tasco-top-color)}
-html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="forms"],[data-tasco-page="account"]){--tasco-top-color:var(--app-navy)}
+html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="assess"],[data-tasco-page="forms"],[data-tasco-page="account"]){--tasco-top-color:var(--app-navy)}
 html[data-tasco-page] body.tasco-workspace{margin:0;padding:0;background:var(--tasco-top-color)!important}
 /* Safari can use body paint when its viewport excludes the device status bar. */
 .tasco-workspace #mainApp[data-shell]{background:var(--ws-bg)}
