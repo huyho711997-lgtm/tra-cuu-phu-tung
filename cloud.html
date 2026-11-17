@@ -109,6 +109,7 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
 .side-head .brand b{font-size:12.5px;color:#fff;letter-spacing:.2em}
 .side-head .brand small{font-size:9px;letter-spacing:.24em}
 .side-scroll{flex:1;overflow:auto;padding:2px 14px 14px}
+.side h3 .ah{display:inline-flex;align-items:center;gap:6px;font:inherit;letter-spacing:inherit;color:inherit;text-transform:inherit;padding:3px 6px;margin:-3px -6px;border-radius:8px;transition:color .15s,background .15s}.side h3 .ah:hover{color:var(--teal-300);background:rgba(143,208,216,.1)}.side h3 .ah.is-on{color:var(--teal-300)}.side h3 .ah svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .side h3{margin:22px 10px 8px;font-size:10px;font-weight:800;letter-spacing:.2em;color:#58748f;text-transform:uppercase}
 .nav{position:relative;display:flex;align-items:center;gap:11px;width:100%;padding:9px 12px;border-radius:12px;color:#b9cfe1;font-size:13.5px;font-weight:600;text-align:left;transition:background .18s,color .18s}
 .nav:hover{background:rgba(255,255,255,.055);color:#fff}
@@ -183,6 +184,20 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
 .day-head .pick:hover{background:rgba(99,173,182,.14);color:var(--teal-600)}
 .grid{display:flex;flex-wrap:wrap;gap:6px}
 .grid::after{content:'';flex-grow:1e6;flex-basis:0}
+.crumb{display:inline-flex;align-items:center;gap:4px;margin:0 0 4px -6px;padding:2px 8px 2px 4px;border-radius:8px;font-size:12px;font-weight:700;color:var(--teal-600)}.crumb:hover{background:rgba(74,152,163,.12)}.crumb svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.crumb[hidden]{display:none}
+.folders{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:26px 22px;padding:10px 4px 40px}
+.folder{position:relative;display:block;text-align:left;width:100%;border-radius:18px;transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.folder:hover{transform:translateY(-4px)}.folder:focus-visible{outline:2px solid var(--teal-500);outline-offset:6px}
+.fd-stack{position:relative;aspect-ratio:4/3;margin:0 8px}
+.fd-stack::before,.fd-stack::after{content:'';position:absolute;left:0;right:0;border-radius:16px;background:#cfdde4;box-shadow:0 1px 2px rgba(11,27,48,.08)}
+.fd-stack::before{top:-8px;left:12px;right:12px;height:30px;background:#dbe7ec}.fd-stack::after{top:-4px;left:6px;right:6px;height:30px;background:#c3d5dd}
+.fd-cover{position:absolute;inset:0;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#d6e2e9,#e8f0f4);box-shadow:var(--shadow);display:grid;place-items:center;color:#8aa4b5}
+.fd-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s,transform .4s}.fd-cover img.ok{opacity:1}.folder:hover .fd-cover img{transform:scale(1.04)}
+.fd-cover svg{width:46px;height:46px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.fd-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(8,18,31,.38))}
+.fd-n{position:absolute;right:10px;bottom:9px;z-index:1;padding:3px 10px;border-radius:999px;background:rgba(8,18,31,.62);backdrop-filter:blur(6px);color:#fff;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.fd-name{margin:12px 8px 0;font-size:14.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fd-sub{margin:2px 8px 0;font-size:12.5px;color:var(--ink-3);font-weight:600}
 .tile{position:relative;height:var(--row);flex-grow:calc(var(--ar)*100);flex-shrink:1;flex-basis:calc(var(--ar)*var(--row));min-width:0;border-radius:11px;overflow:hidden;background:linear-gradient(135deg,#d6e2e9,#e6eef2);isolation:isolate;text-align:left;transition:box-shadow .25s,transform .25s cubic-bezier(.2,.8,.2,1)}
 .tile:hover{box-shadow:0 18px 38px -16px rgba(11,27,48,.55);z-index:2}
 .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
@@ -342,7 +357,7 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
     <div class="side-scroll">
       <h3>Thư viện</h3>
       <div id="navLib"></div>
-      <h3>Album</h3>
+      <h3><button class="ah" id="navAlbumHome" data-albums title="Xem tất cả album dạng thư mục">Album<svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></button></h3>
       <div id="navAlbums"></div>
       <h3>Hạng mục</h3>
       <div class="chips" id="navCats"></div>
@@ -363,7 +378,7 @@ body.shielded #app,body.shielded #viewer{filter:blur(26px) saturate(.5);pointer-
 
   <main class="main">
     <header class="top" id="top">
-      <div class="title"><h2 id="hTitle">Tất cả ảnh</h2><small id="hSub">Đang tải…</small></div>
+      <div class="title"><button class="crumb" id="hBack" data-albums hidden><svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg>Album</button><h2 id="hTitle">Tất cả ảnh</h2><small id="hSub">Đang tải…</small></div>
       <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><input id="q" type="search" placeholder="Tìm ảnh, địa điểm, hạng mục…" autocomplete="off"><kbd>/</kbd></label>
       <div style="position:relative">
         <button class="ctl" id="dateBtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14" rx="3"/><path d="M8 3.5v4M16 3.5v4M4 10h16"/></svg><span id="dateLabel">Ngày</span></button>
@@ -441,7 +456,7 @@ const ICON = {
 /* ---------- Trạng thái ---------- */
 const S = {
   user: null, rows: [], albums: [], loading: false, loaded: 0, error: '', lastSync: 0,
-  f: { album: 'all', kind: 'all', recent: false, category: '', q: '', from: '', to: '', sort: 'desc' },
+  f: { albums: false, album: 'all', kind: 'all', recent: false, category: '', q: '', from: '', to: '', sort: 'desc' },
   selected: new Set(), lastPick: -1, view: [], limit: 480,
   viewer: { open: false, index: 0 },
 };
@@ -545,12 +560,12 @@ function paintSide() {
   const all = S.rows, vids = all.filter(isVideo).length, recent = all.filter(r => dt(r).getTime() > Date.now() - 7 * 864e5).length;
   const nav = (on, icon, label, n, attrs) => `<button class="nav${on ? ' is-on' : ''}" ${attrs}>${icon}<span class="t">${esc(label)}</span><span class="n">${n}</span></button>`;
   const lib = [
-    nav(S.f.album === 'all' && S.f.kind === 'all' && !S.f.recent, ICON.all, 'Tất cả', all.length, 'data-lib="all"'),
+    nav(S.f.album === 'all' && S.f.kind === 'all' && !S.f.recent && !S.f.albums, ICON.all, 'Tất cả', all.length, 'data-lib="all"'),
     nav(S.f.recent, ICON.clock, '7 ngày qua', recent, 'data-lib="recent"'),
     nav(S.f.kind === 'photo' && !S.f.recent, ICON.img, 'Ảnh', all.length - vids, 'data-lib="photo"'),
     nav(S.f.kind === 'video' && !S.f.recent, ICON.vid, 'Video', vids, 'data-lib="video"'),
   ].join('');
-  $('#navLib').innerHTML = lib;
+  $('#navLib').innerHTML = lib; $('#navAlbumHome').classList.toggle('is-on', !!S.f.albums);
   const counts = new Map(); let none = 0; for (const r of all) { if (r.album_id) counts.set(r.album_id, (counts.get(r.album_id) || 0) + 1); else none++; }
   const albums = S.albums.map(a => nav(S.f.album === a.id, ICON.folder, a.name, counts.get(a.id) || 0, `data-album="${esc(a.id)}"`)).join('');
   $('#navAlbums').innerHTML = (albums || '') + nav(S.f.album === 'none', ICON.inbox, 'Chưa vào album', none, 'data-album="none"') || '';
@@ -562,11 +577,13 @@ function paintSide() {
 }
 function paintHeader() {
   const f = S.f; let name = 'Tất cả ảnh';
-  if (f.album === 'none') name = 'Chưa vào album'; else if (f.album !== 'all') name = albumName(f.album) || 'Album';
+  $('#hBack').hidden = f.albums || f.album === 'all';
+  if (f.albums) name = 'Album'; else if (f.album === 'none') name = 'Chưa vào album'; else if (f.album !== 'all') name = albumName(f.album) || 'Album';
   else if (f.recent) name = '7 ngày qua'; else if (f.kind === 'photo') name = 'Ảnh'; else if (f.kind === 'video') name = 'Video';
   if (f.category) name += ' · ' + f.category;
   $('#hTitle').textContent = name;
   const v = S.view, vids = v.filter(isVideo).length;
+  if (f.albums) { $('#hSub').textContent = S.loading && !S.rows.length ? 'Đang tải…' : `${S.albums.length + (S.rows.some(r => !r.album_id) ? 1 : 0)} thư mục · ${S.rows.length} mục`; $('#sortLabel').textContent = f.sort === 'desc' ? 'Mới nhất' : 'Cũ nhất'; $('#zipAll').querySelector('span').textContent = 'Tải ZIP'; $('#zipAll').disabled = true; return; }
   $('#hSub').textContent = S.loading && !S.rows.length ? 'Đang tải…' : `${v.length - vids} ảnh${vids ? ' · ' + vids + ' video' : ''}${S.loading ? ' · đang tải thêm (' + S.loaded + ')…' : ''}`;
   $('#sortLabel').textContent = f.sort === 'desc' ? 'Mới nhất' : 'Cũ nhất';
   $('#zipAll').querySelector('span').textContent = S.selected.size ? `Tải ZIP (${S.selected.size})` : 'Tải ZIP';
@@ -579,6 +596,19 @@ function tileHTML(r, i) {
   const sub = [fmtTime(r), r.category, r.address].filter(Boolean).join(' · ');
   return `<button class="tile${sel ? ' is-sel' : ''}" style="--ar:${aspect(r).toFixed(3)}" data-id="${esc(r.id)}" data-i="${i}" aria-label="${esc((r.title || 'Ảnh') + ', ' + fmtFull(r))}">${src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async">` : ''}${isVideo(r) ? `<span class="vb">${ICON.vid}VIDEO</span><span class="play">${ICON.play}</span>` : ''}<span class="chk" data-chk>${ICON.check}</span><span class="meta"><b>${esc(r.title || 'Ảnh của tôi')}</b><small>${esc(sub)}</small></span></button>`;
 }
+function foldersHTML() {
+  const q = norm(S.f.q), by = new Map(); let none = null;
+  for (const r of S.rows) { if (r.album_id) { if (!by.has(r.album_id)) by.set(r.album_id, []); by.get(r.album_id).push(r); } else (none ||= []).push(r); }
+  const list = S.albums.map(a => ({ id: a.id, name: a.name, rows: by.get(a.id) || [] }));
+  if (none) list.push({ id: 'none', name: 'Chưa vào album', rows: none });
+  const shown = list.filter(a => !q || norm(a.name).includes(q));
+  if (!shown.length) return `<div class="state"><div><div class="ico">${q ? ICON.search : ICON.folder}</div><h3>${q ? 'Không có album khớp' : 'Chưa có album nào'}</h3><p>${q ? 'Thử từ khoá khác.' : 'Tạo album trong app điện thoại để gom ảnh theo từng hồ sơ.'}</p></div></div>`;
+  return '<div class="folders">' + shown.map(a => {
+    const cover = a.rows[0], vids = a.rows.filter(isVideo).length, photos = a.rows.length - vids;
+    const sub = a.rows.length ? `${photos} ảnh${vids ? ' · ' + vids + ' video' : ''}` : 'Trống';
+    return `<button class="folder" data-album="${esc(a.id)}" title="${esc(a.name)}"><div class="fd-stack"><div class="fd-cover">${cover ? `<img src="${esc(thumbURL(cover, 520, 390))}" alt="" loading="lazy">` : ICON.folder}</div><span class="fd-n">${a.rows.length}</span></div><div class="fd-name">${esc(a.name)}</div><div class="fd-sub">${esc(sub)}</div></button>`;
+  }).join('') + '</div>';
+}
 function render() {
   computeView(); paintSide(); paintHeader();
   const box = $('#content'); $('#app').classList.toggle('selecting', S.selected.size > 0);
@@ -588,6 +618,7 @@ function render() {
     const filtered = S.rows.length > 0;
     box.innerHTML = `<div class="state"><div><div class="ico">${filtered ? ICON.search : ICON.cloud}</div><h3>${filtered ? 'Không có ảnh khớp bộ lọc' : 'Cloud chưa có ảnh'}</h3><p>${filtered ? 'Thử đổi từ khoá, ngày hoặc bỏ bớt bộ lọc.' : 'Ảnh chụp trên điện thoại sẽ xuất hiện ở đây sau khi đồng bộ.'}</p>${filtered ? '<button class="tool" id="clearF" style="margin:18px auto 0">Xoá bộ lọc</button>' : ''}</div></div>`; return;
   }
+  if (S.f.albums) { S.selected.clear(); box.innerHTML = foldersHTML(); paintSel(); return; }
   const groups = new Map(); let shown = 0, cut = false;
   S.view.forEach((r, i) => { if (cut) return; if (shown >= S.limit) { cut = true; return; } const k = dayKey(r); if (!groups.has(k)) groups.set(k, []); groups.get(k).push([r, i]); shown++; });
   let html = '';
@@ -627,12 +658,13 @@ $('#content').addEventListener('click', e => {
 });
 
 /* ---------- Bộ lọc ---------- */
-function resetFilters() { Object.assign(S.f, { album: 'all', kind: 'all', recent: false, category: '', q: '', from: '', to: '' }); $('#q').value = ''; S.limit = 480; paintDate(); render(); }
+function resetFilters() { Object.assign(S.f, { albums: false, album: 'all', kind: 'all', recent: false, category: '', q: '', from: '', to: '' }); $('#q').value = ''; S.limit = 480; paintDate(); render(); }
 document.addEventListener('click', e => {
-  const lib = e.target.closest('[data-lib]'), al = e.target.closest('[data-album]'), cat = e.target.closest('[data-cat]');
-  if (lib) { const k = lib.dataset.lib; Object.assign(S.f, { album: 'all', kind: 'all', recent: false, category: '' }); if (k === 'recent') S.f.recent = true; else if (k !== 'all') S.f.kind = k; S.limit = 480; render(); }
-  else if (al) { S.f.album = al.dataset.album; S.f.recent = false; S.limit = 480; render(); }
-  else if (cat) { S.f.category = S.f.category === cat.dataset.cat ? '' : cat.dataset.cat; S.limit = 480; render(); }
+  const lib = e.target.closest('[data-lib]'), al = e.target.closest('[data-album]'), cat = e.target.closest('[data-cat]'), home = e.target.closest('[data-albums]');
+  if (home) { Object.assign(S.f, { albums: true, album: 'all', kind: 'all', recent: false, category: '' }); S.limit = 480; $('#scroll').scrollTop = 0; render(); }
+  else if (lib) { const k = lib.dataset.lib; Object.assign(S.f, { albums: false, album: 'all', kind: 'all', recent: false, category: '' }); if (k === 'recent') S.f.recent = true; else if (k !== 'all') S.f.kind = k; S.limit = 480; render(); }
+  else if (al) { S.f.albums = false; S.f.album = al.dataset.album; S.f.recent = false; $('#scroll').scrollTop = 0; S.limit = 480; render(); }
+  else if (cat) { S.f.albums = false; S.f.category = S.f.category === cat.dataset.cat ? '' : cat.dataset.cat; S.limit = 480; render(); }
 });
 $('#q').addEventListener('input', debounce(e => { S.f.q = e.target.value.trim(); S.limit = 480; render(); }, 180));
 $('#sortBtn').addEventListener('click', () => { S.f.sort = S.f.sort === 'desc' ? 'asc' : 'desc'; render(); });
