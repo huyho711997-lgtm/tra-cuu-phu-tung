@@ -15288,7 +15288,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     var n = who(s, side, swap), k = side === 'X', desc = sub(s, swap, k ? s.x : s.y);
     var cap = n.party ? 'Bên còn lại' : n.mine ? 'Xe của bạn' : 'Xe còn lại';
     var body = n.party ? '<b class="as-party">' + esc(n.text) + '</b>' : '<span class="as-plate" data-empty="' + (n.plate ? 'false' : 'true') + '">' + esc(n.plate || 'Chưa nhập biển số') + '</span>';
-    return '<div class="as-car" data-mine="' + n.mine + '"><div class="as-car-cap"><i class="as-sw ' + (k ? 'k' : 'w') + '"></i><span>' + cap + '</span><em>' + (k ? 'đen' : 'trắng') + '</em></div>' + body + '<p>' + esc(desc) + '</p></div>';
+    return '<div class="as-car" data-mine="' + n.mine + '"><div class="as-car-cap"><i class="as-sw ' + (k ? 'k' : 'w') + '"></i><span>' + cap + '</span>' + (n.party ? '' : '<em>' + (k ? 'đen' : 'trắng') + '</em>') + '</div>' + body + '<p>' + esc(desc) + '</p></div>';
   }
   function sheetHtml() {
     var s = cur.s, c = caseOf(), swap = cur.swap, mS = swap ? 'Y' : 'X', oS = swap ? 'X' : 'Y', multi = s.cases.length > 1, h = '';
@@ -15443,7 +15443,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
           var sx = x + 12, sy = y + 14;
           g.lineWidth = 1.5; g.strokeStyle = INK; if (side === 'X') { g.fillStyle = INK; rr(g, sx, sy, 10, 10, 2.5); g.fill(); } else { g.fillStyle = '#fff'; rr(g, sx, sy, 10, 10, 2.5); g.fill(); g.stroke(); }
           g.fillStyle = MUTED; font(800, 9.5); g.fillText((n.party ? 'BÊN CÒN LẠI' : mine ? 'XE CỦA BẠN' : 'XE CÒN LẠI'), sx + 16, sy + 9);
-          g.textAlign = 'right'; font(700, 9.5); g.fillText(side === 'X' ? 'đen' : 'trắng', x + cw - 12, sy + 9); g.textAlign = 'left';
+          if (!n.party) { g.textAlign = 'right'; font(700, 9.5); g.fillText(side === 'X' ? 'đen' : 'trắng', x + cw - 12, sy + 9); g.textAlign = 'left'; }
           var by = y + 14 + 14 + 10;
           if (n.party) { fitFont(g, n.text, 800, 16, 11, cw - 24); g.fillStyle = INK; g.textAlign = 'center'; g.fillText(n.text, x + cw / 2, by + 24); g.textAlign = 'left'; }
           else {
