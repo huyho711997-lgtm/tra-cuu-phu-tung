@@ -265,7 +265,6 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch,
         const date = String(body.date || '');
         if (!isoDate(date)) throw new HttpError(400, 'INVALID_INPUT', 'Ngày không hợp lệ.');
         const scene = cleanName(body.scene), detail = cleanName(body.detail);
-        if (scene && detail && fold(scene) === fold(detail)) throw new HttpError(400, 'INVALID_INPUT', 'Một người không thể trực cả Hiện trường và Giám định chi tiết cùng ngày.');
         await pull(cfg);
         const { row, cols } = await verifyRow(cfg, date);
         const cells = [];
@@ -294,16 +293,12 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch,
         const me = await myName(people);
         if (!isAdmin && (!me || fold(me) !== fold(fromName))) throw new HttpError(403, 'NOT_YOUR_SHIFT', 'Bạn chỉ xin đổi được ca của chính mình.');
         if (fold(target) === fold(fromName)) throw new HttpError(400, 'INVALID_INPUT', 'Hãy chọn người khác.');
-        const other = role === 'scene' ? 'detail' : 'scene';
-        if (fold(row[other]) === fold(target)) throw new HttpError(400, 'INVALID_INPUT', target + ' đã trực ' + ROLES[other] + ' ngày này.');
         let backRole = null;
         if (backDate) {
           if (backDate === date) throw new HttpError(400, 'INVALID_INPUT', 'Ngày trả ca phải khác ngày đổi.');
           const back = await shiftRow(backDate);
           backRole = back && fold(back.scene) === fold(target) ? 'scene' : back && fold(back.detail) === fold(target) ? 'detail' : null;
           if (!backRole) throw new HttpError(400, 'INVALID_INPUT', target + ' không có ca trực ngày trả ca đã chọn.');
-          const backOther = backRole === 'scene' ? 'detail' : 'scene';
-          if (fold(back[backOther]) === fold(fromName)) throw new HttpError(400, 'INVALID_INPUT', fromName + ' đã trực ngày trả ca đó.');
         }
         const dup = dbCheck(await db.from('tasco_duty_swaps').select('id').eq('duty_date', date).eq('role', role).eq('status', 'pending').limit(1), 'đọc');
         if (dup.length) throw new HttpError(409, 'DUPLICATE', 'Ca này đã có yêu cầu đổi đang chờ duyệt.');
