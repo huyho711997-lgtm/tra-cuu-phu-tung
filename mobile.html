@@ -14894,7 +14894,7 @@ window.TascoCameraRescue = (function () {
       chip('dur', isFinite(dur) ? fmt(dur) : '');
       chip('res', vw && vh ? (Math.min(vw, vh) >= 2000 ? '4K' : Math.min(vw, vh) + 'p') : '');
       chip('size', size ? (size / 1048576).toFixed(1).replace('.', ',') + ' MB' : '');
-      var note = 'App phát lại video để in dấu (mất khoảng ' + fmt(Math.min(isFinite(dur) ? dur : MAX_SECONDS, MAX_SECONDS)) + '). Giữ màn hình sáng, không thoát app trong lúc xử lý.';
+      var note = fastSupported() ? 'Xử lý bằng bộ mã hoá phần cứng của máy, thường nhanh hơn thời lượng video nhiều lần. Giữ màn hình sáng, không thoát app.' : 'App phát lại video để in dấu (mất khoảng ' + fmt(Math.min(isFinite(dur) ? dur : MAX_SECONDS, MAX_SECONDS)) + '). Giữ màn hình sáng, không thoát app trong lúc xử lý.';
       if (dur > MAX_SECONDS + 0.5) note = 'Video dài hơn 3 phút, chỉ giữ 3 phút đầu. ' + note;
       setNote(note);
       try {
@@ -15017,6 +15017,93 @@ window.TascoCameraRescue = (function () {
     }
   }
 
+  /* ---------- Đường nhanh: WebCodecs (thư viện Mediabunny, MPL-2.0, nằm sẵn trong vendor/) ----------
+     Giải mã -> vẽ dấu lên từng khung -> mã hoá lại bằng phần cứng của máy, âm thanh AAC chép nguyên.
+     Không phát video nên KHÔNG phụ thuộc thời gian thực (nhanh hơn nhiều lần), không cần thao tác chạm,
+     không treo khi iOS chặn phát/âm thanh. Bộ mã hoá giữ bitrate sát yêu cầu nên thường chỉ cần 1 lượt.
+     Lỗi bất kỳ (máy/iOS cũ, định dạng lạ, mất tiếng) -> tự quay về cách phát lại cũ. */
+  var MB_URL = 'vendor/mediabunny-1.66.0.min.js', FAST_OFF = 'tasco_video_fast_off', mbLoading = null;
+  function fastSupported() {
+    try { if (localStorage.getItem(FAST_OFF) === '1') return false; } catch (_) {}
+    return typeof VideoEncoder === 'function' && typeof VideoDecoder === 'function' && typeof VideoFrame === 'function';
+  }
+  function loadMB() {
+    if (!mbLoading) mbLoading = import(new URL(MB_URL, document.baseURI).href).catch(function (e) { mbLoading = null; throw e; });
+    return mbLoading;
+  }
+  function fastBitrate(seconds, audioBps, target) {
+    return Math.round(Math.max(0.8e6, Math.min(16e6, (target * 8 * 0.94 / Math.max(seconds, 1)) - audioBps)));
+  }
+  async function burnFast(source, lines, appearance, onProgress, signal, opts) {
+    opts = opts || {};
+    var MB = await loadMB();
+    var isUrl = typeof source === 'string';
+    var input = new MB.Input({ source: isUrl ? new MB.UrlSource(source) : new MB.BlobSource(source), formats: MB.ALL_FORMATS });
+    var conv = null, stall = 0;
+    try {
+      var vt = await input.getPrimaryVideoTrack();
+      if (!vt) throw new Error('fast: no video');
+      var at = await input.getPrimaryAudioTrack().catch(function () { return null; });
+      var total = await input.computeDuration();
+      if (!(total > 0)) throw new Error('fast: no duration');
+      var maxS = opts.maxSeconds || MAX_SECONDS, end = Math.min(total, maxS);
+      var dw = vt.displayWidth, dh = vt.displayHeight;
+      var scale = Math.min(1, (opts.longSide || LONG_SIDE) / Math.max(dw, dh));
+      var w = Math.max(2, Math.round(dw * scale / 2) * 2), h = Math.max(2, Math.round(dh * scale / 2) * 2);
+      var audioBps = 0;
+      if (at) { try { var st = await at.computePacketStats(200); audioBps = st && st.averageBitrate > 0 ? st.averageBitrate : 192000; } catch (_) { audioBps = 192000; } }
+      var bps = typeof opts.bitrate === 'function' ? opts.bitrate(end, audioBps) : (opts.bitrate || fastBitrate(end, audioBps, MAX_BYTES));
+      var videoOpts = { codec: 'avc', bitrate: bps, forceTranscode: true, allowTransformationMetadata: false, keyFrameInterval: 2, processedWidth: w, processedHeight: h };
+      if (!opts.noStamp) {
+        var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext('2d', { alpha: false }); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+        var stampLayer = document.createElement('canvas'); stampLayer.width = w; stampLayer.height = h;
+        drawCameraStamp(stampLayer.getContext('2d'), lines, w, h, appearance);   // chữ in dấu dựng một lần, dán lên mỗi khung
+        videoOpts.process = function (sample) { sample.draw(ctx, 0, 0, w, h); ctx.drawImage(stampLayer, 0, 0); return canvas; };
+      } else { videoOpts.width = w; videoOpts.height = h; videoOpts.fit = 'contain'; }
+      var output = new MB.Output({ format: new MB.Mp4OutputFormat({ fastStart: 'in-memory' }), target: new MB.BufferTarget() });
+      conv = await MB.Conversion.init({ input: input, output: output, video: videoOpts, audio: at ? {} : undefined, trim: end < total - 0.05 ? { start: 0, end: end } : undefined, showWarnings: false });
+      if (!conv.isValid) throw new Error('fast: invalid ' + JSON.stringify((conv.discardedTracks || []).map(function (d) { return d.reason; })));
+      if (at && !conv.utilizedTracks.some(function (t) { return t.type === 'audio'; })) throw new Error('fast: audio dropped');   // không chấp nhận video mất tiếng
+      var lastP = -1, lastMove = performance.now();
+      conv.onProgress = function (p) { if (p !== lastP) { lastP = p; lastMove = performance.now(); } onProgress(Math.max(0, Math.min(100, p * 100))); };
+      var onAbort = function () { try { conv.cancel(); } catch (_) {} };
+      signal.addEventListener('abort', onAbort);
+      var stalled = false;
+      /* Đứng yên > 45 giây (app bị tạm dừng, bộ mã hoá kẹt) -> dừng, báo lỗi thay vì chờ mãi. */
+      stall = setInterval(function () { if (performance.now() - lastMove > 45000) { stalled = true; onAbort(); } }, 3000);
+      try { await conv.execute(); }
+      catch (e) { if (signal.aborted) throw new DOMException('Đã hủy', 'AbortError'); if (stalled) throw Object.assign(new Error('Xử lý video bị đứng. Giữ màn hình sáng, không thoát app rồi bấm Thử lại.'), { stalled: true }); throw e; }
+      finally { clearInterval(stall); signal.removeEventListener('abort', onAbort); }
+      if (signal.aborted) throw new DOMException('Đã hủy', 'AbortError');
+      var buf = output.target.buffer;
+      if (!buf || !buf.byteLength) throw new Error('fast: empty output');
+      return { blob: new Blob([buf], { type: 'video/mp4' }), ext: 'mp4', duration: end, bitrate: bps, audioBps: audioBps, fast: true, trimmed: !opts.maxSeconds && total > MAX_SECONDS + 0.5 };
+    } finally {
+      clearInterval(stall);
+      try { input.dispose && input.dispose(); } catch (_) {}
+    }
+  }
+  /* Đường nhanh + tự nén lại (không cần chạm). Trả null nếu không dùng được để quay về cách cũ. */
+  async function encodeFast(source, lines, appearance, onProgress, signal, opts, onPass) {
+    if (!fastSupported()) return null;
+    var out;
+    try { out = await burnFast(source, lines, appearance, onProgress, signal, opts); }
+    catch (e) {
+      if (e && (e.name === 'AbortError' || e.stalled)) throw e;
+      console.warn('Đường xử lý nhanh không dùng được, quay về cách phát lại:', e);
+      return null;
+    }
+    for (var pass = 2; pass <= 3 && out.blob.size > TARGET_BYTES * 1.08; pass++) {
+      var bps = Math.max(0.6e6, out.bitrate * (TARGET_BYTES / out.blob.size) * 0.92);
+      if (onPass) await onPass(pass, out, true);
+      var o2 = Object.assign({}, opts, { bitrate: bps });
+      if (bps < 2.2e6) o2.longSide = bps < 1.2e6 ? 960 : 1280;
+      out = await burnFast(source, lines, appearance, onProgress, signal, o2);
+    }
+    return out;
+  }
+
   /* Hộp xác nhận một chạm. Trả true khi bấm tiếp tục, false khi chọn để sau. */
   function tapGate(text, label) {
     return new Promise(function (ok) {
@@ -15033,10 +15120,13 @@ window.TascoCameraRescue = (function () {
   }
   /* Ghi video; nếu vẫn nặng hơn giới hạn thì tự nén lại (tối đa 3 lần) với bitrate giảm theo kích thước thực tế. */
   async function encodeToFit(source, lines, appearance, onProgress, signal, opts, onPass) {
+    var fast = await encodeFast(source, lines, appearance, onProgress, signal, opts, onPass);
+    if (fast) return fast;
+    onProgress(0);
     var out = await burn(source, lines, appearance, onProgress, signal, opts); learn(out);
     for (var pass = 2; pass <= 3 && out.blob.size > TARGET_BYTES * 1.08; pass++) {
       var bps = Math.max(0.6e6, out.bitrate * (TARGET_BYTES / out.blob.size) * 0.9);
-      if (onPass) await onPass(pass, out);   // hỏi người dùng chạm xác nhận: iOS chỉ cho phát video/âm thanh sau thao tác chạm
+      if (onPass) await onPass(pass, out, false);   // hỏi người dùng chạm xác nhận: iOS chỉ cho phát video/âm thanh sau thao tác chạm
       var o2 = Object.assign({}, opts, { bitrate: bps });
       if (bps < 2.2e6) o2.longSide = bps < 1.2e6 ? 960 : 1280;
       out = await burn(source, lines, appearance, onProgress, signal, o2); learn(out);
@@ -15048,11 +15138,12 @@ window.TascoCameraRescue = (function () {
     var startBtn = q('[data-video-action="start"]'); startBtn.disabled = true; startBtn.textContent = 'Đang xử lý…';
     var abort = new AbortController(); s.cancel = function () { abort.abort(); };
     workStart = Date.now(); setState('working'); setNote('Giữ màn hình sáng, không thoát app trong lúc xử lý.'); setStep('Đang in dấu lên video…'); setProgress(0);
+    var wake = null; try { wake = await navigator.wakeLock.request('screen'); } catch (_) {}
     try {
       var location = await s.metadata.locationPromise;
       var appearance = s.metadata.appearance;
       var lines = cameraWatermarkLines(location, s.metadata.capturedAt, 'camera', appearance);
-      var out = await encodeToFit(s.src || s.file, lines, appearance, setProgress, abort.signal, {}, async function (pass, prev) { await askMore(pass, prev); setStep('Đang nén lại (lần ' + pass + ')…'); setProgress(0); });
+      var out = await encodeToFit(s.src || s.file, lines, appearance, setProgress, abort.signal, {}, async function (pass, prev, fast) { if (!fast) await askMore(pass, prev); workStart = Date.now(); setStep('Đang nén lại (lần ' + pass + ')…'); setProgress(0); });
       if (out.blob.size >= CLOUD_MAX) throw new Error('Video vẫn nặng hơn 100 MB sau khi nén. Hãy quay ngắn hơn.');
       if (s.cleanup) { try { s.cleanup(); } catch (_) {} s.cleanup = null; }
       if (session !== s) return;
@@ -15069,7 +15160,7 @@ window.TascoCameraRescue = (function () {
       if (error && error.name === 'AbortError') { closePanel(); feedback('Đã hủy video.'); return; }
       setState('ready'); q('.cvp-progress').hidden = true; startBtn.disabled = false; startBtn.textContent = 'Thử lại';
       setNote((error && error.message) || 'Chưa xử lý được video. Thử lại.', true);
-    }
+    } finally { try { wake && wake.release && wake.release(); } catch (_) {} }
   }
 
   panel.addEventListener('click', function (event) {
@@ -15084,6 +15175,7 @@ window.TascoCameraRescue = (function () {
     if (!file) { closePanel(); return; }
     session.file = file;
     mountPanel(); resetPanel(); panel.hidden = false;
+    if (fastSupported()) loadMB().catch(function () {});
     describe(session, file, false, file.size);
   });
   input.addEventListener('cancel', function () { if (session && !session.file) closePanel(); });
@@ -15111,6 +15203,7 @@ window.TascoCameraRescue = (function () {
     session = { metadata: opts.metadata, title: mobileCameraTitle, album: mobileCameraAlbum, owner: mobileCameraOwner, file: null, src: opts.src, cleanup: opts.cleanup || null, cancel: null };
     cameraUiState.captureBusy = true;
     mountPanel(); resetPanel(); panel.hidden = false;
+    if (fastSupported()) loadMB().catch(function () {});   // tải sẵn bộ xử lý nhanh trong lúc xem bảng
     describe(session, opts.src, true, 0);
   }
   /* Nén video đã nằm trong hàng chờ (đã in dấu từ trước) xuống dưới giới hạn Cloudinary. Trả File mới, hoặc null nếu người dùng để sau.
@@ -15122,7 +15215,7 @@ window.TascoCameraRescue = (function () {
       var mb = Math.round(blob.size / 1048576), name = String(opts.name || 'video.mp4').replace(/\.[^.]+$/, '');
       ov.innerHTML = '<section class="cvp" role="dialog" aria-modal="true" aria-labelledby="cvsTitle"><i class="cvp-grab" aria-hidden="true"></i>' +
         '<header class="cvp-head"><span class="cvp-badge">' + ICON_FILM + '</span><div><h3 id="cvsTitle">Video nặng ' + mb + ' MB</h3><p>Cloud miễn phí chỉ nhận video dưới 100 MB</p></div></header>' +
-        '<p class="cvp-note" data-cvs-note>Bấm “Nén &amp; tải lên” để giảm dung lượng (mất thời gian bằng thời lượng video). Giữ màn hình sáng và không thoát app. Nên lưu bản gốc vào Ảnh trước.</p>' +
+        '<p class="cvp-note" data-cvs-note>Bấm “Nén &amp; tải lên” để giảm dung lượng. Giữ màn hình sáng và không thoát app. Nên lưu bản gốc vào Ảnh trước.</p>' +
         '<div class="cvp-progress" hidden><div class="cvp-bar"><i></i></div><div class="cvp-prog-row"><span data-cvs-step>Đang nén video…</span><b data-cvs-pct>0%</b></div></div>' +
         '<footer class="camera-video-actions" style="flex-wrap:wrap"><button type="button" data-cvs="save" style="flex:1 1 100%">Lưu bản gốc vào Ảnh</button><button type="button" data-cvs="later">Để sau</button><button type="button" data-cvs="start" class="is-primary">Nén &amp; tải lên</button></footer></section>';
       document.body.append(ov);
@@ -15140,7 +15233,11 @@ window.TascoCameraRescue = (function () {
         note.classList.remove('is-error'); note.textContent = 'Giữ màn hình sáng, không thoát app trong lúc nén.'; setP(0);
         try { wake = await navigator.wakeLock.request('screen'); } catch (_) {}
         try {
-          var out = await encodeToFit(blob, [], null, setP, abort.signal, { noStamp: true, maxSeconds: 3600, bitrate: function (d) { return Math.round(Math.max(0.8e6, Math.min(12e6, (TARGET_BYTES * 8 * 0.9 / Math.max(d, 1) - AUDIO_BPS) / Math.max(overshoot(), 1.7)))); } }, async function (pass, prev) { await askMore(pass, prev); ov.querySelector('[data-cvs-step]').textContent = 'Đang nén lại (lần ' + pass + ')…'; setP(0); });
+          var fastOpts = { noStamp: true, maxSeconds: 3600, bitrate: function (d, aBps) { return fastBitrate(d, aBps, TARGET_BYTES); } };
+          var slowRate = function (d) { return Math.round(Math.max(0.8e6, Math.min(12e6, (TARGET_BYTES * 8 * 0.9 / Math.max(d, 1) - AUDIO_BPS) / Math.max(overshoot(), 1.7)))); };
+          var onPass = async function (pass, prev, fast) { if (!fast) await askMore(pass, prev); ov.querySelector('[data-cvs-step]').textContent = 'Đang nén lại (lần ' + pass + ')…'; setP(0); };
+          var out = await encodeFast(blob, [], null, setP, abort.signal, fastOpts, onPass);
+          if (!out) { setP(0); out = await encodeToFit(blob, [], null, setP, abort.signal, { noStamp: true, maxSeconds: 3600, bitrate: slowRate }, onPass); }
           if (out.blob.size >= CLOUD_MAX) throw new Error('Video vẫn nặng hơn 100 MB sau khi nén (' + Math.round(out.blob.size / 1048576) + ' MB). Hãy quay ngắn hơn.');
           close(new File([out.blob], name + '.' + out.ext, { type: out.blob.type, lastModified: Date.now() }));
         } catch (error) {
@@ -15153,7 +15250,8 @@ window.TascoCameraRescue = (function () {
       });
     });
   }
-  window.TascoVideoCapture = { supported: supported, busy: function () { return !!session; }, processRecorded: processRecorded, maxSeconds: MAX_SECONDS, shrink: shrink, cloudMax: CLOUD_MAX };
+  window.TascoVideoCapture = { supported: supported, busy: function () { return !!session; }, processRecorded: processRecorded, maxSeconds: MAX_SECONDS, shrink: shrink, cloudMax: CLOUD_MAX,
+    fastSupported: fastSupported, encode: encodeToFit, preload: function () { if (fastSupported()) loadMB().catch(function () {}); } };
 })();
 </script>
 <style id="tascoVideoCaptureStyles">
