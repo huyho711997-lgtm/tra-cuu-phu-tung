@@ -4654,18 +4654,23 @@ window.TascoForms=(()=>{
      navigator.share của WKWebView đưa file qua WebKit nên MySign nhận xong tự đóng; plugin native thì đưa file:// thật.
      Trả về true nếu đã xử lý (kể cả người dùng bấm huỷ), false nếu app chưa có plugin → dùng cách web. */
   window.TascoNativeShare=nativeShareFile;
-  async function nativeShareFile(file){
+  async function nativeShareFile(file,opts){
     const cap=window.Capacitor;
     if(!(cap&&typeof cap.isNativePlatform==='function'&&cap.isNativePlatform()))return false;
     const FS=cap.Plugins&&cap.Plugins.Filesystem,SH=cap.Plugins&&cap.Plugins.Share;
     if(!FS||!SH)return false;
-    const bytes=new Uint8Array(await file.arrayBuffer());
-    if(!bytes.length)throw new Error('Tệp rỗng');
-    let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));
-    const safe=String(file.name||'bieu-mau.pdf').replace(/[\\/:*?"<>|\u0000-\u001f]+/g,'_');
-    const saved=await FS.writeFile({path:'mysign/'+safe,data:btoa(bin),directory:'CACHE',recursive:true});
+    if(!file.size)throw new Error('Tệp rỗng');
+    const dir=(opts&&opts.dir)||'mysign',safe=String(file.name||'bieu-mau.pdf').replace(/[\\/:*?"<>|\u0000-\u001f]+/g,'_');
+    /* Ghi theo từng đoạn 3 MB (bội số của 3 byte để base64 không bị đệm giữa chừng): video hàng chục MB không bị nạp cả vào bộ nhớ. */
+    const CH=3*1024*1024;let saved=null;
+    for(let off=0;off<file.size;off+=CH){
+      const bytes=new Uint8Array(await file.slice(off,Math.min(off+CH,file.size)).arrayBuffer());
+      let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));
+      if(off===0)saved=await FS.writeFile({path:dir+'/'+safe,data:btoa(bin),directory:'CACHE',recursive:true});
+      else await FS.appendFile({path:dir+'/'+safe,data:btoa(bin),directory:'CACHE'});
+    }
     try{
-      await SH.share({files:[saved.uri],dialogTitle:'Ký số Viettel MySign'});
+      await SH.share({files:[saved.uri],dialogTitle:(opts&&opts.title)||'Ký số Viettel MySign'});
     }catch(err){
       if(/cancel/i.test(String(err&&(err.message||err.errorMessage)||err)))return 'cancelled';  // người dùng đóng bảng chia sẻ
       throw err;
@@ -7666,6 +7671,12 @@ window.TascoPhotoExport=(()=>{
     document.body.append(overlay);overlay.querySelector('[data-photo-save="close"]').focus({preventScroll:true});active={close};return 'preview';
   }
   async function save(file,{gesture=true}={}){
+    if(/^video\//.test(file.type)){
+      /* Video: khung xem trước dùng thẻ <img> nên không lưu được. Ưu tiên ghi tệp thật rồi mở bảng chia sẻ iOS (có "Lưu video"). */
+      if(window.TascoNativeShare){try{const done=await window.TascoNativeShare(file,{dir:'tasco-video',title:'Lưu video'});if(done)return done==='cancelled'?'cancelled':'shared';}catch(_){}}
+      if(canShare(file)){try{await navigator.share({files:[file]});return 'shared';}catch(error){if(error.name==='AbortError')return 'cancelled';}}
+      download(file);return 'download';
+    }
     if(!isIOS){download(file);return 'download';}
     if(gesture&&canShare(file)){
       // share() must run synchronously in the tap, with an actual image File.
