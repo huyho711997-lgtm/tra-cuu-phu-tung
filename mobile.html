@@ -5887,6 +5887,9 @@ button.dr-pick{flex:1;min-width:0;display:flex;align-items:center;gap:8px;height
 html[data-tasco-page=wkreport]{background:var(--app-navy)}
 @media(max-width:767px){.tasco-workspace #mainApp[data-shell][data-page=wkreport]{padding-left:0!important;padding-right:0!important;max-width:600px}}
 #wkreportSection .ws-journey-hero{min-height:246px;padding-bottom:54px}
+/* Glow + chấm mờ dần từ dưới vùng an toàn: không còn đường cắt giữa thanh trạng thái (màu đặc) và hero */
+:is(#wkreportSection,#directorySection,#dutySection,#garageSection) .ws-journey-hero::before{-webkit-mask-image:linear-gradient(180deg,transparent env(safe-area-inset-top,0px),#000 calc(env(safe-area-inset-top,0px) + 90px));mask-image:linear-gradient(180deg,transparent env(safe-area-inset-top,0px),#000 calc(env(safe-area-inset-top,0px) + 90px))}
+:is(#wkreportSection,#directorySection,#dutySection,#garageSection) .ws-journey-hero::after{-webkit-mask-image:linear-gradient(90deg,transparent,#000),linear-gradient(180deg,transparent env(safe-area-inset-top,0px),#000 calc(env(safe-area-inset-top,0px) + 60px));-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000),linear-gradient(180deg,transparent env(safe-area-inset-top,0px),#000 calc(env(safe-area-inset-top,0px) + 60px));mask-composite:intersect}
 #wkreportSection .ws-journey-heading{max-width:82%}
 #wkreportSection .ws-journey-heading h2{font-size:32px;font-weight:700;line-height:1.16;letter-spacing:-1.1px;white-space:nowrap}
 #wkreportSection .ws-journey-heading p{max-width:260px;font-size:12px;line-height:1.65}
