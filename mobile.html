@@ -5782,6 +5782,11 @@ window.TascoDuty=(()=>{
 })();
 </script>
 <style id="tascoDirectoryStyle">
+/* Full-bleed như Lịch trực / Giám định: bỏ padding của #mainApp, ẩn header+childbar mặc định, nền safe-area navy */
+.tasco-workspace #mainApp[data-shell][data-page=directory]{max-width:760px;padding:0 0 calc(118px + env(safe-area-inset-bottom,0px))!important}
+.tasco-workspace #mainApp[data-page=directory]>#mainHeader,.tasco-workspace #mainApp[data-page=directory]>#wsChildbar{display:none!important}
+html[data-tasco-page=directory]{background:var(--app-navy)}
+@media(max-width:767px){.tasco-workspace #mainApp[data-shell][data-page=directory]{padding-left:0!important;padding-right:0!important;max-width:600px}}
 #directorySection .ws-journey-hero{min-height:246px;padding-bottom:54px}
 #directorySection .ws-journey-heading{max-width:82%}
 #directorySection .ws-journey-heading h2{font-size:32px;font-weight:700;line-height:1.16;letter-spacing:-1.1px;white-space:nowrap}
