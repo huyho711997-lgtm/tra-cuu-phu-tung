@@ -3634,7 +3634,7 @@ window.TascoBootSplash = (() => {
         <button type="button" class="as-veh" role="tab" data-veh="other" aria-selected="false"><span class="as-veh-cap"><i class="as-av b">2</i>Xe còn lại</span><span class="as-plate-sm" id="asPlateOther"></span><small id="asActOther"></small></button>
       </div>
       <div class="as-edit" role="tabpanel">
-        <label class="as-plate-field" for="asPlate"><span class="as-field-cap" id="asPlateCap">Biển số xe của bạn</span><span class="as-plate-frame"><input id="asPlate" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="13" placeholder="47A-123.45" aria-describedby="asPlateHint"><button type="button" class="ws-search-mic as-mic" id="asMic" aria-label="Nói để nhập biển số" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></span></label>
+        <label class="as-plate-field" for="asPlate"><span class="as-field-cap" id="asPlateCap">Biển số xe của bạn</span><span class="as-plate-frame"><button type="button" class="as-clear" id="asClear" aria-label="Xoá biển số" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button><input id="asPlate" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="13" placeholder="47A-123.45" aria-describedby="asPlateHint"><button type="button" class="ws-search-mic as-mic" id="asMic" aria-label="Nói để nhập biển số" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></span></label>
         <p class="as-hint" id="asPlateHint">Không bắt buộc. Biển số thay cho “xe X, xe Y” trong kết luận.</p>
         <p class="ws-search-voice as-voice" id="asVoiceNote" role="status" aria-live="polite" hidden></p>
         <span class="as-field-cap" id="asActCap">Hành vi của xe này</span>
@@ -15173,8 +15173,13 @@ html.dark .as-veh[aria-selected=true]{border-color:var(--ws-accent-text)}
 html.dark .as-plate-frame{border-color:#84bfc7}
 .as-plate-frame:focus-within{box-shadow:0 0 0 3px rgba(99,173,182,.35),0 6px 16px -10px rgba(24,48,86,.5)}
 #assessSection .as-plate-frame input{display:block;width:100%;min-width:0;height:52px;padding:0 10px;border:1px solid rgba(24,48,86,.18)!important;border-radius:9px;background:#fff!important;color:#0b1b30!important;font-weight:800;letter-spacing:.1em;text-align:center;text-transform:uppercase;outline:none;box-shadow:none!important;appearance:none;-webkit-appearance:none;font-variant-numeric:tabular-nums}
-#assessSection .as-plate-frame input{padding:0 50px 0 14px!important;font-size:clamp(18px,5.6vw,24px)!important;letter-spacing:.07em}
+#assessSection .as-plate-frame input{padding:0 50px!important;font-size:clamp(16px,5.2vw,24px)!important;letter-spacing:.05em}
 #assessSection .as-plate-frame .as-mic{position:absolute;right:10px;top:50%;width:40px;height:40px;margin-top:-20px;z-index:1}
+#assessSection .as-plate-frame .as-clear{position:absolute;left:12px;top:50%;width:34px;height:34px;margin-top:-17px;z-index:1;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:rgba(24,48,86,.09);color:#40536b;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease,background .15s ease}
+#assessSection .as-plate-frame .as-clear[hidden]{display:none}
+#assessSection .as-plate-frame .as-clear:active{transform:scale(.9);background:rgba(24,48,86,.18)}
+#assessSection .as-plate-frame .as-clear svg{width:16px;height:16px}
+html.dark #assessSection .as-plate-frame .as-clear{background:rgba(24,48,86,.12);color:#40536b}
 #assessSection .as-plate-frame .as-mic.is-live{transform:scale(calc(1 + var(--lvl,0) * .22))}
 .as-voice{margin:-6px 1px 12px!important;line-height:1.5}
 #assessSection .as-plate-frame input::placeholder{color:#a7b3c2;font-weight:700;letter-spacing:.1em;opacity:1}
@@ -15687,6 +15692,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     var mine = state.veh === 'mine', inp = $('asPlate');
     $('asPlateCap').textContent = mine ? 'Biển số xe của bạn' : 'Biển số xe còn lại';
     if (document.activeElement !== inp || inp.value !== state.plate[state.veh]) inp.value = state.plate[state.veh];
+    var clr_ = $('asClear'); if (clr_) clr_.hidden = !inp.value;
     var cur_ = state.act[state.veh];
     $('asActBtn').dataset.set = cur_ ? 'true' : 'false'; $('asActTxt').textContent = cur_ ? ACT[cur_] : 'Chọn hành vi';
     $('asActIc').innerHTML = cur_ ? actIcon(cur_) : actIcon('');
@@ -16046,6 +16052,17 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
       $('asReset').hidden = false; renderList();
     });
     plate.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); plate.blur(); } });
+    /* Nút xoá nhanh: giữ bàn phím đang mở (không làm ô mất focus) để gõ/đọc lại ngay */
+    var clr = $('asClear');
+    function syncClear() { clr.hidden = !plate.value; }
+    clr.addEventListener('pointerdown', function (e) { e.preventDefault(); });
+    clr.addEventListener('click', function () {
+      if (!plate.value) return;
+      plate.value = ''; plate.dispatchEvent(new Event('input', { bubbles: true }));
+      try { plate.focus({ preventScroll: true }); } catch (_) {}
+    });
+    plate.addEventListener('input', syncClear);
+    clr.syncClear = syncClear; syncClear();
     document.querySelector('.as-vehs').addEventListener('click', function (e) { var b = e.target.closest('.as-veh'); if (!b) return; state.veh = b.dataset.veh; renderCase(); });
     $('asActBtn').addEventListener('click', pickAct);
     $('asFilterBtn').addEventListener('click', pickGroup);
