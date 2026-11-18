@@ -6175,21 +6175,35 @@ button.wk-step-c{cursor:pointer}
 .pg-gn b{display:-webkit-box;min-width:0;overflow:hidden;font-size:13.5px;font-weight:700;line-height:1.25;overflow-wrap:anywhere;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .pg-av{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:hsl(var(--h,200) 42% 42%);color:#fff;font-size:11px;font-style:normal;font-weight:800}
 .pg-av.is-0{background:var(--ws-line);color:var(--ws-muted)}
-.pg-chips{display:flex;gap:7px;margin:10px -18px 0;padding:0 18px 2px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.pg-picks-row,#pgPicks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.pg-pick{display:flex;align-items:center;gap:6px;min-width:0;height:54px;padding:0 10px 0 15px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-bg);color:var(--ws-text);font-family:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 1px 2px rgba(24,48,86,.04);transition:transform .12s,border-color .2s,background .2s}
+.pg-pick:active{transform:scale(.98)}
+.pg-pick>svg:last-child{flex:none;width:16px;height:16px;margin-left:auto;color:var(--ws-muted)}
+.pg-pk{display:grid;gap:3px;min-width:0;flex:1}
+.pg-pk small{color:var(--ws-muted);font-size:10.5px;font-weight:700;letter-spacing:.2px;line-height:1}
+.pg-pk b{min-width:0;overflow:hidden;color:var(--ws-text);font-size:13px;font-weight:700;line-height:1.15;text-overflow:ellipsis;white-space:nowrap}
+.pg-pick.is-on{border-color:var(--app-teal);background:color-mix(in srgb,var(--app-teal) 10%,var(--ws-bg))}
+.pg-pick.is-on>svg,.pg-pick.is-on .pg-pk small{color:var(--app-teal)}
+.pg-chips{display:flex;gap:8px;margin:12px -18px 0;padding:2px 18px 4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-padding:0 18px}
+.pg-chips.has-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 34px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 34px),transparent)}
+.pg-chips.has-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 26px);mask-image:linear-gradient(90deg,transparent,#000 26px)}
+.pg-chips.has-l.has-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 26px,#000 calc(100% - 34px),transparent);mask-image:linear-gradient(90deg,transparent,#000 26px,#000 calc(100% - 34px),transparent)}
 .pg-chips::-webkit-scrollbar{display:none}
-.pg-ch{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-bg);color:var(--ws-muted);font:700 12.5px 'Plus Jakarta Sans',sans-serif;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s,color .15s}
+.pg-ch{flex:none;display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 8px 0 14px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-bg);color:var(--ws-muted);font:700 12.5px 'Plus Jakarta Sans',sans-serif;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s,color .15s}
 .pg-ch:active{transform:scale(.96)}
-.pg-ch small{min-width:20px;padding:1px 6px;border-radius:99px;background:var(--ws-soft);color:var(--ws-muted);font-size:11px;font-weight:700;text-align:center}
+.pg-ch small{min-width:22px;padding:2px 7px;border-radius:99px;background:color-mix(in srgb,var(--app-navy) 8%,transparent);color:var(--ws-text);font-size:11px;font-weight:800;line-height:1.3;text-align:center;font-variant-numeric:tabular-nums}
 .pg-ch svg{width:13px;height:13px}
 .pg-ch.is-on{border-color:var(--app-navy);background:var(--app-navy);color:#fff}
 .dark .pg-ch.is-on{border-color:var(--app-teal);background:var(--app-teal);color:#0b1b30}
+.dark .pg-ch small{background:rgba(255,255,255,.1)}
 .pg-ch.is-on small{background:rgba(255,255,255,.2);color:inherit}
-.pg-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 2px 0;color:var(--ws-muted);font-size:12px;font-weight:600}
+.pg-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 2px 0;color:var(--ws-muted);font-size:12px;font-weight:600}
 .pg-bar b{color:var(--ws-text);font-variant-numeric:tabular-nums}
 .pg-bar button{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:0 4px;border:0;background:transparent;color:var(--app-teal);font:700 12.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
 .pg-bar button svg{width:14px;height:14px}
 .pg-list{display:grid;gap:10px;margin-top:8px}
-.pg-card{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:12px 13px 12px 17px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-bg);box-shadow:inset 4px 0 0 var(--tc,var(--ws-line));overflow:hidden}
+.pg-card{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:12px 13px 12px 17px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-bg);box-shadow:0 1px 2px rgba(24,48,86,.05),0 6px 18px -10px rgba(24,48,86,.18);overflow:hidden}
+.pg-card::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--tc,var(--ws-line))}
 .pg-card>*:not(.pg-hit){position:relative;pointer-events:none}
 .pg-hit{position:absolute;inset:0;z-index:1;width:100%;height:100%;padding:0;border:0;border-radius:inherit;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .pg-hit:active{background:color-mix(in srgb,var(--app-teal) 8%,transparent)}
@@ -6838,7 +6852,7 @@ window.TascoWeekly=(()=>{
     filter:svg('<path d="M22 3H2l8 9.5V19l4 2v-8.5z"/>'),
     sort:svg('<path d="M3 6h13M3 12h9M3 18h5M17 10v10m0 0-3-3m3 3 3-3"/>'),
     phone:svg('<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>'),
-    close:svg('<path d="M6 6l12 12M18 6 6 18"/>'),check:svg('<path d="m5 12 5 5 9-10"/>'),reset:svg('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>')
+    chev:svg('<path d="m6 9 6 6 6-6"/>'),close:svg('<path d="M6 6l12 12M18 6 6 18"/>'),check:svg('<path d="m5 12 5 5 9-10"/>'),reset:svg('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>')
   };
   let pg={q:'',status:'all',gdv:'all',quick:'all',sort:'age',view:'age',n:PG_PAGE},prog=null,pgm=null,pgp=null,pgTimer=0;const pgDraft={};
   {const s=ls(PGK);if(PG_SORT.some(x=>x[0]===s))pg.sort=s;}
@@ -6917,7 +6931,7 @@ window.TascoWeekly=(()=>{
     return '<div id="pgRoot" class="pg-root"><div id="pgErr"></div><div class="dr-kpis" id="pgSum"></div>'+
       '<div class="dr-seg pg-seg" role="group" aria-label="Phân tích hồ sơ tồn"><button type="button" data-wk="pgview" data-v="age" aria-pressed="true">Tuổi tồn</button><button type="button" data-wk="pgview" data-v="gdv" aria-pressed="false">Theo GĐV</button></div><div id="pgAn" class="pg-an"></div>'+
       '<div class="dr-count">Danh sách hồ sơ tồn</div>'+
-      '<label class="dr-search">'+PGI.search+'<input id="pgSearch" type="search" placeholder="Biển số, số HSBT, SĐT, chủ xe, GĐV…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Tìm hồ sơ tồn" value="'+esc(pg.q)+'"></label>'+
+      '<label class="dr-search">'+PGI.search+'<input id="pgSearch" type="search" placeholder="Biển số, HSBT, SĐT, chủ xe, GĐV…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Tìm hồ sơ tồn" value="'+esc(pg.q)+'"></label>'+
       '<div class="dr-filters" id="pgPicks"></div><div class="pg-chips" id="pgChips" role="group" aria-label="Lọc nhanh"></div><div class="pg-bar" id="pgBar"></div><div class="pg-list" id="pgList"></div><div id="pgMore"></div><p class="dr-stamp" id="pgStamp"></p></div>';
   }
   function paintProg(){
@@ -6942,13 +6956,22 @@ window.TascoWeekly=(()=>{
     paintProgList();
   }
   /* phần danh sách vẽ riêng để gõ tìm kiếm không phải dựng lại cả trang (giữ nguyên bàn phím đang mở) */
+  /* mờ dần ở mép chip còn cuộn được — báo hiệu còn chip phía sau thay vì cắt cụt */
+  function pgChipEdge(){
+    const el=$('pgChips');if(!el)return;
+    const upd=()=>{const max=el.scrollWidth-el.clientWidth,x=el.scrollLeft;el.classList.toggle('has-r',max>4&&x<max-4);el.classList.toggle('has-l',x>4);};
+    if(!el._pgEdge){el._pgEdge=1;el.addEventListener('scroll',upd,{passive:true});}
+    requestAnimationFrame(upd);
+  }
   function paintProgList(){
     const root=$('pgRoot');if(!root||!prog)return;const q=s=>root.querySelector(s),rows=prog.rows,{scoped,list}=pgView(),now=Date.now();
     const sortL=(PG_SORT.find(x=>x[0]===pg.sort)||PG_SORT[0])[1],stL=pg.status==='all'?'Mọi trạng thái':(PG_ST[pg.status]||[pg.status])[0];
-    q('#pgPicks').innerHTML='<button type="button" class="dr-pick'+(pg.status!=='all'?' is-on':'')+'" data-wk="pgpick" data-v="status" aria-haspopup="dialog">'+PGI.filter+'<span>'+esc(stL)+'</span></button><button type="button" class="dr-pick" data-wk="pgpick" data-v="sort" aria-haspopup="dialog">'+PGI.sort+'<span>'+esc(sortL)+'</span></button>';
+    const pick=(k,ico,cap,val,on)=>'<button type="button" class="pg-pick'+(on?' is-on':'')+'" data-wk="pgpick" data-v="'+k+'" aria-haspopup="dialog"><span class="pg-pk"><small>'+cap+'</small><b>'+esc(val)+'</b></span>'+PGI.chev+'</button>';
+    q('#pgPicks').innerHTML=pick('status',0,'Trạng thái',stL,pg.status!=='all')+pick('sort',0,'Sắp xếp',sortL,false);
     const items=PG_QUICK.filter(([k])=>k!=='mine'||rows.some(r=>r.mine)).map(([k,l])=>'<button type="button" class="pg-ch'+(pg.quick===k?' is-on':'')+'" data-wk="pgq" data-v="'+k+'" aria-pressed="'+(pg.quick===k)+'">'+l+'<small>'+scoped.filter(PG_QT[k]).length+'</small></button>').join('');
     const x=(l,k)=>'<button type="button" class="pg-ch is-on" data-wk="pgrm" data-v="'+k+'" aria-label="Bỏ lọc '+esc(l)+'">'+esc(l)+PGI.close+'</button>';
     q('#pgChips').innerHTML=items+(/^b[123]$/.test(pg.quick)?x(PG_AGE.find(a=>a[0]===pg.quick)[1],'quick'):'')+(pg.gdv!=='all'?x(pg.gdv==='Chưa rõ'?'Chưa phân công':pg.gdv,'gdv'):'');
+    pgChipEdge();
     const filtered=pg.q||pg.status!=='all'||pg.gdv!=='all'||pg.quick!=='all';
     q('#pgBar').innerHTML='<span><b>'+list.length.toLocaleString('vi-VN')+'</b> / '+rows.length.toLocaleString('vi-VN')+' hồ sơ</span>'+(filtered?'<button type="button" data-wk="pgreset">'+PGI.reset+'Xoá lọc</button>':'');
     const shown=list.slice(0,pg.n);
