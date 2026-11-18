@@ -9321,6 +9321,12 @@ window.TascoCloud = (() => {
           if((await account()).id!==owner.id)break;
           await verifyUploadTarget(record);
           await fillAddress(record,true);
+          if(!record.upload&&window.tascoIsVideo({blob:record.blob,file_name:record.file_name})&&(record.blob?.size||0)>=(window.TascoVideoCapture?.cloudMax||104857600)&&window.TascoVideoCapture?.shrink){
+            /* Cloudinary miễn phí từ chối video >= 100 MB: nén lại trên máy (người dùng bấm xác nhận), rồi mới tải. */
+            const small=await window.TascoVideoCapture.shrink(record.blob,{name:record.file_name});
+            if(!small){record.error='Video nặng '+Math.round(record.blob.size/1048576)+' MB, vượt giới hạn 100 MB của Cloud. Bấm Thử lại để nén video.';record.upload_error_code='VIDEO_TOO_LARGE';await localStore('put',record);notify(record.error);failed=true;break;}
+            record.blob=small;record.file_name=small.name;record.error='';record.upload_error_code='';await localStore('put',record);
+          }
           if(!record.upload){record.upload=await upload(record);record.error='';record.upload_error_code='';await localStore('put',record);}
           if((await account()).id!==owner.id)break;
           const api=await client(),row={id:record.id,owner_id:record.owner_id,title:record.title,address:record.address,location_status:record.location_status,captured_at:record.captured_at,source:'mobile_camera',cloud_name:record.cloud.cloudName,secure_url:record.upload.secure_url,public_id:record.upload.public_id,bytes:record.upload.bytes,width:record.upload.width,height:record.upload.height};
@@ -14508,7 +14514,12 @@ window.TascoCameraRescue = (function () {
   /* Chất lượng: giữ tới 1080p. Bitrate tự chọn theo thời lượng để file luôn dưới ~95 MB
      (giới hạn 100 MB/video của Cloudinary miễn phí): video ngắn rất nét (tối đa 12 Mbps), video 3 phút ~4 Mbps. */
   var MAX_SECONDS = 180, LONG_SIDE = 1920, AUDIO_BPS = 192000, MAX_BYTES = 95 * 1024 * 1024;
-  function videoBitrate(seconds) { return Math.round(Math.max(3e6, Math.min(16e6, MAX_BYTES * 8 * 0.92 / Math.max(seconds, 1) - AUDIO_BPS))); }
+  var TARGET_BYTES = 88 * 1024 * 1024, CLOUD_MAX = 100 * 1024 * 1024, K_KEY = 'tasco_vid_k';
+  /* MediaRecorder trên iOS thường ghi NẶNG hơn bitrate yêu cầu (đã gặp: ~134 MB thay vì <95 MB nên Cloudinary từ chối).
+     Học hệ số vượt (thực tế / yêu cầu) sau mỗi lần ghi và chia bitrate cho hệ số đó ở lần sau. */
+  function overshoot() { try { var k = parseFloat(localStorage.getItem(K_KEY)); return k >= 1 && k <= 4 ? k : 1; } catch (_) { return 1; } }
+  function learn(out) { try { var k = out.blob.size / ((out.bitrate + AUDIO_BPS) * out.duration / 8); if (isFinite(k) && k > 0) localStorage.setItem(K_KEY, String(Math.max(0.7, Math.min(4, k)))); } catch (_) {} }
+  function videoBitrate(seconds) { return Math.round(Math.max(1.5e6, Math.min(16e6, (MAX_BYTES * 8 * 0.92 / Math.max(seconds, 1) - AUDIO_BPS) / overshoot()))); }
   var input = document.createElement('input');
   input.type = 'file'; input.accept = 'video/*'; input.setAttribute('capture', 'environment'); input.hidden = true;
   document.body.append(input);
@@ -14636,7 +14647,8 @@ window.TascoCameraRescue = (function () {
     return 0;
   }
 
-  async function burn(source, lines, appearance, onProgress, signal) {
+  async function burn(source, lines, appearance, onProgress, signal, opts) {
+    opts = opts || {};
     var isUrl = typeof source === 'string', url = isUrl ? source : URL.createObjectURL(source), video = document.createElement('video');
     if (isUrl) video.crossOrigin = 'anonymous';  // giữ canvas sạch để ghi lại được
     video.playsInline = true; video.setAttribute('playsinline', ''); video.preload = 'auto'; video.src = url;
@@ -14644,16 +14656,16 @@ window.TascoCameraRescue = (function () {
     try {
       await new Promise(function (ok, fail) { video.onloadedmetadata = ok; video.onerror = function () { fail(new Error('Không đọc được video. Thử quay lại.')); }; });
       var vw = video.videoWidth, vh = video.videoHeight; if (!vw || !vh) throw new Error('Video không có hình.');
-      var scale = Math.min(1, LONG_SIDE / Math.max(vw, vh)), w = Math.round(vw * scale / 2) * 2, h = Math.round(vh * scale / 2) * 2;
+      var scale = Math.min(1, (opts.longSide || LONG_SIDE) / Math.max(vw, vh)), w = Math.round(vw * scale / 2) * 2, h = Math.round(vh * scale / 2) * 2;
       var skip = await firstLiveTime(video);   // bỏ đoạn đen đầu video gốc (nếu có)
-      var duration = Math.min((isFinite(video.duration) ? video.duration : MAX_SECONDS) - skip, MAX_SECONDS);
+      var duration = Math.min((isFinite(video.duration) ? video.duration : MAX_SECONDS) - skip, opts.maxSeconds || MAX_SECONDS);
       var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
       var ctx = canvas.getContext('2d', { alpha: false });
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';  // thu nhỏ không vỡ chi tiết
       var stream = canvas.captureStream(60);  // trần 60 fps; video gốc 30 thì ra 30, gốc 60 thì giữ 60 (chỉ vẽ khi có khung mới)
       /* Chữ in dấu không đổi suốt video: dựng một lần ra lớp riêng rồi dán lên mỗi khung (nhẹ hơn nhiều so với vẽ lại chữ + bóng mỗi khung). */
       var stampLayer = document.createElement('canvas'); stampLayer.width = w; stampLayer.height = h;
-      drawCameraStamp(stampLayer.getContext('2d'), lines, w, h, appearance);
+      if (!opts.noStamp) drawCameraStamp(stampLayer.getContext('2d'), lines, w, h, appearance);
       var lastProgress = 0;
       try {
         var AC = window.AudioContext || window.webkitAudioContext;
@@ -14663,7 +14675,8 @@ window.TascoCameraRescue = (function () {
         dest.stream.getAudioTracks().forEach(function (t) { stream.addTrack(t); });
       } catch (_) { video.muted = true; }
       var mime = pickMime(), chunks = [];
-      recorder = new MediaRecorder(stream, Object.assign({ videoBitsPerSecond: videoBitrate(duration), audioBitsPerSecond: AUDIO_BPS }, mime ? { mimeType: mime } : {}));
+      var usedBps = opts.bitrate || videoBitrate(duration);
+      recorder = new MediaRecorder(stream, Object.assign({ videoBitsPerSecond: usedBps, audioBitsPerSecond: AUDIO_BPS }, mime ? { mimeType: mime } : {}));
       recorder.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
       var done = new Promise(function (ok) { recorder.onstop = ok; });
       function draw() {
@@ -14694,7 +14707,7 @@ window.TascoCameraRescue = (function () {
       var type = (recorder.mimeType || mime || 'video/mp4').split(';')[0];
       var blob = new Blob(chunks, { type: type });
       if (!blob.size) throw new Error('Chưa tạo được video. Thử lại.');
-      return { blob: blob, ext: type.indexOf('webm') >= 0 ? 'webm' : 'mp4', duration: duration, trimmed: (video.duration || 0) > MAX_SECONDS + 0.5 };
+      return { blob: blob, ext: type.indexOf('webm') >= 0 ? 'webm' : 'mp4', duration: duration, bitrate: usedBps, trimmed: !opts.maxSeconds && (video.duration || 0) > MAX_SECONDS + 0.5 };
     } finally {
       stopDraw = true;
       try { if (recorder && recorder.state !== 'inactive') recorder.stop(); } catch (_) {}
@@ -14704,6 +14717,18 @@ window.TascoCameraRescue = (function () {
     }
   }
 
+  /* Ghi video; nếu vẫn nặng hơn giới hạn thì tự nén lại (tối đa 3 lần) với bitrate giảm theo kích thước thực tế. */
+  async function encodeToFit(source, lines, appearance, onProgress, signal, opts, onPass) {
+    var out = await burn(source, lines, appearance, onProgress, signal, opts); learn(out);
+    for (var pass = 2; pass <= 3 && out.blob.size > TARGET_BYTES * 1.08; pass++) {
+      var bps = Math.max(0.6e6, out.bitrate * (TARGET_BYTES / out.blob.size) * 0.9);
+      if (onPass) onPass(pass);
+      var o2 = Object.assign({}, opts, { bitrate: bps });
+      if (bps < 2.2e6) o2.longSide = bps < 1.2e6 ? 960 : 1280;
+      out = await burn(source, lines, appearance, onProgress, signal, o2); learn(out);
+    }
+    return out;
+  }
   async function start() {
     var s = session; if (!s || !(s.file || s.src)) return;
     var startBtn = q('[data-video-action="start"]'); startBtn.disabled = true; startBtn.textContent = 'Đang xử lý…';
@@ -14713,7 +14738,8 @@ window.TascoCameraRescue = (function () {
       var location = await s.metadata.locationPromise;
       var appearance = s.metadata.appearance;
       var lines = cameraWatermarkLines(location, s.metadata.capturedAt, 'camera', appearance);
-      var out = await burn(s.src || s.file, lines, appearance, setProgress, abort.signal);
+      var out = await encodeToFit(s.src || s.file, lines, appearance, setProgress, abort.signal, {}, function (pass) { setStep('Video còn nặng, đang nén lại (lần ' + pass + ')…'); setProgress(0); });
+      if (out.blob.size >= CLOUD_MAX) throw new Error('Video vẫn nặng hơn 100 MB sau khi nén. Hãy quay ngắn hơn.');
       if (s.cleanup) { try { s.cleanup(); } catch (_) {} s.cleanup = null; }
       if (session !== s) return;
       var name = 'video_' + s.metadata.capturedAt + '.' + out.ext;
@@ -14773,7 +14799,47 @@ window.TascoCameraRescue = (function () {
     mountPanel(); resetPanel(); panel.hidden = false;
     describe(session, opts.src, true, 0);
   }
-  window.TascoVideoCapture = { supported: supported, busy: function () { return !!session; }, processRecorded: processRecorded, maxSeconds: MAX_SECONDS };
+  /* Nén video đã nằm trong hàng chờ (đã in dấu từ trước) xuống dưới giới hạn Cloudinary. Trả File mới, hoặc null nếu người dùng để sau.
+     Có hộp thoại riêng (cần một lần chạm của người dùng để iOS cho phát video) và nút lưu bản gốc vào Ảnh trước khi nén. */
+  function shrink(blob, opts) {
+    opts = opts || {};
+    return new Promise(function (resolve) {
+      var ov = document.createElement('div'); ov.className = 'cvs-ov';
+      var mb = Math.round(blob.size / 1048576), name = String(opts.name || 'video.mp4').replace(/\.[^.]+$/, '');
+      ov.innerHTML = '<section class="cvp" role="dialog" aria-modal="true" aria-labelledby="cvsTitle"><i class="cvp-grab" aria-hidden="true"></i>' +
+        '<header class="cvp-head"><span class="cvp-badge">' + ICON_FILM + '</span><div><h3 id="cvsTitle">Video nặng ' + mb + ' MB</h3><p>Cloud miễn phí chỉ nhận video dưới 100 MB</p></div></header>' +
+        '<p class="cvp-note" data-cvs-note>Bấm “Nén &amp; tải lên” để giảm dung lượng (mất thời gian bằng thời lượng video). Giữ màn hình sáng và không thoát app. Nên lưu bản gốc vào Ảnh trước.</p>' +
+        '<div class="cvp-progress" hidden><div class="cvp-bar"><i></i></div><div class="cvp-prog-row"><span data-cvs-step>Đang nén video…</span><b data-cvs-pct>0%</b></div></div>' +
+        '<footer class="camera-video-actions" style="flex-wrap:wrap"><button type="button" data-cvs="save" style="flex:1 1 100%">Lưu bản gốc vào Ảnh</button><button type="button" data-cvs="later">Để sau</button><button type="button" data-cvs="start" class="is-primary">Nén &amp; tải lên</button></footer></section>';
+      document.body.append(ov);
+      var abort = null, working = false, wake = null, note = ov.querySelector('[data-cvs-note]'), box = ov.querySelector('.cvp-progress');
+      function setP(pct) { pct = Math.max(0, Math.min(100, pct)); box.hidden = false; ov.querySelector('.cvp-bar i').style.width = pct + '%'; ov.querySelector('[data-cvs-pct]').textContent = Math.round(pct) + '%'; }
+      function close(result) { try { wake && wake.release && wake.release(); } catch (_) {} ov.remove(); resolve(result); }
+      ov.addEventListener('click', async function (event) {
+        var act = event.target.closest('[data-cvs]'); if (!act) return; act = act.dataset.cvs;
+        if (act === 'save') { try { await window.TascoPhotoExport.save(window.TascoPhotoExport.file(blob, opts.name || 'video.mp4')); } catch (_) { note.textContent = 'Chưa lưu được bản gốc. Vẫn có thể nén và tải lên.'; note.classList.add('is-error'); } return; }
+        if (act === 'later') { if (abort) abort.abort(); else close(null); return; }
+        if (act !== 'start' || working) return;
+        working = true; abort = new AbortController();
+        ov.querySelectorAll('[data-cvs=start],[data-cvs=save]').forEach(function (b) { b.disabled = true; });
+        ov.querySelector('[data-cvs=later]').textContent = 'Hủy';
+        note.classList.remove('is-error'); note.textContent = 'Giữ màn hình sáng, không thoát app trong lúc nén.'; setP(0);
+        try { wake = await navigator.wakeLock.request('screen'); } catch (_) {}
+        try {
+          var out = await encodeToFit(blob, [], null, setP, abort.signal, { noStamp: true, maxSeconds: 3600 }, function (pass) { ov.querySelector('[data-cvs-step]').textContent = 'Còn nặng, nén lại (lần ' + pass + ')…'; setP(0); });
+          if (out.blob.size >= CLOUD_MAX) throw new Error('Video vẫn nặng hơn 100 MB sau khi nén (' + Math.round(out.blob.size / 1048576) + ' MB). Hãy quay ngắn hơn.');
+          close(new File([out.blob], name + '.' + out.ext, { type: out.blob.type, lastModified: Date.now() }));
+        } catch (error) {
+          working = false;
+          if (error && error.name === 'AbortError') { close(null); return; }
+          abort = null; box.hidden = true; note.classList.add('is-error'); note.textContent = (error && error.message) || 'Chưa nén được video. Thử lại.';
+          ov.querySelectorAll('[data-cvs=start],[data-cvs=save]').forEach(function (b) { b.disabled = false; });
+          ov.querySelector('[data-cvs=start]').textContent = 'Thử lại'; ov.querySelector('[data-cvs=later]').textContent = 'Để sau';
+        }
+      });
+    });
+  }
+  window.TascoVideoCapture = { supported: supported, busy: function () { return !!session; }, processRecorded: processRecorded, maxSeconds: MAX_SECONDS, shrink: shrink, cloudMax: CLOUD_MAX };
 })();
 </script>
 <style id="tascoVideoCaptureStyles">
@@ -14782,6 +14848,7 @@ window.TascoCameraRescue = (function () {
 .custom-camera-modal .camera-control-left{display:flex;flex-direction:column;align-items:flex-start}
 .camera-video-panel{position:absolute;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(4,12,22,.62);-webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1);visibility:visible;animation:cvpFade .2s ease}
 .camera-video-panel[hidden]{display:none}
+.cvs-ov{position:fixed;inset:0;z-index:100000;display:flex;align-items:flex-end;justify-content:center;background:rgba(4,12,22,.7);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);animation:cvpFade .2s ease}
 @keyframes cvpFade{from{opacity:0}}@keyframes cvpUp{from{transform:translateY(28px);opacity:0}}
 .cvp{--cvp-accent:#8fd0d8;position:relative;width:min(100%,480px);max-height:94%;overflow:auto;padding:10px 18px calc(18px + env(safe-area-inset-bottom,0px));border:1px solid rgba(143,208,216,.2);border-bottom:0;border-radius:26px 26px 0 0;background:linear-gradient(180deg,#14284a 0%,#0d1d36 100%);box-shadow:0 -24px 60px -20px rgba(0,0,0,.65);color:#edf5f7;font-family:inherit;animation:cvpUp .3s cubic-bezier(.2,.85,.25,1);overscroll-behavior:contain}
 .cvp-grab{display:block;width:38px;height:4px;margin:0 auto 14px;border-radius:99px;background:rgba(255,255,255,.22)}
