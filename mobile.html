@@ -5900,10 +5900,35 @@ html[data-tasco-page=wkreport]{background:var(--app-navy)}
 .wk-chips button[aria-pressed=true]{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
 .dark .wk-chips button[aria-pressed=true]{background:var(--app-teal);border-color:var(--app-teal);color:#0b1b30}
 .wk-dates{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
-.wk-dates label,.wk-login label{display:grid;gap:5px;min-width:0}
-.wk-dates span,.wk-login label span{color:var(--ws-muted);font-size:11px;font-weight:700}
-.wk-dates input,.wk-login input{width:100%;min-width:0;min-height:46px;padding:0 12px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-bg);color:var(--ws-text);font-size:16px;font-weight:600;outline:none;-webkit-appearance:none;appearance:none;box-sizing:border-box}
-.wk-dates input:focus,.wk-login input:focus{border-color:var(--app-teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-teal) 22%,transparent)}
+button.wk-date{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;min-height:58px;padding:0 13px 0 14px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-bg);color:var(--ws-text);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s,border-color .15s}
+button.wk-date:active{transform:scale(.98);border-color:var(--app-teal)}
+button.wk-date span{display:grid;gap:3px;min-width:0}
+button.wk-date small{color:var(--ws-muted);font-size:11px;font-weight:700}
+button.wk-date b{font-size:15px;font-weight:700;letter-spacing:-.2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+button.wk-date svg{flex:none;width:19px;height:19px;color:var(--app-teal)}
+.wk-login label{display:grid;gap:5px;min-width:0}
+.wk-login label span{color:var(--ws-muted);font-size:11px;font-weight:700}
+.wk-login input{width:100%;min-width:0;min-height:46px;padding:0 12px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-bg);color:var(--ws-text);font-size:16px;font-weight:600;outline:none;-webkit-appearance:none;appearance:none;box-sizing:border-box}
+.wk-login input:focus{border-color:var(--app-teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-teal) 22%,transparent)}
+.wk-cal{max-height:92vh}
+.wk-cal-nav{flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px 6px}
+.wk-cal-nav b{font-size:15.5px;font-weight:700;letter-spacing:-.3px}
+.wk-cal-nav button{width:38px;height:38px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--ws-soft);color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.wk-cal-nav button:active{background:var(--ws-line)}.wk-cal-nav svg{width:17px;height:17px}
+.wk-cal-wd,.wk-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:0 12px}
+.wk-cal-wd span{padding:6px 0;color:var(--ws-muted);font-size:11px;font-weight:700;text-align:center}
+.wk-cal-grid{row-gap:4px}
+.wk-day{position:relative;height:44px;padding:0;border:0;background:transparent;color:var(--ws-text);font:600 14.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.wk-day span{display:grid;place-items:center;width:40px;height:40px;margin:0 auto;border-radius:50%;font-variant-numeric:tabular-nums;transition:background .12s}
+.wk-day:active span{background:var(--ws-soft)}
+.wk-day.is-today span{box-shadow:inset 0 0 0 1.5px var(--app-teal)}
+.wk-day.in-range{background:color-mix(in srgb,var(--app-teal) 13%,transparent)}
+.wk-day.is-start{background:linear-gradient(90deg,transparent 50%,color-mix(in srgb,var(--app-teal) 13%,transparent) 50%)}
+.wk-day.is-end{background:linear-gradient(90deg,color-mix(in srgb,var(--app-teal) 13%,transparent) 50%,transparent 50%)}
+.wk-day[aria-pressed=true] span{background:var(--app-navy);color:#fff;font-weight:700;box-shadow:none}
+.dark .wk-day[aria-pressed=true] span{background:var(--app-teal);color:#0b1b30}
+.wk-cal-foot{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px 2px}
+.wk-cal-foot span{color:var(--ws-muted);font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
 .wk-per{margin:10px 2px 2px;color:var(--ws-text);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
 .wk-bad{color:#b45335}
 .wk-login{display:grid;gap:12px;margin-top:14px;padding:16px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-soft)}
@@ -6239,7 +6264,7 @@ window.TascoWeekly=(()=>{
     catch(e){err=e.fb?e.message:'Không đăng nhập được. Kiểm tra kết nối rồi thử lại.';paintBody();}
   }
   function onNavigate(view){
-    if(view!=='wkreport'){if(onPage){onPage=false;stopStreams();}return;}
+    if(view!=='wkreport'){closeCal();if(onPage){onPage=false;stopStreams();}return;}
     onPage=true;paintAll();
     if(!admin)return;
     if(phase==='ready'&&auth){if(!es.claims)openStream('claims','/pending_claims');if(!es.rules)openStream('rules','/settings/reportRules');scheduleRefresh();schedule(0);}else start();
@@ -6257,6 +6282,53 @@ window.TascoWeekly=(()=>{
   });
 
   /* ---------- giao diện ---------- */
+
+  /* ---------- bộ chọn ngày (lịch bottom-sheet, thay input date gốc của hệ thống) ---------- */
+  const CAL_ICO=svg('<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>');
+  const pad2=n=>String(n).padStart(2,'0'),mkYmd=(y,m,d)=>y+'-'+pad2(m+1)+'-'+pad2(d),isYmd=v=>/^\d{4}-\d{2}-\d{2}$/.test(String(v||''));
+  const fmtYmd=v=>isYmd(v)?v.slice(8)+'/'+v.slice(5,7)+'/'+v.slice(0,4):'Chọn ngày';
+  const todayYmd=()=>{const t=new Date();return mkYmd(t.getFullYear(),t.getMonth(),t.getDate());};
+  const dateBtn=(k,label)=>'<button type="button" class="wk-date" data-wk="date" data-v="'+k+'" aria-haspopup="dialog"><span><small>'+label+'</small><b>'+esc(fmtYmd(sel[k]))+'</b></span>'+CAL_ICO+'</button>';
+  let cal=null;
+  function closeCal(){if(cal?.el)cal.el.remove();cal=null;}
+  function openCal(k){
+    closeCal();const base=isYmd(sel[k])?sel[k]:todayYmd();
+    const el=document.createElement('div');el.className='dr-sheet-bg wk-cal-bg';
+    el.innerHTML='<div class="dr-sheet wk-cal" role="dialog" aria-modal="true" aria-label="'+(k==='s'?'Chọn ngày bắt đầu':'Chọn ngày kết thúc')+'"></div>';
+    el.addEventListener('click',onCalClick);document.body.appendChild(el);
+    cal={k,y:Number(base.slice(0,4)),m:Number(base.slice(5,7))-1,el};paintCal();
+  }
+  function paintCal(){
+    if(!cal)return;const {k,y,m}=cal,first=new Date(y,m,1),lead=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate(),tY=todayYmd();
+    const lo=isYmd(sel.s)?sel.s:'',hi=isYmd(sel.e)?sel.e:'',cur=sel[k];
+    let cells='';for(let i=0;i<lead;i++)cells+='<i></i>';
+    for(let d=1;d<=days;d++){
+      const v=mkYmd(y,m,d),cls=['wk-day'];
+      if(lo&&hi&&lo<hi){if(v>lo&&v<hi)cls.push('in-range');if(v===lo)cls.push('is-start');if(v===hi)cls.push('is-end');}
+      if(v===tY)cls.push('is-today');
+      cells+='<button type="button" class="'+cls.join(' ')+'" data-wkc="day" data-v="'+v+'" aria-pressed="'+(v===cur)+'" aria-label="'+d+'/'+(m+1)+'/'+y+'"><span>'+d+'</span></button>';
+    }
+    cal.el.firstChild.innerHTML='<div class="dr-sheet-h"><h4>'+(k==='s'?'Từ ngày':'Đến ngày')+'</h4><button type="button" data-wkc="close" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>'+
+      '<div class="wk-cal-nav"><button type="button" data-wkc="prev" aria-label="Tháng trước">'+svg('<path d="m15 6-6 6 6 6"/>')+'</button><b>Tháng '+(m+1)+', '+y+'</b><button type="button" data-wkc="next" aria-label="Tháng sau">'+CHEV+'</button></div>'+
+      '<div class="wk-cal-wd" aria-hidden="true">'+['T2','T3','T4','T5','T6','T7','CN'].map(x=>'<span>'+x+'</span>').join('')+'</div>'+
+      '<div class="wk-cal-grid">'+cells+'</div>'+
+      '<div class="wk-cal-foot"><button type="button" class="dt-btn is-sm" data-wkc="today">Hôm nay</button><span>'+(isYmd(cur)?esc(fmtYmd(cur)):'')+'</span></div>';
+  }
+  function pickDay(v){
+    const k=cal.k;sel.id='custom';sel[k]=v;
+    if(k==='s'&&(!isYmd(sel.e)||sel.e<v))sel.e=v;      // luôn giữ khoảng hợp lệ: đổi ngày này thì ngày kia tự theo
+    if(k==='e'&&(!isYmd(sel.s)||sel.s>v))sel.s=v;
+    ls(K.per,JSON.stringify(sel));closeCal();paintAll();schedule(0);
+  }
+  function onCalClick(e){
+    if(e.target===cal?.el)return closeCal();
+    const b=e.target.closest('[data-wkc]');if(!b||!cal)return;const a=b.dataset.wkc;
+    if(a==='close')closeCal();
+    else if(a==='prev'||a==='next'){const d=new Date(cal.y,cal.m+(a==='next'?1:-1),1);cal.y=d.getFullYear();cal.m=d.getMonth();paintCal();}
+    else if(a==='day')pickDay(b.dataset.v);
+    else if(a==='today')pickDay(todayYmd());
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&cal)closeCal();});
   const $=id=>document.getElementById(id);
   const money=v=>Number(v||0).toLocaleString('vi-VN')+' đ';
   const hhmmss=t=>t?new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'';
@@ -6267,7 +6339,7 @@ window.TascoWeekly=(()=>{
     const per=periodNow(),cs=sel.id==='custom';
     return '<div class="dr-live'+(live?' is-on':'')+'" data-wk-live><i></i><b></b></div>'+
       '<div class="wk-chips" role="group" aria-label="Chọn kỳ báo cáo">'+PRESETS.map(([id,l])=>'<button type="button" data-wk="preset" data-v="'+id+'" aria-pressed="'+(sel.id===id)+'">'+l+'</button>').join('')+'</div>'+
-      (cs?'<div class="wk-dates"><label><span>Từ ngày</span><input type="date" data-wk-s value="'+esc(sel.s)+'" max="2100-12-31"></label><label><span>Đến ngày</span><input type="date" data-wk-e value="'+esc(sel.e)+'" max="2100-12-31"></label></div>':'')+
+      (cs?'<div class="wk-dates">'+dateBtn('s','Từ ngày')+dateBtn('e','Đến ngày')+'</div>':'')+
       '<div class="wk-per" data-wk-per>'+(per?esc(per.startStr+' – '+per.endStr):'<span class="wk-bad">Kỳ không hợp lệ: ngày kết thúc phải sau ngày bắt đầu</span>')+'</div>'+
       '<div id="wkBody"></div>';
   }
@@ -6318,14 +6390,7 @@ window.TascoWeekly=(()=>{
     }else if(k==='open'){openKey=openKey===b.dataset.k?'':b.dataset.k;paintBody();}
     else if(k==='zero'){showZero=!showZero;paintBody();}
     else if(k==='retry'){phase='idle';start();}
-  });
-  document.addEventListener('input',e=>{
-    if(!e.target.matches('#wkreportSection [data-wk-s],#wkreportSection [data-wk-e]'))return;
-    if(e.target.matches('[data-wk-s]'))sel.s=e.target.value;else sel.e=e.target.value;
-    ls(K.per,JSON.stringify(sel));
-    const per=periodNow(),pe=document.querySelector('#wkreportSection [data-wk-per]');
-    if(pe)pe.innerHTML=per?esc(per.startStr+' – '+per.endStr):'<span class="wk-bad">Kỳ không hợp lệ: ngày kết thúc phải sau ngày bắt đầu</span>';
-    schedule(150);
+    else if(k==='date')openCal(b.dataset.v);
   });
   document.addEventListener('submit',e=>{const f=e.target.closest('#wkreportSection [data-wk-form]');if(f){e.preventDefault();doLogin(f);}});
 
