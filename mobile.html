@@ -27,6 +27,14 @@
   document.documentElement.classList.add('tasco-locked','tasco-lock-boot');   /* lock-boot: sau Face ID vào thẳng app, không chạy màn chào */
 }catch(_){}})();
 </script>
+<style id="tascoLockCritical">
+/* CSS tối thiểu của màn khoá phải nằm ở <head>: bản đầy đủ nằm rất sâu trong trang, trước đó màn khoá (kèm biểu tượng Face ID) hiện trần không định dạng. */
+#tascoLock{display:none;position:fixed;inset:0;z-index:2147483600;background:#0b1b30}
+html.tasco-locked #tascoLock,html.tasco-cover #tascoLock,html.tasco-lock-fade #tascoLock{display:flex}
+html.tasco-locked body,html.tasco-cover body{overflow:hidden!important}
+html.tasco-locked :is(#loginOverlay,#mainApp,#bottomNav,#tascoBootSplash),html.tasco-cover :is(#loginOverlay,#mainApp,#bottomNav,#tascoBootSplash){visibility:hidden!important}
+#tascoLock svg:not([viewBox="0 0 148 148"]){width:22px;height:22px}
+</style>
 <script id="tascoBootEarly">
 /* Nhận biết video trong thư viện Cloud (URL Cloudinary /video/upload/, blob video, hoặc đuôi tệp). */
 window.tascoIsVideo = function (row) { row = row || {}; var u = String(row.url || row.secure_url || (row.upload && row.upload.secure_url) || ""); return /\/video\/upload\//.test(u) || /^video\//.test((row.blob && row.blob.type) || "") || /\.(mp4|mov|m4v|webm)$/i.test(row.file_name || ""); };

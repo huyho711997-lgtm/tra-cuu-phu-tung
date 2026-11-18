@@ -67,5 +67,5 @@ App chỉ là "vỏ" iOS, mỗi lần mở nó tải trang web mới nhất từ
 
 - Quay video trong camera của app: tự dùng 60 fps nếu máy hỗ trợ (không hỗ trợ thì giữ 30 fps như cũ), giữ độ phân giải 1080p.
 - In dấu lên video giữ nguyên số khung hình của video gốc (tối đa 60). Chữ in dấu dựng sẵn một lần nên không bị rớt khung.
-- `native/scripts/patch-plugins.mjs` (chạy trong `npm run sync`) vá plugin camera để đổi fps không làm tụt xuống 720p.
+- `native/scripts/patch-plugins.mjs` (chạy trong `npm run sync`) vá plugin camera để đổi fps không làm tụt xuống 720p, và bỏ việc plugin Face ID tự dò sinh trắc học mỗi lần app active (nguyên nhân loé biểu tượng Face ID khi mở app).
 - Video 60 fps nặng hơn, thời gian in dấu vẫn bằng thời lượng video. Máy đời cũ có thể in dấu ra ít khung hơn 60.
