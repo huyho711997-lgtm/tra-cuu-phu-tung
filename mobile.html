@@ -9231,15 +9231,64 @@ window.TascoCloud = (() => {
     };
   }
   const UPLOAD_PARALLEL=4;   // số ảnh tải lên Cloudinary cùng lúc
+  /* Lỗi từ Cloudinary (JSON) -> Error có mã/thông điệp dễ hiểu; dùng chung cho tải một lần và tải theo đoạn. */
+  function cloudinaryError(data,cloud){
+    const issue=presetUploadIssue(data?.error?.message||'',cloud),error=new Error(issue?.message||data?.error?.message||'Cloudinary chưa nhận được ảnh. Kiểm tra cloud name và unsigned preset.');
+    if(issue){error.code=issue.code;error.cloud=cloud;}
+    error.fatal=true;return error;
+  }
+  function networkUploadError(video){
+    const error=new Error(video?'Mạng bị ngắt khi tải video lên. Hãy giữ màn hình sáng, kết nối Wi-Fi ổn định rồi bấm Thử lại.':'Mạng bị ngắt khi tải ảnh lên. Kiểm tra kết nối rồi bấm Thử lại.');
+    error.code='UPLOAD_NETWORK';return error;
+  }
+  const CHUNK_SIZE=6*1024*1024;        // Cloudinary yêu cầu mỗi đoạn >= 5 MB (trừ đoạn cuối)
+  const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  /* Video lớn: gửi từng đoạn 6 MB (Content-Range + X-Unique-Upload-Id). Mỗi đoạn tự thử lại tối đa 5 lần khi rớt mạng,
+     nên không còn "Load failed" do cả tệp hàng chục MB bị đứt giữa chừng trên iPhone. */
+  async function uploadChunked(record){
+    const blob=record.blob,total=blob.size,cloud=record.cloud;
+    const uploadId=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+    const folder=(cloud.folder?cloud.folder+'/':'')+'cloud_cua_toi/'+record.owner_id;
+    const url='https://api.cloudinary.com/v1_1/'+encodeURIComponent(cloud.cloudName)+'/video/upload';
+    try{await blob.slice(0,1).arrayBuffer();}catch(_){const error=new Error('Không đọc được video trong bộ nhớ thiết bị. Hãy quay lại video rồi tải lên.');error.code='UPLOAD_UNREADABLE';throw error;}
+    let start=0,data=null;
+    while(start<total){
+      const end=Math.min(start+CHUNK_SIZE,total)-1;
+      for(let attempt=0;;attempt++){
+        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),120000);
+        try{
+          const form=new FormData();form.append('file',blob.slice(start,end+1),record.file_name);form.append('upload_preset',cloud.preset);form.append('folder',folder);form.append('asset_folder',folder);form.append('tags','tasco_cloud_cua_toi');
+          const response=await fetch(url,{method:'POST',body:form,headers:{'X-Unique-Upload-Id':uploadId,'Content-Range':'bytes '+start+'-'+end+'/'+total},signal:controller.signal});
+          const json=await response.json().catch(()=>null);
+          if(response.ok&&json){data=json;break;}
+          if(response.status!==429&&response.status<500)throw cloudinaryError(json,cloud);
+        }catch(error){if(error.fatal)throw error;}
+        finally{clearTimeout(timer);}
+        if(attempt>=4)throw networkUploadError(true);
+        await wait(1000*2**attempt);   // 1s, 2s, 4s, 8s
+      }
+      start=end+1;
+    }
+    return data;
+  }
   async function upload(record) {
-    // Thời gian chờ tăng theo dung lượng vì các ảnh dùng chung đường truyền khi tải song song.
-    const isVideo=window.tascoIsVideo({blob:record.blob,file_name:record.file_name}),controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),isVideo?600000:90000+Math.ceil((record.blob?.size||0)/1048576)*30000);
-    try{
-      const form=new FormData();form.append('file',record.blob,record.file_name);form.append('upload_preset',record.cloud.preset);const folder=(record.cloud.folder?record.cloud.folder+'/':'')+'cloud_cua_toi/'+record.owner_id;form.append('folder',folder);form.append('asset_folder',folder);form.append('tags','tasco_cloud_cua_toi');
-      const response=await fetch('https://api.cloudinary.com/v1_1/'+encodeURIComponent(record.cloud.cloudName)+(isVideo?'/video/upload':'/image/upload'),{method:'POST',body:form,signal:controller.signal});
-      const data=await response.json();if(!response.ok||!imageURL(data.secure_url)||!data.public_id){const issue=presetUploadIssue(data.error?.message||'',record.cloud),error=new Error(issue?.message||data.error?.message||'Cloudinary chưa nhận được ảnh. Kiểm tra cloud name và unsigned preset.');if(issue){error.code=issue.code;error.cloud=record.cloud;}throw error;}
-      return {secure_url:data.secure_url,public_id:data.public_id,bytes:data.bytes||record.blob.size,width:data.width||0,height:data.height||0};
-    }finally{clearTimeout(timeout);}
+    const isVideo=window.tascoIsVideo({blob:record.blob,file_name:record.file_name});
+    let data;
+    if(isVideo&&(record.blob?.size||0)>CHUNK_SIZE+1024*1024)data=await uploadChunked(record);
+    else{
+      // Thời gian chờ tăng theo dung lượng vì các ảnh dùng chung đường truyền khi tải song song.
+      const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),isVideo?600000:90000+Math.ceil((record.blob?.size||0)/1048576)*30000);
+      try{
+        const form=new FormData();form.append('file',record.blob,record.file_name);form.append('upload_preset',record.cloud.preset);const folder=(record.cloud.folder?record.cloud.folder+'/':'')+'cloud_cua_toi/'+record.owner_id;form.append('folder',folder);form.append('asset_folder',folder);form.append('tags','tasco_cloud_cua_toi');
+        let response;
+        try{response=await fetch('https://api.cloudinary.com/v1_1/'+encodeURIComponent(record.cloud.cloudName)+(isVideo?'/video/upload':'/image/upload'),{method:'POST',body:form,signal:controller.signal});}
+        catch(error){throw error?.name==='AbortError'?error:networkUploadError(isVideo);}
+        data=await response.json().catch(()=>null);
+        if(!response.ok||!data)throw cloudinaryError(data,record.cloud);
+      }finally{clearTimeout(timeout);}
+    }
+    if(!imageURL(data?.secure_url)||!data?.public_id)throw cloudinaryError(data,record.cloud);
+    return {secure_url:data.secure_url,public_id:data.public_id,bytes:data.bytes||record.blob.size,width:data.width||0,height:data.height||0};
   }
   /* Ảnh chụp lúc mất mạng chỉ có tọa độ: khi có mạng, tra tên địa điểm rồi mới ghi lên Cloud (ảnh giữ nguyên dấu tọa độ đã in). */
   async function fillAddress(record,persist){
@@ -9252,6 +9301,7 @@ window.TascoCloud = (() => {
   async function processQueue() {
     if(state.uploading){state.rerun=true;return;}
     if(state.deleting||state.albumSaving||state.deleteDialog||state.albumDialog)return;state.uploading=true;state.rerun=false;let failed=false;state.syncedCount=state.syncedCount||0;
+    let wake=null;try{wake=await navigator.wakeLock?.request?.('screen');}catch(_){wake=null;}  // iOS tạm dừng mạng khi màn hình tắt
     try {
       const owner=await account();state.user=owner;
       const catalog=await loadAlbums(owner.id,await pendingFor(owner.id));if((await account()).id!==owner.id)throw new Error('CLOUD_ACCOUNT');Object.assign(state,{albums:catalog.albums,albumMode:catalog.mode,albumNote:catalog.note});
@@ -9275,7 +9325,7 @@ window.TascoCloud = (() => {
     }catch(error){failed=true;notify(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)?'Đăng nhập đúng tài khoản Cloud để đồng bộ ảnh.':message(error));}
     /* Ảnh được đưa vào hàng đợi trong lúc đang tải (chụp liên tục) thì tải tiếp ngay; lỗi thì dừng, không lặp vô hạn. */
     finally{
-      state.uploading=false;
+      state.uploading=false;try{wake?.release?.();}catch(_){}
       if(state.rerun&&!failed){state.rerun=false;paintPending();processQueue();return;}  // còn ảnh mới trong hàng đợi: tải tiếp, chưa làm mới thư viện
       const synced=state.syncedCount;state.syncedCount=0;
       if(synced)notify('Đã lưu '+synced+' '+(synced>1?'mục':'ảnh')+' vào Cloud của tôi.');
