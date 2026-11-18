@@ -3477,11 +3477,6 @@ window.TascoBootSplash = (() => {
       </div></div>
     </div>
   </div>
-  <div data-cloud-only hidden><div class="ws-section-heading"><h2 data-recent-title>Ảnh gần đây</h2><button type="button" class="ws-text-button" onclick="tascoGo('cloud')">Xem thư viện <svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div>
-  <div id="homeRecentPhotos" class="ws-recent-grid" hidden></div>
-  <div id="homeRecentEmpty" class="ws-recent-empty"><span class="ws-empty-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 6"/></svg></span><div><strong data-empty-title>Đang kết nối thư viện</strong><p data-empty-copy>Ảnh của tài khoản này sẽ hiển thị khi kết nối hoàn tất.</p></div></div>
-  </div>
-  <button type="button" class="ws-admin-card" data-admin-only hidden onclick="updateView('admin')"><span><strong>Quản lý hệ thống</strong><small>Tài khoản và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
   <p class="ws-bottom-note"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span data-cloud-only hidden><span data-cloud-connection>Đang kết nối thư viện…</span> · </span><span>TASCO INSURANCE</span></p>
 </section>
 <section id="accountSection" data-shell-page="account" class="ws-journey ws-account-page" hidden aria-labelledby="accountPageTitle">
@@ -4157,21 +4152,12 @@ window.TascoAppShell=(()=>{
     if(previous!==view&&['lookup','results','cloud','rescue','garage','assess','duty'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
   }
   function paintCloud(summary){
-    if(!canCloud()){document.getElementById('homeRecentPhotos')?.replaceChildren();return;}
+    if(!canCloud())return;
     const relevant=Boolean(user&&summary?.email?.toLowerCase()===user.email.toLowerCase());
     if(relevant)lastCloud=summary;else if(summary)return;
-    const connected=relevant&&summary.ready!==false&&!summary.error,photos=connected?summary.photos||[]:[],container=document.getElementById('homeRecentPhotos'),empty=document.getElementById('homeRecentEmpty'),capture=document.querySelector('[data-home-camera]');
-    if(!container)return;container.replaceChildren();
-    photos.forEach(row=>{
-      const card=document.createElement('button');card.type='button';card.className='ws-recent-photo';card.setAttribute('aria-label','Mở thư viện để xem '+row.title);card.onclick=()=>window.updateView('cloud');
-      const image=document.createElement('img');image.src=row.url;image.alt=row.title||'Ảnh hồ sơ';image.loading='lazy';image.decoding='async';image.onerror=()=>{image.remove();};const title=document.createElement('span');title.textContent=row.title||'Ảnh hồ sơ';const date=document.createElement('small');date.textContent=new Date(row.capturedAt).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'});card.append(image,title,date);container.append(card);
-    });
-    container.hidden=!photos.length;empty.hidden=Boolean(photos.length);
-    setText('[data-recent-title]',summary?.albumName?'Ảnh trong album':summary?.filtered?'Ảnh trong bộ lọc':'Ảnh gần đây');
+    const connected=relevant&&summary.ready!==false&&!summary.error,capture=document.querySelector('[data-home-camera]');
     setText('[data-cloud-caption]',connected?summary.busy?'Đang tải thư viện…':summary.filtered?summary.count+' ảnh đang lọc':summary.count+' ảnh đã lưu':'Thư viện ảnh cá nhân');
     setText('[data-cloud-connection]',connected?'Đã kết nối Cloud':summary?.error?'Chưa kết nối Cloud':'Đang kết nối thư viện…');
-    setText('[data-empty-title]',connected&&!summary.busy?'Bắt đầu lưu ảnh hồ sơ':summary?.error?'Thư viện đang tạm gián đoạn':'Đang kết nối thư viện');
-    setText('[data-empty-copy]',connected&&!summary.busy?'Chụp ảnh có ngày giờ và địa điểm. Ảnh sẽ xuất hiện tại đây.':summary?.error?'Mở Cloud của tôi để kiểm tra kết nối và thử lại.':'Ảnh của tài khoản này sẽ hiển thị khi kết nối hoàn tất.');
     if(capture){capture.disabled=!connected||summary.busy;capture.setAttribute('aria-label',capture.disabled?'Camera đang chờ kết nối Cloud':'Chụp ảnh hồ sơ');}
   }
   function camera(){
