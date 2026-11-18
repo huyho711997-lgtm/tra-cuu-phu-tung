@@ -5397,18 +5397,6 @@ html[data-tasco-page=duty]{background:var(--app-navy)}
 .dt-role strong{display:block;margin-top:4px;font-size:14.5px;font-weight:700;line-height:1.3}
 .dt-role.is-me{background:rgba(132,191,199,.28);border-color:#84bfc7}
 .dt-role.is-me small::after{content:' · Bạn';color:#fff;font-weight:800}
-/* Ca của tôi */
-.dt-mine{display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:2px 18px 4px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-.dt-mine::-webkit-scrollbar{display:none}
-.dt-chip{position:relative;flex:0 0 auto;width:112px;padding:11px 12px 12px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-surface);text-align:left;scroll-snap-align:start;cursor:pointer;color:var(--ws-text);-webkit-tap-highlight-color:transparent}
-.dt-chip:active{transform:scale(.97)}
-.dt-chip small{display:block;color:var(--ws-muted);font-size:10.5px;font-weight:700}
-.dt-chip strong{display:block;margin:2px 0 6px;font-size:18px;font-weight:700;letter-spacing:-.4px}
-.dt-chip span{display:inline-block;padding:3px 8px;border-radius:999px;background:var(--ws-accent);color:var(--ws-accent-text);font-size:10px;font-weight:700}
-.dt-chip i{display:block;margin-top:8px;color:var(--ws-accent-text);font-size:10.5px;font-weight:700;font-style:normal}
-.dt-chip.is-pend i{color:#b07a12}
-.dt-chip.is-wkd{background:linear-gradient(165deg,#fff7e6,var(--ws-surface))}
-.dark .dt-chip.is-wkd{background:linear-gradient(165deg,rgba(255,196,94,.12),var(--ws-surface))}
 /* Lịch tuần */
 .dt-week{padding:14px;border:1px solid var(--ws-line);border-radius:22px;background:var(--ws-surface);box-shadow:0 1px 0 rgba(16,37,64,.03)}
 .dt-weekbar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
@@ -5508,7 +5496,7 @@ html[data-tasco-page=duty]{background:var(--app-navy)}
 .dt-sum{margin-top:14px;padding:12px 13px;border-radius:14px;background:var(--ws-soft);color:var(--ws-text);font-size:12.5px;line-height:1.6}
 .dt-sum b{color:var(--ws-accent-text)}
 @keyframes dtFade{from{opacity:0}}@keyframes dtUp{from{transform:translateY(40px);opacity:.4}}
-@media(min-width:640px){.tasco-workspace #dutySection .rc-panel{padding:26px}.dt-mine{margin:0 -26px;padding:2px 26px 4px}.dt-sheet-bg{align-items:center}.dt-sheet{border-radius:24px}}
+@media(min-width:640px){.tasco-workspace #dutySection .rc-panel{padding:26px}.dt-sheet-bg{align-items:center}.dt-sheet{border-radius:24px}}
 @media(max-width:359px){.dt-dayb b{font-size:14px}.dt-rc{padding:11px 10px;gap:10px}.dt-today-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){#dutySection *,.dt-sheet,.dt-sheet-bg{animation:none!important;transition:none!important}}
 </style>
@@ -5596,18 +5584,10 @@ window.TascoDuty=(()=>{
     h+='<div class="dt-today"><div class="dt-today-cap"><span>Đang trực</span><b>'+(t?wd(t.duty_date)+' '+dm(t.duty_date)+' · 08:00 → 08:00 '+dm(nextDay(t.duty_date)):'Chưa có lịch')+'</b></div>';
     if(t)h+='<div class="dt-today-grid">'+['scene','detail'].map(k=>'<div class="dt-role'+(same(t[k],me)?' is-me':'')+'"><span class="dt-role-ico">'+I[k]+'</span><small>'+ROLE[k]+'</small><strong>'+esc(t[k]||'—')+'</strong></div>').join('')+'</div>';
     h+='</div>';
-    h+=mineHtml();
     h+=weekHtml();
     h+=historyHtml();
     if(data.admin)h+=adminHtml();
     r.innerHTML=h;
-  }
-  function mineHtml(){
-    const me=data.me;let h='<div class="dt-h"><h3>Ca của tôi</h3>'+(me?'<small>Bấm vào ca để đổi</small>':'')+'</div>';
-    if(!me)return h+'<p class="dt-note">Chưa khớp tài khoản của bạn với tên trên Sheet.'+(data.admin?' Gán ở mục Quản trị bên dưới.':' Nhờ quản trị viên gán giúp.')+'</p>';
-    if(!data.upcoming?.length)return h+'<p class="dt-note">Không có ca sắp tới.</p>';
-    return h+'<div class="dt-mine">'+data.upcoming.map(s=>{const role=same(s.scene,me)?'scene':'detail';const pend=pendingOf(s.duty_date,role);
-      return '<button type="button" class="dt-chip'+(isWkd(s.duty_date)?' is-wkd':'')+(pend?' is-pend':'')+'" data-dt="swap" data-date="'+s.duty_date+'" data-role="'+role+'"><small>'+wd(s.duty_date)+(s.duty_date===data.todayKey?' · Hôm nay':'')+'</small><strong>'+dm(s.duty_date)+'</strong><span>'+ROLE_S[role]+'</span><i>'+(pend?'⏳ Chờ duyệt':'⇄ Xin đổi')+'</i></button>';}).join('')+'</div>';
   }
   /* ---------- Lịch tuần ---------- */
   const addDays=(iso,n)=>new Date(Date.parse(iso+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);
