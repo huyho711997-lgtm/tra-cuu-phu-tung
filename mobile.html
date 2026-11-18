@@ -3132,7 +3132,7 @@ html.dark .u021 .u021-stars{opacity:1;transform:none}
 <style id="tascoTopEdgeStyles">
 /* Paint the safe area as part of the current header; inset controls, not the page. */
 html[data-tasco-page]{--tasco-top-color:var(--ws-bg);margin:0;padding:0;background:var(--tasco-top-color)}
-html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="assess"],[data-tasco-page="duty"],[data-tasco-page="forms"],[data-tasco-page="account"]){--tasco-top-color:var(--app-navy)}
+html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="assess"],[data-tasco-page="duty"],[data-tasco-page="directory"],[data-tasco-page="forms"],[data-tasco-page="account"]){--tasco-top-color:var(--app-navy)}
 html[data-tasco-page] body.tasco-workspace{margin:0;padding:0;background:var(--tasco-top-color)!important}
 /* Safari can use body paint when its viewport excludes the device status bar. */
 .tasco-workspace #mainApp[data-shell]{background:var(--ws-bg)}
@@ -3140,7 +3140,7 @@ html[data-tasco-page] body.tasco-workspace{margin:0;padding:0;background:var(--t
 #tascoStatusBackdrop{position:fixed;top:0;left:0;right:0;width:100%;height:12px;height:max(12px,env(safe-area-inset-top,0px));z-index:100;background-color:var(--tasco-top-color,var(--ws-bg));pointer-events:none;user-select:none}
 html[data-tasco-page] body.tasco-workspace::before{content:none;display:none}
 .tasco-workspace #mainApp[data-shell][data-page]{margin-top:0!important;padding-top:0!important}
-.tasco-workspace :is(#traCuuSection,#personalCloudSection,#rescueSection,#garageSection,#assessSection,#dutySection,#formsSection){margin-top:0;padding-top:0}
+.tasco-workspace :is(#traCuuSection,#personalCloudSection,#rescueSection,#garageSection,#assessSection,#dutySection,#directorySection,#formsSection){margin-top:0;padding-top:0}
 .tasco-workspace .ws-journey-hero,.tasco-workspace #personalCloudSection .cloud-hero{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0;padding-top:calc(18px + env(safe-area-inset-top,0px))}
 /* The results page keeps its measured space for the fixed header. */
 .tasco-workspace #resultsStickyHeader{top:0;margin-top:0}
@@ -3472,6 +3472,7 @@ window.TascoBootSplash = (() => {
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('garage')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M3.5 9.2 12 4.5l8.5 4.7v11.3H17V13H7v7.5H3.5Z"/><path d="M3.5 20.5V9.2L12 4.5l8.5 4.7v11.3"/><path d="M7 20.5V13h10v7.5M7 15.6h10M7 18.1h10"/></svg><span><strong>Quản lý gara</strong><small>Danh sách gara &amp; điểm đến kéo xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('assess')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M5 20.5h14M12 4v16.5M12 6.5H5.5l-2.5 6a3 3 0 0 0 5.9 0zM12 6.5h6.5l2.5 6a3 3 0 0 1-5.9 0z"/><path d="M5 20.5h14M12 4v16.5M12 6.5H5.5m6.5 0h6.5"/><path d="m5.5 6.5-2.5 6a3 3 0 0 0 5.9 0zM18.5 6.5l2.5 6a3 3 0 0 1-5.9 0z"/></svg><span><strong>Hướng dẫn phân lỗi</strong><small>Tỷ lệ lỗi 42 tình huống tai nạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('duty')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="i-fill" x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="m9 14.5 2 2 4-4"/></svg><span><strong>Lịch trực</strong><small data-duty-home>Xem lịch, ca của tôi, xin đổi ca</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('directory')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="i-fill" x="5" y="3.5" width="14" height="17" rx="2.5"/><circle cx="12" cy="10" r="2.4"/><path d="M8.6 16.2c.6-1.6 2-2.4 3.4-2.4s2.8.8 3.4 2.4M3.5 8h1.5M3.5 12h1.5M3.5 16h1.5"/></svg><span><strong>Danh bạ &amp; hồ sơ</strong><small>Tra cứu nhân sự, hồ sơ bồi thường</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('forms')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5V8h4.5M8.8 12.4h6.4M8.8 15.9h4.2"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Word &amp; PDF xem ngay trong ứng dụng.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('account')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="i-fill" cx="12" cy="9.3" r="3.5"/><path class="i-fill" d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0A8.9 8.9 0 0 1 12 20.9a8.9 8.9 0 0 1-5.9-2.6Z"/><circle cx="12" cy="12" r="8.9"/><circle cx="12" cy="9.3" r="3.5"/><path d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0"/></svg><span><strong>Tài khoản &amp; thiết lập</strong><small>Không gian riêng, theo cách của bạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div></div>
@@ -3665,6 +3666,13 @@ window.TascoBootSplash = (() => {
     <div id="dtRoot" aria-live="polite"><div class="dt-skel"><i></i><i></i><i></i></div></div>
   </div>
   <p class="ws-journey-note"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>Google Sheet là bản gốc: sửa trên Sheet thì app tự cập nhật; quản trị viên sửa hoặc duyệt đổi ca trong app thì Sheet đổi theo.</span></p>
+</section>
+<section id="directorySection" data-shell-page="directory" class="ws-journey rc dr-page" hidden style="display:none" aria-labelledby="directoryPageTitle">
+  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · DANH BẠ</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">NHÂN SỰ &amp; HỒ SƠ</span><h2 id="directoryPageTitle" tabindex="-1">Danh bạ.</h2><p>Tra cứu nhân sự và hồ sơ bồi thường, dùng chung dữ liệu với webapp giám định.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><rect x="46" y="14" width="88" height="112" rx="14" stroke="currentColor" stroke-width="1.8"/><path d="M34 40h14M34 70h14M34 100h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="90" cy="54" r="14" stroke="currentColor" stroke-width="1.8"/><path d="M64 100c3-15 14-22 26-22s23 7 26 22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></header>
+  <div class="ws-search-panel ws-search-panel--premium rc-panel">
+    <div id="drRoot" aria-live="polite"><div class="dr-skel"><i></i><i></i><i></i></div></div>
+  </div>
+  <p class="ws-journey-note"><span>Dữ liệu do webapp giám định xe cập nhật; sửa danh bạ và hồ sơ tại webapp đó.</span></p>
 </section>
 
 
@@ -4087,8 +4095,8 @@ window.TascoCloudImport=(()=>{
 </script>
 <script id="tascoPremiumShell">
 window.TascoAppShell=(()=>{
-  const pages={home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',rescue:'Tính chi phí cứu hộ',garage:'Quản lý gara',assess:'Hướng dẫn phân lỗi',duty:'Lịch trực',account:'Tài khoản',admin:'Quản lý hệ thống',forms:'Biểu mẫu dùng chung'};
-  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',account:'accountSection',admin:'sysMgrSection',forms:'formsSection'};
+  const pages={directory:'Danh bạ & hồ sơ',home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',rescue:'Tính chi phí cứu hộ',garage:'Quản lý gara',assess:'Hướng dẫn phân lỗi',duty:'Lịch trực',account:'Tài khoản',admin:'Quản lý hệ thống',forms:'Biểu mẫu dùng chung'};
+  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',directory:'directorySection',account:'accountSection',admin:'sysMgrSection',forms:'formsSection'};
   let user=null,current='login',mountedOwner='',lastCloud=null;
   const scrolls={};
   if ('scrollRestoration' in history) history.scrollRestoration='manual';
@@ -4117,7 +4125,7 @@ window.TascoAppShell=(()=>{
     if(changed){mountedOwner='';lastCloud=null;Object.keys(scrolls).forEach(key=>delete scrolls[key]);paintCloud(null);}
     const name=user?.fullName||user?.email||'Tài khoản';const words=name.trim().split(/\s+/);const initials=(words.length>1?words[0][0]+words.at(-1)[0]:name.slice(0,2)).toUpperCase();
     setText('[data-account-name]',name);setText('[data-account-email]',user?.email||'');setText('[data-account-role]',user?.role==='admin'?'Quản trị viên':'Thành viên');setText('[data-shell-avatar]',initials);
-    document.querySelectorAll('[data-admin-only]').forEach(node=>node.hidden=user?.role!=='admin');window.TascoForms?.setUser(user);window.TascoDuty?.setUser(user);greeting();
+    document.querySelectorAll('[data-admin-only]').forEach(node=>node.hidden=user?.role!=='admin');window.TascoForms?.setUser(user);window.TascoDuty?.setUser(user);window.TascoDirectory?.setUser(user);greeting();
     syncCloudAccess();
   }
   function connectCloud(){
@@ -4132,13 +4140,13 @@ window.TascoAppShell=(()=>{
     if(view!=='login')try{localStorage.setItem('tasco_last_view',JSON.stringify({view,email:user?.email||'',at:Date.now()}));}catch(_){}
     const previous=current;scrolls[previous]=Math.max(0,window.scrollY);current=view;
     if(previous!==view)document.activeElement?.blur?.();
-    window.TascoLookupFlow?.onNavigate(view);window.TascoForms?.onNavigate(view);window.TascoDuty?.onNavigate(view);
+    window.TascoLookupFlow?.onNavigate(view);window.TascoForms?.onNavigate(view);window.TascoDuty?.onNavigate(view);window.TascoDirectory?.onNavigate(view);
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
     login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
     Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id);node.hidden=page!==view;node.style.display=page===view?'block':'none';});
-    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','duty','forms','account'].includes(view);
+    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','duty','directory','forms','account'].includes(view);
     setText('#wsPageTitle',pages[view]||'');
-    document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view==='assess'||view==='duty'?'home':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
+    document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view==='assess'||view==='duty'||view==='directory'?'home':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
     window.TascoNavigationMotion?.sync(view,previous);
     if(view==='login'){window.TascoPhotoViewer?.close();window.TascoDatePicker?.close();window.TascoPhotoExport?.close();document.title='TASCO DLK · Đăng nhập';return;}
     document.title=pages[view]+' · TASCO DLK';
@@ -4146,10 +4154,10 @@ window.TascoAppShell=(()=>{
     if(view==='cloud')connectCloud();if(view==='home'){greeting();paintCloud(lastCloud);connectCloud();}
     if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
     window.TascoLookupFlow?.afterNavigate(view);
-    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='duty'?'dutyPageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
+    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='duty'?'dutyPageTitle':view==='directory'?'directoryPageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
     const top=options.restore?scrolls[view]||0:0;
     window.scrollTo({left:0,top,behavior:'instant'});
-    if(previous!==view&&['lookup','results','cloud','rescue','garage','assess','duty'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
+    if(previous!==view&&['lookup','results','cloud','rescue','garage','assess','duty','directory'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
   }
   function paintCloud(summary){
     if(!canCloud())return;
@@ -5773,6 +5781,155 @@ window.TascoDuty=(()=>{
   return {configure:v=>{options={...options,...v};},setUser,onNavigate,load,paintHome};
 })();
 </script>
+<style id="tascoDirectoryStyle">
+#directorySection .ws-journey-hero{min-height:246px;padding-bottom:54px}
+#directorySection .ws-journey-heading{max-width:82%}
+#directorySection .ws-journey-heading h2{font-size:32px;font-weight:700;line-height:1.16;letter-spacing:-1.1px;white-space:nowrap}
+#directorySection .ws-journey-heading p{max-width:260px;font-size:12px;line-height:1.65}
+#directorySection .ws-journey-art{width:138px;right:-12px;bottom:34px;opacity:.4;transform:rotate(-8deg)}
+.tasco-workspace #directorySection .rc-panel{margin:-28px 14px 0;padding:18px;border-radius:26px;border-color:var(--ws-line)}
+#directorySection :is(button,input,select){font-family:'Plus Jakarta Sans',sans-serif}
+#directorySection [hidden]{display:none!important}
+.dr-skel{display:grid;gap:10px}.dr-skel i{display:block;height:62px;border-radius:16px;background:linear-gradient(90deg,var(--ws-soft),var(--ws-bg),var(--ws-soft));background-size:200% 100%;animation:drSk 1.2s linear infinite}
+@keyframes drSk{to{background-position:-200% 0}}
+.dr-seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:15px;background:var(--ws-soft)}
+.dr-seg button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:42px;border:0;border-radius:12px;background:transparent;color:var(--ws-muted);font-size:13.5px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s,box-shadow .2s}
+.dr-seg button[aria-pressed=true]{background:var(--ws-bg);color:var(--ws-text);box-shadow:0 1px 6px rgba(20,40,70,.12)}
+.dr-seg i{font-style:normal;min-width:22px;padding:2px 7px;border-radius:99px;background:var(--ws-line);color:var(--ws-muted);font-size:11px;font-weight:700;line-height:1.3}
+.dr-seg button[aria-pressed=true] i{background:var(--app-navy);color:#fff}
+.dark .dr-seg button[aria-pressed=true] i{background:var(--app-teal);color:#0b1b30}
+.dr-search{position:relative;display:block;margin-top:12px}
+.dr-search svg{position:absolute;left:14px;top:50%;width:17px;height:17px;transform:translateY(-50%);color:var(--ws-muted);pointer-events:none}
+.dr-search input{width:100%;height:46px;padding:0 14px 0 42px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-bg);color:var(--ws-text);font-size:14px;font-weight:600;box-sizing:border-box;-webkit-appearance:none;appearance:none}
+.dr-search input::placeholder{color:var(--ws-muted);font-weight:500}
+.dr-filters{display:flex;gap:8px;margin-top:10px}
+.dr-filters select{flex:1;min-width:0;height:42px;padding:0 30px 0 12px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a8a99' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E") no-repeat right 9px center/15px;color:var(--ws-text);font-size:12.5px;font-weight:600;-webkit-appearance:none;appearance:none;text-overflow:ellipsis}
+.dr-count{margin:14px 2px 8px;color:var(--ws-muted);font-size:11.5px;font-weight:600}
+.dr-list{display:grid;gap:8px}
+.dr-card{border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-bg);overflow:hidden}
+.dr-main{display:flex;align-items:center;gap:12px;width:100%;padding:12px 13px;border:0;background:transparent;text-align:left;cursor:pointer;color:var(--ws-text);-webkit-tap-highlight-color:transparent}
+.dr-main:active{background:var(--ws-soft)}
+.dr-av{font-style:normal;display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;background:hsl(var(--h,200) 42% 42%);color:#fff;font-size:13px;font-weight:800}
+.dr-who b.dr-plate{font-size:15px;font-weight:800;letter-spacing:.2px;font-variant-numeric:tabular-nums}
+.dr-who{display:grid;gap:2px;min-width:0;flex:1}
+.dr-who b{overflow:hidden;color:var(--ws-text);font-size:14px;font-weight:700;letter-spacing:-.2px;text-overflow:ellipsis;white-space:nowrap}
+.dr-who small{overflow:hidden;color:var(--ws-muted);font-size:11.5px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+.dr-st{flex:none;max-width:104px;padding:4px 9px;border-radius:99px;background:hsl(var(--h,200) 60% 92%);color:hsl(var(--h,200) 55% 28%);font-size:10.5px;font-style:normal;font-weight:700;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dark .dr-st{background:hsl(var(--h,200) 40% 22%);color:hsl(var(--h,200) 70% 82%)}
+.dr-chev{flex:none;width:16px;height:16px;color:var(--ws-muted);transition:transform .2s}
+.dr-card.is-open .dr-chev{transform:rotate(90deg)}
+.dr-more{padding:2px 13px 13px;border-top:1px solid var(--ws-line)}
+.dr-kv{display:grid;grid-template-columns:96px 1fr;gap:6px 10px;margin:10px 0 0;font-size:12.5px;line-height:1.5}
+.dr-kv dt{color:var(--ws-muted);font-weight:600}.dr-kv dd{margin:0;color:var(--ws-text);font-weight:600;word-break:break-word}
+.dr-acts{display:flex;gap:8px;margin-top:12px}.dr-acts .dt-btn{flex:1}
+.dr-empty{padding:26px 14px;border-radius:16px;background:var(--ws-soft);color:var(--ws-muted);text-align:center;font-size:12.5px;line-height:1.6}
+.dr-empty b{display:block;margin-bottom:4px;color:var(--ws-text);font-size:14px}
+.dr-more-btn{width:100%;margin-top:10px}
+@media(prefers-reduced-motion:reduce){#directorySection *{animation:none!important;transition:none!important}}
+</style>
+<script id="tascoDirectory">
+/* Danh bạ nội bộ + Hồ sơ bồi thường (chỉ xem): đọc cùng bảng Supabase với webapp giám định xe.
+   tasco_contacts (danh bạ; năm sinh/giới tính nằm bảng riêng, không đọc ở đây) và tasco_claims_mirror (bản rút gọn hồ sơ, đẩy từ webapp). */
+window.TascoDirectory=(()=>{
+  const PAGE=40;
+  let options={},tab='contacts',q='',filt={dept:'all',status:'all',gdv:'all'},data=null,loading=false,failed='',lastLoad=0,limit=PAGE,openKey='',email='';
+  const root=()=>document.getElementById('drRoot');
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const plain=t=>String(t??'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/gi,'d').toLowerCase();
+  const svg=p=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
+  const I={search:svg('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'),chev:svg('<path d="m9 6 6 6-6 6"/>'),call:svg('<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>'),mail:svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>'),copy:svg('<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>')};
+  const hue=t=>{let h=0;for(const ch of String(t||''))h=(h*31+ch.charCodeAt(0))%360;return h;};
+  const initials=n=>{const w=String(n||'').trim().split(/\s+/);return ((w.length>1?w[0][0]:'')+(w.at(-1)?.[0]||'')).toUpperCase()||'?';};
+  const lastName=n=>{const w=String(n||'').trim().split(/\s+/);return plain(w.at(-1)+' '+n);};
+  const fmtDate=v=>{const t=String(v??'').trim();if(/^\d{12,13}$/.test(t))return new Date(Number(t)).toLocaleDateString('vi-VN');return t;};
+  const fmtPhone=v=>{const d=String(v||'').replace(/\D/g,'');return d.length===10?d.replace(/(\d{4})(\d{3})(\d{3})/,'$1 $2 $3'):d.length===11?d.replace(/(\d{4})(\d{3})(\d{4})/,'$1 $2 $3'):String(v||'');};
+  function toast(t){const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3200);}
+  async function copy(text){try{await navigator.clipboard.writeText(text);}catch(_){const a=document.createElement('textarea');a.value=text;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(__){}a.remove();}toast('Đã sao chép: '+text);}
+
+  async function fetchAll(c,table,cols,order,asc){
+    const rows=[];
+    for(let start=0;;start+=1000){
+      const r=await c.from(table).select(cols).order(order,{ascending:asc}).range(start,start+999);
+      if(r.error)throw r.error;rows.push(...(r.data||[]));if(!r.data||r.data.length<1000)break;
+    }
+    return rows;
+  }
+  async function load({quiet}={}){
+    const c=options.client?.();if(!c||loading)return;
+    loading=true;failed='';if(!quiet||!data)render();
+    try{
+      const [contacts,claims]=await Promise.all([
+        fetchAll(c,'tasco_contacts','ma_nv,ho_ten,don_vi,phong,to_nhom,chuc_danh,noi_lam_viec,nhom,sdt,email','ma_nv',true),
+        fetchAll(c,'tasco_claims_mirror','id,so_ho_so_boi_thuong,ma_vu_ton_that,bien_so,hang_xe,hieu_xe,gdv_tiep_nhan,don_vi_cap_don,loai_ton_that,dia_diem_vtt,trang_thai,ngay_ton_that,ngay_mo_hs,ngay_nhan_du_ho_so','id',false)
+      ]);
+      contacts.forEach(r=>{r._s=plain([r.ho_ten,r.ma_nv,r.sdt,r.email,r.chuc_danh,r.phong,r.noi_lam_viec,r.don_vi,r.to_nhom].join(' '));});
+      contacts.sort((a,b)=>lastName(a.ho_ten).localeCompare(lastName(b.ho_ten),'vi'));
+      claims.forEach(r=>{r._s=plain([r.bien_so,r.so_ho_so_boi_thuong,r.ma_vu_ton_that,r.gdv_tiep_nhan,r.hang_xe,r.hieu_xe,r.trang_thai,r.dia_diem_vtt,r.loai_ton_that].join(' '));r._p=plain(r.bien_so).replace(/[^a-z0-9]/g,'');});
+      data={contacts,claims};lastLoad=Date.now();
+    }catch(e){failed=/PGRST205|42P01/.test(e?.code||'')?'Chưa có dữ liệu dùng chung trên hệ thống. Liên hệ quản trị viên.':(e?.code==='42501'?'Tài khoản chưa có quyền xem dữ liệu này.':'Không tải được dữ liệu. Kiểm tra mạng rồi thử lại.');}
+    finally{loading=false;render();}
+  }
+
+  const distinct=(list,f)=>[...new Set(list.map(r=>r[f]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
+  function rows(){
+    const terms=plain(q).split(/\s+/).filter(Boolean),compact=plain(q).replace(/[^a-z0-9]/g,'');
+    const list=tab==='contacts'?data.contacts:data.claims;
+    return list.filter(r=>{
+      if(tab==='contacts'){if(filt.dept!=='all'&&r.phong!==filt.dept)return false;}
+      else{if(filt.status!=='all'&&r.trang_thai!==filt.status)return false;if(filt.gdv!=='all'&&r.gdv_tiep_nhan!==filt.gdv)return false;}
+      if(!terms.length)return true;
+      return terms.every(t=>r._s.includes(t))||(tab==='claims'&&compact.length>=3&&r._p.includes(compact));
+    });
+  }
+  function contactCard(r){
+    const open=openKey===r.ma_nv,sub=[r.chuc_danh,r.phong].filter(Boolean).join(' · ');
+    const kv=[['Mã NV',/^(EM|N)_/.test(r.ma_nv)?'':r.ma_nv],['Đơn vị',r.don_vi],['Phòng ban',r.phong],['Tổ / nhóm',r.to_nhom],['Nơi làm việc',r.noi_lam_viec],['Số điện thoại',fmtPhone(r.sdt)],['Email',r.email]].filter(x=>x[1]);
+    return '<article class="dr-card'+(open?' is-open':'')+'"><button type="button" class="dr-main" data-dr="open" data-k="'+esc(r.ma_nv)+'" aria-expanded="'+open+'"><i class="dr-av" style="--h:'+hue(r.ho_ten)+'">'+esc(initials(r.ho_ten))+'</i><span class="dr-who"><b>'+esc(r.ho_ten)+'</b><small>'+esc(sub||r.nhom||'—')+'</small></span><span class="dr-chev">'+I.chev+'</span></button>'+
+      (open?'<div class="dr-more"><dl class="dr-kv">'+kv.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+esc(v)+'</dd>').join('')+'</dl><div class="dr-acts">'+(r.sdt?'<a class="dt-btn is-main" href="tel:'+esc(r.sdt)+'">'+I.call+'Gọi</a>':'')+(r.email?'<a class="dt-btn" href="mailto:'+esc(r.email)+'">'+I.mail+'Email</a>':'')+(r.sdt?'<button type="button" class="dt-btn" data-dr="copy" data-v="'+esc(r.sdt)+'" aria-label="Sao chép số điện thoại">'+I.copy+'</button>':'')+'</div></div>':'')+'</article>';
+  }
+  function claimCard(r){
+    const open=openKey===r.id,car=[r.hang_xe,r.hieu_xe].filter(Boolean).join(' ')||'Xe chưa rõ',sub=[car,r.gdv_tiep_nhan].filter(Boolean).join(' · ');
+    const kv=[['Số HSBT',r.so_ho_so_boi_thuong],['Mã vụ tổn thất',r.ma_vu_ton_that],['GĐV tiếp nhận',r.gdv_tiep_nhan],['Đơn vị cấp đơn',r.don_vi_cap_don],['Loại tổn thất',r.loai_ton_that],['Địa điểm',r.dia_diem_vtt],['Ngày tổn thất',fmtDate(r.ngay_ton_that)],['Ngày mở hồ sơ',fmtDate(r.ngay_mo_hs)],['Ngày nhận đủ HS',fmtDate(r.ngay_nhan_du_ho_so)]].filter(x=>x[1]);
+    return '<article class="dr-card'+(open?' is-open':'')+'"><button type="button" class="dr-main" data-dr="open" data-k="'+esc(r.id)+'" aria-expanded="'+open+'"><span class="dr-who"><b class="dr-plate">'+esc(r.bien_so||'—')+'</b><small>'+esc(sub||'—')+'</small></span>'+(r.trang_thai?'<em class="dr-st" style="--h:'+hue(r.trang_thai)+'">'+esc(r.trang_thai)+'</em>':'')+'<span class="dr-chev">'+I.chev+'</span></button>'+
+      (open?'<div class="dr-more"><dl class="dr-kv">'+kv.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+esc(v)+'</dd>').join('')+'</dl>'+(r.so_ho_so_boi_thuong?'<div class="dr-acts"><button type="button" class="dt-btn" data-dr="copy" data-v="'+esc(r.so_ho_so_boi_thuong)+'">'+I.copy+'Sao chép số HSBT</button></div>':'')+'</div>':'')+'</article>';
+  }
+  function listHtml(){
+    const all=rows(),total=(tab==='contacts'?data.contacts:data.claims).length,page=all.slice(0,limit);
+    if(!total)return '<div class="dr-empty"><b>'+(tab==='contacts'?'Danh bạ chưa có dữ liệu':'Chưa có hồ sơ')+'</b>'+(tab==='contacts'?'Quản trị viên cần bấm “Đẩy sang Supabase” ở trang Danh bạ của webapp giám định.':'Dữ liệu sẽ xuất hiện sau khi quản trị viên đăng nhập Supabase trên webapp giám định xe.')+'</div>';
+    if(!all.length)return '<div class="dr-empty"><b>Không có kết quả</b>Thử đổi từ khóa hoặc bỏ bớt bộ lọc.</div>';
+    return '<div class="dr-count">'+all.length.toLocaleString('vi-VN')+(all.length!==total?' / '+total.toLocaleString('vi-VN'):'')+(tab==='contacts'?' liên hệ':' hồ sơ')+'</div><div class="dr-list">'+page.map(tab==='contacts'?contactCard:claimCard).join('')+'</div>'+(all.length>page.length?'<button type="button" class="dt-btn dr-more-btn" data-dr="more">Xem thêm '+Math.min(PAGE,all.length-page.length)+' mục</button>':'');
+  }
+  function opt(list,cur,all){return '<option value="all"'+(cur==='all'?' selected':'')+'>'+esc(all)+'</option>'+list.map(v=>'<option value="'+esc(v)+'"'+(cur===v?' selected':'')+'>'+esc(v)+'</option>').join('');}
+  function filtersHtml(){
+    if(tab==='contacts')return '<select data-dr-f="dept" aria-label="Lọc theo phòng ban">'+opt(distinct(data.contacts,'phong'),filt.dept,'Tất cả phòng ban')+'</select>';
+    return '<select data-dr-f="status" aria-label="Lọc theo trạng thái">'+opt(distinct(data.claims,'trang_thai'),filt.status,'Mọi trạng thái')+'</select><select data-dr-f="gdv" aria-label="Lọc theo giám định viên">'+opt(distinct(data.claims,'gdv_tiep_nhan'),filt.gdv,'Mọi GĐV')+'</select>';
+  }
+  function render(){
+    const r=root();if(!r)return;
+    if(failed&&!data){r.innerHTML='<div class="dr-empty"><b>Chưa tải được</b>'+esc(failed)+'<div class="dr-acts"><button type="button" class="dt-btn is-main" data-dr="retry">Thử lại</button></div></div>';return;}
+    if(!data){r.innerHTML='<div class="dr-skel"><i></i><i></i><i></i></div>';return;}
+    r.innerHTML='<div class="dr-seg" role="group" aria-label="Chọn danh sách"><button type="button" data-dr="tab" data-v="contacts" aria-pressed="'+(tab==='contacts')+'">Danh bạ <i>'+data.contacts.length+'</i></button><button type="button" data-dr="tab" data-v="claims" aria-pressed="'+(tab==='claims')+'">Hồ sơ <i>'+data.claims.length+'</i></button></div>'+
+      '<label class="dr-search">'+I.search+'<input type="search" data-dr-q placeholder="'+(tab==='contacts'?'Tìm tên, mã NV, SĐT, email…':'Tìm biển số, số HSBT, GĐV…')+'" autocomplete="off" enterkeyhint="search" value="'+esc(q)+'"></label>'+
+      '<div class="dr-filters">'+filtersHtml()+'</div><div id="drList">'+listHtml()+'</div>'+(failed?'<p class="dt-note is-err" style="margin-top:12px">'+esc(failed)+'</p>':'');
+  }
+  const paintList=()=>{const l=document.getElementById('drList');if(l)l.innerHTML=listHtml();};
+
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('#directorySection [data-dr]');if(!b)return;const k=b.dataset.dr;
+    if(k==='tab'){if(tab!==b.dataset.v){tab=b.dataset.v;q='';openKey='';limit=PAGE;render();}}
+    else if(k==='open'){openKey=openKey===b.dataset.k?'':b.dataset.k;paintList();}
+    else if(k==='more'){limit+=PAGE;paintList();}
+    else if(k==='copy')copy(b.dataset.v);
+    else if(k==='retry')load();
+  });
+  document.addEventListener('input',e=>{if(!e.target.matches('#directorySection [data-dr-q]'))return;q=e.target.value;limit=PAGE;openKey='';paintList();});
+  document.addEventListener('change',e=>{const s=e.target.closest('#directorySection [data-dr-f]');if(!s)return;filt[s.dataset.drF]=s.value;limit=PAGE;openKey='';paintList();});
+
+  function onNavigate(view){if(view==='directory'&&(!data||Date.now()-lastLoad>60000))load({quiet:Boolean(data)});}
+  function setUser(u){const e=String(u?.email||'').toLowerCase();if(e!==email){email=e;data=null;lastLoad=0;q='';openKey='';filt={dept:'all',status:'all',gdv:'all'};const r=root();if(r)r.innerHTML='<div class="dr-skel"><i></i><i></i><i></i></div>';}}
+  return {configure:v=>{options={...options,...v};},setUser,onNavigate,load};
+})();
+</script>
 
     <!-- supabase-js đóng gói sẵn trong app (cố định 2.119.0): mở app không phải chờ tải thư viện từ esm.sh. -->
     <script src="vendor/supabase-2.119.0.js" defer></script>
@@ -6372,6 +6529,7 @@ window.TascoDuty=(()=>{
         window.TascoDesktopLogin.configure({client:()=>supabase});
         window.TascoDrive.configure({client:()=>supabase});
         window.TascoDuty.configure({client:()=>supabase});
+        window.TascoDirectory?.configure({client:()=>supabase});
         window.TascoGarageDB.configure({client:supabase});
         window.TascoForms.configure({client:supabase});
         let lastLoggedUid = null;
@@ -11958,7 +12116,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const color = ['lookup','results','cloud','rescue','garage','assess','duty','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    const color = ['lookup','results','cloud','rescue','garage','assess','duty','directory','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -13727,7 +13885,7 @@ window.TascoNavigationMotion = (() => {
   const indicator = nav?.querySelector('.ws-nav-indicator');
   if (!nav || !indicator) return { sync() {} };
   const motionPreference = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-  const pageIds = {home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',account:'accountSection',forms:'formsSection',admin:'sysMgrSection'};
+  const pageIds = {home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',directory:'directorySection',account:'accountSection',forms:'formsSection',admin:'sysMgrSection'};
   let positioned = false, frame = 0, pendingAnimated = true, pageAnimation = null, lastGeometry = null;
   nav.dataset.navMotion = 'true';
   function position(animate = true) {
@@ -14922,7 +15080,7 @@ window.tascoGo=function(view){
   var shell=window.TascoAppShell, cur=shell&&shell.page, root=document.documentElement;
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(!document.startViewTransition||!cur||cur==='login'||cur===view||reduce||root.dataset.vt)return go();
-  var order=['home','lookup','results','cloud','rescue','garage','assess','duty','forms','account','admin'];
+  var order=['home','lookup','results','cloud','rescue','garage','assess','duty','directory','forms','account','admin'];
   root.dataset.vtDir=order.indexOf(view)>=order.indexOf(cur)?'fwd':'back';root.dataset.vt='1';
   var done=function(){delete root.dataset.vt;delete root.dataset.vtDir;};
   try{var t=document.startViewTransition(go);t.finished.then(done,done);}catch(_){done();go();}
