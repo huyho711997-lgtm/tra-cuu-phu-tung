@@ -238,11 +238,9 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch,
         const me = await myName(people);
         const todayKey = currentDutyDate(now());
         const today = await shiftRow(todayKey);
-        let upcoming = [];
-        if (me) {
-          const fut = dbCheck(await db.from('tasco_duty_shifts').select('duty_date,weekday,day_type,scene,detail').gte('duty_date', todayKey).order('duty_date').limit(120), 'đọc');
-          upcoming = fut.filter(s => fold(s.scene) === fold(me) || fold(s.detail) === fold(me)).slice(0, 8);
-        }
+        // 60 ngày tới (mọi người): để chọn ca đổi lại và hiện "Ca của tôi".
+        const ahead = dbCheck(await db.from('tasco_duty_shifts').select('duty_date,weekday,day_type,scene,detail').gte('duty_date', todayKey).order('duty_date').limit(60), 'đọc');
+        const upcoming = me ? ahead.filter(s => fold(s.scene) === fold(me) || fold(s.detail) === fold(me)).slice(0, 10) : [];
         let swapsQ = db.from('tasco_duty_swaps').select('*').order('created_at', { ascending: false }).limit(40);
         if (!isAdmin) swapsQ = swapsQ.eq('requested_by', actor);
         const swaps = dbCheck(await swapsQ, 'đọc');
@@ -257,7 +255,7 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch,
           });
         }
         const fresh = await readCfg();
-        return reply({ configured: true, admin: isAdmin, month, today: today ? { ...today, sheet_row: undefined, synced_at: undefined } : null, todayKey, shifts, people, me, upcoming, swaps,
+        return reply({ configured: true, admin: isAdmin, month, today: today ? { ...today, sheet_row: undefined, synced_at: undefined } : null, todayKey, shifts, people, me, upcoming, ahead, swaps,
           sync: { at: fresh?.last_sync_at || null, error: fresh?.last_sync_error || syncError || null, tab: cfg.sheet_title },
           ...(isAdmin ? { sheetUrl: 'https://docs.google.com/spreadsheets/d/' + cfg.spreadsheet_id + '/edit#gid=' + (cfg.sheet_gid ?? 0), members } : {}) });
       }
