@@ -5418,36 +5418,50 @@ html[data-tasco-page=duty]{background:var(--app-navy)}
 .dt-icon{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-bg);color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .dt-icon svg{width:17px;height:17px}.dt-icon:disabled{opacity:.5}
 .dt-back-today{display:block;width:100%;min-height:34px;margin-bottom:10px;border:1px dashed var(--ws-line);border-radius:11px;background:transparent;color:var(--ws-accent-text);font-size:12px;font-weight:700;cursor:pointer}
-.dt-days{display:grid;gap:8px;animation:dtIn .18s ease}
-.dt-days.is-next{animation:dtInR .18s ease}.dt-days.is-prev{animation:dtInL .18s ease}
-.dt-card{position:relative;display:flex;align-items:stretch;gap:12px;width:100%;padding:12px 14px;border:1px solid var(--ws-line);border-radius:17px;background:var(--ws-bg);color:var(--ws-text);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s ease}
+.dt-days{display:grid;gap:10px;animation:dtIn .2s ease}
+.dt-days.is-next{animation:dtInR .2s ease}.dt-days.is-prev{animation:dtInL .2s ease}
+.dt-card{position:relative;display:flex;align-items:stretch;gap:13px;width:100%;padding:13px 14px 13px 19px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-bg);color:var(--ws-text);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s ease,box-shadow .12s ease;box-shadow:0 1px 2px rgba(16,37,64,.04)}
+.dt-card::before{content:'';position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:0 4px 4px 0;background:var(--ws-line)}
+.dt-card.is-today::before{background:linear-gradient(var(--app-navy),var(--app-teal))}
+.dark .dt-card.is-today::before{background:linear-gradient(var(--app-teal),#4fb8b2)}
 .dt-card:active{transform:scale(.985)}
-.dt-card.is-wkd{background:linear-gradient(165deg,#fff8ea,var(--ws-bg))}
-.dark .dt-card.is-wkd{background:linear-gradient(165deg,rgba(255,196,94,.08),var(--ws-bg))}
-.dt-card.is-past{opacity:.55}
-.dt-card.is-mine{box-shadow:inset 3px 0 0 var(--app-navy)}
-.dark .dt-card.is-mine{box-shadow:inset 3px 0 0 var(--app-teal)}
-.dt-card.is-today{border-color:transparent;background:linear-gradient(150deg,var(--app-navy),#25507a);color:#fff;box-shadow:0 8px 20px -10px rgba(14,43,78,.5)}
-.dt-card.is-today.is-mine{box-shadow:0 8px 20px -10px rgba(14,43,78,.5),inset 3px 0 0 var(--app-teal)}
-.dt-date{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:42px}
-.dt-date small{color:var(--ws-muted);font-size:10px;font-weight:800;text-transform:uppercase}
-.dt-card.is-today .dt-date small{color:#a9d6dc}
-.dt-date b{font-size:19px;font-weight:800;letter-spacing:-.4px}
-.dt-date em{margin-top:1px;padding:1px 6px;border-radius:999px;background:rgba(255,255,255,.2);color:#fff;font-size:8.5px;font-weight:800;font-style:normal;text-transform:uppercase}
-.dt-roles{flex:1;display:grid;gap:6px;min-width:0}
-.dt-r{display:flex;align-items:center;gap:8px;min-width:0}
-.dt-r.is-empty{color:var(--ws-muted);font-size:11.5px;font-weight:600;padding:3px 0}
-.dt-r>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:0}
-.dt-r small{color:var(--ws-muted);font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
-.dt-card.is-today .dt-r small{color:#a9d6dc}
-.dt-r strong{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dt-r em{flex:none;padding:1px 7px;border-radius:999px;background:rgba(99,173,182,.18);color:var(--ws-accent-text);font-size:9px;font-weight:800;font-style:normal}
-.dt-card.is-today .dt-r em{background:rgba(255,255,255,.22);color:#fff}
+.dt-card.is-past{opacity:.58}
+.dt-card.is-today{box-shadow:0 4px 16px -8px rgba(16,37,64,.28)}
+.dt-date{flex:none;display:flex;flex-direction:column;align-items:center;gap:5px;width:42px;padding-top:1px}
+.dt-date small{color:var(--ws-muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.02em}
+.dt-date.is-wkd small{color:#c0612f}
+.dark .dt-date.is-wkd small{color:#e0a254}
+.dt-date b{display:grid;place-items:center;width:33px;height:33px;border-radius:50%;font-size:15px;font-weight:800;letter-spacing:-.2px;color:var(--ws-text)}
+.dt-date b.is-today{background:linear-gradient(150deg,var(--app-navy),#2a5a86);color:#fff;box-shadow:0 5px 12px -4px rgba(16,37,64,.55)}
+.dark .dt-date b.is-today{background:linear-gradient(150deg,var(--app-teal),#2f8f8c);color:#06231f;box-shadow:0 5px 12px -4px rgba(0,0,0,.4)}
+.dt-date em{color:var(--ws-accent-text);font-size:8px;font-weight:800;font-style:normal;text-transform:uppercase;letter-spacing:.03em}
+.dt-roles{flex:1;display:grid;gap:2px;min-width:0}
+.dt-r{display:flex;align-items:center;gap:9px;min-width:0;padding:5px 7px;border-radius:11px;transition:background .15s}
+.dt-r.is-mine{background:rgba(99,173,182,.14)}
+.dark .dt-r.is-mine{background:rgba(132,191,199,.14)}
+.dt-r.is-empty{color:var(--ws-muted);font-size:11.5px;font-weight:600;padding:8px 7px}
+.dt-r-ico{flex:none;display:grid;place-items:center;width:25px;height:25px;border-radius:9px}
+.dt-r-ico svg{width:14px;height:14px}
+.dt-r[data-role=scene] .dt-r-ico{background:rgba(27,126,120,.13);color:#1b7e78}
+.dt-r[data-role=detail] .dt-r-ico{background:rgba(106,91,196,.14);color:#6a5bc4}
+.dark .dt-r[data-role=scene] .dt-r-ico{background:rgba(84,209,199,.16);color:#6fe0d6}
+.dark .dt-r[data-role=detail] .dt-r-ico{background:rgba(161,150,255,.18);color:#b3a8ff}
+.dt-r>.dt-r-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:0}
+.dt-r-info small{color:var(--ws-muted);font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em}
+.dt-r strong{font-size:13px;font-weight:700;line-height:1.25;word-break:break-word}
+.dt-r em{flex:none;padding:1px 7px;border-radius:999px;background:rgba(99,173,182,.2);color:var(--ws-accent-text);font-size:9px;font-weight:800;font-style:normal}
 .dt-r em.is-pend{background:#fff1d6;color:#94620c}
 @keyframes dtIn{from{opacity:0;transform:translateY(4px)}}
 @keyframes dtInR{from{opacity:0;transform:translateX(16px)}}
 @keyframes dtInL{from{opacity:0;transform:translateX(-16px)}}
+.dt-role-ico{display:grid;place-items:center;width:24px;height:24px;margin-bottom:6px;border-radius:8px;background:rgba(255,255,255,.16);color:#fff}
+.dt-role-ico svg{width:13px;height:13px}
 .dt-line{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:13px;background:var(--ws-surface)}
+.dt-line .dt-r-ico{width:28px;height:28px;border-radius:10px}
+.dt-line[data-role=scene] .dt-r-ico{background:rgba(27,126,120,.13);color:#1b7e78}
+.dt-line[data-role=detail] .dt-r-ico{background:rgba(106,91,196,.14);color:#6a5bc4}
+.dark .dt-line[data-role=scene] .dt-r-ico{background:rgba(84,209,199,.16);color:#6fe0d6}
+.dark .dt-line[data-role=detail] .dt-r-ico{background:rgba(161,150,255,.18);color:#b3a8ff}
 .dt-line small{display:block;color:var(--ws-muted);font-size:10.5px;font-weight:700}
 .dt-line span{display:block;color:var(--ws-text);font-size:13.5px;font-weight:700}
 .dt-line em{margin-left:auto;padding:2px 8px;border-radius:999px;background:var(--ws-accent);color:var(--ws-accent-text);font-size:10px;font-weight:800;font-style:normal}
@@ -5495,7 +5509,7 @@ html[data-tasco-page=duty]{background:var(--app-navy)}
 .dt-sum b{color:var(--ws-accent-text)}
 @keyframes dtFade{from{opacity:0}}@keyframes dtUp{from{transform:translateY(40px);opacity:.4}}
 @media(min-width:640px){.tasco-workspace #dutySection .rc-panel{padding:26px}.dt-mine{margin:0 -26px;padding:2px 26px 4px}.dt-sheet-bg{align-items:center}.dt-sheet{border-radius:24px}}
-@media(max-width:359px){.dt-date{width:36px}.dt-date b{font-size:16px}.dt-today-grid{grid-template-columns:1fr}}
+@media(max-width:359px){.dt-date{width:36px}.dt-date b{width:29px;height:29px;font-size:13px}.dt-today-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){#dutySection *,.dt-sheet,.dt-sheet-bg{animation:none!important;transition:none!important}}
 </style>
 <script id="tascoDuty">
@@ -5522,7 +5536,7 @@ window.TascoDuty=(()=>{
   const isWkd=iso=>{const g=dow(iso);return g===0||g===6;};
   const nextDay=iso=>new Date(Date.parse(iso+'T00:00:00Z')+864e5).toISOString().slice(0,10);
   const svg=p=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
-  const I={prev:svg('<path d="m15 6-6 6 6 6"/>'),next:svg('<path d="m9 6 6 6-6 6"/>'),sync:svg('<path d="M20 11a8 8 0 0 0-14.3-4.9L4 8m0-4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16m0 4v-4h-4"/>'),sheet:svg('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/>'),swap:svg('<path d="M7 7h12l-3-3M17 17H5l3 3"/>'),edit:svg('<path d="M4 20h4L19 9l-4-4L4 16z"/>'),bell:svg('<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/>')};
+  const I={prev:svg('<path d="m15 6-6 6 6 6"/>'),next:svg('<path d="m9 6 6 6-6 6"/>'),sync:svg('<path d="M20 11a8 8 0 0 0-14.3-4.9L4 8m0-4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16m0 4v-4h-4"/>'),sheet:svg('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/>'),swap:svg('<path d="M7 7h12l-3-3M17 17H5l3 3"/>'),edit:svg('<path d="M4 20h4L19 9l-4-4L4 16z"/>'),bell:svg('<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/>'),scene:svg('<path d="M12 21s7-5.4 7-11.2A7 7 0 0 0 5 9.8C5 15.6 12 21 12 21z"/><circle cx="12" cy="9.6" r="2.3"/>'),detail:svg('<rect x="6" y="3.5" width="12" height="17" rx="2.2"/><path d="M9 3.5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v.5"/><path d="m9.3 12.5 1.8 1.8 3.6-3.8"/>')};
   function toast(t){const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),4200);}
   const err=(code,message)=>Object.assign(new Error(message),{code});
   async function call(body){
@@ -5580,7 +5594,7 @@ window.TascoDuty=(()=>{
     if(data.admin)h+=inboxHtml();
     const t=data.today;
     h+='<div class="dt-today"><div class="dt-today-cap"><span>Đang trực</span><b>'+(t?wd(t.duty_date)+' '+dm(t.duty_date)+' · 08:00 → 08:00 '+dm(nextDay(t.duty_date)):'Chưa có lịch')+'</b></div>';
-    if(t)h+='<div class="dt-today-grid">'+['scene','detail'].map(k=>'<div class="dt-role'+(same(t[k],me)?' is-me':'')+'"><small>'+ROLE[k]+'</small><strong>'+esc(t[k]||'—')+'</strong></div>').join('')+'</div>';
+    if(t)h+='<div class="dt-today-grid">'+['scene','detail'].map(k=>'<div class="dt-role'+(same(t[k],me)?' is-me':'')+'"><span class="dt-role-ico">'+I[k]+'</span><small>'+ROLE[k]+'</small><strong>'+esc(t[k]||'—')+'</strong></div>').join('')+'</div>';
     h+='</div>';
     h+=mineHtml();
     h+=weekHtml();
@@ -5613,12 +5627,12 @@ window.TascoDuty=(()=>{
     if(mondayOf(data.todayKey)!==week)h+='<button type="button" class="dt-back-today" data-dt="today">Về tuần này</button>';
     h+='<div class="dt-days'+(slide?' is-'+slide:'')+'">';
     for(let i=0;i<7;i++){
-      const iso=addDays(week,i),s=map.get(iso),today=iso===data.todayKey,past=iso<data.todayKey;
-      const mine=s&&(same(s.scene,me)||same(s.detail,me));
-      const cls=['dt-card',today?'is-today':'',isWkd(iso)?'is-wkd':'',past?'is-past':'',mine?'is-mine':''].join(' ');
-      h+='<button type="button" class="'+cls+'" data-dt="day" data-date="'+iso+'"><span class="dt-date"><small>'+wd(iso)+'</small><b>'+Number(iso.slice(8))+'</b>'+(today?'<em>Hôm nay</em>':'')+'</span><span class="dt-roles">';
+      const iso=addDays(week,i),s=map.get(iso),today=iso===data.todayKey,past=iso<data.todayKey,wkd=isWkd(iso);
+      const cls=['dt-card',today?'is-today':'',past?'is-past':''].join(' ').trim();
+      h+='<button type="button" class="'+cls+'" data-dt="day" data-date="'+iso+'"><span class="dt-date'+(wkd?' is-wkd':'')+'"><small>'+wd(iso)+'</small><b'+(today?' class="is-today"':'')+'>'+Number(iso.slice(8))+'</b>'+(today?'<em>Hôm nay</em>':'')+'</span><span class="dt-roles">';
       if(!s)h+='<span class="dt-r is-empty">'+(loadingMonth?'Đang tải…':'Chưa có lịch trên Sheet')+'</span>';
-      else h+=['scene','detail'].map(k=>{const p=pendingOf(iso,k);return '<span class="dt-r">'+av(s[k])+'<span><small>'+ROLE_S[k]+'</small><strong>'+esc(s[k]||'—')+'</strong></span>'+(same(s[k],me)?'<em>Bạn</em>':p?'<em class="is-pend">Chờ duyệt</em>':'')+'</span>';}).join('');
+      else h+=['scene','detail'].map(k=>{const p=pendingOf(iso,k),mine=same(s[k],me);
+        return '<span class="dt-r'+(mine?' is-mine':'')+'" data-role="'+k+'"><span class="dt-r-ico">'+I[k]+'</span>'+av(s[k])+'<span class="dt-r-info"><small>'+ROLE_S[k]+'</small><strong>'+esc(s[k]||'—')+'</strong></span>'+(mine?'<em>Bạn</em>':p?'<em class="is-pend">Chờ duyệt</em>':'')+'</span>';}).join('');
       h+='</span></button>';
     }
     return h+'</div></div>';
@@ -5630,7 +5644,7 @@ window.TascoDuty=(()=>{
     let h='<h4>'+(s?.weekday||wd(date))+', '+dmy(date)+'</h4><small>Ca 08:00 '+dm(date)+' → 08:00 '+dm(nextDay(date))+(s?.day_type?' · Ngày '+esc(s.day_type):'')+'</small>';
     if(!s)h+='<p class="dt-note" style="margin-top:14px">Sheet chưa có dòng cho ngày này.</p>';
     else h+=['scene','detail'].map(k=>{const mine=same(s[k],me),can=future&&s[k]&&(mine||data.admin);
-      return '<div class="dt-line">'+av(s[k])+'<div><small>'+ROLE[k]+'</small><span>'+esc(s[k]||'—')+(mine?' · Bạn':'')+'</span></div>'+(can?'<button type="button" class="dt-btn is-sm" data-act="swap" data-role="'+k+'">'+I.swap+(data.admin?'Đổi người':'Xin đổi')+'</button>':'')+'</div>';}).join('');
+      return '<div class="dt-line" data-role="'+k+'"><span class="dt-r-ico">'+I[k]+'</span>'+av(s[k])+'<div><small>'+ROLE[k]+'</small><span>'+esc(s[k]||'—')+(mine?' · Bạn':'')+'</span></div>'+(can?'<button type="button" class="dt-btn is-sm" data-act="swap" data-role="'+k+'">'+I.swap+(data.admin?'Đổi người':'Xin đổi')+'</button>':'')+'</div>';}).join('');
     h+='<div class="dt-actions">'+(data.admin&&s?'<button type="button" class="dt-btn" data-act="edit">'+I.edit+'Xếp lại cả ngày</button>':'')+'<button type="button" class="dt-btn" data-dt-close>Đóng</button></div>';
     if(!future&&s&&!data.admin)h+='<p class="dt-note" style="margin-top:10px">Ca đã qua, không đổi được nữa.</p>';
     const el=openSheet(h);
