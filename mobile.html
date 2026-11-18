@@ -4171,7 +4171,7 @@ window.TascoAppShell=(()=>{
     window.TascoLookupFlow?.onNavigate(view);window.TascoForms?.onNavigate(view);window.TascoDuty?.onNavigate(view);window.TascoDirectory?.onNavigate(view);window.TascoWeekly?.onNavigate(view);
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
     login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
-    Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id);node.hidden=page!==view;node.style.display=page===view?'block':'none';});
+    Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id),show=page===view;if(node.hidden===!show&&node.style.display===(show?'block':'none'))return;node.hidden=!show;node.style.display=show?'block':'none';});
     document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account'].includes(view);
     setText('#wsPageTitle',pages[view]||'');
     document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view==='assess'||view==='duty'||view==='directory'?'home':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
@@ -4182,7 +4182,7 @@ window.TascoAppShell=(()=>{
     if(view==='cloud')connectCloud();if(view==='home'){greeting();paintCloud(lastCloud);connectCloud();}
     if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
     window.TascoLookupFlow?.afterNavigate(view);
-    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='duty'?'dutyPageTitle':view==='directory'?'directoryPageTitle':view==='wkreport'?'wkreportPageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
+    if(previous!==view&&view!=='home'){const focusTitle=()=>{if(current!==view)return;(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='duty'?'dutyPageTitle':view==='directory'?'directoryPageTitle':view==='wkreport'?'wkreportPageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});};if(typeof requestAnimationFrame==='function')requestAnimationFrame(focusTitle);else focusTitle();}
     const top=options.restore?scrolls[view]||0:0;
     window.scrollTo({left:0,top,behavior:'instant'});
     if(previous!==view&&['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
@@ -15286,8 +15286,9 @@ window.TascoNavigationMotion = (() => {
     animation.onfinish = () => { if (pageAnimation === animation) pageAnimation = null; };
   }
   function sync(view, previous) {
-    if (frame) { window.cancelAnimationFrame(frame); frame = 0; pendingAnimated = true; }
-    position(previous !== 'login');
+    // Không đo layout trong lúc xử lý chạm (gây reflow đồng bộ ~45ms trên máy yếu):
+    // trạng thái chọn đã đổi ngay bằng class, vạch chỉ báo được đo + trượt ở khung hình kế tiếp.
+    schedule(previous !== 'login');
     animatePage(view,previous);
   }
   window.addEventListener('resize', () => schedule(false), {passive:true});
@@ -16431,7 +16432,9 @@ window.tascoGo=function(view){
   var go=function(){ if(typeof window.updateView==='function')window.updateView(view); else window.TascoAppShell.navigate(view); };
   var shell=window.TascoAppShell, cur=shell&&shell.page, root=document.documentElement;
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!document.startViewTransition||!cur||cur==='login'||cur===view||reduce||root.dataset.vt)return go();
+  var ev=window.event,fromNav=!!(ev&&ev.target&&ev.target.closest&&ev.target.closest('#bottomNav'));
+  /* Thanh điều hướng dưới: đổi trang tức thì (+ mờ nhẹ qua WAAPI) — View Transition chụp snapshot cả trang nên gây giật. */
+  if(fromNav||!document.startViewTransition||!cur||cur==='login'||cur===view||reduce||root.dataset.vt)return go();
   var order=['home','lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account','admin'];
   root.dataset.vtDir=order.indexOf(view)>=order.indexOf(cur)?'fwd':'back';root.dataset.vt='1';
   var done=function(){delete root.dataset.vt;delete root.dataset.vtDir;};
