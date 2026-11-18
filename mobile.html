@@ -7252,6 +7252,7 @@ async function deletePersonalCloudPhotos(ids,owner){
 TascoCloud.configure({mode:'mobile',storageLimitBytes:null,canAccess:()=>window.TascoCloudAccess.allowedFor(currentUserProfile),authorize:user=>window.TascoCloudAccess.check(user,{force:true}),client:()=>Promise.resolve(supabase),sessionUser:()=>auth.currentUser?{id:auth.currentUser.uid,email:auth.currentUser.email}:null,expectedEmail:window.mobileCloudEmail,cloudinary:mobileExistingCloudinary,personalStorage:window.TascoPersonalStorage,storageSettings:problem=>window.TascoPersonalStorage.open(problem),capture:openMobileCamera,deletePhotos:TASCO_DELETE_CLOUD_ASSETS?deletePersonalCloudPhotos:null});
 window.TascoCameraPreferences.configure({client:supabase,expectedEmail:window.mobileCloudEmail});
 window.TascoPlanSync?.configure({client:supabase});
+window.TascoVoiceCloud?.configure({url:SUPABASE_PROJECT_URL,anonKey:SUPABASE_ANON_KEY,token:async()=>{try{return (await supabase.auth.getSession()).data?.session?.access_token||'';}catch(_){return '';}}});
 </script>
 <!-- BOTTOM SHEET FILTER MODAL -->
     <div id="modalFilterSelection" class="fixed inset-0 hidden ws-filter-modal" style="display: none; z-index: 9999;">
@@ -13150,7 +13151,7 @@ window.TascoCategories = (function () {
     function plugin() { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SpeechRecognition || null; }
     function webApi() { return isApp() ? null : (window.SpeechRecognition || window.webkitSpeechRecognition || null); }
     /* hiện nút: app (kể cả bản cũ chưa có plugin, để báo cần cập nhật) hoặc trình duyệt có hỗ trợ */
-    function visible() { return isApp() || !!webApi(); }
+    function visible() { return isApp() || !!webApi() || cloudCapable(); }
     function available() { return !!(plugin() || webApi()); }
     /* "cản trước phẩy đèn pha trái xuống dòng tai xe" -> "Cản trước, Đèn pha trái, Tai xe" */
     function tidy(text, multi) {
@@ -13298,6 +13299,32 @@ window.TascoCategories = (function () {
       return 'Không nghe được. Thử lại gần micro hơn.';
     }
     function stop() { if (session) session.stop(); }
+    /* ---------- Nhận dạng nâng cao (Whisper qua Edge Function tasco-stt) ----------
+       Ghi âm trên máy -> gửi tasco-stt (key Groq lưu ở Supabase, không nằm trong app) -> chữ đi qua bộ chỉnh lỗi như cũ.
+       Lỗi hoặc không dùng được thì tự quay về bộ nhận dạng của iPhone / trình duyệt. */
+    var CLOUD_OFF_KEY = 'tasco_voice_cloud_off', cloudCfg = null, cloudBadUntil = 0;
+    function cloudOff() { try { return window.localStorage.getItem(CLOUD_OFF_KEY) === '1'; } catch (_) { return false; } }
+    function cloudCapable() {
+      return !!(cloudCfg && window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && navigator.onLine !== false && Date.now() > cloudBadUntil && !cloudOff());
+    }
+    function pickMime() {
+      var c = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'];
+      for (var i = 0; i < c.length; i++) { try { if (window.MediaRecorder.isTypeSupported && window.MediaRecorder.isTypeSupported(c[i])) return c[i]; } catch (_) {} }
+      return '';
+    }
+    async function transcribe(blob, prompt) {
+      var token = await cloudCfg.token();
+      if (!token) { var e0 = new Error('auth'); e0.status = 401; throw e0; }
+      var form = new FormData();
+      form.append('file', blob, 'voice'); form.append('language', 'vi'); if (prompt) form.append('prompt', prompt);
+      var ctrl = new AbortController(), timer = setTimeout(function () { ctrl.abort(); }, 30000), res;
+      try { res = await fetch(cloudCfg.url + '/functions/v1/tasco-stt', { method: 'POST', headers: { Authorization: 'Bearer ' + token, apikey: cloudCfg.anonKey }, body: form, signal: ctrl.signal }); }
+      catch (_) { var e1 = new Error('network'); e1.status = 0; throw e1; }
+      finally { clearTimeout(timer); }
+      var data = null; try { data = await res.json(); } catch (_) {}
+      if (!res.ok) { var e2 = new Error((data && data.code) || 'http'); e2.status = res.status; throw e2; }
+      return String((data && data.text) || '');
+    }
     function hints(known, onlyKnown) {
       var out = [], seen = {};
       (known || []).concat(onlyKnown ? [] : learnedList().slice(0, 60)).concat(onlyKnown ? [] : SEED).forEach(function (n) { n = String(n || '').trim(); var k = norm(n); if (!k || seen[k] || n.split(' ').length > 4) return; seen[k] = 1; out.push(n); });
@@ -13308,10 +13335,10 @@ window.TascoCategories = (function () {
       if (winding) { ui.error('Đang kết thúc lần nói trước. Thử lại sau một giây.'); return; }
       if (session) { session.stop(); return; }
       var native = plugin(), Web = webApi();
-      if (!native && !Web) { ui.error(isApp() ? 'Cần cập nhật app bản mới để nói nhập (cài lại file IPA mới nhất).' : 'Trình duyệt này chưa hỗ trợ nhập bằng giọng nói.'); return; }
+      if (!native && !Web && !cloudCapable()) { ui.error(isApp() ? 'Cần cập nhật app bản mới để nói nhập (cài lại file IPA mới nhất).' : 'Trình duyệt này chưa hỗ trợ nhập bằng giọng nói.'); return; }
       var known = (ui.known || []).filter(Boolean);
       var idx = ui.plate ? null : makeIndex(ui), alts = [];
-      var done = false, handles = [], rec = null, parts = [], last = '', stopRequested = false, restarts = 0, startedAt = Date.now(), lastChange = 0, tick = 0, stopTimer = 0, onDevice = false;
+      var useCloud = cloudCapable(), cloudCtl = null, done = false, handles = [], rec = null, parts = [], last = '', stopRequested = false, restarts = 0, startedAt = Date.now(), lastChange = 0, tick = 0, stopTimer = 0, onDevice = false;
       function text() { return parts.concat(last ? [last] : []).join(ui.multi ? ', ' : ' '); }
       /* Chọn phương án tốt nhất trong các phương án iOS trả về: theo bộ chọn riêng của tính năng (vd biển số) hoặc theo từ điển chuyên ngành */
       function choose(list) {
@@ -13331,6 +13358,7 @@ window.TascoCategories = (function () {
       function show() { var t = tidy(text(), ui.multi); if (t) ui.live(t); }
       function requestStop() {
         if (stopRequested) return; stopRequested = true; ui.stopping();
+        if (cloudCtl) { try { cloudCtl.stop(); } catch (_) { finish(); } return; }
         if (native) {
           winding = true;
           try { native.stop().catch(function () {}); } catch (_) {}
@@ -13354,6 +13382,7 @@ window.TascoCategories = (function () {
           if (!last && !parts.length && now - startedAt > NO_SPEECH_MS) { requestStop(); }     // không nói gì: tự dừng
         }, 300);
       }
+      function runNative() {
       if (native) {
         (async function () {
           try {
@@ -13407,7 +13436,75 @@ window.TascoCategories = (function () {
           rec.start(); watch();
         } catch (error) { fail('Chưa bật được nhận dạng giọng nói.'); }
       }
+      }
+      /* Ghi âm + tự dừng khi im lặng (đo mức âm bằng AnalyserNode), rồi gửi tasco-stt. */
+      function runCloud(fallback) {
+        var stream = null, mr = null, chunks = [], ctx = null, analyser = null, buf = null, vad = 0, speech = false, lastVoice = 0, t0 = Date.now(), floor = [], thr = 0, blind = false, sawSignal = false, stopAsked = false, mime = '';
+        var SILENCE = 1800;
+        cloudCtl = { stop: function () { stopAsked = true; if (mr && mr.state !== 'inactive') { try { mr.stop(); } catch (_) { release(); finish(); } } else if (!mr && !stream) { /* chưa mở micro xong: then() sẽ xử lý */ } } };
+        function release() {
+          clearInterval(vad);
+          if (stream) { stream.getTracks().forEach(function (t) { try { t.stop(); } catch (_) {} }); stream = null; }
+          if (ctx) { try { ctx.close(); } catch (_) {} ctx = null; }
+        }
+        function cloudFail(err) {
+          var st = err && err.status, canFall = !!(native || Web), msg;
+          if (st === 401) msg = 'Phiên đăng nhập hết hạn. Hãy đăng nhập lại rồi thử lại.';
+          else if (st === 409 || st === 403) { cloudBadUntil = Infinity; msg = 'Tài khoản này chưa bật nhận dạng nâng cao.' + (canFall ? ' Lần nói sau sẽ dùng bộ nhận dạng có sẵn của máy.' : ''); }
+          else if (st === 429) { cloudBadUntil = Date.now() + 120000; msg = 'Nhận dạng nâng cao đang hết lượt.' + (canFall ? ' Lần nói sau tạm dùng bộ nhận dạng có sẵn của máy.' : ' Thử lại sau ít phút.'); }
+          else { if (canFall) cloudBadUntil = Date.now() + 60000; msg = 'Chưa kết nối được nhận dạng nâng cao.' + (canFall ? ' Lần nói sau tạm dùng bộ nhận dạng có sẵn của máy.' : ' Kiểm tra mạng rồi thử lại.'); }
+          fail(msg);
+        }
+        async function onRecorded() {
+          var type = (mr && mr.mimeType) || mime || 'audio/mp4', blob = new Blob(chunks, { type: type });
+          release();
+          if (done) return;
+          if (blob.size < 1500 || (!speech && !blind)) { fail('Không nghe thấy tiếng nói. Thử lại gần micro hơn.'); return; }
+          var prompt = ui.plate ? 'Biển số xe Việt Nam: 47A-123.45, 47C-678.90, 51H-345.67, 29A-123.45.' : 'Giám định xe ô tô: ' + hints(known, ui.onlyKnown).slice(0, 45).join(', ');
+          try {
+            var text = await transcribe(blob, prompt.slice(0, 650));
+            if (done) return;
+            text = text.replace(/[.!?…]+\s*$/, '').trim();
+            if (ui.multi) text = text.replace(/[.!?]\s+/g, ', ');
+            if (!text) { fail('Chưa nhận ra lời nói. Hãy nói rõ hơn hoặc gần micro hơn.'); return; }
+            last = choose([text]); lastChange = Date.now(); show(); finish();
+          } catch (err) { if (!done) cloudFail(err); }
+        }
+        navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(function (s) {
+          if (done) { s.getTracks().forEach(function (t) { t.stop(); }); return; }
+          stream = s; mime = pickMime();
+          try { mr = mime ? new window.MediaRecorder(s, { mimeType: mime }) : new window.MediaRecorder(s); } catch (_) { release(); cloudCtl = null; fallback(); return; }
+          mr.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+          mr.onstop = onRecorded;
+          try { mr.start(); } catch (_) { release(); cloudCtl = null; fallback(); return; }
+          try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            ctx = new AC(); var src = ctx.createMediaStreamSource(s); analyser = ctx.createAnalyser(); analyser.fftSize = 1024; src.connect(analyser); buf = new Uint8Array(analyser.fftSize);
+            if (ctx.state === 'suspended') ctx.resume().catch(function () {});
+          } catch (_) { analyser = null; blind = true; }
+          t0 = Date.now();
+          if (stopAsked) { try { mr.stop(); } catch (_) {} return; }
+          vad = setInterval(function () {
+            var now = Date.now(), elapsed = now - t0, rms = 0;
+            if (analyser) {
+              analyser.getByteTimeDomainData(buf);
+              var sum = 0; for (var i = 0; i < buf.length; i++) { var v = (buf[i] - 128) / 128; sum += v * v; if (buf[i] !== 128) sawSignal = true; }
+              rms = Math.sqrt(sum / buf.length);
+            }
+            try { ui.level && ui.level(Math.min(1, rms * 6)); } catch (_) {}
+            if (elapsed < 500) floor.push(rms);
+            else if (!thr) { floor.sort(function (a, b) { return a - b; }); thr = Math.max(0.018, (floor[floor.length >> 1] || 0) * 2.5 + 0.01); }
+            if (thr && rms > thr) { speech = true; lastVoice = now; }
+            if (elapsed > 1200 && !sawSignal) blind = true;   // không đọc được mức âm: chỉ dừng khi bấm tay hoặc hết giờ
+            if (stopRequested) return;
+            if (elapsed > MAX_MS) requestStop();
+            else if (!blind) { if (speech && now - lastVoice > SILENCE) requestStop(); else if (!speech && elapsed > NO_SPEECH_MS) requestStop(); }
+          }, 80);
+        }).catch(function () { release(); cloudCtl = null; if (done) return; if (native || Web) fallback(); else fail('Chưa cấp quyền micro. Hãy cho phép micro rồi thử lại.'); });
+      }
+      if (useCloud) runCloud(function () { if (native || Web) runNative(); else fail('Chưa bật được micro.'); }); else runNative();
     }
+    window.TascoVoiceCloud = { configure: function (cfg) { cloudCfg = cfg && cfg.url && cfg.token ? cfg : null; }, disable: function (off) { try { if (off) window.localStorage.setItem(CLOUD_OFF_KEY, '1'); else window.localStorage.removeItem(CLOUD_OFF_KEY); } catch (_) {} }, enabled: function () { return cloudCapable(); } };
     return { visible: visible, available: available, start: start, stop: stop, tidy: tidy, snap: snap, norm: norm, explain: explain, learn: learn, fix: function (t, multi, known) { return fixText(t, multi, makeIndex({ known: known })); }, rerank: function (a, known) { return rerank(a, makeIndex({ known: known })); }, active: function () { return !!session; } };
   })();
   /* open({ current, extra: [tên trong album], title, subtitle, onPick(name|''),
