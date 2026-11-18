@@ -5292,7 +5292,9 @@ window.TascoDrive=(()=>{
     const f=overlay.querySelector('form');if(st.clientId)f.elements.clientId.value=st.clientId;
     f.addEventListener('submit',async e=>{
       e.preventDefault();const id=f.elements.clientId.value.trim(),sec=f.elements.clientSecret.value.trim();
-      if(!id||(!sec&&!st.configured)){msg('Nhập Client ID và Client secret.');return;}
+      if(/^AIza/.test(id)){msg('Đây là API key (AIza…), không phải Client ID. Vào Credentials → Create credentials → OAuth client ID → Web application để lấy Client ID dạng …apps.googleusercontent.com.');return;}
+      if(!/\.apps\.googleusercontent\.com$/.test(id)){msg('Client ID phải kết thúc bằng .apps.googleusercontent.com.');return;}
+      if(!sec&&!st.configured){msg('Nhập Client secret (dạng GOCSPX-…), lấy cùng chỗ với Client ID.');return;}
       const btn=f.querySelector('[type=submit]');btn.disabled=true;btn.textContent='Đang lưu…';msg('');
       try{if(sec||id!==st.clientId)await call({action:'save-config',clientId:id,clientSecret:sec});await startAuth();}
       catch(e2){msg(e2.message);btn.disabled=false;btn.textContent='Lưu và kết nối Google';}
