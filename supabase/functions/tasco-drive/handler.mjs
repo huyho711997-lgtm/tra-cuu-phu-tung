@@ -6,7 +6,8 @@
 //  POST action=session      (mọi tài khoản đang hoạt động) mở phiên upload resumable -> trình duyệt đẩy từng khúc thẳng lên Google.
 //  POST action=disconnect   (admin) xoá kết nối.
 // Client secret + refresh token chỉ nằm trong bảng tasco_drive_config (RLS khóa, chỉ service role đọc), không bao giờ gửi xuống app.
-const SCOPE = 'openid email https://www.googleapis.com/auth/drive.file';
+// drive.file: video nặng; spreadsheets: lịch trực đồng bộ 2 chiều với Google Sheet (Edge Function tasco-duty).
+const SCOPE = 'openid email https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets';
 const FOLDER_NAME = 'Tasco DLK - Video';
 const STATE_TTL_MS = 10 * 60 * 1000;
 const MAX_SIZE = 4 * 1024 * 1024 * 1024;
@@ -115,7 +116,7 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
         }
         if (!folder) folder = await createFolder(data.access_token);
         tokenCache = null;
-        await writeConfig({ refresh_token: refresh, folder_id: folder, account_email: jwtEmail(data.id_token) || cfg.account_email || null, connected_at: new Date().toISOString() });
+        await writeConfig({ refresh_token: refresh, folder_id: folder, account_email: jwtEmail(data.id_token) || cfg.account_email || null, granted_scope: String(data.scope || '').slice(0, 1000) || null, connected_at: new Date().toISOString() });
         return back('ok');
       }
       if (req.method !== 'POST') throw new HttpError(405, 'METHOD_NOT_ALLOWED', 'Chỉ hỗ trợ POST.');
@@ -138,7 +139,7 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
 
       if (action === 'status') {
         const connected = Boolean(cfg?.refresh_token && cfg?.folder_id);
-        return reply({ configured: Boolean(cfg?.client_id && cfg?.client_secret), connected, admin: isAdmin, redirectUri,
+        return reply({ configured: Boolean(cfg?.client_id && cfg?.client_secret), connected, admin: isAdmin, redirectUri, sheets: connected && String(cfg?.granted_scope || '').includes('/auth/spreadsheets'),
           ...(connected ? { folderUrl: 'https://drive.google.com/drive/folders/' + cfg.folder_id, email: isAdmin ? (cfg.account_email || '') : undefined } : {}),
           ...(isAdmin && cfg?.client_id ? { clientId: cfg.client_id } : {}) });
       }
@@ -167,7 +168,7 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
       if (action === 'disconnect') {
         needAdmin();
         if (cfg?.refresh_token) await google('https://oauth2.googleapis.com/revoke', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ token: cfg.refresh_token }) }, 'thu hồi').then(r => r.arrayBuffer?.()).catch(() => null);
-        await writeConfig({ refresh_token: null, folder_id: null, account_email: null, connected_at: null, pending_state: null, pending_state_at: null });
+        await writeConfig({ refresh_token: null, folder_id: null, account_email: null, granted_scope: null, connected_at: null, pending_state: null, pending_state_at: null });
         tokenCache = null;
         return reply({ ok: true });
       }

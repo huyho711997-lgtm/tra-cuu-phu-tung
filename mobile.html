@@ -3132,7 +3132,7 @@ html.dark .u021 .u021-stars{opacity:1;transform:none}
 <style id="tascoTopEdgeStyles">
 /* Paint the safe area as part of the current header; inset controls, not the page. */
 html[data-tasco-page]{--tasco-top-color:var(--ws-bg);margin:0;padding:0;background:var(--tasco-top-color)}
-html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="assess"],[data-tasco-page="forms"],[data-tasco-page="account"]){--tasco-top-color:var(--app-navy)}
+html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="assess"],[data-tasco-page="duty"],[data-tasco-page="forms"],[data-tasco-page="account"]){--tasco-top-color:var(--app-navy)}
 html[data-tasco-page] body.tasco-workspace{margin:0;padding:0;background:var(--tasco-top-color)!important}
 /* Safari can use body paint when its viewport excludes the device status bar. */
 .tasco-workspace #mainApp[data-shell]{background:var(--ws-bg)}
@@ -3140,7 +3140,7 @@ html[data-tasco-page] body.tasco-workspace{margin:0;padding:0;background:var(--t
 #tascoStatusBackdrop{position:fixed;top:0;left:0;right:0;width:100%;height:12px;height:max(12px,env(safe-area-inset-top,0px));z-index:100;background-color:var(--tasco-top-color,var(--ws-bg));pointer-events:none;user-select:none}
 html[data-tasco-page] body.tasco-workspace::before{content:none;display:none}
 .tasco-workspace #mainApp[data-shell][data-page]{margin-top:0!important;padding-top:0!important}
-.tasco-workspace :is(#traCuuSection,#personalCloudSection,#rescueSection,#garageSection,#assessSection,#formsSection){margin-top:0;padding-top:0}
+.tasco-workspace :is(#traCuuSection,#personalCloudSection,#rescueSection,#garageSection,#assessSection,#dutySection,#formsSection){margin-top:0;padding-top:0}
 .tasco-workspace .ws-journey-hero,.tasco-workspace #personalCloudSection .cloud-hero{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0;padding-top:calc(18px + env(safe-area-inset-top,0px))}
 /* The results page keeps its measured space for the fixed header. */
 .tasco-workspace #resultsStickyHeader{top:0;margin-top:0}
@@ -3471,6 +3471,7 @@ window.TascoBootSplash = (() => {
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('rescue')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M3 8.6A1.6 1.6 0 0 1 4.6 7H13v9.6H3ZM13 10h3.7a1.6 1.6 0 0 1 1.26.62l2.4 3.08a1.6 1.6 0 0 1 .34.98v1.92H13Z"/><path d="M13 16.6V7H4.6A1.6 1.6 0 0 0 3 8.6v8"/><path d="M13 10h3.7a1.6 1.6 0 0 1 1.26.62l2.4 3.08a1.6 1.6 0 0 1 .34.98v1.92"/><path d="M15 10v3.2h4.6M9.3 16.6h6.1"/><circle cx="7" cy="17.4" r="2.1"/><circle cx="17.6" cy="17.4" r="2.1"/></svg><span><strong>Chi phí cứu hộ</strong><small>Tra cứu đơn giá, tính nhanh kéo &amp; cẩu xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('garage')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M3.5 9.2 12 4.5l8.5 4.7v11.3H17V13H7v7.5H3.5Z"/><path d="M3.5 20.5V9.2L12 4.5l8.5 4.7v11.3"/><path d="M7 20.5V13h10v7.5M7 15.6h10M7 18.1h10"/></svg><span><strong>Quản lý gara</strong><small>Danh sách gara &amp; điểm đến kéo xe.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('assess')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M5 20.5h14M12 4v16.5M12 6.5H5.5l-2.5 6a3 3 0 0 0 5.9 0zM12 6.5h6.5l2.5 6a3 3 0 0 1-5.9 0z"/><path d="M5 20.5h14M12 4v16.5M12 6.5H5.5m6.5 0h6.5"/><path d="m5.5 6.5-2.5 6a3 3 0 0 0 5.9 0zM18.5 6.5l2.5 6a3 3 0 0 1-5.9 0z"/></svg><span><strong>Hướng dẫn phân lỗi</strong><small>Tỷ lệ lỗi 42 tình huống tai nạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('duty')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="i-fill" x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="m9 14.5 2 2 4-4"/></svg><span><strong>Lịch trực</strong><small data-duty-home>Xem lịch, ca của tôi, xin đổi ca</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('forms')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5V8h4.5M8.8 12.4h6.4M8.8 15.9h4.2"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Word &amp; PDF xem ngay trong ứng dụng.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('account')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="i-fill" cx="12" cy="9.3" r="3.5"/><path class="i-fill" d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0A8.9 8.9 0 0 1 12 20.9a8.9 8.9 0 0 1-5.9-2.6Z"/><circle cx="12" cy="12" r="8.9"/><circle cx="12" cy="9.3" r="3.5"/><path d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0"/></svg><span><strong>Tài khoản &amp; thiết lập</strong><small>Không gian riêng, theo cách của bạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div></div>
@@ -3663,6 +3664,14 @@ window.TascoBootSplash = (() => {
   </div>
   <p class="ws-journey-note"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>Chỉ để tham khảo nhanh. Ưu tiên kết luận của cơ quan có thẩm quyền, tín hiệu đèn, biển báo, làn đường thực tế. Số điều theo Luật Giao thông đường bộ 2008 như văn bản gốc, cần đối chiếu luật mới.</span></p>
 </section>
+<section id="dutySection" data-shell-page="duty" class="ws-journey rc dt-page" hidden style="display:none" aria-labelledby="dutyPageTitle">
+  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · LỊCH TRỰC</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">CA 08:00 → 08:00 HÔM SAU</span><h2 id="dutyPageTitle" tabindex="-1">Lịch<br>trực.</h2><p>Hiện trường &amp; giám định chi tiết, đồng bộ hai chiều với Google Sheet.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><rect x="40" y="26" width="104" height="92" rx="14" stroke="currentColor" stroke-width="1.8"/><path d="M40 52h104M66 16v20M118 16v20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><g fill="currentColor"><circle cx="64" cy="70" r="4"/><circle cx="92" cy="70" r="4" fill-opacity=".45"/><circle cx="120" cy="70" r="4" fill-opacity=".45"/><circle cx="64" cy="96" r="4" fill-opacity=".45"/><circle cx="92" cy="96" r="4"/><circle cx="120" cy="96" r="4" fill-opacity=".45"/></g><path d="M24 128h136" stroke="currentColor" stroke-opacity=".5" stroke-linecap="round"/></svg></header>
+  <div class="ws-search-panel ws-search-panel--premium rc-panel">
+    <div id="dtRoot" aria-live="polite"><div class="dt-skel"><i></i><i></i><i></i></div></div>
+  </div>
+  <p class="ws-journey-note"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>Google Sheet là bản gốc: sửa trên Sheet thì app tự cập nhật; quản trị viên sửa hoặc duyệt đổi ca trong app thì Sheet đổi theo.</span></p>
+</section>
+
 
         <div id="sysMgrSection" data-shell-page="admin" hidden class="px-4 pt-6" style="display: none;">
             <header class="flex flex-col gap-4 mb-6">
@@ -4083,8 +4092,8 @@ window.TascoCloudImport=(()=>{
 </script>
 <script id="tascoPremiumShell">
 window.TascoAppShell=(()=>{
-  const pages={home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',rescue:'Tính chi phí cứu hộ',garage:'Quản lý gara',assess:'Hướng dẫn phân lỗi',account:'Tài khoản',admin:'Quản lý hệ thống',forms:'Biểu mẫu dùng chung'};
-  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',account:'accountSection',admin:'sysMgrSection',forms:'formsSection'};
+  const pages={home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',rescue:'Tính chi phí cứu hộ',garage:'Quản lý gara',assess:'Hướng dẫn phân lỗi',duty:'Lịch trực',account:'Tài khoản',admin:'Quản lý hệ thống',forms:'Biểu mẫu dùng chung'};
+  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',account:'accountSection',admin:'sysMgrSection',forms:'formsSection'};
   let user=null,current='login',mountedOwner='',lastCloud=null;
   const scrolls={};
   if ('scrollRestoration' in history) history.scrollRestoration='manual';
@@ -4113,7 +4122,7 @@ window.TascoAppShell=(()=>{
     if(changed){mountedOwner='';lastCloud=null;Object.keys(scrolls).forEach(key=>delete scrolls[key]);paintCloud(null);}
     const name=user?.fullName||user?.email||'Tài khoản';const words=name.trim().split(/\s+/);const initials=(words.length>1?words[0][0]+words.at(-1)[0]:name.slice(0,2)).toUpperCase();
     setText('[data-account-name]',name);setText('[data-account-email]',user?.email||'');setText('[data-account-role]',user?.role==='admin'?'Quản trị viên':'Thành viên');setText('[data-shell-avatar]',initials);
-    document.querySelectorAll('[data-admin-only]').forEach(node=>node.hidden=user?.role!=='admin');window.TascoForms?.setUser(user);greeting();
+    document.querySelectorAll('[data-admin-only]').forEach(node=>node.hidden=user?.role!=='admin');window.TascoForms?.setUser(user);window.TascoDuty?.setUser(user);greeting();
     syncCloudAccess();
   }
   function connectCloud(){
@@ -4128,13 +4137,13 @@ window.TascoAppShell=(()=>{
     if(view!=='login')try{localStorage.setItem('tasco_last_view',JSON.stringify({view,email:user?.email||'',at:Date.now()}));}catch(_){}
     const previous=current;scrolls[previous]=Math.max(0,window.scrollY);current=view;
     if(previous!==view)document.activeElement?.blur?.();
-    window.TascoLookupFlow?.onNavigate(view);window.TascoForms?.onNavigate(view);
+    window.TascoLookupFlow?.onNavigate(view);window.TascoForms?.onNavigate(view);window.TascoDuty?.onNavigate(view);
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
     login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
     Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id);node.hidden=page!==view;node.style.display=page===view?'block':'none';});
-    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','forms','account'].includes(view);
+    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','duty','forms','account'].includes(view);
     setText('#wsPageTitle',pages[view]||'');
-    document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view==='assess'?'home':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
+    document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view==='assess'||view==='duty'?'home':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
     window.TascoNavigationMotion?.sync(view,previous);
     if(view==='login'){window.TascoPhotoViewer?.close();window.TascoDatePicker?.close();window.TascoPhotoExport?.close();document.title='TASCO DLK · Đăng nhập';return;}
     document.title=pages[view]+' · TASCO DLK';
@@ -4142,10 +4151,10 @@ window.TascoAppShell=(()=>{
     if(view==='cloud')connectCloud();if(view==='home'){greeting();paintCloud(lastCloud);connectCloud();}
     if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
     window.TascoLookupFlow?.afterNavigate(view);
-    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
+    if(previous!==view&&view!=='home')(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='duty'?'dutyPageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});
     const top=options.restore?scrolls[view]||0:0;
     window.scrollTo({left:0,top,behavior:'instant'});
-    if(previous!==view&&['lookup','results','cloud','rescue','garage','assess'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
+    if(previous!==view&&['lookup','results','cloud','rescue','garage','assess','duty'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
   }
   function paintCloud(summary){
     if(!canCloud()){document.getElementById('homeRecentPhotos')?.replaceChildren();return;}
@@ -5272,6 +5281,7 @@ window.TascoDrive=(()=>{
     if(!overlay)return;
     if(st.connected){
       body('<div class="dv-ok">'+ICON.drive+'<span>Đã kết nối Google Drive'+(st.email?' <b>'+esc(st.email)+'</b>':'')+'. Video nặng sẽ được lưu vào thư mục <b>Tasco DLK - Video</b>.</span></div>'
+        +(st.admin&&!st.sheets?'<p class="dv-note" style="color:#9a3f24"><b>Lịch trực</b> cần thêm quyền Google Sheets: bấm <b>Kết nối lại</b> và cho phép lần nữa.</p>':'')
         +'<p class="storage-error" data-dv-msg role="alert" hidden></p>'
         +'<div class="dv-row"><a class="dv-btn is-main" style="display:grid;place-items:center;text-decoration:none" href="'+esc(st.folderUrl)+'" target="_blank" rel="noopener noreferrer">Mở thư mục Drive</a>'+(st.admin?'<button type="button" class="dv-btn" data-dv="reconnect">Kết nối lại</button>':'')+'</div>'
         +(st.admin?'<div class="dv-row"><button type="button" class="dv-btn" data-dv="disconnect">Ngắt kết nối</button></div>':''));
@@ -5336,6 +5346,335 @@ window.TascoDrive=(()=>{
   return {configure:v=>{options=v;},status,upload,openSetup,close,isConnected:async()=>{try{return Boolean((await status()).connected);}catch(_){return false;}},invalidate:()=>{cache=null;}};
 })();
 </script>
+<style id="tascoDutyStyles">
+/* ===== Lịch trực ===== */
+.tasco-workspace #mainApp[data-shell][data-page=duty]{max-width:760px;padding:0 0 calc(118px + env(safe-area-inset-bottom,0px))!important}
+.tasco-workspace #mainApp[data-page=duty]>#mainHeader,.tasco-workspace #mainApp[data-page=duty]>#wsChildbar{display:none!important}
+html[data-tasco-page=duty]{background:var(--app-navy)}
+@media(max-width:767px){.tasco-workspace #mainApp[data-shell][data-page=duty]{padding-left:0!important;padding-right:0!important;max-width:600px}}
+#dutySection .ws-journey-hero{min-height:246px;padding-bottom:54px}
+#dutySection .ws-journey-heading{max-width:82%}
+#dutySection .ws-journey-heading h2{font-size:32px;font-weight:700;line-height:1.16;letter-spacing:-1.1px}
+#dutySection .ws-journey-heading p{max-width:260px;font-size:12px;line-height:1.65}
+#dutySection .ws-journey-art{width:138px;right:-12px;bottom:34px;opacity:.4;transform:rotate(-8deg)}
+.tasco-workspace #dutySection .rc-panel{margin:-28px 14px 0;padding:20px;border-radius:26px;border-color:var(--ws-line)}
+#dutySection :is(button,input,select,textarea){font-family:'Plus Jakarta Sans',sans-serif}
+#dutySection [hidden]{display:none!important}
+.dt-skel{display:grid;gap:10px}.dt-skel i{display:block;height:64px;border-radius:16px;background:linear-gradient(90deg,var(--ws-soft),var(--ws-bg),var(--ws-soft));background-size:200% 100%;animation:dtSk 1.2s linear infinite}
+@keyframes dtSk{to{background-position:-200% 0}}
+.dt-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 10px}
+.dt-h:first-child{margin-top:0}
+.dt-h h3{margin:0;color:var(--ws-text);font-size:15px;font-weight:700;letter-spacing:-.3px}
+.dt-h small{color:var(--ws-muted);font-size:11px}
+.dt-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:0 13px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-bg);color:var(--ws-text);font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent;transition:transform .12s ease}
+.dt-btn:active{transform:scale(.96)}.dt-btn:disabled{opacity:.55;cursor:progress}
+.dt-btn.is-main{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
+.dark .dt-btn.is-main{background:var(--app-teal);border-color:var(--app-teal);color:#0b1b30}
+.dt-btn.is-ok{background:#2f8f6f;border-color:#2f8f6f;color:#fff}.dt-btn.is-no{color:#b45335}
+.dt-btn svg{width:16px;height:16px}
+/* Hôm nay */
+.dt-today{position:relative;padding:16px;border-radius:20px;background:linear-gradient(150deg,var(--app-navy),#25507a);color:#fff;overflow:hidden}
+.dt-today::after{content:'';position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(132,191,199,.35),transparent 70%)}
+.dt-today-cap{display:flex;justify-content:space-between;gap:8px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a9d6dc}
+.dt-today-cap b{color:#fff;letter-spacing:0;text-transform:none;font-size:11px}
+.dt-today-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.dt-role{position:relative;z-index:1;padding:11px 12px;border-radius:14px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14)}
+.dt-role small{display:block;color:#a9d6dc;font-size:10.5px;font-weight:600}
+.dt-role strong{display:block;margin-top:4px;font-size:14.5px;font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+.dt-role.is-me{background:rgba(132,191,199,.28);border-color:#84bfc7}
+.dt-role.is-me strong::after{content:' · Bạn';color:#bfe6ea;font-size:11px;font-weight:700}
+/* Ca của tôi */
+.dt-mine{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.dt-mine::-webkit-scrollbar{display:none}
+.dt-chip{flex:0 0 auto;min-width:118px;padding:11px 12px;border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-surface);text-align:left;scroll-snap-align:start;cursor:pointer;color:var(--ws-text)}
+.dt-chip small{display:block;color:var(--ws-muted);font-size:10.5px;font-weight:600}
+.dt-chip strong{display:block;margin:3px 0 2px;font-size:15px;font-weight:700}
+.dt-chip span{display:inline-block;padding:2px 7px;border-radius:999px;background:var(--ws-accent);color:var(--ws-accent-text);font-size:10px;font-weight:700}
+.dt-chip.is-wkd{background:linear-gradient(165deg,#fff7e6,var(--ws-surface))}
+.dark .dt-chip.is-wkd{background:linear-gradient(165deg,rgba(255,196,94,.12),var(--ws-surface))}
+.dt-note{margin:0;padding:12px 13px;border-radius:14px;background:var(--ws-soft);color:var(--ws-muted);font-size:12px;line-height:1.6}
+.dt-note.is-err{background:rgba(180,83,53,.08);color:#9a3f24}
+.dark .dt-note.is-err{color:#ffb39b}
+/* Tháng */
+.dt-monthbar{display:flex;align-items:center;gap:8px}
+.dt-monthbar strong{flex:1;text-align:center;color:var(--ws-text);font-size:14px;font-weight:700}
+.dt-icon{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-bg);color:var(--ws-text);cursor:pointer}
+.dt-icon svg{width:17px;height:17px}
+.dt-filters{display:flex;gap:6px;overflow-x:auto;margin:10px 0 8px;padding-bottom:2px}
+.dt-filters::-webkit-scrollbar{display:none}
+.dt-filters button{flex:0 0 auto;min-height:32px;padding:0 11px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-bg);color:var(--ws-muted);font-size:11.5px;font-weight:700;cursor:pointer}
+.dt-filters button[aria-pressed=true]{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
+.dark .dt-filters button[aria-pressed=true]{background:var(--app-teal);border-color:var(--app-teal);color:#0b1b30}
+.dt-list{border:1px solid var(--ws-line);border-radius:16px;overflow:hidden;background:var(--ws-surface)}
+.dt-row{display:grid;grid-template-columns:62px 1fr 1fr;align-items:center;gap:8px;width:100%;min-height:50px;padding:7px 10px;border:0;border-top:1px solid var(--ws-line);background:transparent;color:var(--ws-text);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dt-row:first-child{border-top:0}
+.dt-row.is-head{min-height:34px;background:var(--ws-soft);color:var(--ws-muted);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:default}
+.dt-row.is-wkd{background:#fff8e8}
+.dark .dt-row.is-wkd{background:rgba(255,196,94,.07)}
+.dt-row.is-today{box-shadow:inset 3px 0 0 var(--app-teal);background:var(--ws-accent)}
+.dt-row.is-dim{opacity:.38}
+.dt-d strong{display:block;font-size:13px;font-weight:700}.dt-d small{display:block;color:var(--ws-muted);font-size:10px;font-weight:600}
+.dt-n{min-width:0;font-size:12px;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.dt-n.is-me{color:var(--ws-accent-text);font-weight:800}
+.dt-n.is-pend::after{content:' ⇄';color:#c98a1b}
+/* Yêu cầu đổi ca */
+.dt-swaps{display:grid;gap:8px}
+.dt-swap{padding:12px 13px;border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-surface);color:var(--ws-text)}
+.dt-swap p{margin:0;font-size:12.5px;line-height:1.55}.dt-swap small{display:block;margin-top:3px;color:var(--ws-muted);font-size:11px;line-height:1.5}
+.dt-st{display:inline-block;margin-left:4px;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:700;vertical-align:1px}
+.dt-st.pending{background:#fff1d6;color:#94620c}.dt-st.approved{background:#dcf3ea;color:#21704f}.dt-st.rejected{background:#fde4dc;color:#a2431f}.dt-st.cancelled{background:var(--ws-soft);color:var(--ws-muted)}
+.dt-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.dt-actions .dt-btn{flex:1}
+/* Quản trị */
+.dt-admin{padding:14px;border:1px dashed var(--ws-line);border-radius:18px;background:var(--ws-bg)}
+.dt-admin p{margin:0 0 10px;color:var(--ws-muted);font-size:12px;line-height:1.6}
+.dt-admin p b{color:var(--ws-text)}
+.dt-admin .dt-actions .dt-btn{white-space:nowrap;padding:0 10px;font-size:11.5px}
+.dt-field{display:grid;gap:6px;margin:10px 0;color:var(--ws-muted);font-size:11px;font-weight:700}
+.dt-field :is(input,select,textarea){width:100%;min-height:46px;padding:0 12px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-surface);color:var(--ws-text);font-size:16px;font-weight:600}
+.dt-field textarea{min-height:70px;padding:10px 12px;resize:vertical}
+.dt-member{display:grid;grid-template-columns:1fr minmax(0,1.1fr);align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--ws-line)}
+.dt-member span{min-width:0;font-size:12px;font-weight:700;color:var(--ws-text);overflow-wrap:anywhere}.dt-member small{display:block;color:var(--ws-muted);font-weight:600;font-size:10.5px}
+.dt-member select{min-height:40px;padding:0 8px;border:1px solid var(--ws-line);border-radius:10px;background:var(--ws-surface);color:var(--ws-text);font-size:14px}
+/* Bảng thao tác */
+.dt-sheet-bg{position:fixed;inset:0;z-index:9000;display:flex;align-items:flex-end;justify-content:center;background:rgba(9,22,40,.48);animation:dtFade .18s ease}
+.dt-sheet{width:min(560px,100%);max-height:88vh;overflow:auto;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));border-radius:24px 24px 0 0;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 -10px 40px rgba(0,0,0,.2);animation:dtUp .24s cubic-bezier(.2,.8,.2,1)}
+.dt-sheet h4{margin:0;font-size:17px;font-weight:700;letter-spacing:-.3px}.dt-sheet>small{display:block;margin-top:3px;color:var(--ws-muted);font-size:12px}
+.dt-sheet .dt-err{margin:10px 0 0;color:#b45335;font-size:12px;font-weight:600}
+.dt-seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.dt-seg button{min-height:40px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-bg);color:var(--ws-text);font-size:12px;font-weight:700}
+.dt-seg button[aria-pressed=true]{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
+@keyframes dtFade{from{opacity:0}}@keyframes dtUp{from{transform:translateY(40px);opacity:.4}}
+@media(min-width:640px){.tasco-workspace #dutySection .rc-panel{padding:26px}.dt-sheet-bg{align-items:center}.dt-sheet{border-radius:24px}}
+@media(max-width:359px){.dt-row{grid-template-columns:52px 1fr 1fr;gap:6px;padding:7px 8px}.dt-today-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){#dutySection *,.dt-sheet,.dt-sheet-bg{animation:none!important;transition:none!important}}
+</style>
+<script id="tascoDuty">
+/* Lịch trực: xem lịch tháng, ca của tôi, xin đổi ca; admin gắn Google Sheet, sửa ca, duyệt đổi ca, gán tên.
+   Toàn bộ đọc/ghi Google Sheet chạy ở Edge Function tasco-duty, app không giữ khoá Google nào. */
+window.TascoDuty=(()=>{
+  const FN='https://yxwmcpoklxpzlikxojez.supabase.co/functions/v1/tasco-duty';
+  const ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4d21jcG9rbHhwemxpa3hvamV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njk0MDEsImV4cCI6MjA5NjE0NTQwMX0.dmyjtDDo_KTlUFyxQgoCGqEt5Bsq2krEEYg2BCyXeFc';
+  const ROLE={scene:'Hiện trường',detail:'Giám định chi tiết'};
+  const ST={pending:'Chờ duyệt',approved:'Đã duyệt',rejected:'Từ chối',cancelled:'Đã huỷ'};
+  const CACHE='tasco_duty_cache_v1';
+  let options={},data=null,month='',filter='all',busy=false,reqSeq=0,lastLoad=0,sheet=null;
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fold=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().trim();
+  const same=(a,b)=>Boolean(a&&b&&fold(a)===fold(b));
+  /* Tên rút gọn không trùng nhau: "Phúc", nhưng "Hồ Quang Huy" / "Nguyễn Quang Huy" phải giữ đủ. */
+  const shortName=(p,list)=>{const w=String(p||'').trim().split(/\s+/);for(let n=1;n<=w.length;n++){const t=w.slice(-n).join(' ');if(!(list||[]).some(o=>!same(o,p)&&fold(o).endsWith(fold(t))))return t;}return p||'—';};
+  const root=()=>document.getElementById('dtRoot');
+  const vnNow=()=>new Date(Date.now()+7*3600e3);
+  const curMonth=()=>{const d=new Date(Date.now()+7*3600e3-8*3600e3);return d.toISOString().slice(0,7);};
+  const dm=iso=>{const [y,m,d]=String(iso).split('-');return d+'/'+m;};
+  const dmy=iso=>{const [y,m,d]=String(iso).split('-');return d+'/'+m+'/'+y;};
+  const WD=['CN','T2','T3','T4','T5','T6','T7'];
+  const wd=iso=>WD[new Date(iso+'T00:00:00Z').getUTCDay()];
+  const isWkd=iso=>{const g=new Date(iso+'T00:00:00Z').getUTCDay();return g===0||g===6;};
+  const nextDay=iso=>new Date(Date.parse(iso+'T00:00:00Z')+864e5).toISOString().slice(0,10);
+  const svg=p=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
+  const I={prev:svg('<path d="m15 6-6 6 6 6"/>'),next:svg('<path d="m9 6 6 6-6 6"/>'),sync:svg('<path d="M20 11a8 8 0 0 0-14.3-4.9L4 8m0-4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16m0 4v-4h-4"/>'),sheet:svg('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/>'),swap:svg('<path d="M7 7h12l-3-3M17 17H5l3 3"/>')};
+  function toast(t){const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),4200);}
+  const err=(code,message)=>Object.assign(new Error(message),{code});
+  async function call(body){
+    const c=options.client?.();if(!c)throw err('NO_CLIENT','App chưa sẵn sàng. Tải lại trang.');
+    const s=await c.auth.getSession();const token=s.data?.session?.access_token;if(!token)throw err('NO_SESSION','Cần đăng nhập lại.');
+    let res;try{res=await fetch(FN,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:'Bearer '+token},body:JSON.stringify(body)});}
+    catch(_){throw err('NETWORK','Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.');}
+    let d={};try{d=await res.json();}catch(_){}
+    if(!res.ok)throw err(d.code||'HTTP_'+res.status,d.error||'Máy chủ chưa xử lý được (mã '+res.status+').');
+    return d;
+  }
+  const readCache=()=>{try{const v=JSON.parse(localStorage.getItem(CACHE)||'null');return v&&v.email===(options._email||'')?v.data:null;}catch(_){return null;}};
+  const writeCache=d=>{try{localStorage.setItem(CACHE,JSON.stringify({email:options._email||'',data:d}));}catch(_){}};
+
+  async function load({force=false,quiet=false}={}){
+    const seq=++reqSeq;month=month||curMonth();
+    if(!data){const c=readCache();if(c&&c.month===month){data=c;render();}}
+    if(!quiet&&!data)root().innerHTML='<div class="dt-skel"><i></i><i></i><i></i></div>';
+    try{
+      const d=await call({action:'get',month,force});
+      if(seq!==reqSeq)return;data=d;lastLoad=Date.now();if(d.configured&&month===curMonth())writeCache(d);
+      render();paintHome();if(force)toast(d.sync?.error?'Chưa đồng bộ được: '+d.sync.error:'Đã đồng bộ với Google Sheet.');
+    }catch(e){
+      if(seq!==reqSeq)return;
+      if(data&&!force){render(e.message);return;}
+      renderError(e);
+    }
+  }
+  function renderError(e){
+    const admin=data?.admin;
+    const reconnect=['SHEETS_SCOPE','GOOGLE_RECONNECT','GOOGLE_NOT_CONNECTED'].includes(e.code);
+    root().innerHTML='<p class="dt-note is-err">'+esc(e.message)+'</p><div class="dt-actions">'+(reconnect?'<button type="button" class="dt-btn is-main" data-dt="google">Kết nối Google</button>':'')+'<button type="button" class="dt-btn" data-dt="retry">Thử lại</button></div>';
+  }
+
+  /* ---------- Hiển thị ---------- */
+  function render(warn){
+    const r=root();if(!r||!data)return;
+    if(!data.configured){r.innerHTML=data.admin?setupHtml():'<p class="dt-note">Quản trị viên chưa gắn Google Sheet lịch trực. Khi gắn xong, lịch sẽ hiện ở đây.</p>';return;}
+    const me=data.me,pendingKey=new Set((data.swaps||[]).filter(s=>s.status==='pending').map(s=>s.duty_date+':'+s.role));
+    let h='';
+    if(warn||data.sync?.error)h+='<p class="dt-note is-err" style="margin-bottom:12px">'+esc(warn||('Chưa đồng bộ được với Google Sheet: '+data.sync.error+' Đang hiện bản lưu gần nhất.'))+'</p>';
+    const t=data.today;
+    h+='<div class="dt-today"><div class="dt-today-cap"><span>Đang trực</span><b>'+(t?esc(wd(t.duty_date))+' '+dmy(t.duty_date)+' · 08:00 → 08:00 '+dm(nextDay(t.duty_date)):'Chưa có lịch')+'</b></div>';
+    if(t)h+='<div class="dt-today-grid">'+['scene','detail'].map(k=>'<div class="dt-role'+(same(t[k],me)?' is-me':'')+'"><small>'+ROLE[k]+'</small><strong>'+esc(t[k]||'—')+'</strong></div>').join('')+'</div>';
+    h+='</div>';
+    h+='<div class="dt-h"><h3>Ca của tôi</h3>'+(me?'<small>'+esc(me)+'</small>':'')+'</div>';
+    if(!me)h+='<p class="dt-note">Chưa khớp được tài khoản của bạn với tên trên Sheet.'+(data.admin?' Gán tên ở mục “Quản trị” bên dưới.':' Nhờ quản trị viên gán tên giúp.')+'</p>';
+    else if(!data.upcoming?.length)h+='<p class="dt-note">Không có ca sắp tới trên Sheet.</p>';
+    else h+='<div class="dt-mine">'+data.upcoming.map(s=>{const role=same(s.scene,me)?'scene':'detail';return '<button type="button" class="dt-chip'+(isWkd(s.duty_date)?' is-wkd':'')+'" data-dt="day" data-date="'+s.duty_date+'"><small>'+wd(s.duty_date)+(s.duty_date===data.todayKey?' · Hôm nay':'')+'</small><strong>'+dm(s.duty_date)+'</strong><span>'+(role==='scene'?'Hiện trường':'GĐ chi tiết')+(pendingKey.has(s.duty_date+':'+role)?' ⇄':'')+'</span></button>';}).join('')+'</div>';
+    const [y,m]=month.split('-');
+    h+='<div class="dt-h"><h3>Lịch tháng</h3><small>'+(data.sync?.at?'Đồng bộ '+new Date(data.sync.at).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}):'')+'</small></div>';
+    h+='<div class="dt-monthbar"><button type="button" class="dt-icon" data-dt="prev" aria-label="Tháng trước">'+I.prev+'</button><strong>Tháng '+(+m)+'/'+y+'</strong><button type="button" class="dt-icon" data-dt="next" aria-label="Tháng sau">'+I.next+'</button><button type="button" class="dt-icon" data-dt="sync" aria-label="Đồng bộ ngay với Google Sheet" title="Đồng bộ ngay">'+I.sync+'</button></div>';
+    const people=data.people||[];
+    h+='<div class="dt-filters" role="group" aria-label="Lọc theo người"><button type="button" data-dt="filter" data-v="all" aria-pressed="'+(filter==='all')+'">Tất cả</button>'+(me?'<button type="button" data-dt="filter" data-v="'+esc(me)+'" aria-pressed="'+same(filter,me)+'">Của tôi</button>':'')+people.filter(p=>!same(p,me)).map(p=>'<button type="button" data-dt="filter" data-v="'+esc(p)+'" aria-pressed="'+same(filter,p)+'">'+esc(shortName(p,people))+'</button>').join('')+'</div>';
+    const rows=(data.shifts||[]).filter(s=>s.duty_date.slice(0,7)===month);
+    if(!rows.length)h+='<p class="dt-note">Sheet chưa có lịch tháng này.</p>';
+    else{
+      h+='<div class="dt-list"><div class="dt-row is-head"><span>Ngày</span><span>Hiện trường</span><span>GĐ chi tiết</span></div>';
+      for(const s of rows){
+        const hit=filter==='all'||same(s.scene,filter)||same(s.detail,filter);
+        const cls=['dt-row',isWkd(s.duty_date)||/(t7|cn|bay|chu nhat)/.test(fold(s.weekday))?'is-wkd':'',s.duty_date===data.todayKey?'is-today':'',hit?'':'is-dim'].join(' ');
+        const n=k=>'<span class="dt-n'+(same(s[k],me)?' is-me':'')+(pendingKey.has(s.duty_date+':'+k)?' is-pend':'')+'">'+esc(s[k]||'—')+'</span>';
+        h+='<button type="button" class="'+cls+'" data-dt="day" data-date="'+s.duty_date+'"><span class="dt-d"><strong>'+dm(s.duty_date)+'</strong><small>'+wd(s.duty_date)+(s.day_type?' · '+esc(s.day_type):'')+'</small></span>'+n('scene')+n('detail')+'</button>';
+      }
+      h+='</div>';
+    }
+    const swaps=data.swaps||[];
+    if(swaps.length){
+      const pend=swaps.filter(s=>s.status==='pending');
+      h+='<div class="dt-h"><h3>'+(data.admin?'Yêu cầu đổi ca':'Yêu cầu của tôi')+'</h3><small>'+(pend.length?pend.length+' chờ duyệt':'')+'</small></div><div class="dt-swaps">'+[...pend,...swaps.filter(s=>s.status!=='pending').slice(0,8)].map(swapHtml).join('')+'</div>';
+    }
+    if(data.admin)h+=adminHtml();
+    r.innerHTML=h;
+  }
+  function swapHtml(s){
+    const mine=!data.admin||s.requester_name;
+    let t='<b>'+esc(s.from_name)+'</b> → <b>'+esc(s.to_name)+'</b> · '+ROLE[s.role]+' '+wd(s.duty_date)+' '+dm(s.duty_date);
+    if(s.back_date)t+=', trả lại ca '+wd(s.back_date)+' '+dm(s.back_date);
+    let sub=(data.admin?'Gửi bởi '+esc(s.requester_name||'')+' · ':'')+new Date(s.created_at).toLocaleDateString('vi-VN')+(s.reason?' · “'+esc(s.reason)+'”':'');
+    if(s.status!=='pending'&&s.decider_name)sub+='<br>'+ST[s.status]+' bởi '+esc(s.decider_name)+(s.note?': '+esc(s.note):'');
+    let act='';
+    if(s.status==='pending'){
+      if(data.admin)act='<div class="dt-actions"><button type="button" class="dt-btn is-ok" data-dt="approve" data-id="'+s.id+'">Duyệt & ghi Sheet</button><button type="button" class="dt-btn is-no" data-dt="reject" data-id="'+s.id+'">Từ chối</button></div>';
+      else act='<div class="dt-actions"><button type="button" class="dt-btn is-no" data-dt="cancel" data-id="'+s.id+'">Huỷ yêu cầu</button></div>';
+    }
+    return '<div class="dt-swap"><p>'+t+'<span class="dt-st '+s.status+'">'+ST[s.status]+'</span></p><small>'+sub+'</small>'+act+'</div>';
+  }
+  function setupHtml(){
+    return '<div class="dt-h"><h3>Gắn Google Sheet lịch trực</h3></div><div class="dt-admin"><p>Mở Google Sheet, chọn đúng tab lịch trực rồi chép link (có <b>#gid=…</b>) dán vào đây. Sheet cần có các cột <b>Ngày</b>, <b>Hiện trường</b>, <b>Giám định chi tiết</b>, và tài khoản Google đã kết nối trong <b>Google Drive</b> phải có quyền <b>Chỉnh sửa</b>.</p><form data-dt-form="config"><label class="dt-field">Link Google Sheet<input name="url" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="https://docs.google.com/spreadsheets/d/…/edit#gid=0" required></label><p class="dt-note is-err" data-dt-msg hidden></p><div class="dt-actions"><button type="submit" class="dt-btn is-main">Gắn &amp; đồng bộ</button><button type="button" class="dt-btn" data-dt="google">Kết nối Google</button></div></form></div>';
+  }
+  function adminHtml(){
+    const people=data.people||[];
+    let h='<div class="dt-h"><h3>Quản trị</h3></div><div class="dt-admin"><p>Đang đồng bộ tab <b>'+esc(data.sync?.tab||'')+'</b>. Sửa trực tiếp trên Sheet cũng được: app cập nhật sau tối đa 1–2 phút.</p><div class="dt-actions"><a class="dt-btn" href="'+esc(data.sheetUrl)+'" target="_blank" rel="noopener noreferrer">'+I.sheet+'Mở Sheet</a><button type="button" class="dt-btn" data-dt="sync">'+I.sync+'Đồng bộ ngay</button><button type="button" class="dt-btn" data-dt="relink">Đổi link</button></div>';
+    h+='<p style="margin:14px 0 4px"><b>Gán tài khoản với tên trên Sheet</b> (để hiện “Ca của tôi” và cho phép xin đổi ca)</p>';
+    h+=(data.members||[]).map(m=>'<div class="dt-member"><span>'+esc(m.name)+'<small>'+esc(m.email||'')+'</small></span><select data-dt-map="'+m.id+'" aria-label="Tên trên Sheet của '+esc(m.name)+'"><option value="">— Không trực —</option>'+people.map(p=>'<option'+(same(p,m.sheetName)?' selected':'')+'>'+esc(p)+'</option>').join('')+'</select></div>').join('');
+    return h+'</div>';
+  }
+
+  /* ---------- Bảng thao tác (ngày / đổi ca / sửa ca) ---------- */
+  function closeSheet(){sheet?.remove();sheet=null;}
+  function openSheet(html,onSubmit){
+    closeSheet();sheet=document.createElement('div');sheet.className='dt-sheet-bg';
+    sheet.innerHTML='<div class="dt-sheet" role="dialog" aria-modal="true">'+html+'</div>';
+    sheet.addEventListener('click',e=>{if(e.target===sheet||e.target.closest('[data-dt-close]'))closeSheet();const seg=e.target.closest('[data-seg]');if(seg){seg.parentElement.querySelectorAll('[data-seg]').forEach(b=>b.setAttribute('aria-pressed',String(b===seg)));seg.parentElement.dataset.value=seg.dataset.seg;seg.parentElement.dispatchEvent(new Event('change',{bubbles:true}));}});
+    const f=sheet.querySelector('form');
+    if(f)f.addEventListener('submit',async e=>{e.preventDefault();const b=f.querySelector('[type=submit]'),m=f.querySelector('.dt-err');b.disabled=true;m.hidden=true;
+      try{await onSubmit(f);closeSheet();}catch(x){m.textContent=x.message;m.hidden=false;b.disabled=false;}});
+    document.body.appendChild(sheet);
+    setTimeout(()=>sheet?.querySelector('select,input,button[type=submit]')?.focus?.({preventScroll:true}),60);
+    return sheet;
+  }
+  function openDay(date){
+    const s=(data.shifts||[]).concat(data.upcoming||[]).find(x=>x.duty_date===date);if(!s)return;
+    const me=data.me,future=date>=data.todayKey;
+    const myRole=same(s.scene,me)?'scene':same(s.detail,me)?'detail':null;
+    let h='<h4>'+esc(s.weekday||wd(date))+' '+dmy(date)+'</h4><small>Ca 08:00 '+dm(date)+' → 08:00 '+dm(nextDay(date))+(s.day_type?' · Ngày '+esc(s.day_type):'')+'</small>';
+    h+='<div class="dt-today-grid" style="margin-top:14px">'+['scene','detail'].map(k=>'<div class="dt-swap"><small style="margin:0">'+ROLE[k]+'</small><p style="font-weight:700;font-size:14px">'+esc(s[k]||'—')+'</p></div>').join('')+'</div>';
+    h+='<div class="dt-actions">';
+    if(future&&(myRole||data.admin))h+='<button type="button" class="dt-btn is-main" data-act="swap">'+I.swap+'Xin đổi ca</button>';
+    if(data.admin)h+='<button type="button" class="dt-btn" data-act="edit">Sửa ca</button>';
+    h+='<button type="button" class="dt-btn" data-dt-close>Đóng</button></div>';
+    const el=openSheet(h);
+    el.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(!a)return;if(a.dataset.act==='swap')openSwap(s,myRole);else openEdit(s);});
+  }
+  function openSwap(s,myRole){
+    const role=myRole||'scene',people=data.people||[];
+    const others=k=>people.filter(p=>!same(p,s[k])&&!same(p,s[k==='scene'?'detail':'scene']));
+    const backs=me=>(data.shifts||[]).filter(x=>x.duty_date>=data.todayKey&&x.duty_date!==s.duty_date);
+    const h='<h4>Xin đổi ca '+wd(s.duty_date)+' '+dm(s.duty_date)+'</h4><small>Quản trị viên duyệt xong, Google Sheet sẽ tự đổi.</small><form>'
+      +(data.admin&&!myRole?'<div class="dt-field">Vai trò<div class="dt-seg" data-role data-value="scene"><button type="button" data-seg="scene" aria-pressed="true">Hiện trường</button><button type="button" data-seg="detail" aria-pressed="false">GĐ chi tiết</button></div></div>':'<p class="dt-note" style="margin-top:12px">'+ROLE[role]+': <b>'+esc(s[role])+'</b></p>')
+      +'<label class="dt-field">Nhường ca cho<select name="to" required></select></label>'
+      +'<label class="dt-field">Đổi lại: nhận ca của người đó vào ngày (không bắt buộc)<select name="back"><option value="">— Chỉ nhường ca, không đổi lại —</option></select></label>'
+      +'<label class="dt-field">Lý do<textarea name="reason" maxlength="300" placeholder="Ví dụ: việc gia đình"></textarea></label>'
+      +'<p class="dt-err" hidden></p><div class="dt-actions"><button type="submit" class="dt-btn is-main">Gửi yêu cầu</button><button type="button" class="dt-btn" data-dt-close>Huỷ</button></div></form>';
+    const el=openSheet(h,async f=>{
+      const r=f.querySelector('[data-role]')?.dataset.value||role;
+      await call({action:'swap-request',date:s.duty_date,role:r,toName:f.elements.to.value,backDate:f.elements.back.value||null,reason:f.elements.reason.value});
+      toast('Đã gửi yêu cầu đổi ca. Chờ quản trị viên duyệt.');load({quiet:true});
+    });
+    const f=el.querySelector('form');
+    const fill=()=>{const r=f.querySelector('[data-role]')?.dataset.value||role;const to=f.elements.to;const cur=to.value;
+      to.innerHTML=others(r).map(p=>'<option'+(same(p,cur)?' selected':'')+'>'+esc(p)+'</option>').join('');fillBack();};
+    const fillBack=()=>{const name=f.elements.to.value,back=f.elements.back;
+      back.innerHTML='<option value="">— Chỉ nhường ca, không đổi lại —</option>'+backs().filter(x=>same(x.scene,name)||same(x.detail,name)).slice(0,20).map(x=>'<option value="'+x.duty_date+'">'+wd(x.duty_date)+' '+dm(x.duty_date)+' · '+(same(x.scene,name)?'Hiện trường':'GĐ chi tiết')+'</option>').join('');};
+    f.addEventListener('change',e=>{if(e.target.name==='to')fillBack();else if(e.target.matches('[data-role]'))fill();});
+    fill();
+  }
+  function openEdit(s){
+    const people=data.people||[];
+    const opts=v=>'<option value="">— Trống —</option>'+people.map(p=>'<option'+(same(p,v)?' selected':'')+'>'+esc(p)+'</option>').join('');
+    openSheet('<h4>Sửa ca '+wd(s.duty_date)+' '+dm(s.duty_date)+'</h4><small>Ghi thẳng vào Google Sheet.</small><form><label class="dt-field">Hiện trường<select name="scene">'+opts(s.scene)+'</select></label><label class="dt-field">Giám định chi tiết<select name="detail">'+opts(s.detail)+'</select></label><p class="dt-err" hidden></p><div class="dt-actions"><button type="submit" class="dt-btn is-main">Lưu &amp; ghi Sheet</button><button type="button" class="dt-btn" data-dt-close>Huỷ</button></div></form>',
+      async f=>{await call({action:'update',date:s.duty_date,scene:f.elements.scene.value,detail:f.elements.detail.value});toast('Đã cập nhật lịch và Google Sheet.');load({quiet:true});});
+  }
+
+  /* ---------- Sự kiện ---------- */
+  document.addEventListener('click',async e=>{
+    const b=e.target.closest('#dutySection [data-dt]');if(!b)return;const k=b.dataset.dt;
+    if(k==='retry')load();
+    else if(k==='google')window.TascoDrive?.openSetup();
+    else if(k==='prev'||k==='next'){const [y,m]=month.split('-').map(Number);const d=new Date(Date.UTC(y,m-1+(k==='next'?1:-1),1));month=d.toISOString().slice(0,7);data&&(data.shifts=[]);render();load({quiet:true});}
+    else if(k==='sync'){b.disabled=true;await load({force:true});b.disabled=false;}
+    else if(k==='filter'){filter=b.dataset.v;render();}
+    else if(k==='day')openDay(b.dataset.date);
+    else if(k==='relink'){data={...data,configured:false};render();}
+    else if(k==='approve'||k==='reject'||k==='cancel'){
+      let note='';
+      if(k==='reject'){note=prompt('Lý do từ chối (không bắt buộc):','');if(note===null)return;}
+      b.disabled=true;
+      try{await call(k==='cancel'?{action:'swap-cancel',id:b.dataset.id}:{action:'swap-decide',id:b.dataset.id,approve:k==='approve',note});toast(k==='approve'?'Đã duyệt và ghi Google Sheet.':k==='reject'?'Đã từ chối yêu cầu.':'Đã huỷ yêu cầu.');load({quiet:true});}
+      catch(x){toast(x.message);b.disabled=false;}
+    }
+  });
+  document.addEventListener('submit',async e=>{
+    const f=e.target.closest('#dutySection [data-dt-form=config]');if(!f)return;e.preventDefault();
+    const b=f.querySelector('[type=submit]'),m=f.querySelector('[data-dt-msg]');b.disabled=true;b.textContent='Đang đọc Sheet…';m.hidden=true;
+    try{const r=await call({action:'config',url:f.elements.url.value.trim()});toast('Đã gắn tab “'+r.tab+'” ('+r.rows+' ngày).');data=null;await load();}
+    catch(x){m.textContent=x.message;m.hidden=false;b.disabled=false;b.textContent='Gắn & đồng bộ';}
+  });
+  document.addEventListener('change',async e=>{
+    const s=e.target.closest('#dutySection [data-dt-map]');if(!s)return;s.disabled=true;
+    try{await call({action:'map',userId:s.dataset.dtMap,sheetName:s.value||null});toast('Đã gán tên.');load({quiet:true});}
+    catch(x){toast(x.message);}finally{s.disabled=false;}
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheet)closeSheet();});
+
+  /* Trang chủ: dòng "Hôm nay trực" trên nút Lịch trực. */
+  function paintHome(){
+    const n=document.querySelector('[data-duty-home]');if(!n)return;
+    const t=data?.today;
+    if(!data?.configured||!t){n.textContent='Xem lịch, ca của tôi, xin đổi ca';return;}
+    const short=v=>v?shortName(v,data.people):'—';
+    n.textContent='Hôm nay: HT '+short(t.scene)+' · GĐ '+short(t.detail);
+  }
+  function onNavigate(view){
+    if(view==='duty'){month=month||curMonth();if(!data||Date.now()-lastLoad>60000)load({quiet:Boolean(data)});else render();}
+    else{closeSheet();if(view==='home'&&(!lastLoad||Date.now()-lastLoad>10*60000)&&options.client?.())load({quiet:true}).catch(()=>{});}
+  }
+  function setUser(u){const e=String(u?.email||'').toLowerCase();if(e!==(options._email||'')){options._email=e;data=null;month='';filter='all';lastLoad=0;closeSheet();const r=root();if(r)r.innerHTML='<div class="dt-skel"><i></i><i></i><i></i></div>';paintHome();}}
+  return {configure:v=>{options={...options,...v};},setUser,onNavigate,load,paintHome,reset:()=>{data=null;month='';filter='all';lastLoad=0;try{localStorage.removeItem(CACHE);}catch(_){}}};
+})();
+</script>
+
     <!-- supabase-js đóng gói sẵn trong app (cố định 2.119.0): mở app không phải chờ tải thư viện từ esm.sh. -->
     <script src="vendor/supabase-2.119.0.js" defer></script>
     <script type="module">
@@ -5932,6 +6271,7 @@ window.TascoDrive=(()=>{
         window.TascoPersonalStorage.configure({client:()=>supabase});
         window.TascoDesktopLogin.configure({client:()=>supabase});
         window.TascoDrive.configure({client:()=>supabase});
+        window.TascoDuty.configure({client:()=>supabase});
         window.TascoGarageDB.configure({client:supabase});
         window.TascoForms.configure({client:supabase});
         let lastLoggedUid = null;
@@ -11518,7 +11858,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const color = ['lookup','results','cloud','rescue','garage','assess','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    const color = ['lookup','results','cloud','rescue','garage','assess','duty','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -13287,7 +13627,7 @@ window.TascoNavigationMotion = (() => {
   const indicator = nav?.querySelector('.ws-nav-indicator');
   if (!nav || !indicator) return { sync() {} };
   const motionPreference = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-  const pageIds = {home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',account:'accountSection',forms:'formsSection',admin:'sysMgrSection'};
+  const pageIds = {home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',account:'accountSection',forms:'formsSection',admin:'sysMgrSection'};
   let positioned = false, frame = 0, pendingAnimated = true, pageAnimation = null, lastGeometry = null;
   nav.dataset.navMotion = 'true';
   function position(animate = true) {
@@ -14482,7 +14822,7 @@ window.tascoGo=function(view){
   var shell=window.TascoAppShell, cur=shell&&shell.page, root=document.documentElement;
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(!document.startViewTransition||!cur||cur==='login'||cur===view||reduce||root.dataset.vt)return go();
-  var order=['home','lookup','results','cloud','rescue','garage','assess','forms','account','admin'];
+  var order=['home','lookup','results','cloud','rescue','garage','assess','duty','forms','account','admin'];
   root.dataset.vtDir=order.indexOf(view)>=order.indexOf(cur)?'fwd':'back';root.dataset.vt='1';
   var done=function(){delete root.dataset.vt;delete root.dataset.vtDir;};
   try{var t=document.startViewTransition(go);t.finished.then(done,done);}catch(_){done();go();}
