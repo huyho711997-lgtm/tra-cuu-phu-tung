@@ -3271,7 +3271,7 @@ window.TascoBootSplash = (() => {
   const status = document.getElementById('bootStatus');
   const recovery = document.getElementById('bootRecovery');
   const timers = new Set();
-  let active = false, startedOnce = false, abandoned = false, dismissed = false;
+  let active = false, startedOnce = false, abandoned = false, dismissed = false, softFailed = false;
   let cycleReady = Promise.resolve(), resolveCycle = null, leaving = null, resolveEntry = null;
   const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
   const quick = document.documentElement.classList.contains('tasco-quick-boot');
@@ -3304,11 +3304,11 @@ window.TascoBootSplash = (() => {
     }, duration);
     later(() => { recovery.hidden = false; }, 12000);
     // CDN, network and session restoration failures must not trap the login form.
-    later(() => fail('Chưa khôi phục được phiên đăng nhập. Vui lòng đăng nhập lại.'), 30000);
+    later(() => fail('Mạng chậm nên chưa khôi phục được phiên đăng nhập. Nếu vài giây nữa vẫn ở màn hình này, hãy đăng nhập lại.', true), 30000);
   }
   function cancel() { hide(); }
-  function fail(message) {
-    abandoned = true; hide();
+  function fail(message, soft = false) {
+    abandoned = true; softFailed = !!soft; hide();
     const error = document.getElementById('loginError');
     if (error) { error.textContent = message; error.classList.remove('hidden'); }
     window.TascoAppShell?.navigate('login', { replace: true });
@@ -3327,7 +3327,9 @@ window.TascoBootSplash = (() => {
     return leaving;
   }
   function observeSession(user, event) {
-    if (!user || event === 'SIGNED_OUT') { cancel(); return; }
+    if (!user || event === 'SIGNED_OUT') { softFailed = false; cancel(); return; }
+    /* Đã hiện màn đăng nhập vì chờ quá 30 giây, nhưng phiên cũ khôi phục xong sau đó: cho vào app luôn, không bắt gõ lại mật khẩu. */
+    if (softFailed) { softFailed = false; abandoned = false; const stale = document.getElementById('loginError'); if (stale) { stale.textContent = ''; stale.classList.add('hidden'); } return; }
     if (event === 'INITIAL_SESSION' && !startedOnce && !dismissed) start();
   }
   function manualLogin() { abandoned = false; }
@@ -5710,15 +5712,29 @@ window.TascoDesktopLogin=(()=>{
                 try {
                     let profileSnap = null;
                     let profile = {};
+                    const profileCacheKey = 'tasco_profile_cache_' + user.uid;
                     try {
-                        profileSnap = await getDoc(doc(db, "user_profiles", user.uid));
+                        /* Lỗi mạng/máy chủ thoáng qua (đã gặp lỗi 500 timeout) không được coi là hết phiên: thử lại tối đa 3 lần. */
+                        for (let attempt = 0; ; attempt++) {
+                            try { profileSnap = await getDoc(doc(db, "user_profiles", user.uid)); break; }
+                            catch (retryErr) {
+                                if (attempt >= 2) throw retryErr;
+                                await new Promise(resolve => setTimeout(resolve, 900 * (attempt + 1)));
+                                if (authRevision !== AUTH_VIEW_REVISION) return;
+                            }
+                        }
                         if (profileSnap && profileSnap.exists()) {
                             profile = profileSnap.data() || {};
+                            try { localStorage.setItem(profileCacheKey, JSON.stringify({ role: profile.role, status: profile.status, fullName: profile.fullName })); } catch (_) {}
                         }
                     } catch (dbErr) {
                         console.warn("Lỗi tải thông tin profile:", dbErr);
-                        if (window.TascoBootSplash.active) {
-                            window.TascoBootSplash.fail('Chưa tải được thông tin tài khoản. Vui lòng đăng nhập lại.');
+                        let cached = null;
+                        try { cached = JSON.parse(localStorage.getItem(profileCacheKey) || 'null'); } catch (_) {}
+                        if (cached && cached.status === 'active') {
+                            profile = { role: cached.role, status: cached.status, fullName: cached.fullName };   // vào app bằng hồ sơ đã lưu; làm mới khi có mạng
+                        } else if (window.TascoBootSplash.active) {
+                            window.TascoBootSplash.fail('Chưa tải được thông tin tài khoản (' + String(dbErr && dbErr.message || dbErr).slice(0, 80) + '). Hãy kiểm tra mạng rồi mở lại app.');
                             return;
                         }
                     }
