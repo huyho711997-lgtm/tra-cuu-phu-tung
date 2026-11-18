@@ -5513,12 +5513,19 @@ window.TascoDuty=(()=>{
   const I={prev:svg('<path d="m15 6-6 6 6 6"/>'),next:svg('<path d="m9 6 6 6-6 6"/>'),sync:svg('<path d="M20 11a8 8 0 0 0-14.3-4.9L4 8m0-4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16m0 4v-4h-4"/>'),sheet:svg('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/>'),swap:svg('<path d="M7 7h12l-3-3M17 17H5l3 3"/>'),edit:svg('<path d="M4 20h4L19 9l-4-4L4 16z"/>'),bell:svg('<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/>'),scene:svg('<path d="M12 21s7-5.4 7-11.2A7 7 0 0 0 5 9.8C5 15.6 12 21 12 21z"/><circle cx="12" cy="9.6" r="2.3"/>'),detail:svg('<rect x="6" y="3.5" width="12" height="17" rx="2.2"/><path d="M9 3.5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v.5"/><path d="m9.3 12.5 1.8 1.8 3.6-3.8"/>')};
   function toast(t){const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),4200);}
   const err=(code,message)=>Object.assign(new Error(message),{code});
-  async function call(body){
+  async function call(body,retried){
     const c=options.client?.();if(!c)throw err('NO_CLIENT','App chưa sẵn sàng. Tải lại trang.');
     const s=await c.auth.getSession();const token=s.data?.session?.access_token;if(!token)throw err('NO_SESSION','Cần đăng nhập lại.');
     let res;try{res=await fetch(FN,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:'Bearer '+token},body:JSON.stringify(body)});}
     catch(_){throw err('NETWORK','Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.');}
     let d={};try{d=await res.json();}catch(_){}
+    if(res.status===401&&!retried){
+      // Token hết hạn/bị thu hồi: xin phiên mới 1 lần rồi gọi lại; nếu phiên đã mất hẳn thì đưa về màn đăng nhập.
+      let ok=false;try{const r=await c.auth.refreshSession();ok=Boolean(r.data?.session?.access_token&&!r.error);}catch(_){}
+      if(ok)return call(body,true);
+      try{await c.auth.signOut({scope:'local'});}catch(_){}
+      throw err('SESSION_LOST','Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+    }
     if(!res.ok)throw err(d.code||'HTTP_'+res.status,d.error||'Máy chủ chưa xử lý được (mã '+res.status+').');
     return d;
   }
@@ -5901,7 +5908,8 @@ window.TascoDuty=(()=>{
             return () => { disposed = true; revision++; data?.subscription?.unsubscribe?.(); };
         }
         async function signOut(authRef) {
-            const { error } = await authRef._client.auth.signOut();
+            // scope 'local': đăng xuất ở máy này không được thu hồi phiên của các thiết bị khác
+            const { error } = await authRef._client.auth.signOut({ scope: 'local' });
             if (error) throw normalizeAuthError(error, 'Không đăng xuất được');
             authRef._setCurrentUser(null);
         }
