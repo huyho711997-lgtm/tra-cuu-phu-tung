@@ -13460,7 +13460,7 @@ window.TascoCategories = (function () {
           release();
           if (done) return;
           if (blob.size < 1500 || (!speech && !blind)) { fail('Không nghe thấy tiếng nói. Thử lại gần micro hơn.'); return; }
-          var prompt = ui.plate ? 'Biển số xe Việt Nam: 47A-123.45, 47C-678.90, 51H-345.67, 29A-123.45.' : 'Giám định xe ô tô: ' + hints(known, ui.onlyKnown).slice(0, 45).join(', ');
+          var prompt = ui.plate ? 'Biển số xe ô tô, đọc từng số và từng chữ cái.' : 'Giám định xe ô tô: ' + hints(known, ui.onlyKnown).slice(0, 45).join(', ');
           try {
             var text = await transcribe(blob, prompt.slice(0, 650));
             if (done) return;
@@ -15573,7 +15573,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
           mic.style.removeProperty('--lvl'); mic.classList.remove('is-live'); mic.setAttribute('aria-pressed', 'false'); mic.setAttribute('aria-label', 'Nói để nhập biển số');
           var p = parsePlate(t);
           if (p) { input.value = p; input.dispatchEvent(new Event('input', { bubbles: true })); say('Đã nhập ' + p + '. Kiểm tra lại nếu cần.'); }
-          else if (t) say('Chưa nghe rõ biển số. Hãy đọc chậm từng ký tự, ví dụ “bốn bảy A, một hai ba, bốn năm”.', true);
+          else if (t) say('Chưa nghe rõ biển số (nghe được: “' + String(t).slice(0, 40) + '”). Hãy đọc chậm từng ký tự, ví dụ “bốn bảy A, một hai ba, bốn năm”.', true);
           else say('');
         },
         error: function (message) { say(message, true); }

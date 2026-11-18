@@ -14,7 +14,16 @@ class HttpError extends Error {
   constructor(status, code, message, extra = {}) { super(message); Object.assign(this, { status, code, ...extra }); }
 }
 
-export function cleanTranscript(data) {
+const PLATE_IN_HINT = /\d{2}\s?[A-ZĐ]{1,2}\d?\s?[-–]?\s?\d{3}\s?[.,]?\s?\d{2}/gi;
+const squash = v => String(v || '').toLowerCase().replace(/[^0-9a-zđ]/g, '');
+// Whisper hay chép lại nguyên biển số mẫu trong lời gợi ý (prompt) khi âm thanh ngắn/không rõ -> coi là "nghe ra ảo", bỏ đi.
+function echoesHint(text, hint) {
+  const t = squash(text);
+  if (t.length < 6 || !hint) return false;
+  return (String(hint).match(PLATE_IN_HINT) || []).some(p => t.includes(squash(p)));
+}
+
+export function cleanTranscript(data, hint = '') {
   const segs = Array.isArray(data?.segments) ? data.segments : [];
   let text;
   if (segs.length) {
@@ -23,7 +32,7 @@ export function cleanTranscript(data) {
       .map(s => String(s.text || '')).join(' ');
   } else text = String(data?.text || '');
   text = text.replace(/\s+/g, ' ').trim();
-  if (!text || HALLUCINATION.test(text)) return '';
+  if (!text || HALLUCINATION.test(text) || echoesHint(text, hint)) return '';
   // Lặp một cụm quá nhiều lần là dấu hiệu Whisper bị "kẹt".
   if (/(\b.{2,24}\b)(?:\s+\1){5,}/i.test(text)) return '';
   return text.slice(0, 1000);
@@ -90,7 +99,7 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
         if (!response.ok) { await response.arrayBuffer().catch(() => null); throw new HttpError(502, 'PROVIDER_ERROR', 'Dịch vụ nhận dạng giọng nói chưa xử lý được. Hãy thử lại.', { providerStatus: response.status }); }
         const data = await response.json().catch(() => null);
         if (!data) throw new HttpError(502, 'EMPTY_OUTPUT', 'Dịch vụ nhận dạng giọng nói chưa trả kết quả.');
-        return reply({ text: cleanTranscript(data), model: MODEL, duration: Number.isFinite(Number(data.duration)) ? Number(data.duration) : undefined });
+        return reply({ text: cleanTranscript(data, hint), model: MODEL, duration: Number.isFinite(Number(data.duration)) ? Number(data.duration) : undefined });
       }
       if (limited) throw new HttpError(429, 'PROVIDER_LIMIT', 'Dịch vụ nhận dạng đang hết lượt. Hãy thử lại sau ít phút.', { providerStatus: 429 });
       throw new HttpError(502, 'PROVIDER_ERROR', [401, 403].includes(lastStatus) ? 'Key Groq không hợp lệ hoặc chưa được cấp quyền.' : 'Dịch vụ nhận dạng giọng nói chưa xử lý được.', { providerStatus: lastStatus });
