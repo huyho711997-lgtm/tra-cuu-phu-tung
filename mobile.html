@@ -5846,6 +5846,11 @@ button.dr-pick{flex:1;min-width:0;display:flex;align-items:center;gap:8px;height
 .dark .dr-kpi{background:linear-gradient(160deg,hsl(var(--h,200) 35% 20%),var(--ws-bg) 75%)}.dark .dr-kpi b{color:hsl(var(--h,200) 70% 82%)}
 .dr-gdv.is-total{border-color:var(--app-teal);background:color-mix(in srgb,var(--app-teal) 8%,var(--ws-bg))}
 .dr-stamp{margin:12px 2px 0;color:var(--ws-muted);font-size:11px;line-height:1.5}
+.dr-live{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:-2px 2px 8px;color:var(--ws-muted);font-size:11px;font-weight:700}
+.dr-live i{width:8px;height:8px;border-radius:50%;background:#f59e0b}
+.dr-live.is-on i{background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,.5);animation:drPulse 2s ease-out infinite}
+@keyframes drPulse{70%,100%{box-shadow:0 0 0 7px rgba(34,197,94,0)}}
+@media(prefers-reduced-motion:reduce){.dr-live.is-on i{animation:none}}
 .dr-count{margin:14px 2px 8px;color:var(--ws-muted);font-size:11.5px;font-weight:600}
 .dr-list{display:grid;gap:8px}
 .dr-card{border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-bg);overflow:hidden}
@@ -5875,7 +5880,7 @@ button.dr-pick{flex:1;min-width:0;display:flex;align-items:center;gap:8px;height
    tasco_contacts (danh bạ; năm sinh/giới tính nằm bảng riêng, không đọc ở đây) và tasco_claims_mirror (bản rút gọn hồ sơ, đẩy từ webapp). */
 window.TascoDirectory=(()=>{
   const PAGE=40;
-  let options={},tab='contacts',q='',filt={dept:'all',status:'all',gdv:'all'},data=null,loading=false,failed='',lastLoad=0,limit=PAGE,openKey='',email='',admin=false,reports=null,repLoading=false,repFailed='',repId='';
+  let options={},tab='contacts',q='',filt={dept:'all',status:'all',gdv:'all'},data=null,loading=false,failed='',lastLoad=0,limit=PAGE,openKey='',email='',admin=false,reports=null,repLoading=false,repFailed='',repId='',channel=null,live=false,liveClient=null,liveTimer=0;
   const root=()=>document.getElementById('drRoot');
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const plain=t=>String(t??'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/gi,'d').toLowerCase();
@@ -5915,7 +5920,7 @@ window.TascoDirectory=(()=>{
       claims.forEach(r=>{r._s=plain([r.bien_so,r.so_ho_so_boi_thuong,r.ma_vu_ton_that,r.gdv_tiep_nhan,r.hang_xe,r.hieu_xe,r.trang_thai,stLabel(r.trang_thai),r.dia_diem_vtt,r.loai_ton_that].join(' '));r._p=plain(r.bien_so).replace(/[^a-z0-9]/g,'');});
       data={contacts,claims};lastLoad=Date.now();
     }catch(e){failed=/PGRST205|42P01/.test(e?.code||'')?'Chưa có dữ liệu dùng chung trên hệ thống. Liên hệ quản trị viên.':(e?.code==='42501'?'Tài khoản chưa có quyền xem dữ liệu này.':'Không tải được dữ liệu. Kiểm tra mạng rồi thử lại.');}
-    finally{loading=false;render();}
+    finally{loading=false;if(quiet&&data)refreshQuiet();else render();}
   }
 
   const distinct=(list,f)=>[...new Set(list.map(r=>r[f]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
@@ -5947,28 +5952,59 @@ window.TascoDirectory=(()=>{
     if(!all.length)return '<div class="dr-empty"><b>Không có kết quả</b>Thử đổi từ khóa hoặc bỏ bớt bộ lọc.</div>';
     return '<div class="dr-count">'+all.length.toLocaleString('vi-VN')+(all.length!==total?' / '+total.toLocaleString('vi-VN'):'')+(tab==='contacts'?' liên hệ':' hồ sơ')+'</div><div class="dr-list">'+page.map(tab==='contacts'?contactCard:claimCard).join('')+'</div>'+(all.length>page.length?'<button type="button" class="dt-btn dr-more-btn" data-dr="more">Xem thêm '+Math.min(PAGE,all.length-page.length)+' mục</button>':'');
   }
+  /* ===== Real time: Supabase Realtime báo có thay đổi → tải lại âm thầm (gom nhịp 1,5s) ===== */
+  function refreshQuiet(){
+    if(!data)return;
+    const sb=document.querySelectorAll('#directorySection .dr-seg button i');
+    if(sb[0])sb[0].textContent=data.contacts.length;if(sb[1])sb[1].textContent=data.claims.length;
+    if(tab!=='report')paintList();
+  }
+  const paintLive=()=>{document.querySelectorAll('#directorySection [data-dr-live]').forEach(e=>{e.classList.toggle('is-on',live);const t=e.querySelector('b');if(t)t.textContent=live?'Trực tiếp':'Đang kết nối…';});};
+  function stopLive(){
+    clearTimeout(liveTimer);
+    if(channel&&liveClient){try{liveClient.removeChannel(channel);}catch(_){}}
+    channel=null;liveClient=null;live=false;paintLive();
+  }
+  function startLive(){
+    const c=options.client?.();if(!c||typeof c.channel!=='function'||channel)return;
+    const kick=what=>{clearTimeout(liveTimer);liveTimer=setTimeout(()=>{if(what!=='reports'&&data)load({quiet:true});if(what==='reports'&&admin&&reports)loadReports({quiet:true});},1500);};
+    try{
+      liveClient=c;
+      channel=c.channel('tasco-directory')
+        .on('postgres_changes',{event:'*',schema:'public',table:'tasco_claims_mirror'},()=>kick('data'))
+        .on('postgres_changes',{event:'*',schema:'public',table:'tasco_contacts'},()=>kick('data'))
+        .on('postgres_changes',{event:'*',schema:'public',table:'tasco_weekly_reports'},()=>kick('reports'))
+        .subscribe(st=>{live=st==='SUBSCRIBED';paintLive();});
+    }catch(_){channel=null;liveClient=null;live=false;}
+  }
+  /* Quay lại app (iPhone khoá/mở màn hình): có thể đã lỡ sự kiện → tải lại âm thầm và đảm bảo kênh còn sống. */
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden||!document.getElementById('directorySection')?.offsetParent)return;
+    if(!channel)startLive();
+    if(data)load({quiet:true});if(admin&&reports)loadReports({quiet:true});
+  });
   /* ===== Báo cáo tuần (bản chụp đẩy từ webapp giám định; chỉ admin đọc được theo RLS) ===== */
   const money=v=>Number(v||0).toLocaleString('vi-VN')+' đ';
   const fmtTime=v=>{const d=new Date(v);return Number.isNaN(d.getTime())?'':d.toLocaleString('vi-VN',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});};
   const metricDefs=p=>{const r=p.rules||{},tr=n=>(n/1e6).toLocaleString('vi-VN');return [
     ['ps','Phát sinh'],['dd','Đã duyệt HSBT'],['cd','Chưa duyệt PASC'],['dntt','Chuyển ĐNTT'],['carpla','Lượng xe Carpla'],['tnds','HS TNDS tồn lũy kế'],
     ['ton','HS tồn > '+(r.hsTonDays||30)+' ngày'],['dpbt','HS DPBT > '+tr(r.hsDpbtAmount||5e7)+' triệu'],['avg','Bình quân < '+tr(r.avgAmount||1e7)+' triệu',1],['rev','Doanh số Carpla lũy kế T'+(p.month||''),1]];};
-  async function loadReports(){
+  async function loadReports({quiet}={}){
     const c=options.client?.();if(!c||repLoading)return;
-    repLoading=true;repFailed='';render();
+    repLoading=true;repFailed='';if(!quiet||!reports)render();
     try{
       const r=await c.from('tasco_weekly_reports').select('id,end_date,label,payload,pushed_by,pushed_at').order('end_date',{ascending:false}).limit(52);
       if(r.error)throw r.error;
       reports=(r.data||[]).filter(x=>x&&x.payload&&Array.isArray(x.payload.rows));
       if(!reports.some(x=>x.id===repId))repId=reports[0]?.id||'';
     }catch(e){repFailed=/PGRST205|42P01/.test(e?.code||'')?'Chưa có bảng báo cáo tuần trên hệ thống.':(e?.code==='42501'?'Chỉ quản trị viên được xem báo cáo tuần.':'Không tải được báo cáo. Kiểm tra mạng rồi thử lại.');}
-    finally{repLoading=false;render();}
+    finally{repLoading=false;if(quiet&&reports&&tab==='report')paintList();else if(!quiet||tab==='report')render();}
   }
   function reportHtml(){
     if(!admin)return '<div class="dr-empty"><b>Chỉ dành cho quản trị viên</b>Tài khoản của bạn không xem được báo cáo tuần.</div>';
     if(repFailed&&!reports)return '<div class="dr-empty"><b>Chưa tải được</b>'+esc(repFailed)+'<div class="dr-acts"><button type="button" class="dt-btn is-main" data-dr="rep-retry">Thử lại</button></div></div>';
     if(!reports)return '<div class="dr-skel"><i></i><i></i><i></i></div>';
-    if(!reports.length)return '<div class="dr-empty"><b>Chưa có báo cáo tuần</b>Mở báo cáo tuần trên webapp giám định xe và bấm “Gửi lên điện thoại”.</div>';
+    if(!reports.length)return '<div class="dr-empty"><b>Chưa có báo cáo tuần</b>Báo cáo sẽ tự xuất hiện khi webapp giám định xe được mở bằng tài khoản Admin (đã đăng nhập Supabase).</div>';
     const rep=reports.find(x=>x.id===repId)||reports[0],p=rep.payload,t=p.totals||{},defs=metricDefs(p),rate=t.ps>0?Math.round(t.dd/t.ps*100):0;
     const kpi=(label,val,meta,h)=>'<div class="dr-kpi" style="--h:'+h+'"><small>'+esc(label)+'</small><b>'+esc(val)+'</b><span>'+esc(meta)+'</span></div>';
     const cell=(def,src)=>{const v=src[def[0]]||0;return [def[1],def[2]?(v?money(v):'—'):v.toLocaleString('vi-VN')];};
@@ -5978,7 +6014,7 @@ window.TascoDirectory=(()=>{
     return '<button type="button" class="dr-pick dr-week" data-dr="pick" data-f="week" aria-haspopup="dialog" aria-label="Kỳ báo cáo"><span>'+esc(p.startStr+' – '+p.endStr)+'</span>'+DOWN+'</button>'+
       '<div class="dr-kpis">'+kpi('Phát sinh',t.ps||0,'hồ sơ trong kỳ',215)+kpi('Đã duyệt HSBT',t.dd||0,'hoàn thành '+rate+'%',152)+kpi('Chưa duyệt PASC',t.cd||0,'cần xử lý tiếp',38)+kpi('HS tồn quá hạn',t.ton||0,'> '+((p.rules||{}).hsTonDays||30)+' ngày',0)+'</div>'+
       '<div class="dr-count">Theo giám định viên · '+p.rows.length+' người</div><div class="dr-list">'+p.rows.map((r,i)=>card(r.gdv,r,i,false)).join('')+card('Tổng cộng',t,'t',true)+'</div>'+
-      '<p class="dr-stamp">Gửi lúc '+esc(fmtTime(rep.pushed_at))+(rep.pushed_by?' · '+esc(rep.pushed_by):'')+'. Số liệu là bản chụp tại thời điểm gửi.</p>';
+      '<p class="dr-stamp">Cập nhật lúc '+esc(fmtTime(rep.pushed_at))+(rep.pushed_by?' · '+esc(rep.pushed_by):'')+'. Tự động cập nhật khi webapp giám định có thay đổi.</p>';
   }
   const CHK=svg('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),DOWN=svg('<path d="m6 9 6 6 6-6"/>'),CLOSE=svg('<path d="M6 6l12 12M18 6 6 18"/>');
   const FILTERS={
@@ -6025,7 +6061,7 @@ window.TascoDirectory=(()=>{
     const r=root();if(!r)return;
     if(failed&&!data){r.innerHTML='<div class="dr-empty"><b>Chưa tải được</b>'+esc(failed)+'<div class="dr-acts"><button type="button" class="dt-btn is-main" data-dr="retry">Thử lại</button></div></div>';return;}
     if(!data){r.innerHTML='<div class="dr-skel"><i></i><i></i><i></i></div>';return;}
-    const seg='<div class="dr-seg'+(admin?' dr-seg--3':'')+'" role="group" aria-label="Chọn danh sách"><button type="button" data-dr="tab" data-v="contacts" aria-pressed="'+(tab==='contacts')+'">Danh bạ <i>'+data.contacts.length+'</i></button><button type="button" data-dr="tab" data-v="claims" aria-pressed="'+(tab==='claims')+'">Hồ sơ <i>'+data.claims.length+'</i></button>'+(admin?'<button type="button" data-dr="tab" data-v="report" aria-pressed="'+(tab==='report')+'">Báo cáo</button>':'')+'</div>';
+    const seg='<div class="dr-live'+(live?' is-on':'')+'" data-dr-live><i></i><b>'+(live?'Trực tiếp':'Đang kết nối…')+'</b></div><div class="dr-seg'+(admin?' dr-seg--3':'')+'" role="group" aria-label="Chọn danh sách"><button type="button" data-dr="tab" data-v="contacts" aria-pressed="'+(tab==='contacts')+'">Danh bạ <i>'+data.contacts.length+'</i></button><button type="button" data-dr="tab" data-v="claims" aria-pressed="'+(tab==='claims')+'">Hồ sơ <i>'+data.claims.length+'</i></button>'+(admin?'<button type="button" data-dr="tab" data-v="report" aria-pressed="'+(tab==='report')+'">Báo cáo</button>':'')+'</div>';
     if(tab==='report'){r.innerHTML=seg+'<div id="drList" class="dr-rep">'+reportHtml()+'</div>';return;}
     r.innerHTML=seg+
       '<label class="dr-search">'+I.search+'<input type="search" data-dr-q placeholder="'+(tab==='contacts'?'Tìm tên, mã NV, SĐT, email…':'Tìm biển số, số HSBT, GĐV…')+'" autocomplete="off" enterkeyhint="search" value="'+esc(q)+'"></label>'+
@@ -6045,8 +6081,8 @@ window.TascoDirectory=(()=>{
   });
   document.addEventListener('input',e=>{if(!e.target.matches('#directorySection [data-dr-q]'))return;q=e.target.value;limit=PAGE;openKey='';paintList();});
 
-  function onNavigate(view){if(view!=='directory')closeSheet();if(view==='directory'&&(!data||Date.now()-lastLoad>60000))load({quiet:Boolean(data)});}
-  function setUser(u){admin=u?.role==='admin';if(!admin&&tab==='report')tab='contacts';const e=String(u?.email||'').toLowerCase();if(e!==email){email=e;reports=null;repId='';repFailed='';data=null;lastLoad=0;q='';openKey='';filt={dept:'all',status:'all',gdv:'all'};const r=root();if(r)r.innerHTML='<div class="dr-skel"><i></i><i></i><i></i></div>';}}
+  function onNavigate(view){if(view!=='directory'){closeSheet();stopLive();return;}startLive();if(!data||Date.now()-lastLoad>60000)load({quiet:Boolean(data)});if(admin&&reports)loadReports({quiet:true});}
+  function setUser(u){admin=u?.role==='admin';if(!admin&&tab==='report')tab='contacts';const e=String(u?.email||'').toLowerCase();if(e!==email){stopLive();email=e;reports=null;repId='';repFailed='';data=null;lastLoad=0;q='';openKey='';filt={dept:'all',status:'all',gdv:'all'};const r=root();if(r)r.innerHTML='<div class="dr-skel"><i></i><i></i><i></i></div>';}}
   return {configure:v=>{options={...options,...v};},setUser,onNavigate,load};
 })();
 </script>
