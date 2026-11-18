@@ -14620,10 +14620,12 @@ function stamp(){try{sessionStorage.setItem(SEEN,String(Date.now()));}catch(_){}
 function plugin(){return window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.NativeBiometric||null;}
 function $(s,r){return (r||document).querySelector(s);}
 function toast(t){var e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove();},3600);}
-function kind(){return info&&info.type===2?'Face ID':info&&info.type===1?'Touch ID':info&&info.type===0?'mật mã máy':'Face ID';}
+var KIND='tasco_applock_kind';
+function savedType(){try{var v=localStorage.getItem(KIND);return v===null?null:Number(v);}catch(_){return null;}}
+function kind(){var t=info?info.type:savedType();return t===2?'Face ID':t===1?'Touch ID':t===0?'mật mã máy':'Face ID';}
 async function probe(){
   var p=plugin();if(!p)return (info={ok:false,missing:true});
-  try{var r=await p.isAvailable({useFallback:true});info={ok:!!r.isAvailable,type:Number(r.biometryType)||0,secure:!!r.deviceIsSecure};}
+  try{var r=await p.isAvailable({useFallback:true});info={ok:!!r.isAvailable,type:Number(r.biometryType)||0,secure:!!r.deviceIsSecure};try{if(info.ok)localStorage.setItem(KIND,String(info.type));}catch(_){}}
   catch(_){info={ok:false};}
   return info;
 }
@@ -14710,7 +14712,8 @@ document.addEventListener('click',async function(e){
   }finally{busy=false;refreshRow();}
 });
 document.addEventListener('DOMContentLoaded',function(){refreshRow();});
-window.addEventListener('load',function(){probe().then(function(){refreshRow();setBtn();});
+/* Không gọi plugin sinh trắc học khi mở app nếu khoá đang tắt: iOS sẽ loé biểu tượng Face ID ở góc máy. Chỉ hỏi plugin khi thật sự cần (mở khoá / bật-tắt). */
+window.addEventListener('load',function(){refreshRow();setBtn();
   if(root.classList.contains('tasco-locked')){var l=$('#tascoLock');if(l)l.setAttribute('aria-hidden','false');setBtn();setTimeout(function(){tryUnlock(true);},300);}
   else if(native&&cfg.on)stamp();});
 window.TascoAppLock={lock:lock,unlock:unlock,config:function(){return {on:cfg.on,grace:cfg.grace};},refresh:refreshRow};
