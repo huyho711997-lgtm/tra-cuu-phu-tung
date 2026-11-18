@@ -15522,6 +15522,9 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
       if (/^[a-zđ]$/i.test(stripped)) { out += stripped.toUpperCase(); continue; }
       if (/^[0-9a-zđ]{3,}$/i.test(stripped) && /\d/.test(stripped)) { out += stripped.toUpperCase(); continue; }
     }
+    /* Biển số luôn mở đầu bằng 2 số tỉnh và kết thúc bằng số: chữ đứng trước số đầu / sau số cuối là tiếng đệm
+       ("à…", "ờ", "ừ", "ê"…) bị nhận nhầm thành chữ cái nên bỏ đi. */
+    if (/\d/.test(out)) out = out.replace(/^[A-ZĐ]+(?=\d)/, '').replace(/(\d)[A-ZĐ]+$/, '$1');
     return out;
   }
   function formatPlate(c) {
