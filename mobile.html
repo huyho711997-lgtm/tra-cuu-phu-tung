@@ -4119,6 +4119,23 @@ window.TascoAppShell=(()=>{
   }
   const canCloud=()=>Boolean(user&&window.TascoCloudAccess?.allowedFor(user));
   let pendingView='';
+  /* Vết các trang đã đi qua trong phiên: để biết "trang trước đó" khi vuốt từ cạnh trái. */
+  const trail=[];
+  function track(view,options){
+    if(view==='login'){trail.length=0;return;}
+    if(options.restore&&trail.length>1&&trail[trail.length-2]===view)trail.pop();
+    else if(trail[trail.length-1]!==view)trail.push(view);
+    if(trail.length>40)trail.shift();
+  }
+  function back(){
+    if(!user||current==='home'||current==='login')return false;
+    const from=current;
+    if(trail.length>1){
+      history.back();   // popstate sẽ tự điều hướng về trang trước
+      setTimeout(()=>{if(current===from)navigate(trail[trail.length-2]||'home',{history:false,restore:true});},450);
+    }else navigate('home');
+    return true;
+  }
   /* Màn hình mở lại sau khi app bị iOS tải lại (tối đa 2 giờ). */
   function lastView(email){try{const v=JSON.parse(localStorage.getItem('tasco_last_view')||'null');return v&&pages[v.view]&&v.view!=='admin'&&String(v.email).toLowerCase()===String(email||'').toLowerCase()&&Date.now()-v.at<2*3600*1000?v.view:'';}catch(_){return '';}}
   function syncCloudAccess(){
@@ -4149,7 +4166,7 @@ window.TascoAppShell=(()=>{
     if(view!=='login'&&!user)view='login';if(view==='admin'&&user?.role!=='admin')view='home';
     if(view==='cloud'&&!canCloud()){if(window.TascoCloudAccess?.pending?.())pendingView='cloud';view='home';}else if(view!=='home')pendingView='';
     if(view!=='login')try{localStorage.setItem('tasco_last_view',JSON.stringify({view,email:user?.email||'',at:Date.now()}));}catch(_){}
-    const previous=current;scrolls[previous]=Math.max(0,window.scrollY);current=view;
+    const previous=current;scrolls[previous]=Math.max(0,window.scrollY);current=view;track(view,options);
     if(previous!==view)document.activeElement?.blur?.();
     window.TascoLookupFlow?.onNavigate(view);window.TascoForms?.onNavigate(view);window.TascoDuty?.onNavigate(view);window.TascoDirectory?.onNavigate(view);window.TascoWeekly?.onNavigate(view);
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
@@ -4199,7 +4216,69 @@ window.TascoAppShell=(()=>{
   window.addEventListener('popstate',()=>{if(user)navigate(location.hash.slice(1)||'home',{history:false,restore:true});});
   window.addEventListener('pageshow',()=>{if(user)greeting();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&user)greeting();});
-  return {setUser,navigate,camera,cameraHome,canCloud,lastView,get page(){return current;}};
+  /* ---------- Vuốt từ cạnh trái để quay về trang trước ---------- */
+  (function(){
+    const EDGE=24,reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    let g=null,hint=null;
+    const main=()=>document.getElementById('mainApp');
+    const modalOpen=()=>document.body.style.overflow==='hidden'||document.querySelector('.dr-sheet-bg')||[...document.querySelectorAll('[aria-modal="true"]')].some(el=>el.getClientRects().length);
+    const blocked=()=>!user||current==='home'||current==='login'||trail.length<1||document.documentElement.dataset.vt||modalOpen();
+    function ensureHint(){
+      if(hint)return hint;hint=document.createElement('div');hint.id='tascoBackHint';hint.setAttribute('aria-hidden','true');
+      hint.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';document.body.appendChild(hint);return hint;
+    }
+    const setHint=(p)=>{const h=ensureHint();h.style.opacity=String(Math.min(1,p*1.4));h.style.transform='translateX('+(-46+Math.min(1,p)*62)+'px) scale('+(0.8+Math.min(1,p)*0.2)+')';h.dataset.ready=p>=1?'1':'';};
+    const hideHint=()=>{if(hint){hint.style.opacity='0';hint.style.transform='translateX(-46px) scale(.8)';hint.dataset.ready='';}};
+    function begin(){const m=main();m.classList.add('is-edge-drag');m.style.transition='none';m.style.willChange='transform';document.documentElement.style.overflowX='hidden';}
+    function clean(){const m=main();m.classList.remove('is-edge-drag');m.style.transition='';m.style.transform='';m.style.willChange='';m.style.opacity='';document.documentElement.style.overflowX='';}
+    function snapBack(){
+      const m=main();hideHint();
+      if(reduce?.matches){clean();return;}
+      m.style.transition='transform .2s cubic-bezier(.2,.8,.2,1)';m.style.transform='translate3d(0,0,0)';
+      setTimeout(clean,220);
+    }
+    function commit(W){
+      const m=main(),from=current;
+      hideHint();
+      const go=()=>{
+        back();
+        const t0=performance.now();
+        const wait=()=>{
+          if(current!==from||performance.now()-t0>700){
+            clean();
+            if(!reduce?.matches&&m.animate)m.animate([{transform:'translate3d(-12%,0,0)',opacity:.55},{transform:'translate3d(0,0,0)',opacity:1}],{duration:240,easing:'cubic-bezier(.2,.7,.3,1)'});
+          }else requestAnimationFrame(wait);
+        };
+        requestAnimationFrame(wait);
+      };
+      if(reduce?.matches){go();return;}
+      m.style.transition='transform .17s cubic-bezier(.3,.6,.4,1)';m.style.transform='translate3d('+W+'px,0,0)';
+      setTimeout(go,175);
+    }
+    document.addEventListener('touchstart',e=>{
+      g=null;if(e.touches.length!==1||blocked())return;
+      const t=e.touches[0];if(t.clientX>EDGE)return;
+      g={x:t.clientX,y:t.clientY,mode:'',dx:0,v:0,lx:t.clientX,lt:performance.now()};
+    },{passive:true});
+    document.addEventListener('touchmove',e=>{
+      if(!g)return;const t=e.touches[0],dx=t.clientX-g.x,dy=t.clientY-g.y;
+      if(!g.mode){
+        if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
+        if(dx>0&&Math.abs(dx)>Math.abs(dy)*1.2){g.mode='drag';begin();}else{g=null;return;}
+      }
+      if(e.cancelable)e.preventDefault();
+      const W=window.innerWidth,x=Math.max(0,dx),now=performance.now();
+      g.v=(t.clientX-g.lx)/Math.max(1,now-g.lt);g.lx=t.clientX;g.lt=now;g.dx=x;
+      main().style.transform='translate3d('+x+'px,0,0)';setHint(x/(W*0.3));
+    },{passive:false});
+    document.addEventListener('touchend',()=>{
+      if(!g||g.mode!=='drag'){g=null;return;}
+      const W=window.innerWidth,x=g.dx,v=g.v;g=null;
+      if(x>W*0.3||(v>0.5&&x>40))commit(W);else snapBack();
+    },{passive:true});
+    document.addEventListener('touchcancel',()=>{if(g&&g.mode==='drag')snapBack();g=null;},{passive:true});
+  })();
+  return {setUser,navigate,back,camera,cameraHome,canCloud,lastView,get page(){return current;}};
 })();
 
 </script>
@@ -5776,7 +5855,7 @@ window.TascoDuty=(()=>{
   }
   /* Vuốt ngang trên lịch tuần để đổi tuần. */
   let tx=0,ty=0;
-  document.addEventListener('touchstart',e=>{if(!e.target.closest('#dutySection [data-swipe]'))return;tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchstart',e=>{tx=0;if(!e.target.closest('#dutySection [data-swipe]')||e.touches[0].clientX<26)return;tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
   document.addEventListener('touchend',e=>{if(!tx||!e.target.closest('#dutySection [data-swipe]'))return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;tx=0;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)goWeek(dx<0?'next':'prev');},{passive:true});
   function paintHome(){
     const n=document.querySelector('[data-duty-home]');if(!n)return;
@@ -5896,6 +5975,11 @@ html[data-tasco-page=wkreport]{background:var(--app-navy)}
 #wkreportSection .ws-journey-art{width:138px;right:-12px;bottom:34px;opacity:.4;transform:rotate(-8deg)}
 .tasco-workspace #wkreportSection .rc-panel{margin:-28px 14px 0;padding:18px;border-radius:26px;border-color:var(--ws-line)}
 #wkreportSection :is(button,input){font-family:'Plus Jakarta Sans',sans-serif}
+html,body{overscroll-behavior-x:none}
+#mainApp.is-edge-drag{box-shadow:-14px 0 34px rgba(11,27,48,.28);backface-visibility:hidden}
+#tascoBackHint{position:fixed;left:0;top:50%;z-index:2147482000;display:grid;place-items:center;width:42px;height:42px;margin-top:-21px;border-radius:50%;background:var(--app-navy,#183056);color:#fff;box-shadow:0 6px 18px rgba(11,27,48,.3);opacity:0;transform:translateX(-46px) scale(.8);pointer-events:none;transition:background .15s}
+#tascoBackHint svg{width:20px;height:20px}
+#tascoBackHint[data-ready="1"]{background:var(--app-teal,#2a8a96)}
 #wkreportSection [hidden]{display:none!important}
 .wk-unit{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 10px}
 .wk-unit button{min-height:38px;padding:0 8px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-bg);color:var(--ws-muted);font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s,border-color .15s,background .15s,color .15s}
