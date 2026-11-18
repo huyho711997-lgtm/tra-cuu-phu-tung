@@ -3314,11 +3314,19 @@ window.TascoBootSplash = (() => {
     if (error) { error.textContent = message; error.classList.remove('hidden'); }
     window.TascoAppShell?.navigate('login', { replace: true });
   }
+  /* Màn đăng nhập đang hiện chỉ vì chờ lâu (soft): phiên đã khôi phục xong thì vào app luôn. */
+  function recoverSoft() {
+    if (!abandoned || !softFailed) return false;
+    softFailed = false; abandoned = false;
+    const stale = document.getElementById('loginError'); if (stale) { stale.textContent = ''; stale.classList.add('hidden'); }
+    return true;
+  }
   async function allowEntry() {
-    if (abandoned) return false;
+    if (abandoned) return recoverSoft();
     if (!active) return true;
     await cycleReady;
-    if (abandoned || !active) return false;
+    if (abandoned) return recoverSoft();
+    if (!active) return false;
     if (!leaving) {
       clearTimers(); recovery.hidden = true;
       status.textContent = 'Sẵn sàng. Đang mở không gian làm việc…';
@@ -3334,7 +3342,7 @@ window.TascoBootSplash = (() => {
     if (event === 'INITIAL_SESSION' && !startedOnce && !dismissed) start();
   }
   function manualLogin() { abandoned = false; }
-  document.getElementById('bootLoginButton').addEventListener('click', () => fail('Vui lòng đăng nhập để tiếp tục.'));
+  document.getElementById('bootLoginButton').addEventListener('click', () => fail('Đang chờ khôi phục phiên đăng nhập. Nếu vài giây nữa vẫn ở đây, hãy đăng nhập lại.', true));
   if (document.documentElement.classList.contains('tasco-boot-pending')) start();
   else root.setAttribute('aria-hidden', 'true');
   return { observeSession, allowEntry, cancel, fail, manualLogin, get active() { return active; } };
@@ -5326,8 +5334,57 @@ window.TascoDrive=(()=>{
   return {configure:v=>{options=v;},status,upload,openSetup,close,isConnected:async()=>{try{return Boolean((await status()).connected);}catch(_){return false;}},invalidate:()=>{cache=null;}};
 })();
 </script>
+    <!-- supabase-js đóng gói sẵn trong app (cố định 2.119.0): mở app không phải chờ tải thư viện từ esm.sh. -->
+    <script src="vendor/supabase-2.119.0.js" defer></script>
     <script type="module">
-        import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+        /* Thư viện nằm sẵn trong app; chỉ khi tệp vendor lỗi mới tải dự phòng từ esm.sh (cùng phiên bản). */
+        let createClient = window.supabase?.createClient;
+        if (typeof createClient !== 'function') ({ createClient } = await import("https://esm.sh/@supabase/supabase-js@2.119.0"));
+        /* Lưu phiên đăng nhập bền vững trên iPhone.
+           iOS có thể mất localStorage của WebView khi vuốt tắt app ngay sau lúc ghi (đăng nhập / làm mới token)
+           -> lần mở sau mất phiên hoặc còn refresh token cũ đã bị thu hồi -> bắt đăng nhập lại.
+           Trong app native, mỗi lần ghi phiên được chép thêm vào tệp riêng của app (Filesystem, thư mục DATA);
+           lúc mở app đọc tệp này, lấy bản mới hơn (expires_at lớn hơn) giữa tệp và localStorage. */
+        const tascoAuthStorage = (() => {
+            const cap = window.Capacitor;
+            let FS = null;
+            try { if (cap?.isNativePlatform?.() && cap.isPluginAvailable?.('Filesystem')) FS = cap.Plugins.Filesystem; } catch (_) {}
+            const ls = {
+                get(k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
+                set(k, v) { try { localStorage.setItem(k, v); } catch (_) {} },
+                del(k) { try { localStorage.removeItem(k); } catch (_) {} }
+            };
+            if (!FS) return { getItem: ls.get, setItem: ls.set, removeItem: ls.del };
+            const mem = new Map(), loading = new Map();
+            const path = k => 'tasco-auth/' + String(k).replace(/[^\w.-]/g, '_') + '.json';
+            const expiry = v => { try { const o = JSON.parse(v); return Number((o && (o.currentSession || o).expires_at) || 0); } catch (_) { return 0; } };
+            let queue = Promise.resolve();
+            const persist = (k, v) => { queue = queue.then(() => v === null
+                ? FS.deleteFile({ path: path(k), directory: 'DATA' })
+                : FS.writeFile({ path: path(k), data: v, directory: 'DATA', encoding: 'utf8', recursive: true })).catch(() => {}); return queue; };
+            const readFile = k => Promise.race([
+                FS.readFile({ path: path(k), directory: 'DATA', encoding: 'utf8' }).then(r => (typeof r?.data === 'string' && r.data) ? r.data : null),
+                new Promise(resolve => setTimeout(() => resolve(undefined), 2500))     // plugin treo: dùng localStorage
+            ]).catch(() => null);
+            return {
+                getItem(k) {
+                    if (mem.has(k)) return mem.get(k);
+                    if (!loading.has(k)) loading.set(k, readFile(k).then(fileValue => {
+                        if (mem.has(k)) return mem.get(k);            // đã có ghi mới trong lúc đọc
+                        const local = ls.get(k);
+                        let value = local;
+                        if (fileValue) value = (!local || expiry(fileValue) > expiry(local)) ? fileValue : local;
+                        if (value !== null && value !== local) ls.set(k, value);   // khôi phục localStorage bị mất
+                        if (value !== null && fileValue === null) persist(k, value); // lần đầu sau cập nhật: chép sang tệp
+                        mem.set(k, value);
+                        return value;
+                    }));
+                    return loading.get(k);
+                },
+                setItem(k, v) { v = String(v); mem.set(k, v); ls.set(k, v); return persist(k, v); },
+                removeItem(k) { mem.set(k, null); ls.del(k); return persist(k, null); }
+            };
+        })();
         const SUPABASE_PROJECT_URL = "https://yxwmcpoklxpzlikxojez.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4d21jcG9rbHhwemxpa3hvamV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njk0MDEsImV4cCI6MjA5NjE0NTQwMX0.dmyjtDDo_KTlUFyxQgoCGqEt5Bsq2krEEYg2BCyXeFc";
         const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_ANON_KEY, {
@@ -5335,7 +5392,8 @@ window.TascoDrive=(()=>{
                 persistSession: true,
                 autoRefreshToken: true,
                 detectSessionInUrl: true,
-                storageKey: 'tasco_dlk_supabase_auth'
+                storageKey: 'tasco_dlk_supabase_auth',
+                storage: tascoAuthStorage
             }
         });
         // Client phụ dùng khi Admin tạo tài khoản, tránh đè phiên đăng nhập chính.

@@ -64,6 +64,11 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
 
+  if (url.origin === self.location.origin && /\/vendor\/[^/]+-\d+\.\d+\.\d+(\.min)?\.js$/.test(url.pathname)) {
+    // Thư viện đóng gói có số phiên bản trong tên tệp: không bao giờ đổi nội dung -> lấy cache trước, mở app nhanh khi mạng yếu.
+    event.respondWith(staleWhileRevalidate(request));
+    return;
+  }
   if (url.origin === self.location.origin) {
     // Chỉ xử lý trong phạm vi của SW; điều hướng thất bại -> trang mobile đã cache.
     event.respondWith(networkFirst(request, request.mode === 'navigate' ? './mobile' : null));
