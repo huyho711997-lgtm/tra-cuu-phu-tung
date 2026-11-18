@@ -2270,6 +2270,7 @@ html.dark .tasco-workspace #personalCloudSection .cloud-selection-bar .cloud-del
 #personalCloudSection .cloud-pending-actions{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
 #personalCloudSection .cloud-pending-save{display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid var(--ws-line,var(--cl-line));border-radius:11px;background:var(--ws-accent,var(--cl-soft));color:var(--ws-text,var(--cl-text));cursor:pointer}
 #personalCloudSection .cloud-pending-save svg{width:18px;height:18px}
+#personalCloudSection .cloud-pending-drive{display:grid;place-items:center;min-width:64px;max-width:96px;min-height:34px;padding:4px 7px;border:1px solid var(--ws-line,var(--cl-line));border-radius:11px;background:var(--ws-accent,var(--cl-soft));color:var(--ws-text,var(--cl-text));font-size:10.5px;font-weight:800;line-height:1.25;text-align:center;text-decoration:none;cursor:pointer;margin-bottom:3px}#personalCloudSection .cloud-pending-drive:disabled{opacity:.7;cursor:progress}#personalCloudSection .cloud-pending-drive.is-done{border-color:#4aa88a;color:#2f7f66}
 #personalCloudSection .cloud-pending-fix{min-height:30px;max-width:65px;padding:3px;border:0;background:transparent;color:var(--ws-text,var(--cl-text));font-size:10px;font-weight:700;cursor:pointer}
 #personalCloudSection .cloud-pending-connections{margin:0 0 10px}
 #personalCloudSection .cloud-pending-connections p{margin:0 0 6px;font-size:11px;line-height:1.5}
@@ -3489,6 +3490,7 @@ window.TascoBootSplash = (() => {
     <button type="button" class="ws-setting-row" onclick="openChangePasswordModal()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span><strong>Đổi mật khẩu</strong><small>Cập nhật mật khẩu tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-admin-only hidden onclick="updateView('admin')"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span><strong>Quản lý hệ thống</strong><small>Người dùng và quyền truy cập</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-admin-only hidden onclick="TascoForms.openSettings()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span><strong>Kho lưu trữ biểu mẫu</strong><small data-forms-setting-status>Kết nối thư mục Google Drive</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+    <button type="button" class="ws-setting-row" data-admin-only hidden onclick="TascoDrive.openSetup()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 3h8l6 10.5L18 20H6l-4-6.5z"/><path d="M8 3 2 13.5M16 3l-6 10.5M10 13.5h12"/></svg><span><strong>Google Drive (video nặng)</strong><small>Kết nối để đẩy video lớn hơn 100 MB</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
   </div>
     <div class="ws-settings-list"><span class="ws-settings-label">Không gian làm việc</span>
     <button type="button" class="ws-setting-row" onclick="updateView('forms')"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Xem và tải biểu mẫu Word, PDF</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
@@ -5155,6 +5157,175 @@ window.TascoDesktopLogin=(()=>{
   return {configure:v=>{options=v;},open:()=>open(),scan,close};
 })();
 </script>
+<script>
+/* Google Drive (OAuth qua Edge Function tasco-drive): đẩy video/tệp nặng mà Cloudinary miễn phí (100 MB) không nhận.
+   Khoá Google nằm ở Supabase; app chỉ nhận một đường dẫn upload tạm rồi đẩy từng khúc 8 MB thẳng lên Google (resumable). */
+window.TascoDrive=(()=>{
+  const FN='https://yxwmcpoklxpzlikxojez.supabase.co/functions/v1/tasco-drive';
+  const ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4d21jcG9rbHhwemxpa3hvamV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njk0MDEsImV4cCI6MjA5NjE0NTQwMX0.dmyjtDDo_KTlUFyxQgoCGqEt5Bsq2krEEYg2BCyXeFc';
+  const CHUNK=8*1024*1024;                       /* bội số của 256 KiB theo yêu cầu của Google */
+  const SESSION_KEY='tasco_drive_sessions';
+  let options={},overlay=null,cache=null,cacheAt=0,poll=0,prevOverflow='';
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const svg=p=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
+  const ICON={drive:svg('<path d="m8 3 8 0 6 10.5L18 20H6l-4-6.5z"/><path d="M8 3 2 13.5M16 3l-6 10.5M10 13.5h12"/>'),close:svg('<path d="m6 6 12 12M18 6 6 18"/>')};
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  function toast(t){const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),4200);}
+  const err=(code,message,extra)=>Object.assign(new Error(message),{code},extra||{});
+  async function accessToken(){const c=options.client?.();if(!c)throw err('NO_CLIENT','App chưa sẵn sàng. Tải lại trang rồi thử lại.');const r=await c.auth.getSession();const t=r.data?.session?.access_token;if(!t)throw err('NO_SESSION','Cần đăng nhập app để dùng Google Drive.');return t;}
+  async function call(body){
+    const token=await accessToken();let res;
+    try{res=await fetch(FN,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:'Bearer '+token},body:JSON.stringify(body)});}
+    catch(_){throw err('NETWORK','Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.');}
+    let data={};try{data=await res.json();}catch(_){}
+    if(!res.ok)throw err(data.code||'HTTP_'+res.status,data.error||'Máy chủ chưa xử lý được yêu cầu (mã '+res.status+').',{http:res.status});
+    return data;
+  }
+  async function status({force}={}){if(!force&&cache&&Date.now()-cacheAt<20000)return cache;cache=await call({action:'status'});cacheAt=Date.now();return cache;}
+
+  /* ---------- Upload resumable ---------- */
+  const loadSessions=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'{}')||{};}catch(_){return {};}};
+  const saveSessions=v=>{try{const keys=Object.keys(v);if(keys.length>20)for(const k of keys.slice(0,keys.length-20))delete v[k];localStorage.setItem(SESSION_KEY,JSON.stringify(v));}catch(_){}};
+  function put(url,body,range,{onProgress,signal,timeout=240000}={}){
+    return new Promise((resolve,reject)=>{
+      const xhr=new XMLHttpRequest();xhr.open('PUT',url);xhr.timeout=timeout;xhr.setRequestHeader('Content-Range',range);
+      if(onProgress&&xhr.upload)xhr.upload.onprogress=e=>{if(e.lengthComputable)onProgress(e.loaded);};
+      xhr.onload=()=>resolve({status:xhr.status,text:xhr.responseText||'',range:xhr.getResponseHeader('Range')});
+      xhr.onerror=()=>reject(err('UPLOAD_NETWORK','Mạng bị ngắt khi đẩy lên Drive.'));
+      xhr.ontimeout=()=>reject(err('UPLOAD_NETWORK','Đẩy lên Drive quá chậm, đã ngắt khúc này.'));
+      xhr.onabort=()=>reject(err('ABORTED','Đã huỷ.'));
+      if(signal){if(signal.aborted)return reject(err('ABORTED','Đã huỷ.'));signal.addEventListener('abort',()=>xhr.abort(),{once:true});}
+      xhr.send(body);
+    });
+  }
+  const rangeEnd=h=>{const m=/bytes=0-(\d+)/i.exec(h||'');return m?Number(m[1])+1:null;};
+  function parseDone(r){let d={};try{d=JSON.parse(r.text||'{}');}catch(_){}if(!d.id)throw err('UPLOAD_BAD_RESPONSE','Google đã nhận tệp nhưng chưa xác nhận. Kiểm tra thư mục Drive rồi thử lại.');return d;}
+  async function openSession(blob,name,mime){
+    const r=await call({action:'session',name,size:blob.size,mime});if(!r.uploadUrl)throw err('NO_SESSION_URL','Chưa mở được phiên tải lên Drive.');return r;
+  }
+  /* upload(blob,{key,name,mime,onProgress(bytes,total),signal}) -> {id,name,webViewLink,size} */
+  async function upload(blob,opts={}){
+    const total=blob.size,name=opts.name||blob.name||'video.mp4',mime=(opts.mime||blob.type||'video/mp4').split(';')[0]||'video/mp4';
+    if(!total)throw err('EMPTY','Tệp rỗng.');
+    const sessions=loadSessions(),saved=opts.key?sessions[opts.key]:null;
+    let url=null,offset=0,folderUrl='';
+    /* Phiên cũ (app bị tắt/ngắt mạng giữa chừng): hỏi Google đã nhận bao nhiêu byte để gửi tiếp. */
+    if(saved&&saved.size===total&&saved.name===name&&saved.url&&Date.now()-saved.at<5*864e5){
+      try{
+        const q=await put(saved.url,null,'bytes */'+total,{signal:opts.signal,timeout:30000});
+        if(q.status===200||q.status===201){opts.onProgress?.(total,total);delete sessions[opts.key];saveSessions(sessions);return parseDone(q);}
+        const at=q.status===308?rangeEnd(q.range):null;
+        if(at!==null&&at>0&&at<total){url=saved.url;offset=at;folderUrl=saved.folderUrl||'';}
+      }catch(e){if(e.code==='ABORTED')throw e;}
+    }
+    if(!url){const s=await openSession(blob,name,mime);url=s.uploadUrl;folderUrl=s.folderUrl||'';if(opts.key){sessions[opts.key]={url,size:total,name,at:Date.now(),folderUrl};saveSessions(sessions);}}
+    let tries=0,restarts=0;
+    const report=sent=>opts.onProgress?.(Math.min(total,sent),total);
+    report(offset);
+    while(offset<total){
+      if(opts.signal?.aborted)throw err('ABORTED','Đã huỷ.');
+      const end=Math.min(offset+CHUNK,total),base=offset;let r;
+      try{r=await put(url,blob.slice(offset,end),'bytes '+offset+'-'+(end-1)+'/'+total,{signal:opts.signal,onProgress:n=>report(base+n)});}
+      catch(e){
+        if(e.code==='ABORTED')throw e;
+        if(++tries>7)throw err('UPLOAD_NETWORK','Mạng không ổn định nên chưa đẩy xong lên Drive. Giữ màn hình sáng, bật Wi-Fi rồi bấm lại để gửi tiếp từ chỗ đang dở.');
+        await sleep(Math.min(30000,1000*2**(tries-1)));
+        try{const q=await put(url,null,'bytes */'+total,{signal:opts.signal,timeout:30000});if(q.status===200||q.status===201){if(opts.key){delete sessions[opts.key];saveSessions(sessions);}report(total);return parseDone(q);}const at=q.status===308?rangeEnd(q.range):null;if(at!==null&&at>=0&&at<total)offset=at;}catch(e2){if(e2.code==='ABORTED')throw e2;}
+        continue;
+      }
+      if(r.status===200||r.status===201){if(opts.key){delete sessions[opts.key];saveSessions(sessions);}report(total);return parseDone(r);}
+      if(r.status===308){const at=rangeEnd(r.range);offset=at!==null&&at>=offset?at:end;tries=0;report(offset);continue;}
+      if([404,410].includes(r.status)&&restarts<1){restarts++;const s=await openSession(blob,name,mime);url=s.uploadUrl;offset=0;if(opts.key){sessions[opts.key]={url,size:total,name,at:Date.now(),folderUrl:s.folderUrl||''};saveSessions(sessions);}report(0);continue;}
+      if(r.status===429||r.status>=500){if(++tries>7)throw err('UPLOAD_SERVER','Google đang bận (mã '+r.status+'). Hãy thử lại sau ít phút.');await sleep(Math.min(30000,1000*2**(tries-1)));continue;}
+      let reason='';try{reason=JSON.parse(r.text)?.error?.message||'';}catch(_){}
+      if(r.status===403&&/quota|storage/i.test(r.text))throw err('DRIVE_FULL','Drive của quản trị viên đã đầy dung lượng.');
+      throw err('UPLOAD_REJECTED','Google từ chối tệp (mã '+r.status+(reason?': '+reason.slice(0,120):'')+').');
+    }
+    throw err('UPLOAD_INCOMPLETE','Chưa gửi đủ dữ liệu lên Drive. Bấm thử lại.');
+  }
+
+  /* ---------- Hộp thoại kết nối ---------- */
+  function injectStyle(){
+    if(document.getElementById('dvStyle'))return;const s=document.createElement('style');s.id='dvStyle';
+    s.textContent='.dv-uri{display:flex;gap:8px;align-items:stretch;margin:8px 0 14px}.dv-uri code{flex:1;min-width:0;padding:11px 12px;border-radius:12px;background:var(--st-soft);color:var(--st-navy);font-size:11.5px;line-height:1.45;overflow-wrap:anywhere}'
+    +'.dv-uri button,.dv-btn{border:0;border-radius:13px;font-weight:700;font-size:13.5px;cursor:pointer}.dv-uri button{padding:0 14px;background:var(--st-ice);color:var(--st-navy)}'
+    +'.dv-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}.dv-btn{flex:1;min-height:48px;padding:0 14px;background:var(--st-soft);color:var(--st-navy)}.dv-btn.is-main{background:var(--st-teal);color:#06202a}.dv-btn:disabled{opacity:.5}'
+    +'.dv-ok{display:flex;gap:10px;align-items:center;margin:4px 0 4px;padding:13px 14px;border-radius:14px;background:var(--st-ice);color:var(--st-navy);font-size:13.5px;line-height:1.5}.dv-ok svg{width:20px;height:20px;flex:none}'
+    +'.dv-note{margin:12px 2px 0;font-size:12.5px;line-height:1.6;color:var(--st-muted)}.dv-note b{color:var(--st-navy)}'
+    +'.dv-link{display:block;margin-top:10px;padding:11px 12px;border-radius:12px;border:1px dashed var(--st-line);font-size:11.5px;color:var(--st-muted);overflow-wrap:anywhere;user-select:all}';
+    document.head.appendChild(s);
+  }
+  function close(){clearInterval(poll);poll=0;if(!overlay)return;overlay.remove();overlay=null;document.body.style.overflow=prevOverflow;document.removeEventListener('keydown',onKey,true);}
+  function onKey(e){if(e.key==='Escape'&&overlay){e.stopPropagation();close();}}
+  const body=html=>{const n=overlay?.querySelector('[data-dv-body]');if(n)n.innerHTML=html;};
+  const msg=(t,bad=true)=>{const n=overlay?.querySelector('[data-dv-msg]');if(n){n.hidden=!t;n.textContent=t||'';n.className=bad?'storage-error':'dv-note';}};
+  async function copy(text){try{await navigator.clipboard.writeText(text);return true;}catch(_){const t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();let ok=false;try{ok=document.execCommand('copy');}catch(_){}t.remove();return ok;}}
+  function render(st){
+    if(!overlay)return;
+    if(st.connected){
+      body('<div class="dv-ok">'+ICON.drive+'<span>Đã kết nối Google Drive'+(st.email?' <b>'+esc(st.email)+'</b>':'')+'. Video nặng sẽ được lưu vào thư mục <b>Tasco DLK - Video</b>.</span></div>'
+        +'<p class="storage-error" data-dv-msg role="alert" hidden></p>'
+        +'<div class="dv-row"><a class="dv-btn is-main" style="display:grid;place-items:center;text-decoration:none" href="'+esc(st.folderUrl)+'" target="_blank" rel="noopener noreferrer">Mở thư mục Drive</a>'+(st.admin?'<button type="button" class="dv-btn" data-dv="reconnect">Kết nối lại</button>':'')+'</div>'
+        +(st.admin?'<div class="dv-row"><button type="button" class="dv-btn" data-dv="disconnect">Ngắt kết nối</button></div>':''));
+      return;
+    }
+    if(!st.admin){body('<p class="storage-lead">Quản trị viên chưa kết nối Google Drive cho hệ thống. Hãy nhờ quản trị viên vào <b>Tài khoản → Google Drive</b> để kết nối một lần, sau đó nút “Đẩy lên Drive” sẽ dùng được.</p>');return;}
+    form(st);
+  }
+  function form(st){
+    body('<p class="storage-lead">Kết nối <b>một lần</b> bằng tài khoản Google chứa video. Sau đó mọi video nặng hơn 100 MB đẩy thẳng lên Drive của tài khoản này.</p>'
+      +'<details class="storage-help" '+(st.configured?'':'open')+'><summary>Tạo OAuth client trên Google Cloud</summary><ol><li>console.cloud.google.com → tạo project → bật <b>Google Drive API</b>.</li><li>OAuth consent screen → <b>External</b> → bấm <b>Publish app</b> (để Testing thì kết nối hết hạn sau 7 ngày).</li><li>Credentials → Create credentials → OAuth client ID → <b>Web application</b>.</li><li>Authorized redirect URI, dán đúng dòng dưới:</li></ol>'
+      +'<div class="dv-uri"><code>'+esc(st.redirectUri)+'</code><button type="button" data-dv="copy-uri">Chép</button></div></details>'
+      +'<form novalidate><label>Client ID<input name="clientId" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="…apps.googleusercontent.com" maxlength="320" required></label>'
+      +'<label>Client secret<input name="clientSecret" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="GOCSPX-…" maxlength="200" required></label>'
+      +'<p class="storage-error" data-dv-msg role="alert" hidden></p>'
+      +'<div class="dv-row"><button type="submit" class="dv-btn is-main">Lưu và kết nối Google</button></div></form>'
+      +'<p class="dv-note">Client secret chỉ lưu ở máy chủ Supabase của bạn, không nằm trong app. Quyền xin: <b>drive.file</b> (chỉ thấy tệp do app tạo, không đọc được phần còn lại của Drive).</p>');
+    const f=overlay.querySelector('form');if(st.clientId)f.elements.clientId.value=st.clientId;
+    f.addEventListener('submit',async e=>{
+      e.preventDefault();const id=f.elements.clientId.value.trim(),sec=f.elements.clientSecret.value.trim();
+      if(!id||(!sec&&!st.configured)){msg('Nhập Client ID và Client secret.');return;}
+      const btn=f.querySelector('[type=submit]');btn.disabled=true;btn.textContent='Đang lưu…';msg('');
+      try{if(sec||id!==st.clientId)await call({action:'save-config',clientId:id,clientSecret:sec});await startAuth();}
+      catch(e2){msg(e2.message);btn.disabled=false;btn.textContent='Lưu và kết nối Google';}
+    });
+  }
+  async function startAuth(){
+    const {url}=await call({action:'auth-url'});
+    body('<p class="storage-lead">Bước cuối: đăng nhập Google và bấm <b>Cho phép</b>. Google không cho đăng nhập bên trong app, nên hãy mở bằng <b>Safari/Chrome hoặc trên máy tính</b>.</p>'
+      +'<div class="dv-row"><button type="button" class="dv-btn is-main" data-dv="open-auth">Mở trang Google</button><button type="button" class="dv-btn" data-dv="copy-auth">Chép liên kết</button></div>'
+      +'<p class="storage-error" data-dv-msg role="alert" hidden></p><div class="dv-link" data-dv-url>'+esc(url)+'</div>'
+      +'<p class="dv-note">Liên kết dùng được <b>10 phút</b>, một lần. Nếu Google báo “app chưa xác minh” hãy chọn <b>Nâng cao → Tiếp tục</b>. Xong, quay lại đây: màn hình tự cập nhật.</p>');
+    overlay.dataset.authUrl=url;clearInterval(poll);let n=0;
+    poll=setInterval(async()=>{if(!overlay){clearInterval(poll);return;}if(++n>200){clearInterval(poll);return;}try{const st=await status({force:true});if(st.connected){clearInterval(poll);render(st);toast('Đã kết nối Google Drive.');window.dispatchEvent(new CustomEvent('tasco:drive-changed'));}}catch(_){}},3000);
+  }
+  async function openSetup(){
+    if(overlay)return;injectStyle();prevOverflow=document.body.style.overflow;document.body.style.overflow='hidden';
+    overlay=document.createElement('div');overlay.className='storage-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','dvTitle');
+    overlay.innerHTML='<section class="storage-panel"><header class="storage-header"><span class="storage-symbol">'+ICON.drive+'</span><div><small>LƯU TRỮ VIDEO NẶNG</small><h2 id="dvTitle">Google Drive</h2></div><button type="button" class="storage-icon-button" data-dv="close" aria-label="Đóng">'+ICON.close+'</button></header><div class="storage-body" data-dv-body><p class="storage-lead">Đang kiểm tra kết nối…</p></div></section>';
+    overlay.addEventListener('click',async e=>{
+      const b=e.target.closest('[data-dv]');if(!b)return;const k=b.dataset.dv;
+      if(k==='close')close();
+      else if(k==='copy-uri')b.textContent=(await copy(cache?.redirectUri||''))?'Đã chép':'Chép lại';
+      else if(k==='copy-auth'){b.textContent=(await copy(overlay.dataset.authUrl||''))?'Đã chép':'Chép lại';}
+      else if(k==='open-auth'){const w=window.open(overlay.dataset.authUrl,'_blank','noopener');if(!w)msg('Không mở được trình duyệt. Bấm “Chép liên kết” rồi dán vào Safari/Chrome.');}
+      else if(k==='reconnect'){b.disabled=true;try{render({...(await status({force:true})),connected:false,configured:true});}catch(x){msg(x.message);}b.disabled=false;}
+      else if(k==='disconnect'){if(!confirm('Ngắt kết nối Google Drive? Video đã tải lên vẫn nằm trong Drive.'))return;b.disabled=true;try{await call({action:'disconnect'});render(await status({force:true}));window.dispatchEvent(new CustomEvent('tasco:drive-changed'));}catch(x){msg(x.message);b.disabled=false;}}
+    });
+    overlay.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();overlay.querySelector('form')?.requestSubmit?.();}});
+    document.body.appendChild(overlay);document.addEventListener('keydown',onKey,true);
+    try{render(await status({force:true}));}catch(e){body('<p class="storage-error" role="alert">'+esc(e.message)+'</p><div class="dv-row"><button type="button" class="dv-btn" data-dv="close">Đóng</button></div>');}
+  }
+  /* Quay lại app sau khi Google chuyển hướng (…/mobile.html?drive=ok). */
+  (function fromRedirect(){
+    let p;try{p=new URLSearchParams(location.search).get('drive');}catch(_){return;}if(!p)return;
+    try{const u=new URL(location.href);u.searchParams.delete('drive');history.replaceState(history.state,'',u.pathname+(u.search||'')+u.hash);}catch(_){}
+    const text={ok:'Đã kết nối Google Drive. Mở app TASCO DLK trên điện thoại để đẩy video.',denied:'Bạn đã từ chối cấp quyền Google Drive.',expired:'Liên kết kết nối đã hết hạn hoặc đã dùng. Tạo lại trong Tài khoản → Google Drive.',client:'Client ID/Secret không đúng. Kiểm tra lại trên Google Cloud.',norefresh:'Google không trả mã duy trì kết nối. Thu hồi quyền của app tại myaccount.google.com/permissions rồi kết nối lại.',network:'Không kết nối được Google. Thử lại.',error:'Kết nối Google Drive chưa thành công. Thử lại.'}[p]||'Kết nối Google Drive chưa thành công.';
+    setTimeout(()=>toast(text),1500);
+  })();
+  return {configure:v=>{options=v;},status,upload,openSetup,close,isConnected:async()=>{try{return Boolean((await status()).connected);}catch(_){return false;}},invalidate:()=>{cache=null;}};
+})();
+</script>
     <script type="module">
         import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
         const SUPABASE_PROJECT_URL = "https://yxwmcpoklxpzlikxojez.supabase.co";
@@ -5700,6 +5871,7 @@ window.TascoDesktopLogin=(()=>{
         window.TascoCloudAccess.configure({client:()=>supabase});
         window.TascoPersonalStorage.configure({client:()=>supabase});
         window.TascoDesktopLogin.configure({client:()=>supabase});
+        window.TascoDrive.configure({client:()=>supabase});
         window.TascoGarageDB.configure({client:supabase});
         window.TascoForms.configure({client:supabase});
         let lastLoggedUid = null;
@@ -8915,6 +9087,7 @@ window.TascoCloud = (() => {
       if(action==='refresh'){state.storageStatus='unknown';refresh();}if(action==='retry')processQueue();if(action==='more'){state.page=Math.floor(state.rows.length/48);refresh(true);}if(action==='all')loadAllPhotos();
       if(action==='open'&&state.selecting){toggleSelection(button.dataset.id);return;}
       if(action==='open'){const row=[...state.pending,...state.rows].find(item=>item.id===button.dataset.id);if(row)openPhoto(row);}
+      if(action==='drive-upload')driveUpload(button.dataset.id);
       if(action==='download-pending'){const row=state.pending.find(item=>item.id===button.dataset.id);if(row?.blob)downloadBlob(row.blob,row.file_name);}
     };
     let timer;root.querySelector('[data-cloud-search]').oninput=event=>{clearTimeout(timer);timer=setTimeout(()=>{state.query=event.target.value;state.page=0;refresh();},300);};
@@ -9108,9 +9281,39 @@ window.TascoCloud = (() => {
     const issue=pending?presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud):null;
     const url=cardImage(row,thumbnail(row));return `<article class="cloud-photo-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ảnh ${esc(row.title)}">${url?`<img src="${esc(url)}" loading="lazy" alt="${esc(row.title)}">`:icon('camera')}<span class="cloud-photo-label">${pending?'Chờ đồng bộ':icon('check')+' Đã lưu'}</span></button><div class="cloud-photo-copy"><strong>${esc(row.title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><p>${icon('pin')}${esc(row.address||'Chưa xác định địa điểm')}</p>${pending?`<span class="cloud-upload-error">${esc(issue?.summary||row.error||'Đã giữ bản ảnh trên thiết bị này')}</span>${issue?`<button class="cloud-text-button cloud-fix-preset" type="button" data-action="storage-settings" data-id="${esc(row.id)}"${state.uploading?' disabled':''}>Sửa preset ${icon('check')}</button>`:''}<button class="cloud-text-button" type="button" data-action="download-pending" data-id="${esc(row.id)}">${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}</button>`:''}</div></article>`;
   }
+  function driveButton(row){
+    if(row.drive?.url)return `<a class="cloud-pending-drive is-done" href="${esc(row.drive.url)}" target="_blank" rel="noopener noreferrer" title="Đã lưu lên Google Drive. Bấm để mở.">Đã lên Drive ✓</a>`;
+    if(!window.TascoDrive||row.upload)return '';
+    const busy=state.drive?.id===row.id;
+    return `<button class="cloud-pending-drive" type="button" data-action="drive-upload" data-id="${esc(row.id)}"${state.uploading||state.drive?' disabled':''} title="Đẩy bản gốc lên Google Drive (không giới hạn 100 MB)">${busy?esc(state.drive.label||'Đang gửi…'):'Đẩy lên Drive'}</button>`;
+  }
+  let driveTick=0;
+  function driveProgress(label){state.drive.label=label;const now=Date.now();if(now-driveTick<400)return;driveTick=now;try{paintPending();}catch(_){}}
+  async function driveUpload(id){
+    if(state.drive||state.uploading)return;
+    const record=state.pending.find(item=>item.id===id);if(!record?.blob){notify('Không còn bản gốc trên thiết bị để đẩy lên Drive.');return;}
+    let st;try{st=await window.TascoDrive.status({force:true});}catch(error){notify(message(error));return;}
+    if(!st.connected){window.TascoDrive.openSetup();return;}
+    state.drive={id,label:'Đang chuẩn bị…'};paintPending();
+    let wake=null;try{wake=await navigator.wakeLock?.request?.('screen');}catch(_){wake=null;}
+    const mb=value=>Math.round(value/1048576);
+    try{
+      const file=await window.TascoDrive.upload(record.blob,{key:'rec:'+record.id,name:record.file_name||('tasco-'+record.id+'.mp4'),mime:record.blob.type||'video/mp4',onProgress:(sent,total)=>driveProgress('Drive '+Math.floor(sent/total*100)+'% · '+mb(sent)+'/'+mb(total)+' MB')});
+      record.drive={id:file.id,url:file.webViewLink||st.folderUrl||'',at:new Date().toISOString()};
+      record.error='Đã lưu bản gốc lên Google Drive. Có thể xoá khỏi hàng chờ.';record.upload_error_code='DRIVE_DONE';await localStore('put',record);
+      notify('Đã đẩy lên Google Drive thành công.');
+    }catch(error){
+      if(error.code!=='ABORTED'){record.error=message(error);await localStore('put',record);}
+      notify(message(error));
+    }finally{
+      state.drive=null;try{wake?.release?.();}catch(_){}
+      try{state.pending=await pendingFor(record.owner_id);}catch(_){}
+      paintPending();
+    }
+  }
   function pendingCard(row) {
     const issue=presetUploadIssue({message:row.error,code:row.upload_error_code},row.cloud),url=cardImage(row,thumbnail(row)),title=row.title||'Ảnh của tôi';
-    return `<article class="cloud-photo-card cloud-pending-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${window.tascoIsVideo(row)?'video':'ảnh'} ${esc(title)}">${url?`<img src="${esc(url)}" loading="lazy" decoding="async" alt="${esc(title)}">`:pendingVideoPoster(row,thumbnail(row))||icon('camera')}</button><div class="cloud-pending-copy"><strong>${esc(title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><span class="cloud-upload-error" title="${esc(issue?.message||row.error||'Bản ảnh được giữ trên thiết bị đến khi đồng bộ thành công.')}">${esc(issue?.summary||row.error||'Chờ đồng bộ')}</span></div><div class="cloud-pending-actions">${issue?`<button class="cloud-pending-fix" type="button" data-action="storage-settings" data-id="${esc(row.id)}"${state.uploading?' disabled':''}>Sửa preset</button>`:''}<button class="cloud-pending-save" type="button" data-action="download-pending" data-id="${esc(row.id)}" aria-label="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}: ${esc(title)}" title="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}">${icon('download')}</button></div></article>`;
+    return `<article class="cloud-photo-card cloud-pending-card" data-photo-id="${esc(row.id)}">${photoActions(row)}<button class="cloud-photo-image" type="button" data-action="open" data-id="${esc(row.id)}" aria-label="Xem ${window.tascoIsVideo(row)?'video':'ảnh'} ${esc(title)}">${url?`<img src="${esc(url)}" loading="lazy" decoding="async" alt="${esc(title)}">`:pendingVideoPoster(row,thumbnail(row))||icon('camera')}</button><div class="cloud-pending-copy"><strong>${esc(title)}</strong><time datetime="${esc(row.captured_at)}">${esc(stamp(row.captured_at))}</time><span class="cloud-upload-error" title="${esc(issue?.message||row.error||'Bản ảnh được giữ trên thiết bị đến khi đồng bộ thành công.')}">${esc(issue?.summary||row.error||'Chờ đồng bộ')}</span></div><div class="cloud-pending-actions">${driveButton(row)}${issue?`<button class="cloud-pending-fix" type="button" data-action="storage-settings" data-id="${esc(row.id)}"${state.uploading?' disabled':''}>Sửa preset</button>`:''}<button class="cloud-pending-save" type="button" data-action="download-pending" data-id="${esc(row.id)}" aria-label="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}: ${esc(title)}" title="${TascoPhotoExport.isIOS?'Lưu bản ảnh vào Ảnh':'Tải bản ảnh về máy'}">${icon('download')}</button></div></article>`;
   }
   function paintPending() {
     const root=state.root;if(!visible())return;
@@ -9119,7 +9322,7 @@ window.TascoCloud = (() => {
     const scrollTop=pending.querySelector('.cloud-pending-list')?.scrollTop||0;
     const focused=pending.contains(document.activeElement)?document.activeElement.closest('[data-action]'):null;
     const focusAction=focused?.dataset.action,focusId=focused?.dataset.id;
-    const failed=rows.filter(row=>row.error||row.upload_error_code).length;
+    const failed=rows.filter(row=>!row.drive&&(row.error||row.upload_error_code)).length;
     const needsConnection=state.config.personalStorage&&rows.some(row=>!row.upload&&(!uploadReady()||!sameTarget(row,config())));
     const status=state.uploading?'Đang lưu ảnh lên Cloud…':needsConnection?'Cần chọn lại kết nối lưu trữ':failed?failed+' ảnh cần thử lại':'Bản ảnh vẫn được giữ trên thiết bị';
     const previews=rows.slice(0,4).map(row=>{const url=thumbnail(row);return `<span class="cloud-pending-thumb">${url?`<img src="${esc(url)}" alt="" loading="lazy" decoding="async">`:icon('camera')}</span>`;}).join('');
@@ -9341,6 +9544,7 @@ window.TascoCloud = (() => {
       const owner=await account();state.user=owner;
       const catalog=await loadAlbums(owner.id,await pendingFor(owner.id));if((await account()).id!==owner.id)throw new Error('CLOUD_ACCOUNT');Object.assign(state,{albums:catalog.albums,albumMode:catalog.mode,albumNote:catalog.note});
       for(const record of await pendingFor(owner.id)){
+        if(record.drive)continue;  /* bản gốc đã nằm trên Google Drive: không tải lại Cloudinary */
         try{
           if((await account()).id!==owner.id)break;
           await verifyUploadTarget(record);
