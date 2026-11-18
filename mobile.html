@@ -5894,6 +5894,13 @@ html[data-tasco-page=wkreport]{background:var(--app-navy)}
 .tasco-workspace #wkreportSection .rc-panel{margin:-28px 14px 0;padding:18px;border-radius:26px;border-color:var(--ws-line)}
 #wkreportSection :is(button,input){font-family:'Plus Jakarta Sans',sans-serif}
 #wkreportSection [hidden]{display:none!important}
+.wk-unit{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 10px}
+.wk-unit button{min-height:38px;padding:0 8px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-bg);color:var(--ws-muted);font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s,border-color .15s,background .15s,color .15s}
+.wk-unit button:active{transform:scale(.97)}
+.wk-unit button[aria-pressed=true]{border-color:var(--app-teal);background:color-mix(in srgb,var(--app-teal) 13%,var(--ws-bg));color:var(--ws-text)}
+.wk-step-c.is-2{flex-direction:column;gap:2px;padding:6px 8px}
+.wk-step-c small{color:var(--ws-muted);font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wk-step>button:disabled{opacity:.35;pointer-events:none}
 .wk-chips{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 0}
 .wk-chips button{flex:1 0 auto;min-height:38px;padding:0 12px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-bg);color:var(--ws-text);font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s,background .15s}
 .wk-chips button:active{transform:scale(.96)}
@@ -6182,9 +6189,9 @@ window.TascoWeekly=(()=>{
   const noAdminHtml='<div class="dr-empty"><b>Chỉ dành cho quản trị viên</b>Tài khoản của bạn không xem được báo cáo.</div>';
   let admin=false,onPage=false,eng=null,cfg=null,auth=null,me=null,users=null,claims=null,rules=null,rulesReady=false,claimsReady=false,result=null,
       phase='idle',err='',busy=false,live=false,lastAt=0,openKey='',showZero=false,es={claims:null,rules:null,kpi:null},retry={claims:0,rules:0,kpi:0},timers={},
-      sel={id:'week1',s:'',e:''},uidKey='',lastEmail='',
+      sel={id:'week',off:1,s:'',e:''},uidKey='',lastEmail='',
       kcalc=null,kcalcFail=false,kpi=null,kpiReady=false,kres=null,ares=null,tab='week',kSel=(()=>{const n=new Date();return {y:n.getFullYear(),m:n.getMonth()+1};})(),ySel=new Date().getFullYear();
-  try{const p=JSON.parse(ls(K.per)||'null');if(p&&p.id)sel={id:String(p.id),s:String(p.s||''),e:String(p.e||'')};}catch(_){}
+  try{const p=JSON.parse(ls(K.per)||'null');if(p&&p.id){const m=/^(week|month)(\d+)?$/.exec(String(p.id));sel=m?{id:m[1],off:Number.isFinite(+p.off)&&p.off!==undefined?Math.max(0,+p.off|0):(+m[2]||0),s:String(p.s||''),e:String(p.e||'')}:{id:'custom',off:0,s:String(p.s||''),e:String(p.e||'')};}}catch(_){}
   {const t=ls(K.tab);if(t==='kpi'||t==='year'||t==='week')tab=t;}
 
   /* ---------- nạp cấu hình + engine ---------- */
@@ -6288,10 +6295,16 @@ window.TascoWeekly=(()=>{
   function setLive(v){if(live===v)return;live=v;paintLive();}
 
   /* ---------- tính báo cáo ---------- */
+  /* Tuần báo cáo: Thứ 7 → Thứ 6 (giống webapp). off = 0 là kỳ hiện tại, 1 là kỳ liền trước... */
+  function unitPeriod(u,off){
+    const n=new Date();let a,z;
+    if(u==='month'){a=new Date(n.getFullYear(),n.getMonth()-off,1);z=new Date(n.getFullYear(),n.getMonth()-off+1,0);}
+    else{const dow=n.getDay();a=new Date(n.getFullYear(),n.getMonth(),n.getDate()-(dow===6?0:dow+1)-7*off);z=new Date(a.getFullYear(),a.getMonth(),a.getDate()+6);}
+    return eng.makePeriod(mkYmd(a.getFullYear(),a.getMonth(),a.getDate()),mkYmd(z.getFullYear(),z.getMonth(),z.getDate()));
+  }
   const periodNow=()=>{
     if(!eng)return null;
-    if(sel.id==='custom')return eng.makePeriod(sel.s,sel.e);
-    return (eng.presets(new Date()).find(x=>x.id===sel.id)||eng.presets(new Date())[1]).period;
+    return sel.id==='custom'?eng.makePeriod(sel.s,sel.e):unitPeriod(sel.id,sel.off||0);
   };
   function schedule(ms){clearTimeout(timers.calc);timers.calc=setTimeout(recompute,ms);}
   const arr=x=>Array.isArray(x)?x:(x&&typeof x==='object'?Object.values(x):[]);
@@ -6400,7 +6413,7 @@ window.TascoWeekly=(()=>{
       '<div class="wk-cal-foot"><button type="button" class="dt-btn is-sm" data-wkc="today">Hôm nay</button><span>'+(isYmd(cur)?esc(fmtYmd(cur)):'')+'</span></div>';
   }
   function pickDay(v){
-    const k=cal.k;sel.id='custom';sel[k]=v;
+    const k=cal.k;sel.id='custom';sel.off=0;sel[k]=v;
     if(k==='s'&&(!isYmd(sel.e)||sel.e<v))sel.e=v;      // luôn giữ khoảng hợp lệ: đổi ngày này thì ngày kia tự theo
     if(k==='e'&&(!isYmd(sel.s)||sel.s>v))sel.s=v;
     ls(K.per,JSON.stringify(sel));closeCal();paintAll();schedule(0);
@@ -6419,19 +6432,27 @@ window.TascoWeekly=(()=>{
   const hhmmss=t=>t?new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'';
   const defs=(p,r)=>{const tr=n=>(n/1e6).toLocaleString('vi-VN');return [['ps','Phát sinh'],['dd','Đã duyệt HSBT'],['cd','Chưa duyệt PASC'],['dntt','Chuyển ĐNTT'],['carpla','Lượng xe Carpla'],['tnds','HS TNDS tồn lũy kế'],
     ['ton','HS tồn > '+(r.hsTonDays||30)+' ngày'],['dpbt','HS DPBT > '+tr(r.hsDpbtAmount||5e7)+' triệu'],['avg','Bình quân < '+tr(r.avgAmount||1e7)+' triệu',1],['rev','Doanh số Carpla lũy kế T'+(p.endDate.getMonth()+1),1]];};
-  const PRESETS=[['week0','Tuần này'],['week1','Tuần qua'],['month0','Tháng này'],['month1','Tháng trước'],['custom','Tuỳ chọn']];
+  const UNITS=[['week','Tuần'],['month','Tháng'],['custom','Tuỳ chọn']];
+  const WD=['CN','T2','T3','T4','T5','T6','T7'];
+  function periodText(per,unit){
+    if(!per)return {label:'',sub:''};
+    const off=sel.off||0,dm=d=>pad2(d.getDate())+'/'+pad2(d.getMonth()+1);
+    const label=unit==='month'?(off===0?'Tháng này':off===1?'Tháng trước':'Tháng '+(per.startDate.getMonth()+1)+'/'+per.startDate.getFullYear()):(off===0?'Tuần này':off===1?'Tuần trước':off+' tuần trước');
+    const sub=unit==='month'?dm(per.startDate)+' → '+per.endStr:WD[per.startDate.getDay()]+' '+dm(per.startDate)+' → '+WD[per.endDate.getDay()]+' '+per.endStr;
+    return {label,sub};
+  }
   const TABS=[['week','Tuần'],['kpi','KPI tháng'],['year','Năm GĐV']];
   const tabsHtml=()=>'<div class="wk-tabs" role="tablist" aria-label="Loại báo cáo">'+TABS.map(([id,l])=>'<button type="button" role="tab" data-wk="tab" data-v="'+id+'" aria-selected="'+(tab===id)+'">'+l+'</button>').join('')+'</div>';
-  const stepHtml=(label,openable)=>'<div class="wk-step"><button type="button" data-wk="step" data-v="-1" aria-label="Kỳ trước">'+svg('<path d="m15 6-6 6 6 6"/>')+'</button>'+
-    (openable?'<button type="button" class="wk-step-c" data-wk="month" aria-haspopup="dialog"><b>'+label+'</b>'+CAL_ICO+'</button>':'<div class="wk-step-c"><b>'+label+'</b></div>')+
-    '<button type="button" data-wk="step" data-v="1" aria-label="Kỳ sau">'+CHEV+'</button></div>';
+  const stepHtml=(label,openable,sub,noNext)=>'<div class="wk-step"><button type="button" data-wk="step" data-v="-1" aria-label="Kỳ trước">'+svg('<path d="m15 6-6 6 6 6"/>')+'</button>'+
+    (openable?'<button type="button" class="wk-step-c" data-wk="month" aria-haspopup="dialog"><b>'+label+'</b>'+CAL_ICO+'</button>':'<div class="wk-step-c'+(sub?' is-2':'')+'"><b>'+label+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</div>')+
+    '<button type="button" data-wk="step" data-v="1" aria-label="Kỳ sau"'+(noNext?' disabled':'')+'>'+CHEV+'</button></div>';
   function shellHtml(){
     let ctl;
     if(tab==='week'){
-      const per=periodNow(),cs=sel.id==='custom';
-      ctl='<div class="wk-chips" role="group" aria-label="Chọn kỳ báo cáo">'+PRESETS.map(([id,l])=>'<button type="button" data-wk="preset" data-v="'+id+'" aria-pressed="'+(sel.id===id)+'">'+l+'</button>').join('')+'</div>'+
-        (cs?'<div class="wk-dates">'+dateBtn('s','Từ ngày')+dateBtn('e','Đến ngày')+'</div>':'')+
-        '<div class="wk-per" data-wk-per>'+(per?esc(per.startStr+' – '+per.endStr):'<span class="wk-bad">Kỳ không hợp lệ: ngày kết thúc phải sau ngày bắt đầu</span>')+'</div>';
+      const per=periodNow(),cs=sel.id==='custom',pt=periodText(per,sel.id);
+      ctl='<div class="wk-unit" role="group" aria-label="Loại kỳ báo cáo">'+UNITS.map(([id,l])=>'<button type="button" data-wk="unit" data-v="'+id+'" aria-pressed="'+(sel.id===id)+'">'+l+'</button>').join('')+'</div>'+
+        (cs?'<div class="wk-dates">'+dateBtn('s','Từ ngày')+dateBtn('e','Đến ngày')+'</div><div class="wk-per" data-wk-per>'+(per?esc(per.startStr+' – '+per.endStr):'<span class="wk-bad">Kỳ không hợp lệ: ngày kết thúc phải sau ngày bắt đầu</span>')+'</div>'
+          :stepHtml(esc(pt.label),false,esc(pt.sub),(sel.off||0)===0));
     }else if(tab==='kpi')ctl=stepHtml('Tháng '+kSel.m+'/'+kSel.y,true);
     else ctl=stepHtml('Năm '+ySel,false);
     return '<div class="dr-live'+(live?' is-on':'')+'" data-wk-live><i></i><b></b></div>'+tabsHtml()+ctl+'<div id="wkBody"></div>';
@@ -6572,11 +6593,14 @@ window.TascoWeekly=(()=>{
       if(b.dataset.v===tab)return;tab=b.dataset.v;ls(K.tab,tab);openKey='';paintAll();recompute();
     }else if(k==='step'){
       const d=Number(b.dataset.v)||0;
+      if(tab==='week'){sel.off=Math.max(0,(sel.off||0)-d);ls(K.per,JSON.stringify(sel));paintAll();schedule(0);return;}
       if(tab==='kpi'){const n=new Date(kSel.y,kSel.m-1+d,1);kSel={y:n.getFullYear(),m:n.getMonth()+1};}else ySel+=d;
       openKey='';paintAll();recompute();
     }else if(k==='month')openMsh();
-    else if(k==='preset'){
-      if(b.dataset.v==='custom'){const p=periodNow();sel={id:'custom',s:sel.s||p?.startYmd||'',e:sel.e||p?.endYmd||''};}else sel={id:b.dataset.v,s:sel.s,e:sel.e};
+    else if(k==='unit'){
+      const u=b.dataset.v;
+      if(u==='custom'){const pr=periodNow();sel={id:'custom',off:0,s:sel.s||pr?.startYmd||'',e:sel.e||pr?.endYmd||''};}
+      else sel={id:u,off:sel.id===u?(sel.off||0):0,s:sel.s,e:sel.e};
       ls(K.per,JSON.stringify(sel));paintAll();schedule(0);
     }else if(k==='open'){openKey=openKey===b.dataset.k?'':b.dataset.k;paintBody();}
     else if(k==='zero'){showZero=!showZero;paintBody();}
