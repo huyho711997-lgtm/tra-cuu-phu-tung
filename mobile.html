@@ -15897,6 +15897,7 @@ window.TascoCameraRescue = (function () {
     '<header class="cvp-head"><span class="cvp-badge">' + ICON_FILM + '</span><div><h3 id="cvpTitle">In dấu &amp; lưu video</h3><p data-video-sub>Gắn ngày giờ và vị trí lên hình</p></div></header>' +
     '<div class="cvp-preview is-empty"><canvas class="cvp-poster" aria-hidden="true"></canvas><span class="cvp-chips"><b data-chip="dur" hidden></b><b data-chip="res" hidden></b><b data-chip="size" hidden></b></span><span class="cvp-scan" aria-hidden="true"></span></div>' +
     '<dl class="cvp-meta"><div><dt>Lưu vào</dt><dd data-meta="album"></dd></div><div><dt>Hạng mục</dt><dd data-meta="category"></dd></div><div><dt>Thời gian</dt><dd data-meta="time"></dd></div><div><dt>Vị trí</dt><dd data-meta="place"></dd></div></dl>' +
+    '<div class="cvp-mode" data-video-mode role="group" aria-label="Chế độ xử lý"><button type="button" data-mode="fast"><b>Nhanh</b><small>720p · file nhỏ, tải lên nhanh</small></button><button type="button" data-mode="sharp"><b>Nét</b><small>1080p · nét hơn, file lớn hơn</small></button></div>' +
     '<p class="cvp-note" data-video-note></p>' +
     '<div class="cvp-progress" hidden><div class="cvp-bar"><i></i></div><div class="cvp-prog-row"><span data-video-step></span><em data-video-eta></em><b data-video-pct>0%</b></div></div>' +
     '<footer class="camera-video-actions"><button type="button" data-video-action="cancel">Hủy</button><button type="button" data-video-action="start" class="is-primary">In dấu &amp; lưu Cloud</button></footer></section>';
@@ -15905,6 +15906,11 @@ window.TascoCameraRescue = (function () {
   function setNote(t, isError) { var n = q('[data-video-note]'); n.textContent = t || ''; n.classList.toggle('is-error', !!isError); n.hidden = !t; }
   function setState(st) { q('.cvp').dataset.state = st; }   // ready | working | saving
   function setStep(t) { q('[data-video-step]').textContent = t; }
+  /* Chế độ xử lý: 'fast' = tối đa 720p (ít điểm ảnh hơn, file nhỏ hơn nên tải lên nhanh hơn), 'sharp' = giữ tới 1080p. Nhớ lựa chọn cho lần sau. */
+  var MODE_KEY = 'tasco_vid_mode';
+  function getMode() { try { return localStorage.getItem(MODE_KEY) === 'sharp' ? 'sharp' : 'fast'; } catch (_) { return 'fast'; } }
+  function paintMode() { var m = getMode(); panel.querySelectorAll('[data-mode]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === m)); }); }
+  function modeLongSide() { return getMode() === 'sharp' ? LONG_SIDE : 1280; }
   var workStart = 0;
   function setProgress(p) {
     var pct = Math.max(0, Math.min(100, p)), box = q('.cvp-progress'); box.hidden = false;
@@ -15919,7 +15925,7 @@ window.TascoCameraRescue = (function () {
     var btn = q('[data-video-action="start"]'); btn.disabled = false; btn.textContent = 'In dấu & lưu Cloud';
     var prev = q('.cvp-preview'); prev.classList.add('is-empty'); var c = q('.cvp-poster'); c.width = 1; c.height = 1;
     panel.querySelectorAll('[data-chip]').forEach(function (n) { n.hidden = true; });
-    setNote('');
+    setNote(''); paintMode();
   }
   function closePanel() {
     if (session && session.cleanup) { try { session.cleanup(); } catch (_) {} }
@@ -16104,7 +16110,7 @@ window.TascoCameraRescue = (function () {
     var MB = await loadMB();
     var isUrl = typeof source === 'string';
     var input = new MB.Input({ source: isUrl ? new MB.UrlSource(source) : new MB.BlobSource(source), formats: MB.ALL_FORMATS });
-    var conv = null, stall = 0;
+    var conv = null, stall = 0, hid = false, onVis = null;
     try {
       var vt = await input.getPrimaryVideoTrack();
       if (!vt) throw new Error('fast: no video');
@@ -16131,21 +16137,24 @@ window.TascoCameraRescue = (function () {
       if (!conv.isValid) throw new Error('fast: invalid ' + JSON.stringify((conv.discardedTracks || []).map(function (d) { return d.reason; })));
       if (at && !conv.utilizedTracks.some(function (t) { return t.type === 'audio'; })) throw new Error('fast: audio dropped');   // không chấp nhận video mất tiếng
       var lastP = -1, lastMove = performance.now();
+      /* Thoát app / tắt màn hình thì iOS đóng băng trang: không tính là "đứng", và nếu bộ mã hoá bị hệ thống thu hồi thì đánh dấu để chạy lại. */
+      onVis = function () { if (document.hidden) hid = true; else lastMove = performance.now(); };
+      document.addEventListener('visibilitychange', onVis);
       conv.onProgress = function (p) { if (p !== lastP) { lastP = p; lastMove = performance.now(); } onProgress(Math.max(0, Math.min(100, p * 100))); };
       var onAbort = function () { try { conv.cancel(); } catch (_) {} };
       signal.addEventListener('abort', onAbort);
       var stalled = false;
       /* Đứng yên > 45 giây (app bị tạm dừng, bộ mã hoá kẹt) -> dừng, báo lỗi thay vì chờ mãi. */
-      stall = setInterval(function () { if (performance.now() - lastMove > 45000) { stalled = true; onAbort(); } }, 3000);
+      stall = setInterval(function () { if (!document.hidden && performance.now() - lastMove > 45000) { stalled = true; onAbort(); } }, 3000);
       try { await conv.execute(); }
-      catch (e) { if (signal.aborted) throw new DOMException('Đã hủy', 'AbortError'); if (stalled) throw Object.assign(new Error('Xử lý video bị đứng. Giữ màn hình sáng, không thoát app rồi bấm Thử lại.'), { stalled: true }); throw e; }
-      finally { clearInterval(stall); signal.removeEventListener('abort', onAbort); }
+      catch (e) { if (signal.aborted) throw new DOMException('Đã hủy', 'AbortError'); if (hid) throw Object.assign(new Error('Bị gián đoạn do thoát app'), { interrupted: true }); if (stalled) throw Object.assign(new Error('Xử lý video bị đứng. Giữ màn hình sáng, không thoát app rồi bấm Thử lại.'), { stalled: true }); throw e; }
+      finally { clearInterval(stall); signal.removeEventListener('abort', onAbort); document.removeEventListener('visibilitychange', onVis); }
       if (signal.aborted) throw new DOMException('Đã hủy', 'AbortError');
       var buf = output.target.buffer;
       if (!buf || !buf.byteLength) throw new Error('fast: empty output');
       return { blob: new Blob([buf], { type: 'video/mp4' }), ext: 'mp4', duration: end, bitrate: bps, audioBps: audioBps, fast: true, trimmed: !opts.maxSeconds && total > MAX_SECONDS + 0.5 };
     } finally {
-      clearInterval(stall);
+      clearInterval(stall); if (onVis) document.removeEventListener('visibilitychange', onVis);
       try { input.dispose && input.dispose(); } catch (_) {}
     }
   }
@@ -16153,11 +16162,19 @@ window.TascoCameraRescue = (function () {
   async function encodeFast(source, lines, appearance, onProgress, signal, opts, onPass) {
     if (!fastSupported()) return null;
     var out;
-    try { out = await burnFast(source, lines, appearance, onProgress, signal, opts); }
-    catch (e) {
-      if (e && (e.name === 'AbortError' || e.stalled)) throw e;
-      console.warn('Đường xử lý nhanh không dùng được, quay về cách phát lại:', e);
-      return null;
+    for (var attempt = 0; ; attempt++) {
+      try { out = await burnFast(source, lines, appearance, onProgress, signal, opts); break; }
+      catch (e) {
+        if (e && (e.name === 'AbortError' || e.stalled)) throw e;
+        if (e && e.interrupted && attempt < 2) {   // thoát app giữa chừng: đợi quay lại rồi chạy lại từ đầu (không bắt người dùng bấm lại)
+          if (document.hidden) await new Promise(function (r) { document.addEventListener('visibilitychange', function f() { if (!document.hidden) { document.removeEventListener('visibilitychange', f); r(); } }); });
+          if (signal.aborted) throw new DOMException('Đã hủy', 'AbortError');
+          if (opts && opts.onRestart) opts.onRestart(); else onProgress(0);
+          continue;
+        }
+        console.warn('Đường xử lý nhanh không dùng được, quay về cách phát lại:', e);
+        return null;
+      }
     }
     for (var pass = 2; pass <= 3 && out.blob.size > TARGET_BYTES * 1.08; pass++) {
       var bps = Math.max(0.6e6, out.bitrate * (TARGET_BYTES / out.blob.size) * 0.92);
@@ -16202,13 +16219,13 @@ window.TascoCameraRescue = (function () {
     var s = session; if (!s || !(s.file || s.src)) return;
     var startBtn = q('[data-video-action="start"]'); startBtn.disabled = true; startBtn.textContent = 'Đang xử lý…';
     var abort = new AbortController(); s.cancel = function () { abort.abort(); };
-    workStart = Date.now(); setState('working'); setNote('Giữ màn hình sáng, không thoát app trong lúc xử lý.'); setStep('Đang in dấu lên video…'); setProgress(0);
+    var t0 = Date.now(); workStart = t0; setState('working'); setNote('Giữ màn hình sáng. Nếu thoát app, việc xử lý sẽ tạm dừng và tự chạy tiếp khi bạn quay lại.'); setStep('Đang in dấu lên video…'); setProgress(0);
     var wake = null; try { wake = await navigator.wakeLock.request('screen'); } catch (_) {}
     try {
       var location = await s.metadata.locationPromise;
       var appearance = s.metadata.appearance;
       var lines = cameraWatermarkLines(location, s.metadata.capturedAt, 'camera', appearance);
-      var out = await encodeToFit(s.src || s.file, lines, appearance, setProgress, abort.signal, {}, async function (pass, prev, fast) { if (!fast) await askMore(pass, prev); workStart = Date.now(); setStep('Đang nén lại (lần ' + pass + ')…'); setProgress(0); });
+      var out = await encodeToFit(s.src || s.file, lines, appearance, setProgress, abort.signal, { longSide: modeLongSide(), onRestart: function () { workStart = Date.now(); setStep('Đang in dấu lên video…'); setProgress(0); } }, async function (pass, prev, fast) { if (!fast) await askMore(pass, prev); workStart = Date.now(); setStep('Đang nén lại (lần ' + pass + ')…'); setProgress(0); });
       if (out.blob.size >= CLOUD_MAX) throw new Error('Video vẫn nặng hơn 100 MB sau khi nén. Hãy quay ngắn hơn.');
       if (s.cleanup) { try { s.cleanup(); } catch (_) {} s.cleanup = null; }
       if (session !== s) return;
@@ -16219,7 +16236,7 @@ window.TascoCameraRescue = (function () {
       await TascoCloud.queuePhotos([file], s.title, async function () { return { capturedAt: s.metadata.capturedAt, location: location, category: s.metadata.category || '' }; }, s.album);
       closePanel();
       try { window.tascoCountCategory && window.tascoCountCategory(s.metadata.category || ''); } catch (_) {}
-      feedback('Đã lưu video ' + fmt(out.duration) + (out.trimmed ? ' (cắt còn 3 phút)' : '') + ', đang tải lên Cloud.', 3200);
+      feedback('Đã lưu video ' + fmt(out.duration) + (out.trimmed ? ' (cắt còn 3 phút)' : '') + ' · xử lý ' + Math.round((Date.now() - t0) / 1000) + ' giây' + (out.fast ? '' : ' (cách phát lại)') + ', đang tải lên Cloud.', 4200);
     } catch (error) {
       if (session !== s) return;
       if (error && error.name === 'AbortError') { closePanel(); feedback('Đã hủy video.'); return; }
@@ -16229,6 +16246,8 @@ window.TascoCameraRescue = (function () {
   }
 
   panel.addEventListener('click', function (event) {
+    var mode = event.target.closest('[data-mode]');
+    if (mode) { try { localStorage.setItem(MODE_KEY, mode.dataset.mode); } catch (_) {} paintMode(); return; }
     var action = event.target.closest('[data-video-action]'); if (!action) return;
     if (action.dataset.videoAction === 'start') start();
     if (action.dataset.videoAction === 'cancel') { if (session && session.cancel) session.cancel(); else closePanel(); }
@@ -16350,6 +16369,12 @@ window.TascoCameraRescue = (function () {
 .cvp-meta div:last-child{border-bottom:0}
 .cvp-meta dt{flex:none;font-size:12px;color:#8fa9b8;font-weight:600}
 .cvp-meta dd{margin:0;min-width:0;text-align:right;font-size:13px;font-weight:650;color:#edf5f7;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.cvp-mode{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.cvp[data-state=working] .cvp-mode,.cvp[data-state=saving] .cvp-mode{display:none}
+.cvp-mode button{display:grid;gap:3px;padding:10px 12px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.03);color:#c7dbe4;font:inherit;text-align:left;-webkit-tap-highlight-color:transparent}
+.cvp-mode b{font-size:13.5px;font-weight:700;color:#edf5f7}.cvp-mode small{font-size:11px;color:#8fa9b8;font-weight:600}
+.cvp-mode button[aria-pressed=true]{border-color:rgba(143,208,216,.7);background:rgba(143,208,216,.12)}
+.cvp-mode button[aria-pressed=true] b{color:#8fd0d8}
 .cvp-note{margin:12px 2px 0;font-size:12px;line-height:1.6;color:#9db8c6}
 .cvp-note[hidden]{display:none}
 .cvp-note.is-error{padding:10px 12px;border-radius:12px;background:rgba(229,72,77,.12);border:1px solid rgba(229,72,77,.3);color:#ffb4b6}
