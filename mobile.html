@@ -5517,6 +5517,40 @@ html[data-tasco-page=duty]{background:var(--app-navy)}
 .dt-weektitle strong{color:var(--ws-text);font-size:14px;font-weight:700;letter-spacing:-.2px}
 .dt-icon{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-bg);color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .dt-icon svg{width:17px;height:17px}.dt-icon:disabled{opacity:.5}
+
+.dt-tools{display:flex;gap:8px;margin:0 0 12px}
+.dt-chip{flex:1;min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:0 12px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-bg);color:var(--ws-text);font:700 12.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s,opacity .15s}
+.dt-chip:active{transform:scale(.97)}
+.dt-chip span{white-space:nowrap}.dt-chip svg{flex:none;width:16px;height:16px}
+.dt-chip.is-main{border-color:color-mix(in srgb,var(--app-teal) 40%,var(--ws-line));background:color-mix(in srgb,var(--app-teal) 12%,var(--ws-bg));color:color-mix(in srgb,var(--app-teal) 80%,var(--ws-text))}
+.dt-chip:disabled{opacity:.55;cursor:default;transform:none;background:var(--ws-soft);border-color:var(--ws-line);color:var(--ws-muted)}
+.dt-msheet{padding-top:8px}
+.dt-mhead{display:flex;align-items:center;gap:8px;margin:0 0 14px}
+.dt-mtitle{flex:1;display:grid;gap:2px;text-align:center}
+.dt-mtitle strong{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.dt-mtitle small{color:var(--ws-muted);font-size:11.5px;font-weight:600}
+.dt-mgrid{transition:opacity .15s}.dt-mgrid.is-loading{opacity:.45}
+.dt-mwd{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-bottom:6px;text-align:center}
+.dt-mwd small{color:var(--ws-muted);font-size:10.5px;font-weight:700}.dt-mwd small.is-wkd{color:#c0612f}
+.dt-mcells{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.dt-mc{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:54px;padding:6px 0 5px;border:1px solid transparent;border-radius:13px;background:var(--ws-soft);color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.dt-mc.is-blank{background:transparent;pointer-events:none}
+.dt-mc:active{transform:scale(.94)}
+.dt-mc b{font-size:13.5px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.dt-mc.is-wkd b{color:#c0612f}
+.dt-mc.is-past{opacity:.6}
+.dt-mc.is-today{border-color:var(--app-teal);box-shadow:0 0 0 2px color-mix(in srgb,var(--app-teal) 22%,transparent)}
+.dt-mc.is-today b{color:var(--app-teal)}
+.dt-mc.is-sel{background:linear-gradient(165deg,var(--app-navy),#2c5f8d);color:#fff;opacity:1}
+.dt-mc.is-sel b{color:#fff}
+.dt-mc>span{display:flex;gap:2px}
+.dt-mcav{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--c,#8a97a6);color:#fff;font-size:8px;font-style:normal;font-weight:800;line-height:1}
+.dt-mcav.is-none{opacity:.25}
+.dt-mcav.is-me{box-shadow:0 0 0 1.5px var(--ws-surface),0 0 0 3px var(--c)}
+.dt-mc.is-sel .dt-mcav.is-me{box-shadow:0 0 0 1.5px #2c5f8d,0 0 0 3px #fff}
+.dt-mkeys{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 2px 2px;color:var(--ws-muted);font-size:11px;font-weight:600}
+.dt-mkeys span{display:inline-flex;align-items:center;gap:3px}.dt-mkeys{justify-content:center}
+.dt-msheet .dt-actions{margin-top:14px}.dt-msheet .dt-actions .dt-btn{flex:1}
 .dt-back-today{display:block;width:100%;min-height:34px;margin-bottom:10px;border:1px dashed var(--ws-line);border-radius:11px;background:transparent;color:var(--ws-accent-text);font-size:12px;font-weight:700;cursor:pointer}
 @keyframes dtIn{from{opacity:0;transform:translateY(6px)}}
 .dt-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:2px 0 16px}
@@ -5622,7 +5656,7 @@ window.TascoDuty=(()=>{
   const ST={pending:'Chờ duyệt',approved:'Đã duyệt',rejected:'Từ chối',cancelled:'Đã huỷ'};
   const COLORS=['#2f7f8a','#d0742b','#6c5ad0','#c2477a','#3f8f4f','#8a6d1f','#3d6fb6'];
   const CACHE='tasco_duty_cache_v2';
-  let options={},data=null,month='',week='',selDay='',fx=false,slide='',loadingMonth=false,reqSeq=0,lastLoad=0,sheet=null;
+  let options={},data=null,month='',week='',selDay='',fx=false,slide='',loadingMonth=false,reqSeq=0,lastLoad=0,sheet=null,mcache={},mcal=null;
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const fold=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().trim();
   const same=(a,b)=>Boolean(a&&b&&fold(a)===fold(b));
@@ -5636,7 +5670,7 @@ window.TascoDuty=(()=>{
   const isWkd=iso=>{const g=dow(iso);return g===0||g===6;};
   const nextDay=iso=>new Date(Date.parse(iso+'T00:00:00Z')+864e5).toISOString().slice(0,10);
   const svg=p=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
-  const I={prev:svg('<path d="m15 6-6 6 6 6"/>'),next:svg('<path d="m9 6 6 6-6 6"/>'),sync:svg('<path d="M20 11a8 8 0 0 0-14.3-4.9L4 8m0-4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16m0 4v-4h-4"/>'),sheet:svg('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/>'),swap:svg('<path d="M7 7h12l-3-3M17 17H5l3 3"/>'),edit:svg('<path d="M4 20h4L19 9l-4-4L4 16z"/>'),bell:svg('<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/>'),scene:svg('<path d="M12 21s7-5.4 7-11.2A7 7 0 0 0 5 9.8C5 15.6 12 21 12 21z"/><circle cx="12" cy="9.6" r="2.3"/>'),detail:svg('<rect x="6" y="3.5" width="12" height="17" rx="2.2"/><path d="M9 3.5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v.5"/><path d="m9.3 12.5 1.8 1.8 3.6-3.8"/>')};
+  const I={grid:svg('<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9.5h18M8 2.5v3.5M16 2.5v3.5M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01"/>'),today:svg('<circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="8.5"/><path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5"/>'),prev:svg('<path d="m15 6-6 6 6 6"/>'),next:svg('<path d="m9 6 6 6-6 6"/>'),sync:svg('<path d="M20 11a8 8 0 0 0-14.3-4.9L4 8m0-4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16m0 4v-4h-4"/>'),sheet:svg('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/>'),swap:svg('<path d="M7 7h12l-3-3M17 17H5l3 3"/>'),edit:svg('<path d="M4 20h4L19 9l-4-4L4 16z"/>'),bell:svg('<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/>'),scene:svg('<path d="M12 21s7-5.4 7-11.2A7 7 0 0 0 5 9.8C5 15.6 12 21 12 21z"/><circle cx="12" cy="9.6" r="2.3"/>'),detail:svg('<rect x="6" y="3.5" width="12" height="17" rx="2.2"/><path d="M9 3.5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v.5"/><path d="m9.3 12.5 1.8 1.8 3.6-3.8"/>')};
   function toast(t){const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),4200);}
   const err=(code,message)=>Object.assign(new Error(message),{code});
   async function call(body,retried){
@@ -5673,7 +5707,7 @@ window.TascoDuty=(()=>{
   }
   const P=name=>persons().get(fold(name))||{name:name||'—',code:name?String(name).trim()[0].toUpperCase():'?',color:'#8a97a6',short:name||'—'};
   const av=name=>{const p=P(name);return '<i class="dt-av'+(same(name,data?.me)?' is-me':'')+'" style="--c:'+p.color+'" aria-hidden="true">'+esc(p.code)+'</i>';};
-  const allShifts=()=>{const m=new Map();for(const s of [...(data?.shifts||[]),...(data?.ahead||[])])m.set(s.duty_date,{...m.get(s.duty_date),...s});return m;};
+  const allShifts=()=>{const m=new Map();for(const s of [...Object.values(mcache).flat(),...(data?.shifts||[]),...(data?.ahead||[])])m.set(s.duty_date,{...m.get(s.duty_date),...s});return m;};
   const pendingOf=(date,role)=>(data?.swaps||[]).find(s=>s.status==='pending'&&s.duty_date===date&&(!role||s.role===role));
 
   async function load({force=false,quiet=false}={}){
@@ -5682,7 +5716,7 @@ window.TascoDuty=(()=>{
     if(!quiet&&!data)root().innerHTML='<div class="dt-skel"><i></i><i></i><i></i></div>';
     try{
       loadingMonth=true;const d=await call({action:'get',month,force});loadingMonth=false;
-      if(seq!==reqSeq)return;data=d;lastLoad=Date.now();if(d.configured&&month===curMonth())writeCache(d);
+      if(seq!==reqSeq)return;data=d;delete mcache[d.month];lastLoad=Date.now();if(d.configured&&month===curMonth())writeCache(d);
       render();paintHome();if(force)toast(d.sync?.error?'Chưa đồng bộ được: '+d.sync.error:'Đã đồng bộ với Google Sheet.');
     }catch(e){
       loadingMonth=false;if(seq!==reqSeq)return;
@@ -5726,6 +5760,8 @@ window.TascoDuty=(()=>{
     const range=m1===m2?d1+' – '+d2+'/'+m2:d1+'/'+m1+' – '+d2+'/'+m2;
     let h='<div class="dt-h"><h3>Lịch trực</h3><small>'+(data.sync?.at?'Đồng bộ '+new Date(data.sync.at).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}):'')+'</small></div>';
     h+='<div class="dt-week" data-swipe><div class="dt-weekbar"><button type="button" class="dt-icon" data-dt="prev" aria-label="Tuần trước">'+I.prev+'</button><div class="dt-weektitle"><strong>Tháng '+Number(mid[1])+', '+mid[0]+'</strong><small>'+range+' · '+weekLabel(week)+'</small></div><button type="button" class="dt-icon" data-dt="next" aria-label="Tuần sau">'+I.next+'</button></div>';
+    const atToday=week===mondayOf(data.todayKey)&&selDay===data.todayKey;
+    h+='<div class="dt-tools"><button type="button" class="dt-chip" data-dt="month" aria-haspopup="dialog">'+I.grid+'<span>Lịch tháng</span></button><button type="button" class="dt-chip is-main" data-dt="today"'+(atToday?' disabled aria-label="Đang ở hôm nay"':'')+'>'+I.today+'<span>Hôm nay</span></button></div>';
     h+='<div class="dt-strip" role="tablist">';
     for(let i=0;i<7;i++){
       const iso=addDays(week,i),s=map.get(iso),today=iso===data.todayKey;
@@ -5845,6 +5881,7 @@ window.TascoDuty=(()=>{
     if(k==='retry')load();
     else if(k==='google')window.TascoDrive?.openSetup();
     else if(k==='prev'||k==='next'||k==='today')goWeek(k);
+    else if(k==='month')openMonth();
     else if(k==='day'){selDay=b.dataset.date;fx=true;render();fx=false;}
     else if(k==='edit')openEdit(b.dataset.date);
     else if(k==='swap')openSwap(b.dataset.date,b.dataset.role);
@@ -5881,6 +5918,54 @@ window.TascoDuty=(()=>{
     const need=week.slice(0,7);
     if(need!==month){month=need;load({quiet:true});}
   }
+  /* Nhảy tới một ngày bất kỳ: đổi tuần + chọn ngày, tải tháng tương ứng. */
+  function gotoDay(iso){
+    week=mondayOf(iso);selDay=iso;fx=true;render();fx=false;
+    const need=iso.slice(0,7);if(need!==month){month=need;load({quiet:true});}
+  }
+  /* ---------- Lịch tháng (hộp xem nhanh cả tháng) ---------- */
+  const daysIn=m=>new Date(Date.UTC(+m.slice(0,4),+m.slice(5,7),0)).getUTCDate();
+  const shiftMonth=(m,n)=>{const d=new Date(Date.UTC(+m.slice(0,4),+m.slice(5,7)-1+n,1));return d.toISOString().slice(0,7);};
+  async function ensureMonth(m){
+    if(mcache[m]||data?.month===m)return;
+    mcal.loading=true;mcal.err='';paintMonth();
+    try{const d=await call({action:'get',month:m});mcache[m]=d.shifts||[];}
+    catch(e){if(mcal&&mcal.m===m)mcal.err=e.message;}
+    if(mcal&&mcal.m===m){mcal.loading=false;paintMonth();}
+  }
+  function openMonth(){
+    if(!data)return;
+    mcal={m:(selDay||data.todayKey).slice(0,7),loading:false,err:'',el:null};
+    mcal.el=openSheet('');mcal.el.classList.add('dt-msheet');
+    mcal.el.addEventListener('click',e=>{
+      const b=e.target.closest('[data-mc]');if(!b||!mcal)return;const a=b.dataset.mc;
+      if(a==='prev'||a==='next'){mcal.m=shiftMonth(mcal.m,a==='next'?1:-1);paintMonth();ensureMonth(mcal.m);}
+      else if(a==='today'){mcal.m=data.todayKey.slice(0,7);paintMonth();ensureMonth(mcal.m);}
+      else if(a==='go'){closeSheet();mcal=null;gotoDay(data.todayKey);}
+      else if(a==='day'){const iso=b.dataset.date;closeSheet();mcal=null;gotoDay(iso);}
+    });
+    paintMonth();ensureMonth(mcal.m);
+  }
+  function paintMonth(){
+    if(!mcal||!mcal.el||!mcal.el.isConnected)return;
+    const m=mcal.m,map=allShifts(),me=data.me,first=m+'-01',lead=(dow(first)+6)%7,n=daysIn(m),tk=data.todayKey;
+    const known=[...map.keys()].some(k=>k.startsWith(m));
+    let cells='';for(let i=0;i<lead;i++)cells+='<i class="dt-mc is-blank"></i>';
+    let mine=0;
+    for(let d=1;d<=n;d++){
+      const iso=m+'-'+String(d).padStart(2,'0'),s=map.get(iso),wk=isWkd(iso);
+      const mk=s&&(same(s.scene,me)||same(s.detail,me));if(mk)mine++;
+      const cls=['dt-mc',wk?'is-wkd':'',iso===tk?'is-today':'',iso===selDay?'is-sel':'',iso<tk?'is-past':'',mk?'is-mine':''].filter(Boolean).join(' ');
+      const av2=k=>{const nm=s&&s[k];if(!nm)return '<i class="dt-mcav is-none"></i>';const p=P(nm);return '<i class="dt-mcav'+(same(nm,me)?' is-me':'')+'" style="--c:'+p.color+'">'+esc(p.code)+'</i>';};
+      cells+='<button type="button" class="'+cls+'" data-mc="day" data-date="'+iso+'" aria-label="'+FULLWD[dow(iso)]+' '+d+' tháng '+Number(m.slice(5))+(s?': hiện trường '+esc(s.scene||'chưa có')+', giám định chi tiết '+esc(s.detail||'chưa có'):'')+'"><b>'+d+'</b><span>'+av2('scene')+av2('detail')+'</span></button>';
+    }
+    const wdh=['T2','T3','T4','T5','T6','T7','CN'].map((x,i)=>'<small'+(i>=5?' class="is-wkd"':'')+'>'+x+'</small>').join('');
+    mcal.el.innerHTML='<div class="dt-mhead"><button type="button" class="dt-icon" data-mc="prev" aria-label="Tháng trước">'+I.prev+'</button><div class="dt-mtitle"><strong>Tháng '+Number(m.slice(5))+', '+m.slice(0,4)+'</strong><small>'+(mcal.loading?'Đang tải…':known?(mine?'Ca của bạn: '+mine+' ngày':'Bạn không có ca trong tháng này'):'Chưa có lịch cho tháng này')+'</small></div><button type="button" class="dt-icon" data-mc="next" aria-label="Tháng sau">'+I.next+'</button></div>'+
+      '<div class="dt-mgrid'+(mcal.loading?' is-loading':'')+'"><div class="dt-mwd">'+wdh+'</div><div class="dt-mcells">'+cells+'</div></div>'+
+      (mcal.err?'<p class="dt-err">'+esc(mcal.err)+'</p>':'')+
+      '<div class="dt-mkeys"><span>Trái: Hiện trường</span><span>Phải: GĐ chi tiết</span><span>Viền đậm = ca của bạn</span></div>'+
+      '<div class="dt-actions"><button type="button" class="dt-btn" data-dt-close>Đóng</button><button type="button" class="dt-btn is-main" data-mc="go">'+I.today+'Về hôm nay</button></div>';
+  }
   /* Vuốt ngang trên lịch tuần để đổi tuần. */
   let tx=0,ty=0;
   document.addEventListener('touchstart',e=>{tx=0;if(!e.target.closest('#dutySection [data-swipe]')||e.touches[0].clientX<26)return;tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
@@ -5895,7 +5980,7 @@ window.TascoDuty=(()=>{
     if(view==='duty'){month=month||(week?week.slice(0,7):curMonth());if(!data||Date.now()-lastLoad>60000)load({quiet:Boolean(data)});else render();}
     else{closeSheet();if(view==='home'&&(!lastLoad||Date.now()-lastLoad>10*60000)&&options.client?.())load({quiet:true});}
   }
-  function setUser(u){const e=String(u?.email||'').toLowerCase();if(e!==(options._email||'')){options._email=e;data=null;month='';week='';lastLoad=0;closeSheet();const r=root();if(r)r.innerHTML='<div class="dt-skel"><i></i><i></i><i></i></div>';paintHome();}}
+  function setUser(u){const e=String(u?.email||'').toLowerCase();if(e!==(options._email||'')){options._email=e;data=null;month='';week='';lastLoad=0;mcache={};mcal=null;closeSheet();const r=root();if(r)r.innerHTML='<div class="dt-skel"><i></i><i></i><i></i></div>';paintHome();}}
   return {configure:v=>{options={...options,...v};},setUser,onNavigate,load,paintHome};
 })();
 </script>
