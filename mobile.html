@@ -6274,6 +6274,63 @@ button.wk-step-c{cursor:pointer}
 .pg-det svg{flex:none;width:16px;height:16px}.pg-det svg:last-child{width:15px;height:15px;opacity:.7}
 .pg-det.is-sheet{margin-top:14px}
 .pg-card>.pg-det{pointer-events:auto;z-index:2}
+/* Chi tiết hồ sơ (premium) */
+.pgd{position:relative;max-height:92vh}
+.pgd-x{position:absolute;z-index:3;top:14px;right:14px;width:36px;height:36px;display:grid;place-items:center;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pgd-x svg{width:16px;height:16px}
+.pgd-body{padding:6px 14px 14px}
+.pgd-bar{position:absolute;z-index:4;top:0;left:0;right:0;display:flex;align-items:center;gap:10px;padding:18px 16px 10px;border-radius:26px 26px 0 0;background:color-mix(in srgb,var(--ws-surface) 95%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--ws-line);opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s,transform .18s}
+.pgd.is-scrolled .pgd-bar{opacity:1;transform:none;pointer-events:auto}
+.pgd-bar b{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.pgd-bar .pgd-st{background:color-mix(in srgb,var(--c) 14%,var(--ws-bg));color:color-mix(in srgb,var(--c) 78%,var(--ws-text))}
+.pgd-bar button{margin-left:auto;width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--ws-soft);color:var(--ws-muted);cursor:pointer}.pgd-bar svg{width:16px;height:16px}
+.pgd-hero{position:relative;overflow:hidden;padding:18px 18px 16px;border-radius:24px;color:#fff;background:radial-gradient(120% 90% at 100% 0%,color-mix(in srgb,var(--app-teal) 48%,transparent),transparent 58%),linear-gradient(158deg,#1a3664 0%,#0f2142 100%);box-shadow:0 14px 30px -16px rgba(15,33,66,.7)}
+.pgd-hero::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.pgd-eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding-right:44px}
+.pgd-st{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;background:color-mix(in srgb,var(--c) 26%,transparent);color:#fff;font-size:11.5px;font-weight:700}
+.pgd-st i{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 32%,transparent)}
+.pgd-hero .pg-dchip{background:rgba(255,255,255,.14);color:#fff;border-color:transparent}
+.pgd-hero .pg-dchip.is-late{background:rgba(248,113,113,.28)}.pgd-hero .pg-dchip.is-today{background:rgba(251,191,36,.28)}
+.pgd-plate{margin:14px 0 0;font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.8px}
+.pgd-code{display:flex;align-items:center;gap:6px;margin-top:8px;color:rgba(255,255,255,.78);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.pgd-code button{display:grid;place-items:center;width:28px;height:28px;border:0;border-radius:9px;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pgd-code button:active{background:rgba(255,255,255,.24)}.pgd-code svg{width:14px;height:14px}
+.pgd-sub{margin:6px 0 0;color:rgba(255,255,255,.7);font-size:13px;font-weight:600;line-height:1.4}
+.pgd-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:16px;border-radius:16px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.pgd-metrics>div{min-width:0;padding:11px 12px}
+.pgd-metrics>div+div{border-left:1px solid rgba(255,255,255,.1)}
+.pgd-metrics small{display:block;color:rgba(255,255,255,.58);font-size:10.5px;font-weight:700;letter-spacing:.2px}
+.pgd-metrics b{display:block;margin-top:4px;font-size:15px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pgd-metrics b.age{font-size:22px;letter-spacing:-.5px}.pgd-metrics b.age i{margin-left:3px;font-size:11px;font-style:normal;font-weight:700;opacity:.7;letter-spacing:0}
+.pgd-metrics b.warn{color:#fcd34d}
+.pgd-hero.is-ok .age{color:#86efac}.pgd-hero.is-warn .age{color:#fde047}.pgd-hero.is-hot .age{color:#fdba74}.pgd-hero.is-crit .age{color:#fca5a5}
+.pgd-steps{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;margin-top:16px}
+.pgd-steps i{height:4px;border-radius:9px;background:rgba(255,255,255,.2)}.pgd-steps i.on{background:linear-gradient(90deg,#5eead4,#a7f3d0)}
+.pgd-stepcap{margin:8px 0 0;color:rgba(255,255,255,.66);font-size:11px;font-weight:700}
+.pgd-acts{display:flex;gap:10px;margin-top:14px}
+.pgd-act{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:7px;padding:11px 6px 10px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-bg);color:var(--ws-text);font:700 12px 'Plus Jakarta Sans',sans-serif;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 1px 2px rgba(24,48,86,.05);transition:transform .12s}
+.pgd-act:active{transform:scale(.97)}
+.pgd-act i{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:color-mix(in srgb,var(--app-teal) 14%,var(--ws-bg));color:var(--app-teal)}
+.pgd-act svg{width:17px;height:17px}
+.pgd-act.is-off{opacity:.45;pointer-events:none}
+.pgd-sec{margin-top:20px}
+.pgd-sec h5{margin:0 4px 8px;color:var(--ws-muted);font-size:11.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.pgd-sec dl,.pgd-list{margin:0;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-bg);overflow:hidden;box-shadow:0 1px 2px rgba(24,48,86,.04)}
+.pgd-list{margin-top:14px}
+.pgd-sec .r,.pgd-list .r{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:12px 14px}
+.pgd-sec .r+.r,.pgd-list .r+.r{border-top:1px solid color-mix(in srgb,var(--ws-line) 70%,transparent)}
+.pgd-list .r{padding:9px 14px}
+.pgd-sec dt,.pgd-list dt{flex:none;max-width:44%;color:var(--ws-muted);font-size:12.5px;font-weight:600}
+.pgd-sec dd,.pgd-list dd{min-width:0;margin:0;font-size:13.5px;font-weight:700;text-align:right;overflow-wrap:anywhere}
+.pgd-sec .r.is-long{display:block}.pgd-sec .r.is-long dd{margin-top:5px;font-weight:600;line-height:1.55;text-align:left;white-space:pre-wrap}
+.pgd-sec .r.is-money dd{color:var(--app-teal);font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+.dark .pgd-sec .r.is-money dd{color:#5eead4}
+.pgd-note{padding:13px 14px;border:1px solid color-mix(in srgb,var(--app-teal) 40%,var(--ws-line));border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--app-teal) 8%,var(--ws-bg)),var(--ws-bg))}
+.pgd-note p{margin:0;font-size:13.5px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.pgd-note small{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin-top:9px;color:var(--ws-muted);font-size:11.5px;font-weight:600}.pgd-note small b{color:var(--ws-text);font-size:12px}
+.pgd-note.is-empty{border-style:dashed;border-color:var(--ws-line);background:transparent;color:var(--ws-muted);font-size:13px;text-align:center}
+.pg-det{border-color:color-mix(in srgb,var(--app-teal) 34%,var(--ws-line));background:color-mix(in srgb,var(--app-teal) 6%,var(--ws-bg));color:color-mix(in srgb,var(--app-teal) 78%,var(--ws-text))}
+
 .pg-facts>div.is-long{grid-column:1/-1}
 .pg-facts>div.is-long b{font-weight:600;line-height:1.5;white-space:pre-wrap}
 .pg-hist.is-one{max-height:none}
@@ -6916,6 +6973,7 @@ window.TascoWeekly=(()=>{
     sort:svg('<path d="M3 6h13M3 12h9M3 18h5M17 10v10m0 0-3-3m3 3 3-3"/>'),
     phone:svg('<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>'),
     info:svg('<circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.5M12 7.6v.1"/>'),
+    userI:svg('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'),
     chevR:svg('<path d="m9 6 6 6-6 6"/>'),
     chev:svg('<path d="m6 9 6 6 6-6"/>'),close:svg('<path d="M6 6l12 12M18 6 6 18"/>'),check:svg('<path d="m5 12 5 5 9-10"/>'),reset:svg('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>')
   };
@@ -7084,8 +7142,8 @@ window.TascoWeekly=(()=>{
     const nv=tx(['maSpNghiepVu','nghiepVu','loaiHinhBaoHiem']),eff=[dt('ngayHieuLuc'),dt('ngayHetHan')].filter(Boolean).join(' → ');
     const claimNo=tx('soHoSoBoiThuong'),hsbt=tx('soHsbt');
     return [
-      ['Thông tin hồ sơ',[['Số HS bồi thường',claimNo],['Số HSBT',hsbt&&hsbt!==claimNo?hsbt:''],['Nghiệp vụ',nv||[c.vcx?'VCX':'',c.tnds?'TNDS':''].filter(Boolean).join(' · ')],['Chủ xe',r.owner],['Xe',r.car],['Loại xe',tx('loaiXe')],['Số khung / số máy',tx('soKhungSoMay'),'long'],['Số hợp đồng',tx('soHd')],['Số GCN',tx('soGcn')],['Hiệu lực bảo hiểm',eff]]],
-      ['Tổn thất',[['Ngày xảy ra',dt(['ngayVTT','ngayTonThat','date'])],['Ngày thông báo',dt('ngayThongBao')],['Ngày mở hồ sơ',r.openText||dt('ngayMoHs')],['Ngày nhận đủ hồ sơ',dt('ngayNhanDuHoSo')],['Tỉnh / địa điểm',[tx('tinhTonThat'),tx(['diaDiemVTT','diaDiemTonThat'])].filter(Boolean).join(' · '),'long'],['Nguyên nhân',tx(['nguyenNhan','nhomNguyenNhan']),'long'],['Mô tả tổn thất',tx(['moTaTonThat','dienBienTonThat']),'long'],['Ước thiệt hại',pgMoneyTxt(c.uocThietHai)]]],
+      ['Thông tin hồ sơ',[['Số HS bồi thường',claimNo,'hero'],['Số HSBT',hsbt&&hsbt!==claimNo?hsbt:''],['Nghiệp vụ',nv||[c.vcx?'VCX':'',c.tnds?'TNDS':''].filter(Boolean).join(' · ')],['Chủ xe',r.owner],['Xe',r.car],['Loại xe',tx('loaiXe')],['Số khung / số máy',tx('soKhungSoMay'),'long'],['Số hợp đồng',tx('soHd')],['Số GCN',tx('soGcn')],['Hiệu lực bảo hiểm',eff]]],
+      ['Tổn thất',[['Ngày xảy ra',dt(['ngayVTT','ngayTonThat','date'])],['Ngày thông báo',dt('ngayThongBao')],['Ngày mở hồ sơ',r.openText||dt('ngayMoHs'),'hero'],['Ngày nhận đủ hồ sơ',dt('ngayNhanDuHoSo')],['Tỉnh / địa điểm',[tx('tinhTonThat'),tx(['diaDiemVTT','diaDiemTonThat'])].filter(Boolean).join(' · '),'long'],['Nguyên nhân',tx(['nguyenNhan','nhomNguyenNhan']),'long'],['Mô tả tổn thất',tx(['moTaTonThat','dienBienTonThat']),'long'],['Ước thiệt hại',pgMoneyTxt(c.uocThietHai)]]],
       ['Đơn vị xử lý',[['Đơn vị cấp đơn',tx(['donViCapDon','chiNhanh'])],['Chi nhánh xử lý',tx('chiNhanhXuly')],['TTKD',tx(['ttkd','phongBan'])],['Zone bồi thường',tx(['zoneBoiThuong','khuVucGiamDinh'])],['GĐV tiếp nhận',tx('gdvTiepNhan')],['Cán bộ xử lý',tx('canBoXuLy')],['Gara sửa chữa',tx(['garaSuaChua','tenGara','tenGaraVietTat']),'long']]],
       ['Duyệt & thanh toán',[['Tờ trình duyệt',dt(['toTrinhNgayDuyet','toTrinhBtNgayDuyet'])],['Người duyệt tờ trình',tx('toTrinhNguoiDuyet')],['PASC duyệt',dt('pascNgayDuyet')],['Người duyệt PASC',tx('pascNguoiDuyet')],['Ngày duyệt HSBT',dt('ngayDuyetHsbt')],['Số tiền bồi thường',pgMoneyTxt(c.ttbtTongSoTienBoiThuong||c.tongBoiThuongSauThue||c.pascSoTienDuyet||c.soTienDuyetBT||c.ttbtSoTienBoiThuong||c.amount)],['Dự phòng bồi thường',pgMoneyTxt(c.duPhongBoiThuong)],['Đã thanh toán',pgMoneyTxt(c.soTienDaThanhToan)],['Ngày thanh toán',dt('ngayThanhToan')],['KT xác nhận',dt('ngayKtXacNhan')]]],
       ['Ghi chú trên hồ sơ',[['Ghi chú',tx(['ghiChu','ghiChuHoSo']),'long'],['Ghi chú TNDS',tx('tndsGhiChu'),'long']]]
@@ -7102,20 +7160,35 @@ window.TascoWeekly=(()=>{
   function openPgDetail(id){
     const r=pgRowOf(id);if(!r)return;closePgPick();closePgDetail();
     const c=r.c,st=PG_ST[r.status]||[r.status,'#64748b'],dial=/^\+?\d{7,15}$/.test(r.phone),fromNote=!!pgm,last=r.last;
-    const secs=pgDetailData(r).map(([t,rows])=>'<div class="pg-lb">'+esc(t)+'</div><div class="pg-facts">'+rows.map(([l,v,k])=>'<div'+(k==='long'?' class="is-long"':'')+'><small>'+esc(l)+'</small><b>'+esc(v)+'</b></div>').join('')+'</div>').join('');
+    const step=PG_TON.indexOf(r.status)+1,total=PG_TON.length,claimNo=pgBlank(c.soHoSoBoiThuong);
+    const sub=[r.car,r.owner].filter(Boolean).join(' · ');
+    const row=(l,v,k)=>'<div class="r'+(k==='long'?' is-long':'')+(/ đ$/.test(v)?' is-money':'')+'"><dt>'+esc(l)+'</dt><dd>'+esc(v)+'</dd></div>';
+    const secs=pgDetailData(r).map(([t,rows])=>[t,rows.filter(x=>x[2]!=='hero')]).filter(x=>x[1].length).map(([t,rows])=>'<section class="pgd-sec"><h5>'+esc(t)+'</h5><dl>'+rows.map(([l,v,k])=>row(l,v,k)).join('')+'</dl></section>').join('');
+    const noteTxt=last?pgAgo(Number(last.timestamp),Date.now()):'Chưa có';
+    const act=(ico,l,attrs,dis)=>'<'+(attrs.indexOf('href=')>=0?'a':'button type="button"')+' class="pgd-act'+(dis?' is-off':'')+'" '+attrs+'><i>'+ico+'</i><span>'+l+'</span></'+(attrs.indexOf('href=')>=0?'a':'button')+'>';
     const el=document.createElement('div');el.className='dr-sheet-bg wk-cal-bg pg-bg';
-    el.innerHTML='<div class="dr-sheet wk-cal pg-sheet" role="dialog" aria-modal="true" aria-label="Chi tiết hồ sơ"><div class="dr-sheet-h"><h4>'+esc(c.bienSo||'Chi tiết hồ sơ')+'</h4><button type="button" data-pgd="close" aria-label="Đóng">'+PGI.close+'</button></div>'+
-      '<div class="wk-xbody"><div class="pg-chipsR is-'+r.tone+'"><span class="pg-st" style="--c:'+st[1]+'">'+esc(st[0])+'</span>'+(r.age!==null?'<span class="pg-age"><i></i>Tồn '+r.age+' ngày</span>':'<span class="pg-age is-na">Chưa có ngày mở</span>')+pgDue(r)+'</div>'+
-      (r.phone?'<div class="pg-facts"><div><small>SĐT lái xe</small>'+(dial?'<a class="pg-tel" href="tel:'+esc(r.phone)+'">'+esc(r.phone)+'</a>':'<b>'+esc(r.phone)+'</b>')+'</div></div>':'')+
+    el.innerHTML='<div class="dr-sheet wk-cal pg-sheet pgd" role="dialog" aria-modal="true" aria-label="Chi tiết hồ sơ"><div class="pgd-bar"><b>'+esc(c.bienSo||'Hồ sơ')+'</b><span class="pgd-st" style="--c:'+st[1]+'"><i></i>'+esc(st[0])+'</span><button type="button" data-pgd="close" aria-label="Đóng">'+PGI.close+'</button></div>'+
+      '<div class="wk-xbody pgd-body"><section class="pgd-hero is-'+r.tone+'"><button type="button" class="pgd-x" data-pgd="close" aria-label="Đóng">'+PGI.close+'</button>'+
+        '<div class="pgd-eyebrow"><span class="pgd-st" style="--c:'+st[1]+'"><i></i>'+esc(st[0])+'</span>'+pgDue(r)+'</div>'+
+        '<h3 class="pgd-plate">'+esc(c.bienSo||'Hồ sơ')+'</h3>'+
+        (claimNo?'<div class="pgd-code"><span>'+esc(claimNo)+'</span><button type="button" data-pgd="copyno" data-v="'+esc(claimNo)+'" aria-label="Sao chép số hồ sơ">'+PGI.copy+'</button></div>':'')+
+        (sub?'<p class="pgd-sub">'+esc(sub)+'</p>':'')+
+        '<div class="pgd-metrics"><div><small>Tồn</small><b class="age">'+(r.age!==null?r.age+'<i>ngày</i>':'—')+'</b></div><div><small>Ngày mở</small><b>'+esc(r.openText||'—')+'</b></div><div><small>Ghi chú</small><b'+(r.stale?' class="warn"':'')+'>'+esc(noteTxt)+'</b></div></div>'+
+        (step?'<div class="pgd-steps" role="img" aria-label="Bước '+step+' trên '+total+'">'+PG_TON.map((_,i)=>'<i'+(i<step?' class="on"':'')+'></i>').join('')+'</div><p class="pgd-stepcap">Bước '+step+'/'+total+' · '+esc(st[0])+'</p>':'')+
+      '</section>'+
+      '<div class="pgd-acts">'+act(PGI.phone,'Gọi',r.phone&&dial?'href="tel:'+esc(r.phone)+'"':'disabled',!(r.phone&&dial))+act(PGI.copy,'Sao chép','data-pgd="copy"')+(fromNote?'':act(PGI.note,'Ghi chú','data-pgd="note"'))+'</div>'+
       secs+
-      '<div class="pg-lb">Ghi chú tiến độ gần nhất</div>'+(last?'<ul class="pg-hist is-one"><li class="is-latest"><div class="m"><b>'+esc(last.author||'—')+'</b><span>'+esc(pgDT(Number(last.timestamp)))+'</span>'+(isYmd(last.due)?'<span class="pg-dchip">'+CAL_ICO+'Hẹn '+esc(fmtYmd(last.due))+'</span>':'')+'</div><p>'+esc(last.content)+'</p></li></ul>':'<ul class="pg-hist is-one"><li class="pg-h0">Chưa có ghi chú tiến độ.</li></ul>')+
-      '</div><div class="wk-xfoot pg-dfoot"><button type="button" class="dt-btn" data-pgd="copy">'+PGI.copy+'<span>Sao chép</span></button>'+(fromNote?'':'<button type="button" class="dt-btn is-main" data-pgd="note">'+PGI.note+'<span>Ghi chú tiến độ</span></button>')+'</div></div>';
+      '<section class="pgd-sec"><h5>Ghi chú tiến độ gần nhất</h5>'+(last?'<div class="pgd-note"><p>'+esc(last.content)+'</p><small><b>'+esc(last.author||'—')+'</b><span>'+esc(pgDT(Number(last.timestamp)))+'</span>'+(isYmd(last.due)?'<span class="pg-dchip">'+CAL_ICO+'Hẹn '+esc(fmtYmd(last.due))+'</span>':'')+'</small></div>':'<div class="pgd-note is-empty">Chưa có ghi chú tiến độ cho hồ sơ này.</div>')+'</section>'+
+      '</div></div>';
     el.addEventListener('click',e=>{
       if(e.target===el)return closePgDetail();const b=e.target.closest('[data-pgd]');if(!b)return;const a=b.dataset.pgd;
       if(a==='close')closePgDetail();
+      else if(a==='copyno')pgCopy(b.dataset.v);
       else if(a==='copy')pgCopy(pgDetailText(r),'Đã sao chép thông tin hồ sơ '+(c.bienSo||''));
       else if(a==='note'){closePgDetail();openPgNote(r.id);}
     });
+    const sheet=el.firstChild,body=el.querySelector('.pgd-body');
+    body.addEventListener('scroll',()=>sheet.classList.toggle('is-scrolled',body.scrollTop>150),{passive:true});
     document.body.appendChild(el);pgd={id:r.id,el};
   }
 
@@ -7136,12 +7209,11 @@ window.TascoWeekly=(()=>{
   function buildPgNote(){
     const m=pgm,r=pgRowOf(m.id);if(!r)return closePgNote(false);
     const c=r.c,st=PG_ST[r.status]||[r.status,'#64748b'],tone=r.tone,dial=/^\+?\d{7,15}$/.test(r.phone);
-    const fact=(l,v)=>'<div><small>'+l+'</small><b>'+(v?esc(v):'—')+'</b></div>';
     m.el.firstChild.innerHTML='<div class="dr-sheet-h"><h4>'+esc(c.bienSo||'Hồ sơ')+'</h4><button type="button" data-pgm="close" aria-label="Đóng">'+PGI.close+'</button></div>'+
       '<div class="wk-xbody"><div class="pg-codeR"><span>'+esc(c.soHoSoBoiThuong||'—')+'</span>'+(c.soHoSoBoiThuong?'<button type="button" class="pg-cp is-lg" data-pgm="copy" data-v="'+esc(c.soHoSoBoiThuong)+'" aria-label="Sao chép số HSBT">'+PGI.copy+'</button>':'')+'</div>'+
       '<div class="pg-chipsR is-'+tone+'"><span class="pg-st" style="--c:'+st[1]+'">'+esc(st[0])+'</span>'+(r.age!==null?'<span class="pg-age"><i></i>Tồn '+r.age+' ngày</span>':'')+pgDue(r)+'</div>'+
-      '<div class="pg-facts">'+fact('Xe',r.car)+fact('Chủ xe',r.owner)+fact('Đơn vị cấp đơn',c.donViCapDon)+fact('Giám định viên',r.gdv==='Chưa rõ'?'':r.gdv)+fact('Ngày mở hồ sơ',r.openText)+
-        '<div><small>SĐT lái xe</small>'+(r.phone?(dial?'<a class="pg-tel" href="tel:'+esc(r.phone)+'">'+esc(r.phone)+'</a>':'<b>'+esc(r.phone)+'</b>'):'<b>—</b>')+'</div></div>'+
+      '<dl class="pgd-list">'+[['Xe',r.car],['Chủ xe',r.owner],['Đơn vị cấp đơn',pgBlank(c.donViCapDon)],['Giám định viên',r.gdv==='Chưa rõ'?'':r.gdv],['Ngày mở hồ sơ',r.openText]].filter(x=>x[1]).map(([l,v])=>'<div class="r"><dt>'+l+'</dt><dd>'+esc(v)+'</dd></div>').join('')+
+        (r.phone?'<div class="r"><dt>SĐT lái xe</dt><dd>'+(dial?'<a class="pg-tel" href="tel:'+esc(r.phone)+'">'+esc(r.phone)+'</a>':esc(r.phone))+'</dd></div>':'')+'</dl>'+
       '<button type="button" class="pg-det is-sheet" data-pgm="detail">'+PGI.info+'<span>Xem chi tiết hồ sơ</span>'+PGI.chevR+'</button>'+
       '<div class="pg-lb">Lịch sử ghi chú <small id="pgHistN"></small></div><ul class="pg-hist" id="pgHist"></ul>'+
       '<div class="pg-lb">Ghi chú mới</div><div class="pg-tpls">'+PG_TPL.map(t=>'<button type="button" class="pg-tp" data-pgm="tpl" data-v="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div>'+
