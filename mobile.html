@@ -126,9 +126,9 @@ html.tasco-lock-boot #tascoBootSplash > * { display: none !important; }
     <meta name="apple-mobile-web-app-title" content="TASCO DLK">
     <meta name="application-name" content="TASCO DLK">
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png?v=2">
     <!-- Icon hiển thị trên tab trình duyệt (Favicon) -->
-    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=2" />
     
     <!-- CSS & Fonts -->
     <!-- Font: kết nối sớm; display=swap giữ chữ hiện ngay bằng font hệ thống rồi mới đổi. -->
@@ -1251,9 +1251,7 @@ html.dark .search-btn { background: var(--app-teal); color: var(--app-navy); }
 /* Automotive insurance mark and the working home theme control. */
 .tasco-workspace .ws-mark .ws-brand-emblem { width: 27px; height: 27px; stroke-width: 1.65; }
 .tasco-workspace .ws-login-heading .ws-mark .ws-brand-emblem { width: 32px; height: 32px; }
-.ws-brand-emblem .ws-emblem-shield { fill: url(#tascoEmblemGrad); stroke: rgba(255, 255, 255, .75); stroke-width: .7; filter: drop-shadow(0 1.2px 1.6px rgba(0, 0, 0, .35)); }
-.ws-brand-emblem .ws-emblem-car { fill: #16345f; stroke: none; }
-.ws-brand-emblem .ws-emblem-car .ws-emblem-lamp { fill: #bdeff3; }
+.ws-brand-emblem .ws-emblem-t { fill: url(#tascoEmblemGrad); stroke: none; filter: drop-shadow(0 .8px 1.1px rgba(0, 0, 0, .32)); }
 .tasco-workspace .ws-greeting .ws-day { flex-shrink: 0; padding: 0; cursor: pointer; touch-action: manipulation; transition: background .18s, border-color .18s; }
 .tasco-workspace .ws-greeting .ws-day:hover { background: var(--ws-accent); border-color: var(--app-teal); }
 .tasco-workspace .ws-greeting .ws-day:active { transform: scale(.96); }
@@ -3248,7 +3246,7 @@ html.dark .tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data
     <link rel="stylesheet" href="tailwind.css">
 <script src="assets/markup.js?v=20261117b"></script>
 </head>
-<body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300"><div id="tascoLock" role="dialog" aria-modal="true" aria-label="TASCO DLK đang khoá" aria-hidden="true"><div class="al-inner"><div class="al-mark" aria-hidden="true"><svg class="al-ring" viewBox="0 0 148 148" fill="none"><circle class="al-ring-track" cx="74" cy="74" r="70"/><circle class="al-ring-arc" cx="74" cy="74" r="70" pathLength="100" stroke-dasharray="26 74"/></svg><div class="al-tile"><img class="al-logo" src="icons/icon-192.png" alt="" width="96" height="96" decoding="sync"></div></div><h1>TASCO DLK</h1><p class="al-sub">Ứng dụng đang khoá để bảo vệ hồ sơ</p><button type="button" class="al-btn" data-al-unlock><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1.5M15 10v1.5M12 10v4h-1M9 16.2c1.7 1.2 4.3 1.2 6 0"/></svg><span data-al-btn-text>Mở khoá bằng Face ID</span></button><p class="al-msg" data-al-msg role="status" aria-live="polite"></p></div></div><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="tascoEmblemGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4fdfe"/><stop offset=".45" stop-color="#b6e4ea"/><stop offset="1" stop-color="#4f9fac"/></linearGradient></defs></svg>
+<body class="tasco-workspace bg-[#fcfcfc] text-zinc-700 min-h-screen transition-colors duration-300"><div id="tascoLock" role="dialog" aria-modal="true" aria-label="TASCO DLK đang khoá" aria-hidden="true"><div class="al-inner"><div class="al-mark" aria-hidden="true"><svg class="al-ring" viewBox="0 0 148 148" fill="none"><circle class="al-ring-track" cx="74" cy="74" r="70"/><circle class="al-ring-arc" cx="74" cy="74" r="70" pathLength="100" stroke-dasharray="26 74"/></svg><div class="al-tile"><img class="al-logo" src="icons/icon-192.png?v=2" alt="" width="96" height="96" decoding="sync"></div></div><h1>TASCO DLK</h1><p class="al-sub">Ứng dụng đang khoá để bảo vệ hồ sơ</p><button type="button" class="al-btn" data-al-unlock><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1.5M15 10v1.5M12 10v4h-1M9 16.2c1.7 1.2 4.3 1.2 6 0"/></svg><span data-al-btn-text>Mở khoá bằng Face ID</span></button><p class="al-msg" data-al-msg role="status" aria-live="polite"></p></div></div><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="tascoEmblemGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#d9f3f7"/><stop offset="1" stop-color="#9fdbe4"/></linearGradient></defs></svg>
 <div id="tascoStatusBackdrop" aria-hidden="true"></div>
 <section id="tascoBootSplash" aria-labelledby="bootTitle" aria-busy="true">
   <div class="boot-aurora" aria-hidden="true"><i></i><i></i></div>
@@ -3256,7 +3254,7 @@ html.dark .tasco-workspace #lookupResultsSection .rq-heading .part-kind-tag[data
     <div class="boot-mark" aria-hidden="true">
       <span class="boot-halo"></span>
       <svg class="boot-ring" viewBox="0 0 148 148" fill="none"><circle class="boot-ring-track" cx="74" cy="74" r="70"/><circle class="boot-ring-arc" cx="74" cy="74" r="70" pathLength="100" stroke-dasharray="26 74"/><circle class="boot-ring-arc boot-ring-arc--2" cx="74" cy="74" r="70" pathLength="100" stroke-dasharray="8 92" stroke-dashoffset="-50"/></svg>
-      <div class="boot-tile"><img src="icons/icon-192.png" alt="" width="96" height="96" decoding="sync" fetchpriority="high"></div>
+      <div class="boot-tile"><img src="icons/icon-192.png?v=2" alt="" width="96" height="96" decoding="sync" fetchpriority="high"></div>
     </div>
     <h1 id="bootTitle" class="bx" style="--d:.2s">TASCO DLK</h1>
     <p class="boot-tag bx" style="--d:.32s">Sẵn sàng cho ngày làm việc.</p>
@@ -3383,7 +3381,7 @@ window.TascoBootSplash = (() => {
       <div class="login-card ws-login-card">
         <div class="ws-login-heading">
           <div class="ws-login-brand-row">
-            <span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="M11 15.2 12.3 11.4Q12.5 10.8 13.2 10.8H18.8Q19.5 10.8 19.7 11.4L21 15.2Z"/><rect x="9.4" y="14.6" width="13.2" height="6.2" rx="2.3"/><rect x="11" y="20.2" width="3" height="2.8" rx="1.1"/><rect x="18" y="20.2" width="3" height="2.8" rx="1.1"/><circle class="ws-emblem-lamp" cx="12.7" cy="17.5" r="1.05"/><circle class="ws-emblem-lamp" cx="19.3" cy="17.5" r="1.05"/></g></svg></span>
+            <span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="6.3 6.5 19.4 19.4" fill="none" aria-hidden="true"><path class="ws-emblem-t" d="M8.19 9.59Q8.19 8.72 9.06 8.72H22.94Q23.81 8.72 23.81 9.59V12.41Q23.81 13.28 22.94 13.28H18.44V22.41Q18.44 23.28 17.56 23.28H14.44Q13.56 23.28 13.56 22.41V13.28H9.06Q8.19 13.28 8.19 12.41Z"/></svg></span>
             <div><span class="ws-login-brand">TASCO DLK</span><small>Insurance workspace</small></div>
           </div>
           <h2 id="loginTitle">Chào mừng trở lại.</h2>
@@ -3423,7 +3421,7 @@ window.TascoBootSplash = (() => {
     <div id="mainApp" class="main-container" data-shell="premium-v6" data-page="login" style="display: none;">
         <!-- NEW HEADER -->
 <header id="mainHeader" class="ws-topbar">
-  <button type="button" class="ws-brand ws-focus" onclick="updateView('home')" aria-label="TASCO DLK · Trang chủ"><span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ws-emblem-shield" d="M16 3 27 7v9c0 6-4.7 10-11 13C9.7 26 5 22 5 16V7L16 3Z"/><g class="ws-emblem-car"><path d="M11 15.2 12.3 11.4Q12.5 10.8 13.2 10.8H18.8Q19.5 10.8 19.7 11.4L21 15.2Z"/><rect x="9.4" y="14.6" width="13.2" height="6.2" rx="2.3"/><rect x="11" y="20.2" width="3" height="2.8" rx="1.1"/><rect x="18" y="20.2" width="3" height="2.8" rx="1.1"/><circle class="ws-emblem-lamp" cx="12.7" cy="17.5" r="1.05"/><circle class="ws-emblem-lamp" cx="19.3" cy="17.5" r="1.05"/></g></svg></span><span><strong>TASCO DLK</strong><small>Insurance workspace</small></span></button>
+  <button type="button" class="ws-brand ws-focus" onclick="updateView('home')" aria-label="TASCO DLK · Trang chủ"><span class="ws-mark"><svg class="ws-icon ws-brand-emblem" viewBox="6.3 6.5 19.4 19.4" fill="none" aria-hidden="true"><path class="ws-emblem-t" d="M8.19 9.59Q8.19 8.72 9.06 8.72H22.94Q23.81 8.72 23.81 9.59V12.41Q23.81 13.28 22.94 13.28H18.44V22.41Q18.44 23.28 17.56 23.28H14.44Q13.56 23.28 13.56 22.41V13.28H9.06Q8.19 13.28 8.19 12.41Z"/></svg></span><span><strong>TASCO DLK</strong><small>Insurance workspace</small></span></button>
   <div class="ws-top-actions"><span id="headerDate" data-shell-date class="ws-date"></span><button type="button" id="tascoUpdatePill" class="ws-update-pill" data-update-short hidden onclick="tascoUpdateApp(this)" aria-label="Có phiên bản mới, chạm để cập nhật"><i aria-hidden="true"></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.2-4.2M12 15l4.2-4.2"/><path d="M5 19.5h14"/></svg><span data-update-status>Cập nhật</span></button><button type="button" id="headerAvatar" data-shell-avatar class="ws-avatar" onclick="openUserProfileModal()" aria-label="Mở tài khoản">HQ</button></div>
 </header>
 <header id="wsChildbar" class="ws-childbar" hidden><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><small>TASCO DLK</small><h1 id="wsPageTitle" tabindex="-1"></h1></div><button type="button" class="ws-home-return" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Trang chủ</span></button></header>
