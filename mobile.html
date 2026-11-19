@@ -6220,6 +6220,34 @@ button.wk-step-c{cursor:pointer}
 .wk-ch text.val.z{opacity:.6}
 .wk-ch path.fc{fill:color-mix(in srgb,var(--app-teal) 12%,transparent);stroke:var(--app-teal);stroke-width:1.2;stroke-dasharray:3 3;opacity:1}
 .wk-ch text.val.fc{fill:var(--app-teal);font-size:10.5px}
+.wk-cmp{display:grid;gap:10px}
+.cm-lg{display:flex;flex-wrap:wrap;gap:6px}
+.cm-chip{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 11px 0 9px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-surface);color:var(--ws-text);font:700 12px 'Plus Jakarta Sans',sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .12s}
+.cm-chip:active{transform:scale(.96)}.cm-chip i{width:10px;height:10px;border-radius:50%;background:var(--cc)}.cm-chip.is-off{opacity:.45}.cm-chip.is-off i{background:transparent;box-shadow:inset 0 0 0 2px var(--cc)}
+.c0{--cc:#2a78d6}.c1{--cc:#eb6834}.c2{--cc:#1baf7a}.c3{--cc:#eda100}.c4{--cc:#e87ba4}
+html.dark .c0{--cc:#3987e5}html.dark .c1{--cc:#d95926}html.dark .c2{--cc:#199e70}html.dark .c3{--cc:#c98500}html.dark .c4{--cc:#d55181}
+.wk-ln .ln{fill:none;stroke:var(--cc);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.wk-ln .dt{fill:var(--cc);stroke:var(--ws-bg);stroke-width:2}
+.wk-ln line.g{stroke:var(--ws-line);stroke-width:1;stroke-dasharray:2 4}.wk-ln line.g.b{stroke-dasharray:none}
+.wk-ln line.sel{stroke:var(--ws-muted);stroke-width:1;stroke-dasharray:3 3;opacity:.7}
+.wk-ln text.ya{font-size:9px;font-variant-numeric:tabular-nums}
+.wk-ln .hit{fill:transparent;cursor:pointer;pointer-events:all}
+.cm-rd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:9px 12px;border-radius:13px;background:var(--ws-soft);color:var(--ws-muted);font-size:12px;font-weight:600}
+.cm-rd>b{color:var(--ws-text);font-weight:800}
+.cm-rd span{display:inline-flex;align-items:center;gap:5px;color:var(--ws-text)}.cm-rd span i{width:8px;height:8px;border-radius:50%;background:var(--cc)}
+.cm-rd span b{font-variant-numeric:tabular-nums;font-weight:800}
+.cm-rank{display:grid;gap:8px}
+.cm-row{display:grid;grid-template-columns:22px 1fr auto;grid-template-areas:"no who n" "bar bar bar";align-items:center;gap:6px 10px;padding:12px 14px 11px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-surface)}
+.cm-row.is-off{opacity:.5}
+.cm-no{grid-area:no;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--cc);color:#fff;font-size:11px;font-weight:800}
+.cm-who{grid-area:who;min-width:0}.cm-who b{display:block;font-size:14px;font-weight:800;letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cm-who small{display:block;margin-top:1px;color:var(--ws-muted);font-size:11px;font-weight:600}
+.cm-n{grid-area:n;display:grid;gap:1px;justify-items:end}.cm-n>b{font-size:19px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.cm-n em{font-style:normal;font-size:11px;font-weight:800}.cm-n em{color:var(--ws-muted)}.cm-n em.up,.cm-n em.dn{color:var(--ws-text)}
+.cm-bar{grid-area:bar;position:relative;height:6px;margin-top:8px;border-radius:99px;background:var(--ws-soft)}
+.cm-bar i{display:block;height:100%;border-radius:99px;background:var(--cc)}
+.cm-bar small{position:absolute;right:0;top:-17px;color:var(--ws-muted);font-size:10.5px;font-weight:700}
+.cm-note{margin:0 2px;color:var(--ws-muted);font-size:11.5px;line-height:1.55}
 .wk-fc{margin-top:12px;padding:14px 16px 13px;border:1px solid color-mix(in srgb,var(--app-teal) 38%,var(--ws-line));border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--app-teal) 11%,var(--ws-bg)),var(--ws-bg) 70%)}
 .wk-fc-h{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--ws-muted);font-size:12px;font-weight:700}
 .wk-fc-h em{font-style:normal;padding:3px 9px;border-radius:99px;background:color-mix(in srgb,var(--ws-muted) 14%,transparent);font-size:11px;font-weight:800;white-space:nowrap}
@@ -6623,7 +6651,7 @@ window.TascoWeekly=(()=>{
   const CHEV=svg('<path d="m9 6 6 6-6 6"/>');
   const noAdminHtml='<div class="dr-empty"><b>Chỉ dành cho quản trị viên</b>Tài khoản của bạn không xem được báo cáo.</div>';
   let admin=false,onPage=false,eng=null,cfg=null,auth=null,me=null,users=null,claims=null,rules=null,rulesReady=false,claimsReady=false,notes=null,notesReady=false,notesDenied=false,result=null,
-      phase='idle',err='',busy=false,live=false,lastAt=0,openKey='',showZero=false,es={claims:null,rules:null,kpi:null,notes:null},retry={claims:0,rules:0,kpi:0,notes:0},timers={},
+      phase='idle',err='',busy=false,live=false,lastAt=0,openKey='',showZero=false,cmpSel=-1,cmpOff={},es={claims:null,rules:null,kpi:null,notes:null},retry={claims:0,rules:0,kpi:0,notes:0},timers={},
       sel={id:'week',off:1,s:'',e:''},uidKey='',lastEmail='',
       kcalc=null,kcalcFail=false,kpi=null,kpiReady=false,kres=null,ares=null,tab='week',kSel=(()=>{const n=new Date();return {y:n.getFullYear(),m:n.getMonth()+1};})(),ySel=new Date().getFullYear();
   try{const p=JSON.parse(ls(K.per)||'null');if(p&&p.id){const m=/^(week|month)(\d+)?$/.exec(String(p.id));sel=m?{id:m[1],off:Number.isFinite(+p.off)&&p.off!==undefined?Math.max(0,+p.off|0):(+m[2]||0),s:String(p.s||''),e:String(p.e||'')}:{id:'custom',off:0,s:String(p.s||''),e:String(p.e||'')};}}catch(_){}
@@ -7002,6 +7030,50 @@ window.TascoWeekly=(()=>{
       '<p class="dr-stamp">Dữ liệu hồ sơ đến '+esc(F.fmtDate(prep.asOf))+' ('+prep.records.length.toLocaleString('vi-VN')+' hồ sơ hợp lệ). Công thức giống trang KPI Zone của webapp. Cập nhật lúc '+esc(hhmmss(lastAt))+'.</p>';
   }
 
+  /* ---------- So sánh giám định viên theo tháng (đường xu hướng + xếp hạng) ---------- */
+  const CMP_MAX=5,short=n=>{const w=String(n||'').trim().split(/\s+/).filter(Boolean);return w.length>1?w.slice(-2).join(' '):(w[0]||'?');};
+  function cmpData(a){
+    const now=new Date(),cur=a.year===now.getFullYear(),end=cur?now.getMonth()-1:11;           // tháng đã trọn
+    const live=a.rows.filter(r=>r.total>0),order=live.map(r=>r.name).sort((x,y)=>x.localeCompare(y,'vi')),
+      col=n=>order.indexOf(n)%5,top=[...live].sort((x,y)=>y.total-x.total||x.name.localeCompare(y.name,'vi'));
+    const rows=top.slice(0,CMP_MAX).map(r=>{
+      const m=r.months,sum=(i,j)=>{let t=0;for(let k=Math.max(0,i);k<=j;k++)t+=m[k]||0;return t;};
+      let trend=null,base='';
+      if(end>=5){const rc=sum(end-2,end),pv=sum(end-5,end-3);if(pv>0){trend=Math.round((rc-pv)/pv*100);base='3 tháng trước';}}
+      else if(end>=1){const rc=m[end]||0,pv=m[end-1]||0;if(pv>0){trend=Math.round((rc-pv)/pv*100);base='T'+end;}}
+      let best=0;m.forEach((v,i)=>{if(v>m[best])best=i;});
+      return{name:r.name,idx:col(r.name),months:m,total:r.total,trend,base,best,bestV:m[best]};
+    });
+    return{rows,end,cur,live:live.length,hidden:Math.max(0,live.length-rows.length)};
+  }
+  function cmpChart(c,a){
+    const W=320,H=170,L=26,R=8,T=14,B=22,pw=W-L-R,ph=H-T-B,base=H-B,xs=i=>L+pw*(i/11),vis=c.rows.filter(r=>!cmpOff[r.name]);
+    const last=c.cur?new Date().getMonth():11;                                                  // đường dừng ở tháng hiện tại
+    const mx=Math.max(1,...vis.flatMap(r=>r.months.slice(0,last+1))),nice=(v=>{const p=Math.pow(10,Math.floor(Math.log10(v))),f=v/p;return(f<=1?1:f<=2?2:f<=5?5:10)*p;})(mx),ys=v=>base-v/nice*ph;
+    let g='',lines='',dots='',txt='';
+    [0,.5,1].forEach(f=>{const y=base-f*ph;g+='<line class="g'+(f?'':' b')+'" x1="'+L+'" x2="'+(W-R)+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'"/><text class="ya" x="'+(L-5)+'" y="'+(y+3).toFixed(1)+'" text-anchor="end">'+Math.round(nice*f*10)/10+'</text>';});
+    for(let i=0;i<12;i++)txt+='<text x="'+xs(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle"'+(i===cmpSel?' class="is-hi"':'')+'>T'+(i+1)+'</text>';
+    if(cmpSel>=0)g+='<line class="sel" x1="'+xs(cmpSel).toFixed(1)+'" x2="'+xs(cmpSel).toFixed(1)+'" y1="'+T+'" y2="'+base+'"/>';
+    vis.forEach(r=>{
+      const pts=r.months.slice(0,last+1).map((v,i)=>[xs(i),ys(v)]);
+      lines+='<polyline class="ln c'+r.idx+'" points="'+pts.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ')+'"/>';
+      pts.forEach((q,i)=>{if(i===cmpSel||i===last)dots+='<circle class="dt c'+r.idx+'" cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="'+(i===cmpSel?4.2:3.2)+'"/>';});
+    });
+    let hit='';for(let i=0;i<12;i++)hit+='<rect class="hit" data-wk="cmpm" data-v="'+i+'" x="'+(xs(i)-pw/22).toFixed(1)+'" y="0" width="'+(pw/11).toFixed(1)+'" height="'+H+'"/>';
+    return '<svg class="wk-ch wk-ln" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="So sánh số hồ sơ phát sinh theo tháng giữa các giám định viên năm '+a.year+'">'+g+lines+dots+txt+hit+'</svg>';
+  }
+  function cmpHtml(a){
+    const c=cmpData(a);if(c.rows.length<2)return '';
+    const F=n=>Number(n||0).toLocaleString('vi-VN'),vis=c.rows.filter(r=>!cmpOff[r.name]),maxT=Math.max(1,...c.rows.map(r=>r.total)),mi=new Date().getMonth();
+    const sel=cmpSel>=0&&cmpSel<12?cmpSel:(c.cur?mi:11);
+    const legend='<div class="cm-lg" role="group" aria-label="Chọn giám định viên hiển thị">'+c.rows.map(r=>'<button type="button" class="cm-chip c'+r.idx+(cmpOff[r.name]?' is-off':'')+'" data-wk="cmpt" data-k="'+esc(r.name)+'" aria-pressed="'+!cmpOff[r.name]+'"><i></i>'+esc(short(r.name))+'</button>').join('')+'</div>';
+    const rd='<div class="cm-rd" aria-live="polite"><b>Tháng '+(sel+1)+(c.cur&&sel===mi?' (đang diễn ra)':'')+'</b>'+vis.map(r=>'<span class="c'+r.idx+'"><i></i>'+esc(short(r.name))+' <b>'+F(r.months[sel])+'</b></span>').join('')+'</div>';
+    const trendTxt=r=>r.trend===null?'<em class="fl">—</em>':'<em class="'+(r.trend>0?'up':r.trend<0?'dn':'fl')+'">'+(r.trend>0?'▲ ':r.trend<0?'▼ ':'= ')+Math.abs(r.trend)+'%</em>';
+    const rank=c.rows.map((r,i)=>'<div class="cm-row c'+r.idx+(cmpOff[r.name]?' is-off':'')+'"><span class="cm-no">'+(i+1)+'</span><div class="cm-who"><b>'+esc(r.name)+'</b><small>Cao nhất T'+(r.best+1)+' · '+F(r.bestV)+' hồ sơ'+'</small></div><div class="cm-n"><b>'+F(r.total)+'</b>'+trendTxt(r)+'</div><div class="cm-bar"><i style="width:'+(r.total/maxT*100).toFixed(1)+'%"></i><small>'+(a.total?Math.round(r.total/a.total*100):0)+'%</small></div></div>').join('');
+    const lead=c.rows[0];
+    const note='<p class="cm-note">'+esc(short(lead.name))+' xử lý nhiều nhất, chiếm '+(a.total?Math.round(lead.total/a.total*100):0)+'% hồ sơ cả năm.'+(c.hidden?' Chỉ hiển thị '+c.rows.length+' người đầu bảng, còn '+c.hidden+' người khác.':'')+' Xu hướng = '+(c.end>=5?'3 tháng đã trọn gần nhất so với 3 tháng liền trước':'tháng đã trọn gần nhất so với tháng liền trước')+(c.cur?' (không tính tháng đang diễn ra)':'')+'.</p>';
+    return '<div class="dr-count">So sánh giám định viên · xu hướng theo tháng</div><section class="wk-cmp" aria-label="So sánh giám định viên">'+legend+'<div class="wk-chart">'+cmpChart(c,a)+'</div>'+rd+'<div class="cm-rank">'+rank+'</div>'+note+'</section>';
+  }
   function yearHtml(){
     const a=ares,F=(n)=>Number(n||0).toLocaleString('vi-VN'),act=a.totals.filter(n=>n>0).length,peak=a.totals.reduce((b,v,i)=>v>a.totals[b]?i:b,0);
     const live=a.rows.filter(r=>r.total>0),idle=a.rows.filter(r=>!r.total),shown=showZero?a.rows:live;
@@ -7019,6 +7091,7 @@ window.TascoWeekly=(()=>{
     return '<div class="dr-kpis">'+tile('Hồ sơ phát sinh',F(a.total),'cả năm '+a.year,215)+tile('Trung bình/tháng',act?(a.total/act).toLocaleString('vi-VN',{maximumFractionDigits:1}):'0',act+' tháng có hồ sơ',152)+
         tile('Tháng cao nhất',a.total?'T'+(peak+1):'—',a.total?F(a.totals[peak])+' hồ sơ':'chưa có hồ sơ',38)+tile('VCX / TNDS',F(a.typeTotals.VCX.total)+' / '+F(a.typeTotals.TNDS.total),'hồ sơ theo loại',0)+'</div>'+fcCard+
       '<div class="dr-count">Hồ sơ phát sinh theo tháng</div><div class="wk-chart">'+barChart(a.totals,a.totals.map((_,i)=>'T'+(i+1)),a.total?peak:-1,F,'Hồ sơ phát sinh theo tháng năm '+a.year,true,fc?{i:fc.month,v:fc.est}:null)+'</div>'+
+      cmpHtml(a)+
       '<div class="dr-count">Theo giám định viên · '+live.length+' người có hồ sơ</div><div class="dr-list">'+(shown.length?shown.map(card).join(''):'<div class="dr-empty"><b>Chưa có hồ sơ trong năm '+a.year+'</b>Thử chọn năm khác.</div>')+'</div>'+
       (idle.length?'<button type="button" class="wk-more" data-wk="zero">'+(showZero?'Ẩn':'Hiện')+' '+idle.length+' người không có hồ sơ</button>':'')+
       '<p class="dr-stamp">Hồ sơ phát sinh tính theo ngày mở hồ sơ, đọc trực tiếp từ Firebase của webapp. Số dự đoán chỉ là ước lượng theo nhịp các ngày đã qua và trung bình các tháng trước. Cập nhật lúc '+esc(hhmmss(lastAt))+'.</p>';
@@ -7530,6 +7603,8 @@ window.TascoWeekly=(()=>{
       ls(K.per,JSON.stringify(sel));paintAll();schedule(0);
     }else if(k==='open'){openKey=openKey===b.dataset.k?'':b.dataset.k;paintBody();}
     else if(k==='zero'){showZero=!showZero;paintBody();}
+    else if(k==='cmpm'){const i=Number(b.dataset.v);cmpSel=cmpSel===i?-1:i;paintBody();}
+    else if(k==='cmpt'){const n=b.dataset.k;if(cmpOff[n])delete cmpOff[n];else cmpOff[n]=true;if(ares&&cmpData(ares).rows.every(r=>cmpOff[r.name]))delete cmpOff[n];paintBody();}
     else if(k==='export')openX();
     else if(k==='pgq'){const v=b.dataset.v;pg.quick=pg.quick===v&&v!=='all'?'all':v;pg.n=PG_PAGE;paintProg();}
     else if(k==='pggdv'){pg.gdv=pg.gdv===b.dataset.v?'all':b.dataset.v;pg.n=PG_PAGE;paintProg();}
