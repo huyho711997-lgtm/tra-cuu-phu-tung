@@ -6176,6 +6176,23 @@ button.wk-step-c{cursor:pointer}
 .pg-av{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:hsl(var(--h,200) 42% 42%);color:#fff;font-size:11px;font-style:normal;font-weight:800}
 .pg-av.is-0{background:var(--ws-line);color:var(--ws-muted)}
 .pg-picks-row,#pgPicks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.pg-dd{position:relative;min-width:0}
+.pg-dd .pg-pick{width:100%}
+.pg-pick>svg:last-child{transition:transform .2s}
+.pg-pick[aria-expanded=true]{border-color:var(--app-teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-teal) 16%,transparent)}
+.pg-pick[aria-expanded=true]>svg:last-child{transform:rotate(180deg);color:var(--app-teal)}
+.pg-menu{position:absolute;z-index:30;top:calc(100% + 6px);left:0;width:max(100%,236px);max-width:calc(100vw - 36px);max-height:min(340px,52vh);overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:6px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-bg);box-shadow:0 18px 40px -12px rgba(15,32,60,.32),0 2px 6px rgba(15,32,60,.08);transform-origin:top left;animation:pgMenuIn .16s cubic-bezier(.2,.8,.2,1)}
+.pg-dd:nth-child(2) .pg-menu{left:auto;right:0;transform-origin:top right}
+@keyframes pgMenuIn{from{opacity:0;transform:translateY(-4px) scale(.97)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.pg-menu{animation:none}}
+.pg-opt{position:relative;display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:6px 34px 6px 10px;border:0;border-radius:11px;background:transparent;color:var(--ws-text);font:600 13.5px/1.25 'Plus Jakarta Sans',sans-serif;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pg-opt:active{background:var(--ws-soft)}
+.pg-opt i{flex:none;width:9px;height:9px;border-radius:50%}
+.pg-opt span{flex:1;min-width:0}
+.pg-opt small{flex:none;min-width:24px;padding:2px 7px;border-radius:99px;background:color-mix(in srgb,var(--app-navy) 8%,transparent);color:var(--ws-text);font-size:11px;font-weight:700;text-align:center}
+.pg-opt svg{position:absolute;right:10px;top:50%;width:16px;height:16px;margin-top:-8px;color:var(--app-teal)}
+.dark .pg-opt small{background:rgba(255,255,255,.1)}
+.pg-opt[aria-selected=true]{background:color-mix(in srgb,var(--app-teal) 11%,transparent);font-weight:800}
 .pg-pick{display:flex;align-items:center;gap:6px;min-width:0;height:54px;padding:0 10px 0 15px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-bg);color:var(--ws-text);font-family:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 1px 2px rgba(24,48,86,.04);transition:transform .12s,border-color .2s,background .2s}
 .pg-pick:active{transform:scale(.98)}
 .pg-pick>svg:last-child{flex:none;width:16px;height:16px;margin-left:auto;color:var(--ws-muted)}
@@ -6966,7 +6983,7 @@ window.TascoWeekly=(()=>{
   function paintProgList(){
     const root=$('pgRoot');if(!root||!prog)return;const q=s=>root.querySelector(s),rows=prog.rows,{scoped,list}=pgView(),now=Date.now();
     const sortL=(PG_SORT.find(x=>x[0]===pg.sort)||PG_SORT[0])[1],stL=pg.status==='all'?'Mọi trạng thái':(PG_ST[pg.status]||[pg.status])[0];
-    const pick=(k,ico,cap,val,on)=>'<button type="button" class="pg-pick'+(on?' is-on':'')+'" data-wk="pgpick" data-v="'+k+'" aria-haspopup="dialog"><span class="pg-pk"><small>'+cap+'</small><b>'+esc(val)+'</b></span>'+PGI.chev+'</button>';
+    const pick=(k,ico,cap,val,on)=>'<div class="pg-dd"><button type="button" class="pg-pick'+(on?' is-on':'')+'" data-wk="pgpick" data-v="'+k+'" aria-haspopup="listbox" aria-expanded="false"><span class="pg-pk"><small>'+cap+'</small><b>'+esc(val)+'</b></span>'+PGI.chev+'</button></div>';
     q('#pgPicks').innerHTML=pick('status',0,'Trạng thái',stL,pg.status!=='all')+pick('sort',0,'Sắp xếp',sortL,false);
     const items=PG_QUICK.filter(([k])=>k!=='mine'||rows.some(r=>r.mine)).map(([k,l])=>'<button type="button" class="pg-ch'+(pg.quick===k?' is-on':'')+'" data-wk="pgq" data-v="'+k+'" aria-pressed="'+(pg.quick===k)+'">'+l+'<small>'+scoped.filter(PG_QT[k]).length+'</small></button>').join('');
     const x=(l,k)=>'<button type="button" class="pg-ch is-on" data-wk="pgrm" data-v="'+k+'" aria-label="Bỏ lọc '+esc(l)+'">'+esc(l)+PGI.close+'</button>';
@@ -6982,23 +6999,34 @@ window.TascoWeekly=(()=>{
     if(pgm)paintPgHist();
   }
 
-  /* ---------- hộp chọn (trạng thái / sắp xếp) ---------- */
-  function closePgPick(){if(pgp?.el)pgp.el.remove();pgp=null;}
-  function openPgPick(kind){
-    if(!prog)return;closePgPick();
+  /* ---------- dropdown chọn (trạng thái / sắp xếp) — neo ngay dưới nút ---------- */
+  function closePgPick(){
+    if(!pgp)return;
+    if(pgp.btn)pgp.btn.setAttribute('aria-expanded','false');
+    if(pgp.el)pgp.el.remove();
+    document.removeEventListener('pointerdown',pgp.out,true);
+    pgp=null;
+  }
+  function openPgPick(kind,btn){
+    if(!prog)return;
+    btn=btn||document.querySelector('.pg-pick[data-v="'+kind+'"]');if(!btn)return;
+    const same=pgp&&pgp.kind===kind;closePgPick();if(same)return;   // bấm lại nút đang mở = đóng
     const CHK=svg('<path d="m5 12 5 5 9-10"/>'),rows=prog.rows;let title,opts,cur;
     if(kind==='sort'){title='Sắp xếp danh sách';cur=pg.sort;opts=PG_SORT.map(([v,l])=>({v,l}));}
     else{title='Trạng thái hồ sơ';cur=pg.status;opts=[{v:'all',l:'Tất cả trạng thái',n:rows.length},...PG_TON.filter(k=>rows.some(r=>r.status===k)).map(k=>({v:k,l:PG_ST[k][0],n:rows.filter(r=>r.status===k).length,c:PG_ST[k][1]}))];}
-    const el=document.createElement('div');el.className='dr-sheet-bg wk-cal-bg';
-    el.innerHTML='<div class="dr-sheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><div class="dr-sheet-h"><h4>'+esc(title)+'</h4><button type="button" data-pgp="close" aria-label="Đóng">'+PGI.close+'</button></div><div class="dr-opts" role="listbox">'+
-      opts.map(o=>'<button type="button" class="dr-opt" role="option" data-pgp="'+kind+'" data-v="'+esc(o.v)+'" aria-selected="'+(o.v===cur)+'">'+(o.c?'<i style="background:'+o.c+'"></i>':'')+'<span>'+esc(o.l)+'</span>'+(o.n!==undefined?'<small>'+o.n+'</small>':'')+(o.v===cur?CHK:'')+'</button>').join('')+'</div></div>';
+    const el=document.createElement('div');el.className='pg-menu';el.setAttribute('role','listbox');el.setAttribute('aria-label',title);
+    el.innerHTML=opts.map(o=>'<button type="button" class="pg-opt" role="option" data-pgp="'+kind+'" data-v="'+esc(o.v)+'" aria-selected="'+(o.v===cur)+'">'+(o.c?'<i style="background:'+o.c+'"></i>':'')+'<span>'+esc(o.l)+'</span>'+(o.n!==undefined?'<small>'+o.n+'</small>':'')+(o.v===cur?CHK:'')+'</button>').join('');
     el.addEventListener('click',e=>{
-      if(e.target===el)return closePgPick();const b=e.target.closest('[data-pgp]');if(!b)return;const a=b.dataset.pgp;
-      if(a==='close')return closePgPick();
-      if(a==='sort'){pg.sort=b.dataset.v;ls(PGK,pg.sort);}else if(a==='status')pg.status=b.dataset.v;
+      const o=e.target.closest('[data-pgp]');if(!o)return;
+      if(kind==='sort'){pg.sort=o.dataset.v;ls(PGK,pg.sort);}else pg.status=o.dataset.v;
       pg.n=PG_PAGE;closePgPick();paintProgList();
     });
-    document.body.appendChild(el);pgp={kind,el};
+    const wrap=btn.closest('.pg-dd')||btn.parentElement;wrap.appendChild(el);
+    btn.setAttribute('aria-expanded','true');
+    const out=e=>{if(!wrap.contains(e.target))closePgPick();};   // chạm ra ngoài thì đóng
+    document.addEventListener('pointerdown',out,true);
+    pgp={kind,el,btn,out};
+    const cur_=el.querySelector('[aria-selected=true]');if(cur_)el.scrollTop=Math.max(0,cur_.offsetTop-60);
   }
 
   /* ---------- hộp ghi chú tiến độ ---------- */
@@ -7259,7 +7287,7 @@ window.TascoWeekly=(()=>{
     else if(k==='pgq'){const v=b.dataset.v;pg.quick=pg.quick===v&&v!=='all'?'all':v;pg.n=PG_PAGE;paintProg();}
     else if(k==='pggdv'){pg.gdv=pg.gdv===b.dataset.v?'all':b.dataset.v;pg.n=PG_PAGE;paintProg();}
     else if(k==='pgview'){pg.view=b.dataset.v;paintProg();}
-    else if(k==='pgpick')openPgPick(b.dataset.v);
+    else if(k==='pgpick')openPgPick(b.dataset.v,b);
     else if(k==='pgopen')openPgNote(b.dataset.id);
     else if(k==='pgcopy')pgCopy(b.dataset.v);
     else if(k==='pgmore'){pg.n+=PG_PAGE;paintProgList();}
