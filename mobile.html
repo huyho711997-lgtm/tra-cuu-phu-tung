@@ -6268,6 +6268,16 @@ button.wk-step-c{cursor:pointer}
 .pg-facts small{display:block;color:var(--ws-muted);font-size:10.5px;font-weight:700}
 .pg-facts b,.pg-tel{display:block;margin-top:2px;font-size:13px;font-weight:700;overflow-wrap:anywhere}
 .pg-tel{color:var(--app-teal);text-decoration:none;font-variant-numeric:tabular-nums}
+.pg-det{pointer-events:auto;z-index:2;display:flex;align-items:center;gap:8px;width:100%;min-height:40px;padding:0 12px;border:1px solid var(--ws-line);border-radius:12px;background:transparent;color:var(--ws-muted);font:700 12.5px 'Plus Jakarta Sans',sans-serif;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pg-det:active{background:var(--ws-soft)}
+.pg-det span{flex:1;min-width:0}
+.pg-det svg{flex:none;width:16px;height:16px}.pg-det svg:last-child{width:15px;height:15px;opacity:.7}
+.pg-det.is-sheet{margin-top:14px}
+.pg-card>.pg-det{pointer-events:auto;z-index:2}
+.pg-facts>div.is-long{grid-column:1/-1}
+.pg-facts>div.is-long b{font-weight:600;line-height:1.5;white-space:pre-wrap}
+.pg-hist.is-one{max-height:none}
+.pg-dfoot{display:flex;gap:10px}.pg-dfoot .dt-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px}.pg-dfoot .dt-btn svg{width:16px;height:16px}
 .pg-lb{margin:16px 2px 7px;color:var(--ws-muted);font-size:12px;font-weight:700}.pg-lb small{font-weight:600}
 .pg-hist{display:grid;gap:8px;max-height:210px;margin:0;padding:0;overflow-y:auto;list-style:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .pg-hist li{padding:10px 12px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-bg)}
@@ -6738,7 +6748,7 @@ window.TascoWeekly=(()=>{
     else if(a==='day')pickDay(b.dataset.v);
     else if(a==='today')pickDay(todayYmd());
   }
-  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(cal)closeCal();else if(pgp)closePgPick();else if(pgm)closePgNote();else if(xp)closeX();else if(msh)closeMsh();});
+  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(cal)closeCal();else if(pgp)closePgPick();else if(pgd)closePgDetail();else if(pgm)closePgNote();else if(xp)closeX();else if(msh)closeMsh();});
   const $=id=>document.getElementById(id);
   const money=v=>Number(v||0).toLocaleString('vi-VN')+' đ';
   const hhmmss=t=>t?new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'';
@@ -6905,9 +6915,11 @@ window.TascoWeekly=(()=>{
     filter:svg('<path d="M22 3H2l8 9.5V19l4 2v-8.5z"/>'),
     sort:svg('<path d="M3 6h13M3 12h9M3 18h5M17 10v10m0 0-3-3m3 3 3-3"/>'),
     phone:svg('<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>'),
+    info:svg('<circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.5M12 7.6v.1"/>'),
+    chevR:svg('<path d="m9 6 6 6-6 6"/>'),
     chev:svg('<path d="m6 9 6 6 6-6"/>'),close:svg('<path d="M6 6l12 12M18 6 6 18"/>'),check:svg('<path d="m5 12 5 5 9-10"/>'),reset:svg('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>')
   };
-  let pg={q:'',status:'all',gdv:'all',quick:'all',sort:'age',view:'age',n:PG_PAGE},prog=null,pgm=null,pgp=null,pgTimer=0;const pgDraft={};
+  let pg={q:'',status:'all',gdv:'all',quick:'all',sort:'age',view:'age',n:PG_PAGE},prog=null,pgm=null,pgp=null,pgd=null,pgTimer=0;const pgDraft={};
   {const s=ls(PGK);if(PG_SORT.some(x=>x[0]===s))pg.sort=s;}
   const pgPlain=t=>String(t??'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
   const pgHue=t=>{let h=0;for(const ch of String(t||''))h=(h*31+ch.charCodeAt(0))%360;return h;};
@@ -6977,7 +6989,8 @@ window.TascoWeekly=(()=>{
       '<div class="pg-foot"><span class="pg-who"><i class="pg-av'+(unk?' is-0':'')+'" style="--h:'+pgHue(r.gdv)+'">'+esc(unk?'?':pgInit(r.gdv))+'</i><span>'+esc(unk?'Chưa phân công':r.gdv)+'</span></span>'+
         (r.phone?(dial?'<a class="pg-call" href="tel:'+esc(r.phone)+'" aria-label="Gọi lái xe '+esc(r.phone)+'">'+PGI.phone+esc(r.phone)+'</a>':'<span class="pg-call is-text">'+esc(r.phone)+'</span>'):'')+'</div>'+
       (last?'<div class="pg-note'+(r.stale?' is-old':'')+'"><p>'+esc(last.content)+'</p><small><span>'+esc(last.author||'—')+' · '+esc(pgAgo(Number(last.timestamp),Date.now()))+'</span>'+pgDue(r)+(r.stale?'<span class="pg-need">Cần cập nhật</span>':'')+'</small></div>'
-        :'<div class="pg-note is-empty">'+PGI.note+'<span>Chưa có ghi chú · chạm để thêm</span></div>')+'</article>';
+        :'<div class="pg-note is-empty">'+PGI.note+'<span>Chưa có ghi chú · chạm để thêm</span></div>')+
+      '<button type="button" class="pg-det" data-wk="pgdet" data-id="'+esc(r.id)+'" aria-label="Xem chi tiết hồ sơ '+esc(c.bienSo||c.soHoSoBoiThuong||'')+'">'+PGI.info+'<span>Xem chi tiết hồ sơ</span>'+PGI.chevR+'</button></article>';
   }
   const pgTile=(q,l,v,m,h)=>'<button type="button" class="dr-kpi pg-tile'+(pg.quick===q?' is-on':'')+'" style="--h:'+h+'" data-wk="pgq" data-v="'+q+'" aria-pressed="'+(pg.quick===q)+'"><small>'+esc(l)+'</small><b>'+v.toLocaleString('vi-VN')+'</b><span>'+esc(m)+'</span></button>';
   function pgShell(){
@@ -7054,6 +7067,58 @@ window.TascoWeekly=(()=>{
     document.body.appendChild(el);pgp={kind,el};
   }
 
+  /* ---------- chi tiết hồ sơ (chỉ xem) ---------- */
+  const pgBlank=v=>{if(v===undefined||v===null)return '';const t=String(v).trim();return !t||/^(—|–|-|n\/a|null|undefined)$/i.test(t)?'':t;};
+  const pgDateTxt=v=>{
+    if(typeof v==='number'&&v>1e11){const d=new Date(v);return pad2(d.getDate())+'/'+pad2(d.getMonth()+1)+'/'+d.getFullYear();}
+    const t=pgBlank(v);if(!t)return '';
+    let m=/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/.exec(t);if(m)return pad2(+m[1])+'/'+pad2(+m[2])+'/'+m[3];
+    m=/^(\d{4})-(\d{2})-(\d{2})/.exec(t);if(m)return m[3]+'/'+m[2]+'/'+m[1];
+    return t.split(/\s+/)[0];
+  };
+  const pgMoneyTxt=v=>{const t=pgBlank(v);if(!t)return '';const n=typeof v==='number'?Math.round(v):Number(t.replace(/[^\d]/g,''));return n>0?n.toLocaleString('vi-VN')+' đ':'';};
+  const pgFirst=(c,keys)=>{for(const k of keys){const v=pgBlank(c[k]);if(v)return v;}return '';};
+  /* [tiêu đề, [[nhãn, giá trị, kiểu?]...]] — kiểu: 'long' = dòng đầy đủ; bỏ qua dòng/nhóm rỗng */
+  function pgDetailData(r){
+    const c=r.c,dt=k=>pgDateTxt(pgFirst(c,Array.isArray(k)?k:[k])),tx=k=>pgFirst(c,Array.isArray(k)?k:[k]);
+    const nv=tx(['maSpNghiepVu','nghiepVu','loaiHinhBaoHiem']),eff=[dt('ngayHieuLuc'),dt('ngayHetHan')].filter(Boolean).join(' → ');
+    const claimNo=tx('soHoSoBoiThuong'),hsbt=tx('soHsbt');
+    return [
+      ['Thông tin hồ sơ',[['Số HS bồi thường',claimNo],['Số HSBT',hsbt&&hsbt!==claimNo?hsbt:''],['Nghiệp vụ',nv||[c.vcx?'VCX':'',c.tnds?'TNDS':''].filter(Boolean).join(' · ')],['Chủ xe',r.owner],['Xe',r.car],['Loại xe',tx('loaiXe')],['Số khung / số máy',tx('soKhungSoMay'),'long'],['Số hợp đồng',tx('soHd')],['Số GCN',tx('soGcn')],['Hiệu lực bảo hiểm',eff]]],
+      ['Tổn thất',[['Ngày xảy ra',dt(['ngayVTT','ngayTonThat','date'])],['Ngày thông báo',dt('ngayThongBao')],['Ngày mở hồ sơ',r.openText||dt('ngayMoHs')],['Ngày nhận đủ hồ sơ',dt('ngayNhanDuHoSo')],['Tỉnh / địa điểm',[tx('tinhTonThat'),tx(['diaDiemVTT','diaDiemTonThat'])].filter(Boolean).join(' · '),'long'],['Nguyên nhân',tx(['nguyenNhan','nhomNguyenNhan']),'long'],['Mô tả tổn thất',tx(['moTaTonThat','dienBienTonThat']),'long'],['Ước thiệt hại',pgMoneyTxt(c.uocThietHai)]]],
+      ['Đơn vị xử lý',[['Đơn vị cấp đơn',tx(['donViCapDon','chiNhanh'])],['Chi nhánh xử lý',tx('chiNhanhXuly')],['TTKD',tx(['ttkd','phongBan'])],['Zone bồi thường',tx(['zoneBoiThuong','khuVucGiamDinh'])],['GĐV tiếp nhận',tx('gdvTiepNhan')],['Cán bộ xử lý',tx('canBoXuLy')],['Gara sửa chữa',tx(['garaSuaChua','tenGara','tenGaraVietTat']),'long']]],
+      ['Duyệt & thanh toán',[['Tờ trình duyệt',dt(['toTrinhNgayDuyet','toTrinhBtNgayDuyet'])],['Người duyệt tờ trình',tx('toTrinhNguoiDuyet')],['PASC duyệt',dt('pascNgayDuyet')],['Người duyệt PASC',tx('pascNguoiDuyet')],['Ngày duyệt HSBT',dt('ngayDuyetHsbt')],['Số tiền bồi thường',pgMoneyTxt(c.ttbtTongSoTienBoiThuong||c.tongBoiThuongSauThue||c.pascSoTienDuyet||c.soTienDuyetBT||c.ttbtSoTienBoiThuong||c.amount)],['Dự phòng bồi thường',pgMoneyTxt(c.duPhongBoiThuong)],['Đã thanh toán',pgMoneyTxt(c.soTienDaThanhToan)],['Ngày thanh toán',dt('ngayThanhToan')],['KT xác nhận',dt('ngayKtXacNhan')]]],
+      ['Ghi chú trên hồ sơ',[['Ghi chú',tx(['ghiChu','ghiChuHoSo']),'long'],['Ghi chú TNDS',tx('tndsGhiChu'),'long']]]
+    ].map(([t,rows])=>[t,rows.filter(x=>x[1])]).filter(x=>x[1].length);
+  }
+  function pgDetailText(r){
+    const c=r.c,st=(PG_ST[r.status]||[r.status])[0],out=['HỒ SƠ TỒN '+(c.bienSo||'—'),st+(r.age!==null?' · tồn '+r.age+' ngày':'')];
+    if(r.phone)out.push('SĐT lái xe: '+r.phone);
+    pgDetailData(r).forEach(([t,rows])=>{out.push('','■ '+t);rows.forEach(([l,v])=>out.push(l+': '+v));});
+    if(r.last)out.push('','■ Ghi chú tiến độ gần nhất','('+(r.last.author||'—')+' · '+pgDT(Number(r.last.timestamp))+(r.dueIso?' · hẹn '+fmtYmd(r.dueIso):'')+') '+r.last.content);
+    return out.join('\n');
+  }
+  function closePgDetail(){if(!pgd)return;pgd.el.remove();pgd=null;}
+  function openPgDetail(id){
+    const r=pgRowOf(id);if(!r)return;closePgPick();closePgDetail();
+    const c=r.c,st=PG_ST[r.status]||[r.status,'#64748b'],dial=/^\+?\d{7,15}$/.test(r.phone),fromNote=!!pgm,last=r.last;
+    const secs=pgDetailData(r).map(([t,rows])=>'<div class="pg-lb">'+esc(t)+'</div><div class="pg-facts">'+rows.map(([l,v,k])=>'<div'+(k==='long'?' class="is-long"':'')+'><small>'+esc(l)+'</small><b>'+esc(v)+'</b></div>').join('')+'</div>').join('');
+    const el=document.createElement('div');el.className='dr-sheet-bg wk-cal-bg pg-bg';
+    el.innerHTML='<div class="dr-sheet wk-cal pg-sheet" role="dialog" aria-modal="true" aria-label="Chi tiết hồ sơ"><div class="dr-sheet-h"><h4>'+esc(c.bienSo||'Chi tiết hồ sơ')+'</h4><button type="button" data-pgd="close" aria-label="Đóng">'+PGI.close+'</button></div>'+
+      '<div class="wk-xbody"><div class="pg-chipsR is-'+r.tone+'"><span class="pg-st" style="--c:'+st[1]+'">'+esc(st[0])+'</span>'+(r.age!==null?'<span class="pg-age"><i></i>Tồn '+r.age+' ngày</span>':'<span class="pg-age is-na">Chưa có ngày mở</span>')+pgDue(r)+'</div>'+
+      (r.phone?'<div class="pg-facts"><div><small>SĐT lái xe</small>'+(dial?'<a class="pg-tel" href="tel:'+esc(r.phone)+'">'+esc(r.phone)+'</a>':'<b>'+esc(r.phone)+'</b>')+'</div></div>':'')+
+      secs+
+      '<div class="pg-lb">Ghi chú tiến độ gần nhất</div>'+(last?'<ul class="pg-hist is-one"><li class="is-latest"><div class="m"><b>'+esc(last.author||'—')+'</b><span>'+esc(pgDT(Number(last.timestamp)))+'</span>'+(isYmd(last.due)?'<span class="pg-dchip">'+CAL_ICO+'Hẹn '+esc(fmtYmd(last.due))+'</span>':'')+'</div><p>'+esc(last.content)+'</p></li></ul>':'<ul class="pg-hist is-one"><li class="pg-h0">Chưa có ghi chú tiến độ.</li></ul>')+
+      '</div><div class="wk-xfoot pg-dfoot"><button type="button" class="dt-btn" data-pgd="copy">'+PGI.copy+'<span>Sao chép</span></button>'+(fromNote?'':'<button type="button" class="dt-btn is-main" data-pgd="note">'+PGI.note+'<span>Ghi chú tiến độ</span></button>')+'</div></div>';
+    el.addEventListener('click',e=>{
+      if(e.target===el)return closePgDetail();const b=e.target.closest('[data-pgd]');if(!b)return;const a=b.dataset.pgd;
+      if(a==='close')closePgDetail();
+      else if(a==='copy')pgCopy(pgDetailText(r),'Đã sao chép thông tin hồ sơ '+(c.bienSo||''));
+      else if(a==='note'){closePgDetail();openPgNote(r.id);}
+    });
+    document.body.appendChild(el);pgd={id:r.id,el};
+  }
+
   /* ---------- hộp ghi chú tiến độ ---------- */
   function closePgNote(keep){
     if(!pgm)return;const m=pgm,ta=m.el.querySelector('#pgNoteTa');
@@ -7077,6 +7142,7 @@ window.TascoWeekly=(()=>{
       '<div class="pg-chipsR is-'+tone+'"><span class="pg-st" style="--c:'+st[1]+'">'+esc(st[0])+'</span>'+(r.age!==null?'<span class="pg-age"><i></i>Tồn '+r.age+' ngày</span>':'')+pgDue(r)+'</div>'+
       '<div class="pg-facts">'+fact('Xe',r.car)+fact('Chủ xe',r.owner)+fact('Đơn vị cấp đơn',c.donViCapDon)+fact('Giám định viên',r.gdv==='Chưa rõ'?'':r.gdv)+fact('Ngày mở hồ sơ',r.openText)+
         '<div><small>SĐT lái xe</small>'+(r.phone?(dial?'<a class="pg-tel" href="tel:'+esc(r.phone)+'">'+esc(r.phone)+'</a>':'<b>'+esc(r.phone)+'</b>'):'<b>—</b>')+'</div></div>'+
+      '<button type="button" class="pg-det is-sheet" data-pgm="detail">'+PGI.info+'<span>Xem chi tiết hồ sơ</span>'+PGI.chevR+'</button>'+
       '<div class="pg-lb">Lịch sử ghi chú <small id="pgHistN"></small></div><ul class="pg-hist" id="pgHist"></ul>'+
       '<div class="pg-lb">Ghi chú mới</div><div class="pg-tpls">'+PG_TPL.map(t=>'<button type="button" class="pg-tp" data-pgm="tpl" data-v="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div>'+
       '<textarea id="pgNoteTa" class="pg-ta" rows="3" placeholder="VD: Đã liên hệ khách hàng, hẹn bổ sung đăng kiểm trong tuần…" aria-label="Nội dung ghi chú">'+esc(m.draft||'')+'</textarea>'+
@@ -7127,14 +7193,15 @@ window.TascoWeekly=(()=>{
     const b=e.target.closest('[data-pgm]');if(!b)return;const a=b.dataset.pgm;
     if(a==='close')closePgNote();
     else if(a==='copy')pgCopy(b.dataset.v);
+    else if(a==='detail')openPgDetail(m.id);
     else if(a==='tpl'){const ta=m.el.querySelector('#pgNoteTa'),t=ta.value.trim();ta.value=t?t+'\n'+b.dataset.v:b.dataset.v;}
     else if(a==='due'){const d=+b.dataset.d;if(d===0)m.due='';else{const x=new Date(Date.now()+d*PG_DAY);m.due=mkYmd(x.getFullYear(),x.getMonth(),x.getDate());}m.err='';paintPgDue();}
     else if(a==='datepick')openCal('due',{title:'Hẹn xử lý tiếp',value:m.due,min:todayYmd(),onPick:v=>{if(pgm===m){m.due=v;paintPgDue();}}});
     else if(a==='save')savePgNote();
   }
-  async function pgCopy(v){
+  async function pgCopy(v,label){
     try{await navigator.clipboard.writeText(v);}catch(_){const t=document.createElement('textarea');t.value=v;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(__){}t.remove();}
-    pgToast('Đã sao chép số HSBT: '+v);
+    pgToast(label||('Đã sao chép số HSBT: '+v));
   }
   document.addEventListener('input',e=>{if(e.target.id!=='pgSearch')return;clearTimeout(pgTimer);const v=e.target.value;pgTimer=setTimeout(()=>{pg.q=v;pg.n=PG_PAGE;paintProgList();},160);});
 
@@ -7314,6 +7381,7 @@ window.TascoWeekly=(()=>{
     else if(k==='pgview'){pg.view=b.dataset.v;paintProg();}
     else if(k==='pgpick')openPgPick(b.dataset.v);
     else if(k==='pgopen')openPgNote(b.dataset.id);
+    else if(k==='pgdet')openPgDetail(b.dataset.id);
     else if(k==='pgcopy')pgCopy(b.dataset.v);
     else if(k==='pgmore'){pg.n+=PG_PAGE;paintProgList();}
     else if(k==='pgrm'){const v=b.dataset.v;if(v==='gdv')pg.gdv='all';else pg.quick='all';pg.n=PG_PAGE;paintProg();}
