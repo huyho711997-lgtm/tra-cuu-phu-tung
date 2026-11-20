@@ -2972,6 +2972,16 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   .tasco-workspace #modalFilterSelection[data-keyboard=true][data-short-viewport=true] .ws-sheet-bulk { display: none; }
 
 </style>
+<style id="tascoSearchClear">
+/* Nút xóa nhanh nội dung ô "Phụ tùng cần tìm" (hiện khi có chữ). */
+.tasco-workspace #traCuuSection #searchInput::-webkit-search-cancel-button,.tasco-workspace #traCuuSection #searchInput::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
+.tasco-workspace .ws-search-clear{display:grid;place-items:center;width:30px;height:30px;flex:none;margin-right:6px;padding:0;border:0;border-radius:50%;background:rgba(24,48,86,.10);color:#40536b;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease,background .15s ease}
+.tasco-workspace .ws-search-clear[hidden]{display:none}
+.tasco-workspace .ws-search-clear:active{transform:scale(.9);background:rgba(24,48,86,.20)}
+.tasco-workspace .ws-search-clear svg{width:15px;height:15px}
+html.dark .tasco-workspace .ws-search-clear{background:rgba(255,255,255,.14);color:#dbe6f2}
+html.dark .tasco-workspace .ws-search-clear:active{background:rgba(255,255,255,.26)}
+</style>
 <style id="tascoLookupCompactType">
 .tasco-workspace #traCuuSection .ws-filter-grid strong { font-size: 10px; }
 .tasco-workspace #traCuuSection .ws-filter-grid small { font-size: 13px; }
@@ -3851,7 +3861,7 @@ window.TascoBootSplash = (() => {
   <div class="ws-search-panel ws-search-panel--premium">
     <div class="ws-kind-tabs u056 u056-sw" role="group" aria-label="Loại hàng cần tra cứu"><span class="u056-knob" aria-hidden="true"></span><button type="button" data-lookup-type="all" onclick="TascoLookupFlow.chooseType('all')" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="3.5" y="14.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="14.5" width="6" height="6" rx="1.5"/></svg>Tất cả</button><button type="button" data-lookup-type="genuine" onclick="TascoLookupFlow.chooseType('genuine')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg>Chính hãng</button><button type="button" data-lookup-type="aftermarket" onclick="TascoLookupFlow.chooseType('aftermarket')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 10 5-10 5L2 8z"/><path d="m2 12 10 5 10-5M2 16l10 5 10-5"/></svg>Không chính hãng</button></div>
     <label for="searchInput" class="ws-search-label">Phụ tùng cần tìm</label>
-    <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="ws-search-input-wrap"><input type="search" id="searchInput" placeholder="VD: cản trước CRV 2025" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();TascoSmartSearch.search();}"></span><button type="button" class="ws-search-mic" id="searchMic" aria-label="Nói để nhập tên phụ tùng" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></div>
+    <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="ws-search-input-wrap"><input type="search" id="searchInput" placeholder="VD: cản trước CRV 2025" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();TascoSmartSearch.search();}"></span><button type="button" class="ws-search-clear" id="searchClear" aria-label="Xóa nội dung ô tìm kiếm" title="Xóa" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button><button type="button" class="ws-search-mic" id="searchMic" aria-label="Nói để nhập tên phụ tùng" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></div>
     <p class="ws-search-voice" id="searchVoiceNote" role="status" aria-live="polite" hidden></p>
     <div class="ws-part-suggestions" aria-label="Gợi ý phụ tùng"><span>Gợi ý</span><button type="button" data-part-suggestion="Đèn pha" onclick="TascoLookupFlow.choosePart('Đèn pha')" aria-pressed="false">Đèn pha</button><button type="button" data-part-suggestion="Cản trước" onclick="TascoLookupFlow.choosePart('Cản trước')" aria-pressed="false">Cản trước</button><button type="button" data-part-suggestion="Gương chiếu hậu" onclick="TascoLookupFlow.choosePart('Gương chiếu hậu')" aria-pressed="false">Gương chiếu hậu</button></div>
     <div class="ws-filter-grid"><button type="button" id="btnHang" onclick="openFilterModal('hang')" aria-label="Chọn hãng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Hãng xe</strong><small id="labelHang">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="multiHieuBtn" onclick="openFilterModal('hieu')" aria-label="Chọn dòng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Dòng xe</strong><small id="labelHieu">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnNam" onclick="openFilterModal('nam')" aria-label="Chọn năm sản xuất" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></span><span class="ws-filter-copy"><strong>Năm sản xuất</strong><small id="labelNam">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnType" onclick="openFilterModal('type')" aria-label="Chọn loại hàng" data-active="false" hidden><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M8 6V3h8v3M3 12h18m-11 0v3h4v-3"/></svg></span><span class="ws-filter-copy"><strong>Loại hàng</strong><small id="labelType">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
@@ -17107,6 +17117,28 @@ window.TascoCategories = (function () {
     });
   }
   return { open: open, missing: missing, ask: ask, recent: recent, remember: remember, clean: clean, voice: Voice };
+})();
+/* Nút xóa nhanh ô "Phụ tùng cần tìm": hiện khi có chữ, kể cả khi code khác gán .value (giọng nói, gợi ý, AI) mà không phát sự kiện input. */
+(function () {
+  var input = document.getElementById('searchInput'), clear = document.getElementById('searchClear');
+  if (!input || !clear) return;
+  function sync() { clear.hidden = !input.value; }
+  try {
+    var d = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+    Object.defineProperty(input, 'value', { configurable: true, get: function () { return d.get.call(this); }, set: function (v) { d.set.call(this, v); sync(); } });
+  } catch (_) { /* không hook được thì vẫn cập nhật theo sự kiện bên dưới */ }
+  ['input', 'focus', 'change'].forEach(function (ev) { input.addEventListener(ev, sync); });
+  /* Giữ bàn phím đang mở khi bấm nút xóa. */
+  clear.addEventListener('pointerdown', function (e) { e.preventDefault(); });
+  clear.addEventListener('click', function () {
+    input.value = '';
+    input.dispatchEvent(new Event('input', { bubbles: true }));   /* cập nhật gợi ý/tab theo ô tìm kiếm */
+    var note = document.getElementById('searchVoiceNote');
+    if (note) { note.hidden = true; note.textContent = ''; note.classList.remove('is-error'); }
+    try { if (window.TascoAiSearch) window.TascoAiSearch.clearOffer(); } catch (_) {}
+    try { input.focus(); } catch (_) {}
+  });
+  sync();
 })();
 /* Tra cứu phụ tùng: nói để nhập vào ô "Phụ tùng cần tìm" (dùng chung bộ nhận dạng giọng nói với hạng mục). Chỉ điền chữ, người dùng kiểm tra rồi bấm Tra cứu. */
 (function () {
