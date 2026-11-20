@@ -14888,7 +14888,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const color = ['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    const color = view === 'lookup' ? '#0a1829' : ['results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -20859,50 +20859,87 @@ html.dark .tasco-workspace #traCuuSection .ws-ai-btn{background:var(--ws-soft)}
 @media(max-width:380px){.tasco-workspace #traCuuSection .ws-search-actions{margin:0 -13px;padding:18px 13px 2px}}
 @media(prefers-reduced-motion:reduce){.tasco-workspace #traCuuSection .ws-search-panel>*,.tasco-workspace #traCuuSection .lk-dot{animation:none!important}}
 
-/* ---- v4: tiết chế - phẳng, ít viền, một điểm nhấn ---- */
-.tasco-workspace #traCuuSection .ws-search-panel--premium{padding:20px 16px 18px;box-shadow:0 1px 2px rgba(24,48,86,.04),0 18px 40px -28px rgba(24,48,86,.35)}
-.tasco-workspace #traCuuSection .ws-search-label{margin:0 0 9px 2px;font-size:10.5px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .ws-search-field{min-height:56px;border-radius:16px;background:var(--ws-soft)}
-.tasco-workspace #traCuuSection .ws-search-field>.ws-icon{color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .ws-search-mic{width:40px;height:40px;background:var(--ws-surface);color:var(--ws-accent-text);box-shadow:0 0 0 1px var(--ws-line),0 2px 6px -2px rgba(24,48,86,.18)}
-.tasco-workspace #traCuuSection .ws-search-mic.is-live{background:#e5484d;color:#fff;box-shadow:none}
-.tasco-workspace #traCuuSection .ws-part-suggestions{padding:12px 0 0;gap:7px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
-.tasco-workspace #traCuuSection .ws-part-suggestions>span{font-size:11px;letter-spacing:.02em}
-.tasco-workspace #traCuuSection .ws-part-suggestions button{padding:7px 13px;border:0;background:var(--ws-soft);color:var(--ws-text);font-size:12.5px;font-weight:550;transition:background .18s ease,color .18s ease}
-.tasco-workspace #traCuuSection .ws-part-suggestions button[aria-pressed=true]{background:var(--app-navy);color:#fff}
-html.dark .tasco-workspace #traCuuSection .ws-part-suggestions button[aria-pressed=true]{background:var(--app-teal);color:var(--app-navy)}
-.tasco-workspace #traCuuSection .lk-vehicle-head{margin:22px 2px 10px}
-.tasco-workspace #traCuuSection .lk-type-head{margin:20px 2px 10px}
-.tasco-workspace #traCuuSection .lk-vehicle-head>span,.tasco-workspace #traCuuSection .lk-type-head>span{font-size:10.5px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .lk-quick{min-height:30px;padding:0;border:0;border-radius:0;background:transparent;color:var(--ws-accent-text);font-size:12.5px;font-weight:650}
-.tasco-workspace #traCuuSection .lk-quick:active{transform:none;opacity:.6}
-.tasco-workspace #traCuuSection .ws-search-panel .ws-filter-grid{border:0;border-radius:20px;background:var(--ws-soft)}
-.tasco-workspace #traCuuSection .ws-filter-grid>button{min-height:68px;padding:12px 16px;gap:12px}
-.tasco-workspace #traCuuSection .ws-filter-grid>#btnHang{border-bottom:1px solid color-mix(in srgb,var(--ws-line) 70%,transparent)}
-.tasco-workspace #traCuuSection .ws-filter-grid>#btnNam{border-left:1px solid color-mix(in srgb,var(--ws-line) 70%,transparent)}
-.tasco-workspace #traCuuSection .ws-filter-grid>button:active{background:rgba(24,48,86,.05)}
-html.dark .tasco-workspace #traCuuSection .ws-filter-grid>button:active{background:rgba(255,255,255,.06)}
-@media(hover:hover){.tasco-workspace #traCuuSection .ws-filter-grid>button:hover{background:rgba(24,48,86,.04)}}
-.tasco-workspace #traCuuSection .ws-filter-icon,.tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] .ws-filter-icon{width:22px;height:22px;flex:0 0 22px;border-radius:0;background:transparent;color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] .ws-filter-icon{color:var(--ws-accent-text)}
-.tasco-workspace #traCuuSection .ws-filter-grid>button .ws-filter-icon .ws-icon{width:21px;height:21px;stroke-width:1.7}
-.tasco-workspace #traCuuSection .ws-filter-grid strong{font-size:10.5px;font-weight:600;letter-spacing:.05em}
-.tasco-workspace #traCuuSection .ws-filter-grid small{font-size:16px;font-weight:560;letter-spacing:-.15px;color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] small{font-weight:680}
-.tasco-workspace #traCuuSection .lk-vehicle-foot{min-height:42px;padding:10px 16px;border-top:1px solid color-mix(in srgb,var(--ws-line) 70%,transparent);background:transparent;font-size:12.5px}
-.tasco-workspace #traCuuSection .ws-kind-tabs{border:0;background:var(--ws-soft)}
-.tasco-workspace #traCuuSection .ws-search-options{margin:14px 0 0}
-.tasco-workspace #traCuuSection .ws-search-actions{padding:20px 16px 2px;background:linear-gradient(to bottom,rgba(255,255,255,0),var(--ws-surface) 40%)}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-primary,.tasco-workspace #traCuuSection .ws-search-actions .ws-primary:hover,.tasco-workspace #traCuuSection .ws-search-actions .ws-primary:focus-visible{min-height:56px;border-radius:16px;background:var(--app-navy)!important;color:#fff!important;font-size:15.5px;font-weight:650;letter-spacing:0;box-shadow:0 12px 24px -14px rgba(24,48,86,.7)!important;filter:none}
-html.dark .tasco-workspace #traCuuSection .ws-search-actions .ws-primary,html.dark .tasco-workspace #traCuuSection .ws-search-actions .ws-primary:hover{background:var(--app-teal)!important;color:var(--app-navy)!important;box-shadow:none!important}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-primary[aria-busy=true]::before{border-color:rgba(255,255,255,.3);border-top-color:#fff}
-html.dark .tasco-workspace #traCuuSection .ws-search-actions .ws-primary[aria-busy=true]::before{border-color:rgba(24,48,86,.25);border-top-color:var(--app-navy)}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-secondary{width:56px;border:0;border-radius:16px;background:var(--ws-soft);color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .ws-ai-btn,html.dark .tasco-workspace #traCuuSection .ws-ai-btn{margin-top:8px;min-height:50px;padding:8px 4px;border:0;border-radius:14px;background:transparent}
-.tasco-workspace #traCuuSection .ws-ai-ico{width:32px;height:32px;border-radius:10px;background:var(--ws-accent);color:var(--ws-accent-text)}
-html.dark .tasco-workspace #traCuuSection .ws-ai-ico{background:var(--ws-accent);color:var(--ws-accent-text)}
-.tasco-workspace #traCuuSection .ws-ai-copy strong{font-size:13.5px;font-weight:650}
-.tasco-workspace #traCuuSection .ws-ai-copy small{font-size:11px}
+/* ---- v5: toàn màn hình tối, kính mờ, một điểm nhấn teal ---- */
+html:has(#traCuuSection:not([hidden])),html:has(#traCuuSection:not([hidden])) body{background:#0a1829!important}
+html:has(#traCuuSection:not([hidden])) body{background:radial-gradient(120% 55% at 100% 0%,rgba(99,173,182,.30),transparent 62%),radial-gradient(90% 45% at 0% 42%,rgba(36,72,97,.6),transparent 68%),#0a1829!important;background-attachment:fixed!important}
+html:has(#traCuuSection:not([hidden])) #mainApp,html:has(#traCuuSection:not([hidden])) .main-container{background:transparent!important}
+html:has(#traCuuSection:not([hidden])) #bottomNav{--tasco-bar-surface:rgba(12,27,46,.82);--tasco-bar-line:rgba(255,255,255,.1);--tasco-bar-ink:#edf5f7;--tasco-bar-muted:#8da8b8;--tasco-bar-active:#b5dfe3;--tasco-bar-accent:#84bfc7;--tasco-bar-soft:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5)}
+:root:root .tasco-workspace #traCuuSection{--ws-surface:rgba(255,255,255,.055);--ws-soft:rgba(255,255,255,.075);--ws-text:#edf5f7;--ws-muted:#9db8c6;--ws-line:rgba(255,255,255,.13);--ws-accent:rgba(132,191,199,.16);--ws-accent-text:#8fcad2;color:#edf5f7}
+:root:root .tasco-workspace #traCuuSection .u056{--ux-page:#0b1b30;--ux-ink:#8fcad2}
+html[data-tasco-page=lookup] body.tasco-workspace::before{background:#0a1829}
+:root:root .tasco-workspace #traCuuSection .ws-journey-hero{min-height:0;margin:0;padding:calc(14px + env(safe-area-inset-top,0px)) 22px 22px;border-radius:0;background:transparent;overflow:visible}
+:root:root .tasco-workspace #traCuuSection .ws-journey-hero::before,:root:root .tasco-workspace #traCuuSection .ws-journey-hero::after{display:none}
+:root:root .tasco-workspace #traCuuSection .ws-journey-top{margin-bottom:22px}
+:root:root .tasco-workspace #traCuuSection .ws-journey-top>button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+:root:root .tasco-workspace #traCuuSection .ws-journey-eyebrow{color:#8fcad2}
+:root:root .tasco-workspace #traCuuSection .ws-journey-heading h2{font-size:35px;font-weight:660;letter-spacing:-1.4px}
+:root:root .tasco-workspace #traCuuSection .ws-journey-art{opacity:.5;bottom:6px;filter:drop-shadow(0 0 18px rgba(99,173,182,.35))}
+:root:root .tasco-workspace #traCuuSection .ws-search-panel--premium{margin:0 20px;padding:4px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none}
+:root:root .tasco-workspace #traCuuSection .ws-search-label{margin:0 0 10px 2px;font-size:10.5px;font-weight:650;letter-spacing:.16em;text-transform:uppercase;color:#8fb3c2}
+:root:root .tasco-workspace #traCuuSection .ws-search-field{min-height:60px;padding:0 10px 0 18px;border:1px solid rgba(255,255,255,.14);border-radius:20px;background:rgba(255,255,255,.07);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 20px 40px -28px rgba(0,0,0,.7)}
+:root:root .tasco-workspace #traCuuSection .ws-search-field:focus-within{border-color:#84bfc7!important;box-shadow:0 0 0 4px rgba(132,191,199,.18),0 16px 34px -14px rgba(99,173,182,.5)!important}
+:root:root .tasco-workspace #traCuuSection .ws-search-field>.ws-icon{color:#8fcad2}
+:root:root .tasco-workspace #traCuuSection .ws-search-field input{color:#fff}
+:root:root .tasco-workspace #traCuuSection .ws-search-field input,:root:root .tasco-workspace #traCuuSection .ws-search-input-wrap{background:transparent!important}
+:root:root .tasco-workspace #traCuuSection .ws-search-field input:-webkit-autofill{-webkit-text-fill-color:#fff;transition:background-color 9999s}
+:root:root .tasco-workspace #traCuuSection .ws-search-field input::placeholder{color:#8da8b8;opacity:1}
+:root:root .tasco-workspace #traCuuSection .ws-search-mic{width:42px;height:42px;background:rgba(132,191,199,.16);color:#a9dbe1;box-shadow:0 0 0 1px rgba(132,191,199,.4)}
+:root:root .tasco-workspace #traCuuSection .ws-search-mic.is-live{background:#e5484d;color:#fff;box-shadow:none}
+:root:root .tasco-workspace #traCuuSection .ws-search-clear{background:rgba(255,255,255,.12);color:#dcebf0}
+:root:root .tasco-workspace #traCuuSection .ws-search-voice{color:#a9dbe1}
+:root:root .tasco-workspace #traCuuSection .ws-part-suggestions{padding:14px 0 0;gap:8px}
+:root:root .tasco-workspace #traCuuSection .ws-part-suggestions>span{color:#8da8b8}
+:root:root .tasco-workspace #traCuuSection .ws-part-suggestions button{padding:8px 14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#dcebf0;font-size:12.5px;font-weight:550}
+:root:root .tasco-workspace #traCuuSection .ws-part-suggestions button[aria-pressed=true]{border-color:transparent;background:#84bfc7;color:#0b1b30}
+:root:root .tasco-workspace #traCuuSection .lk-vehicle-head{margin:26px 2px 12px}
+:root:root .tasco-workspace #traCuuSection .lk-type-head{margin:22px 2px 12px}
+:root:root .tasco-workspace #traCuuSection .lk-vehicle-head>span,:root:root .tasco-workspace #traCuuSection .lk-type-head>span{font-size:10.5px;font-weight:650;letter-spacing:.16em;text-transform:uppercase;color:#8fb3c2}
+:root:root .tasco-workspace #traCuuSection .lk-quick{min-height:30px;padding:0;border:0;border-radius:0;background:transparent;color:#a9dbe1}
+:root:root .tasco-workspace #traCuuSection .ws-search-panel .ws-filter-grid{border:1px solid rgba(255,255,255,.13);border-radius:24px;background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 24px 50px -30px rgba(0,0,0,.7)}
+:root:root .tasco-workspace #traCuuSection .ws-filter-grid>#btnHang{border-bottom-color:rgba(255,255,255,.1)}
+:root:root .tasco-workspace #traCuuSection .ws-filter-grid>#btnNam{border-left-color:rgba(255,255,255,.1)}
+:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button:active{background:rgba(255,255,255,.07)}
+@media(hover:hover){:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button:hover{background:rgba(255,255,255,.05)}}
+:root:root .tasco-workspace #traCuuSection .ws-filter-icon{background:rgba(255,255,255,.07);color:#9db8c6}
+:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] .ws-filter-icon{background:rgba(132,191,199,.22);color:#b3e0e6;box-shadow:0 0 0 1px rgba(132,191,199,.4)}
+:root:root .tasco-workspace #traCuuSection .ws-filter-grid strong{color:#8da8b8}
+:root:root .tasco-workspace #traCuuSection .ws-filter-grid small{color:#9db8c6}
+:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] small{color:#fff}
+:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button .ws-filter-chevron{color:#8da8b8}
+:root:root .tasco-workspace #traCuuSection .lk-vehicle-foot{border-top-color:rgba(255,255,255,.1);color:#9db8c6}
+:root:root .tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=ok]{color:#edf5f7}
+:root:root .tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=ok] .lk-dot{background:#3ecf8e;box-shadow:0 0 0 4px rgba(62,207,142,.18)}
+:root:root .tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=empty] .lk-dot{background:#f0a54d;box-shadow:0 0 0 4px rgba(240,165,77,.18)}
+:root:root .tasco-workspace #traCuuSection .lk-dot{background:rgba(255,255,255,.25)}
+:root:root .tasco-workspace #traCuuSection .ws-kind-tabs{border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+:root:root .tasco-workspace #traCuuSection .u056.u056-sw button{color:#9db8c6}
+:root:root .tasco-workspace #traCuuSection .u056.u056-sw button[aria-pressed="true"]{color:#0b1b30}
+:root:root .tasco-workspace #traCuuSection .ws-exact-toggle{color:#9db8c6}
+:root:root .tasco-workspace #traCuuSection .ws-exact-box{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.05)}
+:root:root .tasco-workspace #traCuuSection .ws-exact-toggle[aria-pressed=true]{color:#edf5f7}
+:root:root .tasco-workspace #traCuuSection .ws-exact-toggle[aria-pressed=true] .ws-exact-box{background:#84bfc7;border-color:#84bfc7;color:#0b1b30}
+:root:root .tasco-workspace #traCuuSection .ws-search-actions{margin:0 -20px;padding:24px 20px 2px;background:linear-gradient(to bottom,rgba(10,24,41,0),rgba(10,24,41,.94) 42%)}
+:root:root .tasco-workspace #traCuuSection .ws-ask:not([hidden])~.ws-search-actions{margin:0;padding:0;background:none}
+:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-primary,:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-primary:hover,:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-primary:focus-visible{min-height:58px;border-radius:18px;background:linear-gradient(180deg,#8fd0d8,#6fb9c2)!important;color:#07202c!important;font-size:16px;font-weight:700;box-shadow:0 22px 44px -18px rgba(99,173,182,.75),inset 0 1px 0 rgba(255,255,255,.5)!important}
+:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-primary[aria-busy=true]::before{border-color:rgba(7,32,44,.25);border-top-color:#07202c}
+:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-secondary{width:58px;min-height:58px;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:rgba(255,255,255,.07);color:#cfe3ea;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+:root:root .tasco-workspace #traCuuSection .ws-search-actions{grid-template-columns:minmax(0,1fr) 58px}
+:root:root .tasco-workspace #traCuuSection .ws-ai-btn,html.dark :root:root .tasco-workspace #traCuuSection .ws-ai-btn{margin-top:14px;min-height:58px;padding:12px 14px;border:1px solid rgba(132,191,199,.3);border-radius:20px;background:linear-gradient(135deg,rgba(132,191,199,.16),rgba(255,255,255,.04));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+:root:root .tasco-workspace #traCuuSection .ws-ai-ico,html.dark :root:root .tasco-workspace #traCuuSection .ws-ai-ico{width:36px;height:36px;border-radius:12px;background:#84bfc7;color:#0b1b30}
+:root:root .tasco-workspace #traCuuSection .ws-ai-copy strong{color:#fff}
+:root:root .tasco-workspace #traCuuSection .ws-ai-copy small{color:#9db8c6}
+:root:root .tasco-workspace #traCuuSection .ws-ai-chev{color:#8fcad2}
+:root:root .tasco-workspace #traCuuSection .ws-ai-note{color:#f2c46d}
+:root:root .tasco-workspace #traCuuSection .ws-journey-note{color:#7f9aab}
+/* thẻ hỏi lại trên nền tối */
+:root:root .tasco-workspace #traCuuSection .ws-ask{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 24px 50px -30px rgba(0,0,0,.7)}
+:root:root .tasco-workspace #traCuuSection .ws-ask-step.is-now .ws-ask-dot{border-color:#84bfc7;background:#84bfc7;color:#0b1b30}
+:root:root .tasco-workspace #traCuuSection .ws-ask-tok--part{border-color:#84bfc7;background:#84bfc7;color:#0b1b30}
+:root:root .tasco-workspace #traCuuSection .ws-ask-opt[aria-pressed=true]{border-color:#84bfc7;background:#2c6f7b;color:#fff;box-shadow:0 10px 20px -14px rgba(0,0,0,.9)}
+:root:root .tasco-workspace #traCuuSection button.ws-ask-next:not(.ws-ask-next--ghost){background:linear-gradient(135deg,#8fd0d8,#6fb9c2);color:#07202c;box-shadow:0 14px 28px -16px rgba(99,173,182,.8)}
+:root:root .tasco-workspace #traCuuSection .ws-ask-actions{background:linear-gradient(to bottom,rgba(19,37,58,0),rgba(19,37,58,.96) 38%)}
+@media(max-width:380px){:root:root .tasco-workspace #traCuuSection .ws-journey-heading{max-width:100%}:root:root .tasco-workspace #traCuuSection .ws-journey-heading h2{font-size:31px;letter-spacing:-1.2px}}
+@media(max-width:360px){:root:root .tasco-workspace #traCuuSection .ws-search-panel--premium{margin:0 16px}:root:root .tasco-workspace #traCuuSection .ws-search-actions{margin:0 -16px;padding-left:16px;padding-right:16px}}
 </style>
 <script id="tascoAppUpdate">
 /* Dự phòng khi trình duyệt không có ngày triển khai. Phiên bản hiển thị lấy từ document.lastModified. */
