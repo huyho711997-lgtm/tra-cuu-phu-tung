@@ -2982,6 +2982,31 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 html.dark .tasco-workspace .ws-search-clear{background:rgba(255,255,255,.14);color:#dbe6f2}
 html.dark .tasco-workspace .ws-search-clear:active{background:rgba(255,255,255,.26)}
 </style>
+<style id="tascoSmartAsk">
+/* Hỏi lại khi tìm bằng giọng nói/câu tự nhiên mà thiếu hãng, dòng xe hoặc năm. */
+.ws-ask{margin:12px 0 2px;padding:14px 14px 12px;border:1px solid var(--ws-line);border-radius:18px;background:linear-gradient(135deg,rgba(132,191,199,.18),rgba(218,236,240,.55));animation:wsAskIn .22s ease both}
+.ws-ask[hidden]{display:none}
+@keyframes wsAskIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ws-ask{animation:none}}
+html.dark .ws-ask{background:linear-gradient(135deg,rgba(132,191,199,.14),rgba(36,72,97,.72))}
+.ws-ask-head{display:flex;align-items:flex-start;gap:10px}
+.ws-ask-ico{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#183056;color:#daecf0}
+.ws-ask-ico svg{width:17px;height:17px}
+html.dark .ws-ask-ico{background:#84bfc7;color:#0b1b30}
+.ws-ask-text{flex:1;min-width:0}
+.ws-ask-q{margin:0;font-size:14.5px;font-weight:700;line-height:1.35;color:var(--ws-text)}
+.ws-ask-heard{margin:3px 0 0;font-size:11px;line-height:1.45;color:var(--ws-muted);overflow-wrap:anywhere}
+.ws-ask-close{flex:none;display:grid;place-items:center;width:30px;height:30px;margin:-2px -4px 0 0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ws-muted);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.ws-ask-close svg{width:15px;height:15px}
+.ws-ask-close:active{background:rgba(24,48,86,.1)}
+.ws-ask-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.ws-ask-chip{min-height:38px;max-width:100%;padding:0 14px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease,background .15s ease,border-color .15s ease}
+.ws-ask-chip:active{transform:scale(.96);background:var(--ws-accent);border-color:var(--ws-accent-text)}
+.ws-ask-chip--ghost{background:transparent;border-style:dashed;color:var(--ws-muted);font-weight:550}
+.ws-ask-foot{display:flex;justify-content:flex-end;margin-top:10px}
+.ws-ask-go{min-height:36px;padding:0 4px;border:0;background:transparent;color:var(--ws-accent-text);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.ws-ask-go:active{opacity:.6}
+</style>
 <style id="tascoLookupCompactType">
 .tasco-workspace #traCuuSection .ws-filter-grid strong { font-size: 10px; }
 .tasco-workspace #traCuuSection .ws-filter-grid small { font-size: 13px; }
@@ -3863,6 +3888,7 @@ window.TascoBootSplash = (() => {
     <label for="searchInput" class="ws-search-label">Phụ tùng cần tìm</label>
     <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="ws-search-input-wrap"><input type="search" id="searchInput" placeholder="VD: cản trước CRV 2025" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();TascoSmartSearch.search();}"></span><button type="button" class="ws-search-clear" id="searchClear" aria-label="Xóa nội dung ô tìm kiếm" title="Xóa" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button><button type="button" class="ws-search-mic" id="searchMic" aria-label="Nói để nhập tên phụ tùng" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></div>
     <p class="ws-search-voice" id="searchVoiceNote" role="status" aria-live="polite" hidden></p>
+    <section class="ws-ask" id="smartAsk" role="group" aria-label="Cần thêm thông tin để tra cứu" hidden></section>
     <div class="ws-part-suggestions" aria-label="Gợi ý phụ tùng"><span>Gợi ý</span><button type="button" data-part-suggestion="Đèn pha" onclick="TascoLookupFlow.choosePart('Đèn pha')" aria-pressed="false">Đèn pha</button><button type="button" data-part-suggestion="Cản trước" onclick="TascoLookupFlow.choosePart('Cản trước')" aria-pressed="false">Cản trước</button><button type="button" data-part-suggestion="Gương chiếu hậu" onclick="TascoLookupFlow.choosePart('Gương chiếu hậu')" aria-pressed="false">Gương chiếu hậu</button></div>
     <div class="ws-filter-grid"><button type="button" id="btnHang" onclick="openFilterModal('hang')" aria-label="Chọn hãng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Hãng xe</strong><small id="labelHang">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="multiHieuBtn" onclick="openFilterModal('hieu')" aria-label="Chọn dòng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Dòng xe</strong><small id="labelHieu">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnNam" onclick="openFilterModal('nam')" aria-label="Chọn năm sản xuất" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></span><span class="ws-filter-copy"><strong>Năm sản xuất</strong><small id="labelNam">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnType" onclick="openFilterModal('type')" aria-label="Chọn loại hàng" data-active="false" hidden><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M8 6V3h8v3M3 12h18m-11 0v3h4v-3"/></svg></span><span class="ws-filter-copy"><strong>Loại hàng</strong><small id="labelType">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
     <div class="ws-search-options"><button type="button" id="btnExactPartName" class="ws-exact-toggle" onclick="toggleExactPartName()" title="Khớp chính xác tên phụ tùng" aria-label="Khớp chính xác tên phụ tùng" aria-pressed="false"><span class="ws-exact-box" aria-hidden="true"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span>Khớp chính xác tên</span></button></div>
@@ -10159,6 +10185,135 @@ window.searchData = async function(opts) {
                 return [...new Set(out)];
             }
 
+            /* ---- Hỏi lại khi thiếu thông tin: hãng → dòng xe → năm. Người dùng chọn một chip, "Tất cả…" để bỏ qua, hoặc "Tra luôn". ---- */
+            let askState = null, askSeq = 0;
+            const askBox = () => $('smartAsk');
+            const mk = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+            const FC = () => window.TascoFilterCounts || null;
+            function hideAsk() { askSeq++; askState = null; const b = askBox(); if (b) { b.hidden = true; b.replaceChildren(); } }
+            function brandOptions(cat, only) {
+                let names = (only && only.length ? cat.filter(b => only.includes(b.name)) : cat).map(b => b.name);
+                try {
+                    const fc = FC();
+                    if (fc && fc.isFresh(fc.summary)) {
+                        const n = x => fc.getCount('hang', x) || 0;
+                        names = names.filter(x => n(x) > 0 || (only && only.length)).sort((a, b) => n(b) - n(a));
+                    }
+                } catch (_) { /* không có số liệu: giữ thứ tự danh mục */ }
+                return names;
+            }
+            function modelOptions(hang) {
+                let names = Object.keys((CAY_GIA_PHA || {})[hang] || {});
+                try {
+                    const fc = FC();
+                    if (fc && fc.hasBrand(hang)) {
+                        const n = x => fc.getCount('hieu', x, hang, [], []) || 0;
+                        names = names.filter(x => n(x) > 0).sort((a, b) => n(b) - n(a));
+                    } else names.sort((a, b) => a.localeCompare(b, 'vi'));
+                } catch (_) { names.sort((a, b) => a.localeCompare(b, 'vi')); }
+                return names;
+            }
+            function yearOptions() {
+                let years = null;
+                try { years = getAvailableFilterYears(); } catch (_) { /* chưa tải */ }
+                if (!years) years = (Array.isArray(NAM_ALL) ? NAM_ALL : []).map(Number).filter(y => y >= 1990 && y <= 2100).sort((a, b) => b - a);
+                return years;
+            }
+            // Bước còn thiếu tính trên bộ lọc THỰC TẾ đang đặt (hãng/dòng xe/năm đã chọn từ trước thì không hỏi lại).
+            function nextStep(skipped) {
+                const hang = $('filterHang').value;
+                if (!hang) return skipped.has('brand') ? null : 'brand';
+                if (!selectedHieuList.length && !skipped.has('model') && modelOptions(hang).length > 1) return 'model';
+                if (!selectedNamList.length && !skipped.has('year') && yearOptions().length > 1) return 'year';
+                return null;
+            }
+            function heardLine() {
+                const parts = [];
+                const part = $('searchInput').value.trim(); if (part) parts.push(part);
+                const hang = $('filterHang').value; if (hang) parts.push(hang);
+                if (selectedHieuList.length) parts.push(selectedHieuList.length === 1 ? selectedHieuList[0] : selectedHieuList[0] + ' +' + (selectedHieuList.length - 1) + ' đời');
+                if (selectedNamList.length) parts.push(selectedNamList.length === 1 ? String(selectedNamList[0]) : selectedNamList[0] + '–' + selectedNamList[selectedNamList.length - 1]);
+                return parts;
+            }
+            function finishAsk() {
+                const heard = heardLine();
+                hideAsk();
+                const run = window.searchData();
+                if ($('filterHang').value && selectedHieuList.length && window.TascoAiSearch) window.TascoAiSearch.prefetch({ heard, ai: false });
+                return run;
+            }
+            function pickAsk(step, value) {
+                const st = askState; if (!st) return;
+                const part = $('searchInput').value, hang = $('filterHang').value;
+                if (step === 'brand') {
+                    if (st.ambiguous) { $('searchInput').value = st.raw + ' ' + value; hideAsk(); return search({ spoken: true }); }
+                    apply({ brand: value, models: [], years: [], kind: 'all', part });
+                } else if (step === 'model') apply({ brand: hang, models: [value], years: [], kind: 'all', part });
+                else apply({ brand: hang, models: selectedHieuList.slice(), years: [Number(value)], kind: 'all', part });
+                return advanceAsk();
+            }
+            async function advanceAsk() {
+                const st = askState; if (!st) return;
+                const seq = ++askSeq;
+                const step = st.ambiguous ? 'brand' : nextStep(st.skipped);
+                if (!step) return finishAsk();
+                const hang = $('filterHang').value, fc = FC();
+                // Số liệu theo hãng (dòng xe/năm có dữ liệu) tải nền; đợi tối đa ~1,2s rồi dùng danh mục sẵn có.
+                if (step !== 'brand' && hang && fc && !fc.hasBrand(hang)) {
+                    try { await Promise.race([fc.ensureBrand(hang), new Promise(r => setTimeout(r, 1200))]); } catch (_) { /* dùng danh mục */ }
+                    if (seq !== askSeq || !askState) return;
+                    if (nextStep(st.skipped) !== step) return advanceAsk();
+                }
+                renderAsk(step);
+            }
+            function renderAsk(step) {
+                const st = askState, box = askBox(); if (!st || !box) return;
+                const cat = catalog() || [], hang = $('filterHang').value;
+                let options, cfg, limit;
+                if (step === 'brand') { options = brandOptions(cat, st.ambiguous); limit = 10; cfg = { q: st.ambiguous ? 'Dòng xe này có ở nhiều hãng. Bạn tìm hãng nào?' : 'Bạn tìm cho hãng xe nào?', skip: st.ambiguous ? '' : 'Không chọn hãng', modal: 'hang' }; }
+                else if (step === 'model') { options = modelOptions(hang); limit = 10; cfg = { q: 'Dòng xe nào của ' + hang + '?', skip: 'Tất cả dòng xe', modal: 'hieu' }; }
+                else { options = yearOptions(); limit = 10; cfg = { q: 'Xe đời (năm sản xuất) nào?', skip: 'Tất cả năm', modal: 'nam' }; }
+                const head = mk('div', 'ws-ask-head');
+                const ico = mk('span', 'ws-ask-ico'); ico.setAttribute('aria-hidden', 'true');
+                ico.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8M12 17h.01"/></svg>';
+                const text = mk('div', 'ws-ask-text');
+                text.append(mk('p', 'ws-ask-q', cfg.q));
+                const heard = heardLine();
+                if (heard.length) text.append(mk('p', 'ws-ask-heard', 'Đã hiểu: ' + heard.join(' · ')));
+                const close = mk('button', 'ws-ask-close'); close.type = 'button'; close.setAttribute('aria-label', 'Đóng câu hỏi');
+                close.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>';
+                close.addEventListener('click', hideAsk);
+                head.append(ico, text, close);
+                const chips = mk('div', 'ws-ask-chips');
+                options.slice(0, limit).forEach(v => {
+                    const b = mk('button', 'ws-ask-chip', String(v)); b.type = 'button';
+                    b.addEventListener('click', () => pickAsk(step, v));
+                    chips.append(b);
+                });
+                if (options.length > limit && !st.ambiguous) {
+                    const more = mk('button', 'ws-ask-chip ws-ask-chip--ghost', 'Chọn khác…'); more.type = 'button';
+                    more.addEventListener('click', () => { hideAsk(); try { window.openFilterModal(cfg.modal); } catch (_) {} });
+                    chips.append(more);
+                }
+                if (cfg.skip) {
+                    const skip = mk('button', 'ws-ask-chip ws-ask-chip--ghost', cfg.skip); skip.type = 'button';
+                    skip.addEventListener('click', () => { st.skipped.add(step); advanceAsk(); });
+                    chips.append(skip);
+                }
+                const foot = mk('div', 'ws-ask-foot');
+                const go = mk('button', 'ws-ask-go', 'Tra luôn, không cần chọn →'); go.type = 'button';
+                go.addEventListener('click', finishAsk);
+                foot.append(go);
+                box.replaceChildren(head, chips, foot);
+                box.hidden = false;
+                try { box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) { /* bỏ qua */ }
+            }
+            function startAsk(o) {
+                askState = { skipped: new Set(o.skip || []), ambiguous: o.ambiguous || null, raw: o.raw || '' };
+                return advanceAsk();
+            }
+            { const si = $('searchInput'); if (si) si.addEventListener('input', () => { if (askState) hideAsk(); }); }
+
             async function search(opts) {
                 if (busy) return;
                 if ($('btnLookupSearch').getAttribute('aria-busy') === 'true') return;
@@ -10174,6 +10329,7 @@ window.searchData = async function(opts) {
                 const confident = !!(local && local.found && !local.ambiguousBrands && local.brand && local.models && local.models.length && local.part && !/(^|\s)(\d{2}|\d{4})(\s|$)/.test(local.part));
                 const useAi = !confident && !!cat && Date.now() > aiOffUntil && navigator.onLine !== false && (words >= 3 || (local && local.found) || (spoken && words >= 2));
                 if (window.TascoAiSearch && window.TascoAiSearch.clearOffer) window.TascoAiSearch.clearOffer();
+                hideAsk();
                 let r = local && local.found ? { ...local } : null, byAi = false;
                 if (local && local.ambiguousBrands) r = local;
                 if (useAi) {
@@ -10199,7 +10355,10 @@ window.searchData = async function(opts) {
                         console.warn('AI intent lỗi, dùng bộ tách trên máy', e && e.message);
                     } finally { clearTimeout(timer); busy = false; setNote(''); }
                 }
+                // Nói/gõ mà chưa có thông tin xe: hỏi lại người dùng chọn (hoặc tra luôn nếu bộ lọc đã đủ).
+                if ((!r || !r.found) && spoken && cat && raw) return startAsk({ raw });
                 if (!r || !r.found) return window.searchData();
+                if (r.ambiguousBrands && cat) return startAsk({ ambiguous: r.ambiguousBrands, raw });
                 if (r.ambiguousBrands) {
                     setNote('Dòng xe này có ở nhiều hãng (' + r.ambiguousBrands.join(', ') + '). Hãy ghi rõ hãng, ví dụ “… Honda CR-V”.');
                     return;
@@ -10210,12 +10369,14 @@ window.searchData = async function(opts) {
                 if (!r.part) { noteParts.push('Đã chọn xe theo câu của bạn — nhập thêm tên phụ tùng để tra cứu.'); setNote(noteParts.join(' ')); $('searchInput').focus(); return; }
                 setNote(noteParts.join(' '));
                 const heard = r.heard && r.heard.length ? r.heard : describe(r);
+                // Giọng nói / câu tự nhiên còn thiếu hãng, dòng xe hoặc năm -> hỏi lại để người dùng quyết định.
+                if (spoken && cat && nextStep(new Set(r.skippedYears && r.skippedYears.length ? ['year'] : []))) return startAsk({ raw, skip: r.skippedYears && r.skippedYears.length ? ['year'] : [] });
                 // Tra cứu ngay; AI gom tên tương đương chạy nền và gợi ý "Xem & chọn" khi xong.
                 const run = window.searchData();
                 if (r.brand && r.models.length) window.TascoAiSearch.prefetch({ heard, ai: byAi });
                 return run;
             }
-            return { parse, search, vocabulary, ground };
+            return { parse, search, vocabulary, ground, hideAsk };
         })();
 
 
@@ -17165,8 +17326,8 @@ window.TascoCategories = (function () {
         mic.style.removeProperty('--lvl'); mic.classList.remove('is-live'); mic.setAttribute('aria-pressed', 'false'); mic.setAttribute('aria-label', 'Nói để nhập tên phụ tùng');
         if (!t) { say(''); return; }
         setValue(t);
-        /* Câu nói tự nhiên (từ 3 từ) → tự hiểu và tra cứu luôn; cụm ngắn thì chờ người dùng kiểm tra. */
-        if (window.TascoSmartSearch && t.trim().split(/\s+/).length >= 3) { say('Đã nghe: “' + t + '”'); window.TascoSmartSearch.search({ spoken: true }); }
+        /* Nói xong → tự hiểu câu; thiếu hãng/dòng xe/năm thì hỏi lại người dùng chọn, đủ thì tra cứu luôn. */
+        if (window.TascoSmartSearch && t.trim().length >= 2) { say('Đã nghe: “' + t + '”'); window.TascoSmartSearch.search({ spoken: true }); }
         else say('Kiểm tra lại rồi bấm Tra cứu.');
       },
       error: function (message) { say(message, true); }
