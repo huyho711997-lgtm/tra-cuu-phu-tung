@@ -5654,7 +5654,7 @@ window.TascoDuty=(()=>{
   const ST={pending:'Chờ duyệt',approved:'Đã duyệt',rejected:'Từ chối',cancelled:'Đã huỷ'};
   const COLORS=['#2f7f8a','#d0742b','#6c5ad0','#c2477a','#3f8f4f','#8a6d1f','#3d6fb6'];
   const CACHE='tasco_duty_cache_v2';
-  let options={},data=null,month='',week='',selDay='',fx=false,slide='',loadingMonth=false,reqSeq=0,lastLoad=0,sheet=null,mcache={},mcal=null;
+  let options={},data=null,month='',week='',selDay='',fx=false,slide='',loadingMonth=false,reqSeq=0,lastLoad=0,sheet=null,mcache={},mcal=null,follow=true,curView='',seenKey='',leftAt=0,dutyLeftAt=0,midT=0;
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const fold=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().trim();
   const same=(a,b)=>Boolean(a&&b&&fold(a)===fold(b));
@@ -5714,7 +5714,7 @@ window.TascoDuty=(()=>{
     if(!quiet&&!data)root().innerHTML='<div class="dt-skel"><i></i><i></i><i></i></div>';
     try{
       loadingMonth=true;const d=await call({action:'get',month,force});loadingMonth=false;
-      if(seq!==reqSeq)return;data=d;delete mcache[d.month];lastLoad=Date.now();if(d.configured&&month===curMonth())writeCache(d);
+      if(seq!==reqSeq)return;data=d;delete mcache[d.month];lastLoad=Date.now();if(follow&&d.todayKey){week=mondayOf(d.todayKey);selDay=d.todayKey;}if(d.configured&&month===curMonth())writeCache(d);
       render();paintHome();if(force)toast(d.sync?.error?'Chưa đồng bộ được: '+d.sync.error:'Đã đồng bộ với Google Sheet.');
     }catch(e){
       loadingMonth=false;if(seq!==reqSeq)return;
@@ -5880,7 +5880,7 @@ window.TascoDuty=(()=>{
     else if(k==='google')window.TascoDrive?.openSetup();
     else if(k==='prev'||k==='next'||k==='today')goWeek(k);
     else if(k==='month')openMonth();
-    else if(k==='day'){selDay=b.dataset.date;fx=true;render();fx=false;}
+    else if(k==='day'){follow=false;selDay=b.dataset.date;fx=true;render();fx=false;}
     else if(k==='edit')openEdit(b.dataset.date);
     else if(k==='swap')openSwap(b.dataset.date,b.dataset.role);
     else if(k==='sync'){b.disabled=true;await load({force:true});b.disabled=false;}
@@ -5910,15 +5910,15 @@ window.TascoDuty=(()=>{
   function goWeek(k){
     if(!data)return;
     const prev=week||mondayOf(data.todayKey);
-    if(k==='today'){week=mondayOf(data.todayKey);selDay=data.todayKey;}
-    else{const d=k==='next'?7:-7;week=addDays(prev,d);selDay=addDays(selDay||prev,d);}
+    if(k==='today'){follow=true;week=mondayOf(data.todayKey);selDay=data.todayKey;}
+    else{follow=false;const d=k==='next'?7:-7;week=addDays(prev,d);selDay=addDays(selDay||prev,d);}
     fx=true;render();fx=false;
     const need=week.slice(0,7);
     if(need!==month){month=need;load({quiet:true});}
   }
   /* Nhảy tới một ngày bất kỳ: đổi tuần + chọn ngày, tải tháng tương ứng. */
   function gotoDay(iso){
-    week=mondayOf(iso);selDay=iso;fx=true;render();fx=false;
+    follow=false;week=mondayOf(iso);selDay=iso;fx=true;render();fx=false;
     const need=iso.slice(0,7);if(need!==month){month=need;load({quiet:true});}
   }
   /* ---------- Lịch tháng (hộp xem nhanh cả tháng) ---------- */
@@ -5974,11 +5974,47 @@ window.TascoDuty=(()=>{
     if(!data?.configured||!t){n.textContent='Xem lịch, ca của tôi, xin đổi ca';return;}
     n.textContent='Hôm nay: HT '+P(t.scene).short+' · GĐ '+P(t.detail).short;
   }
-  function onNavigate(view){
-    if(view==='duty'){month=month||(week?week.slice(0,7):curMonth());if(!data||Date.now()-lastLoad>60000)load({quiet:Boolean(data)});else render();}
-    else{closeSheet();if(view==='home'&&(!lastLoad||Date.now()-lastLoad>10*60000)&&options.client?.())load({quiet:true});}
+  /* ---------- Tự về hôm nay ----------
+     Ngày đang chọn chỉ nên giữ khi người dùng đang xem dở. Khi qua ngày mới, hoặc quay lại app / trang sau
+     > 5 phút, lịch phải về đúng hôm nay và tải lại ca trực mới (thẻ "Đang trực" cũng theo ngày mới). */
+  const localKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+  const AWAY_MS=5*60000;
+  seenKey=localKey();
+  function followToday(tk){
+    follow=true;week=mondayOf(tk);selDay=tk;month=tk.slice(0,7);mcal=null;lastLoad=0;
+    if(data)data={...data,todayKey:tk};                    // vẽ ngay theo ngày mới, máy chủ chuẩn lại sau khi tải xong
   }
-  function setUser(u){const e=String(u?.email||'').toLowerCase();if(e!==(options._email||'')){options._email=e;data=null;month='';week='';lastLoad=0;mcache={};mcal=null;closeSheet();const r=root();if(r)r.innerHTML='<div class="dt-skel"><i></i><i></i><i></i></div>';paintHome();}}
+  function dayRolled(){                                      // true nếu đã đưa lịch về hôm nay
+    const tk=localKey();if(tk===seenKey)return false;
+    seenKey=tk;closeSheet();followToday(tk);return true;
+  }
+  function refreshToday(){
+    if(curView==='duty'&&data)render();
+    if(data||curView==='duty'||curView==='home'){if(options.client?.())load({quiet:true});}
+  }
+  function onResume(){
+    if(document.hidden)return;
+    const away=leftAt&&Date.now()-leftAt>AWAY_MS;leftAt=0;
+    const rolled=dayRolled();
+    if(!rolled&&away&&curView==='duty'){closeSheet();followToday(localKey());seenKey=localKey();refreshToday();return;}
+    if(rolled)refreshToday();
+  }
+  function armMidnight(){
+    clearTimeout(midT);const n=new Date(),nx=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,3);
+    midT=setTimeout(()=>{if(!document.hidden&&localKey()!==seenKey&&(!selDay||selDay===seenKey||follow)&&dayRolled())refreshToday();armMidnight();},Math.max(1000,nx-n));
+  }
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)leftAt=Date.now();else onResume();});
+  window.addEventListener('pageshow',e=>{if(e.persisted)onResume();});
+  armMidnight();
+  function onNavigate(view){
+    const was=curView;curView=view;
+    if(view==='duty'){
+      const away=dutyLeftAt&&Date.now()-dutyLeftAt>AWAY_MS;dutyLeftAt=0;
+      if(!dayRolled()&&away){followToday(localKey());seenKey=localKey();}
+      month=month||(week?week.slice(0,7):curMonth());if(!data||Date.now()-lastLoad>60000)load({quiet:Boolean(data)});else render();}
+    else{if(was==='duty')dutyLeftAt=Date.now();closeSheet();if(view==='home'&&(!lastLoad||Date.now()-lastLoad>10*60000)&&options.client?.())load({quiet:true});}
+  }
+  function setUser(u){const e=String(u?.email||'').toLowerCase();if(e!==(options._email||'')){options._email=e;data=null;month='';week='';lastLoad=0;mcache={};mcal=null;follow=true;closeSheet();const r=root();if(r)r.innerHTML='<div class="dt-skel"><i></i><i></i><i></i></div>';paintHome();}}
   return {configure:v=>{options={...options,...v};},setUser,onNavigate,load,paintHome};
 })();
 </script>
