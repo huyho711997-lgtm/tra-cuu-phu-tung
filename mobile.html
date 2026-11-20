@@ -9698,7 +9698,7 @@ window.searchData = async function(opts) {
             const SPARK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3Z"/></svg>';
             const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>';
             const CLOSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
-            let seq = 0, ctl = null, items = [], current = null, opener = null, note = '', heard = [];
+            let seq = 0, ctl = null, items = [], current = null, opener = null, note = '', heard = [], heardByAi = false;
 
             function readContext() {
                 return {
@@ -9823,7 +9823,7 @@ window.searchData = async function(opts) {
                 const main = [], rel = [];
                 items.forEach((it, i) => (it.related ? rel : main).push(card(it, i)));
                 let html = '';
-                if (heard.length) html += '<p class="ai-understood">Đã hiểu từ câu của bạn ' + heard.map(h => '<b>' + esc(h) + '</b>').join('') + '</p>';
+                if (heard.length) html += '<p class="ai-understood">' + (heardByAi ? 'AI hiểu câu của bạn ' : 'Đã hiểu từ câu của bạn ') + ' ' + heard.map(h => '<b>' + esc(h) + '</b>').join('') + '</p>';
                 if (res.normalized_name && fold(res.normalized_name) !== fold(current.query)) html += '<p class="ai-understood">AI hiểu là <b>' + esc(res.normalized_name) + '</b></p>';
                 if (res.clarification) html += '<p class="ai-clar">' + esc(res.clarification) + '</p>';
                 html += '<ul class="ai-list" aria-label="Tên phụ tùng trong kho">' + main.join('') + '</ul>';
@@ -9884,6 +9884,7 @@ window.searchData = async function(opts) {
             }
             function open(opts) {
                 heard = opts && Array.isArray(opts.heard) ? opts.heard.slice(0, 6) : [];
+                heardByAi = !!(opts && opts.ai);
                 const ctx = readContext();
                 if (ctx.query.length < 2) { setNote('Nhập tên phụ tùng (ít nhất 2 ký tự) rồi bấm Tìm bằng AI.'); $('searchInput').focus(); return; }
                 if (!ctx.brand) { setNote('Chọn hãng xe để AI tìm đúng tên trong kho của xe đó.'); if (window.openFilterModal) window.openFilterModal('hang'); return; }
@@ -10037,25 +10038,122 @@ window.searchData = async function(opts) {
                 window.TascoLookupFlow.syncChoices();
             }
 
-            function search() {
-                const raw = $('searchInput').value;
+            /* ---- Gemini hiểu câu (qua Edge Function tasco-intent). Lỗi/hết lượt thì tự dùng bộ tách trên máy. ---- */
+            let aiOffUntil = 0, busy = false, intentSeq = 0;
+            async function callIntent(text, brands, signal) {
+                const { data, error } = await supabase.functions.invoke('tasco-intent', { body: { text, brands }, signal });
+                if (error) {
+                    let code = '';
+                    try { const res = error.context; if (res && typeof res.clone === 'function') code = (await res.clone().json()).code || ''; } catch (_) { /* bỏ qua */ }
+                    const e = new Error(code || 'intent'); e.code = code; throw e;
+                }
+                if (!data || typeof data !== 'object') throw new Error('bad-intent');
+                return data;
+            }
+            // Đối chiếu kết quả AI với danh mục thật: hãng phải có trong kho, dòng xe phải khớp tiền tố tên dòng xe trong kho.
+            function ground(ai, local, cat) {
+                const bKey = v => compact(BRAND_ALIAS[compact(v)] || v);
+                let brand = ai.brand ? cat.find(b => bKey(b.name) === bKey(ai.brand)) || null : null;
+                let models = [];
+                const modelText = ai.model ? compact(ai.model) : '';
+                if (modelText.length >= 2) {
+                    const pool = brand ? [brand] : cat, found = [];
+                    pool.forEach(b => b.models.forEach(m => { if (modelKeys(m).includes(modelText)) found.push({ b, m }); }));
+                    const owners = new Set(found.map(x => x.b.name));
+                    if (found.length && (brand || owners.size === 1)) {
+                        if (!brand) brand = cat.find(b => b.name === [...owners][0]);
+                        models = [...new Set(found.map(x => x.m))];
+                    } else if (found.length && owners.size > 1) {
+                        return { ambiguousBrands: [...owners] };
+                    }
+                }
+                if (!models.length && local && local.models && local.models.length && (!brand || local.brand === brand.name)) {
+                    models = local.models.slice();
+                    if (!brand) brand = cat.find(b => b.name === local.brand) || null;
+                }
+                const known = Array.isArray(NAM_ALL) ? NAM_ALL.map(Number) : [];
+                const wanted = ai.years && ai.years.length ? ai.years : (local ? [...(local.years || []), ...(local.skippedYears || [])] : []);
+                const years = [...new Set(wanted.map(Number))].filter(y => !known.length || known.includes(y)).sort((a, b) => a - b).slice(0, 30);
+                const skippedYears = [...new Set(wanted.map(Number))].filter(y => !years.includes(y));
+                const kind = ai.kind && ai.kind !== 'all' ? ai.kind : (local ? local.kind : 'all');
+                const part = ai.part || (local ? local.part : '');
+                models = models.sort((a, b) => a.length - b.length || a.localeCompare(b, 'vi')).slice(0, 30);
+                return { brand: brand ? brand.name : '', models, years, skippedYears, kind, part };
+            }
+            function describe(r) {
+                const heard = [];
+                if (r.part) heard.push(r.part);
+                if (r.brand) heard.push(r.brand);
+                if (r.models.length) heard.push(r.models.length === 1 ? r.models[0] : r.models[0] + ' +' + (r.models.length - 1) + ' đời');
+                if (r.years.length) heard.push(r.years.length === 1 ? String(r.years[0]) : r.years[0] + '–' + r.years[r.years.length - 1]);
+                if (r.kind !== 'all') heard.push(r.kind === 'genuine' ? 'Chính hãng' : 'Không chính hãng');
+                return heard;
+            }
+            // Từ vựng cho bộ nhận dạng giọng nói: hãng + tên dòng xe phổ biến trong kho (nhiều biến thể = phổ biến hơn).
+            function vocabulary() {
+                const cat = catalog();
+                if (!cat) return [];
+                const heads = new Map();
+                cat.forEach(b => b.models.forEach(m => {
+                    const head = String(m).trim().split(/\s+/)[0];
+                    if (head.length >= 2 && !/^\d+$/.test(head)) { const k = fold(head); const e = heads.get(k) || { name: head, n: 0 }; e.n++; heads.set(k, e); }
+                }));
+                const out = cat.map(b => b.name);
+                [...heads.values()].sort((a, b) => b.n - a.n).slice(0, 260).forEach(e => out.push(e.name));
+                return [...new Set(out)];
+            }
+
+            async function search(opts) {
+                if (busy) return;
                 if ($('btnLookupSearch').getAttribute('aria-busy') === 'true') return;
-                let r = null;
-                try { r = parse(raw); } catch (e) { console.warn('Smart parse lỗi, dùng tra cứu thường', e); }
-                if (!r || !r.found) return window.searchData();
+                const raw = $('searchInput').value.trim().replace(/\s+/g, ' ');
                 const note = $('aiPartNote');
                 const setNote = t => { if (note) { note.textContent = t || ''; note.hidden = !t; } };
+                let local = null;
+                try { local = parse(raw); } catch (e) { console.warn('Smart parse lỗi', e); }
+                const cat = catalog(), words = raw.split(' ').filter(Boolean).length;
+                const spoken = !!(opts && opts.spoken);
+                const useAi = !!cat && Date.now() > aiOffUntil && navigator.onLine !== false && (words >= 3 || (local && local.found) || (spoken && words >= 2));
+                let r = local && local.found ? { ...local } : null, byAi = false;
+                if (local && local.ambiguousBrands) r = local;
+                if (useAi) {
+                    busy = true; const mySeq = ++intentSeq;
+                    setNote('AI đang hiểu câu của bạn…');
+                    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 8000);
+                    try {
+                        const ai = await callIntent(raw, cat.map(b => b.name), ctl.signal);
+                        if (mySeq !== intentSeq) return;
+                        const g = ground(ai, local, cat);
+                        if (g.ambiguousBrands) r = { found: true, ambiguousBrands: g.ambiguousBrands };
+                        else {
+                            const vehicle = !!(g.brand || g.models.length || g.years.length || g.skippedYears.length || g.kind !== 'all');
+                            const cleaned = !!g.part && fold(g.part) !== fold(raw);
+                            r = { ...g, found: vehicle || cleaned, heard: describe(g) };
+                            byAi = true;
+                        }
+                    } catch (e) {
+                        const code = e && e.code;
+                        if (['KEY_NOT_CONFIGURED', 'ACCESS_DENIED', 'UNAUTHENTICATED'].includes(code)) aiOffUntil = Date.now() + 30 * 60000;
+                        else if (['PROVIDER_LIMIT', 'APP_RATE_LIMIT'].includes(code)) aiOffUntil = Date.now() + 2 * 60000;
+                        else aiOffUntil = Date.now() + 20000;
+                        console.warn('AI intent lỗi, dùng bộ tách trên máy', e && e.message);
+                    } finally { clearTimeout(timer); busy = false; setNote(''); }
+                }
+                if (!r || !r.found) return window.searchData();
                 if (r.ambiguousBrands) {
                     setNote('Dòng xe này có ở nhiều hãng (' + r.ambiguousBrands.join(', ') + '). Hãy ghi rõ hãng, ví dụ “… Honda CR-V”.');
                     return;
                 }
                 apply(r);
-                setNote(r.skippedYears && r.skippedYears.length ? 'Chưa có dữ liệu năm ' + r.skippedYears.join(', ') + ' nên bỏ qua bộ lọc năm.' : '');
-                if (!r.part) { setNote((note && note.textContent ? note.textContent + ' ' : '') + 'Đã chọn xe theo câu của bạn — nhập thêm tên phụ tùng để tra cứu.'); $('searchInput').focus(); return; }
-                if (r.brand && r.models.length) return window.TascoAiSearch.open({ heard: r.heard });
+                const noteParts = [];
+                if (r.skippedYears && r.skippedYears.length) noteParts.push('Chưa có dữ liệu năm ' + r.skippedYears.join(', ') + ' nên bỏ qua bộ lọc năm.');
+                if (!r.part) { noteParts.push('Đã chọn xe theo câu của bạn — nhập thêm tên phụ tùng để tra cứu.'); setNote(noteParts.join(' ')); $('searchInput').focus(); return; }
+                setNote(noteParts.join(' '));
+                const heard = r.heard && r.heard.length ? r.heard : describe(r);
+                if (r.brand && r.models.length) return window.TascoAiSearch.open({ heard, ai: byAi });
                 return window.searchData();
             }
-            return { parse, search };
+            return { parse, search, vocabulary, ground };
         })();
 
 
@@ -16562,11 +16660,13 @@ window.TascoCategories = (function () {
       for (var i = 0; i < c.length; i++) { try { if (window.MediaRecorder.isTypeSupported && window.MediaRecorder.isTypeSupported(c[i])) return c[i]; } catch (_) {} }
       return '';
     }
-    async function transcribe(blob, prompt) {
+    async function transcribe(blob, prompt, extra) {
       var token = await cloudCfg.token();
       if (!token) { var e0 = new Error('auth'); e0.status = 401; throw e0; }
       var form = new FormData();
       form.append('file', blob, 'voice'); form.append('language', 'vi'); if (prompt) form.append('prompt', prompt);
+      if (extra && extra.context) form.append('context', extra.context);
+      if (extra && extra.vocab) form.append('vocab', extra.vocab);
       var ctrl = new AbortController(), timer = setTimeout(function () { ctrl.abort(); }, 30000), res;
       try { res = await fetch(cloudCfg.url + '/functions/v1/tasco-stt', { method: 'POST', headers: { Authorization: 'Bearer ' + token, apikey: cloudCfg.anonKey }, body: form, signal: ctrl.signal }); }
       catch (_) { var e1 = new Error('network'); e1.status = 0; throw e1; }
@@ -16710,9 +16810,11 @@ window.TascoCategories = (function () {
           release();
           if (done) return;
           if (blob.size < 1500 || (!speech && !blind)) { fail('Không nghe thấy tiếng nói. Thử lại gần micro hơn.'); return; }
-          var prompt = ui.plate ? 'Biển số xe ô tô, đọc từng số và từng chữ cái.' : 'Giám định xe ô tô: ' + hints(known, ui.onlyKnown).slice(0, 45).join(', ');
+          var sttCtx = ui.plate ? 'plate' : (ui.sttContext || 'general');
+          var prompt = ui.plate ? 'Biển số xe ô tô, đọc từng số và từng chữ cái.' : (sttCtx === 'search' ? 'Tra cứu phụ tùng ô tô: cản trước Honda CR-V 2025, đèn pha trái Vios. ' : 'Giám định xe ô tô: ') + hints(known, ui.onlyKnown).slice(0, 45).join(', ');
+          var vocab = ui.plate ? '' : ((ui.vocab && ui.vocab.length ? ui.vocab : hints(known, ui.onlyKnown)).join(', ')).slice(0, 1700);
           try {
-            var text = await transcribe(blob, prompt.slice(0, 650));
+            var text = await transcribe(blob, prompt.slice(0, 650), { context: sttCtx, vocab: vocab });
             if (done) return;
             text = text.replace(/[.!?…]+\s*$/, '').trim();
             if (ui.multi) text = text.replace(/[.!?]\s+/g, ', ');
@@ -16970,14 +17072,18 @@ window.TascoCategories = (function () {
   mic.addEventListener('click', function () {
     try { input.blur(); } catch (_) {}
     V.start({
-      multi: false, known: known(),
+      multi: false, known: known(), sttContext: 'search', vocab: (window.TascoSmartSearch && window.TascoSmartSearch.vocabulary()) || [],
       level: function (v) { mic.style.setProperty('--lvl', v.toFixed(2)); },
-      begin: function () { mic.classList.add('is-live'); mic.setAttribute('aria-pressed', 'true'); mic.setAttribute('aria-label', 'Dừng nghe'); say('Đang nghe… đọc tên phụ tùng'); },
+      begin: function () { mic.classList.add('is-live'); mic.setAttribute('aria-pressed', 'true'); mic.setAttribute('aria-label', 'Dừng nghe'); say('Đang nghe… nói tự nhiên, ví dụ “cản trước Honda CRV 2025”'); },
       live: function (t) { setValue(t); say('Đang nghe: ' + t); },
       stopping: function () { say('Đang xử lý…'); },
       end: function (t) {
         mic.style.removeProperty('--lvl'); mic.classList.remove('is-live'); mic.setAttribute('aria-pressed', 'false'); mic.setAttribute('aria-label', 'Nói để nhập tên phụ tùng');
-        if (t) { setValue(t); say('Kiểm tra lại rồi bấm Tra cứu.'); } else say('');
+        if (!t) { say(''); return; }
+        setValue(t);
+        /* Câu nói tự nhiên (từ 3 từ) → tự hiểu và tra cứu luôn; cụm ngắn thì chờ người dùng kiểm tra. */
+        if (window.TascoSmartSearch && t.trim().split(/\s+/).length >= 3) { say('Đã nghe: “' + t + '”'); window.TascoSmartSearch.search({ spoken: true }); }
+        else say('Kiểm tra lại rồi bấm Tra cứu.');
       },
       error: function (message) { say(message, true); }
     });
