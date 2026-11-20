@@ -3844,13 +3844,13 @@ window.TascoBootSplash = (() => {
   <div class="ws-search-panel ws-search-panel--premium">
     <div class="ws-kind-tabs u056 u056-sw" role="group" aria-label="Loại hàng cần tra cứu"><span class="u056-knob" aria-hidden="true"></span><button type="button" data-lookup-type="all" onclick="TascoLookupFlow.chooseType('all')" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="3.5" y="14.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="14.5" width="6" height="6" rx="1.5"/></svg>Tất cả</button><button type="button" data-lookup-type="genuine" onclick="TascoLookupFlow.chooseType('genuine')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg>Chính hãng</button><button type="button" data-lookup-type="aftermarket" onclick="TascoLookupFlow.chooseType('aftermarket')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 10 5-10 5L2 8z"/><path d="m2 12 10 5 10-5M2 16l10 5 10-5"/></svg>Không chính hãng</button></div>
     <label for="searchInput" class="ws-search-label">Phụ tùng cần tìm</label>
-    <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="ws-search-input-wrap"><input type="search" id="searchInput" placeholder="Nhập tên phụ tùng…" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();searchData();}"></span><button type="button" class="ws-search-mic" id="searchMic" aria-label="Nói để nhập tên phụ tùng" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></div>
+    <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="ws-search-input-wrap"><input type="search" id="searchInput" placeholder="VD: cản trước Honda CRV 2025" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();TascoSmartSearch.search();}"></span><button type="button" class="ws-search-mic" id="searchMic" aria-label="Nói để nhập tên phụ tùng" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></div>
     <p class="ws-search-voice" id="searchVoiceNote" role="status" aria-live="polite" hidden></p>
     <div class="ws-part-suggestions" aria-label="Gợi ý phụ tùng"><span>Gợi ý</span><button type="button" data-part-suggestion="Đèn pha" onclick="TascoLookupFlow.choosePart('Đèn pha')" aria-pressed="false">Đèn pha</button><button type="button" data-part-suggestion="Cản trước" onclick="TascoLookupFlow.choosePart('Cản trước')" aria-pressed="false">Cản trước</button><button type="button" data-part-suggestion="Gương chiếu hậu" onclick="TascoLookupFlow.choosePart('Gương chiếu hậu')" aria-pressed="false">Gương chiếu hậu</button></div>
     <div class="ws-filter-grid"><button type="button" id="btnHang" onclick="openFilterModal('hang')" aria-label="Chọn hãng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Hãng xe</strong><small id="labelHang">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="multiHieuBtn" onclick="openFilterModal('hieu')" aria-label="Chọn dòng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Dòng xe</strong><small id="labelHieu">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnNam" onclick="openFilterModal('nam')" aria-label="Chọn năm sản xuất" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></span><span class="ws-filter-copy"><strong>Năm sản xuất</strong><small id="labelNam">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnType" onclick="openFilterModal('type')" aria-label="Chọn loại hàng" data-active="false" hidden><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M8 6V3h8v3M3 12h18m-11 0v3h4v-3"/></svg></span><span class="ws-filter-copy"><strong>Loại hàng</strong><small id="labelType">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
     <div class="ws-search-options"><button type="button" id="btnExactPartName" class="ws-exact-toggle" onclick="toggleExactPartName()" title="Khớp chính xác tên phụ tùng" aria-label="Khớp chính xác tên phụ tùng" aria-pressed="false"><span class="ws-exact-box" aria-hidden="true"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span>Khớp chính xác tên</span></button></div>
     <input id="exactPartName" type="hidden" value="0"><input type="hidden" id="filterHang" value=""><input type="hidden" id="filterNam" value=""><input type="hidden" id="filterType" value="all">
-    <div class="ws-search-actions"><button type="button" id="btnLookupSearch" class="ws-primary" onclick="searchData()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Tra cứu phụ tùng</span></button><button type="button" class="ws-secondary" onclick="clearFilters()" aria-label="Xóa bộ lọc" title="Xóa bộ lọc"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/></svg><span>Đặt lại</span></button></div>
+    <div class="ws-search-actions"><button type="button" id="btnLookupSearch" class="ws-primary" onclick="TascoSmartSearch.search()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Tra cứu phụ tùng</span></button><button type="button" class="ws-secondary" onclick="clearFilters()" aria-label="Xóa bộ lọc" title="Xóa bộ lọc"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/></svg><span>Đặt lại</span></button></div>
     <button type="button" class="ws-ai-btn" id="btnAiSearch" onclick="TascoAiSearch.open()" aria-haspopup="dialog"><span class="ws-ai-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3Z"/></svg></span><span class="ws-ai-copy"><strong>Tìm bằng AI</strong><small>Hiểu tên đồng nghĩa, gộp cách viết, chọn đúng loại phụ tùng trong kho</small></span><svg class="ws-ai-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <p class="ws-ai-note" id="aiPartNote" role="status" aria-live="polite" hidden></p>
   </div>
@@ -9698,7 +9698,7 @@ window.searchData = async function(opts) {
             const SPARK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3Z"/></svg>';
             const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>';
             const CLOSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
-            let seq = 0, ctl = null, items = [], current = null, opener = null, note = '';
+            let seq = 0, ctl = null, items = [], current = null, opener = null, note = '', heard = [];
 
             function readContext() {
                 return {
@@ -9823,6 +9823,7 @@ window.searchData = async function(opts) {
                 const main = [], rel = [];
                 items.forEach((it, i) => (it.related ? rel : main).push(card(it, i)));
                 let html = '';
+                if (heard.length) html += '<p class="ai-understood">Đã hiểu từ câu của bạn ' + heard.map(h => '<b>' + esc(h) + '</b>').join('') + '</p>';
                 if (res.normalized_name && fold(res.normalized_name) !== fold(current.query)) html += '<p class="ai-understood">AI hiểu là <b>' + esc(res.normalized_name) + '</b></p>';
                 if (res.clarification) html += '<p class="ai-clar">' + esc(res.clarification) + '</p>';
                 html += '<ul class="ai-list" aria-label="Tên phụ tùng trong kho">' + main.join('') + '</ul>';
@@ -9881,7 +9882,8 @@ window.searchData = async function(opts) {
                 window.TascoLookupFlow.syncChoices();
                 return window.searchData({ names, label: picked.length === 1 ? picked[0].name : picked.length + ' tên phụ tùng đã chọn bằng AI' });
             }
-            function open() {
+            function open(opts) {
+                heard = opts && Array.isArray(opts.heard) ? opts.heard.slice(0, 6) : [];
                 const ctx = readContext();
                 if (ctx.query.length < 2) { setNote('Nhập tên phụ tùng (ít nhất 2 ký tự) rồi bấm Tìm bằng AI.'); $('searchInput').focus(); return; }
                 if (!ctx.brand) { setNote('Chọn hãng xe để AI tìm đúng tên trong kho của xe đó.'); if (window.openFilterModal) window.openFilterModal('hang'); return; }
@@ -9897,6 +9899,163 @@ window.searchData = async function(opts) {
                 run();
             }
             return { open, close };
+        })();
+
+        /* ===== TascoSmartSearch: hiểu câu tự nhiên, ví dụ "cản trước Honda CRV 2025 giá bao nhiêu" =====
+           Tách phần tên phụ tùng, hãng, dòng xe, năm, loại hàng ngay trên máy (miễn phí, không tốn hạn mức AI),
+           đối chiếu với danh sách hãng/dòng xe thật của kho rồi điền bộ lọc và tra cứu. */
+        window.TascoSmartSearch = (() => {
+            const $ = id => document.getElementById(id);
+            const fold = v => String(v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
+            const compact = v => fold(v).replace(/ /g, '');
+            const BRAND_ALIAS = { mec: 'mercedesbenz', merc: 'mercedesbenz', mercedes: 'mercedesbenz', vin: 'vinfast', huyndai: 'hyundai', mitsu: 'mitsubishi', chevy: 'chevrolet' };
+            // Cụm gây nhiễu luôn bỏ; từ nối chỉ bỏ khi đứng cạnh thông tin xe/năm để không làm hỏng tên phụ tùng ("giá đỡ", "xe nâng"…).
+            const NOISE = ['tra cuu', 'tim kiem', 'tim giup', 'tim', 'cho toi', 'giup toi', 'giup minh', 'cho minh', 'gia bao nhieu', 'bao nhieu tien', 'la bao nhieu', 'bao nhieu', 'bao gia', 'gia ca', 'gia tien', 'vui long', 'giup', 'nhe', 'nha', 'phu tung', 'hay'].map(p => p.split(' '));
+            const ADJ = new Set(['xe', 'doi', 'nam', 'dong', 'hang', 'loai', 'cua', 'cho', 'la', 'san', 'xuat']);
+            const KIND_AFTER = [['khong', 'chinh', 'hang'], ['thay', 'the'], ['hang', 'ngoai'], ['aftermarket']];
+
+            function catalog() {
+                const brands = Object.keys(CAY_GIA_PHA || {}).map(name => ({ name, key: compact(name), models: Object.keys(CAY_GIA_PHA[name] || {}) }));
+                return brands.length ? brands : null;
+            }
+            // Khoá tiền tố của dòng xe: "CR-V L" → ["crv","crvl"]; "VIOS E CVT" → ["vios","viose","vioseccvt"]…
+            function modelKeys(name) {
+                const words = fold(name).split(' ').filter(Boolean), keys = [];
+                let acc = '';
+                words.forEach(w => { acc += w; keys.push(acc); });
+                return keys;
+            }
+            function matchSeq(f, i, seq) { return seq.every((w, k) => f[i + k] === w); }
+
+            function parse(text) {
+                const raw = String(text || '').trim().replace(/\s+/g, ' ');
+                const cat = catalog();
+                if (!cat || raw.length < 2) return null;
+                const tokens = raw.split(' '), f = tokens.map(fold);
+                const gone = tokens.map((_, i) => !f[i]); // dấu câu thuần (?, !, …) bỏ luôn
+                const used = new Set();
+                const take = (i, n) => { for (let k = 0; k < n; k++) { gone[i + k] = true; used.add(i + k); } };
+                let kind = 'all';
+                // 1) loại hàng
+                for (let i = 0; i < f.length; i++) {
+                    if (gone[i]) continue;
+                    const after = KIND_AFTER.find(seq => matchSeq(f, i, seq));
+                    if (after) { kind = 'aftermarket'; take(i, after.length); continue; }
+                    if (matchSeq(f, i, ['chinh', 'hang'])) { kind = 'genuine'; take(i, 2); }
+                }
+                // 2) hãng xe (n-gram 1–2 từ)
+                let brand = null;
+                for (let n = 2; n >= 1 && !brand; n--) for (let i = 0; i + n <= f.length && !brand; i++) {
+                    if (gone.slice(i, i + n).some(Boolean)) continue;
+                    let t = f.slice(i, i + n).join(''); t = BRAND_ALIAS[t] || t;
+                    const hit = cat.find(b => b.key === t);
+                    if (hit && t.length >= 2) { brand = hit; take(i, n); }
+                }
+                // 3) dòng xe (n-gram 3→1 từ), ưu tiên cụm dài nhất
+                let models = [], modelBrands = new Set();
+                const pool = brand ? [brand] : cat;
+                outer: for (let n = 3; n >= 1; n--) for (let i = 0; i + n <= f.length; i++) {
+                    if (gone.slice(i, i + n).some(Boolean)) continue;
+                    const t = f.slice(i, i + n).join('');
+                    if (t.length < 2 || (!brand && (t.length < 3 || /^\d+$/.test(t)))) continue;
+                    const found = [];
+                    pool.forEach(b => b.models.forEach(m => { if (modelKeys(m).includes(t)) found.push({ brand: b, model: m }); }));
+                    if (!found.length) continue;
+                    found.forEach(x => modelBrands.add(x.brand.name));
+                    models = found; take(i, n); break outer;
+                }
+                if (!brand && models.length) {
+                    if (modelBrands.size === 1) brand = cat.find(b => b.name === [...modelBrands][0]);
+                    else return { found: true, ambiguousBrands: [...modelBrands], part: '', heard: [], kind, brand: null, models: [], years: [] };
+                }
+                const modelNames = [...new Set(models.map(x => x.model))].sort((a, b) => a.length - b.length || a.localeCompare(b, 'vi')).slice(0, 30);
+                // 4) năm: "2025", "2022-2024", "từ 2020 đến 2023"
+                const years = new Set(), validYear = y => y >= 1990 && y <= 2100;
+                for (let i = 0; i < f.length; i++) {
+                    if (gone[i] || !/^(19|20)\d\d$/.test(f[i])) continue;
+                    const y1 = Number(f[i]);
+                    if (!validYear(y1)) continue;
+                    let j = i + 1;
+                    while (j < f.length && !gone[j] && ['den', 'toi', 'ra'].includes(f[j])) j++;
+                    const y2 = j < f.length && !gone[j] && /^(19|20)\d\d$/.test(f[j]) ? Number(f[j]) : 0;
+                    const dashed = tokens[i].includes('-') ? tokens[i].split('-').map(Number) : null;
+                    if (y2 && y2 >= y1 && y2 - y1 <= 15) { for (let y = y1; y <= y2; y++) years.add(y); take(i, j - i + 1); }
+                    else { years.add(y1); take(i, 1); }
+                }
+                // "2022-2024" bị fold thành 2 token "2022","2024" nằm trong cùng một từ gốc
+                tokens.forEach((tk, i) => {
+                    const m = tk.match(/^(\d{4})\s*[-–]\s*(\d{4})$/);
+                    if (m && !gone[i]) { const a = Number(m[1]), b = Number(m[2]); if (b >= a && b - a <= 15 && validYear(a)) { for (let y = a; y <= b; y++) years.add(y); take(i, 1); } }
+                });
+                const knownYears = Array.isArray(NAM_ALL) ? NAM_ALL.map(Number) : [];
+                const yearList = [...years].filter(y => !knownYears.length || knownYears.includes(y)).sort((a, b) => a - b).slice(0, 30);
+                const skippedYears = [...years].filter(y => !yearList.includes(y));
+                // 5) nhiễu
+                for (let i = 0; i < f.length; i++) {
+                    if (gone[i]) continue;
+                    const seq = NOISE.find(p => matchSeq(f, i, p) && p.every((_, k) => !gone[i + k]));
+                    if (seq) { for (let k = 0; k < seq.length; k++) gone[i + k] = true; i += seq.length - 1; }
+                }
+                // "giá" đứng cuối câu ("… 2025 giá")
+                for (let i = f.length - 1; i > 0; i--) { if (gone[i]) continue; if (f[i] === 'gia') gone[i] = true; break; }
+                // từ nối chỉ bỏ khi sát thông tin xe/năm đã nhận
+                for (let changed = true; changed;) {
+                    changed = false;
+                    for (let i = 0; i < f.length; i++) {
+                        if (gone[i] || !ADJ.has(f[i])) continue;
+                        if ((i > 0 && gone[i - 1]) || (i + 1 < f.length && gone[i + 1])) { gone[i] = true; changed = true; }
+                    }
+                }
+                const part = tokens.filter((_, i) => !gone[i]).join(' ').replace(/^[\s,.;:–-]+|[\s,.;:–-]+$/g, '').trim();
+                const found = !!(brand || modelNames.length || yearList.length || skippedYears.length || kind !== 'all');
+                const heard = [];
+                if (part) heard.push(part);
+                if (brand) heard.push(brand.name);
+                if (modelNames.length) heard.push(modelNames.length === 1 ? modelNames[0] : modelNames[0] + ' +' + (modelNames.length - 1) + ' đời');
+                if (yearList.length) heard.push(yearList.length === 1 ? String(yearList[0]) : yearList[0] + '–' + yearList[yearList.length - 1]);
+                if (kind !== 'all') heard.push(kind === 'genuine' ? 'Chính hãng' : 'Không chính hãng');
+                return { found, part, brand: brand ? brand.name : '', models: modelNames, years: yearList, skippedYears, kind, heard };
+            }
+
+            function apply(r) {
+                const prevHang = $('filterHang').value;
+                if (r.brand) {
+                    $('filterHang').value = r.brand;
+                    $('labelHang').innerText = r.brand;
+                    if (prevHang !== r.brand) { selectedNamList = []; selectedHieuList = []; }
+                    if (window.TascoFilterCounts && TascoFilterCounts.ensureBrand) TascoFilterCounts.ensureBrand(r.brand);
+                }
+                if (r.models.length) selectedHieuList = r.models.slice();
+                else if (r.brand && prevHang !== r.brand) selectedHieuList = [];
+                if (r.years.length) selectedNamList = r.years.slice();
+                if (r.kind !== 'all') {
+                    $('filterType').value = r.kind;
+                    const lt = $('labelType'); if (lt) lt.innerText = r.kind === 'genuine' ? 'Chính hãng' : 'Không chính hãng';
+                }
+                updateHieuLabel(); updateNamLabel();
+                $('searchInput').value = r.part;
+                window.TascoLookupFlow.syncChoices();
+            }
+
+            function search() {
+                const raw = $('searchInput').value;
+                if ($('btnLookupSearch').getAttribute('aria-busy') === 'true') return;
+                let r = null;
+                try { r = parse(raw); } catch (e) { console.warn('Smart parse lỗi, dùng tra cứu thường', e); }
+                if (!r || !r.found) return window.searchData();
+                const note = $('aiPartNote');
+                const setNote = t => { if (note) { note.textContent = t || ''; note.hidden = !t; } };
+                if (r.ambiguousBrands) {
+                    setNote('Dòng xe này có ở nhiều hãng (' + r.ambiguousBrands.join(', ') + '). Hãy ghi rõ hãng, ví dụ “… Honda CR-V”.');
+                    return;
+                }
+                apply(r);
+                setNote(r.skippedYears && r.skippedYears.length ? 'Chưa có dữ liệu năm ' + r.skippedYears.join(', ') + ' nên bỏ qua bộ lọc năm.' : '');
+                if (!r.part) { setNote((note && note.textContent ? note.textContent + ' ' : '') + 'Đã chọn xe theo câu của bạn — nhập thêm tên phụ tùng để tra cứu.'); $('searchInput').focus(); return; }
+                if (r.brand && r.models.length) return window.TascoAiSearch.open({ heard: r.heard });
+                return window.searchData();
+            }
+            return { parse, search };
         })();
 
 
