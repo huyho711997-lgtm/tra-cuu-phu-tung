@@ -20858,6 +20858,51 @@ html.dark .tasco-workspace #traCuuSection .ws-ai-btn{background:var(--ws-soft)}
 .tasco-workspace #traCuuSection .ws-search-panel>:nth-child(n+7){animation-delay:.18s}
 @media(max-width:380px){.tasco-workspace #traCuuSection .ws-search-actions{margin:0 -13px;padding:18px 13px 2px}}
 @media(prefers-reduced-motion:reduce){.tasco-workspace #traCuuSection .ws-search-panel>*,.tasco-workspace #traCuuSection .lk-dot{animation:none!important}}
+
+/* ---- v4: tiết chế - phẳng, ít viền, một điểm nhấn ---- */
+.tasco-workspace #traCuuSection .ws-search-panel--premium{padding:20px 16px 18px;box-shadow:0 1px 2px rgba(24,48,86,.04),0 18px 40px -28px rgba(24,48,86,.35)}
+.tasco-workspace #traCuuSection .ws-search-label{margin:0 0 9px 2px;font-size:10.5px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;color:var(--ws-muted)}
+.tasco-workspace #traCuuSection .ws-search-field{min-height:56px;border-radius:16px;background:var(--ws-soft)}
+.tasco-workspace #traCuuSection .ws-search-field>.ws-icon{color:var(--ws-muted)}
+.tasco-workspace #traCuuSection .ws-search-mic{width:40px;height:40px;background:var(--ws-surface);color:var(--ws-accent-text);box-shadow:0 0 0 1px var(--ws-line),0 2px 6px -2px rgba(24,48,86,.18)}
+.tasco-workspace #traCuuSection .ws-search-mic.is-live{background:#e5484d;color:#fff;box-shadow:none}
+.tasco-workspace #traCuuSection .ws-part-suggestions{padding:12px 0 0;gap:7px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
+.tasco-workspace #traCuuSection .ws-part-suggestions>span{font-size:11px;letter-spacing:.02em}
+.tasco-workspace #traCuuSection .ws-part-suggestions button{padding:7px 13px;border:0;background:var(--ws-soft);color:var(--ws-text);font-size:12.5px;font-weight:550;transition:background .18s ease,color .18s ease}
+.tasco-workspace #traCuuSection .ws-part-suggestions button[aria-pressed=true]{background:var(--app-navy);color:#fff}
+html.dark .tasco-workspace #traCuuSection .ws-part-suggestions button[aria-pressed=true]{background:var(--app-teal);color:var(--app-navy)}
+.tasco-workspace #traCuuSection .lk-vehicle-head{margin:22px 2px 10px}
+.tasco-workspace #traCuuSection .lk-type-head{margin:20px 2px 10px}
+.tasco-workspace #traCuuSection .lk-vehicle-head>span,.tasco-workspace #traCuuSection .lk-type-head>span{font-size:10.5px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;color:var(--ws-muted)}
+.tasco-workspace #traCuuSection .lk-quick{min-height:30px;padding:0;border:0;border-radius:0;background:transparent;color:var(--ws-accent-text);font-size:12.5px;font-weight:650}
+.tasco-workspace #traCuuSection .lk-quick:active{transform:none;opacity:.6}
+.tasco-workspace #traCuuSection .ws-search-panel .ws-filter-grid{border:0;border-radius:20px;background:var(--ws-soft)}
+.tasco-workspace #traCuuSection .ws-filter-grid>button{min-height:68px;padding:12px 16px;gap:12px}
+.tasco-workspace #traCuuSection .ws-filter-grid>#btnHang{border-bottom:1px solid color-mix(in srgb,var(--ws-line) 70%,transparent)}
+.tasco-workspace #traCuuSection .ws-filter-grid>#btnNam{border-left:1px solid color-mix(in srgb,var(--ws-line) 70%,transparent)}
+.tasco-workspace #traCuuSection .ws-filter-grid>button:active{background:rgba(24,48,86,.05)}
+html.dark .tasco-workspace #traCuuSection .ws-filter-grid>button:active{background:rgba(255,255,255,.06)}
+@media(hover:hover){.tasco-workspace #traCuuSection .ws-filter-grid>button:hover{background:rgba(24,48,86,.04)}}
+.tasco-workspace #traCuuSection .ws-filter-icon,.tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] .ws-filter-icon{width:22px;height:22px;flex:0 0 22px;border-radius:0;background:transparent;color:var(--ws-muted)}
+.tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] .ws-filter-icon{color:var(--ws-accent-text)}
+.tasco-workspace #traCuuSection .ws-filter-grid>button .ws-filter-icon .ws-icon{width:21px;height:21px;stroke-width:1.7}
+.tasco-workspace #traCuuSection .ws-filter-grid strong{font-size:10.5px;font-weight:600;letter-spacing:.05em}
+.tasco-workspace #traCuuSection .ws-filter-grid small{font-size:16px;font-weight:560;letter-spacing:-.15px;color:var(--ws-muted)}
+.tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] small{font-weight:680}
+.tasco-workspace #traCuuSection .lk-vehicle-foot{min-height:42px;padding:10px 16px;border-top:1px solid color-mix(in srgb,var(--ws-line) 70%,transparent);background:transparent;font-size:12.5px}
+.tasco-workspace #traCuuSection .ws-kind-tabs{border:0;background:var(--ws-soft)}
+.tasco-workspace #traCuuSection .ws-search-options{margin:14px 0 0}
+.tasco-workspace #traCuuSection .ws-search-actions{padding:20px 16px 2px;background:linear-gradient(to bottom,rgba(255,255,255,0),var(--ws-surface) 40%)}
+.tasco-workspace #traCuuSection .ws-search-actions .ws-primary,.tasco-workspace #traCuuSection .ws-search-actions .ws-primary:hover,.tasco-workspace #traCuuSection .ws-search-actions .ws-primary:focus-visible{min-height:56px;border-radius:16px;background:var(--app-navy)!important;color:#fff!important;font-size:15.5px;font-weight:650;letter-spacing:0;box-shadow:0 12px 24px -14px rgba(24,48,86,.7)!important;filter:none}
+html.dark .tasco-workspace #traCuuSection .ws-search-actions .ws-primary,html.dark .tasco-workspace #traCuuSection .ws-search-actions .ws-primary:hover{background:var(--app-teal)!important;color:var(--app-navy)!important;box-shadow:none!important}
+.tasco-workspace #traCuuSection .ws-search-actions .ws-primary[aria-busy=true]::before{border-color:rgba(255,255,255,.3);border-top-color:#fff}
+html.dark .tasco-workspace #traCuuSection .ws-search-actions .ws-primary[aria-busy=true]::before{border-color:rgba(24,48,86,.25);border-top-color:var(--app-navy)}
+.tasco-workspace #traCuuSection .ws-search-actions .ws-secondary{width:56px;border:0;border-radius:16px;background:var(--ws-soft);color:var(--ws-muted)}
+.tasco-workspace #traCuuSection .ws-ai-btn,html.dark .tasco-workspace #traCuuSection .ws-ai-btn{margin-top:8px;min-height:50px;padding:8px 4px;border:0;border-radius:14px;background:transparent}
+.tasco-workspace #traCuuSection .ws-ai-ico{width:32px;height:32px;border-radius:10px;background:var(--ws-accent);color:var(--ws-accent-text)}
+html.dark .tasco-workspace #traCuuSection .ws-ai-ico{background:var(--ws-accent);color:var(--ws-accent-text)}
+.tasco-workspace #traCuuSection .ws-ai-copy strong{font-size:13.5px;font-weight:650}
+.tasco-workspace #traCuuSection .ws-ai-copy small{font-size:11px}
 </style>
 <script id="tascoAppUpdate">
 /* Dự phòng khi trình duyệt không có ngày triển khai. Phiên bản hiển thị lấy từ document.lastModified. */
