@@ -2984,7 +2984,7 @@ html.dark .tasco-workspace .ws-search-clear:active{background:rgba(255,255,255,.
 </style>
 <style id="tascoSmartAsk">
 /* Hỏi lại khi tìm bằng giọng nói/câu tự nhiên mà thiếu hãng, dòng xe/phiên bản hoặc năm. */
-.ws-ask{position:relative;margin:14px 0 4px;padding:16px 14px 12px;border:1px solid var(--ws-line);border-radius:22px;background:var(--ws-surface);box-shadow:0 18px 38px -26px rgba(24,48,86,.6),0 2px 6px rgba(24,48,86,.05);overflow:hidden;animation:wsAskIn .3s cubic-bezier(.2,.8,.2,1) both}
+.ws-ask{position:relative;margin:14px 0 4px;padding:16px 14px 12px;border:1px solid var(--ws-line);border-radius:22px;background:var(--ws-surface);box-shadow:0 18px 38px -26px rgba(24,48,86,.6),0 2px 6px rgba(24,48,86,.05);overflow:hidden;overflow:clip;animation:wsAskIn .3s cubic-bezier(.2,.8,.2,1) both}
 .ws-ask::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,#84bfc7,#39747e 55%,#183056)}
 .ws-ask[hidden]{display:none}
 .ws-ask-body{animation:wsAskStep .26s ease both}
@@ -3015,11 +3015,11 @@ html.dark .ws-ask-tok--part{border-color:#84bfc7;background:#84bfc7;color:#0b1b3
 .ws-ask-sub{margin:4px 0 0;font-size:12px;line-height:1.45;color:var(--ws-muted)}
 .ws-ask-tools{display:flex;gap:4px;margin:10px -4px 0;overflow-x:auto;scrollbar-width:none}
 .ws-ask-tools::-webkit-scrollbar{display:none}
-.ws-ask-tool{flex:none;min-height:32px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:var(--ws-accent-text);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button.ws-ask-tool{flex:none;min-height:32px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:var(--ws-accent-text);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .ws-ask-tool:active{background:var(--ws-soft)}
 .ws-ask-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
 .ws-ask-grid--year{grid-template-columns:repeat(3,minmax(0,1fr))}
-.ws-ask-opt{position:relative;display:flex;align-items:center;gap:8px;min-height:48px;padding:0 12px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:14px;font-weight:650;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,color .18s ease}
+button.ws-ask-opt{position:relative;display:flex;align-items:center;gap:8px;min-height:48px;padding:0 12px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:14px;font-weight:650;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,color .18s ease}
 .ws-ask-opt:active{transform:scale(.97)}
 .ws-ask-opt:focus-visible,.ws-ask-next:focus-visible,.ws-ask-back:focus-visible{outline:2px solid #39747e;outline-offset:2px}
 .ws-ask-grid--year .ws-ask-opt{justify-content:center;padding:0 8px;font-variant-numeric:tabular-nums}
@@ -3033,17 +3033,17 @@ html.dark .ws-ask-tok--part{border-color:#84bfc7;background:#84bfc7;color:#0b1b3
 .ws-ask-opt[aria-pressed=true] .ws-ask-n{color:rgba(255,255,255,.72)}
 html.dark .ws-ask-opt[aria-pressed=true]{border-color:#84bfc7;background:#2c6f7b;box-shadow:0 10px 20px -14px rgba(0,0,0,.9)}
 .ws-ask-cap{margin:10px 2px 0;font-size:10.5px;line-height:1.4;color:var(--ws-muted)}
-.ws-ask-actions{display:flex;gap:10px;margin-top:14px}
-.ws-ask-back{flex:none;display:grid;place-items:center;width:50px;min-height:50px;padding:0;border:1px solid var(--ws-line);border-radius:14px;background:transparent;color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.ws-ask-actions{position:sticky;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:3;display:flex;gap:10px;margin:12px -14px 0;padding:14px 14px 8px;background:linear-gradient(to bottom,rgba(255,255,255,0),var(--ws-surface) 30%)}
+button.ws-ask-back{flex:none;display:grid;place-items:center;width:50px;min-height:50px;padding:0;border:1px solid var(--ws-line);border-radius:14px;background:transparent;color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .ws-ask-back svg{width:20px;height:20px}
 .ws-ask-back:active{background:var(--ws-soft)}
-.ws-ask-next{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 16px;border:0;border-radius:14px;background:linear-gradient(135deg,#183056,#244861);color:#fff;font:inherit;font-size:14.5px;font-weight:720;cursor:pointer;box-shadow:0 14px 24px -16px rgba(24,48,86,.9);-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease}
+button.ws-ask-next{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 16px;border:0;border-radius:14px;background:linear-gradient(135deg,#183056,#244861);color:#fff;font:inherit;font-size:14.5px;font-weight:720;cursor:pointer;box-shadow:0 14px 24px -16px rgba(24,48,86,.9);-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease}
 .ws-ask-next:active{transform:scale(.98)}
 .ws-ask-arrow{display:grid;place-items:center}
 .ws-ask-arrow svg{width:18px;height:18px}
-.ws-ask-next--ghost{border:1px dashed var(--ws-line);background:transparent;color:var(--ws-muted);box-shadow:none;font-weight:600}
+button.ws-ask-next.ws-ask-next--ghost{border:1px dashed var(--ws-line);background:transparent;color:var(--ws-muted);box-shadow:none;font-weight:600}
 html.dark .ws-ask-next:not(.ws-ask-next--ghost){background:linear-gradient(135deg,#84bfc7,#5fa8b2);color:#0b1b30;box-shadow:0 14px 24px -16px rgba(0,0,0,.9)}
-.ws-ask-more,.ws-ask-go{display:block;width:100%;min-height:36px;margin-top:6px;padding:0;border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:650;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button.ws-ask-more,button.ws-ask-go{display:block;width:100%;min-height:36px;margin-top:6px;padding:0;border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:650;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .ws-ask-more{color:var(--ws-accent-text)}
 .ws-ask-go{color:var(--ws-muted)}
 .ws-ask-more:active,.ws-ask-go:active{opacity:.6}
