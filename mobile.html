@@ -10122,8 +10122,8 @@ window.searchData = async function(opts) {
 
             /* ---- Gemini hiểu câu (qua Edge Function tasco-intent). Lỗi/hết lượt thì tự dùng bộ tách trên máy. ---- */
             let aiOffUntil = 0, busy = false, intentSeq = 0;
-            async function callIntent(text, brands, signal) {
-                const { data, error } = await supabase.functions.invoke('tasco-intent', { body: { text, brands }, signal });
+            async function callIntent(text, brands, signal, catalogMap) {
+                const { data, error } = await supabase.functions.invoke('tasco-intent', { body: { text, brands, catalog: catalogMap || {} }, signal });
                 if (error) {
                     let code = '';
                     try { const res = error.context; if (res && typeof res.clone === 'function') code = (await res.clone().json()).code || ''; } catch (_) { /* bỏ qua */ }
@@ -10172,17 +10172,38 @@ window.searchData = async function(opts) {
                 return heard;
             }
             // Từ vựng cho bộ nhận dạng giọng nói: hãng + tên dòng xe phổ biến trong kho (nhiều biến thể = phổ biến hơn).
+            // "Họ" dòng xe thật của kho: bỏ biến thể/đời con ("VIOS E CVT" → "VIOS"), gộp cách viết trùng nhau ("CR-V" = "CRV"), sắp theo số biến thể.
+            function families(brand, limit) {
+                // Khoá tiền tố theo ranh giới từ (giống modelKeys): "CR-V L" → cr, crv, crvl.
+                const items = brand.models.map(name => { const words = fold(name).split(' ').filter(Boolean); let acc = ''; return { name, words, key: words.join(''), pre: words.map(w => (acc += w)) }; }).filter(x => x.words.length);
+                const groups = new Map();
+                items.forEach(it => { const g = groups.get(it.key) || { key: it.key, pre: it.pre, names: [], n: 0 }; g.names.push(it); groups.set(it.key, g); });
+                const kept = new Map();
+                [...groups.values()].sort((a, b) => a.key.length - b.key.length).forEach(g => {
+                    if (g.pre.some(k => k !== g.key && kept.has(k))) return;   // biến thể của một họ đã có
+                    kept.set(g.key, g);
+                });
+                items.forEach(it => { const k = it.pre.find(x => kept.has(x)); if (k) kept.get(k).n++; });
+                return [...kept.values()].sort((a, b) => b.n - a.n || a.key.localeCompare(b.key))
+                    .map(g => g.names.sort((x, y) => y.words.length - x.words.length || x.name.length - y.name.length)[0].name).slice(0, limit || 40);
+            }
+            // Danh mục gửi cho Gemini: AI chuẩn hoá lời nói/câu gõ về đúng hãng + dòng xe có trong dữ liệu.
+            function intentCatalog(cat) {
+                const out = {}; let total = 0;
+                cat.forEach(b => { if (total >= 900) return; const f = families(b, 40); if (f.length) { out[b.name] = f; total += f.length; } });
+                return out;
+            }
+            // Từ vựng cho bộ nhận dạng giọng nói: hãng + họ dòng xe thật của kho (hãng/dòng xe phổ biến lên trước).
             function vocabulary() {
                 const cat = catalog();
                 if (!cat) return [];
-                const heads = new Map();
-                cat.forEach(b => b.models.forEach(m => {
-                    const head = String(m).trim().split(/\s+/)[0];
-                    if (head.length >= 2 && !/^\d+$/.test(head)) { const k = fold(head); const e = heads.get(k) || { name: head, n: 0 }; e.n++; heads.set(k, e); }
-                }));
-                const out = cat.map(b => b.name);
-                [...heads.values()].sort((a, b) => b.n - a.n).slice(0, 260).forEach(e => out.push(e.name));
-                return [...new Set(out)];
+                let brands = cat.slice();
+                try { const fc = window.TascoFilterCounts; if (fc && fc.isFresh(fc.summary)) brands = brands.filter(b => fc.getCount('hang', b.name) > 0).sort((a, b) => fc.getCount('hang', b.name) - fc.getCount('hang', a.name)); } catch (_) { /* giữ thứ tự danh mục */ }
+                const out = brands.map(b => b.name);
+                const fams = [];
+                brands.forEach(b => families(b, 12).forEach((name, i) => fams.push({ name, rank: i })));
+                fams.sort((a, b) => a.rank - b.rank).forEach(f => out.push(f.name));
+                return [...new Set(out)].slice(0, 320);
             }
 
             /* ---- Hỏi lại khi thiếu thông tin: hãng → dòng xe → năm. Người dùng chọn một chip, "Tất cả…" để bỏ qua, hoặc "Tra luôn". ---- */
@@ -10337,7 +10358,7 @@ window.searchData = async function(opts) {
                     setNote('AI đang hiểu câu của bạn…');
                     const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 3000);
                     try {
-                        const ai = await callIntent(raw, cat.map(b => b.name), ctl.signal);
+                        const ai = await callIntent(raw, cat.map(b => b.name), ctl.signal, intentCatalog(cat));
                         if (mySeq !== intentSeq) return;
                         const g = ground(ai, local, cat);
                         if (g.ambiguousBrands) r = { found: true, ambiguousBrands: g.ambiguousBrands };
@@ -10376,7 +10397,7 @@ window.searchData = async function(opts) {
                 if (r.brand && r.models.length) window.TascoAiSearch.prefetch({ heard, ai: byAi });
                 return run;
             }
-            return { parse, search, vocabulary, ground, hideAsk };
+            return { parse, search, vocabulary, ground, hideAsk, intentCatalog: () => { const c = catalog(); return c ? intentCatalog(c) : {}; } };
         })();
 
 
@@ -17035,6 +17056,8 @@ window.TascoCategories = (function () {
           if (blob.size < 1500 || (!speech && !blind)) { fail('Không nghe thấy tiếng nói. Thử lại gần micro hơn.'); return; }
           var sttCtx = ui.plate ? 'plate' : (ui.sttContext || 'general');
           var prompt = ui.plate ? 'Biển số xe ô tô, đọc từng số và từng chữ cái.' : (sttCtx === 'search' ? 'Tra cứu phụ tùng ô tô: cản trước Honda CR-V 2025, đèn pha trái Vios. ' : 'Giám định xe ô tô: ') + hints(known, ui.onlyKnown).slice(0, 45).join(', ');
+          /* Ngữ cảnh tìm kiếm: nạp hãng + dòng xe THẬT của kho vào gợi ý (Whisper ưu tiên phần cuối nên đặt ở cuối) để bớt nghe sai tên xe. */
+          if (!ui.plate && sttCtx === 'search' && ui.vocab && ui.vocab.length) { var head = 'Tra cứu phụ tùng ô tô: cản trước Honda CR-V 2025. ' + hints(known, true).slice(0, 8).join(', ') + '. Hãng, dòng xe: ', names = []; for (var vi = 0; vi < ui.vocab.length && head.length + names.join(', ').length + String(ui.vocab[vi]).length + 2 < 640; vi++) names.push(ui.vocab[vi]); prompt = head + names.join(', '); }
           var vocab = ui.plate ? '' : ((ui.vocab && ui.vocab.length ? ui.vocab : hints(known, ui.onlyKnown)).join(', ')).slice(0, 1700);
           try {
             var text = await transcribe(blob, prompt.slice(0, 650), { context: sttCtx, vocab: vocab });
