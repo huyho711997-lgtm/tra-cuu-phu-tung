@@ -2,9 +2,10 @@
 // Ưu tiên Gemini (hiểu ngữ cảnh, tên hãng/dòng xe, số/năm/biển số tốt hơn); lỗi hoặc hết lượt thì tự chuyển sang Groq Whisper.
 // Dùng lại kho key gemini / groq1-3 của kgpt-ai (Vault), đăng nhập + giới hạn tần suất như kgpt-ai. Không lưu âm thanh.
 const MODEL = 'whisper-large-v3-turbo';
-// Thử lần lượt: model nhẹ (nhanh, mặc định ít "suy nghĩ") trước; model lớn chỉ làm dự phòng khi model nhẹ không tồn tại (404) — bản lớn đo thực tế mất ~22s/lần.
+// Thử lần lượt: gemini-2.5-flash-lite (không "suy nghĩ" mặc định, nhanh nhất) trước; 3.5-flash-lite làm dự phòng khi model không tồn tại (404).
+// Đo thực tế trên dự án này: 3.5-flash ~22s, 3.5-flash-lite 2,8-7,7s/lần; Whisper chỉ ~0,4s.
 // HEDGE: Whisper chạy song song; nếu Gemini chưa xong sau STT_GEMINI_WAIT_MS thì trả Whisper ngay.
-export const GEMINI_STT_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];
+export const GEMINI_STT_MODELS = ['gemini-2.5-flash-lite', 'gemini-3.5-flash-lite'];
 const MAX_VOCAB = 1800;
 const MAX_AUDIO = 8 * 1024 * 1024;          // ghi âm đọc lệnh chỉ vài giây; chặn file lớn bất thường
 const MIN_AUDIO = 800;
@@ -14,6 +15,15 @@ const EXT = { 'audio/webm': 'webm', 'audio/mp4': 'mp4', 'audio/x-m4a': 'm4a', 'a
 // Whisper hay "nghe ra" những câu này khi đoạn ghi im lặng/nhiễu (dữ liệu huấn luyện từ video có phụ đề).
 const HALLUCINATION = /(đăng ký (kênh|ngay)|ghiền mì gõ|subscribe|để không bỏ lỡ|cảm ơn (các bạn|quý vị) đã (xem|theo dõi|lắng nghe)|amara\.org|hẹn gặp lại các bạn|thanks for watching|phụ đề)/i;
 const uuid = v => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+
+// Giải mã (KHÔNG xác minh chữ ký — gateway verify_jwt đã xác minh) để lấy sub, cho phép chạy getUser song song với các RPC.
+function jwtSub(token) {
+  try {
+    const part = String(token).split('.')[1] || '';
+    const json = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(part.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(part.length / 4) * 4, '=')), c => c.charCodeAt(0))));
+    return uuid(json?.sub) && json.role === 'authenticated' ? json.sub : null;
+  } catch (_) { return null; }
+}
 
 class HttpError extends Error {
   constructor(status, code, message, extra = {}) { super(message); Object.assign(this, { status, code, ...extra }); }
@@ -142,9 +152,16 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
       const url = env('SUPABASE_URL'), serviceKey = env('SUPABASE_SERVICE_ROLE_KEY');
       if (!url || !serviceKey) throw new HttpError(503, 'NOT_CONFIGURED', 'Backend chưa được cấu hình.');
       const service = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-      const { data: auth, error: authError } = await service.auth.getUser(token);
-      if (authError || !uuid(auth?.user?.id)) throw new HttpError(401, 'UNAUTHENTICATED', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-      const actor = auth.user.id;
+      // getUser chạy song song với phần chuẩn bị bên dưới (sub lấy từ JWT đã được gateway xác minh); kết quả getUser vẫn phải khớp sub mới được dùng.
+      const hintSub = jwtSub(token);
+      const authP = Promise.resolve(service.auth.getUser(token));
+      authP.catch(() => null);
+      let actor = hintSub;
+      if (!hintSub) {
+        const { data: auth0, error: authError0 } = await authP;
+        if (authError0 || !uuid(auth0?.user?.id)) throw new HttpError(401, 'UNAUTHENTICATED', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        actor = auth0.user.id;
+      }
       const type = req.headers.get('content-type') || '';
       if (!type.startsWith('multipart/form-data')) throw new HttpError(400, 'INVALID_INPUT', 'Dữ liệu gửi lên không hợp lệ.');
       let form;
@@ -164,11 +181,17 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
         return data;
       };
       // Hồ sơ, hạn mức và kho key độc lập nhau -> chạy song song (tiết kiệm 2 lượt chờ DB).
-      const [profileRes, rateOk, credentialsRaw] = await Promise.all([
+      const settle = p => Promise.resolve(p).then(v => ({ v }), e => ({ e }));
+      const [authRes, profileRes, rateS, credS] = await Promise.all([
+        authP,
         service.from('user_profiles').select('role,status').eq('id', actor).maybeSingle(),
-        rpc('kgpt_ai_consume_rate', { p_user_id: actor, p_category: 'ai' }),
-        rpc('kgpt_ai_credentials', { p_user_id: actor }),
+        settle(rpc('kgpt_ai_consume_rate', { p_user_id: actor, p_category: 'ai' })),
+        settle(rpc('kgpt_ai_credentials', { p_user_id: actor })),
       ]);
+      if (authRes?.error || authRes?.data?.user?.id !== actor) throw new HttpError(401, 'UNAUTHENTICATED', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+      if (rateS.e) throw rateS.e;
+      if (credS.e) throw credS.e;
+      const rateOk = rateS.v, credentialsRaw = credS.v;
       if (profileRes.error || profileRes.data?.status !== 'active') throw new HttpError(403, 'ACCESS_DENIED', 'Tài khoản chưa được cấp quyền hoặc đã bị khóa.');
       if (!rateOk) throw new HttpError(429, 'APP_RATE_LIMIT', 'Bạn nói quá nhanh hoặc đã hết hạn mức ngày của ứng dụng. Hãy thử lại sau.');
       const credentials = credentialsRaw || {};
@@ -218,7 +241,7 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
       };
       // Gemini chính xác hơn với tên xe/biển số nhưng có lúc chậm; Whisper (~1,5s) chạy song song làm "phao":
       // Gemini về kịp trong hedgeMs thì dùng Gemini, không thì trả Whisper ngay, không bắt người dùng chờ.
-      const hedgeMs = Math.max(0, Number(env('STT_GEMINI_WAIT_MS')) || 3000);
+      const hedgeMs = Math.max(0, Number(env('STT_GEMINI_WAIT_MS')) || 1200);
       const gCtl = new AbortController(), wCtl = new AbortController();
       let g = null, w = null;
       const gP = geminiKeys.length ? timed(geminiTranscribe({ keys: geminiKeys, bytes, mime, vocab, context, fetchImpl, signal: AbortSignal.any([req.signal, gCtl.signal]) })) : null;
@@ -236,7 +259,7 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
         if (typeof w.text === 'string') {
           // Whisper thắng: vẫn để Gemini chạy nốt chỉ để ghi log độ trễ thật (phục vụ đo/tối ưu), không ảnh hưởng người dùng.
           if (gP) {
-            const late = gP.then(r => console.log(JSON.stringify({ fn: 'tasco-stt-gemini-late', ok: typeof r.text === 'string', err: r.error, status: r.status, ms: r.ms, ctx: context }))).catch(() => null);
+            const late = gP.then(r => console.log(JSON.stringify({ fn: 'tasco-stt-gemini-late', ok: typeof r.text === 'string', model: r.model, err: r.error, status: r.status, ms: r.ms, ctx: context }))).catch(() => null);
             try { globalThis.EdgeRuntime?.waitUntil?.(late); } catch (_) { /* không bắt buộc */ }
           }
           return done(w, 'whisper');

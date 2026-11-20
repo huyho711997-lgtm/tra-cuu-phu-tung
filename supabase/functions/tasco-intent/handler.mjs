@@ -3,8 +3,17 @@
 // -> { part: "cản trước", brand: "HONDA", model: "CRV", years: [2025], kind: "all", asks_price: true }
 // Gemini chỉ TÁCH câu thành các trường; app đối chiếu hãng/dòng xe/năm với danh mục thật của kho trước khi dùng.
 // Dùng lại key Gemini trong Vault của kgpt-ai, đăng nhập + giới hạn tần suất như kgpt-ai. Không lưu nội dung.
-export const GEMINI_INTENT_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];
+export const GEMINI_INTENT_MODELS = ['gemini-2.5-flash-lite', 'gemini-3.5-flash-lite'];   // 2.5-flash-lite không "suy nghĩ" mặc định; 3.5-flash-lite đo được 6s+ cho câu ngắn
 const uuid = v => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+
+// Giải mã (KHÔNG xác minh chữ ký — gateway verify_jwt đã xác minh) để lấy sub, cho phép chạy getUser song song với các RPC.
+function jwtSub(token) {
+  try {
+    const part = String(token).split('.')[1] || '';
+    const json = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(part.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(part.length / 4) * 4, '=')), c => c.charCodeAt(0))));
+    return uuid(json?.sub) && json.role === 'authenticated' ? json.sub : null;
+  } catch (_) { return null; }
+}
 
 class HttpError extends Error {
   constructor(status, code, message, extra = {}) { super(message); Object.assign(this, { status, code, ...extra }); }
@@ -65,12 +74,12 @@ export async function geminiIntent({ keys, input, fetchImpl, signal, now = Date.
     if ((keyCooldowns.get(id) || 0) > now()) { limited = true; continue; }
     for (const model of GEMINI_INTENT_MODELS) {
       if ((badModels.get(model) || 0) > now()) continue;
-      if (now() - started > 8000) return { error: 'timeout', status: 504 };
+      if (now() - started > 5000) return { error: 'timeout', status: 504 };
       let response;
       try {
         response = await fetchImpl(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body, redirect: 'error',
-          signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(6000)]),
+          signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(3500)]),
         });
       } catch (_) { return { error: 'network', status: 504 }; }
       status = response.status;
@@ -108,9 +117,16 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
       const url = env('SUPABASE_URL'), serviceKey = env('SUPABASE_SERVICE_ROLE_KEY');
       if (!url || !serviceKey) throw new HttpError(503, 'NOT_CONFIGURED', 'Backend chưa được cấu hình.');
       const service = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-      const { data: auth, error: authError } = await service.auth.getUser(token);
-      if (authError || !uuid(auth?.user?.id)) throw new HttpError(401, 'UNAUTHENTICATED', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-      const actor = auth.user.id;
+      // getUser chạy song song với phần chuẩn bị bên dưới (sub lấy từ JWT đã được gateway xác minh); kết quả getUser vẫn phải khớp sub mới được dùng.
+      const hintSub = jwtSub(token);
+      const authP = Promise.resolve(service.auth.getUser(token));
+      authP.catch(() => null);
+      let actor = hintSub;
+      if (!hintSub) {
+        const { data: auth0, error: authError0 } = await authP;
+        if (authError0 || !uuid(auth0?.user?.id)) throw new HttpError(401, 'UNAUTHENTICATED', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        actor = auth0.user.id;
+      }
       let body; try { body = await req.json(); } catch (_) { throw new HttpError(400, 'INVALID_INPUT', 'Dữ liệu gửi lên không hợp lệ.'); }
       const input = validateInput(body);
       if (!input) throw new HttpError(400, 'INVALID_INPUT', 'Câu tra cứu không hợp lệ.');
@@ -120,11 +136,17 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
         return data;
       };
       // Hồ sơ, hạn mức và kho key độc lập nhau -> chạy song song (tiết kiệm 2 lượt chờ DB).
-      const [profileRes, rateOk, credentialsRaw] = await Promise.all([
+      const settle = p => Promise.resolve(p).then(v => ({ v }), e => ({ e }));
+      const [authRes, profileRes, rateS, credS] = await Promise.all([
+        authP,
         service.from('user_profiles').select('role,status').eq('id', actor).maybeSingle(),
-        rpc('kgpt_ai_consume_rate', { p_user_id: actor, p_category: 'ai' }),
-        rpc('kgpt_ai_credentials', { p_user_id: actor }),
+        settle(rpc('kgpt_ai_consume_rate', { p_user_id: actor, p_category: 'ai' })),
+        settle(rpc('kgpt_ai_credentials', { p_user_id: actor })),
       ]);
+      if (authRes?.error || authRes?.data?.user?.id !== actor) throw new HttpError(401, 'UNAUTHENTICATED', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+      if (rateS.e) throw rateS.e;
+      if (credS.e) throw credS.e;
+      const rateOk = rateS.v, credentialsRaw = credS.v;
       if (profileRes.error || profileRes.data?.status !== 'active') throw new HttpError(403, 'ACCESS_DENIED', 'Tài khoản chưa được cấp quyền hoặc đã bị khóa.');
       if (!rateOk) throw new HttpError(429, 'APP_RATE_LIMIT', 'Đã đạt hạn mức ứng dụng. Hãy thử lại sau.');
       const keys = splitKeys((credentialsRaw || {}).gemini?.key);

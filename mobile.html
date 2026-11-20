@@ -10169,7 +10169,7 @@ window.searchData = async function(opts) {
                 if (useAi) {
                     busy = true; const mySeq = ++intentSeq;
                     setNote('AI đang hiểu câu của bạn…');
-                    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 4500);
+                    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 3000);
                     try {
                         const ai = await callIntent(raw, cat.map(b => b.name), ctl.signal);
                         if (mySeq !== intentSeq) return;
@@ -16842,7 +16842,7 @@ window.TascoCategories = (function () {
       /* Ghi âm + tự dừng khi im lặng (đo mức âm bằng AnalyserNode), rồi gửi tasco-stt. */
       function runCloud(fallback) {
         var stream = null, mr = null, chunks = [], ctx = null, analyser = null, buf = null, vad = 0, speech = false, lastVoice = 0, t0 = Date.now(), floor = [], thr = 0, blind = false, sawSignal = false, stopAsked = false, mime = '';
-        var SILENCE = 1800;
+        var SILENCE = ui.sttContext === 'search' ? 1100 : 1800;   // câu tra cứu ngắn: dừng sớm hơn (bấm mic để dừng tay vẫn được)
         cloudCtl = { stop: function () { stopAsked = true; if (mr && mr.state !== 'inactive') { try { mr.stop(); } catch (_) { release(); finish(); } } else if (!mr && !stream) { /* chưa mở micro xong: then() sẽ xử lý */ } } };
         function release() {
           clearInterval(vad);
@@ -16877,7 +16877,7 @@ window.TascoCategories = (function () {
         navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(function (s) {
           if (done) { s.getTracks().forEach(function (t) { t.stop(); }); return; }
           stream = s; mime = pickMime();
-          try { mr = mime ? new window.MediaRecorder(s, { mimeType: mime }) : new window.MediaRecorder(s); } catch (_) { release(); cloudCtl = null; fallback(); return; }
+          try { mr = mime ? new window.MediaRecorder(s, { mimeType: mime, audioBitsPerSecond: 32000 }) : new window.MediaRecorder(s, { audioBitsPerSecond: 32000 }); }  /* 32 kbps đủ cho giọng nói, file nhỏ ~8 lần */ catch (_) { release(); cloudCtl = null; fallback(); return; }
           mr.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
           mr.onstop = onRecorded;
           try { mr.start(); } catch (_) { release(); cloudCtl = null; fallback(); return; }
