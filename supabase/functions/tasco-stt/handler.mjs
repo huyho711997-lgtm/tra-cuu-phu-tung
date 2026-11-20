@@ -2,8 +2,9 @@
 // Ưu tiên Gemini (hiểu ngữ cảnh, tên hãng/dòng xe, số/năm/biển số tốt hơn); lỗi hoặc hết lượt thì tự chuyển sang Groq Whisper.
 // Dùng lại kho key gemini / groq1-3 của kgpt-ai (Vault), đăng nhập + giới hạn tần suất như kgpt-ai. Không lưu âm thanh.
 const MODEL = 'whisper-large-v3-turbo';
-// Thử lần lượt: model chính xác hơn trước, model nhẹ (đã chạy ổn ở kgpt-ai-part-search) làm dự phòng khi model không tồn tại.
-export const GEMINI_STT_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite'];
+// Thử lần lượt: model nhẹ (nhanh, mặc định ít "suy nghĩ") trước; model lớn chỉ làm dự phòng khi model nhẹ không tồn tại (404) — bản lớn đo thực tế mất ~22s/lần.
+// HEDGE: Whisper chạy song song; nếu Gemini chưa xong sau STT_GEMINI_WAIT_MS thì trả Whisper ngay.
+export const GEMINI_STT_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];
 const MAX_VOCAB = 1800;
 const MAX_AUDIO = 8 * 1024 * 1024;          // ghi âm đọc lệnh chỉ vài giây; chặn file lớn bất thường
 const MIN_AUDIO = 800;
@@ -100,12 +101,12 @@ export async function geminiTranscribe({ keys, bytes, mime, vocab, context, fetc
     if ((keyCooldowns.get(id) || 0) > now()) { limited = true; continue; }
     for (const model of GEMINI_STT_MODELS) {
       if ((badModels.get(model) || 0) > now()) continue;
-      if (now() - started > 30000) return { error: 'timeout', status: 504 };
+      if (now() - started > 12000) return { error: 'timeout', status: 504 };
       let response;
       try {
         response = await fetchImpl(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body, redirect: 'error',
-          signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(20000)]),
+          signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(10000)]),
         });
       } catch (_) { return { error: 'network', status: 504 }; }
       status = response.status;
@@ -125,6 +126,7 @@ export async function geminiTranscribe({ keys, bytes, mime, vocab, context, fetc
 
 export function createHandler({ createClient, env, fetchImpl = globalThis.fetch }) {
   return async req => {
+    const t0 = Date.now();
     const origin = req.headers.get('origin');
     const allowed = (env('ALLOWED_ORIGINS') || 'https://huyho711997-lgtm.github.io,https://tra-cuu-phu-tung-pro.vercel.app').split(',').map(s => s.trim()).filter(Boolean);
     const cors = { Vary: 'Origin', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -143,8 +145,6 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
       const { data: auth, error: authError } = await service.auth.getUser(token);
       if (authError || !uuid(auth?.user?.id)) throw new HttpError(401, 'UNAUTHENTICATED', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
       const actor = auth.user.id;
-      const { data: profile, error: profileError } = await service.from('user_profiles').select('role,status').eq('id', actor).maybeSingle();
-      if (profileError || profile?.status !== 'active') throw new HttpError(403, 'ACCESS_DENIED', 'Tài khoản chưa được cấp quyền hoặc đã bị khóa.');
       const type = req.headers.get('content-type') || '';
       if (!type.startsWith('multipart/form-data')) throw new HttpError(400, 'INVALID_INPUT', 'Dữ liệu gửi lên không hợp lệ.');
       let form;
@@ -163,47 +163,90 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
         if (error) throw new HttpError(error.code === '42501' ? 403 : 503, error.code === '42501' ? 'ACCESS_DENIED' : 'STORAGE_UNAVAILABLE', error.code === '42501' ? 'Bạn không có quyền dùng tính năng này.' : 'Không truy cập được kho key. Hãy thử lại sau.');
         return data;
       };
-      if (!await rpc('kgpt_ai_consume_rate', { p_user_id: actor, p_category: 'ai' })) throw new HttpError(429, 'APP_RATE_LIMIT', 'Bạn nói quá nhanh hoặc đã hết hạn mức ngày của ứng dụng. Hãy thử lại sau.');
-      const credentials = await rpc('kgpt_ai_credentials', { p_user_id: actor }) || {};
+      // Hồ sơ, hạn mức và kho key độc lập nhau -> chạy song song (tiết kiệm 2 lượt chờ DB).
+      const [profileRes, rateOk, credentialsRaw] = await Promise.all([
+        service.from('user_profiles').select('role,status').eq('id', actor).maybeSingle(),
+        rpc('kgpt_ai_consume_rate', { p_user_id: actor, p_category: 'ai' }),
+        rpc('kgpt_ai_credentials', { p_user_id: actor }),
+      ]);
+      if (profileRes.error || profileRes.data?.status !== 'active') throw new HttpError(403, 'ACCESS_DENIED', 'Tài khoản chưa được cấp quyền hoặc đã bị khóa.');
+      if (!rateOk) throw new HttpError(429, 'APP_RATE_LIMIT', 'Bạn nói quá nhanh hoặc đã hết hạn mức ngày của ứng dụng. Hãy thử lại sau.');
+      const credentials = credentialsRaw || {};
       const keys = [...new Set(['groq1', 'groq2', 'groq3'].map(n => credentials[n]?.key).filter(Boolean))];
       const geminiKeys = engine === 'whisper' ? [] : splitKeys(credentials.gemini?.key);
       if (!keys.length && !geminiKeys.length) throw new HttpError(409, 'KEY_NOT_CONFIGURED', 'Tài khoản chưa được cấp key Gemini hoặc Groq.');
+      const prepMs = Date.now() - t0;
       const bytes = new Uint8Array(await file.arrayBuffer());
-      let geminiLimited = false;
-      if (geminiKeys.length) {
-        const g = await geminiTranscribe({ keys: geminiKeys, bytes, mime, vocab, context, fetchImpl, signal: req.signal });
-        if (typeof g.text === 'string') return reply({ text: g.text, engine: 'gemini', model: g.model });
-        geminiLimited = g.error === 'limited';
-        // Không còn Groq để dự phòng: báo lỗi rõ ràng thay vì im lặng.
-        if (!keys.length) {
-          if (g.error === 'limited') throw new HttpError(429, 'PROVIDER_LIMIT', 'Dịch vụ nhận dạng đang hết lượt. Hãy thử lại sau ít phút.', { providerStatus: 429 });
-          if (g.error === 'rejected') throw new HttpError(502, 'PROVIDER_ERROR', 'Key Gemini không hợp lệ hoặc chưa được cấp quyền.', { providerStatus: g.status });
-          throw new HttpError(g.status === 504 ? 504 : 502, g.status === 504 ? 'PROVIDER_UNAVAILABLE' : 'PROVIDER_ERROR', 'Dịch vụ nhận dạng giọng nói chưa xử lý được. Hãy thử lại.', { providerStatus: g.status });
+      const runWhisper = async signal => {
+        let lastStatus = 502, limited = 0;
+        for (const key of keys) {
+          const payload = new FormData();
+          payload.append('file', new Blob([bytes], { type: mime }), 'voice.' + EXT[mime]);
+          payload.append('model', MODEL);
+          payload.append('language', language);
+          payload.append('response_format', 'verbose_json');
+          payload.append('temperature', '0');
+          if (hint) payload.append('prompt', hint);
+          let response;
+          try {
+            response = await fetchImpl('https://api.groq.com/openai/v1/audio/transcriptions', { method: 'POST', headers: { Authorization: `Bearer ${key}` }, body: payload, redirect: 'error', signal: AbortSignal.any([signal, AbortSignal.timeout(15000)]) });
+          } catch (_) { return { error: 'network', status: 504 }; }
+          lastStatus = response.status;
+          if (response.status === 429) { limited++; await response.arrayBuffer().catch(() => null); continue; }
+          if ([401, 403].includes(response.status)) { await response.arrayBuffer().catch(() => null); continue; }
+          if (!response.ok) { await response.arrayBuffer().catch(() => null); return { error: 'provider', status: response.status }; }
+          const data = await response.json().catch(() => null);
+          if (!data) return { error: 'empty', status: 502 };
+          return { text: cleanTranscript(data, hint), model: MODEL };
+        }
+        return { error: limited ? 'limited' : 'provider', status: limited ? 429 : lastStatus };
+      };
+      const timed = async promise => { const s = Date.now(); const r = await promise; return { ...r, ms: Date.now() - s }; };
+      const done = (r, used) => {
+        const total = Date.now() - t0;
+        console.log(JSON.stringify({ fn: 'tasco-stt', engine: used, model: r.model, total_ms: total, prep_ms: prepMs, gemini_ms: g?.ms, whisper_ms: w?.ms, bytes: bytes.length, ctx: context }));
+        return reply({ text: r.text, engine: used, model: r.model, ms: total });
+      };
+      const fail = () => {
+        const errs = [g, w].filter(r => r && r.error);
+        if (errs.some(r => r.error === 'limited')) throw new HttpError(429, 'PROVIDER_LIMIT', 'Dịch vụ nhận dạng đang hết lượt. Hãy thử lại sau ít phút.', { providerStatus: 429 });
+        const e = errs[errs.length - 1] || { error: 'provider', status: 502 };
+        if (e.error === 'rejected') throw new HttpError(502, 'PROVIDER_ERROR', 'Key nhận dạng giọng nói không hợp lệ hoặc chưa được cấp quyền.', { providerStatus: e.status });
+        if (e.error === 'empty') throw new HttpError(502, 'EMPTY_OUTPUT', 'Dịch vụ nhận dạng giọng nói chưa trả kết quả.');
+        if (e.status === 504) throw new HttpError(504, 'PROVIDER_UNAVAILABLE', 'Không kết nối được dịch vụ nhận dạng giọng nói.');
+        throw new HttpError(502, 'PROVIDER_ERROR', 'Dịch vụ nhận dạng giọng nói chưa xử lý được. Hãy thử lại.', { providerStatus: e.status });
+      };
+      // Gemini chính xác hơn với tên xe/biển số nhưng có lúc chậm; Whisper (~1,5s) chạy song song làm "phao":
+      // Gemini về kịp trong hedgeMs thì dùng Gemini, không thì trả Whisper ngay, không bắt người dùng chờ.
+      const hedgeMs = Math.max(0, Number(env('STT_GEMINI_WAIT_MS')) || 3000);
+      const gCtl = new AbortController(), wCtl = new AbortController();
+      let g = null, w = null;
+      const gP = geminiKeys.length ? timed(geminiTranscribe({ keys: geminiKeys, bytes, mime, vocab, context, fetchImpl, signal: AbortSignal.any([req.signal, gCtl.signal]) })) : null;
+      const wP = keys.length ? timed(runWhisper(AbortSignal.any([req.signal, wCtl.signal]))) : null;
+      if (gP) {
+        if (wP) {
+          let timer;
+          g = await Promise.race([gP, new Promise(resolve => { timer = setTimeout(() => resolve(null), hedgeMs); })]);
+          clearTimeout(timer);
+        } else g = await gP;
+        if (g && typeof g.text === 'string') { wCtl.abort(); return done(g, 'gemini'); }
+      }
+      if (wP) {
+        w = await wP;
+        if (typeof w.text === 'string') {
+          // Whisper thắng: vẫn để Gemini chạy nốt chỉ để ghi log độ trễ thật (phục vụ đo/tối ưu), không ảnh hưởng người dùng.
+          if (gP) {
+            const late = gP.then(r => console.log(JSON.stringify({ fn: 'tasco-stt-gemini-late', ok: typeof r.text === 'string', err: r.error, status: r.status, ms: r.ms, ctx: context }))).catch(() => null);
+            try { globalThis.EdgeRuntime?.waitUntil?.(late); } catch (_) { /* không bắt buộc */ }
+          }
+          return done(w, 'whisper');
+        }
+        if (gP && !g) {              // Whisper hỏng, Gemini còn đang chạy -> chờ nốt Gemini
+          g = await gP;
+          if (typeof g.text === 'string') return done(g, 'gemini');
         }
       }
-      let lastStatus = 502, limited = geminiLimited ? 1 : 0;
-      for (const key of keys) {
-        const payload = new FormData();
-        payload.append('file', new Blob([bytes], { type: mime }), 'voice.' + EXT[mime]);
-        payload.append('model', MODEL);
-        payload.append('language', language);
-        payload.append('response_format', 'verbose_json');
-        payload.append('temperature', '0');
-        if (hint) payload.append('prompt', hint);
-        let response;
-        try {
-          response = await fetchImpl('https://api.groq.com/openai/v1/audio/transcriptions', { method: 'POST', headers: { Authorization: `Bearer ${key}` }, body: payload, redirect: 'error', signal: AbortSignal.any([req.signal, AbortSignal.timeout(25000)]) });
-        } catch (_) { throw new HttpError(504, 'PROVIDER_UNAVAILABLE', 'Không kết nối được dịch vụ nhận dạng giọng nói.'); }
-        lastStatus = response.status;
-        if (response.status === 429) { limited++; await response.arrayBuffer().catch(() => null); continue; }
-        if ([401, 403].includes(response.status)) { await response.arrayBuffer().catch(() => null); continue; }
-        if (!response.ok) { await response.arrayBuffer().catch(() => null); throw new HttpError(502, 'PROVIDER_ERROR', 'Dịch vụ nhận dạng giọng nói chưa xử lý được. Hãy thử lại.', { providerStatus: response.status }); }
-        const data = await response.json().catch(() => null);
-        if (!data) throw new HttpError(502, 'EMPTY_OUTPUT', 'Dịch vụ nhận dạng giọng nói chưa trả kết quả.');
-        return reply({ text: cleanTranscript(data, hint), engine: 'whisper', model: MODEL, duration: Number.isFinite(Number(data.duration)) ? Number(data.duration) : undefined });
-      }
-      if (limited) throw new HttpError(429, 'PROVIDER_LIMIT', 'Dịch vụ nhận dạng đang hết lượt. Hãy thử lại sau ít phút.', { providerStatus: 429 });
-      throw new HttpError(502, 'PROVIDER_ERROR', [401, 403].includes(lastStatus) ? 'Key Groq không hợp lệ hoặc chưa được cấp quyền.' : 'Dịch vụ nhận dạng giọng nói chưa xử lý được.', { providerStatus: lastStatus });
+      return fail();
     } catch (error) {
       if (error instanceof HttpError) return reply({ error: error.message, code: error.code, ...(error.providerStatus ? { providerStatus: error.providerStatus } : {}) }, error.status);
       return reply({ error: 'Backend chưa xử lý được yêu cầu. Hãy thử lại sau.', code: 'INTERNAL_ERROR' }, 500);

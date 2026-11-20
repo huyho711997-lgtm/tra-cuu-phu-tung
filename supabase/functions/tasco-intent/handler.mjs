@@ -65,12 +65,12 @@ export async function geminiIntent({ keys, input, fetchImpl, signal, now = Date.
     if ((keyCooldowns.get(id) || 0) > now()) { limited = true; continue; }
     for (const model of GEMINI_INTENT_MODELS) {
       if ((badModels.get(model) || 0) > now()) continue;
-      if (now() - started > 12000) return { error: 'timeout', status: 504 };
+      if (now() - started > 8000) return { error: 'timeout', status: 504 };
       let response;
       try {
         response = await fetchImpl(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body, redirect: 'error',
-          signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(9000)]),
+          signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(6000)]),
         });
       } catch (_) { return { error: 'network', status: 504 }; }
       status = response.status;
@@ -92,6 +92,7 @@ export async function geminiIntent({ keys, input, fetchImpl, signal, now = Date.
 
 export function createHandler({ createClient, env, fetchImpl = globalThis.fetch }) {
   return async req => {
+    const t0 = Date.now();
     const origin = req.headers.get('origin');
     const allowed = (env('ALLOWED_ORIGINS') || 'https://huyho711997-lgtm.github.io,https://tra-cuu-phu-tung-pro.vercel.app').split(',').map(s => s.trim()).filter(Boolean);
     const cors = { Vary: 'Origin', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -110,8 +111,6 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
       const { data: auth, error: authError } = await service.auth.getUser(token);
       if (authError || !uuid(auth?.user?.id)) throw new HttpError(401, 'UNAUTHENTICATED', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
       const actor = auth.user.id;
-      const { data: profile, error: profileError } = await service.from('user_profiles').select('role,status').eq('id', actor).maybeSingle();
-      if (profileError || profile?.status !== 'active') throw new HttpError(403, 'ACCESS_DENIED', 'Tài khoản chưa được cấp quyền hoặc đã bị khóa.');
       let body; try { body = await req.json(); } catch (_) { throw new HttpError(400, 'INVALID_INPUT', 'Dữ liệu gửi lên không hợp lệ.'); }
       const input = validateInput(body);
       if (!input) throw new HttpError(400, 'INVALID_INPUT', 'Câu tra cứu không hợp lệ.');
@@ -120,11 +119,20 @@ export function createHandler({ createClient, env, fetchImpl = globalThis.fetch 
         if (error) throw new HttpError(error.code === '42501' ? 403 : 503, error.code === '42501' ? 'ACCESS_DENIED' : 'STORAGE_UNAVAILABLE', error.code === '42501' ? 'Bạn không có quyền dùng tính năng này.' : 'Không truy cập được kho key. Hãy thử lại sau.');
         return data;
       };
-      if (!await rpc('kgpt_ai_consume_rate', { p_user_id: actor, p_category: 'ai' })) throw new HttpError(429, 'APP_RATE_LIMIT', 'Đã đạt hạn mức ứng dụng. Hãy thử lại sau.');
-      const credentials = await rpc('kgpt_ai_credentials', { p_user_id: actor }) || {};
-      const keys = splitKeys(credentials.gemini?.key);
+      // Hồ sơ, hạn mức và kho key độc lập nhau -> chạy song song (tiết kiệm 2 lượt chờ DB).
+      const [profileRes, rateOk, credentialsRaw] = await Promise.all([
+        service.from('user_profiles').select('role,status').eq('id', actor).maybeSingle(),
+        rpc('kgpt_ai_consume_rate', { p_user_id: actor, p_category: 'ai' }),
+        rpc('kgpt_ai_credentials', { p_user_id: actor }),
+      ]);
+      if (profileRes.error || profileRes.data?.status !== 'active') throw new HttpError(403, 'ACCESS_DENIED', 'Tài khoản chưa được cấp quyền hoặc đã bị khóa.');
+      if (!rateOk) throw new HttpError(429, 'APP_RATE_LIMIT', 'Đã đạt hạn mức ứng dụng. Hãy thử lại sau.');
+      const keys = splitKeys((credentialsRaw || {}).gemini?.key);
       if (!keys.length) throw new HttpError(409, 'KEY_NOT_CONFIGURED', 'Tài khoản chưa được cấp key Gemini.');
+      const prepMs = Date.now() - t0;
+      const gStart = Date.now();
       const g = await geminiIntent({ keys, input, fetchImpl, signal: req.signal });
+      console.log(JSON.stringify({ fn: 'tasco-intent', ok: !!g.intent, err: g.error, model: g.model, total_ms: Date.now() - t0, prep_ms: prepMs, gemini_ms: Date.now() - gStart }));
       if (g.intent) return reply({ ...g.intent, engine: 'gemini', engine_model: g.model });
       if (g.error === 'limited') throw new HttpError(429, 'PROVIDER_LIMIT', 'Gemini đang hết lượt. Hãy thử lại sau ít phút.', { providerStatus: 429 });
       if (g.error === 'rejected') throw new HttpError(502, 'PROVIDER_ERROR', 'Key Gemini không hợp lệ hoặc chưa được cấp quyền.', { providerStatus: g.status });

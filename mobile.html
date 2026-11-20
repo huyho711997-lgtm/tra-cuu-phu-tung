@@ -1321,6 +1321,13 @@ html.dark .ws-ai-ico{background:#84bfc7;color:#0b1b30}
 .ws-ai-chev{flex:none;width:16px;height:16px;color:var(--ws-muted)}
 .ws-ai-note{margin:9px 2px 0;font-size:11px;font-weight:500;line-height:1.5;color:#9a5b00}
 html.dark .ws-ai-note{color:#f2c46d}
+.ws-ai-offer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:9px 10px 9px 12px;border:1px solid var(--ws-line);border-radius:12px;background:linear-gradient(135deg,rgba(132,191,199,.18),rgba(218,236,240,.5));font-size:12px;font-weight:550;line-height:1.45;color:var(--ws-text)}
+.ws-ai-offer[hidden]{display:none}
+.ws-ai-offer .ai-offer-txt{flex:1;min-width:150px}
+.ws-ai-offer .ai-offer{flex:none;min-height:34px;padding:7px 14px;border:0;border-radius:999px;background:#183056;color:#daecf0;font:inherit;font-size:12px;font-weight:650;cursor:pointer}
+.ws-ai-offer .ai-offer:active{transform:scale(.97)}
+html.dark .ws-ai-offer{background:linear-gradient(135deg,rgba(132,191,199,.14),rgba(36,72,97,.7))}
+html.dark .ws-ai-offer .ai-offer{background:#84bfc7;color:#0b1b30}
 .ai-scrim{position:fixed;inset:0;z-index:10050;display:flex;align-items:flex-end;justify-content:center;background:rgba(11,27,48,.55)}
 .ai-scrim[hidden]{display:none}
 .ai-sheet{display:flex;flex-direction:column;width:100%;max-width:560px;max-height:88vh;max-height:88dvh;background:var(--ws-surface);color:var(--ws-text);border:1px solid var(--ws-line);border-bottom:0;border-radius:24px 24px 0 0;box-shadow:0 -12px 40px rgba(11,27,48,.28);animation:aiUp .26s cubic-bezier(.2,.8,.2,1)}
@@ -3891,6 +3898,7 @@ window.TascoBootSplash = (() => {
     </div>
   <div class="ws-results-surface" id="resultsSurface" data-search-busy="false">
     <div class="ws-results-top"><h3 class="ws-results-heading">Báo giá phụ tùng</h3><span id="statCount" aria-live="polite">0 kết quả</span></div>
+    <p class="ws-ai-offer" id="aiPartOffer" role="status" aria-live="polite" hidden></p>
     <div id="loadingIndicator" class="ws-results-loading hidden" role="status" aria-live="polite"><span aria-hidden="true"></span><strong>Đang tra cứu phụ tùng</strong><p>Đang tìm báo giá phù hợp với lựa chọn của bạn…</p></div>
     <div id="resultsTableBody"><div class="ws-lookup-empty"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><strong>Sẵn sàng tra cứu</strong><p>Chọn phụ tùng và nhấn Tra cứu để xem báo giá.</p></div></div>
     <div class="ws-pagination"><div id="customPageSizeContainer"><button type="button" onclick="togglePageSizeMenu(event)"><span id="customPageSizeLabel">10 dòng / trang</span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg></button><div id="pageSizeMenu" class="hidden"><button type="button" onclick="selectPageSize(10)">10 dòng / trang</button><button type="button" onclick="selectPageSize(25)">25 dòng / trang</button><button type="button" onclick="selectPageSize(50)">50 dòng / trang</button></div></div><div><span id="pageInfo">Trang 0 / 0</span><button type="button" id="btnPrev" onclick="changePage(-1)" aria-label="Trang kết quả trước" disabled><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><button type="button" id="btnNext" onclick="changePage(1)" aria-label="Trang kết quả tiếp theo" disabled><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div></div>
@@ -9891,7 +9899,7 @@ window.searchData = async function(opts) {
                 if (!ctx.models.length) { setNote('Chọn ít nhất một dòng xe để AI tìm đúng tên trong kho.'); if (window.openFilterModal) window.openFilterModal('hieu'); return; }
                 if (ctx.models.length > 30) { setNote('Chọn tối đa 30 dòng xe cho mỗi lần tìm bằng AI.'); return; }
                 if (ctx.years.length > 30) { setNote('Chọn tối đa 30 năm sản xuất cho mỗi lần tìm bằng AI.'); return; }
-                setNote('');
+                setNote(''); offer(0);
                 current = ctx; items = []; opener = document.activeElement;
                 ensureSheet();
                 const k = kindLabel(ctx.kind);
@@ -9899,7 +9907,45 @@ window.searchData = async function(opts) {
                 show();
                 run();
             }
-            return { open, close };
+            /* Tìm nền: kết quả tra cứu hiện ngay, AI gom tên tương đương chạy song song rồi mới gợi ý (không chặn màn hình). */
+            let pre = null;
+            const ctxSig = c => JSON.stringify([fold(c.query), c.brand, [...c.models].sort(), [...c.years].sort(), c.kind]);
+            function offer(count) {
+                const el = $('aiPartOffer'); if (!el) return;
+                if (!count) { el.hidden = true; el.textContent = ''; return; }
+                el.innerHTML = '<span class="ai-offer-txt">✨ AI tìm thấy <b>' + count + '</b> tên phụ tùng tương đương trong kho.</span><button type="button" class="ai-offer" data-ai-offer="1">Xem &amp; chọn</button>';
+                el.hidden = false;
+                if (!el.dataset.bound) { el.dataset.bound = '1'; el.addEventListener('click', e => { if (e.target.closest('[data-ai-offer]')) openPrefetched(); }); }
+            }
+            function clearOffer() { if (pre && pre.ctl) pre.ctl.abort(); pre = null; offer(0); }
+            function prefetch(opts) {
+                clearOffer();
+                const ctx = readContext();
+                if (ctx.query.length < 2 || !ctx.brand || !ctx.models.length || ctx.models.length > 30 || ctx.years.length > 30 || navigator.onLine === false) return;
+                const mine = pre = { ctx, sig: ctxSig(ctx), ctl: new AbortController(), heard: opts && Array.isArray(opts.heard) ? opts.heard.slice(0, 6) : [], byAi: !!(opts && opts.ai), items: null, data: null };
+                const timer = setTimeout(() => mine.ctl.abort(), 30000);
+                supabase.functions.invoke('kgpt-ai-part-search', { body: ctx, signal: mine.ctl.signal }).then(({ data, error }) => {
+                    if (pre !== mine) return;
+                    if (error) throw error;
+                    if (!data || !Array.isArray(data.candidates)) throw new Error('bad-response');
+                    mine.items = prepare(data.candidates, ctx.query); mine.data = data;
+                    const n = mine.items.length;
+                    // Chỉ gợi ý khi AI có thêm tên khác với từ khoá đã tra (nếu chỉ trùng đúng 1 tên thì kết quả đã hiện đủ).
+                    offer(n && !(n === 1 && nameKey(mine.items[0].name) === nameKey(ctx.query)) ? n : 0);
+                }).catch(() => { if (pre === mine) offer(0); }).finally(() => clearTimeout(timer));
+            }
+            function openPrefetched() {
+                const ctx = readContext();
+                if (!pre || !pre.items || ctxSig(ctx) !== pre.sig) { offer(0); return open(); }
+                current = pre.ctx; items = pre.items; heard = pre.heard; heardByAi = pre.byAi; opener = document.activeElement;
+                const data = pre.data; offer(0); setNote('');
+                ensureSheet();
+                const k = kindLabel(current.kind);
+                $('aiSheetSub').textContent = [current.query, current.brand, current.models.length === 1 ? current.models[0] : current.models.length + ' dòng xe', k].filter(Boolean).join(' · ');
+                show();
+                renderResult(data);
+            }
+            return { open, close, prefetch, clearOffer };
         })();
 
         /* ===== TascoSmartSearch: hiểu câu tự nhiên, ví dụ "cản trước Honda CRV 2025 giá bao nhiêu" =====
@@ -10113,13 +10159,17 @@ window.searchData = async function(opts) {
                 try { local = parse(raw); } catch (e) { console.warn('Smart parse lỗi', e); }
                 const cat = catalog(), words = raw.split(' ').filter(Boolean).length;
                 const spoken = !!(opts && opts.spoken);
-                const useAi = !!cat && Date.now() > aiOffUntil && navigator.onLine !== false && (words >= 3 || (local && local.found) || (spoken && words >= 2));
+                // Bộ tách trên máy đã nhận đủ hãng + dòng xe + phụ tùng -> không cần hỏi AI (tiết kiệm ~5s và hạn mức).
+                // Còn số 2 hoặc 4 chữ số lẻ loi trong tên phụ tùng ("cản trước 25") = năm viết tắt chưa hiểu -> để AI xử lý.
+                const confident = !!(local && local.found && !local.ambiguousBrands && local.brand && local.models && local.models.length && local.part && !/(^|\s)(\d{2}|\d{4})(\s|$)/.test(local.part));
+                const useAi = !confident && !!cat && Date.now() > aiOffUntil && navigator.onLine !== false && (words >= 3 || (local && local.found) || (spoken && words >= 2));
+                if (window.TascoAiSearch && window.TascoAiSearch.clearOffer) window.TascoAiSearch.clearOffer();
                 let r = local && local.found ? { ...local } : null, byAi = false;
                 if (local && local.ambiguousBrands) r = local;
                 if (useAi) {
                     busy = true; const mySeq = ++intentSeq;
                     setNote('AI đang hiểu câu của bạn…');
-                    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 8000);
+                    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 4500);
                     try {
                         const ai = await callIntent(raw, cat.map(b => b.name), ctl.signal);
                         if (mySeq !== intentSeq) return;
@@ -10150,8 +10200,10 @@ window.searchData = async function(opts) {
                 if (!r.part) { noteParts.push('Đã chọn xe theo câu của bạn — nhập thêm tên phụ tùng để tra cứu.'); setNote(noteParts.join(' ')); $('searchInput').focus(); return; }
                 setNote(noteParts.join(' '));
                 const heard = r.heard && r.heard.length ? r.heard : describe(r);
-                if (r.brand && r.models.length) return window.TascoAiSearch.open({ heard, ai: byAi });
-                return window.searchData();
+                // Tra cứu ngay; AI gom tên tương đương chạy nền và gợi ý "Xem & chọn" khi xong.
+                const run = window.searchData();
+                if (r.brand && r.models.length) window.TascoAiSearch.prefetch({ heard, ai: byAi });
+                return run;
             }
             return { parse, search, vocabulary, ground };
         })();
