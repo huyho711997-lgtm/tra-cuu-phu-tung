@@ -2983,29 +2983,70 @@ html.dark .tasco-workspace .ws-search-clear{background:rgba(255,255,255,.14);col
 html.dark .tasco-workspace .ws-search-clear:active{background:rgba(255,255,255,.26)}
 </style>
 <style id="tascoSmartAsk">
-/* Hỏi lại khi tìm bằng giọng nói/câu tự nhiên mà thiếu hãng, dòng xe hoặc năm. */
-.ws-ask{margin:12px 0 2px;padding:14px 14px 12px;border:1px solid var(--ws-line);border-radius:18px;background:linear-gradient(135deg,rgba(132,191,199,.18),rgba(218,236,240,.55));animation:wsAskIn .22s ease both}
+/* Hỏi lại khi tìm bằng giọng nói/câu tự nhiên mà thiếu hãng, dòng xe/phiên bản hoặc năm. */
+.ws-ask{position:relative;margin:14px 0 4px;padding:16px 14px 12px;border:1px solid var(--ws-line);border-radius:22px;background:var(--ws-surface);box-shadow:0 18px 38px -26px rgba(24,48,86,.6),0 2px 6px rgba(24,48,86,.05);overflow:hidden;animation:wsAskIn .3s cubic-bezier(.2,.8,.2,1) both}
+.ws-ask::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,#84bfc7,#39747e 55%,#183056)}
 .ws-ask[hidden]{display:none}
-@keyframes wsAskIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.ws-ask{animation:none}}
-html.dark .ws-ask{background:linear-gradient(135deg,rgba(132,191,199,.14),rgba(36,72,97,.72))}
-.ws-ask-head{display:flex;align-items:flex-start;gap:10px}
-.ws-ask-ico{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#183056;color:#daecf0}
-.ws-ask-ico svg{width:17px;height:17px}
-html.dark .ws-ask-ico{background:#84bfc7;color:#0b1b30}
-.ws-ask-text{flex:1;min-width:0}
-.ws-ask-q{margin:0;font-size:14.5px;font-weight:700;line-height:1.35;color:var(--ws-text)}
-.ws-ask-heard{margin:3px 0 0;font-size:11px;line-height:1.45;color:var(--ws-muted);overflow-wrap:anywhere}
-.ws-ask-close{flex:none;display:grid;place-items:center;width:30px;height:30px;margin:-2px -4px 0 0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ws-muted);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.ws-ask-body{animation:wsAskStep .26s ease both}
+@keyframes wsAskIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes wsAskStep{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ws-ask,.ws-ask-body{animation:none}.ws-ask-opt,.ws-ask-next{transition:none!important}}
+html.dark .ws-ask{box-shadow:0 18px 38px -26px rgba(0,0,0,.8)}
+.ws-ask-top{display:flex;align-items:center;gap:8px}
+.ws-ask-steps{flex:1;min-width:0;display:flex;align-items:center;gap:8px;margin:0;padding:0;list-style:none}
+.ws-ask-step{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:650;color:var(--ws-muted);white-space:nowrap}
+.ws-ask-step+.ws-ask-step::before{content:"";width:16px;height:1.5px;margin-right:1px;background:var(--ws-line);border-radius:2px}
+.ws-ask-dot{display:grid;place-items:center;flex:none;width:22px;height:22px;border:1px solid var(--ws-line);border-radius:50%;background:var(--ws-soft);color:var(--ws-muted);font-size:10.5px;font-weight:750}
+.ws-ask-dot svg{width:11px;height:11px}
+.ws-ask-steplab{display:none}
+.ws-ask-step.is-now{color:var(--ws-text)}
+.ws-ask-step.is-now .ws-ask-steplab{display:inline}
+.ws-ask-step.is-now .ws-ask-dot{border-color:#183056;background:#183056;color:#fff}
+.ws-ask-step.is-done .ws-ask-dot{border-color:#39747e;background:#39747e;color:#fff}
+html.dark .ws-ask-step.is-now .ws-ask-dot{border-color:#84bfc7;background:#84bfc7;color:#0b1b30}
+.ws-ask-close{flex:none;display:grid;place-items:center;width:32px;height:32px;margin:-4px -6px -4px 0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ws-muted);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .ws-ask-close svg{width:15px;height:15px}
-.ws-ask-close:active{background:rgba(24,48,86,.1)}
-.ws-ask-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.ws-ask-chip{min-height:38px;max-width:100%;padding:0 14px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease,background .15s ease,border-color .15s ease}
-.ws-ask-chip:active{transform:scale(.96);background:var(--ws-accent);border-color:var(--ws-accent-text)}
-.ws-ask-chip--ghost{background:transparent;border-style:dashed;color:var(--ws-muted);font-weight:550}
-.ws-ask-foot{display:flex;justify-content:flex-end;margin-top:10px}
-.ws-ask-go{min-height:36px;padding:0 4px;border:0;background:transparent;color:var(--ws-accent-text);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-.ws-ask-go:active{opacity:.6}
+.ws-ask-close:active{background:var(--ws-soft)}
+.ws-ask-sum{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.ws-ask-tok{max-width:100%;padding:3px 10px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-soft);color:var(--ws-text);font-size:11.5px;font-weight:600;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ws-ask-tok--part{border-color:#183056;background:#183056;color:#daecf0}
+html.dark .ws-ask-tok--part{border-color:#84bfc7;background:#84bfc7;color:#0b1b30}
+.ws-ask-q{margin:12px 0 0;font-size:17px;font-weight:760;line-height:1.3;letter-spacing:-.01em;color:var(--ws-text)}
+.ws-ask-sub{margin:4px 0 0;font-size:12px;line-height:1.45;color:var(--ws-muted)}
+.ws-ask-tools{display:flex;gap:4px;margin:10px -4px 0;overflow-x:auto;scrollbar-width:none}
+.ws-ask-tools::-webkit-scrollbar{display:none}
+.ws-ask-tool{flex:none;min-height:32px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:var(--ws-accent-text);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.ws-ask-tool:active{background:var(--ws-soft)}
+.ws-ask-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.ws-ask-grid--year{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ws-ask-opt{position:relative;display:flex;align-items:center;gap:8px;min-height:48px;padding:0 12px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-surface);color:var(--ws-text);font:inherit;font-size:14px;font-weight:650;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,color .18s ease}
+.ws-ask-opt:active{transform:scale(.97)}
+.ws-ask-opt:focus-visible,.ws-ask-next:focus-visible,.ws-ask-back:focus-visible{outline:2px solid #39747e;outline-offset:2px}
+.ws-ask-grid--year .ws-ask-opt{justify-content:center;padding:0 8px;font-variant-numeric:tabular-nums}
+.ws-ask-grid--year .ws-ask-name{flex:none;display:block;padding:0}
+.ws-ask-tick{flex:none;display:grid;place-items:center;width:18px;height:18px;border:1.5px solid var(--ws-line);border-radius:6px;color:transparent;transition:background .18s ease,border-color .18s ease,color .18s ease}
+.ws-ask-tick svg{width:11px;height:11px}
+.ws-ask-name{flex:1;min-width:0;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;line-height:1.2;overflow-wrap:anywhere;padding:6px 0}
+.ws-ask-n{flex:none;font-size:11px;font-weight:600;color:var(--ws-muted);font-variant-numeric:tabular-nums}
+.ws-ask-opt[aria-pressed=true]{border-color:#183056;background:#183056;color:#fff;box-shadow:0 10px 20px -14px rgba(24,48,86,.9)}
+.ws-ask-opt[aria-pressed=true] .ws-ask-tick{border-color:#84bfc7;background:#84bfc7;color:#0b1b30}
+.ws-ask-opt[aria-pressed=true] .ws-ask-n{color:rgba(255,255,255,.72)}
+html.dark .ws-ask-opt[aria-pressed=true]{border-color:#84bfc7;background:#2c6f7b;box-shadow:0 10px 20px -14px rgba(0,0,0,.9)}
+.ws-ask-cap{margin:10px 2px 0;font-size:10.5px;line-height:1.4;color:var(--ws-muted)}
+.ws-ask-actions{display:flex;gap:10px;margin-top:14px}
+.ws-ask-back{flex:none;display:grid;place-items:center;width:50px;min-height:50px;padding:0;border:1px solid var(--ws-line);border-radius:14px;background:transparent;color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.ws-ask-back svg{width:20px;height:20px}
+.ws-ask-back:active{background:var(--ws-soft)}
+.ws-ask-next{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 16px;border:0;border-radius:14px;background:linear-gradient(135deg,#183056,#244861);color:#fff;font:inherit;font-size:14.5px;font-weight:720;cursor:pointer;box-shadow:0 14px 24px -16px rgba(24,48,86,.9);-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease}
+.ws-ask-next:active{transform:scale(.98)}
+.ws-ask-arrow{display:grid;place-items:center}
+.ws-ask-arrow svg{width:18px;height:18px}
+.ws-ask-next--ghost{border:1px dashed var(--ws-line);background:transparent;color:var(--ws-muted);box-shadow:none;font-weight:600}
+html.dark .ws-ask-next:not(.ws-ask-next--ghost){background:linear-gradient(135deg,#84bfc7,#5fa8b2);color:#0b1b30;box-shadow:0 14px 24px -16px rgba(0,0,0,.9)}
+.ws-ask-more,.ws-ask-go{display:block;width:100%;min-height:36px;margin-top:6px;padding:0;border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:650;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.ws-ask-more{color:var(--ws-accent-text)}
+.ws-ask-go{color:var(--ws-muted)}
+.ws-ask-more:active,.ws-ask-go:active{opacity:.6}
 </style>
 <style id="tascoLookupCompactType">
 .tasco-workspace #traCuuSection .ws-filter-grid strong { font-size: 10px; }
@@ -10206,11 +10247,18 @@ window.searchData = async function(opts) {
                 return [...new Set(out)].slice(0, 320);
             }
 
-            /* ---- Hỏi lại khi thiếu thông tin: hãng → dòng xe → năm. Người dùng chọn một chip, "Tất cả…" để bỏ qua, hoặc "Tra luôn". ---- */
+            /* ---- Hỏi lại khi thiếu thông tin (premium): hãng → dòng xe / phiên bản → năm. Hãng chọn một chạm; dòng xe và năm chọn nhiều, "Không chọn" = tra tất cả. ---- */
             let askState = null, askSeq = 0;
             const askBox = () => $('smartAsk');
             const mk = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
             const FC = () => window.TascoFilterCounts || null;
+            const ICO = {
+                check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>',
+                back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg>',
+                close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+                next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>'
+            };
+            const ico = (html, cls) => { const e = mk('span', cls); e.setAttribute('aria-hidden', 'true'); e.innerHTML = html; return e; };
             function hideAsk() { askSeq++; askState = null; const b = askBox(); if (b) { b.hidden = true; b.replaceChildren(); } }
             function brandOptions(cat, only) {
                 let names = (only && only.length ? cat.filter(b => only.includes(b.name)) : cat).map(b => b.name);
@@ -10223,6 +10271,8 @@ window.searchData = async function(opts) {
                 } catch (_) { /* không có số liệu: giữ thứ tự danh mục */ }
                 return names;
             }
+            function brandCount(name) { try { const fc = FC(); return fc && fc.isFresh(fc.summary) ? fc.getCount('hang', name) : null; } catch (_) { return null; } }
+            function modelCount(m, hang) { try { const fc = FC(); return fc && fc.hasBrand(hang) ? fc.getCount('hieu', m, hang, [], []) : null; } catch (_) { return null; } }
             function modelOptions(hang) {
                 let names = Object.keys((CAY_GIA_PHA || {})[hang] || {});
                 try {
@@ -10240,22 +10290,41 @@ window.searchData = async function(opts) {
                 if (!years) years = (Array.isArray(NAM_ALL) ? NAM_ALL : []).map(Number).filter(y => y >= 1990 && y <= 2100).sort((a, b) => b - a);
                 return years;
             }
-            // Bước còn thiếu tính trên bộ lọc THỰC TẾ đang đặt (hãng/dòng xe/năm đã chọn từ trước thì không hỏi lại).
-            function nextStep(skipped) {
+            const makeAsk = o => ({ skipped: new Set(o.skip || []), done: new Set(), ambiguous: o.ambiguous || null, raw: o.raw || '', variants: o.variants && o.variants.length > 1 ? o.variants.slice() : null, sel: { model: new Set(), year: new Set() }, flow: null, step: '' });
+            // Bước còn thiếu tính trên bộ lọc THỰC TẾ đang đặt (đã chọn từ trước thì không hỏi lại). Dòng xe nói chung chung (nhiều phiên bản) luôn hỏi bản.
+            function nextStep(st) {
                 const hang = $('filterHang').value;
-                if (!hang) return skipped.has('brand') ? null : 'brand';
-                if (!selectedHieuList.length && !skipped.has('model') && modelOptions(hang).length > 1) return 'model';
-                if (!selectedNamList.length && !skipped.has('year') && yearOptions().length > 1) return 'year';
+                if (!hang) return st.skipped.has('brand') ? null : 'brand';
+                if (!st.done.has('model') && !st.skipped.has('model')) {
+                    if (st.variants) return 'model';
+                    if (!selectedHieuList.length && modelOptions(hang).length > 1) return 'model';
+                }
+                if (!st.done.has('year') && !st.skipped.has('year') && !selectedNamList.length && yearOptions().length > 1) return 'year';
                 return null;
             }
-            function heardLine() {
-                const parts = [];
-                const part = $('searchInput').value.trim(); if (part) parts.push(part);
-                const hang = $('filterHang').value; if (hang) parts.push(hang);
-                if (selectedHieuList.length) parts.push(selectedHieuList.length === 1 ? selectedHieuList[0] : selectedHieuList[0] + ' +' + (selectedHieuList.length - 1) + ' đời');
-                if (selectedNamList.length) parts.push(selectedNamList.length === 1 ? String(selectedNamList[0]) : selectedNamList[0] + '–' + selectedNamList[selectedNamList.length - 1]);
-                return parts;
+            function tokens(st) {
+                const out = [], part = $('searchInput').value.trim(), hang = $('filterHang').value;
+                if (part) out.push({ t: part, k: 'part' });
+                if (hang) out.push({ t: hang });
+                if (selectedHieuList.length && !(st.variants && !st.done.has('model'))) out.push({ t: selectedHieuList.length === 1 ? selectedHieuList[0] : selectedHieuList[0] + ' +' + (selectedHieuList.length - 1) });
+                else if (st.variants) out.push({ t: familyName(st.variants) + ' · ' + groupModels(st.variants, hang).length + ' bản' });
+                if (selectedNamList.length) out.push({ t: selectedNamList.length === 1 ? String(selectedNamList[0]) : selectedNamList[0] + '–' + selectedNamList[selectedNamList.length - 1] });
+                return out;
             }
+            const familyName = list => list.slice().sort((a, b) => compact(a).length - compact(b).length || b.length - a.length)[0];
+            // Gộp cách viết trùng nhau trong dữ liệu ("CR-V" = "CRV"): một lựa chọn, tra cả hai.
+            function groupModels(names, hang) {
+                const map = new Map();
+                names.forEach(name => {
+                    const key = compact(name), g = map.get(key) || { label: name, members: [], n: 0 };
+                    if (name.length > g.label.length) g.label = name;
+                    g.members.push(name);
+                    const c = modelCount(name, hang); if (c) g.n += c;
+                    map.set(key, g);
+                });
+                return [...map.values()].sort((a, b) => b.n - a.n || a.label.length - b.label.length || a.label.localeCompare(b.label, 'vi'));
+            }
+            function heardLine() { return tokens(askState || { variants: null, done: new Set() }).map(x => x.t); }
             function finishAsk() {
                 const heard = heardLine();
                 hideAsk();
@@ -10263,76 +10332,143 @@ window.searchData = async function(opts) {
                 if ($('filterHang').value && selectedHieuList.length && window.TascoAiSearch) window.TascoAiSearch.prefetch({ heard, ai: false });
                 return run;
             }
-            function pickAsk(step, value) {
+            function commitAsk(step, values) {
                 const st = askState; if (!st) return;
                 const part = $('searchInput').value, hang = $('filterHang').value;
                 if (step === 'brand') {
-                    if (st.ambiguous) { $('searchInput').value = st.raw + ' ' + value; hideAsk(); return search({ spoken: true }); }
-                    apply({ brand: value, models: [], years: [], kind: 'all', part });
-                } else if (step === 'model') apply({ brand: hang, models: [value], years: [], kind: 'all', part });
-                else apply({ brand: hang, models: selectedHieuList.slice(), years: [Number(value)], kind: 'all', part });
+                    if (st.ambiguous) { $('searchInput').value = st.raw + ' ' + values[0]; hideAsk(); return search({ spoken: true }); }
+                    apply({ brand: values[0], models: [], years: [], kind: 'all', part });
+                } else if (step === 'model') {
+                    // Không chọn gì = tất cả phiên bản vừa nói tới (hoặc không lọc dòng xe nếu chưa nói dòng nào).
+                    apply({ brand: hang, models: values.length ? values : (st.variants || []), years: [], kind: 'all', part });
+                    st.done.add('model');
+                } else { apply({ brand: hang, models: selectedHieuList.slice(), years: values.map(Number), kind: 'all', part }); st.done.add('year'); }
                 return advanceAsk();
+            }
+            function rewindAsk() {
+                const st = askState; if (!st || !st.flow) return;
+                const prev = st.flow[st.flow.indexOf(st.step) - 1]; if (!prev) return;
+                selectedNamList = []; updateNamLabel(); st.done.delete('year'); st.skipped.delete('year');
+                if (prev === 'brand') { $('filterHang').value = ''; $('labelHang').innerText = 'Tất cả'; selectedHieuList = []; st.done.clear(); st.skipped.clear(); st.sel.model.clear(); }
+                else if (prev === 'model') { selectedHieuList = st.variants ? st.variants.slice() : []; st.done.delete('model'); st.skipped.delete('model'); }
+                updateHieuLabel(); window.TascoLookupFlow.syncChoices();
+                renderAsk(prev);
             }
             async function advanceAsk() {
                 const st = askState; if (!st) return;
                 const seq = ++askSeq;
-                const step = st.ambiguous ? 'brand' : nextStep(st.skipped);
+                const step = st.ambiguous ? 'brand' : nextStep(st);
                 if (!step) return finishAsk();
                 const hang = $('filterHang').value, fc = FC();
                 // Số liệu theo hãng (dòng xe/năm có dữ liệu) tải nền; đợi tối đa ~1,2s rồi dùng danh mục sẵn có.
                 if (step !== 'brand' && hang && fc && !fc.hasBrand(hang)) {
                     try { await Promise.race([fc.ensureBrand(hang), new Promise(r => setTimeout(r, 1200))]); } catch (_) { /* dùng danh mục */ }
                     if (seq !== askSeq || !askState) return;
-                    if (nextStep(st.skipped) !== step) return advanceAsk();
+                    if (nextStep(st) !== step) return advanceAsk();
                 }
                 renderAsk(step);
             }
             function renderAsk(step) {
                 const st = askState, box = askBox(); if (!st || !box) return;
-                const cat = catalog() || [], hang = $('filterHang').value;
-                let options, cfg, limit;
-                if (step === 'brand') { options = brandOptions(cat, st.ambiguous); limit = 10; cfg = { q: st.ambiguous ? 'Dòng xe này có ở nhiều hãng. Bạn tìm hãng nào?' : 'Bạn tìm cho hãng xe nào?', skip: st.ambiguous ? '' : 'Không chọn hãng', modal: 'hang' }; }
-                else if (step === 'model') { options = modelOptions(hang); limit = 10; cfg = { q: 'Dòng xe nào của ' + hang + '?', skip: 'Tất cả dòng xe', modal: 'hieu' }; }
-                else { options = yearOptions(); limit = 10; cfg = { q: 'Xe đời (năm sản xuất) nào?', skip: 'Tất cả năm', modal: 'nam' }; }
-                const head = mk('div', 'ws-ask-head');
-                const ico = mk('span', 'ws-ask-ico'); ico.setAttribute('aria-hidden', 'true');
-                ico.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8M12 17h.01"/></svg>';
-                const text = mk('div', 'ws-ask-text');
-                text.append(mk('p', 'ws-ask-q', cfg.q));
-                const heard = heardLine();
-                if (heard.length) text.append(mk('p', 'ws-ask-heard', 'Đã hiểu: ' + heard.join(' · ')));
-                const close = mk('button', 'ws-ask-close'); close.type = 'button'; close.setAttribute('aria-label', 'Đóng câu hỏi');
-                close.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>';
-                close.addEventListener('click', hideAsk);
-                head.append(ico, text, close);
-                const chips = mk('div', 'ws-ask-chips');
-                options.slice(0, limit).forEach(v => {
-                    const b = mk('button', 'ws-ask-chip', String(v)); b.type = 'button';
-                    b.addEventListener('click', () => pickAsk(step, v));
-                    chips.append(b);
+                st.step = step;
+                const cat = catalog() || [], hang = $('filterHang').value, multi = step !== 'brand';
+                // Chuỗi bước hiển thị (tính một lần theo tình trạng lúc bắt đầu hỏi).
+                if (!st.flow) st.flow = [...(!hang || st.ambiguous ? ['brand'] : []), 'model', 'year'];
+                const labelOf = { brand: 'Hãng', model: st.variants ? 'Phiên bản' : 'Dòng xe', year: 'Năm' };
+                // Danh sách lựa chọn
+                let opts, limit, q, sub, unit, modelGroups = [];
+                if (step === 'brand') {
+                    opts = brandOptions(cat, st.ambiguous).map(v => ({ v, n: brandCount(v) })); limit = 12;
+                    q = st.ambiguous ? 'Dòng xe này có ở nhiều hãng' : 'Bạn tìm cho hãng xe nào?'; sub = st.ambiguous ? 'Chọn hãng bạn cần tra cứu.' : 'Chạm để chọn hãng.'; unit = '';
+                } else if (step === 'model') {
+                    modelGroups = groupModels(st.variants || modelOptions(hang), hang);
+                    opts = modelGroups.map(g => ({ v: g.label, n: g.n || null })); limit = st.variants ? 16 : 12;
+                    q = st.variants ? familyName(st.variants) + ' có ' + modelGroups.length + ' phiên bản. Bạn tìm bản nào?' : 'Dòng xe nào của ' + hang + '?';
+                    sub = 'Chọn một hoặc nhiều. Không chọn = tra tất cả.'; unit = st.variants ? 'bản' : 'dòng xe';
+                } else {
+                    opts = yearOptions().map(v => ({ v, n: null })); limit = 12;
+                    q = 'Xe đời năm nào?'; sub = 'Chọn một hoặc nhiều năm. Không chọn = tất cả năm.'; unit = 'năm';
+                }
+                const shown = opts.slice(0, limit), sel = st.sel[step] || new Set();
+                // Khung
+                const body = mk('div', 'ws-ask-body');
+                const top = mk('div', 'ws-ask-top');
+                const steps = mk('ol', 'ws-ask-steps'); steps.setAttribute('aria-label', 'Tiến độ');
+                const idx = st.flow.indexOf(step);
+                st.flow.forEach((k, i) => {
+                    const li = mk('li', 'ws-ask-step' + (i < idx ? ' is-done' : i === idx ? ' is-now' : ''));
+                    if (i === idx) li.setAttribute('aria-current', 'step');
+                    const dot = mk('span', 'ws-ask-dot'); if (i < idx) dot.innerHTML = ICO.check; else dot.textContent = String(i + 1);
+                    li.append(dot, mk('span', 'ws-ask-steplab', labelOf[k]));
+                    steps.append(li);
                 });
-                if (options.length > limit && !st.ambiguous) {
-                    const more = mk('button', 'ws-ask-chip ws-ask-chip--ghost', 'Chọn khác…'); more.type = 'button';
-                    more.addEventListener('click', () => { hideAsk(); try { window.openFilterModal(cfg.modal); } catch (_) {} });
-                    chips.append(more);
+                const close = mk('button', 'ws-ask-close'); close.type = 'button'; close.setAttribute('aria-label', 'Đóng câu hỏi'); close.innerHTML = ICO.close; close.addEventListener('click', hideAsk);
+                top.append(steps, close);
+                body.append(top);
+                const toks = tokens(st);
+                if (toks.length) { const sum = mk('div', 'ws-ask-sum'); toks.forEach(t => sum.append(mk('span', 'ws-ask-tok' + (t.k === 'part' ? ' ws-ask-tok--part' : ''), t.t))); body.append(sum); }
+                body.append(mk('h3', 'ws-ask-q', q), mk('p', 'ws-ask-sub', sub));
+                // Nút chọn nhanh (chỉ bước chọn nhiều)
+                let primary = null, refresh = () => {};
+                const grid = mk('div', 'ws-ask-grid ws-ask-grid--' + step);
+                const btns = shown.map(o => {
+                    const b = mk('button', 'ws-ask-opt'); b.type = 'button'; b.dataset.v = String(o.v);
+                    if (multi) { b.setAttribute('aria-pressed', sel.has(String(o.v)) ? 'true' : 'false'); b.append(ico(ICO.check, 'ws-ask-tick')); }
+                    b.append(mk('span', 'ws-ask-name', String(o.v)));
+                    if (o.n != null && o.n > 0) b.append(mk('span', 'ws-ask-n', String(o.n)));
+                    b.addEventListener('click', () => {
+                        if (!multi) { commitAsk(step, [o.v]); return; }
+                        const k = String(o.v);
+                        if (sel.has(k)) sel.delete(k); else sel.add(k);
+                        st.sel[step] = sel; refresh();
+                    });
+                    grid.append(b); return b;
+                });
+                if (multi) {
+                    const tools = mk('div', 'ws-ask-tools');
+                    const tool = (label, fn) => { const t = mk('button', 'ws-ask-tool', label); t.type = 'button'; t.addEventListener('click', () => { fn(); st.sel[step] = sel; refresh(); }); tools.append(t); };
+                    tool('Chọn tất cả', () => shown.forEach(o => sel.add(String(o.v))));
+                    if (step === 'year') tool('3 năm mới nhất', () => { sel.clear(); shown.slice(0, 3).forEach(o => sel.add(String(o.v))); });
+                    tool('Bỏ chọn', () => sel.clear());
+                    body.append(tools);
                 }
-                if (cfg.skip) {
-                    const skip = mk('button', 'ws-ask-chip ws-ask-chip--ghost', cfg.skip); skip.type = 'button';
-                    skip.addEventListener('click', () => { st.skipped.add(step); advanceAsk(); });
-                    chips.append(skip);
+                body.append(grid);
+                if (shown.some(o => o.n > 0)) body.append(mk('p', 'ws-ask-cap', 'Số bên cạnh là số báo giá hiện có trong kho.'));
+                // Hành động
+                const acts = mk('div', 'ws-ask-actions');
+                if (idx > 0 && !(st.ambiguous)) { const back = mk('button', 'ws-ask-back'); back.type = 'button'; back.setAttribute('aria-label', 'Quay lại bước trước'); back.innerHTML = ICO.back; back.addEventListener('click', rewindAsk); acts.append(back); }
+                if (multi) {
+                    primary = mk('button', 'ws-ask-next'); primary.type = 'button';
+                    primary.addEventListener('click', () => commitAsk(step, step === 'year' ? [...sel].map(Number) : [...new Set([...sel].flatMap(l => (modelGroups.find(g => g.label === l) || { members: [l] }).members))]));
+                    acts.append(primary);
+                } else {
+                    const skip = mk('button', 'ws-ask-next ws-ask-next--ghost', st.ambiguous ? 'Để tôi nói lại' : 'Không chọn hãng'); skip.type = 'button';
+                    skip.addEventListener('click', () => { if (st.ambiguous) { hideAsk(); try { $('searchInput').focus(); } catch (_) {} } else { st.skipped.add('brand'); advanceAsk(); } });
+                    acts.append(skip);
                 }
-                const foot = mk('div', 'ws-ask-foot');
-                const go = mk('button', 'ws-ask-go', 'Tra luôn, không cần chọn →'); go.type = 'button';
-                go.addEventListener('click', finishAsk);
-                foot.append(go);
-                box.replaceChildren(head, chips, foot);
+                body.append(acts);
+                if (opts.length > limit) {
+                    const more = mk('button', 'ws-ask-more', 'Xem đầy đủ danh sách…'); more.type = 'button';
+                    const modal = { brand: 'hang', model: 'hieu', year: 'nam' }[step];
+                    more.addEventListener('click', () => { hideAsk(); try { window.openFilterModal(modal); } catch (_) {} });
+                    body.append(more);
+                }
+                const go = mk('button', 'ws-ask-go', 'Tra luôn, không cần chọn'); go.type = 'button'; go.addEventListener('click', finishAsk);
+                body.append(go);
+                refresh = () => {
+                    btns.forEach(b => b.setAttribute('aria-pressed', sel.has(b.dataset.v) ? 'true' : 'false'));
+                    if (!primary) return;
+                    const n = sel.size, yearNext = step === 'model' && !selectedNamList.length && yearOptions().length > 1;
+                    const head = step === 'year' || !yearNext ? 'Tra cứu' : 'Tiếp tục';
+                    const tail = n ? ' · ' + n + ' ' + unit : ' · tất cả' + (step === 'model' && st.variants ? ' ' + modelGroups.length + ' bản' : (step === 'year' ? ' năm' : ''));
+                    primary.replaceChildren(mk('span', null, head + tail), ico(ICO.next, 'ws-ask-arrow'));
+                };
+                refresh();
+                box.replaceChildren(body);
                 box.hidden = false;
                 try { box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) { /* bỏ qua */ }
             }
-            function startAsk(o) {
-                askState = { skipped: new Set(o.skip || []), ambiguous: o.ambiguous || null, raw: o.raw || '' };
-                return advanceAsk();
-            }
+            function startAsk(o) { askState = makeAsk(o); return advanceAsk(); }
             { const si = $('searchInput'); if (si) si.addEventListener('input', () => { if (askState) hideAsk(); }); }
 
             async function search(opts) {
@@ -10391,7 +10527,8 @@ window.searchData = async function(opts) {
                 setNote(noteParts.join(' '));
                 const heard = r.heard && r.heard.length ? r.heard : describe(r);
                 // Giọng nói / câu tự nhiên còn thiếu hãng, dòng xe hoặc năm -> hỏi lại để người dùng quyết định.
-                if (spoken && cat && nextStep(new Set(r.skippedYears && r.skippedYears.length ? ['year'] : []))) return startAsk({ raw, skip: r.skippedYears && r.skippedYears.length ? ['year'] : [] });
+                { const ao = { raw, skip: r.skippedYears && r.skippedYears.length ? ['year'] : [], variants: r.brand && r.models.length > 1 ? r.models : null };
+                  if (spoken && cat && nextStep(makeAsk(ao))) return startAsk(ao); }
                 // Tra cứu ngay; AI gom tên tương đương chạy nền và gợi ý "Xem & chọn" khi xong.
                 const run = window.searchData();
                 if (r.brand && r.models.length) window.TascoAiSearch.prefetch({ heard, ai: byAi });
