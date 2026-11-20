@@ -3925,19 +3925,17 @@ window.TascoBootSplash = (() => {
 <section id="traCuuSection" data-shell-page="lookup" class="ws-lookup ws-journey" hidden aria-labelledby="lookupPageTitle">
   <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Trở về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TRA CỨU PHỤ TÙNG</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">THÔNG TIN ĐÚNG · LỰA CHỌN RÕ RÀNG</span><h2 id="lookupPageTitle" tabindex="-1">Chọn phụ tùng.<br>Tra cứu nhanh.</h2><p>Giá và thông tin phụ tùng theo xe của bạn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="94" cy="70" r="59" stroke="currentColor" stroke-opacity=".18"/><circle cx="94" cy="70" r="47" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="3 7"/><path d="m35 80 12-22h59l24 17 17 4v16H28V84l7-4Z" fill="#84bfc7" fill-opacity=".09" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m51 60-9 19h77l-19-19H51ZM78 60v19M36 85h12m86 0h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="53" cy="96" r="13" fill="#183056" stroke="#daecf0" stroke-width="2"/><circle cx="123" cy="96" r="13" fill="#183056" stroke="#daecf0" stroke-width="2"/><circle cx="53" cy="96" r="5" stroke="currentColor"/><circle cx="123" cy="96" r="5" stroke="currentColor"/><path d="M29 118h120" stroke="currentColor" stroke-opacity=".2" stroke-linecap="round"/></svg></header>
   <div class="ws-search-panel ws-search-panel--premium">
+    <div class="ws-kind-tabs u056 u056-sw" role="group" aria-label="Loại hàng cần tra cứu"><span class="u056-knob" aria-hidden="true"></span><button type="button" data-lookup-type="all" onclick="TascoLookupFlow.chooseType('all')" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="3.5" y="14.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="14.5" width="6" height="6" rx="1.5"/></svg>Tất cả</button><button type="button" data-lookup-type="genuine" onclick="TascoLookupFlow.chooseType('genuine')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg>Chính hãng</button><button type="button" data-lookup-type="aftermarket" onclick="TascoLookupFlow.chooseType('aftermarket')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 10 5-10 5L2 8z"/><path d="m2 12 10 5 10-5M2 16l10 5 10-5"/></svg>Không chính hãng</button></div>
     <label for="searchInput" class="ws-search-label">Phụ tùng cần tìm</label>
     <div class="ws-search-field"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="ws-search-input-wrap"><input type="search" id="searchInput" placeholder="VD: cản trước CRV 2025" autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();TascoSmartSearch.search();}"></span><button type="button" class="ws-search-clear" id="searchClear" aria-label="Xóa nội dung ô tìm kiếm" title="Xóa" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button><button type="button" class="ws-search-mic" id="searchMic" aria-label="Nói để nhập tên phụ tùng" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></button></div>
     <p class="ws-search-voice" id="searchVoiceNote" role="status" aria-live="polite" hidden></p>
     <section class="ws-ask" id="smartAsk" role="group" aria-label="Cần thêm thông tin để tra cứu" hidden></section>
     <div class="ws-part-suggestions" aria-label="Gợi ý phụ tùng"><span>Gợi ý</span><button type="button" data-part-suggestion="Đèn pha" onclick="TascoLookupFlow.choosePart('Đèn pha')" aria-pressed="false">Đèn pha</button><button type="button" data-part-suggestion="Cản trước" onclick="TascoLookupFlow.choosePart('Cản trước')" aria-pressed="false">Cản trước</button><button type="button" data-part-suggestion="Gương chiếu hậu" onclick="TascoLookupFlow.choosePart('Gương chiếu hậu')" aria-pressed="false">Gương chiếu hậu</button></div>
-    <div class="lk-vehicle-head"><span id="lkVehicleTitle">Xe của bạn</span><button type="button" class="lk-quick" id="btnQuickPick" onclick="TascoSmartSearch.pick()" aria-haspopup="group"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg><span>Chọn nhanh theo bước</span></button></div>
-    <div class="ws-filter-grid"><button type="button" id="btnHang" onclick="openFilterModal('hang')" aria-label="Chọn hãng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Hãng xe</strong><small id="labelHang">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="multiHieuBtn" onclick="openFilterModal('hieu')" aria-label="Chọn dòng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg></span><span class="ws-filter-copy"><strong>Dòng xe</strong><small id="labelHieu">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnNam" onclick="openFilterModal('nam')" aria-label="Chọn năm sản xuất" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></span><span class="ws-filter-copy"><strong>Năm sản xuất</strong><small id="labelNam">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnType" onclick="openFilterModal('type')" aria-label="Chọn loại hàng" data-active="false" hidden><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M8 6V3h8v3M3 12h18m-11 0v3h4v-3"/></svg></span><span class="ws-filter-copy"><strong>Loại hàng</strong><small id="labelType">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><div class="lk-vehicle-foot" id="lkVehicleFoot" data-state="idle" role="status" aria-live="polite"><span class="lk-dot" aria-hidden="true"></span><span id="lkVehicleFootText">Chưa chọn xe: tra cứu trên tất cả xe</span></div></div>
-    <div class="lk-type-head"><span>Loại hàng</span></div>
-    <div class="ws-kind-tabs u056 u056-sw" role="group" aria-label="Loại hàng cần tra cứu"><span class="u056-knob" aria-hidden="true"></span><button type="button" data-lookup-type="all" onclick="TascoLookupFlow.chooseType('all')" aria-pressed="true"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="3.5" y="14.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="14.5" width="6" height="6" rx="1.5"/></svg>Tất cả</button><button type="button" data-lookup-type="genuine" onclick="TascoLookupFlow.chooseType('genuine')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg>Chính hãng</button><button type="button" data-lookup-type="aftermarket" onclick="TascoLookupFlow.chooseType('aftermarket')" aria-pressed="false"><svg class="u056-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 10 5-10 5L2 8z"/><path d="m2 12 10 5 10-5M2 16l10 5 10-5"/></svg>Không chính hãng</button></div>
+    <div class="ws-filter-grid"><button type="button" id="btnHang" onclick="openFilterModal('hang')" aria-label="Chọn hãng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Hãng xe</strong><small id="labelHang">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="multiHieuBtn" onclick="openFilterModal('hieu')" aria-label="Chọn dòng xe" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 11 2-6h12l2 6M3 11h18v7H3zM5 18v3m14-3v3M6 14h2m8 0h2"/></svg></span><span class="ws-filter-copy"><strong>Dòng xe</strong><small id="labelHieu">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnNam" onclick="openFilterModal('nam')" aria-label="Chọn năm sản xuất" data-active="false"><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg></span><span class="ws-filter-copy"><strong>Năm sản xuất</strong><small id="labelNam">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><button type="button" id="btnType" onclick="openFilterModal('type')" aria-label="Chọn loại hàng" data-active="false" hidden><span class="ws-filter-icon"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M8 6V3h8v3M3 12h18m-11 0v3h4v-3"/></svg></span><span class="ws-filter-copy"><strong>Loại hàng</strong><small id="labelType">Tất cả</small></span><svg class="ws-icon ws-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
     <div class="ws-search-options"><button type="button" id="btnExactPartName" class="ws-exact-toggle" onclick="toggleExactPartName()" title="Khớp chính xác tên phụ tùng" aria-label="Khớp chính xác tên phụ tùng" aria-pressed="false"><span class="ws-exact-box" aria-hidden="true"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span>Khớp chính xác tên</span></button></div>
     <input id="exactPartName" type="hidden" value="0"><input type="hidden" id="filterHang" value=""><input type="hidden" id="filterNam" value=""><input type="hidden" id="filterType" value="all">
     <div class="ws-search-actions"><button type="button" id="btnLookupSearch" class="ws-primary" onclick="TascoSmartSearch.search()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Tra cứu phụ tùng</span></button><button type="button" class="ws-secondary" onclick="clearFilters()" aria-label="Xóa bộ lọc" title="Xóa bộ lọc"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a8 8 0 1 1-1 8M4 3v5h5"/></svg><span>Đặt lại</span></button></div>
-    <button type="button" class="ws-ai-btn" id="btnAiSearch" onclick="TascoAiSearch.open()" aria-haspopup="dialog"><span class="ws-ai-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3Z"/></svg></span><span class="ws-ai-copy"><strong>Tìm bằng AI</strong><small>Hiểu tên đồng nghĩa, gộp cách viết</small></span><svg class="ws-ai-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+    <button type="button" class="ws-ai-btn" id="btnAiSearch" onclick="TascoAiSearch.open()" aria-haspopup="dialog"><span class="ws-ai-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3Z"/></svg></span><span class="ws-ai-copy"><strong>Tìm bằng AI</strong><small>Hiểu tên đồng nghĩa, gộp cách viết, chọn đúng loại phụ tùng trong kho</small></span><svg class="ws-ai-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <p class="ws-ai-note" id="aiPartNote" role="status" aria-live="polite" hidden></p>
   </div>
   <p class="ws-journey-note"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 4-3.8 7-8 9-4.2-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg><span>TASCO INSURANCE · Thông tin cho quyết định của bạn</span></p>
@@ -9145,15 +9143,6 @@ window.TascoWeekly=(()=>{
             }
         };
         window.TascoFilterCounts = TascoFilterCounts;
-        // Khi số liệu hãng/tổng hợp tải xong thì cập nhật dòng "N báo giá" ở trang Tra cứu.
-        ['ensureBrand', 'ensureSummary'].forEach(k => {
-            const o = TascoFilterCounts[k]; if (typeof o !== 'function') return;
-            TascoFilterCounts[k] = function () {
-                const r = o.apply(this, arguments);
-                try { Promise.resolve(r).then(() => { window.TascoLookupFlow && window.TascoLookupFlow.syncChoices(); }, () => {}); } catch (_) { /* bỏ qua */ }
-                return r;
-            };
-        });
         TascoFilterCounts.init();
 
 
@@ -9188,8 +9177,6 @@ window.TascoWeekly=(()=>{
         let currentFilterType = '';
         let selectedHieuList = [];
         let selectedNamList = []; // For multi-select năm sx
-        // Cho các module khác (dòng "N báo giá" ở trang Tra cứu) đọc lựa chọn hiện tại, chỉ đọc.
-        try { Object.defineProperty(window, 'TascoSelected', { value: { get hieu() { return selectedHieuList; }, get nam() { return selectedNamList; } } }); } catch (_) { /* đã có */ }
 
         function getAvailableFilterYears() {
             const hang = document.getElementById('filterHang')?.value || '';
@@ -10303,7 +10290,7 @@ window.searchData = async function(opts) {
                 if (!years) years = (Array.isArray(NAM_ALL) ? NAM_ALL : []).map(Number).filter(y => y >= 1990 && y <= 2100).sort((a, b) => b - a);
                 return years;
             }
-            const makeAsk = o => ({ manual: !!o.manual, skipped: new Set(o.skip || []), done: new Set(), ambiguous: o.ambiguous || null, raw: o.raw || '', variants: o.variants && o.variants.length > 1 ? o.variants.slice() : null, sel: { model: new Set(), year: new Set() }, flow: null, step: '' });
+            const makeAsk = o => ({ skipped: new Set(o.skip || []), done: new Set(), ambiguous: o.ambiguous || null, raw: o.raw || '', variants: o.variants && o.variants.length > 1 ? o.variants.slice() : null, sel: { model: new Set(), year: new Set() }, flow: null, step: '' });
             // Bước còn thiếu tính trên bộ lọc THỰC TẾ đang đặt (đã chọn từ trước thì không hỏi lại). Dòng xe nói chung chung (nhiều phiên bản) luôn hỏi bản.
             function nextStep(st) {
                 const hang = $('filterHang').value;
@@ -10339,15 +10326,8 @@ window.searchData = async function(opts) {
             }
             function heardLine() { return tokens(askState || { variants: null, done: new Set() }).map(x => x.t); }
             function finishAsk() {
-                const heard = heardLine(), manual = !!(askState && askState.manual);
+                const heard = heardLine();
                 hideAsk();
-                if (manual) {
-                    // Chọn xe thủ công: giữ nguyên trang, chỉ cập nhật bộ lọc; đã có tên phụ tùng thì tra luôn.
-                    try { window.TascoLookupFlow.syncChoices(); } catch (_) { /* bỏ qua */ }
-                    if ($('searchInput').value.trim()) return window.searchData();
-                    try { $('btnLookupSearch').scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) { /* bỏ qua */ }
-                    return;
-                }
                 const run = window.searchData();
                 if ($('filterHang').value && selectedHieuList.length && window.TascoAiSearch) window.TascoAiSearch.prefetch({ heard, ai: false });
                 return run;
@@ -10473,13 +10453,13 @@ window.searchData = async function(opts) {
                     more.addEventListener('click', () => { hideAsk(); try { window.openFilterModal(modal); } catch (_) {} });
                     body.append(more);
                 }
-                const go = mk('button', 'ws-ask-go', st.manual ? 'Xong, giữ nguyên lựa chọn' : 'Tra luôn, không cần chọn'); go.type = 'button'; go.addEventListener('click', finishAsk);
+                const go = mk('button', 'ws-ask-go', 'Tra luôn, không cần chọn'); go.type = 'button'; go.addEventListener('click', finishAsk);
                 body.append(go);
                 refresh = () => {
                     btns.forEach(b => b.setAttribute('aria-pressed', sel.has(b.dataset.v) ? 'true' : 'false'));
                     if (!primary) return;
                     const n = sel.size, yearNext = step === 'model' && !selectedNamList.length && yearOptions().length > 1;
-                    const head = step === 'year' || !yearNext ? (st.manual && !$('searchInput').value.trim() ? 'Xong' : 'Tra cứu') : 'Tiếp tục';
+                    const head = step === 'year' || !yearNext ? 'Tra cứu' : 'Tiếp tục';
                     const tail = n ? ' · ' + n + ' ' + unit : ' · tất cả' + (step === 'model' && st.variants ? ' ' + modelGroups.length + ' bản' : (step === 'year' ? ' năm' : ''));
                     primary.replaceChildren(mk('span', null, head + tail), ico(ICO.next, 'ws-ask-arrow'));
                 };
@@ -10488,16 +10468,7 @@ window.searchData = async function(opts) {
                 box.hidden = false;
                 try { box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) { /* bỏ qua */ }
             }
-            function startAsk(o) {
-                askState = makeAsk(o);
-                if (o.manual) {
-                    // Bắt đầu lại từ hãng xe.
-                    selectedHieuList = []; selectedNamList = []; $('filterHang').value = ''; $('labelHang').innerText = 'Tất cả';
-                    updateHieuLabel(); updateNamLabel(); try { window.TascoLookupFlow.syncChoices(); } catch (_) { /* bỏ qua */ }
-                }
-                return advanceAsk();
-            }
-            const pick = () => startAsk({ manual: true, raw: '' });
+            function startAsk(o) { askState = makeAsk(o); return advanceAsk(); }
             { const si = $('searchInput'); if (si) si.addEventListener('input', () => { if (askState) hideAsk(); }); }
 
             async function search(opts) {
@@ -10563,7 +10534,7 @@ window.searchData = async function(opts) {
                 if (r.brand && r.models.length) window.TascoAiSearch.prefetch({ heard, ai: byAi });
                 return run;
             }
-            return { parse, search, pick, vocabulary, ground, hideAsk, intentCatalog: () => { const c = catalog(); return c ? intentCatalog(c) : {}; } };
+            return { parse, search, vocabulary, ground, hideAsk, intentCatalog: () => { const c = catalog(); return c ? intentCatalog(c) : {}; } };
         })();
 
 
@@ -14888,7 +14859,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const color = view === 'lookup' ? '#0a1829' : ['results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    const color = ['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -14937,32 +14908,6 @@ window.TascoLookupFlow = (() => {
     document.querySelectorAll('[data-lookup-type]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.lookupType === type)));
     const keyword = node('searchInput').value.trim().toLocaleLowerCase('vi');
     document.querySelectorAll('[data-part-suggestion]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.partSuggestion.toLocaleLowerCase('vi') === keyword)));
-    try { vehicleFoot(); } catch (_) { /* bỏ qua */ }
-  }
-  const footTried = new Set();
-  function vehicleFoot() {
-    const el = node('lkVehicleFoot'), tx = node('lkVehicleFootText'); if (!el || !tx) return;
-    const fc = window.TascoFilterCounts, hang = node('filterHang').value;
-    let state, msg;
-    if (!hang) { state = 'idle'; msg = 'Chưa chọn xe: tra cứu trên tất cả xe'; }
-    else {
-      let n = null;
-      try {
-        const key = fc.normalize(hang);
-        if (!fc.hasBrand(hang)) { if (!footTried.has(key) && !fc.errors[key]) { footTried.add(key); fc.ensureBrand(hang); } }
-        else {
-          const sel = window.TascoSelected || { hieu: [], nam: [] }, hs = sel.hieu, ns = sel.nam;
-          if (hs.length) n = hs.reduce((t, h) => t + (fc.getCount('hieu', h, hang, [], ns) || 0), 0);
-          else if (ns.length) n = ns.reduce((t, y) => t + (fc.getCount('nam', y, hang, [], []) || 0), 0);
-          else n = fc.getCount('hang', hang);
-        }
-      } catch (_) { n = null; }
-      if (n === null) { state = 'loading'; msg = 'Đang đếm báo giá…'; }
-      else if (n > 0) { state = 'ok'; msg = n.toLocaleString('vi-VN') + ' báo giá cho lựa chọn này'; }
-      else { state = 'empty'; msg = 'Chưa có báo giá cho lựa chọn này'; }
-    }
-    if (el.dataset.state !== state) el.dataset.state = state;
-    if (tx.textContent !== msg) tx.textContent = msg;
   }
   function chooseType(type) {
     if (!['all','genuine','aftermarket'].includes(type)) return;
@@ -15035,7 +14980,6 @@ window.TascoLookupFlow = (() => {
   node('searchInput').addEventListener('input', syncChoices);
   const observer = new MutationObserver(syncChoices);
   observer.observe(node('labelType'), {childList:true,characterData:true,subtree:true});
-  ['labelHang','labelHieu','labelNam'].forEach(id => { const n = node(id); if (n) observer.observe(n, {childList:true,characterData:true,subtree:true}); });
   const themeObserver = new MutationObserver(() => syncBrowserChrome());
   themeObserver.observe(document.documentElement, {attributes:true,attributeFilter:['class']});
   if (typeof ResizeObserver === 'function') new ResizeObserver(measureResultHeader).observe(node('resultsStickyHeader'));
@@ -20772,174 +20716,6 @@ html.tasco-native-camera-ready #cameraSettingsPanel label:has([data-camera-pref=
 #customCameraModal #btnToggleCameraFlash[data-flash="torch"]{background:#f4e3a1;border-color:#f4e3a1;color:#1b2a3a;box-shadow:0 0 18px rgba(244,227,161,.55)}
 #btnToggleCameraFlash[data-flash="auto"]::after{content:'A';position:absolute;right:6px;bottom:4px;font-size:9px;font-weight:800;color:#84bfc7}
 #btnToggleCameraFlash{position:relative}
-</style>
-<style id="tascoLookupV2">
-/* Trang Tra cứu v2: một khối chọn xe, nút chính nổi bật, cùng ngôn ngữ với Cứu hộ / Trang chủ */
-.tasco-workspace #traCuuSection .ws-search-panel--premium{padding:18px 16px 16px}
-.tasco-workspace #traCuuSection .ws-kind-tabs{margin-bottom:16px}
-.tasco-workspace #traCuuSection .ws-part-suggestions{padding:10px 0 0}
-.tasco-workspace #traCuuSection .lk-vehicle-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 3px 9px}
-.tasco-workspace #traCuuSection .lk-vehicle-head>span{font-size:12px;font-weight:650;line-height:1.4;color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .lk-quick{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 13px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-accent);color:var(--ws-accent-text);font:inherit;font-size:12px;font-weight:700;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .12s ease,background .18s ease}
-.tasco-workspace #traCuuSection .lk-quick svg{width:14px;height:14px;flex:none}
-.tasco-workspace #traCuuSection .lk-quick:active{transform:scale(.97)}
-.tasco-workspace #traCuuSection .ws-search-panel .ws-filter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0 0 12px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-surface);overflow:hidden}
-.tasco-workspace #traCuuSection .ws-filter-grid>button{position:relative;display:flex;align-items:center;gap:11px;min-width:0;min-height:64px;padding:10px 14px;border:0;border-radius:0;background:transparent;box-shadow:none;text-align:left;transition:background .18s ease}
-.tasco-workspace #traCuuSection .ws-filter-grid>#btnHang{grid-column:1/-1;border-bottom:1px solid var(--ws-line)}
-.tasco-workspace #traCuuSection .ws-filter-grid>#btnNam{border-left:1px solid var(--ws-line)}
-.tasco-workspace #traCuuSection .ws-filter-grid>#btnType{display:none!important}
-.tasco-workspace #traCuuSection .ws-filter-grid>button:hover{background:transparent}
-.tasco-workspace #traCuuSection .ws-filter-grid>button:active{background:var(--ws-soft)}
-@media(hover:hover){.tasco-workspace #traCuuSection .ws-filter-grid>button:hover{background:var(--ws-soft)}}
-.tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true]{background:transparent;border-color:var(--ws-line)}
-.tasco-workspace #traCuuSection .ws-filter-icon{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:12px;background:var(--ws-soft);color:var(--ws-accent-text);transition:background .18s ease,color .18s ease}
-.tasco-workspace #traCuuSection .ws-filter-grid>button .ws-filter-icon .ws-icon{width:18px;height:18px}
-.tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] .ws-filter-icon{background:var(--app-teal);color:var(--app-navy)}
-.tasco-workspace #traCuuSection .ws-filter-copy{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
-.tasco-workspace #traCuuSection .ws-filter-grid strong{margin:0;font-size:11px;font-weight:550;line-height:1.3;color:var(--ws-muted);white-space:nowrap}
-.tasco-workspace #traCuuSection .ws-filter-grid small{display:block;font-size:14.5px;font-weight:650;line-height:1.3;color:var(--ws-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] small{color:var(--ws-text)}
-.tasco-workspace #traCuuSection .ws-filter-grid>button .ws-filter-chevron{width:14px;height:14px;flex:0 0 14px;color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .ws-filter-grid>button:not(#btnHang) .ws-filter-chevron{display:none}
-.tasco-workspace #traCuuSection .ws-search-options{margin:2px 0 14px}
-.tasco-workspace #traCuuSection .ws-search-actions{display:grid;grid-template-columns:minmax(0,1fr) 56px;gap:10px;padding-top:0;border-top:0}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-primary,.tasco-workspace #traCuuSection .ws-search-actions .ws-primary:hover,.tasco-workspace #traCuuSection .ws-search-actions .ws-primary:focus-visible{min-height:56px;padding:0 20px;gap:10px;border:0!important;border-radius:18px;background:linear-gradient(180deg,#78bfc7,var(--app-teal))!important;color:var(--app-navy)!important;font-size:15px;font-weight:720;letter-spacing:-.1px;box-shadow:0 16px 28px -16px rgba(40,120,134,.95),inset 0 1px 0 rgba(255,255,255,.38)!important;transition:transform .12s ease,filter .18s ease}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-primary .ws-icon{width:20px;height:20px}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-primary:active{transform:scale(.985)}
-@media(hover:hover){.tasco-workspace #traCuuSection .ws-search-actions .ws-primary:hover{filter:brightness(1.05)}}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-primary[aria-busy=true]{filter:saturate(.7);opacity:.85}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-secondary{width:56px;min-height:56px;padding:0;gap:0;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-surface);color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-secondary span{display:none}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-secondary .ws-icon{width:20px;height:20px}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-secondary:active{background:var(--ws-soft)}
-.tasco-workspace #traCuuSection .ws-ai-btn{margin-top:12px;min-height:54px;padding:10px 14px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-soft)}
-html.dark .tasco-workspace #traCuuSection .ws-ai-btn{background:var(--ws-soft)}
-@media(max-width:380px){
-  .tasco-workspace #traCuuSection .ws-search-panel--premium{padding:16px 13px 14px}
-  .tasco-workspace #traCuuSection .ws-filter-grid>button{gap:9px;padding:10px 11px}
-  .tasco-workspace #traCuuSection .ws-filter-icon{width:32px;height:32px;flex-basis:32px;border-radius:11px}
-  .tasco-workspace #traCuuSection .ws-filter-grid small{font-size:14px}
-  .tasco-workspace #traCuuSection .lk-quick span{font-size:11.5px}
-}
-@media(prefers-reduced-motion:reduce){.tasco-workspace #traCuuSection .lk-quick,.tasco-workspace #traCuuSection .ws-filter-grid>button,.tasco-workspace #traCuuSection .ws-search-actions .ws-primary{transition:none}}
-
-/* ---- v3 ---- */
-.tasco-workspace #traCuuSection .ws-journey-hero{min-height:0;padding-bottom:44px}
-.tasco-workspace #traCuuSection .ws-journey-heading p{display:none}
-.tasco-workspace #traCuuSection .ws-journey-art{bottom:30px}
-.tasco-workspace #traCuuSection .ws-search-field{min-height:58px;padding:0 9px 0 16px;border:1px solid transparent;border-radius:18px;background:var(--ws-soft);transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
-.tasco-workspace #traCuuSection .ws-search-field input{font-size:16.5px!important;font-weight:520!important}
-.tasco-workspace #traCuuSection .ws-search-mic{width:42px;height:42px;background:linear-gradient(180deg,#78bfc7,var(--app-teal));color:var(--app-navy);box-shadow:0 10px 18px -10px rgba(40,120,134,.95),inset 0 1px 0 rgba(255,255,255,.38)}
-.tasco-workspace #traCuuSection .ws-search-mic svg{width:20px;height:20px}
-.tasco-workspace #traCuuSection .ws-search-mic.is-live{background:#e5484d;color:#fff;box-shadow:none}
-.tasco-workspace #traCuuSection .ws-kind-tabs{margin:0}
-.tasco-workspace #traCuuSection .ws-kind-tabs button{min-height:34px}
-.tasco-workspace #traCuuSection .lk-type-head{margin:16px 3px 8px}
-.tasco-workspace #traCuuSection .lk-type-head>span{font-size:12px;font-weight:650;line-height:1.4;color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .ws-search-options{margin:12px 0 0}
-.tasco-workspace #traCuuSection .lk-vehicle-foot{grid-column:1/-1;display:flex;align-items:center;gap:9px;min-height:40px;padding:9px 14px;border-top:1px solid var(--ws-line);background:var(--ws-soft);font-size:12px;font-weight:620;line-height:1.35;color:var(--ws-muted)}
-.tasco-workspace #traCuuSection .lk-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--ws-line);transition:background .2s ease,box-shadow .2s ease}
-.tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=ok]{color:var(--ws-text)}
-.tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=ok] .lk-dot{background:#2fa36b;box-shadow:0 0 0 4px rgba(47,163,107,.16)}
-.tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=empty] .lk-dot{background:#d9822b;box-shadow:0 0 0 4px rgba(217,130,43,.16)}
-.tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=loading] .lk-dot{background:var(--app-teal);animation:lkPulse 1s ease-in-out infinite}
-@keyframes lkPulse{50%{opacity:.35;transform:scale(.8)}}
-@keyframes lkSpin{to{transform:rotate(360deg)}}
-@keyframes lkRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.tasco-workspace #traCuuSection .ws-search-actions{position:sticky;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:5;margin:0 -16px;padding:18px 16px 2px;background:linear-gradient(to bottom,rgba(255,255,255,0),var(--ws-surface) 36%);border-radius:0 0 23px 23px}
-.tasco-workspace #traCuuSection .ws-ask:not([hidden])~.ws-search-actions{position:static;margin:0;padding:0;background:none;border-radius:0}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-primary[aria-busy=true] .ws-icon{display:none}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-primary[aria-busy=true]::before{content:"";flex:none;width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(24,48,86,.25);border-top-color:var(--app-navy);animation:lkSpin .7s linear infinite}
-.tasco-workspace #traCuuSection .ws-search-actions .ws-primary:disabled{cursor:progress}
-.tasco-workspace #traCuuSection .ws-search-panel>*:not(.ws-ask):not(.ws-search-actions){animation:lkRise .45s cubic-bezier(.2,.8,.2,1) both}
-.tasco-workspace #traCuuSection .ws-search-panel>:nth-child(2){animation-delay:.04s}
-.tasco-workspace #traCuuSection .ws-search-panel>:nth-child(3){animation-delay:.08s}
-.tasco-workspace #traCuuSection .ws-search-panel>:nth-child(n+4){animation-delay:.12s}
-.tasco-workspace #traCuuSection .ws-search-panel>:nth-child(n+7){animation-delay:.18s}
-@media(max-width:380px){.tasco-workspace #traCuuSection .ws-search-actions{margin:0 -13px;padding:18px 13px 2px}}
-@media(prefers-reduced-motion:reduce){.tasco-workspace #traCuuSection .ws-search-panel>*,.tasco-workspace #traCuuSection .lk-dot{animation:none!important}}
-
-/* ---- v5: toàn màn hình tối, kính mờ, một điểm nhấn teal ---- */
-html:has(#traCuuSection:not([hidden])),html:has(#traCuuSection:not([hidden])) body{background:#0a1829!important}
-html:has(#traCuuSection:not([hidden])) body{background:radial-gradient(120% 55% at 100% 0%,rgba(99,173,182,.30),transparent 62%),radial-gradient(90% 45% at 0% 42%,rgba(36,72,97,.6),transparent 68%),#0a1829!important;background-attachment:fixed!important}
-html:has(#traCuuSection:not([hidden])) #mainApp,html:has(#traCuuSection:not([hidden])) .main-container{background:transparent!important}
-html:has(#traCuuSection:not([hidden])) #bottomNav{--tasco-bar-surface:rgba(12,27,46,.82);--tasco-bar-line:rgba(255,255,255,.1);--tasco-bar-ink:#edf5f7;--tasco-bar-muted:#8da8b8;--tasco-bar-active:#b5dfe3;--tasco-bar-accent:#84bfc7;--tasco-bar-soft:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5)}
-:root:root .tasco-workspace #traCuuSection{--ws-surface:rgba(255,255,255,.055);--ws-soft:rgba(255,255,255,.075);--ws-text:#edf5f7;--ws-muted:#9db8c6;--ws-line:rgba(255,255,255,.13);--ws-accent:rgba(132,191,199,.16);--ws-accent-text:#8fcad2;color:#edf5f7}
-:root:root .tasco-workspace #traCuuSection .u056{--ux-page:#0b1b30;--ux-ink:#8fcad2}
-html[data-tasco-page=lookup] body.tasco-workspace::before{background:#0a1829}
-:root:root .tasco-workspace #traCuuSection .ws-journey-hero{min-height:0;margin:0;padding:calc(14px + env(safe-area-inset-top,0px)) 22px 22px;border-radius:0;background:transparent;overflow:visible}
-:root:root .tasco-workspace #traCuuSection .ws-journey-hero::before,:root:root .tasco-workspace #traCuuSection .ws-journey-hero::after{display:none}
-:root:root .tasco-workspace #traCuuSection .ws-journey-top{margin-bottom:22px}
-:root:root .tasco-workspace #traCuuSection .ws-journey-top>button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
-:root:root .tasco-workspace #traCuuSection .ws-journey-eyebrow{color:#8fcad2}
-:root:root .tasco-workspace #traCuuSection .ws-journey-heading h2{font-size:35px;font-weight:660;letter-spacing:-1.4px}
-:root:root .tasco-workspace #traCuuSection .ws-journey-art{opacity:.5;bottom:6px;filter:drop-shadow(0 0 18px rgba(99,173,182,.35))}
-:root:root .tasco-workspace #traCuuSection .ws-search-panel--premium{margin:0 20px;padding:4px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none}
-:root:root .tasco-workspace #traCuuSection .ws-search-label{margin:0 0 10px 2px;font-size:10.5px;font-weight:650;letter-spacing:.16em;text-transform:uppercase;color:#8fb3c2}
-:root:root .tasco-workspace #traCuuSection .ws-search-field{min-height:60px;padding:0 10px 0 18px;border:1px solid rgba(255,255,255,.14);border-radius:20px;background:rgba(255,255,255,.07);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 20px 40px -28px rgba(0,0,0,.7)}
-:root:root .tasco-workspace #traCuuSection .ws-search-field:focus-within{border-color:#84bfc7!important;box-shadow:0 0 0 4px rgba(132,191,199,.18),0 16px 34px -14px rgba(99,173,182,.5)!important}
-:root:root .tasco-workspace #traCuuSection .ws-search-field>.ws-icon{color:#8fcad2}
-:root:root .tasco-workspace #traCuuSection .ws-search-field input{color:#fff}
-:root:root .tasco-workspace #traCuuSection .ws-search-field input,:root:root .tasco-workspace #traCuuSection .ws-search-input-wrap{background:transparent!important}
-:root:root .tasco-workspace #traCuuSection .ws-search-field input:-webkit-autofill{-webkit-text-fill-color:#fff;transition:background-color 9999s}
-:root:root .tasco-workspace #traCuuSection .ws-search-field input::placeholder{color:#8da8b8;opacity:1}
-:root:root .tasco-workspace #traCuuSection .ws-search-mic{width:42px;height:42px;background:rgba(132,191,199,.16);color:#a9dbe1;box-shadow:0 0 0 1px rgba(132,191,199,.4)}
-:root:root .tasco-workspace #traCuuSection .ws-search-mic.is-live{background:#e5484d;color:#fff;box-shadow:none}
-:root:root .tasco-workspace #traCuuSection .ws-search-clear{background:rgba(255,255,255,.12);color:#dcebf0}
-:root:root .tasco-workspace #traCuuSection .ws-search-voice{color:#a9dbe1}
-:root:root .tasco-workspace #traCuuSection .ws-part-suggestions{padding:14px 0 0;gap:8px}
-:root:root .tasco-workspace #traCuuSection .ws-part-suggestions>span{color:#8da8b8}
-:root:root .tasco-workspace #traCuuSection .ws-part-suggestions button{padding:8px 14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#dcebf0;font-size:12.5px;font-weight:550}
-:root:root .tasco-workspace #traCuuSection .ws-part-suggestions button[aria-pressed=true]{border-color:transparent;background:#84bfc7;color:#0b1b30}
-:root:root .tasco-workspace #traCuuSection .lk-vehicle-head{margin:26px 2px 12px}
-:root:root .tasco-workspace #traCuuSection .lk-type-head{margin:22px 2px 12px}
-:root:root .tasco-workspace #traCuuSection .lk-vehicle-head>span,:root:root .tasco-workspace #traCuuSection .lk-type-head>span{font-size:10.5px;font-weight:650;letter-spacing:.16em;text-transform:uppercase;color:#8fb3c2}
-:root:root .tasco-workspace #traCuuSection .lk-quick{min-height:30px;padding:0;border:0;border-radius:0;background:transparent;color:#a9dbe1}
-:root:root .tasco-workspace #traCuuSection .ws-search-panel .ws-filter-grid{border:1px solid rgba(255,255,255,.13);border-radius:24px;background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 24px 50px -30px rgba(0,0,0,.7)}
-:root:root .tasco-workspace #traCuuSection .ws-filter-grid>#btnHang{border-bottom-color:rgba(255,255,255,.1)}
-:root:root .tasco-workspace #traCuuSection .ws-filter-grid>#btnNam{border-left-color:rgba(255,255,255,.1)}
-:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button:active{background:rgba(255,255,255,.07)}
-@media(hover:hover){:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button:hover{background:rgba(255,255,255,.05)}}
-:root:root .tasco-workspace #traCuuSection .ws-filter-icon{background:rgba(255,255,255,.07);color:#9db8c6}
-:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] .ws-filter-icon{background:rgba(132,191,199,.22);color:#b3e0e6;box-shadow:0 0 0 1px rgba(132,191,199,.4)}
-:root:root .tasco-workspace #traCuuSection .ws-filter-grid strong{color:#8da8b8}
-:root:root .tasco-workspace #traCuuSection .ws-filter-grid small{color:#9db8c6}
-:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button[data-active=true] small{color:#fff}
-:root:root .tasco-workspace #traCuuSection .ws-filter-grid>button .ws-filter-chevron{color:#8da8b8}
-:root:root .tasco-workspace #traCuuSection .lk-vehicle-foot{border-top-color:rgba(255,255,255,.1);color:#9db8c6}
-:root:root .tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=ok]{color:#edf5f7}
-:root:root .tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=ok] .lk-dot{background:#3ecf8e;box-shadow:0 0 0 4px rgba(62,207,142,.18)}
-:root:root .tasco-workspace #traCuuSection .lk-vehicle-foot[data-state=empty] .lk-dot{background:#f0a54d;box-shadow:0 0 0 4px rgba(240,165,77,.18)}
-:root:root .tasco-workspace #traCuuSection .lk-dot{background:rgba(255,255,255,.25)}
-:root:root .tasco-workspace #traCuuSection .ws-kind-tabs{border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
-:root:root .tasco-workspace #traCuuSection .u056.u056-sw button{color:#9db8c6}
-:root:root .tasco-workspace #traCuuSection .u056.u056-sw button[aria-pressed="true"]{color:#0b1b30}
-:root:root .tasco-workspace #traCuuSection .ws-exact-toggle{color:#9db8c6}
-:root:root .tasco-workspace #traCuuSection .ws-exact-box{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.05)}
-:root:root .tasco-workspace #traCuuSection .ws-exact-toggle[aria-pressed=true]{color:#edf5f7}
-:root:root .tasco-workspace #traCuuSection .ws-exact-toggle[aria-pressed=true] .ws-exact-box{background:#84bfc7;border-color:#84bfc7;color:#0b1b30}
-:root:root .tasco-workspace #traCuuSection .ws-search-actions{margin:0 -20px;padding:24px 20px 2px;background:linear-gradient(to bottom,rgba(10,24,41,0),rgba(10,24,41,.94) 42%)}
-:root:root .tasco-workspace #traCuuSection .ws-ask:not([hidden])~.ws-search-actions{margin:0;padding:0;background:none}
-:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-primary,:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-primary:hover,:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-primary:focus-visible{min-height:58px;border-radius:18px;background:linear-gradient(180deg,#8fd0d8,#6fb9c2)!important;color:#07202c!important;font-size:16px;font-weight:700;box-shadow:0 22px 44px -18px rgba(99,173,182,.75),inset 0 1px 0 rgba(255,255,255,.5)!important}
-:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-primary[aria-busy=true]::before{border-color:rgba(7,32,44,.25);border-top-color:#07202c}
-:root:root .tasco-workspace #traCuuSection .ws-search-actions .ws-secondary{width:58px;min-height:58px;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:rgba(255,255,255,.07);color:#cfe3ea;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
-:root:root .tasco-workspace #traCuuSection .ws-search-actions{grid-template-columns:minmax(0,1fr) 58px}
-:root:root .tasco-workspace #traCuuSection .ws-ai-btn,html.dark :root:root .tasco-workspace #traCuuSection .ws-ai-btn{margin-top:14px;min-height:58px;padding:12px 14px;border:1px solid rgba(132,191,199,.3);border-radius:20px;background:linear-gradient(135deg,rgba(132,191,199,.16),rgba(255,255,255,.04));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
-:root:root .tasco-workspace #traCuuSection .ws-ai-ico,html.dark :root:root .tasco-workspace #traCuuSection .ws-ai-ico{width:36px;height:36px;border-radius:12px;background:#84bfc7;color:#0b1b30}
-:root:root .tasco-workspace #traCuuSection .ws-ai-copy strong{color:#fff}
-:root:root .tasco-workspace #traCuuSection .ws-ai-copy small{color:#9db8c6}
-:root:root .tasco-workspace #traCuuSection .ws-ai-chev{color:#8fcad2}
-:root:root .tasco-workspace #traCuuSection .ws-ai-note{color:#f2c46d}
-:root:root .tasco-workspace #traCuuSection .ws-journey-note{color:#7f9aab}
-/* thẻ hỏi lại trên nền tối */
-:root:root .tasco-workspace #traCuuSection .ws-ask{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 24px 50px -30px rgba(0,0,0,.7)}
-:root:root .tasco-workspace #traCuuSection .ws-ask-step.is-now .ws-ask-dot{border-color:#84bfc7;background:#84bfc7;color:#0b1b30}
-:root:root .tasco-workspace #traCuuSection .ws-ask-tok--part{border-color:#84bfc7;background:#84bfc7;color:#0b1b30}
-:root:root .tasco-workspace #traCuuSection .ws-ask-opt[aria-pressed=true]{border-color:#84bfc7;background:#2c6f7b;color:#fff;box-shadow:0 10px 20px -14px rgba(0,0,0,.9)}
-:root:root .tasco-workspace #traCuuSection button.ws-ask-next:not(.ws-ask-next--ghost){background:linear-gradient(135deg,#8fd0d8,#6fb9c2);color:#07202c;box-shadow:0 14px 28px -16px rgba(99,173,182,.8)}
-:root:root .tasco-workspace #traCuuSection .ws-ask-actions{background:linear-gradient(to bottom,rgba(19,37,58,0),rgba(19,37,58,.96) 38%)}
-@media(max-width:380px){:root:root .tasco-workspace #traCuuSection .ws-journey-heading{max-width:100%}:root:root .tasco-workspace #traCuuSection .ws-journey-heading h2{font-size:31px;letter-spacing:-1.2px}}
-@media(max-width:360px){:root:root .tasco-workspace #traCuuSection .ws-search-panel--premium{margin:0 16px}:root:root .tasco-workspace #traCuuSection .ws-search-actions{margin:0 -16px;padding-left:16px;padding-right:16px}}
 </style>
 <script id="tascoAppUpdate">
 /* Dự phòng khi trình duyệt không có ngày triển khai. Phiên bản hiển thị lấy từ document.lastModified. */
