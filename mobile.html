@@ -11197,6 +11197,11 @@ window.TascoVoiceCloud?.configure({url:SUPABASE_PROJECT_URL,anonKey:SUPABASE_ANO
               <div class="cam-seg" data-pro="stab" role="radiogroup" aria-label="Chống rung video"><button type="button" data-v="off">Tắt</button><button type="button" data-v="standard">Chuẩn</button><button type="button" data-v="cinematic">Điện ảnh</button></div>
               <p class="cam-pro-hint">Điện ảnh mượt nhất nhưng khung hình hẹp hơn một chút.</p>
             </div>
+            <div class="cam-pro-card">
+              <div class="cam-pro-head"><h3>Đóng dấu video</h3></div>
+              <div class="cam-seg" data-vmode role="radiogroup" aria-label="Chất lượng video đóng dấu"><button type="button" data-v="fast" aria-checked="true">Nhanh · 720p</button><button type="button" data-v="sharp" aria-checked="false">Nét · 1080p</button></div>
+              <p class="cam-pro-hint">Quay xong app tự đóng dấu ngầm, bạn quay tiếp được ngay. Nhanh: file nhỏ, tải lên nhanh. Nét: giữ tới 1080p.</p>
+            </div>
             <p class="cam-pro-info" data-pro-info></p>
           </div>
         </section>
@@ -18637,6 +18642,119 @@ window.TascoCameraRescue = (function () {
     } finally { try { wake && wake.release && wake.release(); } catch (_) {} }
   }
 
+  /* ---- Đóng dấu nền: quay xong là vào hàng đợi, vừa quay tiếp vừa xử lý, không chặn camera ----
+     Bộ mã hoá phần cứng chạy lần lượt từng video. Khi bắt đầu quay video mới thì tạm dừng (huỷ lượt đang chạy, xếp lại đầu hàng)
+     để camera và bộ mã hoá không tranh nhau, quay xong sẽ chạy lại. */
+  var jobs = [], failed = [], current = null, recording = false, pumpOn = false, jobSeq = 0, flashMsg = '', flashT = 0, pillEl = null, lastPaint = 0, armT = 0;
+  function pillNode() {
+    if (pillEl) return pillEl;
+    pillEl = document.createElement('div'); pillEl.className = 'cvbg'; pillEl.hidden = true; pillEl.setAttribute('role', 'status'); pillEl.setAttribute('aria-live', 'polite');
+    pillEl.addEventListener('click', function (event) {
+      var b = event.target.closest('[data-cvbg]'); if (!b) return; var act = b.dataset.cvbg;
+      if (act === 'cancel') {
+        if (!armT) { b.textContent = 'Chắc chắn?'; armT = setTimeout(function () { armT = 0; paintPill(true); }, 3000); return; }
+        clearTimeout(armT); armT = 0;
+        if (current && current.abort) { current.canceled = true; current.abort.abort(); }
+      }
+      if (act === 'retry') { var f = failed.shift(); if (f) { f.err = ''; jobs.push(f); paintPill(true); pump(); } }
+      if (act === 'drop') { var d = failed.shift(); if (d) { if (d.cleanup) { try { d.cleanup(); } catch (_) {} } paintPill(true); } }
+    });
+    document.body.append(pillEl); return pillEl;
+  }
+  var pillKey = '';
+  function paintPill(force) {
+    var now = Date.now(); if (!force && now - lastPaint < 220) return; lastPaint = now;
+    var el = pillNode(), n = jobs.length + (current && jobs.indexOf(current) < 0 ? 1 : 0), html = '', key = '', title = '', pct = 0;
+    if (failed.length) {
+      key = 'err|' + failed.length + '|' + failed[0].err;
+      html = '<div class="cvbg-row is-error"><span class="cvbg-ic">!</span><span class="cvbg-tx"><b>Chưa đóng dấu được video</b><small>' + esc2(failed[0].err || 'Thử lại hoặc bỏ video này.') + '</small></span><button type="button" data-cvbg="retry">Thử lại</button><button type="button" data-cvbg="drop">Bỏ</button></div>';
+    } else if (n) {
+      var j = current || jobs[0];
+      if (recording) {
+        key = 'rec|' + n;
+        html = '<div class="cvbg-row"><span class="cvbg-ic">' + ICON_FILM + '</span><span class="cvbg-tx"><b>' + n + ' video chờ đóng dấu</b><small>Sẽ tự chạy khi bạn quay xong</small></span></div>';
+      } else {
+        pct = Math.max(0, Math.min(100, (j && j.pct) || 0));
+        var eta = pct > 4 && pct < 99 && j && j.t0 ? ' · còn ~' + fmt((now - j.t0) / 1000 * (100 - pct) / pct) : '';
+        title = 'Đang đóng dấu video · ' + Math.round(pct) + '%' + eta;
+        key = 'run|' + n + '|' + (armT ? 1 : 0);
+        html = '<div class="cvbg-row"><span class="cvbg-ic is-spin">' + ICON_FILM + '</span><span class="cvbg-tx"><b data-cvbg-t>' + title + '</b><small>' + (n > 1 ? '+' + (n - 1) + ' video chờ · ' : '') + 'Giữ app mở tới khi xong</small></span><button type="button" data-cvbg="cancel">' + (armT ? 'Chắc chắn?' : 'Hủy') + '</button></div>' +
+          '<i class="cvbg-bar" data-cvbg-bar style="--p:' + (pct / 100).toFixed(3) + '"></i>';
+      }
+    } else if (flashMsg) {
+      key = 'ok|' + flashMsg;
+      html = '<div class="cvbg-row is-ok"><span class="cvbg-ic">✓</span><span class="cvbg-tx"><b>' + esc2(flashMsg) + '</b></span></div>';
+    }
+    if (!html) { pillKey = ''; el.hidden = true; el.innerHTML = ''; return; }
+    if (key === pillKey && !el.hidden) {   // cùng bố cục: chỉ cập nhật số, không dựng lại (để nút bấm không bị thay giữa lúc chạm)
+      var t = el.querySelector('[data-cvbg-t]'), bar = el.querySelector('[data-cvbg-bar]');
+      if (t && t.textContent !== title) t.textContent = title; if (bar) bar.style.setProperty('--p', (pct / 100).toFixed(3));
+      return;
+    }
+    pillKey = key; el.hidden = false; el.innerHTML = html;
+  }
+  function esc2(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function flash(msg, ms) { flashMsg = msg; clearTimeout(flashT); flashT = setTimeout(function () { flashMsg = ''; paintPill(true); }, ms || 5200); paintPill(true); }
+  function enqueue(job) { job.id = ++jobSeq; job.pct = 0; jobs.push(job); paintPill(true); pump(); }
+  async function pump() {
+    if (pumpOn) return; pumpOn = true;
+    try {
+      while (jobs.length && !recording) {
+        var job = jobs[0], r = await runJob(job);
+        if (r === 'paused') continue;                    // đang quay: giữ nguyên đầu hàng (vòng lặp dừng nếu còn quay); quay xong thì chạy lại ngay
+        jobs.shift();
+        if (r === 'failed') failed.push(job);
+        else if (r === 'canceled' && job.cleanup) { try { job.cleanup(); } catch (_) {} }
+      }
+    } finally { pumpOn = false; current = null; paintPill(true); }
+  }
+  async function runJob(job) {
+    var abort = new AbortController(); job.abort = abort; job.paused = false; job.canceled = false; job.t0 = Date.now(); job.pct = 0; current = job; paintPill(true);
+    var wake = null; try { wake = await navigator.wakeLock.request('screen'); } catch (_) {}
+    try {
+      var location = await job.metadata.locationPromise;
+      var appearance = job.metadata.appearance;
+      var lines = cameraWatermarkLines(location, job.metadata.capturedAt, 'camera', appearance);
+      var out = await encodeToFit(job.src || job.file, lines, appearance, function (p) { job.pct = p; paintPill(); }, abort.signal,
+        { longSide: modeLongSide(), onRestart: function () { job.t0 = Date.now(); job.pct = 0; paintPill(true); } },
+        async function (pass, prev, fast) { if (!fast) await askMore(pass, prev); job.t0 = Date.now(); job.pct = 0; paintPill(true); });
+      if (out.blob.size >= CLOUD_MAX) throw new Error('Video vẫn nặng hơn 100 MB sau khi nén. Hãy quay ngắn hơn.');
+      if (job.owner !== window.mobileCloudEmail?.()) throw new Error('Tài khoản đã thay đổi. Video chưa được lưu.');
+      var file = new File([out.blob], 'video_' + job.metadata.capturedAt + '.' + out.ext, { type: out.blob.type, lastModified: job.metadata.capturedAt });
+      job.pct = 100; paintPill(true);
+      await TascoCloud.queuePhotos([file], job.title, async function () { return { capturedAt: job.metadata.capturedAt, location: location, category: job.metadata.category || '' }; }, job.album);
+      if (job.cleanup) { try { job.cleanup(); } catch (_) {} job.cleanup = null; }
+      try { window.tascoCountCategory && window.tascoCountCategory(job.metadata.category || ''); } catch (_) {}
+      var t = Math.round((Date.now() - job.t0) / 1000);
+      flash('Đã lưu video ' + fmt(out.duration) + (out.trimmed ? ' (cắt còn 3 phút)' : '') + ' · xử lý ' + t + ' giây, đang tải lên Cloud');
+      return 'done';
+    } catch (error) {
+      if (error && error.name === 'AbortError') return job.canceled ? 'canceled' : (job.paused ? 'paused' : 'canceled');
+      job.err = (error && error.message) || 'Chưa xử lý được video.'; return 'failed';
+    } finally { try { wake && wake.release && wake.release(); } catch (_) {} }
+  }
+  /* Camera native báo bắt đầu/kết thúc quay: tạm dừng đóng dấu trong lúc quay. */
+  function setRecording(on) {
+    on = !!on; if (recording === on) return; recording = on;
+    if (on && current && current.abort) { current.paused = true; current.abort.abort(); }
+    paintPill(true);
+    if (!on) pump();
+  }
+  /* Trả camera về ngay sau khi quay xong (không còn bảng chờ). */
+  function releaseCamera() {
+    cameraUiState.captureBusy = false;
+    try { syncCameraViewport(); } catch (_) {}
+    setTimeout(function () { if (modal() && modal().style.display !== 'none') { try { startCustomCameraStream(); } catch (_) {} } }, 220);
+  }
+  /* Chất lượng đóng dấu (Nhanh 720p / Nét 1080p) nằm trong cài đặt camera → Nâng cao. */
+  function paintVmode() { var m = getMode(); document.querySelectorAll('.cam-seg[data-vmode] button').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.v === m)); }); }
+  document.addEventListener('click', function (event) {
+    var b = event.target.closest('.cam-seg[data-vmode] button');
+    if (b) { try { localStorage.setItem(MODE_KEY, b.dataset.v); } catch (_) {} }
+    if (b || event.target.closest('#customCameraModal')) setTimeout(paintVmode, 0);
+  });
+  paintVmode();
+
   panel.addEventListener('click', function (event) {
     var mode = event.target.closest('[data-mode]');
     if (mode) { try { localStorage.setItem(MODE_KEY, mode.dataset.mode); } catch (_) {} paintMode(); return; }
@@ -18648,11 +18766,9 @@ window.TascoCameraRescue = (function () {
   input.addEventListener('change', async function () {
     var file = input.files && input.files[0]; input.value = '';
     if (!session) return;
-    if (!file) { closePanel(); return; }
-    session.file = file;
-    mountPanel(); resetPanel(); panel.hidden = false;
-    if (fastSupported()) loadMB().catch(function () {});
-    describe(session, file, false, file.size);
+    var sess = session; session = null;
+    if (file) { enqueue({ metadata: sess.metadata, title: sess.title, album: sess.album, owner: sess.owner, file: file, src: null, cleanup: null }); if (fastSupported()) loadMB().catch(function () {}); }
+    releaseCamera();
   });
   input.addEventListener('cancel', function () { if (session && !session.file) closePanel(); });
 
@@ -18676,11 +18792,9 @@ window.TascoCameraRescue = (function () {
   };
   /* Camera native gọi khi quay xong: src là URL capacitor:// của tệp video trong máy. */
   async function processRecorded(opts) {
-    session = { metadata: opts.metadata, title: mobileCameraTitle, album: mobileCameraAlbum, owner: mobileCameraOwner, file: null, src: opts.src, cleanup: opts.cleanup || null, cancel: null };
-    cameraUiState.captureBusy = true;
-    mountPanel(); resetPanel(); panel.hidden = false;
-    if (fastSupported()) loadMB().catch(function () {});   // tải sẵn bộ xử lý nhanh trong lúc xem bảng
-    describe(session, opts.src, true, 0);
+    enqueue({ metadata: opts.metadata, title: mobileCameraTitle, album: mobileCameraAlbum, owner: mobileCameraOwner, file: null, src: opts.src, cleanup: opts.cleanup || null });
+    if (fastSupported()) loadMB().catch(function () {});   // tải sẵn bộ xử lý nhanh
+    releaseCamera();
   }
   /* Nén video đã nằm trong hàng chờ (đã in dấu từ trước) xuống dưới giới hạn Cloudinary. Trả File mới, hoặc null nếu người dùng để sau.
      Có hộp thoại riêng (cần một lần chạm của người dùng để iOS cho phát video) và nút lưu bản gốc vào Ảnh trước khi nén. */
@@ -18726,7 +18840,7 @@ window.TascoCameraRescue = (function () {
       });
     });
   }
-  window.TascoVideoCapture = { supported: supported, busy: function () { return !!session; }, processRecorded: processRecorded, maxSeconds: MAX_SECONDS, shrink: shrink, cloudMax: CLOUD_MAX,
+  window.TascoVideoCapture = { supported: supported, busy: function () { return !!session || !!jobs.length || !!failed.length; }, setRecording: setRecording, processRecorded: processRecorded, maxSeconds: MAX_SECONDS, shrink: shrink, cloudMax: CLOUD_MAX,
     fastSupported: fastSupported, encode: encodeToFit, preload: function () { if (fastSupported()) loadMB().catch(function () {}); } };
 })();
 </script>
@@ -18805,6 +18919,21 @@ window.TascoCameraRescue = (function () {
 .cloud-pending-card .cloud-video-badge{display:none}
 .cloud-photo-image,.cloud-tile-preview{position:relative}
 .cloud-photo-viewer .viewer-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.cvbg{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:2147483000;width:min(calc(100% - 20px),420px);transform:translateX(-50%);overflow:hidden;border:1px solid rgba(132,191,199,.32);border-radius:16px;background:rgba(10,24,41,.88);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2);box-shadow:0 10px 30px rgba(3,10,20,.45);color:#e6f1f4;visibility:visible!important;animation:cvpUp .25s ease}
+.cvbg[hidden]{display:none}
+.cvbg-row{display:flex;align-items:center;gap:11px;padding:10px 12px}
+.cvbg-ic{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:10px;background:rgba(132,191,199,.16);color:#8fd0d8;font-size:15px;font-weight:800}
+.cvbg-ic svg{width:18px;height:18px}
+.cvbg-ic.is-spin svg{animation:cvbgPulse 1.4s ease-in-out infinite}
+@keyframes cvbgPulse{50%{opacity:.4}}
+.cvbg-tx{display:grid;gap:1px;min-width:0;flex:1}
+.cvbg-tx b{overflow:hidden;font-size:13px;font-weight:700;letter-spacing:-.1px;text-overflow:ellipsis;white-space:nowrap}
+.cvbg-tx small{overflow:hidden;color:#9db8c6;font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+.cvbg-row button{flex:none;min-height:32px;padding:0 12px;border:1px solid rgba(255,255,255,.16);border-radius:10px;background:rgba(255,255,255,.07);color:#e6f1f4;font:700 12px 'Plus Jakarta Sans',sans-serif}
+.cvbg-row.is-error .cvbg-ic{background:rgba(224,95,80,.2);color:#ffb4aa}
+.cvbg-row.is-ok .cvbg-ic{background:rgba(70,200,130,.2);color:#8ae6b4}
+.cvbg-bar{display:block;height:3px;background:rgba(255,255,255,.1)}
+.cvbg-bar::after{content:'';display:block;height:100%;width:100%;transform:scaleX(var(--p,0));transform-origin:left;background:linear-gradient(90deg,#84bfc7,#a9dbe1);transition:transform .25s ease}
 </style>
 <style id="cloudPhotoMenuStyles">
 /* Bảng thao tác khi nhấn giữ ảnh. Tắt menu mặc định của iPhone khi nhấn giữ ảnh trong lưới. */
@@ -20313,7 +20442,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     st.gen++;
     var wasActive = st.running || st.starting;
     st.running = false; st.rect = null; st.fitKey = '';
-    if (st.recording) { st.recording = false; clearInterval(st.recTimer); var mm = cameraModal(); if (mm) mm.dataset.recording = 'false'; }
+    if (st.recording) { st.recording = false; clearInterval(st.recTimer); try { window.TascoVideoCapture && window.TascoVideoCapture.setRecording(false); } catch (_) {} var mm = cameraModal(); if (mm) mm.dataset.recording = 'false'; }
     root.classList.remove('tasco-native-cam'); setTransparent(false); clearPlane();
     var m = cameraModal(); if (m) delete m.dataset.nativeTurn;
     st.land = null;
@@ -20646,7 +20775,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
   }
   function finishRecording(path) {
     if (!st.recording) return;
-    st.recording = false; clearInterval(st.recTimer); updateModeUI();
+    st.recording = false; clearInterval(st.recTimer); try { window.TascoVideoCapture.setRecording(false); } catch (_) {} updateModeUI();
     if (!path) { feedback('Chưa lưu được video. Thử quay lại.'); return; }
     var meta = st.recMeta; st.recMeta = null;
     stopNative();  // giải phóng camera trong lúc in dấu
@@ -20665,14 +20794,14 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
         if (st.fps === 60) recOpts.videoBitrate = 16000000;   // 60 khung/giây cần bitrate cao hơn
         try { await CP.startRecordVideo(recOpts); }
         catch (first) { if (pro.stab === 'off') throw first; recOpts.videoStabilizationMode = 'off'; await CP.startRecordVideo(recOpts); feedback('Máy chưa hỗ trợ chế độ chống rung này, đang quay không chống rung.', 3000); }
-        st.recording = true; st.recStart = Date.now();
+        st.recording = true; st.recStart = Date.now(); try { window.TascoVideoCapture.setRecording(true); } catch (_) {}
         st.recTimer = setInterval(updateModeUI, 500);
       } else {
         var res = await CP.stopRecordVideo();
         finishRecording(res && res.videoFilePath);
       }
     } catch (error) {
-      if (st.recording) { st.recording = false; clearInterval(st.recTimer); }
+      if (st.recording) { st.recording = false; clearInterval(st.recTimer); try { window.TascoVideoCapture.setRecording(false); } catch (_) {} }
       feedback('Chưa quay được video: ' + String((error && error.message) || error || ''), 4000);
     } finally { st.recBusy = false; updateModeUI(); }
   }
