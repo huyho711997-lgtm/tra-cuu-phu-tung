@@ -3291,7 +3291,7 @@ html.dark .u021 .u021-stars{opacity:1;transform:none}
 <style id="tascoTopEdgeStyles">
 /* Paint the safe area as part of the current header; inset controls, not the page. */
 html[data-tasco-page]{--tasco-top-color:var(--ws-bg);margin:0;padding:0;background:var(--tasco-top-color)}
-html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="assess"],[data-tasco-page="duty"],[data-tasco-page="directory"],[data-tasco-page="wkreport"],[data-tasco-page="forms"],[data-tasco-page="account"]){--tasco-top-color:var(--app-navy)}
+html:is([data-tasco-page="lookup"],[data-tasco-page="results"],[data-tasco-page="cloud"],[data-tasco-page="rescue"],[data-tasco-page="garage"],[data-tasco-page="assess"],[data-tasco-page="duty"],[data-tasco-page="directory"],[data-tasco-page="wkreport"],[data-tasco-page="progress"],[data-tasco-page="forms"],[data-tasco-page="account"]){--tasco-top-color:var(--app-navy)}
 html[data-tasco-page] body.tasco-workspace{margin:0;padding:0;background:var(--tasco-top-color)!important}
 /* Safari can use body paint when its viewport excludes the device status bar. */
 .tasco-workspace #mainApp[data-shell]{background:var(--ws-bg)}
@@ -3299,7 +3299,7 @@ html[data-tasco-page] body.tasco-workspace{margin:0;padding:0;background:var(--t
 #tascoStatusBackdrop{position:fixed;top:0;left:0;right:0;width:100%;height:12px;height:max(12px,env(safe-area-inset-top,0px));z-index:100;background-color:var(--tasco-top-color,var(--ws-bg));pointer-events:none;user-select:none}
 html[data-tasco-page] body.tasco-workspace::before{content:none;display:none}
 .tasco-workspace #mainApp[data-shell][data-page]{margin-top:0!important;padding-top:0!important}
-.tasco-workspace :is(#traCuuSection,#personalCloudSection,#rescueSection,#garageSection,#assessSection,#dutySection,#directorySection,#wkreportSection,#formsSection){margin-top:0;padding-top:0}
+.tasco-workspace :is(#traCuuSection,#personalCloudSection,#rescueSection,#garageSection,#assessSection,#dutySection,#directorySection,#wkreportSection,#progressSection,#formsSection){margin-top:0;padding-top:0}
 .tasco-workspace .ws-journey-hero,.tasco-workspace #personalCloudSection .cloud-hero{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0;padding-top:calc(18px + env(safe-area-inset-top,0px))}
 /* The results page keeps its measured space for the fixed header. */
 .tasco-workspace #resultsStickyHeader{top:0;margin-top:0}
@@ -3623,7 +3623,8 @@ window.TascoBootSplash = (() => {
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('assess')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M5 20.5h14M12 4v16.5M12 6.5H5.5l-2.5 6a3 3 0 0 0 5.9 0zM12 6.5h6.5l2.5 6a3 3 0 0 1-5.9 0z"/><path d="M5 20.5h14M12 4v16.5M12 6.5H5.5m6.5 0h6.5"/><path d="m5.5 6.5-2.5 6a3 3 0 0 0 5.9 0zM18.5 6.5l2.5 6a3 3 0 0 1-5.9 0z"/></svg><span><strong>Hướng dẫn phân lỗi</strong><small>Tỷ lệ lỗi 42 tình huống tai nạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('duty')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="i-fill" x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="m9 14.5 2 2 4-4"/></svg><span><strong>Lịch trực</strong><small data-duty-home>Xem lịch, ca của tôi, xin đổi ca</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('directory')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="i-fill" x="5" y="3.5" width="14" height="17" rx="2.5"/><circle cx="12" cy="10" r="2.4"/><path d="M8.6 16.2c.6-1.6 2-2.4 3.4-2.4s2.8.8 3.4 2.4M3.5 8h1.5M3.5 12h1.5M3.5 16h1.5"/></svg><span><strong>Danh bạ &amp; hồ sơ</strong><small>Tra cứu nhân sự, hồ sơ bồi thường</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-      <button type="button" class="ws-shortcut ws-shortcut--wide" data-admin-only hidden onclick="tascoGo('wkreport')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="i-fill" x="4" y="4" width="16" height="16" rx="3"/><path d="M8 16v-3.5M12 16V9M16 16v-5.5"/></svg><span><strong>Báo cáo</strong><small>Tuần · KPI Zone · Năm GĐV · Tiến độ hồ sơ tồn</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('progress')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="i-fill" x="4" y="3.5" width="16" height="17" rx="3"/><path d="m8 9 1.6 1.6L12.5 7.7M14.5 9.5H17M8 15l1.6 1.6 2.9-2.9M14.5 15.5H17"/></svg><span><strong>Quản lý tiến độ HS</strong><small>Hồ sơ tồn, ghi chú và lịch hẹn của bạn</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="ws-shortcut ws-shortcut--wide" data-admin-only hidden onclick="tascoGo('wkreport')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="i-fill" x="4" y="4" width="16" height="16" rx="3"/><path d="M8 16v-3.5M12 16V9M16 16v-5.5"/></svg><span><strong>Báo cáo</strong><small>Tuần · KPI Zone · Năm GĐV</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('forms')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="i-fill" d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5V8h4.5M8.8 12.4h6.4M8.8 15.9h4.2"/></svg><span><strong>Biểu mẫu dùng chung</strong><small>Word &amp; PDF xem ngay trong ứng dụng.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       <button type="button" class="ws-shortcut ws-shortcut--wide" onclick="tascoGo('account')"><svg class="ws-icon tasco-di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="i-fill" cx="12" cy="9.3" r="3.5"/><path class="i-fill" d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0A8.9 8.9 0 0 1 12 20.9a8.9 8.9 0 0 1-5.9-2.6Z"/><circle cx="12" cy="12" r="8.9"/><circle cx="12" cy="9.3" r="3.5"/><path d="M6.1 18.3a7.1 7.1 0 0 1 11.8 0"/></svg><span><strong>Tài khoản &amp; thiết lập</strong><small>Không gian riêng, theo cách của bạn.</small></span><svg class="ws-icon ws-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div></div>
@@ -3826,11 +3827,18 @@ window.TascoBootSplash = (() => {
   <p class="ws-journey-note"><span>Dữ liệu do webapp giám định xe cập nhật; sửa danh bạ và hồ sơ tại webapp đó.</span></p>
 </section>
 <section id="wkreportSection" data-shell-page="wkreport" class="ws-journey rc dr-page" hidden style="display:none" aria-labelledby="wkreportPageTitle">
-  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · BÁO CÁO</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">SỐ LIỆU REAL TIME</span><h2 id="wkreportPageTitle" tabindex="-1">Báo cáo.</h2><p>Báo cáo tuần, KPI Zone, tổng hợp năm và tiến độ hồ sơ tồn, đọc trực tiếp từ Firebase.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><rect x="30" y="16" width="120" height="108" rx="14" stroke="currentColor" stroke-width="1.8"/><path d="M54 98V74M82 98V50M110 98V62M138 98V38" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg></header>
+  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · BÁO CÁO</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">SỐ LIỆU REAL TIME</span><h2 id="wkreportPageTitle" tabindex="-1">Báo cáo.</h2><p>Báo cáo tuần, KPI Zone và tổng hợp năm, đọc trực tiếp từ Firebase.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><rect x="30" y="16" width="120" height="108" rx="14" stroke="currentColor" stroke-width="1.8"/><path d="M54 98V74M82 98V50M110 98V62M138 98V38" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg></header>
   <div class="ws-search-panel ws-search-panel--premium rc-panel">
     <div id="wkRoot" aria-live="polite"><div class="dr-skel"><i></i><i></i><i></i></div></div>
   </div>
   <p class="ws-journey-note"><span>Chỉ quản trị viên xem được. Dữ liệu và cách tính lấy từ webapp giám định xe.</span></p>
+</section>
+<section id="progressSection" data-shell-page="progress" class="ws-journey rc dr-page" hidden style="display:none" aria-labelledby="progressPageTitle">
+  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TIẾN ĐỘ HỒ SƠ</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">HỒ SƠ TỒN CỦA BẠN</span><h2 id="progressPageTitle" tabindex="-1">Quản lý<br>tiến độ HS.</h2><p>Theo dõi tuổi tồn, ghi chú và lịch hẹn của các hồ sơ bạn phụ trách, cập nhật trực tiếp.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><rect x="34" y="14" width="112" height="112" rx="14" stroke="currentColor" stroke-width="1.8"/><path d="m56 52 8 8 14-16M92 52h38M56 88l8 8 14-16M92 88h38" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></header>
+  <div class="ws-search-panel ws-search-panel--premium rc-panel">
+    <div id="pgPageRoot" aria-live="polite"><div class="dr-skel"><i></i><i></i><i></i></div></div>
+  </div>
+  <p class="ws-journey-note"><span>Chỉ hiện hồ sơ thuộc tài khoản đăng nhập. Dữ liệu lấy từ webapp giám định xe.</span></p>
 </section>
 
 
@@ -4258,8 +4266,8 @@ window.TascoCloudImport=(()=>{
 </script>
 <script id="tascoPremiumShell">
 window.TascoAppShell=(()=>{
-  const pages={directory:'Danh bạ & hồ sơ',wkreport:'Báo cáo',home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',rescue:'Tính chi phí cứu hộ',garage:'Quản lý gara',assess:'Hướng dẫn phân lỗi',duty:'Lịch trực',account:'Tài khoản',admin:'Quản lý hệ thống',forms:'Biểu mẫu dùng chung'};
-  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',directory:'directorySection',wkreport:'wkreportSection',account:'accountSection',admin:'sysMgrSection',forms:'formsSection'};
+  const pages={directory:'Danh bạ & hồ sơ',wkreport:'Báo cáo',progress:'Quản lý tiến độ HS',home:'Trang chủ',lookup:'Tra cứu phụ tùng',results:'Kết quả tra cứu',cloud:'Cloud của tôi',rescue:'Tính chi phí cứu hộ',garage:'Quản lý gara',assess:'Hướng dẫn phân lỗi',duty:'Lịch trực',account:'Tài khoản',admin:'Quản lý hệ thống',forms:'Biểu mẫu dùng chung'};
+  const ids={home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',directory:'directorySection',wkreport:'wkreportSection',progress:'progressSection',account:'accountSection',admin:'sysMgrSection',forms:'formsSection'};
   let user=null,current='login',mountedOwner='',lastCloud=null;
   const scrolls={};
   if ('scrollRestoration' in history) history.scrollRestoration='manual';
@@ -4324,9 +4332,9 @@ window.TascoAppShell=(()=>{
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
     login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
     Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id),show=page===view;if(node.hidden===!show&&node.style.display===(show?'block':'none'))return;node.hidden=!show;node.style.display=show?'block':'none';});
-    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account'].includes(view);
+    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','progress','forms','account'].includes(view);
     setText('#wsPageTitle',pages[view]||'');
-    document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view==='assess'||view==='duty'||view==='directory'?'home':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
+    document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='garage'?'rescue':view==='assess'||view==='duty'||view==='directory'||view==='progress'?'home':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
     window.TascoNavigationMotion?.sync(view,previous);
     if(view==='login'){window.TascoPhotoViewer?.close();window.TascoDatePicker?.close();window.TascoPhotoExport?.close();document.title='TASCO DLK · Đăng nhập';return;}
     document.title=pages[view]+' · TASCO DLK';
@@ -4334,10 +4342,10 @@ window.TascoAppShell=(()=>{
     if(view==='cloud')connectCloud();if(view==='home'){greeting();paintCloud(lastCloud);connectCloud();}
     if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
     window.TascoLookupFlow?.afterNavigate(view);
-    if(previous!==view&&view!=='home'){const focusTitle=()=>{if(current!==view)return;(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='duty'?'dutyPageTitle':view==='directory'?'directoryPageTitle':view==='wkreport'?'wkreportPageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});};if(typeof requestAnimationFrame==='function')requestAnimationFrame(focusTitle);else focusTitle();}
+    if(previous!==view&&view!=='home'){const focusTitle=()=>{if(current!==view)return;(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='duty'?'dutyPageTitle':view==='directory'?'directoryPageTitle':view==='wkreport'?'wkreportPageTitle':view==='progress'?'progressPageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});};if(typeof requestAnimationFrame==='function')requestAnimationFrame(focusTitle);else focusTitle();}
     const top=options.restore?scrolls[view]||0:0;
     window.scrollTo({left:0,top,behavior:'instant'});
-    if(previous!==view&&['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
+    if(previous!==view&&['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','progress'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
   }
   function paintCloud(summary){
     if(!canCloud())return;
@@ -4376,7 +4384,7 @@ window.TascoAppShell=(()=>{
     const modalOpen=()=>document.body.style.overflow==='hidden'||document.querySelector('.dr-sheet-bg')||[...document.querySelectorAll('[aria-modal="true"]')].some(el=>el.getClientRects().length);
     const blocked=()=>!user||current==='home'||current==='login'||trail.length<1||document.documentElement.dataset.vt||modalOpen();
     const targetView=()=>trail.length>1?trail[trail.length-2]:'home';
-    const NAVY=['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account'];
+    const NAVY=['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','progress','forms','account'];
     function ensureHint(){
       if(hint)return hint;hint=document.createElement('div');hint.id='tascoBackHint';hint.setAttribute('aria-hidden','true');
       hint.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';document.body.appendChild(hint);return hint;
@@ -6276,6 +6284,27 @@ html[data-tasco-page=wkreport]{background:var(--app-navy)}
 #wkreportSection .ws-journey-art{width:138px;right:-12px;bottom:34px;opacity:.4;transform:rotate(-8deg)}
 .tasco-workspace #wkreportSection .rc-panel{margin:-28px 14px 0;padding:18px;border-radius:26px;border-color:var(--ws-line)}
 #wkreportSection :is(button,input){font-family:'Plus Jakarta Sans',sans-serif}
+.tasco-workspace #mainApp[data-shell][data-page=progress]{max-width:760px;padding:0 0 calc(118px + env(safe-area-inset-bottom,0px))!important}
+.tasco-workspace #mainApp[data-page=progress]>#mainHeader,.tasco-workspace #mainApp[data-page=progress]>#wsChildbar{display:none!important}
+html[data-tasco-page=progress]{background:var(--app-navy)}
+@media(max-width:767px){.tasco-workspace #mainApp[data-shell][data-page=progress]{padding-left:0!important;padding-right:0!important;max-width:600px}}
+#progressSection .ws-journey-hero{min-height:246px;padding-bottom:54px}
+#progressSection .ws-journey-heading{max-width:82%}
+#progressSection .ws-journey-heading h2{font-size:32px;font-weight:700;line-height:1.16;letter-spacing:-1.1px;white-space:nowrap}
+#progressSection .ws-journey-heading p{max-width:260px;font-size:12px;line-height:1.65}
+#progressSection .ws-journey-art{width:138px;right:-12px;bottom:34px;opacity:.4;transform:rotate(-8deg)}
+.tasco-workspace #progressSection .rc-panel{margin:-28px 14px 0;padding:18px;border-radius:26px;border-color:var(--ws-line)}
+#progressSection :is(button,input){font-family:'Plus Jakarta Sans',sans-serif}
+#progressSection .ws-journey-hero{min-height:262px}
+#progressSection .ws-journey-heading h2{font-size:30px;white-space:normal}
+#progressSection .ws-journey-heading p{max-width:232px}
+#progressSection [hidden]{display:none!important}
+#pgBody{margin-top:12px}
+.pg-me{display:flex;align-items:center;gap:12px;margin:0 0 12px}
+.pg-me .pg-av{width:40px;height:40px;flex:none;font-size:14px}
+.pg-me span{display:grid;gap:1px;min-width:0}.pg-me small{color:var(--ws-muted);font-size:11px;font-weight:600;letter-spacing:.02em}
+.pg-me b{overflow:hidden;color:var(--ws-text);font-size:15.5px;font-weight:800;letter-spacing:-.3px;text-overflow:ellipsis;white-space:nowrap}
+.pg-scope{margin:0 0 14px}
 html,body{overscroll-behavior-x:none}
 #mainApp.is-edge-drag{position:relative;z-index:3;box-shadow:-16px 0 38px rgba(11,27,48,.3);backface-visibility:hidden}
 #tascoBackUnder{position:fixed;inset:0;z-index:1;overflow:hidden;pointer-events:none}
@@ -6653,7 +6682,7 @@ html.dark .c0{--cc:#3987e5}html.dark .c1{--cc:#d95926}html.dark .c2{--cc:#199e70
 #pgNoteErr .wk-err{margin:0 0 8px}
 .pg-dpick b{font-size:14px;font-weight:700}
 .wk-more+.dr-stamp{margin-top:10px}
-@media(prefers-reduced-motion:reduce){#wkreportSection *{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){#wkreportSection *,#progressSection *{animation:none!important;transition:none!important}}
 </style>
 <script id="tascoDirectory">
 /* Danh bạ nội bộ + Hồ sơ bồi thường (chỉ xem): đọc cùng bảng Supabase với webapp giám định xe.
@@ -6833,19 +6862,20 @@ window.TascoWeekly=(()=>{
   /* Báo cáo tuần Zone: đọc THẲNG Firebase Realtime Database (REST + SSE, không cần SDK) của webapp giám định xe,
      tính bằng WeeklyReportEngine tải từ GitHub Pages của webapp (một nguồn logic duy nhất). */
   const PAGES='https://huyho711997-lgtm.github.io/giam-dinh-xe/';
-  const K={cfg:'tasco_wk_cfg',eng:'tasco_wk_engine',auth:'tasco_wk_fb',per:'tasco_wk_period',kc:'tasco_wk_kcalc',tab:'tasco_wk_tab'};
+  const K={cfg:'tasco_wk_cfg',eng:'tasco_wk_engine',auth:'tasco_wk_fb',per:'tasco_wk_period',kc:'tasco_wk_kcalc',tab:'tasco_wk_tab',pgs:'tasco_wk_pgscope'};
   const PATH={claims:'/pending_claims',rules:'/settings/reportRules',kpi:'/settings/kpiZone',notes:'/pending_notes'};
   const ls=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(_){}return null;};
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const svg=p=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
   const CHEV=svg('<path d="m9 6 6 6-6 6"/>');
   const noAdminHtml='<div class="dr-empty"><b>Chỉ dành cho quản trị viên</b>Tài khoản của bạn không xem được báo cáo.</div>';
-  let admin=false,onPage=false,eng=null,cfg=null,auth=null,me=null,users=null,claims=null,rules=null,rulesReady=false,claimsReady=false,notes=null,notesReady=false,notesDenied=false,result=null,
+  let admin=false,onPage=false,page='wkreport',pgScope=ls(K.pgs)||'',eng=null,cfg=null,auth=null,me=null,users=null,claims=null,rules=null,rulesReady=false,claimsReady=false,notes=null,notesReady=false,notesDenied=false,result=null,
       phase='idle',err='',busy=false,live=false,lastAt=0,openKey='',showZero=false,cmpSel=-1,cmpOff={},es={claims:null,rules:null,kpi:null,notes:null},retry={claims:0,rules:0,kpi:0,notes:0},timers={},
       sel={id:'week',off:1,s:'',e:''},uidKey='',lastEmail='',
       kcalc=null,kcalcFail=false,kpi=null,kpiReady=false,kres=null,ares=null,tab='week',kSel=(()=>{const n=new Date();return {y:n.getFullYear(),m:n.getMonth()+1};})(),ySel=new Date().getFullYear();
   try{const p=JSON.parse(ls(K.per)||'null');if(p&&p.id){const m=/^(week|month)(\d+)?$/.exec(String(p.id));sel=m?{id:m[1],off:Number.isFinite(+p.off)&&p.off!==undefined?Math.max(0,+p.off|0):(+m[2]||0),s:String(p.s||''),e:String(p.e||'')}:{id:'custom',off:0,s:String(p.s||''),e:String(p.e||'')};}}catch(_){}
-  {const t=ls(K.tab);if(t==='kpi'||t==='year'||t==='week'||t==='prog')tab=t;}
+  {const t=ls(K.tab);if(t==='kpi'||t==='year'||t==='week')tab=t;}
+  const can=()=>page==='progress'||admin,T=()=>page==='progress'?'prog':tab;
 
   /* ---------- nạp cấu hình + engine ---------- */
   async function getText(url){const r=await fetch(url,{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}
@@ -6895,10 +6925,15 @@ window.TascoWeekly=(()=>{
   /* ---------- đọc dữ liệu: users một lần, claims + rules theo thời gian thực (SSE) ---------- */
   const dbUrl=(path,extra)=>cfg.dbUrl+path+'.json?auth='+encodeURIComponent(auth.idToken)+(extra||'');
   async function loadUsers(){
-    const res=await fetch(dbUrl('/users'));if(!res.ok)throw new Error('USERS '+res.status);
-    const all=await res.json()||{};users={};
+    const res=await fetch(dbUrl('/users'));let all;
+    if(res.ok)all=await res.json()||{};
+    else if(page==='progress'&&(res.status===401||res.status===403)){   // tài khoản thường không đọc được cả danh sách: chỉ đọc hồ sơ của chính mình
+      const r1=await fetch(dbUrl('/users/'+encodeURIComponent(auth.uid)));if(!r1.ok)throw new Error('USERS '+r1.status);
+      const one=await r1.json();all=one&&typeof one==='object'?{[auth.uid]:one}:{};
+    }else throw new Error('USERS '+res.status);
+    users={};
     Object.entries(all).forEach(([uid,u])=>{const name=String(u?.profile?.displayName||u?.displayName||u?.name||'').trim();users[uid]={profile:{displayName:name}};});
-    const mine=all[auth.uid]?.profile||{};me={role:String(mine.role||'').trim().toLowerCase(),displayName:String(mine.displayName||'').trim().toLowerCase(),email:String(mine.email||auth.email||'').trim().toLowerCase()};
+    const mine=all[auth.uid]?.profile||{};me={name:String(mine.displayName||'').trim(),role:String(mine.role||'').trim().toLowerCase(),displayName:String(mine.displayName||'').trim().toLowerCase(),email:String(mine.email||auth.email||'').trim().toLowerCase()};
   }
   // Giống filterPendingClaimsByUserPrivileges của webapp: Admin thấy hết, người khác chỉ thấy hồ sơ liên quan mình.
   function visibleClaims(){
@@ -6993,23 +7028,23 @@ window.TascoWeekly=(()=>{
     return {rep,prep,synced:gd.length>0,zones:Object.keys(zoneMap).length};
   }
   function recompute(){
-    if(!eng||!claimsReady||!rulesReady||!users||!auth)return;
+    if(!claimsReady||!users||!auth||(T()!=='prog'&&(!eng||!rulesReady)))return;
     try{
-      if(tab==='week'){
+      if(T()==='week'){
         const period=periodNow();
         if(!period){result=null;paintBody();return;}
         const out=eng.compute({claims:visibleClaims(),users,rules,period,nowMs:Date.now()});
         result={period,rules:out.rules,...eng.summarize(out.list)};
-      }else if(tab==='kpi'){
+      }else if(T()==='kpi'){
         if(!kcalc||!kpiReady){paintBody();return;}
         kres=computeKpi();
-      }else if(tab==='prog'){
-        if(!notesReady){clearTimeout(timers.nfb);timers.nfb=setTimeout(()=>{if(!notesReady&&onPage&&tab==='prog'){notes=notes||{};notesReady=true;notesDenied=true;schedule(0);}},6000);paintBody();return;}
+      }else if(T()==='prog'){
+        if(!notesReady){clearTimeout(timers.nfb);timers.nfb=setTimeout(()=>{if(!notesReady&&onPage&&T()==='prog'){notes=notes||{};notesReady=true;notesDenied=true;schedule(0);}},6000);paintBody();return;}
         prog=buildProg();
       }else{ares=eng.annual({claims:visibleClaims(),users,rules,year:ySel});ares.fc=yearForecast(ares);}
       lastAt=Date.now();err='';
     }catch(e){
-      if(tab==='week')result=null;else if(tab==='kpi')kres=null;else if(tab==='prog')prog=null;else ares=null;
+      if(T()==='week')result=null;else if(T()==='kpi')kres=null;else if(T()==='prog')prog=null;else ares=null;
       err='Không tính được báo cáo: '+(e&&e.message||'lỗi dữ liệu');
     }
     paintBody();paintLive();
@@ -7017,10 +7052,10 @@ window.TascoWeekly=(()=>{
 
   /* ---------- khởi động / dừng ---------- */
   async function start(){
-    if(!admin||busy)return;busy=true;
+    if(!can()||busy)return;busy=true;
     try{
       phase='loading';err='';paintAll();
-      kcalcFail=false;await Promise.all([loadConfig(),loadEngine(),loadKpiCalc().catch(()=>{kcalcFail=true;})]);
+      kcalcFail=false;await Promise.all([loadConfig(),page==='progress'?loadEngine().catch(()=>null):loadEngine(),loadKpiCalc().catch(()=>{kcalcFail=true;})]);
       if(!auth){const sv=JSON.parse(ls(K.auth)||'null');if(sv?.r)auth={refreshToken:sv.r,uid:sv.uid,email:sv.email,idToken:'',exp:0};}
       if(!auth){phase='login';paintAll();return;}
       if(!auth.idToken||auth.exp-Date.now()<300000){try{await refresh();}catch(e){if(e.fb){forget();phase='login';err='Phiên Firebase đã hết hạn, vui lòng đăng nhập lại.';paintAll();return;}throw e;}}
@@ -7041,9 +7076,9 @@ window.TascoWeekly=(()=>{
     catch(e){err=e.fb?e.message:'Không đăng nhập được. Kiểm tra kết nối rồi thử lại.';paintBody();}
   }
   function onNavigate(view){
-    if(view!=='wkreport'){closeCal();closeMsh();closeX();closePgPick();closePgNote();if(onPage){onPage=false;stopStreams();}return;}
-    onPage=true;paintAll();
-    if(!admin)return;
+    if(view!=='wkreport'&&view!=='progress'){closeCal();closeMsh();closeX();closePgPick();closePgNote();if(onPage){onPage=false;stopStreams();}return;}
+    page=view;onPage=true;paintAll();
+    if(!can())return;
     if(phase==='ready'&&auth){Object.keys(PATH).forEach(k=>{if(!es[k])openStream(k,PATH[k]);});scheduleRefresh();schedule(0);}else start();
   }
   function setUser(u){
@@ -7051,10 +7086,10 @@ window.TascoWeekly=(()=>{
     const id=u?.id||u?.email||'';
     if(uidKey&&id!==uidKey){forget();phase='idle';}   // đổi/đăng xuất tài khoản app → bỏ phiên Firebase trên máy
     uidKey=id;
-    if(onPage&&admin&&!was)start();else if(onPage)paintAll();
+    if(onPage&&can()&&(phase==='idle'||(!was&&admin)))start();else if(onPage)paintAll();
   }
   document.addEventListener('visibilitychange',()=>{
-    if(!onPage||!admin||document.hidden||phase!=='ready'||!auth)return;
+    if(!onPage||!can()||document.hidden||phase!=='ready'||!auth)return;
     refresh().catch(()=>{}).finally(()=>{openAll();scheduleRefresh();});
   });
 
@@ -7121,7 +7156,7 @@ window.TascoWeekly=(()=>{
     const sub=unit==='month'?dm(per.startDate)+' → '+per.endStr:WD[per.startDate.getDay()]+' '+dm(per.startDate)+' → '+WD[per.endDate.getDay()]+' '+per.endStr;
     return {label,sub};
   }
-  const TABS=[['week','Tuần'],['kpi','KPI tháng'],['year','Năm GĐV'],['prog','Tiến độ']];
+  const TABS=[['week','Tuần'],['kpi','KPI tháng'],['year','Năm GĐV']];
   const tabsHtml=()=>'<div class="wk-tabs" role="tablist" aria-label="Loại báo cáo">'+TABS.map(([id,l])=>'<button type="button" role="tab" data-wk="tab" data-v="'+id+'" aria-selected="'+(tab===id)+'">'+l+'</button>').join('')+'</div>';
   const stepHtml=(label,openable,sub,noNext)=>'<div class="wk-step"><button type="button" data-wk="step" data-v="-1" aria-label="Kỳ trước">'+svg('<path d="m15 6-6 6 6 6"/>')+'</button>'+
     (openable?'<button type="button" class="wk-step-c" data-wk="month" aria-haspopup="dialog"><b>'+label+'</b>'+CAL_ICO+'</button>':'<div class="wk-step-c'+(sub?' is-2':'')+'"><b>'+label+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</div>')+
@@ -7138,9 +7173,12 @@ window.TascoWeekly=(()=>{
     else ctl='';
     return '<div class="dr-live'+(live?' is-on':'')+'" data-wk-live><i></i><b></b></div>'+tabsHtml()+ctl+'<div id="wkBody"></div>';
   }
-  function paintAll(){const r=$('wkRoot');if(!r)return;if(!admin){r.innerHTML=noAdminHtml;return;}r.innerHTML=shellHtml();paintLive();paintBody();}
+  function paintAll(){
+    if(page==='progress'){const r=$('pgPageRoot');if(!r)return;r.innerHTML='<div class="dr-live'+(live?' is-on':'')+'" data-wk-live><i></i><b></b></div><div id="pgBody"></div>';paintLive();paintBody();return;}
+    const r=$('wkRoot');if(!r)return;if(!admin){r.innerHTML=noAdminHtml;return;}r.innerHTML=shellHtml();paintLive();paintBody();}
+  const bodyEl=()=>$(page==='progress'?'pgBody':'wkBody');
   function paintLive(){
-    document.querySelectorAll('#wkreportSection [data-wk-live]').forEach(e=>{e.classList.toggle('is-on',live);const b=e.querySelector('b');
+    document.querySelectorAll('#wkreportSection [data-wk-live],#progressSection [data-wk-live]').forEach(e=>{e.classList.toggle('is-on',live);const b=e.querySelector('b');
       if(b)b.textContent=live?('Trực tiếp'+(lastAt?' · '+hhmmss(lastAt):'')):(phase==='ready'?'Đang kết nối lại…':'Chưa kết nối');});
   }
   function loginHtml(){
@@ -7288,18 +7326,18 @@ window.TascoWeekly=(()=>{
   }
 
   function paintBody(){
-    const b=$('wkBody');if(!b)return;
-    if(!admin)return;
+    const b=bodyEl();if(!b)return;
+    if(!can())return;
     if(phase==='login'){b.innerHTML=loginHtml();return;}
     if(phase==='error'){b.innerHTML='<div class="dr-empty"><b>Chưa tải được</b>'+esc(err)+'<div class="dr-acts"><button type="button" class="dt-btn is-main" data-wk="retry">Thử lại</button></div></div>';return;}
-    if(phase==='ready'&&tab==='kpi'&&kcalcFail&&!kcalc){b.innerHTML='<div class="dr-empty"><b>Chưa tải được bộ tính KPI</b>Không tải được từ webapp giám định. Kiểm tra mạng rồi thử lại.<div class="dr-acts"><button type="button" class="dt-btn is-main" data-wk="retry">Thử lại</button></div></div>';return;}
-    if(phase==='ready'&&tab==='prog'&&prog){paintProg();return;}
-    const data=tab==='week'?result:tab==='kpi'?kres:tab==='prog'?prog:ares;
+    if(phase==='ready'&&T()==='kpi'&&kcalcFail&&!kcalc){b.innerHTML='<div class="dr-empty"><b>Chưa tải được bộ tính KPI</b>Không tải được từ webapp giám định. Kiểm tra mạng rồi thử lại.<div class="dr-acts"><button type="button" class="dt-btn is-main" data-wk="retry">Thử lại</button></div></div>';return;}
+    if(phase==='ready'&&T()==='prog'&&prog){paintProg();return;}
+    const data=T()==='week'?result:T()==='kpi'?kres:T()==='prog'?prog:ares;
     if(phase!=='ready'||!data){
-      if(phase==='ready'&&tab==='week'&&!periodNow()){b.innerHTML='';return;}
+      if(phase==='ready'&&T()==='week'&&!periodNow()){b.innerHTML='';return;}
       b.innerHTML=(err?'<div class="wk-err" role="alert">'+esc(err)+'</div>':'')+'<div class="wk-load">'+(phase==='ready'?'Đang tải dữ liệu hồ sơ từ Firebase…':'Đang chuẩn bị…')+'</div><div class="dr-skel"><i></i><i></i><i></i></div>';return;
     }
-    b.innerHTML=(err?'<div class="wk-err" role="alert">'+esc(err)+'</div>':'')+(tab==='week'?reportHtml():tab==='kpi'?kpiHtml():yearHtml());
+    b.innerHTML=(err?'<div class="wk-err" role="alert">'+esc(err)+'</div>':'')+(T()==='week'?reportHtml():T()==='kpi'?kpiHtml():yearHtml());
   }
 
   /* ---------- Tiến độ hồ sơ tồn: cùng dữ liệu và cách tính với trang "Tiến độ hồ sơ tồn" của webapp (claims/notes.js) ---------- */
@@ -7309,7 +7347,7 @@ window.TascoWeekly=(()=>{
   const PG_AGE=[['b1','≤ 7 ngày','ok',a=>a<=7],['b2','8 – 14 ngày','warn',a=>a>=8&&a<=14],['b3','15 – 30 ngày','hot',a=>a>=15&&a<=30],['over30','> 30 ngày','crit',a=>a>30]];
   const PG_TPL=['Đã liên hệ khách hàng','Chờ khách bổ sung hồ sơ','Chờ garage báo giá','Đã gửi hồ sơ lên PASC','Chờ PASC duyệt','Hồ sơ vướng, cần hỗ trợ'];
   const PG_SORT=[['age','Tồn lâu nhất'],['stale','Cần cập nhật trước'],['note','Ghi chú mới nhất'],['due','Hẹn gần nhất'],['new','Mới mở nhất']];
-  const PG_QUICK=[['all','Tất cả'],['mine','Của tôi'],['over30','Quá 30 ngày'],['stale','Cần cập nhật'],['overdue','Quá hẹn'],['fresh','Đã cập nhật']];
+  const PG_QUICK=[['all','Tất cả'],['over30','Quá 30 ngày'],['stale','Cần cập nhật'],['overdue','Quá hẹn'],['fresh','Đã cập nhật']];
   const PG_QT={all:()=>true,mine:r=>r.mine,over30:r=>r.bucket==='over30',b1:r=>r.bucket==='b1',b2:r=>r.bucket==='b2',b3:r=>r.bucket==='b3',stale:r=>r.stale,overdue:r=>r.overdue,fresh:r=>r.fresh};
   const PGI={
     note:svg('<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>'),
@@ -7346,7 +7384,10 @@ window.TascoWeekly=(()=>{
   const pgDT=ms=>{const d=new Date(ms);return pad2(d.getHours())+':'+pad2(d.getMinutes())+' · '+pad2(d.getDate())+'/'+pad2(d.getMonth()+1)+'/'+d.getFullYear();};
   const pgToast=t=>{const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3000);};
   function buildProg(){
-    const today=pgSerial(new Date()),td=Math.floor(today),now=Date.now(),mine=pgPlain(me?.displayName||''),rows=[];
+    const today=pgSerial(new Date()),td=Math.floor(today),now=Date.now(),uid=auth?.uid||'',mname=pgPlain(me?.name||me?.displayName||''),memail=pgPlain(me?.email||''),rows=[];
+    /* "của tôi" = đúng quy tắc quyền xem hồ sơ của webapp: người tạo, GĐV tiếp nhận, cán bộ xử lý hoặc GĐV hồ sơ trùng tên/email tài khoản */
+    const isMine=(c,gdv)=>{const g=pgPlain(c.gdvTiepNhan),cb=pgPlain(c.canBoXuLy),gh=pgPlain(c.gdvHo),by=c.createdByUid||c.nguoiTao?.uid||'';
+      return !!(uid&&by===uid)||(!!mname&&(g===mname||cb===mname||gh===mname||pgPlain(gdv)===mname))||(!!memail&&(g===memail||cb===memail||gh===memail));};
     Object.entries(visibleClaims()).forEach(([key,c])=>{
       if(!c||typeof c!=='object')return;
       const status=String(c.trangThai||'moi').toLowerCase();if(!PG_TON.includes(status))return;
@@ -7362,10 +7403,12 @@ window.TascoWeekly=(()=>{
       if(/^\+?84\d{9}$/.test(phone))phone='0'+phone.replace(/^\+?84/,'');else if(/^\d{9}$/.test(phone))phone='0'+phone;
       const car=((c.hangXe||'')+' '+(c.hieuXe||'')).trim();
       rows.push({id,identifier,c,gdv,status,age,bucket:bk?bk[0]:null,tone:bk?bk[2]:'na',history,last,nd,stale:!last||nd>PG_STALE,fresh:!!last&&nd<=PG_STALE,dueIso,dueIn,overdue:dueIn!==null&&dueIn<0,
-        mine:!!mine&&pgPlain(gdv)===mine,owner,phone,car,openText:String(c.ngayMoHs||'').trim().split(/\s+/)[0]||'',
+        mine:isMine(c,gdv),owner,phone,car,openText:String(c.ngayMoHs||'').trim().split(/\s+/)[0]||'',
         hay:pgPlain([c.bienSo,c.soHoSoBoiThuong,phone,gdv,owner,c.moTaTonThat,car].join(' '))});
     });
-    return {rows,at:now};
+    /* quản trị chọn Của tôi / Toàn zone (mặc định: Của tôi nếu có hồ sơ của mình); tài khoản thường chỉ có phần được phép xem */
+    const isAdm=me?.role==='admin',scope=isAdm?(pgScope==='mine'||pgScope==='all'?pgScope:(rows.some(r=>r.mine)?'mine':'all')):'mine';
+    return {rows:isAdm&&scope==='mine'?rows.filter(r=>r.mine):rows,allCount:rows.length,mineCount:rows.filter(r=>r.mine).length,scope,isAdmin:isAdm,at:now};
   }
   function pgSorted(list){
     const by={age:(a,b)=>(b.age??-1)-(a.age??-1),stale:(a,b)=>(a.last?1:0)-(b.last?1:0)||(b.nd??0)-(a.nd??0)||(b.age??-1)-(a.age??-1),
@@ -7398,19 +7441,24 @@ window.TascoWeekly=(()=>{
   }
   const pgTile=(q,l,v,m,h)=>'<button type="button" class="dr-kpi pg-tile'+(pg.quick===q?' is-on':'')+'" style="--h:'+h+'" data-wk="pgq" data-v="'+q+'" aria-pressed="'+(pg.quick===q)+'"><small>'+esc(l)+'</small><b>'+v.toLocaleString('vi-VN')+'</b><span>'+esc(m)+'</span></button>';
   function pgShell(){
-    return '<div id="pgRoot" class="pg-root"><div id="pgErr"></div><div class="dr-kpis" id="pgSum"></div>'+
+    return '<div id="pgRoot" class="pg-root"><div id="pgErr"></div><div id="pgScope"></div><div class="dr-kpis" id="pgSum"></div>'+
       '<div class="dr-seg pg-seg" role="group" aria-label="Phân tích hồ sơ tồn"><button type="button" data-wk="pgview" data-v="age" aria-pressed="true">Tuổi tồn</button><button type="button" data-wk="pgview" data-v="gdv" aria-pressed="false">Theo GĐV</button></div><div id="pgAn" class="pg-an"></div>'+
       '<div class="dr-count">Danh sách hồ sơ tồn</div>'+
       '<label class="dr-search">'+PGI.search+'<input id="pgSearch" type="search" placeholder="Biển số, HSBT, SĐT, chủ xe, GĐV…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Tìm hồ sơ tồn" value="'+esc(pg.q)+'"></label>'+
       '<div class="dr-filters" id="pgPicks"></div><div class="pg-chips" id="pgChips" role="group" aria-label="Lọc nhanh"></div><div class="pg-bar" id="pgBar"></div><div class="pg-list" id="pgList"></div><div id="pgMore"></div><p class="dr-stamp" id="pgStamp"></p></div>';
   }
   function paintProg(){
-    const b=$('wkBody');if(!b||!prog)return;
+    const b=bodyEl();if(!b||!prog)return;
     let root=b.querySelector('#pgRoot');if(!root){b.innerHTML=pgShell();root=b.querySelector('#pgRoot');}
     const q=s=>root.querySelector(s),rows=prog.rows,total=rows.length;
     const ages=rows.map(r=>r.age).filter(a=>a!==null),over30=rows.filter(r=>r.bucket==='over30').length,stale=rows.filter(r=>r.stale).length,noNote=rows.filter(r=>!r.last).length,overdue=rows.filter(r=>r.overdue).length,
       sched=rows.filter(r=>r.dueIso).length,fresh=rows.filter(r=>r.fresh).length,share=n=>total?Math.round(n/total*100):0;
     q('#pgErr').innerHTML=(err?'<div class="wk-err" role="alert">'+esc(err)+'</div>':'')+(notesDenied?'<div class="wk-note">Tài khoản Firebase này chưa đọc được ghi chú tiến độ nên chưa hiện ghi chú và lịch hẹn.</div>':'');
+    const nm=String(me?.name||auth?.email||'').trim();
+    q('#pgScope').innerHTML='<div class="pg-me"><i class="pg-av" style="--h:'+pgHue(nm)+'">'+esc(pgInit(nm))+'</i><span><small>'+(prog.scope==='mine'?'Hồ sơ tồn của':'Đang xem')+'</small><b>'+esc(prog.scope==='mine'?(nm||'bạn'):'Toàn zone')+'</b></span></div>'+
+      (prog.isAdmin?'<div class="dr-seg pg-seg pg-scope" role="group" aria-label="Phạm vi hồ sơ"><button type="button" data-wk="pgscope" data-v="mine" aria-pressed="'+(prog.scope==='mine')+'">Của tôi · '+prog.mineCount+'</button><button type="button" data-wk="pgscope" data-v="all" aria-pressed="'+(prog.scope==='all')+'">Toàn zone · '+prog.allCount+'</button></div>':'');
+    if(prog.scope==='mine'&&pg.view==='gdv')pg.view='age';
+    {const sg=root.querySelector('.pg-seg:not(.pg-scope)');if(sg)sg.hidden=prog.scope==='mine';}
     q('#pgSum').innerHTML=pgTile('all','Tổng hồ sơ tồn',total,ages.length?'lâu nhất '+Math.max(...ages)+' ngày':'chưa có ngày mở',215)+pgTile('over30','Tồn quá 30 ngày',over30,share(over30)+'% tổng tồn',0)+
       pgTile('stale','Cần cập nhật',stale,noNote+' chưa ghi chú',38)+(overdue?pgTile('overdue','Quá hẹn xử lý',overdue,sched+' hồ sơ có lịch hẹn',8):pgTile('fresh','Đã cập nhật',fresh,'ghi chú trong '+PG_STALE+' ngày',152));
     root.querySelectorAll('[data-wk=pgview]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===pg.view)));
@@ -7445,7 +7493,7 @@ window.TascoWeekly=(()=>{
     const filtered=pg.q||pg.status!=='all'||pg.gdv!=='all'||pg.quick!=='all';
     q('#pgBar').innerHTML='<span><b>'+list.length.toLocaleString('vi-VN')+'</b> / '+rows.length.toLocaleString('vi-VN')+' hồ sơ</span>'+(filtered?'<button type="button" data-wk="pgreset">'+PGI.reset+'Xoá lọc</button>':'');
     const shown=list.slice(0,pg.n);
-    q('#pgList').innerHTML=shown.length?shown.map(pgCard).join(''):'<div class="dr-empty"><b>'+(rows.length?'Không có hồ sơ phù hợp bộ lọc':'Chưa có hồ sơ tồn')+'</b>'+(rows.length?'Thử bỏ bớt bộ lọc hoặc đổi từ khoá tìm kiếm.':'Hồ sơ tồn sẽ hiện ở đây khi có dữ liệu.')+'</div>';
+    q('#pgList').innerHTML=shown.length?shown.map(pgCard).join(''):'<div class="dr-empty"><b>'+(rows.length?'Không có hồ sơ phù hợp bộ lọc':prog.isAdmin&&prog.scope==='mine'&&prog.allCount?'Chưa có hồ sơ tồn nào thuộc về bạn':'Chưa có hồ sơ tồn')+'</b>'+(rows.length?'Thử bỏ bớt bộ lọc hoặc đổi từ khoá tìm kiếm.':prog.isAdmin&&prog.scope==='mine'&&prog.allCount?'Chọn "Toàn zone" để xem tất cả hồ sơ tồn.':'Hồ sơ tồn sẽ hiện ở đây khi có dữ liệu.')+'</div>';
     q('#pgMore').innerHTML=list.length>shown.length?'<button type="button" class="wk-more" data-wk="pgmore">Xem thêm '+Math.min(PG_PAGE,list.length-shown.length)+' hồ sơ · còn '+(list.length-shown.length)+'</button>':'';
     const ages=rows.map(r=>r.age).filter(a=>a!==null),md=pgMedian(ages);
     q('#pgStamp').textContent='Tuổi tồn tính từ ngày mở hồ sơ'+(md!==null?' (trung vị '+md+' ngày)':'')+'; ghi chú cũ hơn '+PG_STALE+' ngày hoặc chưa có thì tính là cần cập nhật. Đọc trực tiếp từ Firebase của webapp, cập nhật lúc '+hhmmss(prog.at)+'.';
@@ -7777,7 +7825,7 @@ window.TascoWeekly=(()=>{
   }
 
   document.addEventListener('click',e=>{
-    const b=e.target.closest('#wkreportSection [data-wk]');if(!b)return;const k=b.dataset.wk;
+    const b=e.target.closest('#wkreportSection [data-wk],#progressSection [data-wk]');if(!b)return;const k=b.dataset.wk;
     if(k==='tab'){
       if(b.dataset.v===tab)return;tab=b.dataset.v;ls(K.tab,tab);openKey='';paintAll();recompute();
     }else if(k==='step'){
@@ -7799,6 +7847,7 @@ window.TascoWeekly=(()=>{
     else if(k==='pgq'){const v=b.dataset.v;pg.quick=pg.quick===v&&v!=='all'?'all':v;pg.n=PG_PAGE;paintProg();}
     else if(k==='pggdv'){pg.gdv=pg.gdv===b.dataset.v?'all':b.dataset.v;pg.n=PG_PAGE;paintProg();}
     else if(k==='pgview'){pg.view=b.dataset.v;paintProg();}
+    else if(k==='pgscope'){pgScope=b.dataset.v==='all'?'all':'mine';ls(K.pgs,pgScope);pg={...pg,gdv:'all',quick:'all',status:'all',n:PG_PAGE};recompute();}
     else if(k==='pgpick')openPgPick(b.dataset.v);
     else if(k==='pgopen')openPgNote(b.dataset.id);
     else if(k==='pgdet')openPgDetail(b.dataset.id);
@@ -7809,7 +7858,7 @@ window.TascoWeekly=(()=>{
     else if(k==='retry'){phase='idle';start();}
     else if(k==='date')openCal(b.dataset.v);
   });
-  document.addEventListener('submit',e=>{const f=e.target.closest('#wkreportSection [data-wk-form]');if(f){e.preventDefault();doLogin(f);}});
+  document.addEventListener('submit',e=>{const f=e.target.closest('#wkreportSection [data-wk-form],#progressSection [data-wk-form]');if(f){e.preventDefault();doLogin(f);}});
 
   return {setUser,onNavigate};
 })();
@@ -14859,7 +14908,7 @@ window.TascoLookupFlow = (() => {
   const text = (selector, value) => document.querySelectorAll(selector).forEach(element => { element.textContent = value; });
   function syncBrowserChrome(view = node('mainApp').dataset.page) {
     document.documentElement.dataset.tascoPage = view;
-    const color = ['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
+    const color = ['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','progress','forms','account'].includes(view) ? '#183056' : document.documentElement.classList.contains('dark') ? '#0b1b30' : '#edf5f7';
     node('tascoThemeColor').setAttribute('content',color);
   }
   function measureResultHeader() {
@@ -16660,7 +16709,7 @@ window.TascoNavigationMotion = (() => {
   const indicator = nav?.querySelector('.ws-nav-indicator');
   if (!nav || !indicator) return { sync() {} };
   const motionPreference = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-  const pageIds = {home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',directory:'directorySection',wkreport:'wkreportSection',account:'accountSection',forms:'formsSection',admin:'sysMgrSection'};
+  const pageIds = {home:'homeSection',lookup:'traCuuSection',results:'lookupResultsSection',cloud:'personalCloudSection',rescue:'rescueSection',garage:'garageSection',assess:'assessSection',duty:'dutySection',directory:'directorySection',wkreport:'wkreportSection',progress:'progressSection',account:'accountSection',forms:'formsSection',admin:'sysMgrSection'};
   let positioned = false, frame = 0, pendingAnimated = true, pageAnimation = null, lastGeometry = null;
   nav.dataset.navMotion = 'true';
   function position(animate = true) {
@@ -17890,7 +17939,7 @@ window.tascoGo=function(view){
   var ev=window.event,fromNav=!!(ev&&ev.target&&ev.target.closest&&ev.target.closest('#bottomNav'));
   /* Thanh điều hướng dưới: đổi trang tức thì (+ mờ nhẹ qua WAAPI) — View Transition chụp snapshot cả trang nên gây giật. */
   if(fromNav||!document.startViewTransition||!cur||cur==='login'||cur===view||reduce||root.dataset.vt)return go();
-  var order=['home','lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','forms','account','admin'];
+  var order=['home','lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','progress','forms','account','admin'];
   root.dataset.vtDir=order.indexOf(view)>=order.indexOf(cur)?'fwd':'back';root.dataset.vt='1';
   var done=function(){delete root.dataset.vt;delete root.dataset.vtDir;};
   try{var t=document.startViewTransition(go);t.finished.then(done,done);}catch(_){done();go();}
