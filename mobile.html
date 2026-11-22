@@ -7890,7 +7890,7 @@ window.TascoWeekly=(()=>{
   document.addEventListener('submit',e=>{const f=e.target.closest('#wkreportSection [data-wk-form],#progressSection [data-wk-form],#sceneSection [data-wk-form]');if(f){e.preventDefault();doLogin(f);}});
 
   /* cầu nối cho trang Biên bản hiện trường (TascoScene): dùng chung phiên Firebase và danh sách hồ sơ đã lọc theo người dùng */
-  const sceneApi={pages:PAGES,getText,claims:()=>visibleClaims(),
+  const sceneApi={pages:PAGES,getText,claims:()=>visibleClaims(),pickDate:ext=>openCal('scene',ext),
     me:()=>({uid:auth?.uid||'',name:me?.name||'',email:me?.email||auth?.email||''}),
     async url(path){if(!auth)throw Object.assign(new Error('NOAUTH'),{fb:true});if(!auth.idToken||auth.exp-Date.now()<120000)await refresh();return dbUrl(path);}};
   return {setUser,onNavigate};
@@ -7950,6 +7950,20 @@ window.TascoWeekly=(()=>{
 .sc-in:focus{outline:0;border-color:var(--app-teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-teal) 22%,transparent)}
 .sc-ta{display:block;min-height:96px;padding:11px 13px;line-height:1.55;resize:vertical}
 .sc-card2 .sc-in+.sc-in{margin-top:8px}
+.sc-fdt{position:relative;margin:0 0 10px}
+.sc-fdt .sc-tagsync{position:absolute;right:10px;top:-8px;z-index:1;background:var(--ws-bg);box-shadow:0 0 0 1px color-mix(in srgb,var(--app-teal) 30%,var(--ws-line))}
+.sc-fdt button.wk-date{width:100%;min-height:62px;background:var(--ws-surface,var(--ws-bg))}
+.sc-fdt button.wk-date.is-empty b{color:var(--ws-muted);font-weight:600}
+.sc-tsheet{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.sc-wheels{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;height:220px;margin:0 20px 6px}
+.sc-wheels>b{font-size:26px;font-weight:700;color:var(--ws-muted)}
+.sc-wsel{position:absolute;left:0;right:0;top:50%;height:44px;margin-top:-22px;border-radius:14px;background:var(--ws-soft,var(--ws-line));pointer-events:none}
+.sc-wh{position:relative;z-index:1;flex:1;max-width:120px;height:220px;padding:88px 0;overflow-y:auto;box-sizing:border-box;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior:contain;mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent)}
+.sc-wh::-webkit-scrollbar{display:none}
+.sc-wi{height:44px;display:grid;place-items:center;scroll-snap-align:center;font-size:22px;font-weight:600;color:var(--ws-muted);font-variant-numeric:tabular-nums;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sc-wi.on{color:var(--ws-text);font-weight:800}
+.sc-tsheet .wk-cal-foot{padding-top:6px}
+.sc-tsheet .wk-cal-foot .dt-btn{min-width:110px}
 .sc-mini{flex:none;min-height:26px;padding:0 9px;border:1px solid var(--ws-line);border-radius:9px;background:var(--ws-bg);color:var(--app-teal);font-size:11.5px;font-weight:700;cursor:pointer}
 .sc-tagsync{flex:none;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--app-teal) 14%,var(--ws-bg));color:var(--app-teal);font-size:10.5px;font-weight:700}
 .sc-link{display:inline-flex;align-items:center;gap:6px;margin-top:2px;padding:6px 2px;border:0;background:none;color:var(--app-teal);font-size:12.5px;font-weight:700;cursor:pointer}
@@ -7987,8 +8001,10 @@ window.TascoWeekly=(()=>{
 .sc-dspots{display:grid;gap:10px}
 .sc-dspot{display:grid;gap:8px}
 .sc-dspot .sc-in{min-height:42px}
-.sc-chips{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
-.sc-chips-l{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--ws-muted)}
+.sc-chips{display:flex;flex-wrap:nowrap;align-items:center;gap:7px;margin:10px -13px 0;padding:2px 13px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:x proximity}
+.sc-chips::-webkit-scrollbar{display:none}
+.sc-chips>*{flex:none;scroll-snap-align:start}
+.sc-chips-l{display:inline-flex;white-space:nowrap;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--ws-muted)}
 .sc-chips-l svg{width:13px;height:13px}
 .sc-chip{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:0 11px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-bg);color:var(--ws-text);font-size:12px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .sc-chip svg{width:12px;height:12px;stroke-width:2.6;color:var(--app-teal)}
@@ -7999,8 +8015,9 @@ window.TascoWeekly=(()=>{
 .sc-allok{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:13px;font-weight:700;color:#2f8f6f}
 .sc-allok svg{width:18px;height:18px}
 .sc-acts{display:grid;gap:10px}
-.sc-nav{display:flex;justify-content:space-between;gap:10px;margin:2px 0 6px}
-.sc-nav .dt-btn{flex:1;max-width:none}
+.sc-nav{position:sticky;bottom:calc(var(--sc-bn,70px) + 10px);z-index:6;display:flex;justify-content:space-between;gap:10px;margin:2px -4px 6px;padding:8px;border:1px solid var(--ws-line);border-radius:20px;background:color-mix(in srgb,var(--ws-bg) 90%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 8px 26px rgba(20,40,70,.16)}
+.sc-nav .dt-btn{flex:1;max-width:none;min-height:48px}
+.sc-nav>span{flex:1}
 
 .sc-pv{position:fixed;inset:0;z-index:2147482000;display:flex;flex-direction:column;background:var(--ws-surface,#e9eef2);color:var(--ws-text)}
 .sc-pv header{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px;border-bottom:1px solid var(--ws-line);background:var(--ws-bg)}
@@ -8222,7 +8239,7 @@ window.TascoScene=(()=>{
   async function leave(){
     const en=S.cur;S.seq++;
     if(en){clearTimeout(en.t);flush(en);}
-    S.mode='list';S.cur=null;S.pv&&closePreview();paint(root,api,true);
+    S.mode='list';S.cur=null;S.pv&&closePreview();closeTime();paint(root,api,true);
     if(en)ENT.forEach((e,k)=>{if(!e.dirty&&!e.busy)ENT.delete(k);});
   }
 
@@ -8231,8 +8248,16 @@ window.TascoScene=(()=>{
   const setP=(o,p,v)=>{const ks=p.split('.');let n=o;for(let i=0;i<ks.length-1;i++)n=n[ks[i]];n[ks[ks.length-1]]=v;};
   const MANUAL={accidentDate:'accidentDate',accidentTime:'accidentTime',accidentLocation:'accidentLocation',plate:'plate',driver:'driver',withParty:'withParty','participants.0.name':'assessorName','participants.0.phone':'assessorPhone','participants.1.name':'driver','participants.1.phone':'driverPhone'};
   const fid=p=>'scf_'+p.replace(/[^a-zA-Z0-9_]/g,'_');
-  const inp=(p,v,a)=>'<input id="'+fid(p)+'" class="sc-in" data-sc-f="'+esc(p)+'" value="'+esc(v)+'" '+(a||'')+'>';
+  const inp=(p,v,a)=>'<input id="'+fid(p)+'" class="sc-in" data-sc-f="'+esc(p)+'" value="'+esc(v)+'" enterkeyhint="next" '+(a||'')+'>';
   const area=(k,rows,ph)=>'<textarea id="'+fid(k)+'" class="sc-in sc-ta" data-sc-f="'+k+'" rows="'+rows+'" maxlength="'+M.LIM[k]+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+'>'+esc(S.cur.data[k])+'</textarea>';
+  const ICO_CAL=ico('<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>'),ICO_CLK=ico('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');
+  const dfmt=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'')?v.slice(8)+'/'+v.slice(5,7)+'/'+v.slice(0,4):'';
+  const isHm=v=>/^\d{2}:\d{2}$/.test(v||'');
+  /* ngày/giờ dùng bộ chọn riêng của app (lịch + bánh xe giờ), không dùng bộ chọn gốc của hệ thống */
+  function dtf(kind,p,label){
+    const v=S.cur.data[p],txt=kind==='d'?dfmt(v):(isHm(v)?v:'');
+    return '<div class="sc-f sc-fdt">'+autoTag(p)+'<button type="button" class="wk-date'+(txt?'':' is-empty')+'" data-sc="'+(kind==='d'?'pickdate':'picktime')+'" data-sc-f="'+p+'" data-label="'+esc(label)+'" aria-haspopup="dialog"><span><small>'+esc(label)+'</small><b>'+(txt||(kind==='d'?'Chọn ngày':'Chọn giờ'))+'</b></span>'+(kind==='d'?ICO_CAL:ICO_CLK)+'</button></div>';
+  }
   const fld=(p,label,inner,right)=>'<div class="sc-f"><div class="sc-fh"><label for="'+fid(p)+'">'+esc(label)+'</label>'+(right||'')+'</div>'+inner+'</div>';
   const autoTag=k=>M.AUTO.includes(k)?'<span class="sc-tagsync" data-sc-badge="'+k+'">'+(S.cur.data.manual[k]?'Đã sửa':'Từ hồ sơ')+'</span>':'';
   const mini=(act,label,extra)=>'<button type="button" class="sc-mini" data-sc="'+act+'"'+(extra||'')+'>'+label+'</button>';
@@ -8258,11 +8283,11 @@ window.TascoScene=(()=>{
       inp('participants.'+i+'.name',p.name,'placeholder="Họ và tên" autocomplete="off"')+
       '<div class="sc-g2">'+inp('participants.'+i+'.role',p.role,'placeholder="Vai trò"')+inp('participants.'+i+'.phone',p.phone,'placeholder="Số điện thoại" inputmode="tel"')+'</div></div></div>').join('');
     return sect('Thời gian & địa điểm lập biên bản','',
-        '<div class="sc-g2">'+fld('reportDate','Ngày lập',inp('reportDate',d.reportDate,'type="date"'))+fld('reportTime','Giờ lập',inp('reportTime',d.reportTime,'type="time"'),mini('now','Hiện tại',' data-f="reportTime"'))+'</div>'+
+        '<div class="sc-g2">'+dtf('d','reportDate','Ngày lập')+dtf('t','reportTime','Giờ lập')+'</div>'+
         fld('reportPlace','Địa điểm lập biên bản',inp('reportPlace',d.reportPlace,'placeholder="Địa chỉ hoặc vị trí lập biên bản…"'),mini('copyplace','Như nơi tai nạn')))+
       sect('Thành phần tham gia','Dòng 1–2 lấy từ hồ sơ, sửa tay thì giữ nguyên bản sửa.',people)+
       sect('Vụ tai nạn & phương tiện','Tự lấy từ hồ sơ; sửa tay sẽ không bị ghi đè.',
-        '<div class="sc-g2">'+fld('accidentDate','Ngày xảy ra',inp('accidentDate',d.accidentDate,'type="date"'),autoTag('accidentDate'))+fld('accidentTime','Giờ xảy ra',inp('accidentTime',d.accidentTime,'type="time"'),autoTag('accidentTime'))+'</div>'+
+        '<div class="sc-g2">'+dtf('d','accidentDate','Ngày xảy ra')+dtf('t','accidentTime','Giờ xảy ra')+'</div>'+
         '<div class="sc-g2">'+fld('plate','Biển số xe',inp('plate',d.plate,'autocapitalize="characters" autocomplete="off"'),autoTag('plate'))+fld('driver','Lái xe điều khiển',inp('driver',d.driver,'autocomplete="off"'),autoTag('driver'))+'</div>'+
         fld('accidentLocation','Địa điểm xảy ra tai nạn',inp('accidentLocation',d.accidentLocation,'placeholder="Cây số, đường, xã, huyện, tỉnh…"'),autoTag('accidentLocation'))+
         fld('withParty','Va chạm / xảy ra với',inp('withParty',d.withParty),autoTag('withParty'))+
@@ -8298,7 +8323,7 @@ window.TascoScene=(()=>{
       tile('15','[15]','Thiệt hại về người',area('injuries',2)+chips('injuries'))+
       tile('16','[16]','Ghi chú, lời khai lái xe & nhân chứng',area('notes',4)+chips('notes'))+
       '<section class="sc-t"><div class="sc-th"><b>Đề xuất khác</b></div>'+area('proposals',2)+chips('proposals')+'</section>'+
-      '<section class="sc-t"><div class="sc-th"><b>Kết thúc biên bản</b></div>'+fld('endTime','Giờ kết thúc',inp('endTime',d.endTime,'type="time"'),mini('now','Hiện tại',' data-f="endTime"'))+
+      '<section class="sc-t"><div class="sc-th"><b>Kết thúc biên bản</b></div>'+dtf('t','endTime','Giờ kết thúc')+
         '<div class="sc-tgs">'+tg('includeDiagram','Kèm sơ đồ hiện trường (nếu đã vẽ trên webapp)',d.includeDiagram!==false)+'</div></section>')+
       '<div id="scReview"></div>';
   }
@@ -8324,8 +8349,10 @@ window.TascoScene=(()=>{
     if(state==='error'){b.innerHTML='<div class="sc-ed">'+head+'<div class="dr-empty"><b>Chưa mở được</b>'+esc(S.err)+'<div class="dr-acts"><button type="button" class="dt-btn is-main" data-sc="open" data-k="'+esc(k)+'">Thử lại</button></div></div></div>';return;}
     if(!S.cur||!M)return;
     b.innerHTML='<div class="sc-ed">'+head+'<div class="sc-steps" id="scSteps">'+stepsHtml()+'</div><div id="scPane">'+(S.step===1?step1():S.step===2?step2():step3())+'</div>'+navHtml()+'</div>';
-    paintDone();if(S.step===3)paintReview();paintSave(S.cur);
+    paintDone();if(S.step===3)paintReview();paintSave(S.cur);growAll();setBn();
   }
+  const setBn=()=>{const n=document.getElementById('bottomNav');const h=n&&n.offsetHeight?n.getBoundingClientRect().height:70;document.documentElement.style.setProperty('--sc-bn',Math.round(h)+'px');};
+  window.addEventListener('resize',setBn);
   function paintDone(){
     if(!S.cur)return;const d=S.cur.data;
     M.META.forEach(m=>{const el=document.querySelector('#scPane [data-sc-tile="'+m.tile+'"]');if(el)el.classList.toggle('is-done',m.idx.some(i=>M.CHECKS[i](d)));});
@@ -8343,7 +8370,7 @@ window.TascoScene=(()=>{
     const sel=focus?String(focus).replace('[data-sr-item-tile=','[data-sc-tile=').replace('[data-sr=','[data-sc-f='):'';
     setTimeout(()=>{
       const t=sel?document.querySelector('#scPane '+sel):null;
-      if(t){t.scrollIntoView({block:'center',behavior:'smooth'});const f=t.matches('input,textarea')?t:t.querySelector('input,textarea');if(f&&!/^(date|time)$/.test(f.type)){try{f.focus({preventScroll:true});}catch(_){}}t.classList.add('is-flash');setTimeout(()=>t.classList.remove('is-flash'),1400);}
+      if(t){t.scrollIntoView({block:'center',behavior:'smooth'});if(t.matches('button[data-sc=pickdate],button[data-sc=picktime]')){setTimeout(()=>t.click(),350);}else{const f=t.matches('input,textarea')?t:t.querySelector('input,textarea');if(f){try{f.focus({preventScroll:true});}catch(_){}}}t.classList.add('is-flash');setTimeout(()=>t.classList.remove('is-flash'),1400);}
       else{const s=$('scSteps');if(s)s.scrollIntoView({block:'start',behavior:'smooth'});}
     },30);
   }
@@ -8404,6 +8431,44 @@ window.TascoScene=(()=>{
     finally{wordBusy=false;if(btn)btn.disabled=false;}
   }
 
+  /* ---------- chọn ngày / giờ ---------- */
+  function setDT(p,v){
+    const en=S.cur;if(!en)return;const d=en.data;setP(d,p,v);if(MANUAL[p]){d.manual[MANUAL[p]]=true;paintBadges();}
+    const b=document.querySelector('#scPane button[data-sc-f="'+p+'"]');
+    if(b){const isD=b.dataset.sc==='pickdate';b.classList.toggle('is-empty',!v);b.querySelector('b').textContent=v?(isD?dfmt(v):v):(isD?'Chọn ngày':'Chọn giờ');}
+    commit();
+  }
+  function pickDate(b){const p=b.dataset.scF;api.pickDate({title:b.dataset.label,value:S.cur.data[p],onPick:v=>setDT(p,v)});}
+  let tp=null;
+  const WI=44,WH=220;
+  const wheel=(w,n)=>'<div class="sc-wh" data-w="'+w+'" role="listbox" aria-label="'+(w==='h'?'Giờ':'Phút')+'">'+Array.from({length:n},(_,i)=>'<div class="sc-wi" data-i="'+i+'" role="option">'+pad(i)+'</div>').join('')+'</div>';
+  function closeTime(){if(tp?.el)tp.el.remove();tp=null;}
+  function pickTime(b){
+    closeTime();const p=b.dataset.scF,cur=S.cur.data[p],base=isHm(cur)?cur:nowHm();
+    const el=document.createElement('div');el.className='dr-sheet-bg wk-cal-bg';
+    el.innerHTML='<div class="dr-sheet sc-tsheet" role="dialog" aria-modal="true" aria-label="'+esc(b.dataset.label)+'"><div class="dr-sheet-h"><h4>'+esc(b.dataset.label)+'</h4><button type="button" data-st="close" aria-label="Đóng">'+I.x+'</button></div>'+
+      '<div class="sc-wheels"><i class="sc-wsel" aria-hidden="true"></i>'+wheel('h',24)+'<b aria-hidden="true">:</b>'+wheel('m',60)+'</div>'+
+      '<div class="wk-cal-foot"><button type="button" class="dt-btn is-sm" data-st="now">Bây giờ</button><button type="button" class="dt-btn is-main" data-st="ok">Xong</button></div></div>';
+    document.body.appendChild(el);
+    tp={el,p,h:+base.slice(0,2),m:+base.slice(3)};
+    const cols={h:el.querySelector('[data-w=h]'),m:el.querySelector('[data-w=m]')};
+    const mark=w=>{const c=cols[w];c.querySelectorAll('.sc-wi').forEach(x=>x.classList.toggle('on',+x.dataset.i===tp[w]));};
+    const goto=(w,i,smooth)=>{cols[w].scrollTo({top:i*WI,behavior:smooth?'smooth':'auto'});tp[w]=i;mark(w);};
+    ['h','m'].forEach(w=>{
+      let t=0;
+      cols[w].addEventListener('scroll',()=>{if(!tp)return;const n=w==='h'?23:59,i=Math.max(0,Math.min(n,Math.round(cols[w].scrollTop/WI)));if(i!==tp[w]){tp[w]=i;mark(w);}},{passive:true});
+      cols[w].addEventListener('click',e=>{const it=e.target.closest('.sc-wi');if(it)goto(w,+it.dataset.i,true);});
+    });
+    el.addEventListener('click',e=>{
+      if(e.target===el)return closeTime();
+      const a=e.target.closest('[data-st]')?.dataset.st;if(!a)return;
+      if(a==='close')closeTime();
+      else if(a==='now'){const n=nowHm();goto('h',+n.slice(0,2),true);goto('m',+n.slice(3),true);}
+      else if(a==='ok'){const v=pad(tp.h)+':'+pad(tp.m),pp=tp.p;closeTime();setDT(pp,v);}
+    });
+    requestAnimationFrame(()=>{goto('h',tp.h,false);goto('m',tp.m,false);});
+  }
+
   /* ---------- sự kiện ---------- */
   const inScene=e=>e.target.closest&&e.target.closest('#sceneSection');
   document.addEventListener('input',e=>{
@@ -8416,11 +8481,11 @@ window.TascoScene=(()=>{
     const dm=/^damage\.(\w+)\.text$/.exec(p);
     if(dm&&val.trim()&&d.damage[dm[1]]&&!d.damage[dm[1]].on){d.damage[dm[1]].on=true;const b=document.querySelector('#scPane [data-sc-tg="damage.'+dm[1]+'.on"]');if(b){b.classList.add('on');b.setAttribute('aria-pressed','true');b.closest('.sc-dspot').classList.add('on');}}
     if(M.SUG[p])syncChips(p);
+    if(t.tagName==='TEXTAREA')grow(t);
     commit();
   });
   document.addEventListener('change',e=>{
     const t=e.target,p=t.dataset?.scF;if(!p||!S.cur||!t.closest('#scPane'))return;
-    if(t.type==='date'||t.type==='time'){const d=S.cur.data;setP(d,p,t.value);if(MANUAL[p]){d.manual[MANUAL[p]]=true;paintBadges();}commit();}
   });
   document.addEventListener('click',e=>{
     const pv=e.target.closest('.sc-pv [data-sc]');
@@ -8436,7 +8501,7 @@ window.TascoScene=(()=>{
     }
     if(b.dataset.scSg){
       if(!en)return;const d=en.data,k=b.dataset.scSg,s=M.SUG[k][+b.dataset.i];if(!s)return;
-      d[k]=M.insert(d[k],s[1],d.plate,M.LIM[k]);const f=document.querySelector('#scPane [data-sc-f="'+k+'"]');if(f)f.value=d[k];syncChips(k);commit();return;
+      d[k]=M.insert(d[k],s[1],d.plate,M.LIM[k]);const f=document.querySelector('#scPane [data-sc-f="'+k+'"]');if(f){f.value=d[k];grow(f);}syncChips(k);commit();return;
     }
     if(b.dataset.scTg){
       if(!en)return;const p=b.dataset.scTg,next=!getP(en.data,p);setP(en.data,p,next);
@@ -8454,11 +8519,23 @@ window.TascoScene=(()=>{
     else if(k==='copyplace'&&en){const loc=String(en.data.accidentLocation||'').trim();if(!loc){toast('Chưa có địa điểm tai nạn để sao chép.');return;}en.data.reportPlace=loc.slice(0,M.LIM.reportPlace);const i=document.querySelector('#scPane [data-sc-f="reportPlace"]');if(i)i.value=en.data.reportPlace;commit();}
     else if(k==='docsall'&&en){const all=M.DOCS.every(([x])=>en.data.docs[x]);M.DOCS.forEach(([x])=>{en.data.docs[x]=!all;const bt=document.querySelector('#scPane [data-sc-tg="docs.'+x+'"]');if(bt){bt.classList.toggle('on',!all);bt.setAttribute('aria-pressed',String(!all));}});commit();}
     else if(k==='resync'&&en){M.AUTO.forEach(x=>{en.data.manual[x]=false;});en.data=M.normalize(en.data,defaultsOf(en.claim));paintEditor();commit();toast('Đã đồng bộ lại theo hồ sơ.');}
+    else if(k==='pickdate'&&en){pickDate(b);}
+    else if(k==='picktime'&&en){pickTime(b);}
     else if(k==='preview'){openPreview(b);}
     else if(k==='word'){sendWord(b);}
     else if(k==='resave'&&en){flush(en);}
   });
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.pv){e.stopPropagation();closePreview();}},true);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&tp){e.stopPropagation();closeTime();return;}
+    if(e.key==='Escape'&&S.pv){e.stopPropagation();closePreview();return;}
+    /* Enter ở ô một dòng → sang ô kế tiếp thay vì gửi form/đóng bàn phím sớm */
+    if(e.key==='Enter'&&!e.isComposing&&e.target.matches&&e.target.matches('#scPane input.sc-in')){
+      e.preventDefault();const all=[...document.querySelectorAll('#scPane .sc-in')],nx=all[all.indexOf(e.target)+1];
+      if(nx){nx.focus();try{nx.scrollIntoView({block:'center',behavior:'smooth'});}catch(_){}}else e.target.blur();
+    }
+  },true);
+  const grow=t=>{t.style.height='auto';t.style.height=Math.min(t.scrollHeight+2,360)+'px';};
+  const growAll=()=>requestAnimationFrame(()=>document.querySelectorAll('#scPane textarea.sc-ta').forEach(grow));
 
   /* ---------- vào/ra trang ---------- */
   function paint(b,a,force){
@@ -8472,7 +8549,7 @@ window.TascoScene=(()=>{
     if(force||!b.querySelector('.sc-root')){b.innerHTML=listShell();}
     paintList();
   }
-  function reset(){ENT.forEach(en=>clearTimeout(en.t));ENT.clear();S.mode='list';S.cur=null;S.q='';S.n=PER;S.seq++;closePreview();M=null;modelP=null;docxFn=null;}
+  function reset(){ENT.forEach(en=>clearTimeout(en.t));ENT.clear();S.mode='list';S.cur=null;S.q='';S.n=PER;S.seq++;closePreview();closeTime();M=null;modelP=null;docxFn=null;}
   return {paint,reset};
 })();
 </script>
