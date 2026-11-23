@@ -8728,6 +8728,15 @@ window.TascoAsk=(()=>{
   /* ---------- khung trang ---------- */
   function shell(){
     host.innerHTML='<div class="ak-root" data-ak-root><div data-ak-top></div><div class="ak-thread" data-ak-thread aria-live="polite"></div><div class="ak-comp-wrap"><button type="button" class="ak-jump" data-ak="jump" data-ak-jump aria-label="Xuống cuối cuộc trò chuyện" title="Xuống cuối">'+IC.chev+'</button><div class="ak-comp" data-ak-comp></div></div></div>';
+    watchComp();
+  }
+  // Ô chat cố định ở đáy: đo chiều cao thật để trang luôn chừa đủ chỗ phía dưới (nội dung cuối không bị che)
+  let compRO=null;
+  function watchComp(){
+    const w=document.querySelector('.ak-comp-wrap');if(!w||!window.ResizeObserver)return;
+    if(compRO)compRO.disconnect();
+    compRO=new ResizeObserver(()=>{const h=Math.ceil(w.getBoundingClientRect().height);if(h>0)document.documentElement.style.setProperty('--ak-comp-h',h+'px');});
+    compRO.observe(w);
   }
   function paintAll(){
     if(!live())return;
@@ -8993,7 +9002,9 @@ html.dark .ak-note.is-error :is(b,.ak-note-ico){color:#f0a08a}
 .ak-idea svg{flex:none;width:30px;height:30px;padding:7px;border-radius:50%;background:var(--ws-soft);color:var(--ws-accent-text)}
 .ak-idea:active{transform:scale(.985);border-color:var(--app-teal)}
 /* ô nhập nổi */
-.ak-comp-wrap{position:sticky;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:6;margin:6px -14px 0;padding:22px 14px 4px;background:linear-gradient(to top,var(--ws-bg) 58%,transparent)}
+.ak-comp-wrap{position:fixed;left:0;right:0;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:60;box-sizing:border-box;width:min(100%,600px);margin:0 auto;padding:22px 14px 4px;background:linear-gradient(to top,var(--ws-bg) 58%,transparent);pointer-events:none}
+.ak-comp-wrap>*{pointer-events:auto}
+#askSection .ak-root{padding-bottom:calc(var(--ak-comp-h,128px) + 12px)}
 .ak-comp{display:flex;flex-direction:column;gap:2px;padding:10px 10px 8px 16px;border:1px solid var(--ws-line);border-radius:26px;background:var(--ws-surface);box-shadow:0 14px 34px rgba(24,48,86,.18);transition:border-color .18s,box-shadow .18s}
 html.dark .ak-comp{box-shadow:0 14px 34px rgba(0,0,0,.4)}
 .ak-comp:focus-within{border-color:var(--app-teal);box-shadow:0 14px 34px rgba(24,48,86,.18),0 0 0 3px color-mix(in srgb,var(--app-teal) 24%,transparent)}
@@ -9114,8 +9125,7 @@ html[data-tasco-page=ask]{background:var(--app-navy)}
 
 /* đang gõ: ẩn thanh dưới, ô nhập hạ sát đáy */
 html.kb-open .tasco-workspace #bottomNav.ws-bottom-nav,html.kb-open #bottomNav.ws-bottom-nav{transform:translate(-50%,120%)!important;opacity:0!important;pointer-events:none!important}
-html.kb-open .ak-comp-wrap{position:fixed;left:50%;right:auto;bottom:0;width:min(100%,600px);margin:0;padding:20px 14px 8px;transform:translateX(-50%);z-index:60}
-html.kb-open #askSection .ak-root{padding-bottom:128px}
+html.kb-open .ak-comp-wrap{bottom:0;padding:20px 14px 8px}
 html.kb-open .tasco-workspace #mainApp[data-shell][data-page=ask]{padding-bottom:0!important}
 html.kb-open #askSection .ak-thread{min-height:0}
 /* che phần chữ chạy đè lên đồng hồ/pin khi cuộn */
@@ -9124,7 +9134,6 @@ html.kb-open #askSection .ws-journey-note{display:none}
 
 .ak-agy-fetch{width:100%;margin-top:10px}.ak-agy .ak-agy-n{margin:8px 0 0}
 
-.ak-comp-wrap{position:sticky}
 .ak-jump{position:absolute;right:20px;top:-22px;z-index:2;width:42px;height:42px;display:grid;place-items:center;padding:0;border:1px solid var(--ws-line);border-radius:50%;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 4px 12px rgba(24,48,86,.18);cursor:pointer;-webkit-tap-highlight-color:transparent;opacity:0;pointer-events:none;transition:opacity .18s}
 .ak-jump svg{width:20px;height:20px;transition:transform .28s cubic-bezier(.3,.7,.2,1)}
 .ak-jump.is-on{opacity:1;pointer-events:auto}
@@ -18561,6 +18570,19 @@ document.addEventListener('visibilitychange',function(){
   }
 });
 window.addEventListener('pagehide',function(){if(native&&cfg.on)stamp();});
+/* Giữ vị trí cuộn khi app xuống nền: lớp che riêng tư đặt body{overflow:hidden}, iOS đưa trang về đầu → ghi nhớ rồi trả lại khi hết che/khoá */
+(function(){
+  var lastY=0,saved=null,rootEl=document.documentElement;
+  function covered(){return rootEl.classList.contains('tasco-cover')||rootEl.classList.contains('tasco-locked');}
+  window.addEventListener('scroll',function(){if(!covered())lastY=window.scrollY||0;},{passive:true});
+  new MutationObserver(function(){
+    if(covered()){if(saved===null)saved=lastY;return;}
+    if(saved===null)return;
+    var y=saved;saved=null;if(y<=0)return;
+    function put(){if(Math.abs((window.scrollY||0)-y)>2)window.scrollTo(0,y);}
+    requestAnimationFrame(function(){put();requestAnimationFrame(put);});setTimeout(put,250);
+  }).observe(rootEl,{attributes:true,attributeFilter:['class']});
+})();
 function beat(){if(native&&cfg.on&&document.visibilityState==='visible'&&!root.classList.contains('tasco-locked'))stamp();}
 seenTimer=setInterval(beat,8000);
 
