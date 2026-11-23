@@ -8450,6 +8450,14 @@ window.TascoAsk=(()=>{
     const ta=e.target.closest&&e.target.closest('#askSection [data-ak-input]');
     if(ta&&e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();send();}
   });
+  /* Bàn phím ảo: khi đang gõ, ẩn thanh điều hướng dưới để nó không bị đẩy lên trên bàn phím (áp dụng cho mọi trang). */
+  (()=>{
+    const root=document.documentElement;
+    const typing=el=>!!el&&el.nodeType===1&&el.matches('textarea,input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]):not([type=range]):not([type=file]):not([type=color]):not([type=date]):not([type=time]):not([type=month]):not([type=week]):not([type=datetime-local]),[contenteditable=""],[contenteditable=true]');
+    let t=0;
+    document.addEventListener('focusin',e=>{clearTimeout(t);if(typing(e.target))root.classList.add('kb-open');},true);
+    document.addEventListener('focusout',()=>{clearTimeout(t);t=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},160);},true);
+  })();
   return {paint,reset,leave:closeSheet};
 })();
 </script>
@@ -8648,6 +8656,10 @@ html[data-tasco-page=ask]{background:var(--app-navy)}
 .ak-doc-t{flex:1 1 auto;min-width:0}.ak-doc-t b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13.5px;line-height:1.4}
 .ak-doc-t small{display:block;margin-top:2px;color:var(--ws-muted);font-size:11.5px}
 .ak-docs-foot{margin-top:14px}.ak-docs-foot .dt-btn{width:100%}
+
+/* đang gõ: ẩn thanh dưới, ô nhập hạ sát đáy */
+html.kb-open .tasco-workspace #bottomNav.ws-bottom-nav,html.kb-open #bottomNav.ws-bottom-nav{transform:translate(-50%,120%)!important;opacity:0!important;pointer-events:none!important}
+html.kb-open .ak-comp-wrap{bottom:8px}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
