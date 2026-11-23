@@ -8426,7 +8426,23 @@ window.TascoAsk=(()=>{
   function jump(){
     const b=$('[data-ak-jump]');if(!b)return;
     clearInterval(endTimer);endTimer=0;   // đang giữ ở cuối thì thôi
-    const max=Math.max(0,document.documentElement.scrollHeight-innerHeight);window.scrollTo(0,b.classList.contains('is-up')?0:max);
+    const max=Math.max(0,document.documentElement.scrollHeight-innerHeight);glide(b.classList.contains('is-up')?0:max);
+  }
+  // Cuộn có hiệu ứng nhưng tự điều khiển từng khung hình (ease-out, 320–650ms tuỳ quãng đường) thay cho cuộn mượt gốc của trình duyệt trên trang rất dài; chạm/lăn thì dừng ngay.
+  let glideRaf=0;
+  function glide(to){
+    cancelAnimationFrame(glideRaf);glideRaf=0;
+    const from=window.scrollY||0,d=to-from;
+    if(Math.abs(d)<4||(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)){window.scrollTo(0,to);return;}
+    const dur=Math.min(650,Math.max(320,Math.abs(d)*0.35)),t0=performance.now();
+    const stop=()=>{cancelAnimationFrame(glideRaf);glideRaf=0;window.removeEventListener('touchstart',stop,true);window.removeEventListener('wheel',stop,true);};
+    window.addEventListener('touchstart',stop,{capture:true,passive:true,once:true});window.addEventListener('wheel',stop,{capture:true,passive:true,once:true});
+    const step=now=>{
+      const k=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-k,3);   // easeOutCubic
+      window.scrollTo(0,from+d*e);
+      if(k<1&&glideRaf)glideRaf=requestAnimationFrame(step);else stop();
+    };
+    glideRaf=requestAnimationFrame(step);
   }
   const onAsk=()=>document.getElementById('mainApp')?.dataset.page==='ask';
   let endTimer=0;
