@@ -7951,7 +7951,7 @@ window.TascoAsk=(()=>{
   const toast=t=>{const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3400);};
 
   let api=null,host=null,B=null,bundleP=null,tick=0,sheet=null;
-  const fresh=()=>({uid:'',ready:false,err:'',kind:'ask',chats:[],activeId:'',messages:[],usage:null,deep:true,lib:false,cfg:null,keys:null,libInfo:null,pin:[],docs:null,pinQ:'',draft:'',busy:false,status:'',since:0,open:Object.create(null),ctl:null,gen:0,deepOnce:false,att:[],attBusy:0,attGen:0,prev:Object.create(null)});
+  const fresh=()=>({uid:'',ready:false,err:'',kind:'ask',chats:[],activeId:'',messages:[],usage:null,deep:true,lib:false,cfg:null,keys:null,libInfo:null,pin:[],docs:null,pinQ:'',draft:'',busy:false,status:'',since:0,open:Object.create(null),ctl:null,gen:0,deepOnce:false,att:[],attBusy:0,attGen:0,prev:Object.create(null),needEnd:true});
   let S=fresh();
   const me=()=>api?.me?.()||{uid:'',email:''};
   const keyChats=()=>LS+'chats_'+(S.uid||'anon'),keyPrefs=()=>LS+'prefs_'+(S.uid||'anon');
@@ -8409,6 +8409,24 @@ window.TascoAsk=(()=>{
   function startTick(){stopTick();tick=setInterval(()=>{const n=$('[data-ak-secs]');if(n&&live())n.textContent=fmtSecs(elapsed());},1000);}
   function stopTick(){clearInterval(tick);tick=0;}
   const scrollBottom=()=>{const el=$('[data-ak-busy]')||$('[data-ak-thread]');if(el&&live())requestAnimationFrame(()=>el.scrollIntoView({block:'center',behavior:'smooth'}));};
+  // Vào lại trang AI (hoặc đổi tab/mở cuộc khác): đưa thẳng tới cuối cuộc trò chuyện. Thử lại vài lần vì khung trang có thể tự cuộn lên đầu sau khi vẽ.
+  const onAsk=()=>document.getElementById('mainApp')?.dataset.page==='ask';
+  let endTimer=0;
+  function scrollToEnd(){
+    if(!live())return;
+    clearInterval(endTimer);
+    const gen=S.gen;let tick=0;
+    const stopNow=()=>{clearInterval(endTimer);endTimer=0;window.removeEventListener('touchstart',stopNow,true);window.removeEventListener('wheel',stopNow,true);};
+    window.addEventListener('touchstart',stopNow,{capture:true,passive:true,once:true});window.addEventListener('wheel',stopNow,{capture:true,passive:true,once:true});
+    endTimer=setInterval(()=>{
+      tick++;
+      if(!live()||S.gen!==gen||tick>25){stopNow();return;}
+      if(!onAsk())return;   // trang chưa chuyển hẳn sang AI: đợi
+      S.needEnd=false;
+      const end=document.documentElement.scrollHeight-innerHeight;
+      if(Math.abs((window.scrollY||0)-end)>4)window.scrollTo(0,end+8);   // khung trang đôi khi tự cuộn lại lên đầu sau khi vẽ: giữ ở cuối tới khi người dùng chạm/cuộn
+    },100);
+  }
   function scrollToLastAnswer(){
     if(!live())return;
     const nodes=host.querySelectorAll('[data-ak-msg]'),last=nodes[nodes.length-1];
@@ -8496,6 +8514,7 @@ window.TascoAsk=(()=>{
       return;
     }
     paintTop();paintThread();paintComposer(true);
+    if(S.needEnd&&S.messages.length)scrollToEnd();
   }
   async function init(){
     const u=me();
@@ -8534,7 +8553,7 @@ window.TascoAsk=(()=>{
     if(cite){const msg=cite.closest('[data-ak-msg]');if(msg)sourceSheet(msg.dataset.akMsg,cite.dataset.olQaCite);return;}
     const b=e.target.closest('#askSection [data-ak],.ak-sheet-bg [data-ak]');if(!b)return;
     const k=b.dataset.ak;
-    if(k==='kind'){const v=b.dataset.v;if(v===S.kind||S.busy)return;openKind(v);savePrefs();paintTop();paintThread();paintComposer(true);}
+    if(k==='kind'){const v=b.dataset.v;if(v===S.kind||S.busy)return;openKind(v);savePrefs();paintTop();paintThread();paintComposer(true);scrollToEnd();}
     else if(k==='deep'){S.deep=!S.deep;savePrefs();paintTop();}
     else if(k==='lib'){S.lib=!S.lib;savePrefs();paintTop();}
     else if(k==='model')modelSheet();
@@ -8605,7 +8624,7 @@ window.TascoAsk=(()=>{
     document.addEventListener('focusout',()=>{clearTimeout(t);t=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},160);},true);
   })();
   window.addEventListener('scroll',()=>document.documentElement.classList.toggle('ak-scrolled',(window.scrollY||0)>24),{passive:true});
-  return {paint,reset,leave:closeSheet};
+  return {paint,reset,leave:()=>{closeSheet();S.needEnd=true;}};
 })();
 </script>
 <style id="tascoAskStyles">
