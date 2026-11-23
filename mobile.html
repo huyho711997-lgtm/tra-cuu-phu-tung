@@ -8026,8 +8026,11 @@ window.TascoAsk=(()=>{
   }
 
   /* ---------- mô hình & khoá ---------- */
-  const ORDER_OK=e=>e&&e.provider!=='antigravity';   // Antigravity chạy qua công cụ cục bộ trên máy tính → không dùng trên điện thoại
   function cfg(){return S.cfg||(S.cfg=B.Models.load());}
+  // Antigravity chỉ dùng được trên điện thoại khi đã khai báo địa chỉ HTTPS Tailscale (*.ts.net) của máy trung gian; mặc định 127.0.0.1 là chính điện thoại nên bị ẩn.
+  const agyBase=()=>{try{const g=cfg().providers&&cfg().providers.antigravity;return (g&&B.Models.normalizeAntigravityBase(g.base))||'';}catch(_){return '';}};
+  const ORDER_OK=e=>e&&(e.provider!=='antigravity'||!!agyBase());
+  let tieredFailedAt=0;
   function active(){
     const M=B.Models,c=cfg();let e=M.resolve(c);
     if(!ORDER_OK(e)){const first=M.entries(c).find(ORDER_OK);e=first?M.resolve(c,first.id):null;}
@@ -8039,7 +8042,7 @@ window.TascoAsk=(()=>{
   async function refreshKeys(){
     if(!B)return;
     const out={};
-    await Promise.all(B.Models.ORDER.map(async id=>{try{out[id]=!!(await B.Models.getKey(id));}catch(_){out[id]=false;}}));
+    await Promise.all(B.Models.ORDER.concat('antigravity').map(async id=>{try{out[id]=!!(await B.Models.getKey(id));}catch(_){out[id]=false;}}));
     S.keys=out;
   }
   const noKeyText=a=>'Chưa có khoá '+a.providerLabel+' trong tài khoản này. Hãy nhập khoá ở webapp giám định (Công văn AI → biểu tượng ⚙) — app dùng chung khoá theo tài khoản đăng nhập — hoặc chọn mô hình khác ở nút Mô hình.';
@@ -8049,11 +8052,21 @@ window.TascoAsk=(()=>{
     if(!a)throw new Error('Chưa có mô hình AI nào để dùng.');
     const apiKey=await B.Models.getKey(a.provider);
     if(!apiKey)throw new Error(noKeyText(a));
-    const thinking=!!extra.thinking&&a.profile.reasoning!=='none',ctl=S.ctl;
+    const thinking=!!extra.thinking&&a.profile.reasoning!=='none',ctl=S.ctl,M=B.Models;
+    let model=a.model,fellBack=false;
+    const limit=M.timeoutMs(a.provider,thinking);   // chỉ Antigravity có hạn chờ riêng cho từng lần gọi
+    const canTimeout=limit&&typeof AbortSignal.timeout==='function'&&typeof AbortSignal.any==='function';
+    const attemptSignal=()=>canTimeout?AbortSignal.any([ctl.signal,AbortSignal.timeout(limit)]):ctl.signal;
+    if(Date.now()-tieredFailedAt<600000&&M.fallbackModel(a.provider,model)){model=M.fallbackModel(a.provider,model);fellBack=true;}
     for(let attempt=0;;attempt++){
-      try{return await B.AI.call(request,{apiKey,model:a.model,signal:ctl.signal,onUsage:extra.onUsage,thinking,effort:extra.effort,maxTokens:thinking?16000:undefined,endpoint:a.endpoint,label:a.providerLabel,profile:a.profile});}
+      const signal=attemptSignal();
+      try{return await B.AI.call(request,{apiKey,model,signal,onUsage:extra.onUsage,thinking,effort:extra.effort,maxTokens:thinking?16000:undefined,endpoint:a.endpoint,label:a.providerLabel,profile:a.profile});}
       catch(error){
+        const timedOut=a.provider==='antigravity'&&signal.aborted&&!ctl.signal.aborted;
         if(ctl.signal.aborted)throw error;
+        const fb=!fellBack&&(timedOut||(error&&error.retryable&&attempt>=RETRY_WAITS.length))?M.fallbackModel(a.provider,model):'';
+        if(fb){fellBack=true;model=fb;attempt=-1;tieredFailedAt=Date.now();extra.onWait&&extra.onWait('Mô hình 3.8 Flash đang chậm/bận — tự chuyển sang Gemini 3 Flash…');continue;}
+        if(timedOut){const sec=Math.round(limit/1000);throw new Error(thinking?'Antigravity chưa trả kết quả suy luận sâu sau '+sec+' giây. Hãy thử lại, tắt Suy luận sâu hoặc chọn mô hình khác.':'Antigravity chưa trả lời sau '+sec+' giây — mô hình đang chậm hoặc bận. Hãy thử lại hoặc chọn mô hình khác.');}
         if(!(error&&error.retryable)||attempt>=RETRY_WAITS.length)throw error;
         for(let left=RETRY_WAITS[attempt];left>0;left--){extra.onWait&&extra.onWait(a.providerLabel+' đang bận — tự thử lại sau '+left+' giây…');await sleep(1000,ctl.signal);}
         extra.onWait&&extra.onWait(extra.resumeText||'');
@@ -8285,8 +8298,8 @@ window.TascoAsk=(()=>{
     const M=B.Models,c=cfg(),a=active();
     const list=M.entries(c).filter(ORDER_OK).filter(e=>e.id===(a&&a.id)||!['groq','custom'].includes(e.provider)||(S.keys&&S.keys[e.provider]));
     openSheet('Mô hình AI','<div class="ak-models">'+list.map(e=>{const has=S.keys?!!S.keys[e.provider]:true,on=a&&e.id===a.id;
-      return '<button type="button" class="ak-model'+(on?' is-on':'')+'" data-ak="pick" data-id="'+esc(e.id)+'"><span><b>'+esc(e.label)+'</b><small>'+(has?'Đã có khoá trong tài khoản':'Chưa có khoá — nhập ở webapp giám định')+'</small></span>'+(on?IC.check:'')+'</button>';}).join('')
-      +'</div><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
+      return '<button type="button" class="ak-model'+(on?' is-on':'')+'" data-ak="pick" data-id="'+esc(e.id)+'"><span><b>'+esc(e.label)+'</b><small>'+(e.provider==='antigravity'?'Qua máy trung gian Tailscale của bạn':has?'Đã có khoá trong tài khoản':'Chưa có khoá — nhập ở webapp giám định')+'</small></span>'+(on?IC.check:'')+'</button>';}).join('')
+      +'</div><div class="ak-agy"><b>Antigravity (máy trung gian riêng)</b><p class="ak-hint">Cần bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian (dạng https://ten-may.ten-mang.ts.net). Địa chỉ chỉ lưu trên điện thoại này.</p><input type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ</button>':'')+'</div></div><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
   }
   function historySheet(){
     const rows=kindChats(S.kind==='chat');
@@ -8349,6 +8362,14 @@ window.TascoAsk=(()=>{
     else if(k==='lib'){S.lib=!S.lib;savePrefs();paintTop();}
     else if(k==='model')modelSheet();
     else if(k==='pick'){const c=cfg();c.selected=b.dataset.id;S.cfg=B.Models.save(c);closeSheet();paintTop();}
+    else if(k==='agysave'||k==='agyclear'){
+      const inp=document.querySelector('.ak-sheet-bg [data-ak-agy]'),raw=k==='agyclear'?'':(inp?inp.value.trim():'');
+      const base=raw?B.Models.normalizeAntigravityBase(raw):'';
+      if(raw&&!base){toast('Địa chỉ phải là HTTPS Tailscale (*.ts.net), không kèm tài khoản, mật khẩu hay tham số.');return;}
+      const c=cfg();c.providers=c.providers||{};c.providers.antigravity={base};
+      if(!base&&/^antigravity:/.test(c.selected||''))c.selected='';
+      S.cfg=B.Models.save(c);toast(base?'Đã lưu địa chỉ Antigravity.':'Đã gỡ địa chỉ Antigravity.');modelSheet();paintTop();
+    }
     else if(k==='history')historySheet();
     else if(k==='open'){if(S.busy){toast('Đợi AI trả lời xong rồi mở cuộc khác.');return;}openChat(b.dataset.id);savePrefs();closeSheet();paintTop();paintThread();paintComposer(true);scrollToLastAnswer();}
     else if(k==='del'){const id=b.dataset.id;if(S.busy&&id===S.activeId){toast('Đang trả lời — hãy dừng trước khi xoá.');return;}removeChat(id);historySheet();paintTop();paintThread();paintComposer(true);}
@@ -8494,6 +8515,8 @@ html[data-tasco-page=ask]{background:var(--app-navy)}
 #askSection .ws-journey-heading p{max-width:236px;font-size:12px;line-height:1.65}
 #askSection .ws-journey-art{width:138px;right:-12px;bottom:34px;opacity:.4;transform:rotate(-8deg)}
 .tasco-workspace #askSection .rc-panel{margin:-28px 14px 0;padding:14px;border-radius:26px;border-color:var(--ws-line)}
+
+.ak-agy{margin-top:14px;padding:12px 14px;border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-bg)}.ak-agy b{font-size:13.5px}.ak-agy .ak-hint{margin:4px 0 10px}.ak-agy-in{width:100%;min-height:44px;padding:0 12px;border:1px solid var(--ws-line);border-radius:12px;background:transparent!important;color:var(--ws-text);font:inherit;font-size:16px}.ak-agy-acts{display:flex;gap:8px;margin-top:10px}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
