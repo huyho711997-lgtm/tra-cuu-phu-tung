@@ -12542,10 +12542,14 @@ window.TascoCloud = (() => {
     }
     return state.clientInit;
   }
-  async function account({verify=true}={}) {
+  /* Xác thực qua mạng (getUser + kiểm quyền) mất 1–2 lượt gọi máy chủ. Khi chụp/tải nhiều ảnh liên tục, kết quả vừa xác thực còn mới
+     (maxAge ms) được dùng lại thay vì hỏi máy chủ cho từng ảnh; đổi tài khoản (authRevision) thì bỏ nhớ. */
+  let accountCache=null;
+  async function account({verify=true,maxAge=0}={}) {
     if(!hasAccess())throw new Error('CLOUD_FORBIDDEN');
     const api=await client(),authRevision=state.authRevision;
-    let user=verify?null:(state.config.sessionUser?.()||state.authUser);
+    let user=verify?null:(state.config.sessionUser?.()||state.authUser),fresh=false;
+    if(verify&&maxAge>0&&accountCache&&accountCache.rev===authRevision&&Date.now()-accountCache.at<maxAge){user=accountCache.user;fresh=true;}
     if(!user){
       const result=await waitFor(()=>api.auth.getUser(),10000,'Phiên Cloud chưa phản hồi. Tải lại trang rồi nhấn Thử kết nối lại.');
       if(result.error){if(result.error.name==='AuthSessionMissingError'||['session_not_found','refresh_token_not_found'].includes(result.error.code))throw new Error('CLOUD_LOGIN');throw result.error;}
@@ -12555,7 +12559,8 @@ window.TascoCloud = (() => {
     if(!user?.id)throw new Error('CLOUD_LOGIN');
     const expected=String(state.config.expectedEmail?.()||'').trim().toLowerCase();
     if(!expected||user.email?.toLowerCase()!==expected)throw new Error('CLOUD_ACCOUNT');
-    if(state.config.mode==='mobile'&&(!await state.config.authorize?.(user,{force:verify})||!hasAccess()))throw new Error('CLOUD_FORBIDDEN');
+    if(state.config.mode==='mobile'&&(!(fresh?true:await state.config.authorize?.(user,{force:verify}))||!hasAccess()))throw new Error('CLOUD_FORBIDDEN');
+    if(verify&&!fresh)accountCache={user,rev:authRevision,at:Date.now()};
     return user;
   }
   async function pendingFor(owner) {
@@ -12996,9 +13001,17 @@ window.TascoCloud = (() => {
   }
   function uploadReady(){try{return cloudReady()&&Boolean(config());}catch(_){return false;}}
   function sameTarget(record,target){return record.cloud?.ownerId===record.owner_id&&Boolean(record.cloud?.connectionId)&&['cloudName','preset','folder'].every(key=>(record.cloud[key]||'')===(target[key]||''));}
-  async function verifyUploadTarget(record){
+  let storageLoad=null,storageLoadAt=0;
+  /* Nạp lại kết nối lưu trữ (có gọi máy chủ). Nhiều ảnh cùng lúc dùng chung một lần nạp; vừa nạp xong trong maxAge ms thì khỏi nạp lại. */
+  function loadStorageFresh(maxAge=0){
+    if(maxAge>0&&Date.now()-storageLoadAt<maxAge)return Promise.resolve();
+    if(storageLoad)return storageLoad;
+    storageLoad=Promise.resolve(state.config.personalStorage.load({force:true})).then(()=>{storageLoadAt=Date.now();}).finally(()=>{storageLoad=null;});
+    return storageLoad;
+  }
+  async function verifyUploadTarget(record,maxAge=0){
     if(!state.config.personalStorage||record.upload)return;
-    await state.config.personalStorage.load({force:true});
+    await loadStorageFresh(maxAge);
     const target=config({id:record.owner_id,email:state.user?.email});
     if(!sameTarget(record,target))throw new Error('Kết nối lưu trữ đã đổi. Ảnh vẫn được giữ; chọn “Dùng kết nối hiện tại” cho ảnh chờ hoặc mở lại phần tải ảnh.');
   }
@@ -13681,27 +13694,45 @@ window.TascoCloud = (() => {
       if(address){record.address=address;record.location_status=typeof found==='object'&&found?.hasWard===false?'partial':'ready';record.geo=null;if(persist)await localStore('put',record).catch(()=>{});}
     }catch(_){}
   }
+  /* Hàng đợi tải lên chạy SONG SONG (UPLOAD_PARALLEL ảnh cùng lúc), mỗi luồng tự lấy ảnh kế tiếp, kể cả ảnh mới vào hàng đợi lúc đang tải
+     (chụp liên tục). Kiểm tra tài khoản/kết nối lưu trữ làm một lần cho cả đợt thay vì hỏi máy chủ lại ở từng ảnh; danh sách album chỉ nạp
+     lại khi có ảnh chờ thuộc album chưa đồng bộ. Gặp lỗi: các luồng đang chạy làm nốt ảnh của mình rồi dừng, không nhận thêm ảnh. */
   async function processQueue() {
-    if(state.uploading){state.rerun=true;return;}
+    if(state.uploading){state.rerun=true;try{state.kick?.();}catch(_){}return;}   // đang tải: đánh thức thêm luồng cho ảnh mới vào hàng đợi
     if(state.deleting||state.albumSaving||state.deleteDialog||state.albumDialog)return;state.uploading=true;state.rerun=false;let failed=false;state.syncedCount=state.syncedCount||0;
     let wake=null;try{wake=await navigator.wakeLock?.request?.('screen');}catch(_){wake=null;}  // iOS tạm dừng mạng khi màn hình tắt
     try {
-      const owner=await account();state.user=owner;
-      const catalog=await loadAlbums(owner.id,await pendingFor(owner.id));if((await account()).id!==owner.id)throw new Error('CLOUD_ACCOUNT');Object.assign(state,{albums:catalog.albums,albumMode:catalog.mode,albumNote:catalog.note});
-      for(const record of await pendingFor(owner.id)){
-        if(record.drive)continue;  /* bản gốc đã nằm trên Google Drive: không tải lại Cloudinary */
+      const owner=await account({maxAge:15000});state.user=owner;
+      let queue=await pendingFor(owner.id);
+      const albumKnown=id=>state.albums.some(row=>row.id===id&&row.owner_id===owner.id&&row.cloud_synced&&!row.needs_sync);
+      if(state.albumMode!=='cloud'||queue.some(row=>row.album_id&&!albumKnown(row.album_id))){
+        const catalog=await loadAlbums(owner.id,queue);if((await account({maxAge:15000})).id!==owner.id)throw new Error('CLOUD_ACCOUNT');Object.assign(state,{albums:catalog.albums,albumMode:catalog.mode,albumNote:catalog.note});
+      }
+      const claimed=new Set();let stop=false,paintTimer=0,shrinkLock=Promise.resolve();
+      const repaint=()=>{if(paintTimer)return;paintTimer=setTimeout(async()=>{paintTimer=0;try{state.pending=await pendingFor(owner.id);paintPending();}catch(_){}},350);};  // vẽ lại hàng chờ, gộp nhiều ảnh xong cùng lúc
+      async function nextRecord(){
+        for(let round=0;round<2;round++){
+          const record=queue.find(row=>!row.drive&&!claimed.has(row.id));   /* row.drive: bản gốc đã nằm trên Google Drive, không tải lại Cloudinary */
+          if(record){claimed.add(record.id);return record;}
+          if(round===0)queue=await pendingFor(owner.id);   // có ảnh mới vào hàng đợi trong lúc đang tải?
+        }
+        return null;
+      }
+      async function uploadOne(record){
         try{
-          if((await account()).id!==owner.id)break;
-          await verifyUploadTarget(record);
+          if((await account({verify:false})).id!==owner.id){stop=true;return;}   // đối chiếu cục bộ: tài khoản đã được xác thực ở đầu đợt
+          await verifyUploadTarget(record,20000);
           await fillAddress(record,true);
           if(!record.upload&&window.tascoIsVideo({blob:record.blob,file_name:record.file_name})&&(record.blob?.size||0)>=(window.TascoVideoCapture?.cloudMax||104857600)&&window.TascoVideoCapture?.shrink){
-            /* Cloudinary miễn phí từ chối video >= 100 MB: nén lại trên máy (người dùng bấm xác nhận), rồi mới tải. */
-            const small=await window.TascoVideoCapture.shrink(record.blob,{name:record.file_name});
-            if(!small){record.error='Video nặng '+Math.round(record.blob.size/1048576)+' MB, vượt giới hạn 100 MB của Cloud. Bấm Thử lại để nén video.';record.upload_error_code='VIDEO_TOO_LARGE';await localStore('put',record);notify(record.error);failed=true;break;}
+            /* Cloudinary miễn phí từ chối video >= 100 MB: nén lại trên máy (người dùng bấm xác nhận), rồi mới tải. Mỗi lần nén một video, không chồng hộp thoại. */
+            const run=shrinkLock.then(()=>window.TascoVideoCapture.shrink(record.blob,{name:record.file_name}));shrinkLock=run.catch(()=>{});
+            const small=await run;
+            if(!small){record.error='Video nặng '+Math.round(record.blob.size/1048576)+' MB, vượt giới hạn 100 MB của Cloud. Bấm Thử lại để nén video.';record.upload_error_code='VIDEO_TOO_LARGE';await localStore('put',record);notify(record.error);failed=true;stop=true;return;}
             record.blob=small;record.file_name=small.name;record.error='';record.upload_error_code='';await localStore('put',record);
           }
           if(!record.upload){record.upload=await upload(record);record.error='';record.upload_error_code='';await localStore('put',record);}
-          if((await account()).id!==owner.id)break;
+          if(stop&&failed)return;   // luồng khác đã gặp lỗi: giữ ảnh đã tải (record.upload) cho lần sau, không ghi thêm
+          if((await account({verify:false})).id!==owner.id){stop=true;return;}
           const api=await client(),row={id:record.id,owner_id:record.owner_id,title:record.title,address:record.address,location_status:record.location_status,captured_at:record.captured_at,source:'mobile_camera',cloud_name:record.cloud.cloudName,secure_url:record.upload.secure_url,public_id:record.upload.public_id,bytes:record.upload.bytes,width:record.upload.width,height:record.upload.height};
           if(record.origin)row.upload_origin=record.origin;
           if(record.category)row.category=record.category;
@@ -13709,13 +13740,24 @@ window.TascoCloud = (() => {
           const result=await cloudRequest(api.from(table).upsert(row,{onConflict:'id'}).select('id,owner_id'),'lưu ảnh vào thư viện');if(result.error)throw result.error;
           if(!Array.isArray(result.data)||!result.data.some(saved=>saved.id===row.id&&saved.owner_id===owner.id))throw new Error('Cloud chưa xác nhận ảnh. Bản ảnh vẫn được giữ để thử lại.');
           await localStore('delete',record.id);state.syncedCount++;
-        }catch(error){const presetError=String(error?.code||'').startsWith('CLOUDINARY_');record.error=presetError?error.message:message(error);record.upload_error_code=presetError?error.code:'';await localStore('put',record);notify(record.error);failed=true;break;}
-        state.pending=await pendingFor(owner.id);paintPending();  // chỉ vẽ lại phần hàng chờ, không vẽ lại cả lưới ảnh
+        }catch(error){const presetError=String(error?.code||'').startsWith('CLOUDINARY_');record.error=presetError?error.message:message(error);record.upload_error_code=presetError?error.code:'';try{await localStore('put',record);}catch(_){}if(!failed)notify(record.error);failed=true;stop=true;}
+        repaint();
       }
+      const running=new Set();
+      function spawn(){
+        if(stop||running.size>=UPLOAD_PARALLEL)return;
+        const worker=(async()=>{for(;;){if(stop)return;const record=await nextRecord();if(!record||stop)return;await uploadOne(record);}})();
+        running.add(worker);worker.finally(()=>running.delete(worker));
+      }
+      state.kick=spawn;   // ảnh mới vào hàng đợi lúc đang tải: gọi thêm một luồng (tối đa UPLOAD_PARALLEL)
+      for(let i=0;i<UPLOAD_PARALLEL;i++)spawn();
+      while(running.size)await Promise.all([...running]);
+      state.kick=null;
+      clearTimeout(paintTimer);paintTimer=0;state.pending=await pendingFor(owner.id);paintPending();
     }catch(error){failed=true;notify(['CLOUD_LOGIN','CLOUD_ACCOUNT'].includes(error.message)?'Đăng nhập đúng tài khoản Cloud để đồng bộ ảnh.':message(error));}
     /* Ảnh được đưa vào hàng đợi trong lúc đang tải (chụp liên tục) thì tải tiếp ngay; lỗi thì dừng, không lặp vô hạn. */
     finally{
-      state.uploading=false;try{wake?.release?.();}catch(_){}
+      state.kick=null;state.uploading=false;try{wake?.release?.();}catch(_){}
       if(state.rerun&&!failed){state.rerun=false;paintPending();processQueue();return;}  // còn ảnh mới trong hàng đợi: tải tiếp, chưa làm mới thư viện
       const synced=state.syncedCount;state.syncedCount=0;
       if(synced)notify('Đã lưu '+synced+' '+(synced>1?'mục':'ảnh')+' vào Cloud của tôi.');
@@ -13787,10 +13829,11 @@ window.TascoCloud = (() => {
        Dùng phiên + kết nối đã nạp sẵn trong máy; ảnh vào hàng đợi trên thiết bị và tự tải lên khi có mạng lại. */
     const offline=()=>navigator.onLine===false||/^(CLOUD_TIMEOUT)$/.test(error?.code||'')||/Failed to fetch|NetworkError|Load failed|network/i.test(String(error?.message||''));
     let error=null,owner;
+    const quick=options.silent?30000:0;   // chụp liên tục: dùng lại xác thực vừa có, không hỏi máy chủ cho từng ảnh
     if(navigator.onLine===false)owner=await account({verify:false});
-    else try{owner=await account();}catch(err){error=err;if(!offline()||['CLOUD_LOGIN','CLOUD_ACCOUNT','CLOUD_FORBIDDEN'].includes(err?.message))throw err;owner=await account({verify:false});}
+    else try{owner=await account({maxAge:quick});}catch(err){error=err;if(!offline()||['CLOUD_LOGIN','CLOUD_ACCOUNT','CLOUD_FORBIDDEN'].includes(err?.message))throw err;owner=await account({verify:false});}
     const cachedOnly=navigator.onLine===false||Boolean(error);
-    if(state.config.personalStorage){try{await state.config.personalStorage.load({force:!cachedOnly});}catch(err){if(!cachedOnly)throw err;}}
+    if(state.config.personalStorage){try{if(cachedOnly)await state.config.personalStorage.load({force:false});else await loadStorageFresh(options.silent?60000:0);}catch(err){if(!cachedOnly)throw err;}}
     const cloud=config(owner),records=[];let album=null;
     if(options.cloud&&!sameTarget({owner_id:owner.id,cloud:options.cloud},cloud))throw new Error('Kết nối đã thay đổi. Mở lại phần tải ảnh để chọn nơi lưu mới.');
     const recordKey=owner.id+':'+(albumContext?.albumId||'');
@@ -13806,7 +13849,7 @@ window.TascoCloud = (() => {
       if(!cached){const info=await metadata(file);cached={id:crypto.randomUUID(),owner_id:owner.id,title:String(info.title||title||album?.name||'Ảnh của tôi').slice(0,160),album_id:album?.id||null,album_name:album?.name||'',blob:file,file_name:file.name,captured_at:new Date(info.capturedAt).toISOString(),address:info.location?.address||window.cameraGpsText?.(info.location)||'',geo:info.location?.address?null:(window.cameraGpsPoint?.(info.location)||null),location_status:info.location?.addressStatus||info.location?.status||'unavailable',category:String(info.category||'').trim().slice(0,120)||null,origin:info.origin==='device_upload'?'device_upload':null,cloud,upload:null,error:''};if(direct){let saved=directRecords.get(file);if(!saved){saved=new Map();directRecords.set(file,saved);}saved.set(key,cached);}}
       records.push(cached);if(direct&&!cached.confirmed)unsavedDirect.add(cached);
     }
-    if((await account({verify:!cachedOnly})).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Hãy đăng nhập lại trước khi lưu ảnh.');
+    if((await account({verify:!cachedOnly,maxAge:quick})).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Hãy đăng nhập lại trước khi lưu ảnh.');
     if(direct){await saveDirect(records,owner.id,options);notify('Đã lưu '+records.length+' ảnh'+(album?' vào album “'+album.name+'”':' vào Cloud')+'.');await refresh();return;}
     await storeBatch(records,album);
     if(options.silent){if(!cachedOnly)processQueue();else{state.pending=await pendingFor(owner.id);try{paintPending();}catch(_){}}return records.map(row=>row.id);}
