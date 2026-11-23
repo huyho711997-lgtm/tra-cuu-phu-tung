@@ -8037,7 +8037,7 @@ window.TascoAsk=(()=>{
   // Antigravity chỉ dùng được trên điện thoại khi đã khai báo địa chỉ HTTPS Tailscale (*.ts.net) của máy trung gian; mặc định 127.0.0.1 là chính điện thoại nên bị ẩn.
   const agyBase=()=>{try{const g=cfg().providers&&cfg().providers.antigravity;return (g&&B.Models.normalizeAntigravityBase(g.base))||'';}catch(_){return '';}};
   const ORDER_OK=e=>e&&(e.provider!=='antigravity'||!!agyBase());
-  let tieredFailedAt=0;
+  const failedAt=Object.create(null);   // mô hình Antigravity nào vừa thất bại hẳn → 10 phút tới dùng thẳng mô hình dự phòng
   function active(){
     const M=B.Models,c=cfg();let e=M.resolve(c);
     if(!ORDER_OK(e)){const first=M.entries(c).find(ORDER_OK);e=first?M.resolve(c,first.id):null;}
@@ -8061,10 +8061,10 @@ window.TascoAsk=(()=>{
     if(!apiKey)throw new Error(noKeyText(a));
     const thinking=!!extra.thinking&&a.profile.reasoning!=='none',ctl=S.ctl,M=B.Models;
     let model=a.model,fellBack=false;
-    const limit=M.timeoutMs(a.provider,thinking);   // chỉ Antigravity có hạn chờ riêng cho từng lần gọi
+    const limit=M.timeoutMs(a.provider,thinking,a.model);   // chỉ Antigravity có hạn chờ riêng cho từng lần gọi
     const canTimeout=limit&&typeof AbortSignal.timeout==='function'&&typeof AbortSignal.any==='function';
     const attemptSignal=()=>canTimeout?AbortSignal.any([ctl.signal,AbortSignal.timeout(limit)]):ctl.signal;
-    if(Date.now()-tieredFailedAt<600000&&M.fallbackModel(a.provider,model)){model=M.fallbackModel(a.provider,model);fellBack=true;}
+    if(Date.now()-(failedAt[model]||0)<600000&&M.fallbackModel(a.provider,model)){model=M.fallbackModel(a.provider,model);fellBack=true;}
     for(let attempt=0;;attempt++){
       const signal=attemptSignal();
       try{return await B.AI.call(request,{apiKey,model,signal,onUsage:extra.onUsage,thinking,effort:extra.effort,maxTokens:thinking?16000:undefined,endpoint:a.endpoint,label:a.providerLabel,profile:a.profile});}
@@ -8073,7 +8073,7 @@ window.TascoAsk=(()=>{
         if(ctl.signal.aborted)throw error;
         if(a.provider==='antigravity'&&error&&/^Không kết nối được/.test(error.message||'')&&!/allowedOrigins/.test(error.message))error.message+=' Nếu Tailscale đã bật mà web vẫn dùng được: cầu nối trên máy tính chưa cho phép nguồn của app — thêm "'+location.origin+'" vào allowedOrigins trong local-settings.json (kèm nguồn cũ của web) rồi khởi động lại cầu nối.';
         const fb=!fellBack&&(timedOut||(error&&error.retryable&&attempt>=RETRY_WAITS.length))?M.fallbackModel(a.provider,model):'';
-        if(fb){fellBack=true;model=fb;attempt=-1;tieredFailedAt=Date.now();extra.onWait&&extra.onWait('Mô hình 3.8 Flash đang chậm/bận — tự chuyển sang Gemini 3 Flash…');continue;}
+        if(fb){failedAt[model]=Date.now();fellBack=true;const was=model;model=fb;attempt=-1;extra.onWait&&extra.onWait('Mô hình '+was+' đang chậm/bận — tự chuyển sang '+fb+'…');continue;}
         if(timedOut){const sec=Math.round(limit/1000);throw new Error(thinking?'Antigravity chưa trả kết quả suy luận sâu sau '+sec+' giây. Hãy thử lại, tắt Suy luận sâu hoặc chọn mô hình khác.':'Antigravity chưa trả lời sau '+sec+' giây — mô hình đang chậm hoặc bận. Hãy thử lại hoặc chọn mô hình khác.');}
         if(!(error&&error.retryable)||attempt>=RETRY_WAITS.length)throw error;
         for(let left=RETRY_WAITS[attempt];left>0;left--){extra.onWait&&extra.onWait(a.providerLabel+' đang bận — tự thử lại sau '+left+' giây…');await sleep(1000,ctl.signal);}
@@ -8309,7 +8309,7 @@ window.TascoAsk=(()=>{
   /* ---------- giao diện ---------- */
   const $=(s,r)=>(r||host||document).querySelector(s);
   const live=()=>host&&host.isConnected;
-  function shortModel(){const a=active();return a?a.providerLabel.replace(/^Google\s+/,'').replace(/\s*\(.*\)$/,''):'Chọn mô hình';}
+  function shortModel(){const a=active();if(a&&a.provider==='antigravity')return a.model;return a?a.providerLabel.replace(/^Google\s+/,'').replace(/\s*\(.*\)$/,''):'Chọn mô hình';}
   function topHtml(){
     const ask=S.kind==='ask';
     const usage=S.usage&&S.usage.calls?B.AI.formatTokens(S.usage.total)+' token':'';
@@ -8475,7 +8475,7 @@ window.TascoAsk=(()=>{
     const list=M.entries(c).filter(ORDER_OK).filter(e=>e.id===(a&&a.id)||!['groq','custom'].includes(e.provider)||(S.keys&&S.keys[e.provider]));
     openSheet('Mô hình AI','<div class="ak-models">'+list.map(e=>{const has=S.keys?!!S.keys[e.provider]:true,on=a&&e.id===a.id;
       return '<button type="button" class="ak-model'+(on?' is-on':'')+'" data-ak="pick" data-id="'+esc(e.id)+'"><span><b>'+esc(e.label)+'</b><small>'+(e.provider==='antigravity'?'Qua máy trung gian Tailscale của bạn':has?'Đã có khoá trong tài khoản':'Chưa có khoá — nhập ở webapp giám định')+'</small></span>'+(on?IC.check:'')+'</button>';}).join('')
-      +'</div><div class="ak-agy"><b>Antigravity (máy trung gian riêng)</b><p class="ak-hint">Cần bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian (dạng https://ten-may.ten-mang.ts.net). Địa chỉ này chỉ được lưu trên điện thoại.</p><input type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ</button>':'')+'</div></div><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
+      +'</div><div class="ak-agy"><b>Antigravity (máy trung gian riêng)</b><p class="ak-hint">Cần bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian (dạng https://ten-may.ten-mang.ts.net). Địa chỉ này chỉ được lưu trên điện thoại.</p><input type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ</button>':'')+'</div>'+(agyBase()?'<button type="button" class="dt-btn is-sm ak-agy-fetch" data-ak="agyfetch">Lấy danh sách mô hình từ Antigravity</button><p class="ak-hint ak-agy-n">'+(((cfg().providers.antigravity.models||[]).length)?'Đã lấy '+cfg().providers.antigravity.models.length+' mô hình từ máy trung gian.':'Đang dùng 2 mô hình mặc định. Bấm để dùng toàn bộ mô hình trong tài khoản Antigravity của bạn.')+'</p>':'')+'</div><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
   }
   function historySheet(){
     const rows=kindChats(S.kind==='chat');
@@ -8546,9 +8546,21 @@ window.TascoAsk=(()=>{
       const inp=document.querySelector('.ak-sheet-bg [data-ak-agy]'),raw=k==='agyclear'?'':(inp?inp.value.trim():'');
       const base=raw?B.Models.normalizeAntigravityBase(raw):'';
       if(raw&&!base){toast('Địa chỉ phải là HTTPS Tailscale (*.ts.net), không kèm tài khoản, mật khẩu hay tham số.');return;}
-      const c=cfg();c.providers=c.providers||{};c.providers.antigravity={base};
+      const c=cfg();c.providers=c.providers||{};c.providers.antigravity={base,models:(c.providers.antigravity&&c.providers.antigravity.models)||[]};
       if(!base&&/^antigravity:/.test(c.selected||''))c.selected='';
       S.cfg=B.Models.save(c);toast(base?'Đã lưu địa chỉ Antigravity.':'Đã gỡ địa chỉ Antigravity.');modelSheet();paintTop();
+    }
+    else if(k==='agyfetch'){
+      if(b.disabled)return;b.disabled=true;const old=b.textContent;b.textContent='Đang lấy…';
+      (async()=>{
+        try{
+          const c=cfg(),names=await B.Models.listModels('antigravity',c);
+          if(!names.length)throw new Error('Máy trung gian chưa liệt kê mô hình nào — hãy đăng nhập tài khoản Antigravity trong CLIProxyAPI trên máy tính.');
+          c.providers.antigravity=Object.assign({},c.providers.antigravity,{models:B.Models.parseAgyModels?B.Models.parseAgyModels(names):names});
+          S.cfg=B.Models.save(c);toast('Có '+B.Models.entries(S.cfg).filter(e=>e.provider==='antigravity').length+' mô hình Antigravity.');
+          modelSheet();paintTop();
+        }catch(err){toast((err&&err.message)||'Không lấy được danh sách mô hình.');b.disabled=false;b.textContent=old;}
+      })();
     }
     else if(k==='docs')docsSheet();
     else if(k==='pindoc'){const id=b.dataset.id;if(S.busy){toast('Đợi AI trả lời xong rồi đổi tài liệu.');return;}
@@ -8839,6 +8851,8 @@ html.kb-open #askSection .ak-thread{min-height:0}
 /* che phần chữ chạy đè lên đồng hồ/pin khi cuộn */
 html[data-tasco-page=ask].ak-scrolled::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--ws-bg) 86%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:90;pointer-events:none}
 html.kb-open #askSection .ws-journey-note{display:none}
+
+.ak-agy-fetch{width:100%;margin-top:10px}.ak-agy .ak-agy-n{margin:8px 0 0}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
