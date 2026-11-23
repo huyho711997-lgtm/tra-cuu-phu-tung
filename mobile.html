@@ -8659,7 +8659,9 @@ html[data-tasco-page=ask]{background:var(--app-navy)}
 
 /* đang gõ: ẩn thanh dưới, ô nhập hạ sát đáy */
 html.kb-open .tasco-workspace #bottomNav.ws-bottom-nav,html.kb-open #bottomNav.ws-bottom-nav{transform:translate(-50%,120%)!important;opacity:0!important;pointer-events:none!important}
-html.kb-open .ak-comp-wrap{bottom:8px}
+html.kb-open .ak-comp-wrap{position:fixed;left:50%;right:auto;bottom:0;width:min(100%,600px);margin:0;padding:20px 14px 8px;transform:translateX(-50%);z-index:60}
+html.kb-open #askSection .ak-root{padding-bottom:92px}
+html.kb-open #askSection .ws-journey-note{display:none}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
