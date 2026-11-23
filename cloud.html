@@ -535,6 +535,9 @@ const S = {
   viewer: { open: false, index: 0 },
 };
 const albumName = id => S.albums.find(a => a.id === id)?.name || '';
+/* Album sắp xếp theo ngày tạo, mới nhất lên đầu; cùng thời điểm thì theo tên. Ngày tạo thiếu/sai coi là cũ nhất. */
+const albumTime = a => { const t = Date.parse(a.created_at); return Number.isFinite(t) ? t : 0; };
+const byCreated = (a, b) => albumTime(b) - albumTime(a) || String(a.name || '').localeCompare(String(b.name || ''), 'vi');
 const isVideo = r => /\/video\/upload\//.test(r.secure_url || '');
 const cldURL = v => { try { const u = new URL(v); return u.protocol === 'https:' && u.hostname === 'res.cloudinary.com' ? u.href : ''; } catch (_) { return ''; } };
 function thumbURL(r, w, h = w) {
@@ -586,10 +589,10 @@ let loadToken = 0;
 async function loadAll({ silent = false } = {}) {
   const token = ++loadToken; S.loading = true; S.error = ''; if (!silent) { S.rows = []; S.loaded = 0; } paintBusy(); if (!silent) render();
   try {
-    const al = await sb.from('tasco_personal_photo_albums').select('id,name,created_at').eq('owner_id', S.user.id).order('name');
+    const al = await sb.from('tasco_personal_photo_albums').select('id,name,created_at').eq('owner_id', S.user.id).order('created_at', { ascending: false });
     if (al.error && !silent) throw al.error;
     if (token !== loadToken) return;
-    if (!al.error) S.albums = al.data || [];
+    if (!al.error) S.albums = (al.data || []).slice().sort(byCreated);
     try { const pl = await sb.from('tasco_capture_plans').select('plan_key,items,updated_at').eq('owner_id', S.user.id); if (!pl.error) S.plans = new Map((pl.data || []).map(r => [r.plan_key, { items: Array.isArray(r.items) ? r.items.map(String) : [], updated_at: r.updated_at }])); } catch (_) {}
     const rows = []; let from = 0;
     for (;;) {
@@ -939,7 +942,7 @@ async function createAlbum() {
     const now = new Date().toISOString(), row = { id: crypto.randomUUID(), owner_id: S.user.id, name, created_at: now, updated_at: now };
     const r = await sb.from('tasco_personal_photo_albums').insert(row).select('id,name,created_at'); if (r.error) throw r.error;
     if (!r.data?.some(x => x.id === row.id)) throw new Error('Cloud chưa xác nhận album mới. Tải lại rồi kiểm tra.');
-    S.albums = [...S.albums, { id: row.id, name, created_at: now }].sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+    S.albums = [...S.albums, { id: row.id, name, created_at: now }].sort(byCreated);
     let planNote = '';
     if (items.length) { try { await savePlan(row.id, items); } catch (e) { planNote = ' Album đã tạo nhưng chưa lưu được hạng mục — mở album và thêm lại.'; } }
     $('#albDlg')._ui.close(); render();
