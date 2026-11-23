@@ -8064,6 +8064,7 @@ window.TascoAsk=(()=>{
       catch(error){
         const timedOut=a.provider==='antigravity'&&signal.aborted&&!ctl.signal.aborted;
         if(ctl.signal.aborted)throw error;
+        if(a.provider==='antigravity'&&error&&/^Không kết nối được/.test(error.message||'')&&!/allowedOrigins/.test(error.message))error.message+=' Nếu Tailscale đã bật mà web vẫn dùng được: cầu nối trên máy tính chưa cho phép nguồn của app — thêm "'+location.origin+'" vào allowedOrigins trong local-settings.json (kèm nguồn cũ của web) rồi khởi động lại cầu nối.';
         const fb=!fellBack&&(timedOut||(error&&error.retryable&&attempt>=RETRY_WAITS.length))?M.fallbackModel(a.provider,model):'';
         if(fb){fellBack=true;model=fb;attempt=-1;tieredFailedAt=Date.now();extra.onWait&&extra.onWait('Mô hình 3.8 Flash đang chậm/bận — tự chuyển sang Gemini 3 Flash…');continue;}
         if(timedOut){const sec=Math.round(limit/1000);throw new Error(thinking?'Antigravity chưa trả kết quả suy luận sâu sau '+sec+' giây. Hãy thử lại, tắt Suy luận sâu hoặc chọn mô hình khác.':'Antigravity chưa trả lời sau '+sec+' giây — mô hình đang chậm hoặc bận. Hãy thử lại hoặc chọn mô hình khác.');}
