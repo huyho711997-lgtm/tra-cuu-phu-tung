@@ -21225,7 +21225,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
       var result;
       try {
         result = await CP.start({
-          position: st.position, toBack: true, aspectRatio: isVideo ? '16:9' : '4:3', aspectMode: isVideo ? 'contain' : 'cover', y: y,
+          position: st.position, toBack: true, aspectRatio: isVideo ? '16:9' : 'fill', aspectMode: isVideo ? 'contain' : 'cover', y: y,
           rotateWhenOrientationChanged: false, force: true,
           gridMode: pro.grid,
           captureResolution: { width: 4032, height: 3024 },
@@ -21243,7 +21243,8 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
       st.running = true;
       st.rect = { x: result.x, y: result.y, width: result.width, height: result.height };
       st.fitKey = startKey;
-      /* Ảnh dùng chế độ 'cover' và đặt khung đúng bằng vùng sẽ lưu (theo tỉ lệ đã chọn); video giữ khung 16:9 như cũ. */
+      /* Ảnh dùng 'fill' + 'cover': plugin KHÔNG co khung về 3:4 nữa mà lấp đúng vùng ta đặt (9:16, 1:1...), đồng thời tự cắt ảnh chụp theo đúng phần đang thấy.
+         Nếu để tỉ lệ số ('4:3') thì plugin luôn co khung về 3:4 giữa vùng, 9:16 bị teo hai bên. Video giữ khung 16:9 như cũ. */
       if (land || !isVideo) {
         try {
           var area = previewArea(isVideo);
