@@ -8428,28 +8428,17 @@ window.TascoAsk=(()=>{
   function jump(){
     const b=$('[data-ak-jump]');if(!b)return;
     clearInterval(endTimer);endTimer=0;   // đang giữ ở cuối thì thôi
-    const goTop=b.classList.contains('is-up');glide(goTop?0:()=>Math.max(0,document.documentElement.scrollHeight-innerHeight));
+    glide(b.classList.contains('is-up')?0:Math.max(0,document.documentElement.scrollHeight-innerHeight));
   }
-  // Cuộn có hiệu ứng, tự điều khiển từng khung hình: easeInOutCubic (êm lúc bắt đầu và lúc dừng), thời gian tăng theo căn bậc hai quãng đường (420–900ms),
-  // đích được đọc lại mỗi khung (ảnh/nội dung nạp muộn không làm lệch), không đọc layout nào khác trong lúc chạy. Chạm/lăn thì dừng ngay.
-  let glideRaf=0,gliding=false;
-  function glide(target){
-    cancelAnimationFrame(glideRaf);glideRaf=0;
-    const get=typeof target==='function'?target:()=>target,from=window.scrollY||0;
-    let to=get();const d0=to-from;
-    if(Math.abs(d0)<4||(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)){window.scrollTo(0,to);updateJump();return;}
-    const dur=Math.round(Math.min(900,Math.max(420,380+Math.sqrt(Math.abs(d0))*9)));
-    let t0=0;gliding=true;
-    const end=()=>{cancelAnimationFrame(glideRaf);glideRaf=0;gliding=false;window.removeEventListener('touchstart',end,true);window.removeEventListener('wheel',end,true);updateJump();};
-    window.addEventListener('touchstart',end,{capture:true,passive:true,once:true});window.addEventListener('wheel',end,{capture:true,passive:true,once:true});
-    const step=ts=>{
-      if(!gliding)return;
-      if(!t0)t0=ts;   // mốc thời gian lấy từ chính khung hình đầu tiên để không bị giật lùi
-      const k=Math.min(1,(ts-t0)/dur),e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
-      to=get();window.scrollTo(0,from+(to-from)*e);
-      if(k<1)glideRaf=requestAnimationFrame(step);else{window.scrollTo(0,get());end();}
-    };
-    glideRaf=requestAnimationFrame(step);
+  // Cuộn mượt bằng cơ chế gốc của iOS/WebKit (chạy ở luồng ghép hình, đúng cảm giác cuộn của hệ thống, không phụ thuộc JS từng khung hình).
+  // Chạm/vuốt thì hệ thống tự dừng. `gliding` chỉ để tạm không cập nhật nút trong lúc đang trượt; hết cuộn ~150ms thì cập nhật lại.
+  let gliding=false,glideT=0;
+  function glideDone(){gliding=false;clearTimeout(glideT);glideT=0;updateJump();}
+  function glide(to){
+    const from=window.scrollY||0;
+    if(Math.abs(to-from)<4||(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)){window.scrollTo(0,to);updateJump();return;}
+    gliding=true;clearTimeout(glideT);glideT=setTimeout(glideDone,1800);   // chốt an toàn nếu không có sự kiện cuộn nào
+    try{window.scrollTo({top:to,behavior:'smooth'});}catch(_){window.scrollTo(0,to);glideDone();}
   }
   const onAsk=()=>document.getElementById('mainApp')?.dataset.page==='ask';
   let endTimer=0;
@@ -8850,7 +8839,7 @@ window.TascoAsk=(()=>{
     document.addEventListener('focusout',()=>{clearTimeout(t);t=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},160);},true);
   })();
   let scRaf=0,scOn=false;
-  window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;const on=(window.scrollY||0)>24;if(on!==scOn){scOn=on;document.documentElement.classList.toggle('ak-scrolled',on);}updateJump();});},{passive:true});
+  window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;const on=(window.scrollY||0)>24;if(on!==scOn){scOn=on;document.documentElement.classList.toggle('ak-scrolled',on);}if(gliding){clearTimeout(glideT);glideT=setTimeout(glideDone,150);return;}updateJump();});},{passive:true});
   window.addEventListener('resize',updateJump);
   window.addEventListener('pagehide',()=>{if(S.voice)voiceCancel();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.voice&&S.voice.phase==='rec')voiceCancel();});
