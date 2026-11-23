@@ -8458,6 +8458,7 @@ window.TascoAsk=(()=>{
     document.addEventListener('focusin',e=>{clearTimeout(t);if(typing(e.target))root.classList.add('kb-open');},true);
     document.addEventListener('focusout',()=>{clearTimeout(t);t=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},160);},true);
   })();
+  window.addEventListener('scroll',()=>document.documentElement.classList.toggle('ak-scrolled',(window.scrollY||0)>24),{passive:true});
   return {paint,reset,leave:closeSheet};
 })();
 </script>
@@ -8660,7 +8661,11 @@ html[data-tasco-page=ask]{background:var(--app-navy)}
 /* đang gõ: ẩn thanh dưới, ô nhập hạ sát đáy */
 html.kb-open .tasco-workspace #bottomNav.ws-bottom-nav,html.kb-open #bottomNav.ws-bottom-nav{transform:translate(-50%,120%)!important;opacity:0!important;pointer-events:none!important}
 html.kb-open .ak-comp-wrap{position:fixed;left:50%;right:auto;bottom:0;width:min(100%,600px);margin:0;padding:20px 14px 8px;transform:translateX(-50%);z-index:60}
-html.kb-open #askSection .ak-root{padding-bottom:92px}
+html.kb-open #askSection .ak-root{padding-bottom:84px}
+html.kb-open .tasco-workspace #mainApp[data-shell][data-page=ask]{padding-bottom:0!important}
+html.kb-open #askSection .ak-thread{min-height:0}
+/* che phần chữ chạy đè lên đồng hồ/pin khi cuộn */
+html[data-tasco-page=ask].ak-scrolled::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--ws-bg) 86%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:90;pointer-events:none}
 html.kb-open #askSection .ws-journey-note{display:none}
 </style>
 <style id="tascoSceneStyles">
