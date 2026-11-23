@@ -8430,15 +8430,29 @@ window.TascoAsk=(()=>{
     clearInterval(endTimer);endTimer=0;   // đang giữ ở cuối thì thôi
     glide(b.classList.contains('is-up')?0:Math.max(0,document.documentElement.scrollHeight-innerHeight));
   }
-  // Cuộn mượt bằng cơ chế gốc của iOS/WebKit (chạy ở luồng ghép hình, đúng cảm giác cuộn của hệ thống, không phụ thuộc JS từng khung hình).
-  // Chạm/vuốt thì hệ thống tự dừng. `gliding` chỉ để tạm không cập nhật nút trong lúc đang trượt; hết cuộn ~150ms thì cập nhật lại.
-  let gliding=false,glideT=0;
-  function glideDone(){gliding=false;clearTimeout(glideT);glideT=0;updateJump();}
+  // Lên đầu / xuống cuối: KHÔNG trượt qua cả trang dài (trên iOS dễ làm WKWebView bỏ vẽ vùng cuộn → màn hình trống).
+  // Quãng xa: nhảy tức thì tới cách đích ~1 màn hình rồi mới trượt đoạn cuối (easeOutCubic, ~400–520ms). Xong thì "đánh thức" lại vùng vẽ.
+  let glideRaf=0,gliding=false;
+  const jumpTo=y=>{try{window.scrollTo({top:y,left:0,behavior:'instant'});}catch(_){window.scrollTo(0,y);}};
+  function glideDone(){gliding=false;cancelAnimationFrame(glideRaf);glideRaf=0;window.removeEventListener('touchstart',glideDone,true);window.removeEventListener('wheel',glideDone,true);updateJump();}
   function glide(to){
-    const from=window.scrollY||0;
-    if(Math.abs(to-from)<4||(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)){window.scrollTo(0,to);updateJump();return;}
-    gliding=true;clearTimeout(glideT);glideT=setTimeout(glideDone,1800);   // chốt an toàn nếu không có sự kiện cuộn nào
-    try{window.scrollTo({top:to,behavior:'smooth'});}catch(_){window.scrollTo(0,to);glideDone();}
+    cancelAnimationFrame(glideRaf);glideRaf=0;
+    let from=window.scrollY||0;const vh=window.innerHeight||700;
+    if(Math.abs(to-from)<4||(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)){jumpTo(to);updateJump();return;}
+    if(Math.abs(to-from)>vh*1.1){from=to+(from>to?1:-1)*Math.round(vh*.9);jumpTo(from);}
+    const d=to-from,dur=Math.round(Math.min(520,Math.max(400,380+Math.abs(d)*.12)));let t0=0;gliding=true;
+    window.addEventListener('touchstart',glideDone,{capture:true,passive:true,once:true});window.addEventListener('wheel',glideDone,{capture:true,passive:true,once:true});
+    const step=ts=>{
+      if(!gliding)return;
+      if(!t0)t0=ts;
+      const k=Math.min(1,(ts-t0)/dur),e=1-Math.pow(1-k,3);
+      jumpTo(from+d*e);
+      if(k<1){glideRaf=requestAnimationFrame(step);return;}
+      jumpTo(to);glideDone();
+      // đánh thức lớp vẽ gốc của WebKit: lệch 1px rồi trả lại (chỉ khi còn chỗ để lệch)
+      requestAnimationFrame(()=>{const y=window.scrollY||0;jumpTo(y>0?y-1:y+1);requestAnimationFrame(()=>jumpTo(y));});
+    };
+    glideRaf=requestAnimationFrame(step);
   }
   const onAsk=()=>document.getElementById('mainApp')?.dataset.page==='ask';
   let endTimer=0;
@@ -8839,7 +8853,7 @@ window.TascoAsk=(()=>{
     document.addEventListener('focusout',()=>{clearTimeout(t);t=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},160);},true);
   })();
   let scRaf=0,scOn=false;
-  window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;const on=(window.scrollY||0)>24;if(on!==scOn){scOn=on;document.documentElement.classList.toggle('ak-scrolled',on);}if(gliding){clearTimeout(glideT);glideT=setTimeout(glideDone,150);return;}updateJump();});},{passive:true});
+  window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;const on=(window.scrollY||0)>24;if(on!==scOn){scOn=on;document.documentElement.classList.toggle('ak-scrolled',on);}if(gliding)return;updateJump();});},{passive:true});
   window.addEventListener('resize',updateJump);
   window.addEventListener('pagehide',()=>{if(S.voice)voiceCancel();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.voice&&S.voice.phase==='rec')voiceCancel();});
