@@ -7937,6 +7937,7 @@ window.TascoAsk=(()=>{
     cpu:svg('<rect x="6.5" y="6.5" width="11" height="11" rx="2.5"/><path d="M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3M3.5 9.5h3M3.5 14.5h3M17.5 9.5h3M17.5 14.5h3"/>'),
     retry:svg('<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/>'),
     check:svg('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
+    mic:svg('<rect x="9" y="3" width="6" height="11.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6"/>'),
     warn:svg('<path d="M12 4 3 19.5h18z"/><path d="M12 10v4.5M12 17.2v.1"/>'),
     search:svg('<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>'),
     up:svg('<path d="M7 17 17 7M9 7h8v8"/>'),
@@ -7950,7 +7951,7 @@ window.TascoAsk=(()=>{
   const toast=t=>{const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3400);};
 
   let api=null,host=null,B=null,bundleP=null,tick=0,sheet=null;
-  const fresh=()=>({uid:'',ready:false,err:'',kind:'ask',chats:[],activeId:'',messages:[],usage:null,deep:true,lib:false,cfg:null,keys:null,libInfo:null,pin:[],docs:null,pinQ:'',draft:'',busy:false,status:'',since:0,open:Object.create(null),ctl:null,gen:0,deepOnce:false,att:[],attBusy:0,attGen:0,prev:Object.create(null),needEnd:true});
+  const fresh=()=>({uid:'',ready:false,err:'',kind:'ask',chats:[],activeId:'',messages:[],usage:null,deep:true,lib:false,cfg:null,keys:null,libInfo:null,pin:[],docs:null,pinQ:'',draft:'',busy:false,status:'',since:0,open:Object.create(null),ctl:null,gen:0,deepOnce:false,voice:null,att:[],attBusy:0,attGen:0,prev:Object.create(null),needEnd:true});
   let S=fresh();
   const me=()=>api?.me?.()||{uid:'',email:''};
   const keyChats=()=>LS+'chats_'+(S.uid||'anon'),keyPrefs=()=>LS+'prefs_'+(S.uid||'anon');
@@ -8392,7 +8393,7 @@ window.TascoAsk=(()=>{
     const el=$('[data-ak-comp]');if(!el||!live())return;
     const ta=el.querySelector('textarea');
     if(!ta){
-      el.innerHTML='<div class="ak-atts" data-ak-atts hidden></div><textarea data-ak-input rows="1" enterkeyhint="send" autocapitalize="sentences" placeholder="" aria-label="Nội dung câu hỏi"></textarea><div class="ak-row"><div class="ak-tools" data-ak-tools></div><button type="button" class="ak-send" data-ak="send" aria-label="Gửi câu hỏi">'+IC.send+'</button></div>'
+      el.innerHTML='<div class="ak-atts" data-ak-atts hidden></div><textarea data-ak-input rows="1" enterkeyhint="send" autocapitalize="sentences" placeholder="" aria-label="Nội dung câu hỏi"></textarea><div class="ak-row"><div class="ak-tools" data-ak-tools></div><button type="button" class="ak-mic" data-ak="mic" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói">'+IC.mic+'</button><button type="button" class="ak-send" data-ak="send" aria-label="Gửi câu hỏi">'+IC.send+'</button></div>'
         +'<input type="file" hidden data-ak-file="img" accept="image/*" multiple><input type="file" hidden data-ak-file="cam" accept="image/*" capture="environment"><input type="file" hidden data-ak-file="doc" accept=".pdf,.docx,.xlsx,.xls,.csv,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,text/csv" multiple>';
       return paintComposer(true);
     }
@@ -8401,7 +8402,8 @@ window.TascoAsk=(()=>{
     ta.disabled=!B||S.busy;
     const btn=el.querySelector('[data-ak=send],[data-ak=stop]');
     if(btn){btn.dataset.ak=S.busy?'stop':'send';btn.classList.toggle('is-stop',S.busy);btn.innerHTML=S.busy?IC.stop:IC.send;btn.setAttribute('aria-label',S.busy?'Dừng':'Gửi câu hỏi');}
-    paintAtts();
+    const mic=el.querySelector('[data-ak=mic]');if(mic)mic.disabled=!B||S.busy||!!S.voice;
+    paintAtts();paintVoice();
   }
   const autosize=ta=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,132)+'px';};
   function paintStatus(t){S.status=t;const n=$('[data-ak-status]');if(n&&live())n.textContent=t;}
@@ -8470,6 +8472,162 @@ window.TascoAsk=(()=>{
     if(!live())return;
     const nodes=host.querySelectorAll('[data-ak-msg]'),last=nodes[nodes.length-1];
     if(last)requestAnimationFrame(()=>window.scrollTo({top:Math.max(0,last.getBoundingClientRect().top+window.scrollY-72),behavior:'smooth'}));
+  }
+
+
+  /* ---------- nhập bằng giọng nói: ghi âm → WAV 16 kHz → Antigravity (Gemini) chép chữ, dự phòng khoá Gemini ---------- */
+  const VOICE_MAX=120,VOICE_BARS=30,TRANS_NONE='KHONG_CO_LOI';
+  const TRANS_SYS='Bạn là công cụ chép lời nói thành chữ (speech-to-text) tiếng Việt cho nghiệp vụ giám định, bồi thường bảo hiểm xe cơ giới. Hãy chép lại CHÍNH XÁC những gì người nói trong bản ghi âm: không thêm, không bớt, không trả lời, không giải thích, không dịch. Tự thêm dấu câu và viết hoa hợp lý. Giữ nguyên thuật ngữ chuyên môn (giám định, bồi thường, khấu hao, hợp đồng, Nghị định, điều, khoản…), viết biển số xe, số tiền, ngày tháng bằng chữ số (VD 47A-123.45, 15 triệu đồng, ngày 20/11). Chỉ trả về đúng phần chữ đã chép. Nếu không có lời nói nào nghe được, chỉ trả về đúng chuỗi '+TRANS_NONE+'.';
+  let rec=null;
+  const fmtClock=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  function paintVoice(){
+    const comp=$('[data-ak-comp]');if(!comp||!live())return;
+    let el=comp.querySelector('[data-ak-rec]');
+    const mic=comp.querySelector('[data-ak=mic]');if(mic)mic.disabled=!B||S.busy||!!S.voice;
+    if(!S.voice){if(el)el.remove();comp.classList.remove('is-rec');return;}
+    comp.classList.add('is-rec');
+    const phase=S.voice.phase;
+    if(el&&el.dataset.phase===phase)return;
+    if(!el){el=document.createElement('div');el.setAttribute('data-ak-rec','');comp.appendChild(el);}
+    el.dataset.phase=phase;el.className='ak-rec is-'+phase;
+    el.innerHTML=phase==='rec'
+      ?'<button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ ghi âm">'+IC.x+'</button><div class="ak-rec-mid"><div class="ak-wave" data-ak-wave>'+'<i></i>'.repeat(VOICE_BARS)+'</div><div class="ak-rec-t"><i class="ak-rec-dot" aria-hidden="true"></i><span data-ak-rect>0:00</span><em>Đang nghe — cứ nói tự nhiên</em></div></div><button type="button" class="ak-rec-ok" data-ak="micstop" aria-label="Xong — chuyển thành chữ">'+IC.check+'</button>'
+      :'<i class="ak-spin" aria-hidden="true"></i><div class="ak-rec-mid"><b>Đang chuyển thành chữ…</b><em data-ak-eng>'+esc(S.voice.engine||'Đang chọn bộ nhận dạng giọng nói')+'</em></div><button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ">'+IC.x+'</button>';
+  }
+  function voiceCleanup(){
+    if(!rec)return;
+    const r=rec;rec=null;
+    cancelAnimationFrame(r.raf);clearInterval(r.clock);
+    try{if(r.mr&&r.mr.state!=='inactive')r.mr.stop();}catch(_){}
+    try{r.stream.getTracks().forEach(t=>t.stop());}catch(_){}
+    try{r.ctx&&r.ctx.close&&r.ctx.close();}catch(_){}
+  }
+  function voiceCancel(){
+    if(rec)rec.cancelled=true;
+    if(S.voice&&S.voice.ctl)S.voice.ctl.abort();
+    voiceCleanup();S.voice=null;paintVoice();updateSend();
+    const mic=$('[data-ak=mic]');if(mic)mic.disabled=!B||S.busy;
+  }
+  async function voiceStart(){
+    if(!B||S.busy||S.voice)return;
+    if(!window.isSecureContext||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast('Thiết bị này chưa hỗ trợ ghi âm trong ứng dụng.');return;}
+    S.voice={phase:'rec'};paintVoice();const m0=$('[data-ak=mic]');if(m0)m0.disabled=true;
+    let stream;
+    try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});}
+    catch(e){S.voice=null;paintVoice();const m1=$('[data-ak=mic]');if(m1)m1.disabled=!B||S.busy;toast(/NotAllowed|Permission|denied/i.test((e&&e.name||'')+(e&&e.message||''))?'Chưa được cấp quyền micro. Vào Cài đặt iPhone → Tasco DLK → bật Micro.':'Không mở được micro. Hãy thử lại.');return;}
+    if(!S.voice||S.voice.phase!=='rec'||!live()){stream.getTracks().forEach(t=>t.stop());return;}   // người dùng đã huỷ/chuyển trang trong lúc chờ cấp quyền
+    const mime=['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+    let mr;try{mr=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);}catch(_){stream.getTracks().forEach(t=>t.stop());S.voice=null;paintVoice();toast('Không khởi động được ghi âm.');return;}
+    const r=rec={stream,mr,chunks:[],t0:Date.now(),peak:0,hist:new Array(VOICE_BARS).fill(0),cancelled:false,mime:mr.mimeType||mime||'audio/mp4'};
+    mr.ondataavailable=e=>{if(e.data&&e.data.size)r.chunks.push(e.data);};
+    mr.onstop=()=>{if(!r.cancelled&&r.finish)r.finish();};
+    try{
+      const Ctx=window.AudioContext||window.webkitAudioContext;r.ctx=new Ctx();if(r.ctx.state==='suspended')r.ctx.resume().catch(()=>{});
+      const src=r.ctx.createMediaStreamSource(stream);r.an=r.ctx.createAnalyser();r.an.fftSize=512;src.connect(r.an);r.buf=new Uint8Array(r.an.fftSize);
+    }catch(_){r.an=null;}
+    mr.start(250);
+    let last=0;
+    const frame=ts=>{
+      if(rec!==r)return;
+      if(ts-last>=55){
+        last=ts;let lv=0;
+        if(r.an){r.an.getByteTimeDomainData(r.buf);let s=0;for(let i=0;i<r.buf.length;i++){const v=(r.buf[i]-128)/128;s+=v*v;}lv=Math.min(1,Math.sqrt(s/r.buf.length)*3.2);}
+        r.peak=Math.max(r.peak,lv);r.hist.push(lv);r.hist.shift();
+        const bars=document.querySelectorAll('[data-ak-wave] i');
+        for(let i=0;i<bars.length;i++)bars[i].style.transform='scaleY('+(0.1+0.9*r.hist[i]).toFixed(3)+')';
+      }
+      r.raf=requestAnimationFrame(frame);
+    };
+    r.raf=requestAnimationFrame(frame);
+    r.clock=setInterval(()=>{const s=Math.floor((Date.now()-r.t0)/1000),t=$('[data-ak-rect]');if(t)t.textContent=fmtClock(s);if(s>=VOICE_MAX)voiceStop();},500);
+  }
+  function voiceStop(){
+    const r=rec;if(!r||!S.voice||S.voice.phase!=='rec')return;
+    const dur=(Date.now()-r.t0)/1000;
+    S.voice={phase:'busy',ctl:new AbortController()};paintVoice();
+    cancelAnimationFrame(r.raf);clearInterval(r.clock);
+    r.finish=async()=>{
+      const mime=r.mime,blob=new Blob(r.chunks,{type:mime}),peak=r.peak,ctl=S.voice&&S.voice.ctl;
+      voiceCleanup();
+      if(dur<0.7||blob.size<800){S.voice=null;paintVoice();toast('Ghi âm quá ngắn — hãy giữ lâu hơn một chút rồi bấm ✓.');return;}
+      if(r.an&&peak<0.02){S.voice=null;paintVoice();toast('Không thu được tiếng nói. Kiểm tra micro rồi thử lại.');return;}
+      try{
+        const text=await transcribe(blob,ctl);
+        if(!S.voice||ctl.signal.aborted)return;
+        S.voice=null;paintVoice();voiceInsert(text);
+      }catch(e){
+        if(!S.voice||ctl.signal.aborted)return;
+        S.voice=null;paintVoice();toast(String(e&&e.message||'Không chuyển được giọng nói thành chữ.'));
+      }
+    };
+    try{if(r.mr.state!=='inactive')r.mr.stop();else r.finish();}catch(_){r.finish();}
+  }
+  function voiceInsert(text){
+    const ta=$('[data-ak-input]');if(!ta)return;
+    S.draft=(S.draft&&S.draft.trim()?S.draft.replace(/\s+$/,'')+' ':'')+text;
+    ta.value=S.draft;autosize(ta);updateSend();
+    ta.classList.add('is-fresh');setTimeout(()=>ta.classList.remove('is-fresh'),1400);
+    toast('Đã chuyển thành chữ — kiểm tra lại rồi bấm gửi.');
+  }
+  // Ghi âm (mp4/webm/ogg tuỳ máy) → mono 16 kHz WAV 16-bit: định dạng mà API Gemini tương thích OpenAI nhận (input_audio: wav/mp3).
+  async function toWavBase64(blob){
+    const Ctx=window.AudioContext||window.webkitAudioContext,ctx=new Ctx();
+    try{
+      const raw=await blob.arrayBuffer();
+      const audio=await new Promise((res,rej)=>{const p=ctx.decodeAudioData(raw,res,rej);if(p&&p.catch)p.catch(rej);});
+      const RATE=16000,len=Math.max(1,Math.ceil(audio.duration*RATE)),off=new OfflineAudioContext(1,len,RATE),s=off.createBufferSource();
+      s.buffer=audio;s.connect(off.destination);s.start();
+      const pcm=(await off.startRendering()).getChannelData(0),out=new DataView(new ArrayBuffer(44+pcm.length*2)),w=(o,t)=>{for(let i=0;i<t.length;i++)out.setUint8(o+i,t.charCodeAt(i));};
+      w(0,'RIFF');out.setUint32(4,36+pcm.length*2,true);w(8,'WAVE');w(12,'fmt ');out.setUint32(16,16,true);out.setUint16(20,1,true);out.setUint16(22,1,true);out.setUint32(24,RATE,true);out.setUint32(28,RATE*2,true);out.setUint16(32,2,true);out.setUint16(34,16,true);w(36,'data');out.setUint32(40,pcm.length*2,true);
+      for(let i=0;i<pcm.length;i++){const v=Math.max(-1,Math.min(1,pcm[i]));out.setInt16(44+i*2,v<0?v*0x8000:v*0x7fff,true);}
+      const bytes=new Uint8Array(out.buffer);let bin='';
+      for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));
+      return btoa(bin);
+    }finally{try{ctx.close&&ctx.close();}catch(_){}}
+  }
+  // Thứ tự thử: Antigravity (Gemini Flash, rồi mô hình Gemini khác) → khoá Gemini trong tài khoản. Mô hình/dịch vụ không nhận âm thanh thì tự chuyển sang bước sau.
+  function voiceCandidates(){
+    const M=B.Models,c=cfg(),all=M.entries(c),out=[];
+    if(agyBase()){
+      const agy=all.filter(e=>e.provider==='antigravity'&&/^gemini/i.test(e.model));
+      const score=e=>/lite/i.test(e.model)?3:/flash/i.test(e.model)&&!/(high|medium|low|tiered)$/i.test(e.model)?0:/flash/i.test(e.model)?1:2;   // Flash thường nhanh và rẻ nhất cho chép chữ
+      agy.slice().sort((x,y)=>score(x)-score(y)).slice(0,2).forEach(e=>out.push(e));
+    }
+    const g=all.find(e=>e.provider==='gemini');if(g)out.push(g);
+    return out;
+  }
+  async function transcribe(blob,ctl){
+    let wav;
+    try{wav=await toWavBase64(blob);}catch(_){throw new Error('Không đọc được bản ghi âm trên máy này. Hãy thử lại hoặc dùng nút micro trên bàn phím iPhone.');}
+    const M=B.Models,c=cfg(),cands=voiceCandidates(),notes=[];
+    if(!cands.length)throw new Error('Chưa có Antigravity hay khoá Gemini để chuyển giọng nói. Hãy cài địa chỉ Antigravity (nút mô hình) hoặc dùng nút micro trên bàn phím iPhone.');
+    for(const e of cands){
+      if(ctl.signal.aborted)throw new DOMException('Đã huỷ','AbortError');
+      let key='';try{key=await M.getKey(e.provider);}catch(_){}
+      if(!key){notes.push(e.provider==='gemini'?'chưa có khoá Gemini':'chưa đăng nhập Antigravity');continue;}
+      const r=M.resolve(c,e.id),name=(r.providerLabel||e.provider)+' · '+e.model;
+      if(S.voice){S.voice.engine=name;const n=$('[data-ak-eng]');if(n)n.textContent=name;}
+      const body={model:e.model,stream:false,temperature:0,max_tokens:4000,messages:[{role:'system',content:TRANS_SYS},{role:'user',content:[{type:'text',text:'Chép lại bản ghi âm sau (tiếng Việt).'},{type:'input_audio',input_audio:{data:wav,format:'wav'}}]}]};
+      const limit=e.provider==='antigravity'?60000:45000,signals=[ctl.signal];
+      if(typeof AbortSignal.timeout==='function')signals.push(AbortSignal.timeout(limit));
+      const signal=typeof AbortSignal.any==='function'?AbortSignal.any(signals):ctl.signal;
+      try{
+        const res=await fetch(r.endpoint,{method:'POST',signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},body:JSON.stringify(body)});
+        let data=null;try{data=await res.json();}catch(_){}
+        if(!res.ok){notes.push(name+' trả lỗi '+res.status);continue;}
+        let t=data&&data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content;
+        if(Array.isArray(t))t=t.map(x=>x&&x.text||'').join('');
+        t=String(t||'').replace(/^```[a-z]*\n?|```$/gi,'').trim().replace(/^["“”']+|["“”']+$/g,'').trim();
+        if(!t){notes.push(name+' trả về rỗng');continue;}
+        if(t.includes(TRANS_NONE)||/^\[?(không nghe rõ|không có lời nói)/i.test(t))throw new Error('Không nghe rõ lời nói. Hãy nói gần micro hơn rồi thử lại.');
+        return t;
+      }catch(err){
+        if(ctl.signal.aborted)throw err;
+        if(err&&/Không nghe rõ/.test(err.message))throw err;
+        notes.push(name+(err&&err.name==='TimeoutError'?' quá chậm':' không kết nối được'));
+      }
+    }
+    throw new Error('Chưa chuyển được giọng nói thành chữ ('+notes.slice(0,2).join('; ')+'). Bạn có thể dùng nút micro trên bàn phím iPhone.');
   }
 
   /* ---------- bottom sheet ---------- */
@@ -8607,7 +8765,7 @@ window.TascoAsk=(()=>{
     init();
   }
   function reset(){
-    S.gen++;try{S.ctl?.abort();}catch(_){}stopTick();closeSheet();
+    S.gen++;try{S.ctl?.abort();}catch(_){}try{S.voice&&S.voice.ctl&&S.voice.ctl.abort();}catch(_){}voiceCleanup();stopTick();closeSheet();
     B=null;bundleP=null;S=fresh();
   }
 
@@ -8657,6 +8815,9 @@ window.TascoAsk=(()=>{
     else if(k==='close')closeSheet();
     else if(k==='idea'){S.draft=b.dataset.t;paintComposer(true);const ta=$('[data-ak-input]');ta?.focus();}
     else if(k==='jump')jump();
+    else if(k==='mic')voiceStart();
+    else if(k==='micstop')voiceStop();
+    else if(k==='miccancel')voiceCancel();
     else if(k==='send')send();
     else if(k==='stop')stop();
     else if(k==='src')sourceSheet(b.dataset.m,b.dataset.c);
@@ -8691,7 +8852,9 @@ window.TascoAsk=(()=>{
   let scRaf=0,scOn=false;
   window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;const on=(window.scrollY||0)>24;if(on!==scOn){scOn=on;document.documentElement.classList.toggle('ak-scrolled',on);}updateJump();});},{passive:true});
   window.addEventListener('resize',updateJump);
-  return {paint,reset,leave:()=>{closeSheet();S.needEnd=true;}};
+  window.addEventListener('pagehide',()=>{if(S.voice)voiceCancel();});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.voice&&S.voice.phase==='rec')voiceCancel();});
+  return {paint,reset,leave:()=>{closeSheet();S.needEnd=true;if(S.voice)voiceCancel();}};
 })();
 </script>
 <style id="tascoAskStyles">
@@ -8967,6 +9130,30 @@ html.kb-open #askSection .ws-journey-note{display:none}
 html.dark .ak-jump{box-shadow:0 4px 12px rgba(0,0,0,.4)}
 @media(prefers-reduced-motion:reduce){.ak-jump,.ak-jump svg{transition:none}}
 html.kb-open .ak-jump{top:-30px}
+
+/* ---- nhập bằng giọng nói ---- */
+.ak-mic{flex:none;width:42px;height:42px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:var(--ws-soft);color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .18s,opacity .18s}
+.ak-mic svg{width:20px;height:20px}.ak-mic:active{background:color-mix(in srgb,var(--app-teal) 18%,var(--ws-soft))}
+.ak-mic:disabled{opacity:.45;cursor:default}
+.ak-comp.is-rec>:not(.ak-rec){display:none!important}
+.ak-comp.is-rec{padding:10px;border-color:color-mix(in srgb,var(--app-teal) 55%,var(--ws-line))}
+.ak-rec{display:flex;align-items:center;gap:12px;min-height:64px}
+.ak-rec-mid{flex:1 1 auto;min-width:0;display:grid;gap:6px}
+.ak-rec-mid b{font-size:14px;font-weight:650;color:var(--ws-text)}
+.ak-rec-mid em{font-style:normal;color:var(--ws-muted);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ak-rec-x,.ak-rec-ok{flex:none;width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background .18s}
+.ak-rec-x{background:var(--ws-soft);color:var(--ws-muted)}.ak-rec-x:active{background:color-mix(in srgb,#b45335 16%,var(--ws-soft));color:#b45335}
+.ak-rec-ok{background:var(--ak-grad);color:#fff;box-shadow:0 6px 16px rgba(24,48,86,.3)}.ak-rec-ok:active{transform:scale(.92)}
+.ak-rec-x svg,.ak-rec-ok svg{width:20px;height:20px}
+.ak-wave{display:flex;align-items:center;gap:3px;height:34px}
+.ak-wave i{flex:1 1 0;min-width:2px;max-width:5px;height:100%;border-radius:3px;background:linear-gradient(180deg,var(--app-teal),color-mix(in srgb,var(--app-teal) 55%,#183056));transform:scaleY(.1);opacity:.9;transition:transform .09s linear}
+.ak-rec-t{display:flex;align-items:center;gap:8px;min-width:0;color:var(--ws-text);font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.ak-rec-dot{flex:none;width:8px;height:8px;border-radius:50%;background:#d6483b;animation:akRecDot 1.2s ease-in-out infinite}
+@keyframes akRecDot{0%,100%{opacity:1}50%{opacity:.3}}
+.ak-rec.is-busy .ak-spin{flex:none;margin:0 4px 0 6px}
+[data-ak-input].is-fresh{animation:akFresh 1.4s ease-out}
+@keyframes akFresh{0%{background:color-mix(in srgb,var(--app-teal) 18%,transparent)}100%{background:transparent}}
+@media(prefers-reduced-motion:reduce){.ak-rec-dot,[data-ak-input].is-fresh{animation:none}.ak-wave i{transition:none}}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
