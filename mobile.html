@@ -15095,6 +15095,24 @@ async function triggerCustomCameraFocus(event){
 }
 function deleteCapturedPhotoFromCamera(index){if(mobileCameraSaving)return;if(cameraQueueState.has(customCameraPhotos[index])){cameraFeedback('Ảnh này đã gửi lên Cloud. Xóa trong mục Cloud của tôi.',3000);return;}customCameraPhotos.splice(index,1);renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();}
 function updateCustomCameraDoneBtn(){const button=document.getElementById('btnSaveCustomCameraPhotos');const total=customCameraPhotos.length,auto=cameraAutoUploadActive();let sent=0,sending=0;for(const file of customCameraPhotos){const status=cameraQueueState.get(file);if(status==='queued')sent++;else if(status==='sending')sending++;}button.textContent=mobileCameraSaving?'Đang lưu…':auto?(sending?'Đang gửi '+sent+'/'+total:'Xong ('+total+')'):'Lưu Cloud ('+total+')';button.disabled=mobileCameraSaving||!total||!window.TascoAppShell.canCloud();}
+/* Lưu nền sau khi bấm Xong. Ảnh nào chưa vào hàng đợi vẫn còn trong kho cứu (IndexedDB) nên không mất; lỗi thì báo và mở lại hộp cứu ảnh. */
+async function cameraFinishSave(photos,context){
+  const total=photos.length;
+  try{
+    if(photos.some(file=>cameraQueueState.get(file)!=='queued'))TascoCloud.notify('Đang lưu '+total+' ảnh vào Cloud…');
+    await cameraAutoUploadChain;/* chờ các ảnh đang được đưa vào hàng đợi */
+    const rest=photos.filter(file=>cameraQueueState.get(file)!=='queued'),stamped=[];
+    for(const file of rest){const result=await addWatermarkToImageFile(file,context.title,{isCameraSource:true});if(result===file&&cameraPhotoMetadata.get(file)?.stampedFile!==file)throw new Error('Chưa tạo được dấu ngày giờ trên ảnh.');stamped.push(result);}
+    if(stamped.length){
+      await TascoCloud.queuePhotos(stamped,context.title,cameraQueueMetadata,context.album);
+      stamped.forEach(file=>{cameraQueueState.set(file,'queued');try{window.TascoCameraRescue?.drop(file);}catch(_){}});
+      for(const file of rest)if(!stamped.includes(file))try{window.TascoCameraRescue?.drop(file);}catch(_){}
+    }
+  }catch(error){
+    try{TascoCloud.notify((error&&error.message?error.message+' ':'')+'Ảnh vẫn được giữ trong máy, sẽ hiện lại để bạn lưu.');}catch(_){}
+    try{window.TascoCameraRescue?.again?.();}catch(_){}
+  }
+}
 async function closeCustomCameraModal(savePhotos=false){
   if(savePhotos&&mobileCameraSaving)return;
   if(savePhotos&&!window.TascoAppShell.canCloud()){TascoCloud.notify('Chưa có quyền Cloud. Ảnh chưa lưu vẫn được giữ ở đây.');return;}
@@ -15112,18 +15130,14 @@ async function closeCustomCameraModal(savePhotos=false){
     if(choice==='save'){return closeCustomCameraModal(true);}
     if(choice!=='discard')return;
   }
+  let savingInBackground=null;
   if(savePhotos){
     if(!customCameraPhotos.length)return;
+    if(mobileCameraOwner!==window.mobileCloudEmail?.()){TascoCloud.notify('Tài khoản đã thay đổi. Đăng nhập lại đúng tài khoản trước khi lưu.');return;}
     cameraSaveBatchToDevice([...customCameraPhotos]);
-    mobileCameraSaving=true;cameraUiState.captureBusy=true;updateCustomCameraDoneBtn();syncCameraViewport();
-    try{
-      if(mobileCameraOwner!==window.mobileCloudEmail?.())throw new Error('Tài khoản đã thay đổi. Đăng nhập lại đúng tài khoản trước khi lưu.');
-      await cameraAutoUploadChain;/* chờ các ảnh đang được đưa vào hàng đợi */
-      const restPhotos=customCameraPhotos.filter(file=>cameraQueueState.get(file)!=='queued'),stamped=[];
-      for(const file of restPhotos){const result=await addWatermarkToImageFile(file,mobileCameraTitle,{isCameraSource:true});if(result===file&&cameraPhotoMetadata.get(file)?.stampedFile!==file)throw new Error('Chưa tạo được dấu ngày giờ trên ảnh. Vui lòng thử lưu lại.');stamped.push(result);}
-      if(stamped.length)await TascoCloud.queuePhotos(stamped,mobileCameraTitle,cameraQueueMetadata,mobileCameraAlbum);
-    }catch(error){TascoCloud.notify(error.message);mobileCameraSaving=false;cameraUiState.captureBusy=false;syncCameraViewport();updateCustomCameraDoneBtn();return;}
-    mobileCameraSaving=false;
+    /* Không giữ người dùng trong camera để chờ từng ảnh lên hàng đợi (mỗi ảnh phải hỏi mạng, chụp nhiều ảnh là chờ rất lâu).
+       Ảnh đã nằm trong kho cứu trên máy; đóng camera ngay, phần lưu chạy nền và báo lỗi nếu có. */
+    savingInBackground=cameraFinishSave([...customCameraPhotos],{album:mobileCameraAlbum,title:mobileCameraTitle});
   }
   try{TascoCloud.releaseCapture?.();}catch(_){}
   try{stopCustomCameraStream();}catch(_){}
@@ -15138,7 +15152,8 @@ async function closeCustomCameraModal(savePhotos=false){
   mobileCameraSaving=false;
   cameraUiState.captureBusy=false;
   try{onCustomCameraClose();}catch(_){}
-  try{window.TascoCameraRescue?.dropAll(customCameraPhotos);}catch(_){}
+  /* Lưu: kho cứu do tác vụ nền tự xoá từng ảnh khi đã vào hàng đợi. Đóng thường: bỏ ảnh, trừ ảnh còn đang gửi dở. */
+  if(!savingInBackground)try{window.TascoCameraRescue?.dropAll(customCameraPhotos.filter(file=>cameraQueueState.get(file)!=='sending'));}catch(_){}
   customCameraPhotos=[];
   mobileCameraAlbum=null;
   try{renderCustomCameraPreviewStrip();}catch(_){}
@@ -18942,7 +18957,9 @@ window.TascoCameraRescue = (function () {
   }
   var tries = 0, timer = setInterval(function () { if (shown || ++tries > 60) { clearInterval(timer); return; } check(); }, 2000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { shown = false; setTimeout(check, 1500); } });
-  return { keep: keep, drop: drop, dropAll: dropAll, check: check };
+  /* Lưu nền thất bại: cho phép hỏi lại ngay (bình thường chỉ hỏi một lần mỗi phiên). */
+  function again() { shown = false; setTimeout(check, 1200); }
+  return { keep: keep, drop: drop, dropAll: dropAll, check: check, again: again };
 })();
 </script>
 <script id="tascoVideoCapture">
@@ -21097,30 +21114,60 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     plane.style.transform = 'translate(-50%,-50%) rotate(' + turn + 'deg)';
     plane.style.setProperty('--camera-stamp-size', Math.max(10, Math.min(18, w / 56)) + 'px');
   }
-  /* Vùng đặt khung camera thật trong vùng nhìn (đo lại theo kích thước hiện tại của vùng camera). */
+  /* Tỉ lệ rộng/cao của vùng sẽ được LƯU theo "Tỷ lệ ảnh" đã chọn, đúng hướng đang cầm. Ảnh gốc 4:3 nên 3:4 dọc / 4:3 ngang là kín khung. */
+  function shotRatio(land) {
+    var sel = cameraDocMode ? 'native' : cameraAppearance.aspectRatio, parts = cameraAspectRatios[sel];
+    if (!parts) return land ? 4 / 3 : 3 / 4;
+    var s = Math.min(parts[0], parts[1]), l = Math.max(parts[0], parts[1]);
+    return land ? l / s : s / l;
+  }
+  function fitRect(x, y, w, h, r) {
+    var fw = w, fh = w / r; if (fh > h) { fh = h; fw = h * r; }
+    return { x: Math.round(x + (w - fw) / 2), y: Math.round(y + (h - fh) / 2), width: Math.round(fw), height: Math.round(fh) };
+  }
+  /* Vùng đặt khung camera thật trong vùng nhìn (đo lại theo kích thước hiện tại của vùng camera).
+     Ảnh: khung camera đúng bằng vùng sẽ lưu (9:16, 1:1... đều lấp tối đa vùng trống, không còn khung 4:3 cố định bị che bớt). */
   function previewArea(isVideo) {
     var boxEl = document.querySelector('#customCameraModal .camera-stream-container'); if (!boxEl) return null;
     var box = boxEl.getBoundingClientRect(); if (box.width < 10 || box.height < 10) return null;
-    if (isLandscape()) return { x: Math.round(box.left), y: Math.round(box.top), width: Math.round(box.width), height: Math.round(box.height) };
+    var land = isLandscape();
+    if (land) return isVideo ? { x: Math.round(box.left), y: Math.round(box.top), width: Math.round(box.width), height: Math.round(box.height) } : fitRect(box.left, box.top, box.width, box.height, shotRatio(true));
     var head = document.querySelector('#customCameraModal .camera-overlay-header'), headBottom = head ? head.getBoundingClientRect().bottom : box.top;
-    var width = (window.visualViewport && visualViewport.width) || innerWidth, previewH = width * (isVideo ? 16 / 9 : 4 / 3), room = box.bottom - headBottom;
-    var y = Math.round(isVideo ? Math.max(box.top, box.bottom - previewH) : previewH <= room ? headBottom + (room - previewH) / 2 : box.top + Math.max(0, (box.height - previewH) / 2));
-    return { x: 0, y: y, width: Math.round(width), height: Math.round(previewH) };
+    var width = (window.visualViewport && visualViewport.width) || innerWidth, room = box.bottom - headBottom;
+    if (isVideo) {
+      var previewH = width * 16 / 9;
+      return { x: 0, y: Math.round(Math.max(box.top, box.bottom - previewH)), width: Math.round(width), height: Math.round(previewH) };
+    }
+    var r = shotRatio(false), h1 = width / r;
+    if (h1 <= room) return { x: 0, y: Math.round(headBottom + (room - h1) / 2), width: Math.round(width), height: Math.round(h1) };   // vừa dưới tiêu đề (như 3:4 cũ)
+    if (h1 <= box.height) return { x: 0, y: Math.round(box.top + (box.height - h1) / 2), width: Math.round(width), height: Math.round(h1) };
+    return fitRect(0, box.top, width, box.height, r);   // khung cao hơn vùng trống (vd. 9:16): lấp kín chiều cao, hai bên chừa đều
   }
   function areaKey(a) { return a ? [a.x, a.y, a.width, a.height].join(',') : ''; }
   /* Vùng camera đổi cỡ sau khi mở (vd. thanh ảnh vừa chụp trồi lên làm chân trang cao hơn) -> dời khung camera thật cho khỏi bị chân trang che mất, kể cả dấu ngày giờ. */
-  var refitRaf = 0;
+  var refitRaf = 0, refitBusy = false, refitAgain = false, refitFails = 0, settleTimer = 0;
   function refitPreview() {
     if (!st.running || st.starting || st.recording || !modalOpen()) return;
+    if (refitFails > 3) return;
+    if (refitBusy) { refitAgain = true; return; }   // chỉ một lệnh đổi cỡ chạy một lúc; xong sẽ đo lại vùng mới nhất
     var area = previewArea(st.mode === 'video'); if (!area) return;
     var key = areaKey(area); if (key === st.fitKey) return;
-    var gen = st.gen; st.fitKey = key;
+    var gen = st.gen; refitBusy = true; refitAgain = false;
+    var guard = setTimeout(function () { refitBusy = false; refitFails++; scheduleRetry(); }, 4000);   // plugin không trả lời: bỏ qua, đo lại
     CP.setPreviewSize(area).then(function (fit) {
       if (gen !== st.gen || !st.running) return;
+      st.fitKey = key; refitFails = 0;
       st.rect = fit && fit.width > 0 && fit.height > 0 ? { x: fit.x, y: fit.y, width: fit.width, height: fit.height } : { x: area.x, y: area.y, width: area.width, height: area.height };
       placePlane();
-    }).catch(function () { st.fitKey = ''; });
+    }).catch(function () { refitFails++; }).then(function () {
+      clearTimeout(guard); refitBusy = false;
+      if (refitFails) { if (refitFails <= 3) scheduleRetry(); return; }   // lỗi liên tục: dừng, chờ bố cục đổi thật rồi mới thử lại
+      if (refitAgain || areaKey(previewArea(st.mode === 'video')) !== st.fitKey) scheduleRefit();
+    });
   }
+  function scheduleRetry() { clearTimeout(settleTimer); if (refitFails > 3) return; settleTimer = setTimeout(scheduleRefit, 500 * refitFails); }
+  /* Sau mỗi lần vùng camera đổi cỡ (đổi hạng mục làm chân trang cao thấp, bàn phím mở/đóng, xoay...) đo lại một lần nữa khi bố cục đã yên. */
+  function settleRefit() { clearTimeout(settleTimer); settleTimer = setTimeout(function () { refitFails = 0; scheduleRefit(); }, 350); }
   function scheduleRefit() { if (refitRaf) return; refitRaf = requestAnimationFrame(function () { refitRaf = 0; refitPreview(); }); }
   function clearPlane() {
     var plane = document.getElementById('cameraImagePlane'); if (!plane) return;
@@ -21131,7 +21178,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     if (!keepOrient) Orient.leave();
     st.gen++;
     var wasActive = st.running || st.starting;
-    st.running = false; st.rect = null; st.fitKey = '';
+    st.running = false; st.rect = null; st.fitKey = ''; refitBusy = false; refitAgain = false; refitFails = 0; clearTimeout(settleTimer);
     if (st.recording) { st.recording = false; clearInterval(st.recTimer); try { window.TascoVideoCapture && window.TascoVideoCapture.setRecording(false); } catch (_) {} var mm = cameraModal(); if (mm) mm.dataset.recording = 'false'; }
     root.classList.remove('tasco-native-cam'); setTransparent(false); clearPlane();
     var m = cameraModal(); if (m) delete m.dataset.nativeTurn;
@@ -21172,11 +21219,13 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
       /* Ảnh: khung 4:3 tràn ngang, ngay dưới tiêu đề. Video: khung 16:9 tràn màn hình, đáy sát thanh nút (tiêu đề nổi trên hình như app Camera). */
       var y = Math.round(isVideo ? Math.max(box.top, box.bottom - previewH) : previewH <= room ? headBottom + (room - previewH) / 2 : box.top + Math.max(0, (box.height - previewH) / 2));
       if (land) y = 0;   // màn hình ngang: khung ngang nằm giữa vùng camera, đặt chính xác sau khi mở
-      var startKey = areaKey(previewArea(isVideo));
+      var firstArea = previewArea(isVideo);
+      if (!land && !isVideo && firstArea) y = firstArea.y;   // mở đúng chỗ khung ảnh sẽ nằm, khỏi nhảy sau khi mở
+      var startKey = areaKey(firstArea);
       var result;
       try {
         result = await CP.start({
-          position: st.position, toBack: true, aspectRatio: isVideo ? '16:9' : '4:3', aspectMode: 'contain', y: y,
+          position: st.position, toBack: true, aspectRatio: isVideo ? '16:9' : '4:3', aspectMode: isVideo ? 'contain' : 'cover', y: y,
           rotateWhenOrientationChanged: false, force: true,
           gridMode: pro.grid,
           captureResolution: { width: 4032, height: 3024 },
@@ -21194,13 +21243,16 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
       st.running = true;
       st.rect = { x: result.x, y: result.y, width: result.width, height: result.height };
       st.fitKey = startKey;
-      if (land) {
-        /* Khung 4:3 ngang vừa khít vùng camera (bên trái cột nút), căn giữa trong đó. */
+      /* Ảnh dùng chế độ 'cover' và đặt khung đúng bằng vùng sẽ lưu (theo tỉ lệ đã chọn); video giữ khung 16:9 như cũ. */
+      if (land || !isVideo) {
         try {
-          var area = document.querySelector('#customCameraModal .camera-stream-container').getBoundingClientRect();
-          var fit = await CP.setPreviewSize({ x: Math.round(area.left), y: Math.round(area.top), width: Math.round(area.width), height: Math.round(area.height) });
-          if (fit && fit.width > 0 && fit.height > 0) st.rect = { x: fit.x, y: fit.y, width: fit.width, height: fit.height };
-        } catch (_) {}
+          var area = previewArea(isVideo);
+          if (area) {
+            var fit = await CP.setPreviewSize(area);
+            st.fitKey = areaKey(area);
+            st.rect = fit && fit.width > 0 && fit.height > 0 ? { x: fit.x, y: fit.y, width: fit.width, height: fit.height } : { x: area.x, y: area.y, width: area.width, height: area.height };
+          }
+        } catch (_) { st.fitKey = ''; }
       }
       customCameraFacingMode = st.position === 'front' ? 'user' : 'environment';
       await refreshCapabilities();
@@ -21251,25 +21303,44 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
   window.addEventListener('orientationchange', onRotated);
   (function () {
     var box = document.querySelector('#customCameraModal .camera-stream-container');
-    if (box && typeof ResizeObserver === 'function') new ResizeObserver(scheduleRefit).observe(box);
+    if (box && typeof ResizeObserver === 'function') new ResizeObserver(function () { scheduleRefit(); settleRefit(); }).observe(box);
   })();
 
   /* Camera thật không xoay theo giao diện, nên giữ màn hình camera đứng yên (như app Camera của iPhone)
      và chỉ xoay biểu tượng + dấu định vị theo hướng cầm máy. */
+  /* Bàn phím (ô tìm hạng mục, đổi tên...) làm visualViewport thấp đi; iOS đôi khi không báo lại khi đóng bàn phím nên khung camera kẹt ở nửa màn hình.
+     Khi đang gõ chữ, giữ nguyên cỡ đã đo trước đó; gõ xong đo lại vài lần cho chắc. */
+  var kbBase = { w: 0, h: 0 };
+  function stableViewport() {
+    var vv = window.visualViewport, w = vv ? vv.width : innerWidth, h = vv ? vv.height : innerHeight, a = document.activeElement;
+    var typing = !!a && (a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && !/^(range|checkbox|radio|button|submit|color|file)$/i.test(a.type || 'text')));
+    if (!typing || Math.abs(w - kbBase.w) > 2) { kbBase = { w: w, h: h }; return { w: w, h: h }; }
+    return { w: w, h: Math.max(h, kbBase.h) };
+  }
+  document.addEventListener('focusout', function () {
+    [120, 600, 1400].forEach(function (ms) { setTimeout(function () { if (modalOpen() && st.running) { try { window.syncCameraViewport(); } catch (_) {} settleRefit(); } }, ms); });
+  }, true);
+  /* Trang đăng ký sự kiện resize/xoay bằng chính hàm web cũ nên bỏ qua bản native: hàm cũ đặt khung camera theo bàn phím/hướng máy rồi để nguyên
+     (khung camera kẹt co nửa màn hình sau khi đóng bảng hạng mục). Đăng ký thêm ở đây để bản native chạy ngay sau và đặt lại đúng. */
+  function reapplyViewport() { if (modalOpen()) { try { window.syncCameraViewport(); } catch (_) {} } }
+  window.addEventListener('resize', reapplyViewport);
+  window.addEventListener('orientationchange', reapplyViewport);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', reapplyViewport);
+  try { if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', reapplyViewport); } catch (_) {}
   window.syncCameraViewport = function () {
     try { origSync(); } catch (_) {}
     var modal = cameraModal();
     if (!modal || modal.style.display === 'none' || !root.classList.contains('tasco-native-cam')) return;
-    var land = isLandscape(), turn = land ? 0 : (Number(modal.dataset.uiRotation) || 0), vv = window.visualViewport;
+    var land = isLandscape(), turn = land ? 0 : (Number(modal.dataset.uiRotation) || 0), vv = window.visualViewport, sv = stableViewport();
     modal.style.transform = 'none'; modal.style.left = '0px'; modal.style.top = (vv ? vv.offsetTop : 0) + 'px';
-    modal.style.setProperty('--camera-viewport-width', (vv ? vv.width : innerWidth) + 'px');
-    modal.style.setProperty('--camera-viewport-height', (vv ? vv.height : innerHeight) + 'px');
+    modal.style.setProperty('--camera-viewport-width', sv.w + 'px');
+    modal.style.setProperty('--camera-viewport-height', sv.h + 'px');
     ['top', 'right', 'bottom', 'left'].forEach(function (side) { modal.style.setProperty('--camera-safe-' + side, 'env(safe-area-inset-' + side + ',0px)'); });
     /* Màn hình iPhone xoay thật nên không xoay giao diện bằng CSS nữa; chỉ khi màn còn dọc mà máy đã nghiêng thì xoay biểu tượng. */
     modal.dataset.orientation = land ? 'landscape' : 'portrait'; modal.dataset.uiRotation = '0'; modal.dataset.nativeTurn = String(turn);
-    modal.dataset.compact = String((vv ? vv.height : innerHeight) <= 380);
+    modal.dataset.compact = String(sv.h <= 380);
     if (!st.running) return;
-    placePlane();
+    placePlane(); scheduleRefit();   // đổi Tỷ lệ ảnh / bố cục: đo lại khung camera
     var shutter = document.getElementById('cameraCaptureButton');
     if (shutter) shutter.disabled = cameraUiState.captureBusy || cameraControlsState.busy || cameraControlsState.settingsOpen;
   };
@@ -21430,7 +21501,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     window.tascoShutterHaptic();
     if (fx && cameraAppearance.shutterFlash) { fx.classList.add('flash-active'); setTimeout(function () { fx.classList.remove('flash-active'); }, 80); }
     try {
-      var shot = await CP.capture({ quality: 92, orientation: Orient.available && cameraOrientLock === 'landscape' && isLandscape() ? 'preview' : 'device', photoQualityPrioritization: pro.priority === 'speed' ? 'speed' : 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront });
+      var shot = await withTimeout(CP.capture({ quality: 92, orientation: Orient.available && cameraOrientLock === 'landscape' && isLandscape() ? 'preview' : 'device', photoQualityPrioritization: pro.priority === 'speed' ? 'speed' : 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront }), 20000);
       if (session !== cameraUiState.session) return;
       feedback('Đang đóng dấu ảnh…', 0);
       var blob = await (await fetch('data:image/jpeg;base64,' + shot.value)).blob();
@@ -21446,11 +21517,29 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
       renderCustomCameraPreviewStrip(); updateCustomCameraDoneBtn();
       feedback('Đã chụp ' + customCameraPhotos.length + ' ảnh.' + (cameraQueueState.has(stamped) ? ' Đang gửi lên Cloud.' : ''), 1100);
     } catch (error) {
-      if (session === cameraUiState.session) feedback((error && error.message) || 'Chưa chụp được ảnh. Vui lòng thử lại.');
+      if (session === cameraUiState.session) {
+        if (error && error.code === 'CAPTURE_TIMEOUT') { feedback('Camera phản hồi quá chậm. Đang mở lại camera…', 0); setTimeout(function () { restartNative(); }, 0); }
+        else feedback((error && error.message) || 'Chưa chụp được ảnh. Vui lòng thử lại.');
+      }
     } finally {
       if (session === cameraUiState.session) { cameraUiState.captureBusy = false; syncCameraViewport(); }
     }
   };
+  /* Lệnh native không trả lời sau ngần ấy thời gian thì coi như treo: không để nút chụp / nút Xong kẹt mãi ở trạng thái bận. */
+  function withTimeout(promise, ms) {
+    return new Promise(function (ok, fail) {
+      var timer = setTimeout(function () { var e = new Error('Camera không phản hồi.'); e.code = 'CAPTURE_TIMEOUT'; fail(e); }, ms);
+      Promise.resolve(promise).then(function (v) { clearTimeout(timer); ok(v); }, function (e) { clearTimeout(timer); fail(e); });
+    });
+  }
+  async function restartNative() {
+    if (!modalOpen() || st.starting || st.recording) return;
+    cameraControlsState.busy = true; st.running = false;
+    try { await startNative(true); } catch (_) {}
+    cameraControlsState.busy = false;
+    try { renderCameraLensChoices(); syncCameraViewport(); } catch (_) {}
+    if (st.running) feedback('Camera đã sẵn sàng.', 1200);
+  }
 
   /* ---- Quay video bằng camera native: 1080p, chống rung, có tiếng ---- */
   function fmtTime(sec) { return Math.floor(sec / 60) + ':' + String(Math.floor(sec % 60)).padStart(2, '0'); }
