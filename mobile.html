@@ -3850,7 +3850,7 @@ window.TascoBootSplash = (() => {
   <p class="ws-journey-note"><span>Chỉ hiện hồ sơ thuộc tài khoản đăng nhập. Biên bản dùng chung dữ liệu với webapp giám định xe.</span></p>
 </section>
 <section id="askSection" data-shell-page="ask" class="ws-journey rc dr-page" hidden style="display:none" aria-labelledby="askPageTitle">
-  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TRỢ LÝ NGHIỆP VỤ</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">THƯ VIỆN TÀI LIỆU</span><h2 id="askPageTitle" tabindex="-1">AI<br>nghiệp vụ.</h2><p>Hỏi quy tắc, Luật, Nghị định — trả lời có dẫn nguồn, bấm xem nguyên văn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><path d="M44 22a10 10 0 0 1 10-10h82v92H54a10 10 0 0 0-10 10z" stroke="currentColor" stroke-width="1.8"/><path d="M44 114V22M64 38h56M64 56h40" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="m118 78 5 12 12 5-12 5-5 12-5-12-12-5 12-5z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg></header>
+  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TRỢ LÝ NGHIỆP VỤ</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">THƯ VIỆN TÀI LIỆU</span><h2 id="askPageTitle" tabindex="-1">AI nghiệp vụ.</h2><p>Hỏi quy tắc, Luật, Nghị định — có dẫn nguồn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><path d="M44 22a10 10 0 0 1 10-10h82v92H54a10 10 0 0 0-10 10z" stroke="currentColor" stroke-width="1.8"/><path d="M44 114V22M64 38h56M64 56h40" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="m118 78 5 12 12 5-12 5-5 12-5-12-12-5 12-5z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg></header>
   <div class="ws-search-panel ws-search-panel--premium rc-panel">
     <div id="akPageRoot" aria-live="polite"><div class="dr-skel"><i></i><i></i><i></i></div></div>
   </div>
@@ -7937,7 +7937,10 @@ window.TascoAsk=(()=>{
     trash:svg('<path d="M4.5 7h15M10 11v6M14 11v6M6.5 7l.8 11a2 2 0 0 0 2 1.9h5.4a2 2 0 0 0 2-1.9l.8-11M9.5 7V4.5h5V7"/>'),
     cpu:svg('<rect x="6.5" y="6.5" width="11" height="11" rx="2.5"/><path d="M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3M3.5 9.5h3M3.5 14.5h3M17.5 9.5h3M17.5 14.5h3"/>'),
     retry:svg('<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/>'),
-    check:svg('<path d="m5 12.5 4.5 4.5L19 7.5"/>')
+    check:svg('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
+    warn:svg('<path d="M12 4 3 19.5h18z"/><path d="M12 10v4.5M12 17.2v.1"/>'),
+    search:svg('<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>'),
+    up:svg('<path d="M7 17 17 7M9 7h8v8"/>')
   };
   const sleep=(ms,signal)=>new Promise((res,rej)=>{const t=setTimeout(res,ms);signal?.addEventListener('abort',()=>{clearTimeout(t);rej(new DOMException('Đã huỷ','AbortError'));},{once:true});});
   const fmtSecs=n=>n<60?n+' giây':Math.floor(n/60)+' phút '+String(n%60).padStart(2,'0')+' giây';
@@ -8211,12 +8214,13 @@ window.TascoAsk=(()=>{
     const usage=S.usage&&S.usage.calls?B.AI.formatTokens(S.usage.total)+' token':'';
     const libText=ask||S.lib?(S.libInfo?(S.libInfo.err?esc(S.libInfo.err):'Thư viện tài liệu: '+S.libInfo.n+' văn bản (chỉ đọc)'):'Đang nạp Thư viện tài liệu…'):'';
     const hist='<button type="button" class="ak-ico" data-ak="history" aria-label="Lịch sử trò chuyện">'+IC.hist+'</button><button type="button" class="ak-ico" data-ak="new" aria-label="Cuộc trò chuyện mới"'+(S.busy?' disabled':'')+'>'+IC.plus+'</button>';
-    return '<div class="ak-head"><div class="dr-seg ak-seg" role="tablist" aria-label="Chế độ AI"><button type="button" role="tab" data-ak="kind" data-v="ask" aria-pressed="'+ask+'">Hỏi nghiệp vụ</button><button type="button" role="tab" data-ak="kind" data-v="chat" aria-pressed="'+!ask+'">Trò chuyện AI</button></div>'+hist+'</div>'
-      +'<div class="ak-bar"><button type="button" class="ak-chip" data-ak="model" title="'+esc(a?a.label:'Chọn mô hình AI')+'">'+IC.cpu+'<span>'+esc(shortModel())+'</span>'+IC.chev+'</button>'
-      +'<button type="button" class="ak-chip'+(deepOn()?' is-set':'')+'" data-ak="deep" aria-pressed="'+deepOn()+'"'+(deepAble?'':' disabled')+' title="'+(deepAble?'Suy luận sâu: chậm hơn, tốn token hơn nhưng kỹ hơn':'Mô hình này không có chế độ suy luận riêng')+'">'+IC.spark+'<span>Suy luận sâu</span></button>'
-      +(ask?'':'<button type="button" class="ak-chip'+(S.lib?' is-set':'')+'" data-ak="lib" aria-pressed="'+S.lib+'" title="Bật để AI tra Thư viện tài liệu trước khi trả lời">'+IC.book+'<span>Thư viện</span></button>')
+    const sw=on=>'<i class="ak-sw'+(on?' is-on':'')+'" aria-hidden="true"><u></u></i>';
+    return '<div class="ak-ctl"><div class="ak-head"><div class="dr-seg ak-seg" role="tablist" aria-label="Chế độ AI"><button type="button" role="tab" data-ak="kind" data-v="ask" aria-pressed="'+ask+'">Hỏi nghiệp vụ</button><button type="button" role="tab" data-ak="kind" data-v="chat" aria-pressed="'+!ask+'">Trò chuyện AI</button></div>'+hist+'</div>'
+      +'<div class="ak-bar'+(ask?'':' is-chat')+'"><button type="button" class="ak-chip is-model" data-ak="model" title="'+esc(a?a.label:'Chọn mô hình AI')+'"><span class="ak-chip-ico">'+IC.cpu+'</span><span class="ak-chip-t"><small>Mô hình</small><span>'+esc(shortModel())+'</span></span>'+IC.chev+'</button>'
+      +'<button type="button" class="ak-chip is-toggle'+(deepOn()?' is-set':'')+'" data-ak="deep" aria-pressed="'+deepOn()+'"'+(deepAble?'':' disabled')+' title="'+(deepAble?'Suy luận sâu: chậm hơn, tốn token hơn nhưng kỹ hơn':'Mô hình này không có chế độ suy luận riêng')+'">'+IC.spark+'<span>Suy luận sâu</span>'+sw(deepOn())+'</button>'
+      +(ask?'':'<button type="button" class="ak-chip is-toggle'+(S.lib?' is-set':'')+'" data-ak="lib" aria-pressed="'+S.lib+'" title="Bật để AI tra Thư viện tài liệu trước khi trả lời">'+IC.book+'<span>Thư viện</span>'+sw(S.lib)+'</button>')
       +'</div>'
-      +(libText||usage?'<div class="ak-lib'+(libText?'':' is-solo')+(S.libInfo&&S.libInfo.err&&libText?' is-bad':'')+'">'+(libText?IC.book:'')+'<span>'+libText+'</span><b class="ak-usage" data-ak-usage title="Token đã dùng trong cuộc trò chuyện này"'+(usage?'':' hidden')+'>'+esc(usage)+'</b></div>':'');
+      +(libText||usage?'<div class="ak-lib'+(libText?'':' is-solo')+(S.libInfo&&S.libInfo.err&&libText?' is-bad':'')+'">'+(libText?'<i class="ak-dot" aria-hidden="true"></i>':'')+'<span>'+libText+'</span><b class="ak-usage" data-ak-usage title="Token đã dùng trong cuộc trò chuyện này"'+(usage?'':' hidden')+'>'+esc(usage)+'</b></div>':'')+'</div>';
   }
   function srcHtml(m,s,cited){
     return '<button type="button" class="ak-src'+(cited?' is-cited':'')+'" data-ak="src" data-m="'+esc(m.id)+'" data-c="'+esc(s.code)+'"><b>'+esc(s.code)+'</b><span>'+esc(s.doc+(s.title?' – '+s.title:''))+'</span>'+(cited?'<em>được dẫn</em>':'')+(s.via?'<i>'+(/dẫn chiếu/i.test(s.via)?'dẫn chiếu':'liền kề')+'</i>':'')+'</button>';
@@ -8227,25 +8231,28 @@ window.TascoAsk=(()=>{
     const sources=m.sources||[],cited=q.citedCodes(m.text),bad=q.unknownCodes(m.text,sources);
     const warn=m.error||m.empty||(m.free&&!sources.length)?'':bad.length?'<p class="ak-warn">AI dẫn mã nguồn không có trong các đoạn đã tra ('+esc(bad.join(', '))+') — đừng dùng phần đó khi chưa kiểm tra lại.</p>'
       :(sources.length&&!cited.length&&!m.free)?'<p class="ak-warn">Câu trả lời không dẫn nguồn nào — hãy đối chiếu với các đoạn bên dưới trước khi dùng.</p>':'';
-    const body=m.error?'<div class="ak-note is-error">'+esc(m.text)+'</div>':m.empty?'<div class="ak-note">'+esc(m.text)+'</div>'
+    const stopped=m.empty&&/^Đã dừng/.test(m.text||'');
+    const note=(cls,ico,title,text)=>'<div class="ak-note'+cls+'"><span class="ak-note-ico">'+ico+'</span><div><b>'+title+'</b><p>'+esc(text)+'</p></div></div>';
+    const body=m.error?note(' is-error',IC.warn,'Chưa nhận được câu trả lời',m.text):stopped?note(' is-stop',IC.stop,'Đã dừng','Bạn đã dừng câu trả lời này. Có thể hỏi lại hoặc đổi cách đặt câu hỏi.'):m.empty?note('',IC.search,'Chưa tìm thấy trong Thư viện',m.text)
       :m.free?'<div class="ak-text ak-md">'+(sources.length?q.chatHtml(m.text).replace(/\[C(\d{1,3})\]/g,'<button type="button" class="ola-cite" data-ol-qa-cite="C$1">C$1</button>'):q.chatHtml(m.text))+'</div>'
-      :'<div class="ak-text">'+q.answerHtml(m.text,sources)+'</div>';
+      :'<div class="ak-text">'+q.answerHtml(m.text,sources).replace(/(<b class="ola-h">[^<]*<\/b>)\s*:\s*/g,'$1 ')+'</div>';
     const open=!!S.open[m.id+':*'];
     const read=m.read&&m.read.included&&m.read.included.length?'<p class="ak-queries">Đã đọc toàn văn: '+m.read.included.map(d=>esc(d.name)+' ('+d.chunks+' đoạn)').join(' · ')+(m.read.skipped&&m.read.skipped.length?' — chỉ trích đoạn: '+m.read.skipped.map(d=>esc(d.name)).join(', '):'')+'</p>':'';
-    const srcs=sources.length||read?'<div class="ak-srcs'+(open?' is-open':'')+'"><button type="button" class="ak-srcs-head" data-ak="srcs" data-m="'+esc(m.id)+'" aria-expanded="'+open+'"><span>'+(m.read?'Đoạn được dẫn trong Thư viện (':'Nguồn đã tra trong Thư viện (')+sources.length+')'+(cited.length?'<em>Đã dẫn: '+esc(cited.filter(c=>sources.some(s=>s.code===c)).join(', '))+'</em>':'')+'</span>'+IC.chev+'</button>'
+    const srcs=sources.length||read?'<div class="ak-srcs'+(open?' is-open':'')+'"><button type="button" class="ak-srcs-head" data-ak="srcs" data-m="'+esc(m.id)+'" aria-expanded="'+open+'"><span class="ak-srcs-i">'+IC.book+'</span><span>'+(m.read?'Căn cứ từ Thư viện · ':'Nguồn đã tra · ')+sources.length+' đoạn'+(cited.length?'<em>Đã dẫn: '+esc(cited.filter(c=>sources.some(s=>s.code===c)).join(', '))+'</em>':'')+'</span>'+IC.chev+'</button>'
       +'<div class="ak-srcs-body"'+(open?'':' hidden')+'>'+read+(m.queries&&m.queries.length?'<p class="ak-queries">Đã tra: '+m.queries.map(esc).join(' · ')+'</p>':'')+sources.map(s=>srcHtml(m,s,cited.includes(s.code))).join('')+'</div></div>':'';
-    const acts=m.error?'<button type="button" class="ak-act" data-ak="retry" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.retry+'Thử lại</button>'
+    const acts=m.error?'<button type="button" class="ak-act" data-ak="retry" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.retry+'Thử lại</button><button type="button" class="ak-act" data-ak="model">'+IC.cpu+'Đổi mô hình</button>'
       :m.empty?'':'<button type="button" class="ak-act" data-ak="copy" data-m="'+esc(m.id)+'">'+IC.copy+'Sao chép</button>'
         +(m.quick&&deepSupported()?'<button type="button" class="ak-act" data-ak="deeper" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.spark+'Suy luận sâu lại</button>':'');
-    return '<div class="ak-msg is-ai" data-ak-msg="'+esc(m.id)+'"><span class="ak-av" aria-hidden="true">'+IC.book+'</span><div class="ak-body">'+body+warn+srcs+(acts||m.secs?'<div class="ak-acts">'+acts+(!m.error&&!m.empty&&m.secs?'<span class="ak-took" title="Thời gian AI trả lời câu hỏi này">'+fmtSecs(m.secs)+'</span>':'')+'</div>':'')+'</div></div>';
+    const plain=m.error||m.empty,who='<div class="ak-who"><span class="ak-av" aria-hidden="true">'+IC.spark+'</span><b>'+(m.free?'Trợ lý AI':'AI nghiệp vụ')+'</b></div>';
+    return '<div class="ak-msg is-ai" data-ak-msg="'+esc(m.id)+'">'+who+'<div class="ak-body">'+(plain?body:'<div class="ak-card">'+body+warn+srcs+'</div>')+(acts||m.secs?'<div class="ak-acts">'+acts+(!m.error&&!m.empty&&m.secs?'<span class="ak-took" title="Thời gian AI trả lời câu hỏi này">'+fmtSecs(m.secs)+'</span>':'')+'</div>':'')+'</div></div>';
   }
   function emptyHtml(){
     const ask=S.kind==='ask',list=ask?Q().SUGGESTIONS:Q().FREE_SUGGESTIONS;
-    return '<div class="ak-empty"><span class="ak-empty-ico">'+(ask?IC.book:IC.chat)+'</span><b>'+(ask?'Hỏi nghiệp vụ bảo hiểm':'Trò chuyện với AI')+'</b><p>'+(ask?'Trả lời dựa trên Thư viện tài liệu (Luật, Nghị định, quy tắc bảo hiểm), dẫn đúng mã nguồn <em>C1, C2…</em> — bấm mã để xem nguyên văn điều khoản.':'Hỏi mọi thứ: viết lại câu chữ, tính toán, dịch, soạn email. Muốn đúng điều khoản bảo hiểm thì bật “Tra thư viện”.')+'</p>'
-      +'<div class="ak-ideas">'+list.map(t=>'<button type="button" class="ak-idea" data-ak="idea" data-t="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div></div>';
+    return '<div class="ak-empty"><span class="ak-empty-ico">'+(ask?IC.book:IC.spark)+'</span><b>'+(ask?'Hỏi nghiệp vụ bảo hiểm':'Trò chuyện với AI')+'</b><p>'+(ask?'Trả lời dựa trên Thư viện tài liệu — Luật, Nghị định, quy tắc bảo hiểm — dẫn đúng mã nguồn <em>C1, C2…</em>. Bấm mã để xem nguyên văn điều khoản.':'Hỏi mọi thứ: viết lại câu chữ, tính toán, dịch, soạn email. Muốn đúng điều khoản bảo hiểm thì bật “Thư viện”.')+'</p>'
+      +'<small class="ak-ideas-h">Gợi ý để bắt đầu</small><div class="ak-ideas">'+list.map(t=>'<button type="button" class="ak-idea" data-ak="idea" data-t="'+esc(t)+'"><span>'+esc(t)+'</span>'+IC.up+'</button>').join('')+'</div></div>';
   }
   function busyHtml(){
-    return '<div class="ak-msg is-ai ak-busy" data-ak-busy><span class="ak-av is-spin" aria-hidden="true">'+IC.book+'</span><div class="ak-body"><div class="ak-busy-row"><i class="ak-dots"><b></b><b></b><b></b></i><span data-ak-status>'+esc(S.status)+'</span></div><div class="ak-busy-f"><small data-ak-secs>'+fmtSecs(elapsed())+'</small><button type="button" class="ak-act" data-ak="stop">'+IC.stop+'Dừng</button></div></div></div>';
+    return '<div class="ak-msg is-ai ak-busy" data-ak-busy><div class="ak-who"><span class="ak-av is-spin" aria-hidden="true">'+IC.spark+'</span><b>'+(S.kind==='chat'?'Trợ lý AI':'AI nghiệp vụ')+'</b></div><div class="ak-body"><div class="ak-busy-row"><span data-ak-status>'+esc(S.status)+'</span><i class="ak-bar-ind" aria-hidden="true"></i></div><div class="ak-busy-f"><small data-ak-secs>'+fmtSecs(elapsed())+'</small><button type="button" class="ak-act" data-ak="stop">'+IC.stop+'Dừng</button></div></div></div>';
   }
   function paintTop(){const el=$('[data-ak-top]');if(el&&live())el.innerHTML=topHtml();}
   function paintThread(){
@@ -8300,7 +8307,7 @@ window.TascoAsk=(()=>{
     const list=M.entries(c).filter(ORDER_OK).filter(e=>e.id===(a&&a.id)||!['groq','custom'].includes(e.provider)||(S.keys&&S.keys[e.provider]));
     openSheet('Mô hình AI','<div class="ak-models">'+list.map(e=>{const has=S.keys?!!S.keys[e.provider]:true,on=a&&e.id===a.id;
       return '<button type="button" class="ak-model'+(on?' is-on':'')+'" data-ak="pick" data-id="'+esc(e.id)+'"><span><b>'+esc(e.label)+'</b><small>'+(e.provider==='antigravity'?'Qua máy trung gian Tailscale của bạn':has?'Đã có khoá trong tài khoản':'Chưa có khoá — nhập ở webapp giám định')+'</small></span>'+(on?IC.check:'')+'</button>';}).join('')
-      +'</div><div class="ak-agy"><b>Antigravity (máy trung gian riêng)</b><p class="ak-hint">Cần bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian (dạng https://ten-may.ten-mang.ts.net). Địa chỉ chỉ lưu trên điện thoại này.</p><input type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ</button>':'')+'</div></div><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
+      +'</div><div class="ak-agy"><b>Antigravity (máy trung gian riêng)</b><p class="ak-hint">Cần bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian (dạng https://ten-may.ten-mang.ts.net). Địa chỉ này chỉ được lưu trên điện thoại.</p><input type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ</button>':'')+'</div></div><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
   }
   function historySheet(){
     const rows=kindChats(S.kind==='chat');
@@ -8399,91 +8406,143 @@ window.TascoAsk=(()=>{
 })();
 </script>
 <style id="tascoAskStyles">
-/* AI nghiệp vụ (#askSection) */
+/* AI nghiệp vụ (#askSection) — giao diện v2 */
 #askSection :is(button,input,textarea){font-family:'Plus Jakarta Sans',sans-serif}
 #askSection [hidden],.ak-sheet-bg [hidden]{display:none!important}
-.ak-root{display:flex;flex-direction:column;gap:10px;min-width:0}
+#askSection{--ak-sh:0 1px 2px rgba(24,48,86,.05),0 10px 28px rgba(24,48,86,.09);--ak-grad:linear-gradient(135deg,#3f8f98,#183056)}
+html.dark #askSection{--ak-sh:0 1px 2px rgba(0,0,0,.2),0 10px 28px rgba(0,0,0,.28);--ak-grad:linear-gradient(135deg,#63adb6,#2c5d86)}
+.ak-root{display:flex;flex-direction:column;gap:0;min-width:0}
+.ak-ctl,.ak-ctl *{box-sizing:border-box}
 .ak-chip svg,.ak-act svg{width:16px;height:16px;flex:none}
-.ak-head{display:flex;align-items:center;gap:7px}
-.ak-head .ak-seg{flex:1 1 auto;min-width:0}
-.ak-seg button{padding:0 6px;white-space:nowrap}
+/* thẻ điều khiển nổi */
+.ak-ctl{display:flex;flex-direction:column;gap:11px;padding:12px;border:1px solid var(--ws-line);border-radius:24px;background:var(--ws-surface);box-shadow:var(--ak-sh)}
+.ak-head{display:flex;align-items:center;gap:8px}
+.ak-head .ak-seg{flex:1 1 auto;min-width:0;padding:3px;border-radius:16px}
+.ak-seg button{min-height:38px;padding:0 6px;white-space:nowrap;font-size:13px;border-radius:13px}
+.ak-seg button[aria-pressed=true]{background:var(--app-navy);color:#fff!important;box-shadow:0 4px 12px rgba(24,48,86,.3)}
+html.dark #askSection .ak-seg button[aria-pressed=true]{background:var(--app-teal);color:#0b1b30!important;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 @media(max-width:380px){.ak-seg button{font-size:12.5px}}
-.ak-bar{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
-.ak-grow{flex:1 1 auto}
-.ak-chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;max-width:100%;padding:0 11px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-bg);color:var(--ws-text);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:background .18s,border-color .18s,transform .12s}
-.ak-chip:active{transform:scale(.96)}
+.ak-ico{flex:none;width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:14px;background:var(--ws-soft);color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background .18s}
+.ak-ico svg{width:18px;height:18px}.ak-ico:active{transform:scale(.92)}.ak-ico:disabled{opacity:.4}
+.ak-bar{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
+.ak-bar.is-chat .ak-chip.is-model{flex-basis:100%}
+.ak-bar.is-chat .ak-chip.is-toggle{flex:1 1 0;justify-content:space-between}
+.ak-chip{display:inline-flex;align-items:center;gap:8px;min-height:46px;min-width:0;padding:0 12px;border:1px solid transparent;border-radius:16px;background:var(--ws-soft);color:var(--ws-text);font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:background .18s,border-color .18s,transform .12s}
+.ak-chip:active{transform:scale(.97)}.ak-chip:disabled{opacity:.45;cursor:default}
 .ak-chip span{overflow:hidden;text-overflow:ellipsis;min-width:0}
-.ak-chip svg:last-child:not(:first-child){width:13px;height:13px;color:var(--ws-muted)}
-.ak-chip.is-set{background:color-mix(in srgb,var(--app-teal) 18%,var(--ws-bg));border-color:color-mix(in srgb,var(--app-teal) 60%,var(--ws-line))}
-.ak-chip:disabled{opacity:.5;cursor:default}
-.ak-usage{margin-left:auto;font-size:11px;font-weight:700;color:var(--ws-muted);white-space:nowrap}
-.ak-ico{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--ws-line);border-radius:50%;background:var(--ws-bg);color:var(--ws-text);cursor:pointer;-webkit-tap-highlight-color:transparent}
-.ak-ico svg{width:17px;height:17px}.ak-ico:active{transform:scale(.94)}.ak-ico:disabled{opacity:.45}
-.ak-lib{display:flex;align-items:center;gap:7px;min-height:34px;padding:8px 11px;border-radius:12px;background:var(--ws-soft);color:var(--ws-muted);font-size:11.5px;font-weight:600;line-height:1.45}
-.ak-lib.is-solo{min-height:0;padding:0 4px;background:none}
-.ak-lib svg{width:15px;height:15px;flex:none;color:var(--app-teal)}
-.ak-lib.is-bad{background:color-mix(in srgb,#e0674b 12%,var(--ws-bg));color:#b45335}.ak-lib.is-bad svg{color:#b45335}
-.ak-thread{display:flex;flex-direction:column;gap:14px;min-height:34vh;padding:4px 0 6px}
-.ak-msg.is-user{align-self:flex-end;max-width:88%}
-.ak-msg.is-user p{margin:0;padding:10px 14px;border-radius:18px 18px 6px 18px;background:var(--app-navy);color:#fff;font-size:14px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
-html.dark .ak-msg.is-user p{background:#2c5d86}
-.ak-msg.is-ai{display:flex;gap:9px;align-items:flex-start;min-width:0}
-.ak-av{flex:none;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:color-mix(in srgb,var(--app-teal) 22%,var(--ws-bg));color:var(--ws-text)}
-.ak-av svg{width:16px;height:16px}
+.ak-chip.is-model{flex:1 1 150px;padding-left:8px}
+.ak-chip-ico{flex:none;width:30px;height:30px;display:grid!important;place-items:center;border-radius:10px;background:var(--ak-grad);color:#fff}
+.ak-chip-ico svg{width:16px;height:16px}
+.ak-chip-t{display:flex!important;flex-direction:column;align-items:flex-start;line-height:1.2;text-align:left}
+.ak-chip-t small{font-size:10px;font-weight:600;color:var(--ws-muted);letter-spacing:.02em}
+.ak-chip-t span{font-size:13px;font-weight:700;max-width:100%}
+.ak-chip.is-model>svg:last-child{width:14px;height:14px;margin-left:auto;color:var(--ws-muted)}
+.ak-chip.is-toggle{flex:none;padding:0 10px 0 12px}
+.ak-chip.is-toggle>svg:first-child{color:var(--ws-muted);transition:color .18s}
+.ak-chip.is-toggle>span:not(.ak-sw){flex:1 1 auto;text-align:left}
+.ak-chip.is-toggle.is-set{background:color-mix(in srgb,var(--app-teal) 14%,var(--ws-surface));border-color:color-mix(in srgb,var(--app-teal) 55%,var(--ws-line))}
+.ak-chip.is-toggle.is-set>svg:first-child{color:var(--ws-accent-text)}
+.ak-sw{position:relative;flex:none;display:block;width:30px;height:18px;border-radius:99px;background:color-mix(in srgb,var(--ws-muted) 38%,var(--ws-soft));transition:background .2s}
+.ak-sw u{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.28);transition:transform .2s cubic-bezier(.3,.8,.3,1)}
+.ak-sw.is-on{background:var(--ak-grad)}.ak-sw.is-on u{transform:translateX(12px)}
+@media(max-width:370px){.ak-chip.is-toggle>svg:first-child{display:none}.ak-chip{padding:0 9px}}
+.ak-lib{display:flex;align-items:center;gap:8px;min-height:20px;padding:0 3px;color:var(--ws-muted);font-size:11.5px;font-weight:600;line-height:1.4}
+.ak-lib.is-solo{justify-content:flex-end}
+.ak-dot{flex:none;width:7px;height:7px;border-radius:50%;background:#2f8f6f;box-shadow:0 0 0 3px color-mix(in srgb,#2f8f6f 22%,transparent)}
+.ak-lib.is-bad{color:#b45335}.ak-lib.is-bad .ak-dot{background:#e0674b;box-shadow:0 0 0 3px color-mix(in srgb,#e0674b 22%,transparent)}
+.ak-usage{margin-left:auto;padding:2px 8px;border-radius:99px;background:var(--ws-soft);font-size:10.5px;font-weight:700;color:var(--ws-muted);white-space:nowrap}
+/* luồng hội thoại */
+.ak-thread{display:flex;flex-direction:column;gap:20px;min-height:34vh;padding:20px 2px 8px}
+.ak-msg{animation:akIn .32s cubic-bezier(.2,.8,.3,1) both}
+.ak-msg.is-user{align-self:flex-end;max-width:86%}
+.ak-msg.is-user p{margin:0;padding:11px 16px;border-radius:20px 20px 6px 20px;background:linear-gradient(135deg,#2a5886,#183056);color:#fff;font-size:14.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;box-shadow:0 8px 20px rgba(24,48,86,.22)}
+html.dark .ak-msg.is-user p{background:linear-gradient(135deg,#3b78a8,#2c5d86)}
+.ak-msg.is-ai{display:flex;flex-direction:column;gap:9px;min-width:0}
+.ak-who{display:flex;align-items:center;gap:8px;padding-left:2px}
+.ak-who b{font-size:12px;font-weight:700;letter-spacing:.01em;color:var(--ws-muted)}
+.ak-av{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:var(--ak-grad);color:#fff;box-shadow:0 3px 10px rgba(24,48,86,.25)}
+.ak-av svg{width:14px;height:14px}
 .ak-av.is-spin{animation:akPulse 1.6s ease-in-out infinite}
-.ak-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:8px}
-.ak-text{font-size:14px;line-height:1.7;color:var(--ws-text);word-break:break-word;overflow-wrap:anywhere}
-.ak-text p{margin:0 0 9px}.ak-text p:last-child{margin-bottom:0}
-.ak-text :is(ul,ol){margin:0 0 9px;padding-left:20px}.ak-text ul{list-style:disc}.ak-text ol{list-style:decimal}.ak-text li{margin:0 0 5px}
-.ak-text .ola-h{display:inline-block;margin-top:2px;padding-bottom:1px;border-bottom:2px solid color-mix(in srgb,var(--app-teal) 70%,transparent)}
-.ak-text h4{margin:12px 0 6px;font-size:14.5px;font-weight:700}
-.ak-text .ola-cite{display:inline-flex;align-items:center;height:20px;margin:0 1px;padding:0 7px;border:1px solid color-mix(in srgb,var(--app-teal) 65%,var(--ws-line));border-radius:99px;background:color-mix(in srgb,var(--app-teal) 15%,var(--ws-bg));color:var(--ws-text);font:700 11px 'Plus Jakarta Sans',sans-serif;vertical-align:1px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ak-body{min-width:0;display:flex;flex-direction:column;gap:9px}
+.ak-card{padding:16px 16px 15px;border:1px solid var(--ws-line);border-radius:6px 22px 22px 22px;background:var(--ws-surface);box-shadow:var(--ak-sh);overflow:hidden}
+.ak-text{font-size:14.5px;line-height:1.75;color:var(--ws-text);word-break:break-word;overflow-wrap:anywhere}
+.ak-text p{margin:0 0 10px}.ak-text p:last-child{margin-bottom:0}
+.ak-text :is(ul,ol){margin:0 0 10px;padding-left:19px}.ak-text ul{list-style:disc}.ak-text ol{list-style:decimal}.ak-text li{margin:0 0 6px}.ak-text li::marker{color:var(--app-teal);font-weight:700}
+.ak-text .ola-h{display:inline-block;margin:0 4px 0 0;padding:1px 9px;border:0;border-radius:8px;background:color-mix(in srgb,var(--app-teal) 20%,var(--ws-surface));color:var(--ws-accent-text);font-size:12px;font-weight:700;letter-spacing:.01em;line-height:1.7}
+.ak-text p>.ola-h:only-child,.ak-text :is(ul,ol)+p>.ola-h:first-child{margin-top:6px}
+.ak-text h4{margin:14px 0 6px;font-size:14.5px;font-weight:700}
+.ak-text .ola-cite{display:inline-flex;align-items:center;height:21px;margin:0 2px;padding:0 8px;border:1px solid color-mix(in srgb,var(--app-teal) 45%,var(--ws-line));border-radius:99px;background:color-mix(in srgb,var(--app-teal) 14%,var(--ws-surface));color:var(--ws-accent-text);font:700 11px 'Plus Jakarta Sans',sans-serif;vertical-align:1px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.ak-text .ola-cite:active{transform:scale(.93)}
 .ak-text .ola-cite.is-repeat{padding:0 6px;opacity:.8}
-.ak-text .ola-cite.is-bad{border-color:#e0674b;background:color-mix(in srgb,#e0674b 14%,var(--ws-bg));color:#b45335;cursor:default}
-.ak-md pre{margin:0 0 9px;padding:11px 12px;border-radius:12px;background:var(--ws-soft);border:1px solid var(--ws-line);overflow-x:auto;font-size:12.5px;line-height:1.55}
-.ak-md code{padding:1px 5px;border-radius:6px;background:var(--ws-soft);font-size:12.5px}.ak-md pre code{padding:0;background:none}
-.ak-md .ola-md-table{margin:0 0 9px;overflow-x:auto}.ak-md table{border-collapse:collapse;font-size:12.5px}.ak-md :is(th,td){padding:6px 9px;border:1px solid var(--ws-line);text-align:left}.ak-md th{background:var(--ws-soft)}
-.ak-note{padding:11px 13px;border-radius:14px;background:var(--ws-soft);color:var(--ws-text);font-size:13px;line-height:1.6}
-.ak-note.is-error{background:color-mix(in srgb,#e0674b 12%,var(--ws-bg));color:#b45335;border:1px solid color-mix(in srgb,#e0674b 35%,var(--ws-line))}
-.ak-warn{margin:0;padding:9px 12px;border-radius:12px;background:color-mix(in srgb,#f59e0b 14%,var(--ws-bg));color:#8a5a00;font-size:12px;line-height:1.55}
+.ak-text .ola-cite.is-bad{border-color:#e0674b;background:color-mix(in srgb,#e0674b 14%,var(--ws-surface));color:#b45335;cursor:default}
+.ak-md pre{margin:0 0 10px;padding:12px 13px;border-radius:14px;background:var(--ws-soft);border:1px solid var(--ws-line);overflow-x:auto;font-size:12.5px;line-height:1.55}
+.ak-md code{padding:1px 6px;border-radius:6px;background:var(--ws-soft);font-size:12.5px}.ak-md pre code{padding:0;background:none}
+.ak-md .ola-md-table{margin:0 0 10px;overflow-x:auto}.ak-md table{border-collapse:collapse;font-size:12.5px}.ak-md :is(th,td){padding:6px 9px;border:1px solid var(--ws-line);text-align:left}.ak-md th{background:var(--ws-soft)}
+.ak-warn{margin:12px 0 0;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,#f59e0b 13%,var(--ws-surface));color:#8a5a00;font-size:12px;line-height:1.6}
 html.dark .ak-warn{color:#f2c46b}
-.ak-srcs{border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-bg);overflow:hidden}
-.ak-srcs-head{display:flex;align-items:center;gap:8px;width:100%;min-height:42px;padding:8px 12px;border:0;background:transparent;color:var(--ws-text);font-size:12.5px;font-weight:700;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.ak-srcs-head span{flex:1 1 auto;min-width:0}.ak-srcs-head em{display:block;margin-top:1px;font-style:normal;font-size:11px;font-weight:600;color:var(--ws-muted)}
-.ak-srcs-head svg{width:16px;height:16px;flex:none;color:var(--ws-muted);transition:transform .2s}.ak-srcs.is-open .ak-srcs-head svg{transform:rotate(180deg)}
-.ak-srcs-body{display:grid;gap:6px;padding:0 10px 10px}
-.ak-queries{margin:0;color:var(--ws-muted);font-size:11.5px;line-height:1.55}
-.ak-src{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:8px 10px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-soft);color:var(--ws-text);text-align:left;font-size:12px;line-height:1.4;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.ak-src b{flex:none;min-width:30px;padding:3px 7px;border-radius:99px;background:var(--ws-line);color:var(--ws-text);font-size:11px;text-align:center}
+/* thẻ thông báo (lỗi / dừng / không có kết quả) */
+.ak-note{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1px solid var(--ws-line);border-radius:6px 20px 20px 20px;background:var(--ws-surface);box-shadow:var(--ak-sh)}
+.ak-note-ico{flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:12px;background:var(--ws-soft);color:var(--ws-muted)}
+.ak-note-ico svg{width:18px;height:18px}
+.ak-note b{display:block;font-size:13.5px;font-weight:700;color:var(--ws-text);line-height:1.4}
+.ak-note p{margin:3px 0 0;color:var(--ws-muted);font-size:12.5px;line-height:1.65;word-break:break-word;overflow-wrap:anywhere}
+.ak-note.is-error{border-color:color-mix(in srgb,#e0674b 40%,var(--ws-line));background:color-mix(in srgb,#e0674b 6%,var(--ws-surface))}
+.ak-note.is-error .ak-note-ico{background:color-mix(in srgb,#e0674b 16%,var(--ws-surface));color:#b45335}
+.ak-note.is-error b{color:#b45335}
+html.dark .ak-note.is-error :is(b,.ak-note-ico){color:#f0a08a}
+.ak-note.is-stop .ak-note-ico svg{width:15px;height:15px}
+/* nguồn trích dẫn: chân thẻ */
+.ak-srcs{border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-soft);overflow:hidden}
+.ak-card .ak-srcs{margin:14px -16px -15px;border:0;border-top:1px solid var(--ws-line);border-radius:0;background:color-mix(in srgb,var(--ws-soft) 70%,var(--ws-surface))}
+.ak-srcs-head{display:flex;align-items:center;gap:10px;width:100%;min-height:50px;padding:9px 14px;border:0;background:transparent;color:var(--ws-text);font-size:12.5px;font-weight:700;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ak-srcs-i{flex:none;display:grid!important;place-items:center;width:28px;height:28px;border-radius:9px;background:color-mix(in srgb,var(--app-teal) 20%,var(--ws-surface));color:var(--ws-accent-text)}
+.ak-srcs-i svg{width:15px;height:15px}
+.ak-srcs-head span:not(.ak-srcs-i){flex:1 1 auto;min-width:0}.ak-srcs-head em{display:block;margin-top:1px;font-style:normal;font-size:11px;font-weight:600;color:var(--ws-muted)}
+.ak-srcs-head>svg{width:16px;height:16px;flex:none;color:var(--ws-muted);transition:transform .2s}.ak-srcs.is-open .ak-srcs-head>svg{transform:rotate(180deg)}
+.ak-srcs-body{display:grid;gap:7px;padding:0 12px 12px}
+.ak-queries{margin:0;color:var(--ws-muted);font-size:11.5px;line-height:1.6}
+.ak-src{display:flex;align-items:center;gap:9px;width:100%;min-height:46px;padding:8px 11px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-surface);color:var(--ws-text);text-align:left;font-size:12px;line-height:1.4;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.ak-src:active{transform:scale(.985)}
+.ak-src b{flex:none;min-width:32px;padding:3px 8px;border-radius:99px;background:var(--ws-soft);color:var(--ws-text);font-size:11px;text-align:center}
 .ak-src span{flex:1 1 auto;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ak-src em,.ak-src i{flex:none;font-style:normal;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
-.ak-src em{background:color-mix(in srgb,#2f8f6f 18%,var(--ws-bg));color:#2f8f6f}.ak-src i{background:var(--ws-line);color:var(--ws-muted)}
-.ak-src.is-cited{border-color:color-mix(in srgb,var(--app-teal) 60%,var(--ws-line))}.ak-src.is-cited b{background:var(--app-teal);color:#fff}
-.ak-acts{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
-.ak-act{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 11px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-bg);color:var(--ws-text);font-size:12px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.ak-act:active{transform:scale(.96)}.ak-act:disabled{opacity:.45}
+.ak-src em{background:color-mix(in srgb,#2f8f6f 18%,var(--ws-surface));color:#2f8f6f}.ak-src i{background:var(--ws-soft);color:var(--ws-muted)}
+.ak-src.is-cited{border-color:color-mix(in srgb,var(--app-teal) 60%,var(--ws-line))}.ak-src.is-cited b{background:var(--ak-grad);color:#fff}
+/* nút thao tác dưới câu trả lời */
+.ak-acts{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding-left:2px}
+.ak-act{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border:0;border-radius:99px;background:color-mix(in srgb,var(--ws-line) 50%,transparent);color:var(--ws-text);font-size:12px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background .18s}
+.ak-act:active{transform:scale(.95)}.ak-act:disabled{opacity:.45}
 .ak-took{margin-left:auto;color:var(--ws-muted);font-size:11px;font-weight:600}
-.ak-busy-row{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:14px;background:var(--ws-soft);color:var(--ws-text);font-size:13px;line-height:1.5}
-.ak-busy-f{display:flex;align-items:center;gap:10px}.ak-busy-f small{color:var(--ws-muted);font-size:11.5px;font-weight:600}
-.ak-dots{display:inline-flex;gap:4px;flex:none}.ak-dots b{width:7px;height:7px;border-radius:50%;background:var(--app-teal);animation:akDot 1.2s ease-in-out infinite}
-.ak-dots b:nth-child(2){animation-delay:.15s}.ak-dots b:nth-child(3){animation-delay:.3s}
-.ak-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 6px 6px;text-align:center}
-.ak-empty-ico{width:54px;height:54px;display:grid;place-items:center;border-radius:18px;background:color-mix(in srgb,var(--app-teal) 20%,var(--ws-bg));color:var(--ws-text)}
-.ak-empty-ico svg{width:26px;height:26px}
-.ak-empty b{margin-top:6px;font-size:17px;font-weight:700;letter-spacing:-.3px;color:var(--ws-text)}
-.ak-empty p{margin:0 0 6px;max-width:330px;color:var(--ws-muted);font-size:12.5px;line-height:1.65}
-.ak-empty em{font-style:normal;font-weight:700;color:var(--ws-text)}
-.ak-ideas{display:grid;gap:8px;width:100%;margin-top:6px}
-.ak-idea{display:block;width:100%;padding:12px 14px;border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-bg);color:var(--ws-text);font-size:13px;font-weight:600;line-height:1.5;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,border-color .18s}
+/* đang xử lý */
+.ak-busy-row{display:flex;flex-direction:column;gap:12px;padding:15px;border:1px solid var(--ws-line);border-radius:6px 20px 20px 20px;background:var(--ws-surface);box-shadow:var(--ak-sh);color:var(--ws-text);font-size:13.5px;line-height:1.55}
+.ak-bar-ind{display:block;position:relative;height:4px;border-radius:99px;background:var(--ws-soft);overflow:hidden}
+.ak-bar-ind::after{content:"";position:absolute;top:0;bottom:0;left:0;width:38%;border-radius:99px;background:linear-gradient(90deg,transparent,var(--app-teal),transparent);animation:akInd 1.5s ease-in-out infinite}
+.ak-busy-f{display:flex;align-items:center;gap:10px;padding-left:2px}.ak-busy-f small{color:var(--ws-muted);font-size:11.5px;font-weight:600}
+/* màn hình trống */
+.ak-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px 4px;text-align:center}
+.ak-empty-ico{width:66px;height:66px;display:grid;place-items:center;border-radius:24px;background:var(--ak-grad);color:#fff;box-shadow:0 14px 30px rgba(24,48,86,.28),inset 0 1px 0 rgba(255,255,255,.28)}
+.ak-empty-ico svg{width:30px;height:30px}
+.ak-empty b{margin-top:10px;font-size:20px;font-weight:700;letter-spacing:-.5px;color:var(--ws-text)}
+.ak-empty p{margin:0 0 10px;max-width:326px;color:var(--ws-muted);font-size:13px;line-height:1.7}
+.ak-empty em{font-style:normal;font-weight:700;color:var(--ws-accent-text)}
+.ak-ideas-h{align-self:flex-start;margin:6px 4px 2px;color:var(--ws-muted);font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.ak-ideas{display:grid;gap:9px;width:100%}
+.ak-idea{display:flex;align-items:center;gap:12px;width:100%;padding:14px 12px 14px 16px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-surface);color:var(--ws-text);font-size:13.5px;font-weight:600;line-height:1.5;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:var(--ak-sh);transition:transform .12s,border-color .18s}
+.ak-idea span{flex:1 1 auto;min-width:0}
+.ak-idea svg{flex:none;width:30px;height:30px;padding:7px;border-radius:50%;background:var(--ws-soft);color:var(--ws-accent-text)}
 .ak-idea:active{transform:scale(.985);border-color:var(--app-teal)}
-.ak-comp-wrap{position:sticky;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:6;margin:2px -4px 0;padding:8px 4px 2px;background:linear-gradient(to top,var(--ws-surface) 62%,transparent)}
-.ak-comp{display:flex;align-items:flex-end;gap:8px;padding:6px 6px 6px 14px;border:1px solid var(--ws-line);border-radius:24px;background:var(--ws-bg);box-shadow:0 6px 22px rgba(20,40,70,.13)}
-.ak-comp:focus-within{border-color:var(--app-teal)}
-.ak-comp textarea{background:transparent!important;box-shadow:none!important;flex:1 1 auto;min-width:0;max-height:132px;padding:9px 0;border:0;outline:0;resize:none;background:transparent;color:var(--ws-text);font:500 16px/1.45 'Plus Jakarta Sans',sans-serif;-webkit-appearance:none;appearance:none}
+/* ô nhập nổi */
+.ak-comp-wrap{position:sticky;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:6;margin:6px -14px 0;padding:22px 14px 4px;background:linear-gradient(to top,var(--ws-bg) 58%,transparent)}
+.ak-comp{display:flex;align-items:flex-end;gap:8px;padding:6px 6px 6px 18px;border:1px solid var(--ws-line);border-radius:28px;background:var(--ws-surface);box-shadow:0 14px 34px rgba(24,48,86,.18);transition:border-color .18s,box-shadow .18s}
+html.dark .ak-comp{box-shadow:0 14px 34px rgba(0,0,0,.4)}
+.ak-comp:focus-within{border-color:var(--app-teal);box-shadow:0 14px 34px rgba(24,48,86,.18),0 0 0 3px color-mix(in srgb,var(--app-teal) 24%,transparent)}
+.ak-comp textarea{background:transparent!important;box-shadow:none!important;flex:1 1 auto;min-width:0;max-height:132px;padding:10px 0;border:0;outline:0;resize:none;color:var(--ws-text);font:500 16px/1.45 'Plus Jakarta Sans',sans-serif;-webkit-appearance:none;appearance:none}
 .ak-comp textarea::placeholder{color:var(--ws-muted)}
-.ak-send{flex:none;width:42px;height:42px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--app-navy);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,opacity .18s}
-.ak-send svg{width:19px;height:19px}.ak-send:active{transform:scale(.92)}.ak-send:disabled{opacity:.35}.ak-send.is-stop{background:#b45335}
-html.dark .ak-send{background:var(--app-teal);color:#0b1b30}
+html.dark #askSection .ak-comp textarea,#askSection .ak-comp textarea{background:transparent!important;background-color:transparent!important;box-shadow:none!important;border:0!important}
+.ak-send{flex:none;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--ak-grad);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 6px 16px rgba(24,48,86,.3);transition:transform .12s,opacity .18s,background .18s,box-shadow .18s}
+.ak-send svg{width:20px;height:20px}.ak-send:active{transform:scale(.9)}
+.ak-send:disabled{background:var(--ws-soft);color:var(--ws-muted);box-shadow:none;cursor:default}
+.ak-send.is-stop{background:#b45335}
 .ak-sheet{max-height:86vh}
 .ak-sheet-b{overflow:auto;-webkit-overflow-scrolling:touch;padding:0 18px 6px}
 .ak-s-title{margin:0 0 9px;color:var(--ws-muted);font-size:12.5px;font-weight:700;line-height:1.5}
@@ -8503,19 +8562,21 @@ html.dark .ak-send{background:var(--app-teal);color:#0b1b30}
 .ak-hdel{flex:none;width:46px;display:grid;place-items:center;border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-bg);color:#b45335;cursor:pointer}
 .ak-hdel svg{width:18px;height:18px}
 @keyframes akDot{0%,80%,100%{transform:scale(.55);opacity:.45}40%{transform:scale(1);opacity:1}}
-@keyframes akPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--app-teal) 45%,transparent)}50%{box-shadow:0 0 0 7px transparent}}
-@media(prefers-reduced-motion:reduce){.ak-dots b,.ak-av.is-spin{animation:none}}
+@keyframes akPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--app-teal) 50%,transparent)}50%{box-shadow:0 0 0 8px transparent}}
+@keyframes akInd{0%{transform:translateX(-100%)}100%{transform:translateX(270%)}}
+@keyframes akIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.ak-av.is-spin,.ak-bar-ind::after,.ak-msg{animation:none}}
 /* khung trang */
 .tasco-workspace #mainApp[data-shell][data-page=ask]{max-width:760px;padding:0 0 calc(118px + env(safe-area-inset-bottom,0px))!important}
 .tasco-workspace #mainApp[data-page=ask]>#mainHeader,.tasco-workspace #mainApp[data-page=ask]>#wsChildbar{display:none!important}
 html[data-tasco-page=ask]{background:var(--app-navy)}
 @media(max-width:767px){.tasco-workspace #mainApp[data-shell][data-page=ask]{padding-left:0!important;padding-right:0!important;max-width:600px}}
-#askSection .ws-journey-hero{min-height:206px;padding-bottom:50px}
-#askSection .ws-journey-heading{max-width:82%}
-#askSection .ws-journey-heading h2{font-size:30px;font-weight:700;line-height:1.16;letter-spacing:-1.1px}
-#askSection .ws-journey-heading p{max-width:236px;font-size:12px;line-height:1.65}
-#askSection .ws-journey-art{width:138px;right:-12px;bottom:34px;opacity:.4;transform:rotate(-8deg)}
-.tasco-workspace #askSection .rc-panel{margin:-28px 14px 0;padding:14px;border-radius:26px;border-color:var(--ws-line)}
+#askSection .ws-journey-hero{min-height:158px;padding-bottom:48px}
+#askSection .ws-journey-heading{max-width:86%}
+#askSection .ws-journey-heading h2{font-size:29px;font-weight:700;line-height:1.14;letter-spacing:-1.1px;white-space:nowrap}
+#askSection .ws-journey-heading p{max-width:250px;margin-top:9px;font-size:12px;line-height:1.6}
+#askSection .ws-journey-art{width:112px;right:-8px;bottom:36px;opacity:.34;transform:rotate(-8deg)}
+.tasco-workspace #askSection .rc-panel{margin:-30px 14px 0;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
 
 .ak-agy{margin-top:14px;padding:12px 14px;border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-bg)}.ak-agy b{font-size:13.5px}.ak-agy .ak-hint{margin:4px 0 10px}.ak-agy-in{width:100%;min-height:44px;padding:0 12px;border:1px solid var(--ws-line);border-radius:12px;background:transparent!important;color:var(--ws-text);font:inherit;font-size:16px}.ak-agy-acts{display:flex;gap:8px;margin-top:10px}
 </style>
