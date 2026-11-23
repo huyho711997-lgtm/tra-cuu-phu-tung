@@ -8418,7 +8418,8 @@ window.TascoAsk=(()=>{
     jumpRaf=requestAnimationFrame(()=>{
       jumpRaf=0;
       const b=$('[data-ak-jump]');if(!b||!live()||!onAsk())return;
-      const max=document.documentElement.scrollHeight-innerHeight,y=window.scrollY||0,up=max-y<=220,show=max>420&&S.messages.length>0;
+      const max=document.documentElement.scrollHeight-innerHeight,y=window.scrollY||0,up=max-y<=220,show=max>420&&S.messages.length>0,key=(show?1:0)+(up?2:0);
+      if(b._k===key)return;b._k=key;   // chỉ đụng DOM khi trạng thái đổi: ghi liên tục lúc đang cuộn dễ làm WKWebView ngừng vẽ
       b.classList.toggle('is-on',show);b.classList.toggle('is-up',up);b.tabIndex=show?0:-1;
       const t=up?'Lên đầu cuộc trò chuyện':'Xuống cuối cuộc trò chuyện';b.setAttribute('aria-label',t);b.title=up?'Lên đầu':'Xuống cuối';
     });
@@ -8426,7 +8427,7 @@ window.TascoAsk=(()=>{
   function jump(){
     const b=$('[data-ak-jump]');if(!b)return;
     clearInterval(endTimer);endTimer=0;   // đang giữ ở cuối thì thôi
-    window.scrollTo({top:b.classList.contains('is-up')?0:document.documentElement.scrollHeight,behavior:'smooth'});
+    const max=Math.max(0,document.documentElement.scrollHeight-innerHeight);window.scrollTo(0,b.classList.contains('is-up')?0:max);
   }
   const onAsk=()=>document.getElementById('mainApp')?.dataset.page==='ask';
   let endTimer=0;
@@ -8442,7 +8443,7 @@ window.TascoAsk=(()=>{
       if(!onAsk())return;   // trang chưa chuyển hẳn sang AI: đợi
       S.needEnd=false;
       const end=document.documentElement.scrollHeight-innerHeight;
-      if(Math.abs((window.scrollY||0)-end)>4)window.scrollTo(0,end+8);   // khung trang đôi khi tự cuộn lại lên đầu sau khi vẽ: giữ ở cuối tới khi người dùng chạm/cuộn
+      if(Math.abs((window.scrollY||0)-end)>4)window.scrollTo(0,Math.max(0,end));   // khung trang đôi khi tự cuộn lại lên đầu sau khi vẽ: giữ ở cuối tới khi người dùng chạm/cuộn
     },100);
   }
   function scrollToLastAnswer(){
@@ -8642,7 +8643,8 @@ window.TascoAsk=(()=>{
     document.addEventListener('focusin',e=>{clearTimeout(t);if(typing(e.target))root.classList.add('kb-open');},true);
     document.addEventListener('focusout',()=>{clearTimeout(t);t=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},160);},true);
   })();
-  window.addEventListener('scroll',()=>{document.documentElement.classList.toggle('ak-scrolled',(window.scrollY||0)>24);updateJump();},{passive:true});
+  let scRaf=0,scOn=false;
+  window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;const on=(window.scrollY||0)>24;if(on!==scOn){scOn=on;document.documentElement.classList.toggle('ak-scrolled',on);}updateJump();});},{passive:true});
   window.addEventListener('resize',updateJump);
   return {paint,reset,leave:()=>{closeSheet();S.needEnd=true;}};
 })();
@@ -8888,18 +8890,18 @@ html.kb-open #askSection .ak-root{padding-bottom:128px}
 html.kb-open .tasco-workspace #mainApp[data-shell][data-page=ask]{padding-bottom:0!important}
 html.kb-open #askSection .ak-thread{min-height:0}
 /* che phần chữ chạy đè lên đồng hồ/pin khi cuộn */
-html[data-tasco-page=ask].ak-scrolled::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--ws-bg) 86%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:90;pointer-events:none}
+html[data-tasco-page=ask].ak-scrolled::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--ws-bg);opacity:.94;z-index:90;pointer-events:none}
 html.kb-open #askSection .ws-journey-note{display:none}
 
 .ak-agy-fetch{width:100%;margin-top:10px}.ak-agy .ak-agy-n{margin:8px 0 0}
 
 .ak-comp-wrap{position:sticky}
-.ak-jump{position:absolute;right:20px;top:-22px;z-index:2;width:42px;height:42px;display:grid;place-items:center;padding:0;border:1px solid var(--ws-line);border-radius:50%;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 8px 22px rgba(24,48,86,.2);cursor:pointer;-webkit-tap-highlight-color:transparent;opacity:0;pointer-events:none;transform:translateY(8px) scale(.85);transition:opacity .2s,transform .2s,background .18s}
-.ak-jump svg{width:20px;height:20px;transition:transform .25s}
-.ak-jump.is-on{opacity:1;pointer-events:auto;transform:none}
+.ak-jump{position:absolute;right:20px;top:-22px;z-index:2;width:42px;height:42px;display:grid;place-items:center;padding:0;border:1px solid var(--ws-line);border-radius:50%;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 4px 12px rgba(24,48,86,.18);cursor:pointer;-webkit-tap-highlight-color:transparent;opacity:0;pointer-events:none;transition:opacity .18s}
+.ak-jump svg{width:20px;height:20px}
+.ak-jump.is-on{opacity:1;pointer-events:auto}
 .ak-jump.is-up svg{transform:rotate(180deg)}
-.ak-jump:active{transform:scale(.92);background:var(--ws-soft)}
-html.dark .ak-jump{box-shadow:0 8px 22px rgba(0,0,0,.45)}
+.ak-jump:active{background:var(--ws-soft)}
+html.dark .ak-jump{box-shadow:0 4px 12px rgba(0,0,0,.4)}
 @media(prefers-reduced-motion:reduce){.ak-jump,.ak-jump svg{transition:none}}
 html.kb-open .ak-jump{top:-30px}
 </style>
