@@ -15094,7 +15094,7 @@ async function triggerCustomCameraFocus(event){
   }finally{cameraRuntime.focusBusy=false;ring._timer=setTimeout(()=>ring.classList.remove('active'),1400);}
 }
 function deleteCapturedPhotoFromCamera(index){if(mobileCameraSaving)return;if(cameraQueueState.has(customCameraPhotos[index])){cameraFeedback('Ảnh này đã gửi lên Cloud. Xóa trong mục Cloud của tôi.',3000);return;}customCameraPhotos.splice(index,1);renderCustomCameraPreviewStrip();updateCustomCameraDoneBtn();}
-function updateCustomCameraDoneBtn(){const button=document.getElementById('btnSaveCustomCameraPhotos');const total=customCameraPhotos.length,auto=cameraAutoUploadActive();let sent=0,sending=0;for(const file of customCameraPhotos){const status=cameraQueueState.get(file);if(status==='queued')sent++;else if(status==='sending')sending++;}button.textContent=mobileCameraSaving?'Đang lưu…':auto?(sending?'Đang gửi '+sent+'/'+total:'Xong ('+total+')'):'Lưu Cloud ('+total+')';button.disabled=mobileCameraSaving||!total||!window.TascoAppShell.canCloud();}
+function updateCustomCameraDoneBtn(){const button=document.getElementById('btnSaveCustomCameraPhotos');const total=customCameraPhotos.length,auto=cameraAutoUploadActive();let sent=0,sending=0;for(const file of customCameraPhotos){const status=cameraQueueState.get(file);if(status==='queued')sent++;else if(status==='sending')sending++;}const stamping=window.tascoCameraStampPending?.()||0;button.textContent=mobileCameraSaving?'Đang lưu…':stamping?'Đang xử lý '+stamping+'…':auto?(sending?'Đang gửi '+sent+'/'+total:'Xong ('+total+')'):'Lưu Cloud ('+total+')';button.disabled=mobileCameraSaving||stamping>0||!total||!window.TascoAppShell.canCloud();}
 /* Lưu nền sau khi bấm Xong. Ảnh nào chưa vào hàng đợi vẫn còn trong kho cứu (IndexedDB) nên không mất; lỗi thì báo và mở lại hộp cứu ảnh. */
 async function cameraFinishSave(photos,context){
   const total=photos.length;
@@ -15113,10 +15113,16 @@ async function cameraFinishSave(photos,context){
     try{window.TascoCameraRescue?.again?.();}catch(_){}
   }
 }
+let cameraCloseWaiting=false;
 async function closeCustomCameraModal(savePhotos=false){
   if(savePhotos&&mobileCameraSaving)return;
   if(savePhotos&&!window.TascoAppShell.canCloud()){TascoCloud.notify('Chưa có quyền Cloud. Ảnh chưa lưu vẫn được giữ ở đây.');return;}
   if(savePhotos&&cameraUiState.captureBusy){cameraFeedback('Đợi ảnh đang xử lý xong rồi lưu Cloud.');return;}
+  /* Camera native đóng dấu ảnh ở nền (chụp tiếp được ngay): bấm Xong thì đợi các ảnh cuối đóng dấu xong rồi mới lưu. */
+  if(window.tascoCameraStampPending?.()>0){
+    if(cameraCloseWaiting)return;cameraCloseWaiting=true;
+    try{cameraFeedback('Đang xử lý ảnh cuối…',0);await window.tascoCameraStampIdle();}catch(_){}finally{cameraCloseWaiting=false;}
+  }
   if(savePhotos){const missing=cameraPlanMissing();
     if(missing.length){  // còn mục chưa chụp: hỏi bằng bảng riêng, chạm một mục để chụp tiếp mục đó
       const answer=await TascoCategories.missing({missing,total:cameraPlan().length,photos:customCameraPhotos.length});
@@ -21492,10 +21498,41 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     triggerCustomCameraFocus(event);
   }, true);
 
+  /* Chụp liên tục: nút chụp chỉ bận trong lúc CAMERA chụp (~0,3 giây). Việc nặng (giải mã ảnh 12 MP, cắt, đóng dấu, mã hoá JPEG)
+     chạy ở hàng đợi nền, lần lượt từng ảnh (đỡ tốn bộ nhớ), nên chụp tấm sau không phải đợi tấm trước xử lý/tải lên Cloud. */
+  var stampChain = Promise.resolve(), stampPending = 0, shotSeq = 0, STAMP_MAX = 4;
+  window.tascoCameraStampPending = function () { return stampPending; };
+  window.tascoCameraStampIdle = function () { return stampChain; };   // luôn resolve, không bao giờ reject
+  function enqueueStamp(job) {
+    stampPending++;
+    stampChain = stampChain.then(async function () {
+      try {
+        if (job.session !== cameraUiState.session) return;   // đã đóng/đổi phiên camera: bỏ ảnh này
+        var blob = await (await fetch('data:image/jpeg;base64,' + job.b64)).blob(); job.b64 = null;
+        var metadata = job.metadata;
+        var file = new File([blob], 'capture_' + metadata.capturedAt + '_' + job.seq + '.jpg', { type: 'image/jpeg', lastModified: metadata.capturedAt });
+        metadata.quality = job.quality; metadata.fx = job.fx;
+        cameraPhotoMetadata.set(file, metadata);
+        var stamped = await addWatermarkToImageFile(file, '', { isCameraSource: true });
+        if (job.session !== cameraUiState.session) return;
+        if (stamped === file) throw new Error('Chưa đóng dấu được ảnh. Vui lòng chụp lại.');
+        customCameraPhotos.push(stamped);
+        cameraAutoUpload(stamped);
+        renderCustomCameraPreviewStrip();
+        feedback('Đã chụp ' + (customCameraPhotos.length + stampPending - 1) + ' ảnh.' + (cameraQueueState.has(stamped) ? ' Đang gửi lên Cloud.' : ''), 1100);
+      } catch (error) {
+        if (job.session === cameraUiState.session) feedback((error && error.message) || 'Một ảnh chưa xử lý được. Vui lòng chụp lại.');
+      } finally {
+        job.b64 = null; stampPending--;
+        try { updateCustomCameraDoneBtn(); } catch (_) {}
+      }
+    });
+  }
   window.triggerCustomCameraCapture = async function () {
     if (!TascoAppShell.canCloud()) { feedback('Chưa có quyền Cloud để chụp ảnh.'); return; }
     if (st.mode === 'video') { toggleRecording(); return; }
     if (!st.running || cameraUiState.captureBusy || cameraControlsState.busy || cameraControlsState.settingsOpen || mobileCameraSaving) return;
+    if (stampPending >= STAMP_MAX) { feedback('Đang xử lý ảnh trước, đợi một chút…', 900); return; }   // giới hạn ảnh chờ để khỏi đầy bộ nhớ
     var session = cameraUiState.session, metadata = createCameraPhotoMetadata();
     cameraUiState.captureBusy = true; syncCameraViewport();
     var fx = document.getElementById('cameraFlashEffect');
@@ -21504,19 +21541,14 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     try {
       var shot = await withTimeout(CP.capture({ quality: 92, orientation: Orient.available && cameraOrientLock === 'landscape' && isLandscape() ? 'preview' : 'device', photoQualityPrioritization: pro.priority === 'speed' ? 'speed' : 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront }), 20000);
       if (session !== cameraUiState.session) return;
-      feedback('Đang đóng dấu ảnh…', 0);
-      var blob = await (await fetch('data:image/jpeg;base64,' + shot.value)).blob();
-      var file = new File([blob], 'capture_' + metadata.capturedAt + '_' + customCameraPhotos.length + '.jpg', { type: 'image/jpeg', lastModified: metadata.capturedAt });
-      metadata.quality = Object.assign({}, cameraQuality(), { maxSide: MAX_SIDE[cameraControlsState.quality] || 3024, jpeg: cameraControlsState.quality === 'economy' ? .88 : .95 });
-      metadata.fx = window.TascoPhotoFX ? TascoPhotoFX.fromPro(pro) : null;  // màu sắc & độ nét áp lên ảnh sau khi chụp
-      cameraPhotoMetadata.set(file, metadata);
-      var stamped = await addWatermarkToImageFile(file, '', { isCameraSource: true });
-      if (session !== cameraUiState.session) return;
-      if (stamped === file) throw new Error('Chưa đóng dấu được ảnh. Vui lòng chụp lại.');
-      customCameraPhotos.push(stamped);
-      cameraAutoUpload(stamped);
-      renderCustomCameraPreviewStrip(); updateCustomCameraDoneBtn();
-      feedback('Đã chụp ' + customCameraPhotos.length + ' ảnh.' + (cameraQueueState.has(stamped) ? ' Đang gửi lên Cloud.' : ''), 1100);
+      enqueueStamp({
+        session: session, metadata: metadata, b64: shot.value, seq: shotSeq++,
+        quality: Object.assign({}, cameraQuality(), { maxSide: MAX_SIDE[cameraControlsState.quality] || 3024, jpeg: cameraControlsState.quality === 'economy' ? .88 : .95 }),
+        fx: window.TascoPhotoFX ? TascoPhotoFX.fromPro(pro) : null   // màu sắc & độ nét áp lên ảnh sau khi chụp
+      });
+      shot = null;
+      try { updateCustomCameraDoneBtn(); } catch (_) {}
+      feedback('Đã chụp ' + (customCameraPhotos.length + stampPending) + ' ảnh.', 900);
     } catch (error) {
       if (session === cameraUiState.session) {
         if (error && error.code === 'CAPTURE_TIMEOUT') { feedback('Camera phản hồi quá chậm. Đang mở lại camera…', 0); setTimeout(function () { restartNative(); }, 0); }
