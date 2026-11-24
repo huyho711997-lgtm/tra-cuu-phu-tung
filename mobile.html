@@ -8495,7 +8495,9 @@ window.TascoAsk=(()=>{
     if(el&&el.dataset.phase===phase)return;
     if(!el){el=document.createElement('div');el.setAttribute('data-ak-rec','');comp.appendChild(el);}
     el.dataset.phase=phase;el.className='ak-rec is-'+phase;
-    el.innerHTML=phase==='rec'
+    el.innerHTML=phase==='init'
+      ?'<button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ ghi âm">'+IC.x+'</button><div class="ak-rec-mid"><div class="ak-wave" aria-hidden="true">'+'<i></i>'.repeat(VOICE_BARS)+'</div><div class="ak-rec-t"><i class="ak-spin" aria-hidden="true"></i><span>Đang bật micro…</span></div></div><button type="button" class="ak-rec-ok" disabled aria-label="Chưa sẵn sàng">'+IC.check+'</button>'
+    :phase==='rec'
       ?'<button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ ghi âm">'+IC.x+'</button><div class="ak-rec-mid"><div class="ak-wave" data-ak-wave>'+'<i></i>'.repeat(VOICE_BARS)+'</div><div class="ak-rec-t"><i class="ak-rec-dot" aria-hidden="true"></i><span data-ak-rect>0:00</span><em>Đang nghe — cứ nói tự nhiên</em></div></div><button type="button" class="ak-rec-ok" data-ak="micstop" aria-label="Xong — chuyển thành chữ">'+IC.check+'</button>'
       :'<i class="ak-spin" aria-hidden="true"></i><div class="ak-rec-mid"><b>Đang chuyển thành chữ…</b><em data-ak-eng>'+esc(S.voice.engine||'Đang chọn bộ nhận dạng giọng nói')+'</em></div><button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ">'+IC.x+'</button>';
   }
@@ -8505,10 +8507,11 @@ window.TascoAsk=(()=>{
     cancelAnimationFrame(r.raf);clearInterval(r.clock);
     try{if(r.mr&&r.mr.state!=='inactive')r.mr.stop();}catch(_){}
     try{r.stream.getTracks().forEach(t=>t.stop());}catch(_){}
-    try{r.ctx&&r.ctx.close&&r.ctx.close();}catch(_){}
+    try{if(r.ctx&&r.ctx.state!=='closed')r.ctx.close().catch(()=>{});}catch(_){}
   }
   function voiceCancel(){
     if(rec)rec.cancelled=true;
+    try{if(S.voice&&S.voice.ctx0&&!rec){const c0=S.voice.ctx0;S.voice.ctx0=null;c0.close().catch(()=>{});}}catch(_){}
     if(S.voice&&S.voice.ctl)S.voice.ctl.abort();
     voiceCleanup();S.voice=null;paintVoice();updateSend();
     const mic=$('[data-ak=mic]');if(mic)mic.disabled=!B||S.busy;
@@ -8516,21 +8519,26 @@ window.TascoAsk=(()=>{
   async function voiceStart(){
     if(!B||S.busy||S.voice)return;
     if(!window.isSecureContext||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast('Thiết bị này chưa hỗ trợ ghi âm trong ứng dụng.');return;}
-    S.voice={phase:'rec'};paintVoice();const m0=$('[data-ak=mic]');if(m0)m0.disabled=true;
+    const v0=S.voice={phase:'init'};paintVoice();const m0=$('[data-ak=mic]');if(m0)m0.disabled=true;
+    // chạy song song: tạo + đánh thức AudioContext ngay trong cử chỉ chạm (iOS cần), không đợi xin micro xong
+    let ctx0=null;try{const Ctx0=window.AudioContext||window.webkitAudioContext;if(Ctx0){ctx0=new Ctx0();if(ctx0.state==='suspended')ctx0.resume().catch(()=>{});}}catch(_){ctx0=null;}
+    v0.ctx0=ctx0;
+    const dropCtx=()=>{try{if(ctx0&&ctx0.state!=='closed')ctx0.close().catch(()=>{});}catch(_){}};
     let stream;
     try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});}
-    catch(e){S.voice=null;paintVoice();const m1=$('[data-ak=mic]');if(m1)m1.disabled=!B||S.busy;toast(/NotAllowed|Permission|denied/i.test((e&&e.name||'')+(e&&e.message||''))?'Chưa được cấp quyền micro. Vào Cài đặt iPhone → Tasco DLK → bật Micro.':'Không mở được micro. Hãy thử lại.');return;}
-    if(!S.voice||S.voice.phase!=='rec'||!live()){stream.getTracks().forEach(t=>t.stop());return;}   // người dùng đã huỷ/chuyển trang trong lúc chờ cấp quyền
+    catch(e){dropCtx();if(S.voice===v0)S.voice=null;paintVoice();const m1=$('[data-ak=mic]');if(m1)m1.disabled=!B||S.busy;toast(/NotAllowed|Permission|denied/i.test((e&&e.name||'')+(e&&e.message||''))?'Chưa được cấp quyền micro. Vào Cài đặt iPhone → Tasco DLK → bật Micro.':'Không mở được micro. Hãy thử lại.');return;}
+    if(S.voice!==v0||!live()){stream.getTracks().forEach(t=>t.stop());dropCtx();return;}   // người dùng đã huỷ/chuyển trang trong lúc chờ cấp quyền
     const mime=['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
-    let mr;try{mr=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);}catch(_){stream.getTracks().forEach(t=>t.stop());S.voice=null;paintVoice();toast('Không khởi động được ghi âm.');return;}
+    let mr;try{mr=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);}catch(_){stream.getTracks().forEach(t=>t.stop());dropCtx();S.voice=null;paintVoice();toast('Không khởi động được ghi âm.');return;}
     const r=rec={stream,mr,chunks:[],t0:Date.now(),peak:0,hist:new Array(VOICE_BARS).fill(0),cancelled:false,mime:mr.mimeType||mime||'audio/mp4'};
     mr.ondataavailable=e=>{if(e.data&&e.data.size)r.chunks.push(e.data);};
     mr.onstop=()=>{if(!r.cancelled&&r.finish)r.finish();};
     try{
-      const Ctx=window.AudioContext||window.webkitAudioContext;r.ctx=new Ctx();if(r.ctx.state==='suspended')r.ctx.resume().catch(()=>{});
+      r.ctx=ctx0;if(!r.ctx)throw 0;if(r.ctx.state==='suspended')r.ctx.resume().catch(()=>{});
       const src=r.ctx.createMediaStreamSource(stream);r.an=r.ctx.createAnalyser();r.an.fftSize=512;src.connect(r.an);r.buf=new Uint8Array(r.an.fftSize);
     }catch(_){r.an=null;}
     mr.start(250);
+    S.voice={phase:'rec'};paintVoice();   // chỉ báo "Đang nghe" khi micro đã thực sự thu
     let last=0;
     const frame=ts=>{
       if(rec!==r)return;
@@ -9164,6 +9172,9 @@ html.kb-open .ak-jump{top:-30px}
 .ak-rec-t{display:flex;align-items:center;gap:8px;min-width:0;color:var(--ws-text);font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
 .ak-rec-dot{flex:none;width:8px;height:8px;border-radius:50%;background:#d6483b;animation:akRecDot 1.2s ease-in-out infinite}
 @keyframes akRecDot{0%,100%{opacity:1}50%{opacity:.3}}
+.ak-rec.is-init .ak-wave i{transform:scaleY(.14);opacity:.35}
+.ak-rec.is-init .ak-rec-t{color:var(--ws-muted)}
+.ak-rec-ok:disabled{opacity:.4;box-shadow:none;cursor:default}
 .ak-rec.is-busy .ak-spin{flex:none;margin:0 4px 0 6px}
 [data-ak-input].is-fresh{animation:akFresh 1.4s ease-out}
 @keyframes akFresh{0%{background:color-mix(in srgb,var(--app-teal) 18%,transparent)}100%{background:transparent}}
