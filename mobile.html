@@ -8833,11 +8833,11 @@ window.TascoAsk=(()=>{
       return '<section class="ak-mg"><header class="ak-mg-h"><div><b>'+esc(name)+'</b></div><em class="ak-mg-st'+(has?' is-ok':'')+'">'+(has?'Đã có khoá':'Chưa có khoá')+'</em></header><div class="ak-mrows">'+items.map(e=>modelRow(e,on(e))).join('')+'</div>'+(has?'':'<p class="ak-hint">Nhập khoá ở webapp giám định xe để dùng mô hình này.</p>')+'</section>';
     }).join('')+'</div>';
   }
-  async function modelSheet(){
+  async function modelSheet(keepAgyOpen=false){
     await refreshKeys();
     const M=B.Models,c=cfg(),a=active();
     const list=M.entries(c).filter(ORDER_OK).filter(e=>e.id===(a&&a.id)||!['groq','custom'].includes(e.provider)||(S.keys&&S.keys[e.provider]));
-    openSheet('Mô hình AI','<div class="ak-model-intro"><span class="ak-model-intro-icon" aria-hidden="true">'+IC.spark+'</span><div><span>TRỢ LÝ NGHIỆP VỤ</span><strong>Chọn mô hình phù hợp</strong><small>Chọn một mô hình để sử dụng cho cuộc trò chuyện.</small></div></div>'+modelGroups(list,a)+'<div class="ak-agy"><span class="ak-agy-cap">KẾT NỐI RIÊNG</span><b>Antigravity</b><p class="ak-hint">Cần bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian (dạng https://ten-may.ten-mang.ts.net). Địa chỉ này chỉ được lưu trên điện thoại.</p><input type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ</button>':'')+'</div>'+(agyBase()?'<button type="button" class="dt-btn is-sm ak-agy-fetch" data-ak="agyfetch">Lấy danh sách mô hình từ Antigravity</button><p class="ak-hint ak-agy-n">'+(((cfg().providers.antigravity.models||[]).length)?'Đã lấy '+cfg().providers.antigravity.models.length+' mô hình từ máy trung gian.':'Đang dùng 2 mô hình mặc định. Bấm để dùng toàn bộ mô hình trong tài khoản Antigravity của bạn.')+'</p>':'')+'</div><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
+    openSheet('Mô hình AI','<div class="ak-model-intro"><span class="ak-model-intro-icon" aria-hidden="true">'+IC.spark+'</span><div><span>TRỢ LÝ NGHIỆP VỤ</span><strong>Chọn mô hình phù hợp</strong><small>Chọn một mô hình để sử dụng cho cuộc trò chuyện.</small></div></div>'+modelGroups(list,a)+'<details class="ak-agy"'+(keepAgyOpen?' open':'')+'><summary class="ak-agy-summary"><span class="ak-agy-icon" aria-hidden="true">'+IC.cpu+'</span><span class="ak-agy-heading"><b>Antigravity</b><small>Máy trung gian riêng</small></span><span class="ak-agy-status'+(agyBase()?' is-set':'')+'">'+(agyBase()?'Đã lưu địa chỉ':'Chưa thiết lập')+'</span>'+IC.chev+'</summary><div class="ak-agy-body"><p class="ak-hint">Bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian. Địa chỉ chỉ được lưu trên thiết bị này.</p><label for="akAgyAddress">Địa chỉ máy trung gian</label><input id="akAgyAddress" type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ địa chỉ</button>':'')+'</div>'+(agyBase()?'<button type="button" class="dt-btn is-sm ak-agy-fetch" data-ak="agyfetch">Lấy danh sách mô hình</button><p class="ak-hint ak-agy-n">'+(((cfg().providers.antigravity.models||[]).length)?'Đã lấy '+cfg().providers.antigravity.models.length+' mô hình từ máy trung gian.':'Đang dùng 2 mô hình mặc định. Bấm để tải danh sách từ máy trung gian.')+'</p>':'')+'</div></details><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
     sheet.classList.add('ak-model-sheet-bg');
   }
   function historySheet(){
@@ -8921,7 +8921,7 @@ window.TascoAsk=(()=>{
       if(raw&&!base){toast('Địa chỉ phải là HTTPS Tailscale (*.ts.net), không kèm tài khoản, mật khẩu hay tham số.');return;}
       const c=cfg();c.providers=c.providers||{};c.providers.antigravity={base,models:(c.providers.antigravity&&c.providers.antigravity.models)||[]};
       if(!base&&/^antigravity:/.test(c.selected||''))c.selected='';
-      S.cfg=B.Models.save(c);toast(base?'Đã lưu địa chỉ Antigravity.':'Đã gỡ địa chỉ Antigravity.');modelSheet();paintTop();
+      S.cfg=B.Models.save(c);toast(base?'Đã lưu địa chỉ Antigravity.':'Đã gỡ địa chỉ Antigravity.');modelSheet(true);paintTop();
     }
     else if(k==='agyfetch'){
       if(b.disabled)return;b.disabled=true;const old=b.textContent;b.textContent='Đang lấy…';
@@ -8931,7 +8931,7 @@ window.TascoAsk=(()=>{
           if(!names.length)throw new Error('Máy trung gian chưa liệt kê mô hình nào — hãy đăng nhập tài khoản Antigravity trong CLIProxyAPI trên máy tính.');
           c.providers.antigravity=Object.assign({},c.providers.antigravity,{models:B.Models.parseAgyModels?B.Models.parseAgyModels(names):names});
           S.cfg=B.Models.save(c);toast('Có '+B.Models.entries(S.cfg).filter(e=>e.provider==='antigravity').length+' mô hình Antigravity.');
-          modelSheet();paintTop();
+          modelSheet(true);paintTop();
         }catch(err){toast((err&&err.message)||'Không lấy được danh sách mô hình.');b.disabled=false;b.textContent=old;}
       })();
     }
@@ -9361,6 +9361,24 @@ html.dark #askSection .ak-ctl,html.dark #askSection .ak-card{box-shadow:0 8px 25
 .ak-model-sheet-bg .ak-agy-acts{margin-top:10px}.ak-model-sheet-bg .ak-agy-acts button{min-height:40px;border-radius:12px}
 .ak-model-sheet-bg :is(button,input):focus-visible{outline:2px solid var(--app-teal);outline-offset:3px}
 html.dark .ak-model-sheet-bg .ak-mg-st.is-ok{color:#a3e0cc}
+
+/* Compact private connection settings */
+.ak-model-sheet-bg details.ak-agy{padding:0;overflow:hidden;background:var(--ws-surface)}
+.ak-agy-summary{display:flex;align-items:center;gap:11px;min-height:72px;padding:13px 14px;list-style:none;cursor:pointer}
+.ak-agy-summary::-webkit-details-marker{display:none}
+.ak-agy-icon{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:13px;background:color-mix(in srgb,var(--app-teal) 15%,var(--ws-surface));color:var(--ws-accent-text)}
+.ak-agy-icon svg{width:19px;height:19px}.ak-agy-heading{flex:1;min-width:0}.ak-agy-heading b,.ak-agy-heading small{display:block}
+.ak-agy-heading b{color:var(--ws-text);font-size:13px}.ak-agy-heading small{margin-top:3px;color:var(--ws-muted);font-size:10px}
+.ak-agy-status{flex:none;padding:5px 8px;border-radius:99px;background:var(--ws-soft);color:var(--ws-muted);font-size:10px;font-weight:700;white-space:nowrap}
+.ak-agy-status.is-set{background:color-mix(in srgb,#53b69a 18%,var(--ws-surface));color:#277b68}
+.ak-agy-summary>svg{flex:none;width:15px;height:15px;color:var(--ws-muted);transition:transform .2s}.ak-agy[open] .ak-agy-summary>svg{transform:rotate(180deg)}
+.ak-agy-body{padding:0 14px 15px;border-top:1px solid var(--ws-line)}
+.ak-model-sheet-bg .ak-agy-body .ak-hint{margin:12px 0;line-height:1.6}.ak-agy-body label{display:block;margin-bottom:7px;color:var(--ws-text);font-size:11px;font-weight:700}
+.ak-model-sheet-bg .ak-agy-acts button:first-child{flex:1}.ak-model-sheet-bg .ak-agy-fetch{min-height:40px;border-radius:12px}
+.ak-agy-summary:focus-visible{outline:2px solid var(--app-teal);outline-offset:-3px}
+html.dark .ak-agy-status.is-set{color:#a3e0cc}
+@media(max-width:350px){.ak-agy-summary{gap:7px;padding:12px}.ak-agy-icon{width:34px;height:34px}.ak-agy-status{font-size:9px;padding:5px 6px}}
+@media(prefers-reduced-motion:reduce){.ak-agy-summary>svg{transition:none}}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
