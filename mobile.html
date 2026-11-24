@@ -8810,13 +8810,13 @@ window.TascoAsk=(()=>{
       try{urls.push(await plateImage(f,1024));}catch(_){/* bỏ qua ảnh hỏng */}
     }
     if(!urls.length)throw new Error('Không đọc được ảnh nào. Hãy chọn lại ảnh.');
-    const M=B.Models,c=cfg(),cands=voiceCandidates(),notes=[];
-    if(!cands.length)throw new Error('Chưa có Antigravity hay khoá Gemini để phân tích ảnh.');
+    const M=B.Models,c=cfg(),cands=voiceCandidates().filter(e=>e.provider==='antigravity'),notes=[];
+    if(!cands.length)throw new Error('Chưa có mô hình Antigravity để đọc ảnh. Vào AI nghiệp vụ → Mô hình AI → Antigravity, lưu địa chỉ Tailscale và tải danh sách mô hình Gemini.');
     const content=[{type:'text',text:'Đây là '+urls.length+' ảnh hiện trường. Điền JSON theo quy tắc.'}].concat(urls.map(u=>({type:'image_url',image_url:{url:u}})));
     for(const e of cands){
       if(ctl.aborted)throw new DOMException('Đã huỷ','AbortError');
       let key='';try{key=await M.getKey(e.provider);}catch(_){}
-      if(!key){notes.push(e.provider==='gemini'?'chưa có khoá Gemini':'chưa đăng nhập Antigravity');continue;}
+      if(!key){notes.push('chưa đăng nhập Antigravity');continue;}
       const r=M.resolve(c,e.id),name=(r.providerLabel||e.provider)+' · '+e.model;
       const body={model:e.model,stream:false,temperature:0.1,max_tokens:1500,messages:[{role:'system',content:sceneSys(lim)},{role:'user',content}]};
       const signals=[ctl];if(typeof AbortSignal.timeout==='function')signals.push(AbortSignal.timeout(90000));
@@ -8849,7 +8849,7 @@ window.TascoAsk=(()=>{
         notes.push(name+(err&&err.name==='TimeoutError'?' quá chậm':' không kết nối được'));
       }
     }
-    throw new Error('Chưa phân tích được ảnh ('+notes.slice(0,2).join('; ')+'). Bạn vẫn có thể nhập tay.');
+    throw new Error('Antigravity chưa phân tích được ảnh ('+notes.slice(0,2).join('; ')+'). Hãy kiểm tra Tailscale, máy trung gian và đăng nhập Antigravity; bạn vẫn có thể nhập tay.');
   }
 
   /* ---------- bottom sheet ---------- */
@@ -10198,7 +10198,7 @@ window.TascoScene=(()=>{
     }
     const run=ai.busy?'<button type="button" class="dt-btn" data-sc="ai-cancel"><i class="sc-ai-spin" aria-hidden="true"></i>Đang phân tích… Huỷ</button>':'<button type="button" class="dt-btn is-main" data-sc="ai-run"'+(n?'':' disabled')+'>'+I.spark+'Phân tích'+(n?' '+n+' ảnh':'')+'</button>';
     return '<section class="sc-t sc-ai" id="scAI"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+I.spark+'</span><b>AI đọc ảnh hiện trường</b></div>'+
-      '<p class="sc-ai-sub">Chọn ảnh hiện trường, AI đề xuất các mục nhìn thấy được. Bạn xem lại rồi mới áp dụng. Ảnh chỉ gửi để phân tích, không lưu lại.</p>'+
+      '<p class="sc-ai-sub">Antigravity phân tích ảnh và đề xuất các mục nhìn thấy được. Bạn xem lại trước khi áp dụng. Ảnh chỉ gửi để phân tích, không lưu lại.</p>'+
       (n?'<div class="sc-ai-thumbs">'+thumbs+'</div>':'')+
       '<div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-pick"'+(ai.busy?' disabled':'')+'>'+I.plus+(n?'Thêm ảnh':'Chọn ảnh')+'</button>'+run+'</div>'+
       '<input type="file" id="scAIFile" accept="image/*" multiple hidden tabindex="-1">'+
