@@ -9779,7 +9779,7 @@ window.TascoScene=(()=>{
       (loc?'<span class="sc-c-loc">'+I.pin+'<span>'+esc(loc)+'</span></span>':'')+'<i class="sc-c-go">'+I.chev+'</i></button>';
   }
   function listShell(){
-    return '<div class="sc-root"><div class="sc-intro">Chọn hồ sơ để lập <b>Biên bản giám định hiện trường</b> ngay tại hiện trường. Dữ liệu tự lưu và đồng bộ với webapp giám định.</div>'+
+    return '<div class="sc-root">'+
       '<label class="dr-search">'+I.search+'<input id="scSearch" type="search" placeholder="Biển số, HSBT, chủ xe, địa điểm…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Tìm hồ sơ" value="'+esc(S.q)+'"></label>'+
       '<div class="dr-count" id="scCount"></div><div class="sc-list" id="scList"></div><div id="scMore"></div></div>';
   }
