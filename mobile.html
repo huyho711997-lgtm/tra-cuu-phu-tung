@@ -3886,7 +3886,7 @@ window.TascoBootSplash = (() => {
 <section id="askSection" data-shell-page="ask" class="ws-journey rc dr-page" hidden style="display:none" aria-labelledby="askPageTitle">
   <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TRỢ LÝ NGHIỆP VỤ</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">THƯ VIỆN TÀI LIỆU</span><h2 id="askPageTitle" tabindex="-1">AI nghiệp vụ.</h2><p>Hỏi quy tắc, Luật, Nghị định — có dẫn nguồn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><g transform="translate(13 -5) scale(6)" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5H7a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h1v3l4-3h5a3 3 0 0 0 3-3v-3" stroke-width=".32"/><path d="M8 11h5M8 14.5h8" stroke-width="1"/><path d="M17.5 2.5l1.2 3.1 3.1 1.2-3.1 1.2-1.2 3.1-1.2-3.1-3.1-1.2 3.1-1.2Z" stroke-width=".5"/></g></svg></header>
   <div class="ws-search-panel ws-search-panel--premium rc-panel">
-    <div id="akPageRoot" aria-live="polite"><div class="dr-skel"><i></i><i></i><i></i></div></div>
+    <template id="akLoadingTemplate"><div class="ak-loading" role="status" aria-live="polite"><div class="ak-loading-head"><span class="ak-loading-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5H7a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h1v3l4-3h5a3 3 0 0 0 3-3v-3"/><path d="M17.5 2.5l1.2 3.1 3.1 1.2-3.1 1.2-1.2 3.1-1.2-3.1-3.1-1.2 3.1-1.2Z"/></svg></span><div><small>TRỢ LÝ NGHIỆP VỤ</small><strong>Đang chuẩn bị</strong><p>Vui lòng chờ trong giây lát</p></div><span class="ak-loading-spinner" aria-hidden="true"></span></div><div class="ak-loading-preview" aria-hidden="true"><div class="ak-loading-tabs"><i></i><i></i></div><div class="ak-loading-field"><i></i><span><i></i><i></i></span></div><div class="ak-loading-lines"><i></i><i></i></div></div></div></template><div id="akPageRoot" aria-live="polite"><div class="ak-loading" role="status" aria-live="polite"><div class="ak-loading-head"><span class="ak-loading-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5H7a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h1v3l4-3h5a3 3 0 0 0 3-3v-3"/><path d="M17.5 2.5l1.2 3.1 3.1 1.2-3.1 1.2-1.2 3.1-1.2-3.1-3.1-1.2 3.1-1.2Z"/></svg></span><div><small>TRỢ LÝ NGHIỆP VỤ</small><strong>Đang chuẩn bị</strong><p>Vui lòng chờ trong giây lát</p></div><span class="ak-loading-spinner" aria-hidden="true"></span></div><div class="ak-loading-preview" aria-hidden="true"><div class="ak-loading-tabs"><i></i><i></i></div><div class="ak-loading-field"><i></i><span><i></i><i></i></span></div><div class="ak-loading-lines"><i></i><i></i></div></div></div></div>
   </div>
 </section>
 
@@ -7404,6 +7404,7 @@ window.TascoWeekly=(()=>{
     if(phase==='ready'&&T()==='kpi'&&kcalcFail&&!kcalc){b.innerHTML='<div class="dr-empty"><b>Chưa tải được bộ tính KPI</b>Không tải được từ webapp giám định. Kiểm tra mạng rồi thử lại.<div class="dr-acts"><button type="button" class="dt-btn is-main" data-wk="retry">Thử lại</button></div></div>';return;}
     if(phase==='ready'&&T()==='prog'&&prog){paintProg();return;}
     if(phase==='ready'&&T()==='ask'){window.TascoAsk?.paint(b,askApi);return;}
+    if(T()==='ask'&&phase!=='ready'){b.innerHTML=document.getElementById('akLoadingTemplate').innerHTML;return;}
     if(phase==='ready'&&T()==='scene'){
       if(!claimsReady||!users){b.innerHTML='<div class="wk-load">Đang tải danh sách hồ sơ…</div><div class="dr-skel"><i></i><i></i><i></i></div>';return;}
       window.TascoScene?.paint(b,sceneApi);return;
@@ -8863,7 +8864,7 @@ window.TascoAsk=(()=>{
     if(!$('[data-ak-root]'))shell();
     if(!B||!S.ready){
       $('[data-ak-top]').innerHTML='';
-      $('[data-ak-thread]').innerHTML=S.err?'<div class="dr-empty"><b>Chưa mở được AI nghiệp vụ</b>'+esc(S.err)+'<div class="dr-acts"><button type="button" class="dt-btn is-main" data-ak="reload">Thử lại</button></div></div>':'<div class="wk-load">Đang nạp bộ AI nghiệp vụ từ webapp giám định…</div><div class="dr-skel"><i></i><i></i><i></i></div>';
+      $('[data-ak-thread]').innerHTML=S.err?'<div class="dr-empty"><b>Chưa mở được AI nghiệp vụ</b>'+esc(S.err)+'<div class="dr-acts"><button type="button" class="dt-btn is-main" data-ak="reload">Thử lại</button></div></div>':document.getElementById('akLoadingTemplate').innerHTML;
       const comp=$('[data-ak-comp]');if(comp)comp.innerHTML='';
       return;
     }
@@ -9393,6 +9394,18 @@ html.dark .ak-agy-status.is-set{color:#a3e0cc}
 #askSection .ak-lib{min-height:16px;padding:0 2px;font-size:10px;font-weight:600}
 html.dark #askSection .ak-seg button[aria-pressed=true]{background:var(--app-teal);color:#0b1b30!important}
 @media(max-width:360px){#askSection .ak-ctl{padding:12px}#askSection .ak-head{gap:5px}#askSection .ak-ico{width:36px}#askSection .ak-seg button{font-size:10px}.ak-control-label{font-size:8px}}
+
+/* AI page preparation */
+#askSection .ak-loading{padding:19px;border:1px solid var(--ws-line);border-radius:21px;background:var(--ws-surface);box-shadow:0 10px 28px rgba(24,48,86,.08)}
+.ak-loading-head{display:flex;align-items:center;gap:12px}.ak-loading-head>div{flex:1;min-width:0}
+.ak-loading-mark{display:grid;place-items:center;flex:none;width:45px;height:45px;border-radius:14px;background:color-mix(in srgb,var(--app-teal) 15%,var(--ws-surface));color:var(--ws-accent-text)}
+.ak-loading-mark svg{width:22px;height:22px}.ak-loading-head small,.ak-loading-head strong{display:block}
+.ak-loading-head small{color:var(--ws-accent-text);font-size:9px;letter-spacing:.1em;font-weight:800}.ak-loading-head strong{margin-top:4px;color:var(--ws-text);font-size:14px;line-height:1.3}.ak-loading-head p{margin:3px 0 0;color:var(--ws-muted);font-size:11px}
+.ak-loading-spinner{flex:none;width:21px;height:21px;border:2px solid color-mix(in srgb,var(--app-teal) 22%,transparent);border-top-color:var(--app-teal);border-radius:50%;animation:akSpin 1s linear infinite}
+.ak-loading-preview{margin-top:18px;padding-top:16px;border-top:1px solid var(--ws-line)}.ak-loading-preview i{display:block;background:var(--ws-soft);border-radius:8px}
+.ak-loading-tabs{display:flex;gap:7px}.ak-loading-tabs i{width:38%;height:35px}.ak-loading-field{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px;border:1px solid var(--ws-line);border-radius:13px}.ak-loading-field>i{width:36px;height:36px;flex:none}.ak-loading-field span{display:grid;gap:6px;flex:1}.ak-loading-field span i:first-child{width:33%;height:7px}.ak-loading-field span i:last-child{width:62%;height:9px}
+.ak-loading-lines{display:flex;gap:6px;margin-top:13px}.ak-loading-lines i{width:7px;height:7px;border-radius:50%}.ak-loading-lines i+ i{width:40%;border-radius:5px}
+@media(prefers-reduced-motion:reduce){.ak-loading-spinner{animation:none;border-color:var(--app-teal)}}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
