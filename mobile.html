@@ -7244,7 +7244,7 @@ window.TascoWeekly=(()=>{
   }
   function paintAll(){
     if(page==='ask'){const r=$('akPageRoot');if(!r)return;const keep=$('akBody');if(!keep||!r.contains(keep))r.innerHTML='<div id="akBody"></div>';paintBody();return;}   // giữ nguyên khung đang có: xoá đi thì trang co lại và vị trí cuộn về đầu
-    if(page==='scene'){const r=$('scPageRoot');if(!r)return;r.innerHTML='<div class="dr-live'+(live?' is-on':'')+'" data-wk-live><i></i><b></b></div><div id="scBody"></div>';paintLive();paintBody();return;}
+    if(page==='scene'){const r=$('scPageRoot');if(!r)return;r.innerHTML='<div id="scBody"></div>';paintBody();return;}
     if(page==='progress'){const r=$('pgPageRoot');if(!r)return;r.innerHTML='<div class="dr-live'+(live?' is-on':'')+'" data-wk-live><i></i><b></b></div><div id="pgBody"></div>';paintLive();paintBody();return;}
     const r=$('wkRoot');if(!r)return;if(!admin){r.innerHTML=noAdminHtml;return;}r.innerHTML=shellHtml();paintLive();paintBody();}
   const bodyEl=()=>$(page==='ask'?'akBody':page==='scene'?'scBody':page==='progress'?'pgBody':'wkBody');
