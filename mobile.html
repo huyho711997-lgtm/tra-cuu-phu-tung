@@ -1780,6 +1780,12 @@ html.dark .tasco-workspace #personalCloudSection .cloud-delete-selected { backgr
 .cloud-album-heading h2:focus { outline: none; }
 .tasco-workspace #personalCloudSection .cloud-album-heading .cloud-button { min-height: 40px; padding: 9px 12px; border-radius: 99px; color: var(--ws-accent-text); background: var(--ws-surface); font-size: 12px; font-weight: 500; }
 .cloud-album-heading .cloud-button svg { width: 15px; height: 15px; }
+.cloud-album-heading-actions { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.cloud-album-dialog .cloud-plate-scan { width: 100%; margin-top: 10px; border-style: dashed; background: transparent; color: var(--ws-accent-text, var(--ws-text)); }
+.cloud-album-dialog .cloud-plate-scan:disabled { opacity: .55; }
+.cloud-album-dialog .cloud-plate-note { margin: 10px 0 0; color: var(--ws-muted); font-size: 11px; line-height: 1.7; }
+.cloud-album-dialog .cloud-plate-note[data-error=true] { color: #a65550; }
+@media(max-width:380px) { .tasco-workspace #personalCloudSection .cloud-album-heading .cloud-button[data-action=scan-plate] { width: 40px; padding: 9px; } .cloud-scan-label { display: none; } }
 [data-album-list] { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
 .tasco-workspace #personalCloudSection .cloud-album-card { display: block; min-width: 0; min-height: 135px; padding: 16px; border: 1px solid var(--ws-line); border-radius: 21px; background: var(--ws-surface); color: var(--ws-text); text-align: left; }
 .cloud-album-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
@@ -7910,7 +7916,15 @@ window.TascoWeekly=(()=>{
   const askApi={pages:PAGES,getText,me:()=>({uid:auth?.uid||'',email:auth?.email||''}),
     async url(path){if(!auth)throw Object.assign(new Error('NOAUTH'),{fb:true});if(!auth.idToken||auth.exp-Date.now()<120000)await refresh();return dbUrl(path);},
     async token(){if(!auth)throw Object.assign(new Error('NOAUTH'),{fb:true});if(!auth.idToken||auth.exp-Date.now()<120000)await refresh();return auth.idToken;}};
-  return {setUser,onNavigate};
+  /* cho tính năng chụp biển số ở Cloud: dùng lại phiên Firebase đã đăng nhập ở trang AI nghiệp vụ (không tự đăng nhập, không lưu thêm gì); trả null nếu chưa đăng nhập */
+  async function askBridge(){
+    if(!cfg)await loadConfig();
+    if(!auth){const sv=JSON.parse(ls(K.auth)||'null');if(sv?.r)auth={refreshToken:sv.r,uid:sv.uid,email:sv.email,idToken:'',exp:0};}
+    if(!auth)return null;
+    if(!auth.idToken||auth.exp-Date.now()<300000){try{await refresh();}catch(e){if(e.fb){forget();return null;}throw e;}}
+    return askApi;
+  }
+  return {setUser,onNavigate,askBridge};
 })();
 </script>
 <script id="tascoAsk">
@@ -8653,6 +8667,76 @@ window.TascoAsk=(()=>{
     throw new Error('Chưa chuyển được giọng nói thành chữ ('+notes.slice(0,2).join('; ')+'). Bạn có thể dùng nút micro trên bàn phím iPhone.');
   }
 
+  /* ---------- đọc biển số từ ảnh (Cloud: tạo album nhanh theo biển số) ---------- */
+  const PLATE_SYS='Bạn đọc biển số xe Việt Nam trong ảnh (ô tô hoặc xe máy, biển 1 hoặc 2 dòng, nền trắng/vàng/xanh/đỏ). Chỉ trả JSON một dòng: {"plate":"<biển số ghép các dòng, ví dụ 47A-123.45>","confidence":<số 0..1>}. Có nhiều xe thì chọn biển rõ và lớn nhất. Không thấy biển thì {"plate":"","confidence":0}. Không giải thích gì thêm.';
+  const PL_DIG={O:'0',Q:'0',D:'0',I:'1',L:'1',Z:'2',S:'5',B:'8',G:'6'};
+  const plKey=v=>String(v||'').toUpperCase().replace(/[^0-9A-ZĐ]/g,'');
+  // Chuẩn hoá về dạng chuẩn "47A-123.45"; trả null nếu không giống biển Việt Nam (để người dùng tự nhập).
+  function normPlate(raw){
+    const s=plKey(raw);
+    if(s.length<7||s.length>10)return null;
+    const head=s.slice(0,2).replace(/[OQDILZSBG]/g,c=>PL_DIG[c]);
+    if(!/^\d\d$/.test(head)||+head<11)return null;
+    const rest=s.slice(2);
+    if(!/^[A-ZĐ]/.test(rest))return null;
+    const r=rest.slice(1),n=r.length;
+    if(n<4||n>7)return null;
+    const tl=n===4?4:5,extra=r.slice(0,n-tl);
+    const tail=r.slice(n-tl).replace(/[OQDILZSBG]/g,c=>PL_DIG[c]);
+    if(!/^\d+$/.test(tail)||extra.length>2)return null;
+    const series=head+rest[0]+extra;
+    return {plate:series+'-'+(tl===5?tail.slice(0,3)+'.'+tail.slice(3):tail),compact:series+tail};
+  }
+  async function plateImage(file,max=1280){
+    let bmp=null;
+    try{bmp=await createImageBitmap(file,{imageOrientation:'from-image'});}catch(_){try{bmp=await createImageBitmap(file);}catch(__){}}
+    if(!bmp){
+      bmp=await new Promise((ok,no)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);ok(im);};im.onerror=()=>{URL.revokeObjectURL(u);no(new Error('IMG'));};im.src=u;});
+    }
+    const w=bmp.width||bmp.naturalWidth,h=bmp.height||bmp.naturalHeight,k=Math.min(1,max/Math.max(w,h)),c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(w*k));c.height=Math.max(1,Math.round(h*k));
+    c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+    try{bmp.close&&bmp.close();}catch(_){}
+    return c.toDataURL('image/jpeg',.85);
+  }
+  async function readPlate(file,opt){
+    const ctl=(opt&&opt.signal)||new AbortController().signal;
+    if(!file)throw new Error('Chưa có ảnh biển số.');
+    if(!api){
+      try{api=await (window.TascoWeekly&&window.TascoWeekly.askBridge&&window.TascoWeekly.askBridge());}catch(_){api=null;}
+      if(!api)throw new Error('Chưa đăng nhập AI nghiệp vụ. Mở trang AI nghiệp vụ, đăng nhập một lần rồi quay lại chụp biển số. Bạn vẫn có thể gõ tên album.');
+    }
+    await loadBundle();
+    let url;try{url=await plateImage(file);}catch(_){throw new Error('Không đọc được ảnh này. Hãy chụp lại.');}
+    const M=B.Models,c=cfg(),cands=voiceCandidates(),notes=[];
+    if(!cands.length)throw new Error('Chưa có Antigravity hay khoá Gemini để đọc biển số. Bạn có thể gõ tên album.');
+    for(const e of cands){
+      if(ctl.aborted)throw new DOMException('Đã huỷ','AbortError');
+      let key='';try{key=await M.getKey(e.provider);}catch(_){}
+      if(!key){notes.push(e.provider==='gemini'?'chưa có khoá Gemini':'chưa đăng nhập Antigravity');continue;}
+      const r=M.resolve(c,e.id),name=(r.providerLabel||e.provider)+' · '+e.model;
+      const body={model:e.model,stream:false,temperature:0,max_tokens:300,messages:[{role:'system',content:PLATE_SYS},{role:'user',content:[{type:'text',text:'Đọc biển số xe trong ảnh.'},{type:'image_url',image_url:{url}}]}]};
+      const signals=[ctl];if(typeof AbortSignal.timeout==='function')signals.push(AbortSignal.timeout(e.provider==='antigravity'?40000:30000));
+      const signal=typeof AbortSignal.any==='function'?AbortSignal.any(signals):ctl;
+      try{
+        const res=await fetch(r.endpoint,{method:'POST',signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},body:JSON.stringify(body)});
+        let data=null;try{data=await res.json();}catch(_){}
+        if(!res.ok){notes.push(name+' trả lỗi '+res.status);continue;}
+        let t=data&&data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content;
+        if(Array.isArray(t))t=t.map(x=>x&&x.text||'').join('');
+        t=String(t||'');
+        if(!t.trim()){notes.push(name+' trả về rỗng');continue;}
+        let o=null;try{o=JSON.parse(t.replace(/^```[a-z]*\n?|```$/gi,'').trim());}catch(_){const m=t.match(/"plate"\s*:\s*"([^"]*)"/);if(m)o={plate:m[1]};}
+        const raw=String(o&&o.plate||'').trim(),n=normPlate(raw);
+        return {plate:n?n.plate:'',compact:n?n.compact:'',raw,confidence:Number(o&&o.confidence)||0,engine:name};
+      }catch(err){
+        if(ctl.aborted)throw err;
+        notes.push(name+(err&&err.name==='TimeoutError'?' quá chậm':' không kết nối được'));
+      }
+    }
+    throw new Error('Chưa đọc được biển số ('+notes.slice(0,2).join('; ')+'). Bạn có thể gõ tên album.');
+  }
+
   /* ---------- bottom sheet ---------- */
   function closeSheet(){if(sheet){sheet.remove();sheet=null;document.removeEventListener('keydown',onKey);}}
   const onKey=e=>{if(e.key==='Escape')closeSheet();};
@@ -8886,7 +8970,7 @@ window.TascoAsk=(()=>{
   window.addEventListener('resize',updateJump);
   window.addEventListener('pagehide',()=>{if(S.voice)voiceCancel();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.voice&&S.voice.phase==='rec')voiceCancel();});
-  return {paint,reset,leave:()=>{closeSheet();S.needEnd=true;if(S.voice)voiceCancel();}};
+  return {paint,reset,readPlate,normPlate,plateKey:plKey,leave:()=>{closeSheet();S.needEnd=true;if(S.voice)voiceCancel();}};
 })();
 </script>
 <style id="tascoAskStyles">
@@ -8943,7 +9027,7 @@ html.dark #askSection .ak-seg button[aria-pressed=true]{background:var(--app-tea
 .ak-usage{margin-left:auto;padding:2px 8px;border-radius:99px;background:var(--ws-soft);font-size:10.5px;font-weight:700;color:var(--ws-muted);white-space:nowrap}
 /* luồng hội thoại */
 .ak-thread{display:flex;flex-direction:column;gap:20px;min-height:34vh;padding:20px 2px 8px}
-.ak-msg{animation:akIn .32s cubic-bezier(.2,.8,.3,1) backwards}   /* backwards: xong animation thì thả lớp, không giữ "fill" cho từng tin nhắn */
+.ak-msg{animation:akIn .32s cubic-bezier(.2,.8,.3,1) both}
 .ak-msg.is-user{align-self:flex-end;max-width:86%}
 .ak-msg.is-user p{margin:0;padding:11px 16px;border-radius:20px 20px 6px 20px;background:linear-gradient(135deg,#2a5886,#183056);color:#fff;font-size:14.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;box-shadow:0 8px 20px rgba(24,48,86,.22)}
 html.dark .ak-msg.is-user p{background:linear-gradient(135deg,#3b78a8,#2c5d86)}
@@ -9191,11 +9275,9 @@ html.kb-open .ak-jump{top:-30px}
 @media(prefers-reduced-motion:reduce){.ak-rec-dot,[data-ak-input].is-fresh{animation:none}.ak-wave i{transition:none}}
 
 /* hiệu ứng mờ-rồi-hiện khi bấm Lên đầu / Xuống cuối ở quãng xa (ô soạn cố định không bị mờ) */
-/* Mờ bằng MỘT lớp phủ cỡ màn hình (nằm dưới ô soạn z60 và thanh dưới z90) thay vì đổi opacity của cả hero + thread:
-   opacity trên vùng nội dung cao hàng chục nghìn px buộc WebKit gộp cả thread thành một lớp composite → giật khi nhảy xa. */
-html[data-tasco-page=ask]::before{content:"";position:fixed;inset:0;z-index:50;background:var(--ws-bg);opacity:0;pointer-events:none;transition:opacity .28s cubic-bezier(.2,.7,.2,1)}
-html[data-tasco-page=ask].ak-fx::before{opacity:1;transition:opacity .14s ease-in}
-@media(prefers-reduced-motion:reduce){html[data-tasco-page=ask]::before{transition:none}}
+#askSection .ws-journey-hero,[data-ak-root]>:not(.ak-comp-wrap){transition:opacity .28s cubic-bezier(.2,.7,.2,1)}
+html.ak-fx #askSection .ws-journey-hero,html.ak-fx [data-ak-root]>:not(.ak-comp-wrap){opacity:0;transition:opacity .14s ease-in}
+@media(prefers-reduced-motion:reduce){#askSection .ws-journey-hero,[data-ak-root]>:not(.ak-comp-wrap){transition:none}}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
@@ -13880,6 +13962,7 @@ window.TascoCloud = (() => {
   }
   const albumTable='tasco_personal_photo_albums';
   const albumIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M3 10h18"/></svg>';
+  const cameraIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h1.5l1.2-1.6A1 1 0 0 1 9.5 4h5a1 1 0 0 1 .8.4L16.5 6H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="12.5" r="3.2"/></svg>';
   const plusIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
   const arrowIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
   const moreIcon='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
@@ -14004,25 +14087,51 @@ window.TascoCloud = (() => {
     }
     if((await account()).id!==owner.id)throw new Error('Tài khoản đã thay đổi. Mở lại Cloud trước khi tạo album.');state.albums.unshift(album);albumAttempts.delete(attemptKey);await openAlbum(album.id);return album;
   }
-  function showAlbumCreator(){
+  function showAlbumCreator(autoScan=false){
     if(!state.user){notify('Kết nối tài khoản Cloud trước khi tạo album.');return;}
     if(state.albumDialog)return;
     const owner=state.user.id,focus=document.activeElement,overlay=document.createElement('div'),controller=new AbortController();let saving=false;
-    overlay.className='cloud-album-overlay';overlay.innerHTML=`<section class="cloud-album-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudAlbumDialogTitle" aria-describedby="cloudAlbumDialogCopy"><header><span class="cloud-album-dialog-icon">${albumIcon}</span><button type="button" data-album-close aria-label="Đóng">${icon('close')}</button></header><h2 id="cloudAlbumDialogTitle">Tạo album mới</h2><p id="cloudAlbumDialogCopy">Mở album rồi chụp. Tất cả ảnh trong phiên chụp sẽ tự lưu vào album đó.</p><form><label for="cloudAlbumName">Tên album</label><input id="cloudAlbumName" name="albumName" maxlength="100" required autocomplete="off" placeholder="VD: Hồ sơ xe 51A · Nguyễn Văn A"><p data-album-error role="alert" hidden></p><footer><button type="button" data-album-close>Hủy</button><button type="submit" data-album-submit>${plusIcon}Tạo và mở album</button></footer></form></section>`;
-    const form=overlay.querySelector('form'),input=overlay.querySelector('input'),submit=overlay.querySelector('[data-album-submit]'),errorNode=overlay.querySelector('[data-album-error]');
+    overlay.className='cloud-album-overlay';overlay.innerHTML=`<section class="cloud-album-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudAlbumDialogTitle" aria-describedby="cloudAlbumDialogCopy"><header><span class="cloud-album-dialog-icon">${albumIcon}</span><button type="button" data-album-close aria-label="Đóng">${icon('close')}</button></header><h2 id="cloudAlbumDialogTitle">Tạo album mới</h2><p id="cloudAlbumDialogCopy">Mở album rồi chụp. Tất cả ảnh trong phiên chụp sẽ tự lưu vào album đó.</p><form><label for="cloudAlbumName">Tên album</label><input id="cloudAlbumName" name="albumName" maxlength="100" required autocomplete="off" placeholder="VD: Hồ sơ xe 51A · Nguyễn Văn A"><button type="button" class="cloud-plate-scan" data-plate-scan>${cameraIcon}Chụp biển số để đặt tên</button><input type="file" accept="image/*" capture="environment" data-plate-file hidden tabindex="-1"><p class="cloud-plate-note" data-plate-note role="status" hidden></p><p data-album-error role="alert" hidden></p><footer><button type="button" data-album-close>Hủy</button><button type="submit" data-album-submit>${plusIcon}Tạo và mở album</button></footer></form></section>`;
+    const form=overlay.querySelector('form'),input=overlay.querySelector('#cloudAlbumName'),scanBtn=overlay.querySelector('[data-plate-scan]'),fileInput=overlay.querySelector('[data-plate-file]'),noteNode=overlay.querySelector('[data-plate-note]'),submit=overlay.querySelector('[data-album-submit]'),errorNode=overlay.querySelector('[data-album-error]');
     const oldOverflow=document.body.style.overflow;
     function close(force=false){if(saving&&!force)return;controller.abort();overlay.remove();document.body.style.overflow=oldOverflow;state.albumDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
+    // Album đã có cho biển số này (so theo biển số liền, VD "47A12345"; tên có thêm chữ phía sau như "47A-123.45 · Nguyễn Văn A" vẫn khớp)
+    const plateAlbum=value=>{
+      const T=window.TascoAsk,n=T?.normPlate?.(value);if(!n)return null;
+      return state.albums.find(row=>{const k=T.plateKey(row.name);return k===n.compact||(k.startsWith(n.compact)&&!/\d/.test(k[n.compact.length]||''));})||null;
+    };
+    const syncSubmit=()=>{if(saving)return;const hit=plateAlbum(input.value);submit.innerHTML=hit?albumIcon+'Mở album đã có':plusIcon+'Tạo và mở album';};
+    input.addEventListener('input',()=>{noteNode.hidden=true;syncSubmit();},{signal:controller.signal});
+    let scanning=false;
+    const say=(text,bad)=>{noteNode.textContent=text;noteNode.hidden=!text;noteNode.dataset.error=bad?'true':'false';};
+    scanBtn.addEventListener('click',()=>{if(!saving&&!scanning)fileInput.click();},{signal:controller.signal});
+    fileInput.addEventListener('change',async()=>{
+      const file=fileInput.files&&fileInput.files[0];fileInput.value='';
+      if(!file||saving||scanning)return;
+      if(!window.TascoAsk?.readPlate){say('Chưa dùng được tính năng đọc biển số. Hãy gõ tên album.',true);return;}
+      scanning=true;scanBtn.disabled=true;submit.disabled=true;errorNode.hidden=true;say('Đang đọc biển số…',false);
+      try{
+        const r=await window.TascoAsk.readPlate(file,{signal:controller.signal});
+        if(controller.signal.aborted)return;
+        if(r.plate){input.value=r.plate;const hit=plateAlbum(r.plate);say(hit?'Đã đọc '+r.plate+'. Album này đã có — bấm “Mở album đã có”.':'Đã đọc '+r.plate+'. Kiểm tra lại cho đúng rồi bấm “Tạo và mở album”.',false);}
+        else{if(r.raw)input.value=r.raw;say(r.raw?'Đọc được “'+r.raw+'” nhưng chưa giống biển số Việt Nam. Hãy kiểm tra và sửa lại.':'Chưa thấy biển số trong ảnh. Chụp gần hơn, đủ sáng hoặc gõ tên album.',true);}
+        input.focus({preventScroll:true});input.select?.();
+      }catch(error){if(!controller.signal.aborted)say(message(error),true);}
+      finally{if(!controller.signal.aborted){scanning=false;scanBtn.disabled=false;submit.disabled=false;syncSubmit();}}
+    },{signal:controller.signal});
     state.albumDialog={cancel:()=>close(true)};
     overlay.addEventListener('click',event=>{if(event.target===overlay||event.target.closest('[data-album-close]'))close();},{signal:controller.signal});
-    overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();}if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button:not(:disabled),input:not(:disabled)')];if(event.shiftKey&&document.activeElement===nodes[0]){event.preventDefault();nodes.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0].focus();}}},{signal:controller.signal});
+    overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();}if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button:not(:disabled),input:not(:disabled):not([type=file])')];if(event.shiftKey&&document.activeElement===nodes[0]){event.preventDefault();nodes.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0].focus();}}},{signal:controller.signal});
     form.onsubmit=async event=>{
       event.preventDefault();if(saving)return;if(state.user?.id!==owner){close(true);notify('Tài khoản đã thay đổi. Hãy mở lại Cloud.');return;}
-      saving=true;submit.disabled=true;input.disabled=true;errorNode.hidden=true;submit.textContent='Đang tạo album…';
+      const hit=plateAlbum(input.value);
+      if(hit){saving=true;try{close(true);await openAlbum(hit.id);notify('Đã mở album “'+hit.name+'” (đã có sẵn).');}catch(error){notify(message(error));}finally{saving=false;}return;}
+      saving=true;submit.disabled=true;input.disabled=true;scanBtn.disabled=true;errorNode.hidden=true;submit.textContent='Đang tạo album…';
       try{const album=await createAlbum(input.value);close(true);state.root?.querySelector('#cloudPageTitle')?.focus({preventScroll:true});notify('Đã mở album “'+album.name+'”.');}
       catch(error){errorNode.textContent=message(error);errorNode.hidden=false;}
-      finally{saving=false;submit.disabled=false;input.disabled=false;submit.innerHTML=plusIcon+'Tạo và mở album';}
+      finally{saving=false;submit.disabled=false;input.disabled=false;scanBtn.disabled=false;syncSubmit();}
     };
-    document.body.style.overflow='hidden';document.body.append(overlay);input.focus();
+    document.body.style.overflow='hidden';document.body.append(overlay);if(autoScan)fileInput.click();else input.focus();
   }
   async function renameLocalAlbum(album,owner){
     const db=await database(),tx=db.transaction(['photos','albums'],'readwrite'),photos=tx.objectStore('photos'),albums=tx.objectStore('albums');
@@ -14195,6 +14304,7 @@ window.TascoCloud = (() => {
     const panel=root.querySelector('.cloud-albums-panel');panel.hidden=Boolean(album);
     const note=root.querySelector('[data-album-note]');note.textContent=state.albumNote;note.hidden=!state.albumNote;
     root.querySelector('[data-action="new-album"]').disabled=!cloudReady()||state.busy||state.deleting||state.albumSaving;
+    root.querySelector('[data-action="scan-plate"]').disabled=!cloudReady()||state.busy||state.deleting||state.albumSaving;
     const allBtn=root.querySelector('[data-album-all]');
     if(allBtn){allBtn.hidden=!state.albums.length;allBtn.innerHTML='Xem tất cả '+state.albums.length+' album'+chevronIcon;}
     const list=root.querySelector('[data-album-list]');
@@ -14510,7 +14620,7 @@ window.TascoCloud = (() => {
       <div class="cloud-account-line"${state.config.mode==='mobile'?' hidden':''}><span data-cloud-account>Đang kết nối tài khoản…</span><span data-cloud-target></span></div>
       <div class="cloud-login" hidden></div>
       <div class="cloud-feedback" role="status" aria-live="polite" hidden></div>
-      <p data-album-status hidden></p><section class="cloud-albums-panel"><div class="cloud-album-heading"><div class="cloud-album-heading-copy"><h2 id="cloudAlbumsTitle" tabindex="-1">Album của bạn</h2><button class="cloud-album-all" type="button" data-action="all-albums" data-album-all hidden></button></div><button class="cloud-button" type="button" data-action="new-album" disabled>${plusIcon}Tạo album</button></div><p data-album-note hidden></p><div data-album-list></div></section>
+      <p data-album-status hidden></p><section class="cloud-albums-panel"><div class="cloud-album-heading"><div class="cloud-album-heading-copy"><h2 id="cloudAlbumsTitle" tabindex="-1">Album của bạn</h2><button class="cloud-album-all" type="button" data-action="all-albums" data-album-all hidden></button></div><span class="cloud-album-heading-actions"><button class="cloud-button" type="button" data-action="scan-plate" disabled aria-label="Chụp biển số để tạo album" title="Chụp biển số">${cameraIcon}<span class="cloud-scan-label">Biển số</span></button><button class="cloud-button" type="button" data-action="new-album" disabled>${plusIcon}Tạo album</button></span></div><p data-album-note hidden></p><div data-album-list></div></section>
       <div class="cloud-pending" hidden></div><div class="cloud-gallery-heading"><h2 data-cloud-library-heading>Tất cả ảnh</h2><div class="cloud-gallery-actions"><span data-cloud-total>0 ảnh</span>${state.config.mode==='mobile'?`<button class="cloud-button" type="button" data-action="gallery-settings" aria-haspopup="dialog" aria-label="Cài đặt hiển thị ảnh" disabled>${gallerySettingsIcon}<span>Hiển thị</span></button>`:''}<button class="cloud-button" type="button" data-action="selection" disabled>${icon('check')}<span data-selection-label>Chọn ảnh</span></button></div></div><div class="cloud-category-bar" data-cloud-categories hidden role="toolbar" aria-label="Lọc theo hạng mục"></div><div class="cloud-selection-bar" data-cloud-selection hidden role="toolbar" aria-label="Thao tác với ảnh đã chọn"><strong data-selected-count data-empty="true" role="status" aria-live="polite"><b>0</b><span>đã chọn</span></strong><div><button type="button" class="cloud-button sel-act" data-action="select-all" aria-label="Chọn tất cả ảnh đã tải"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="m8 12.2 2.7 2.7L16.2 9"/></svg><span>Chọn hết</span></button><button type="button" class="cloud-button sel-act" data-action="deselect-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M8.5 12h7"/></svg><span>Bỏ chọn</span></button><button type="button" class="cloud-button sel-act sel-dl" data-action="download-selected" disabled>${icon('download')}<span>Tải về</span></button><button type="button" class="cloud-button sel-act cloud-delete-selected" data-action="delete-selected" disabled>${icon('trash')}<span>Xoá</span></button></div><button type="button" class="cloud-sel-close" data-action="selection" aria-label="Xong, thoát chọn ảnh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" stroke-width="2.2"><path d="m5.5 12.5 4.2 4.2L18.5 8"/></svg><span>Xong</span></button></div><div class="cloud-grid"><div class="cloud-empty cloud-loading" role="status"><span class="cloud-loading-spinner" aria-hidden="true"></span><h2>Đang tải thư viện</h2><p>Đang tìm ảnh đã lưu trong tài khoản của bạn…</p></div></div><div class="cloud-more-row" data-cloud-more-row hidden><button class="cloud-button cloud-more" type="button" data-action="more">Xem thêm ảnh</button><button class="cloud-button cloud-more cloud-more-all" type="button" data-action="all"><span data-cloud-all-label>Xem tất cả</span></button></div>
     </section>`;
     bindLongPress(root);
@@ -14537,6 +14647,7 @@ window.TascoCloud = (() => {
       if(action==='album-options')showAlbumActions(button.dataset.id);
       if(action==='rename-active-album'){const album=activeAlbum();if(album)showAlbumActions(album.id);}
       if(action==='new-album')showAlbumCreator();
+      if(action==='scan-plate')showAlbumCreator(true);
       if(action==='all-albums')showAllAlbums();
       if(action==='choose-album')chooseAlbum();
       if(action==='open-album'){clearTimeout(timer);openAlbum(button.dataset.id);}
