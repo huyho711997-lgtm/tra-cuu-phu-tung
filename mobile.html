@@ -10140,6 +10140,13 @@ window.TascoScene=(()=>{
     return M.defaults({plate:v(c.bienSo),driver:v(c.laiXe),driverPhone:v(c.dienThoaiLaiXe),lossRaw:v(c.ngayVTT||c.ngayTonThat),location:v(c.diaDiemVTT),cause:v(c.nguyenNhan),
       assessor:v(c.canBoXuLy||c.gdvTiepNhan),assessorPhone:'',today:todayYmd()});
   }
+  const isHuyAssessor=name=>String(name||'').normalize('NFC').trim().replace(/\s+/g,' ').toLocaleLowerCase('vi-VN')==='hồ quang huy';
+  function defaultAssessorPhone(d){
+    const p=d&&d.participants&&d.participants[0];
+    if(!p||(d.manual&&d.manual.assessorPhone)||String(p.phone||'').trim())return false;
+    if(!isHuyAssessor(p.name))return false;
+    p.phone='0917828538';return true;
+  }
   async function openClaim(k){
     const c=api.claims()[k];if(!c)return;
     const seq=++S.seq;S.mode='edit';S.step=1;S.cur=null;S.err='';paintEditor('loading');
@@ -10154,7 +10161,8 @@ window.TascoScene=(()=>{
         ENT.set(key,en);
       }else{en.claim=c;}
       if(seq!==S.seq)return;
-      S.cur=en;paintEditor();paintSave(en);
+      const defaultPhoneAdded=defaultAssessorPhone(en.data);if(defaultPhoneAdded)en.autoAssessorPhone=true;
+      S.cur=en;paintEditor();if(defaultPhoneAdded)markDirty(en);else paintSave(en);
     }catch(e){
       if(seq!==S.seq)return;
       S.err=e.message==='MODEL'?'Chưa tải được biểu mẫu từ webapp giám định. Kiểm tra mạng rồi thử lại.':e.status===401||e.status===403?'Tài khoản này chưa có quyền đọc dữ liệu biên bản.':e.message==='NOAUTH'||e.message==='EXPIRED'?'Phiên đăng nhập hết hạn, hãy thoát ra rồi mở lại trang.':'Không mở được biên bản. Kiểm tra mạng rồi thử lại.';
@@ -10609,6 +10617,13 @@ window.TascoScene=(()=>{
     const lim=M.LIM[p]||(/\.(name|role)$/.test(p)?120:/\.phone$/.test(p)?40:120);
     const val=String(t.value).slice(0,lim),d=en.data;if(t.value!==val)t.value=val;
     syncFieldTools(t);setP(d,p,val);if(MANUAL[p]){d.manual[MANUAL[p]]=true;paintBadges();}
+    if(p==='participants.0.phone')en.autoAssessorPhone=false;
+    if(p==='participants.0.name'){
+      const person=d.participants[0];
+      if(en.autoAssessorPhone&&!isHuyAssessor(val)&&!d.manual.assessorPhone&&person.phone==='0917828538'){person.phone='';en.autoAssessorPhone=false;}
+      if(defaultAssessorPhone(d))en.autoAssessorPhone=true;
+      const phone=document.getElementById(fid('participants.0.phone'));if(phone){phone.value=person.phone;syncFieldTools(phone);}
+    }
     const person=t.closest('.sc-person-optional');if(person){const label=person.querySelector('.sc-person-summary small');if(label)label.textContent=[...person.querySelectorAll('.sc-in[data-sc-f]')].some(field=>field.value.trim())?'Đã có thông tin':'Thêm khi cần';}
     if((p==='absentReason'||p==='absentDestination')&&val.trim()&&d.driverPresence===''){d.driverPresence='absent';syncCh('driverPresence','absent');}
     const dm=/^damage\.(\w+)\.text$/.exec(p);
@@ -10665,7 +10680,7 @@ window.TascoScene=(()=>{
     else if(k==='report-location'&&en){useReportLocation(b);}
     else if(k==='copyplace'&&en){const loc=String(en.data.accidentLocation||'').trim();if(!loc){toast('Chưa có địa điểm tai nạn để sao chép.');return;}en.data.reportPlace=loc.slice(0,M.LIM.reportPlace);const i=document.querySelector('#scPane [data-sc-f="reportPlace"]');if(i){i.value=en.data.reportPlace;syncFieldTools(i);grow(i);}commit();}
     else if(k==='docsall'&&en){const all=M.DOCS.every(([x])=>en.data.docs[x]);M.DOCS.forEach(([x])=>{en.data.docs[x]=!all;const bt=document.querySelector('#scPane [data-sc-tg="docs.'+x+'"]');if(bt){bt.classList.toggle('on',!all);bt.setAttribute('aria-pressed',String(!all));}});commit();}
-    else if(k==='resync'&&en){M.AUTO.forEach(x=>{en.data.manual[x]=false;});en.data=M.normalize(en.data,defaultsOf(en.claim));paintEditor();commit();toast('Đã đồng bộ lại theo hồ sơ.');}
+    else if(k==='resync'&&en){M.AUTO.forEach(x=>{en.data.manual[x]=false;});en.data=M.normalize(en.data,defaultsOf(en.claim));en.autoAssessorPhone=defaultAssessorPhone(en.data);paintEditor();commit();toast('Đã đồng bộ lại theo hồ sơ.');}
     else if(k==='pickdate'&&en){pickDate(b);}
     else if(k==='picktime'&&en){pickTime(b);}
     else if(k==='preview'){openPreview(b);}
