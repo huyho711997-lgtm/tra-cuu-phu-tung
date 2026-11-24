@@ -9828,6 +9828,16 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-scene-step .sc-chip{min-height:34px;padding:0 10px;border-radius:11px;background:var(--ws-bg);font-size:11px}
 #sceneSection .sc-scene-step .sc-chip.is-used{background:color-mix(in srgb,var(--app-teal) 12%,var(--ws-surface));border-color:var(--app-teal)}
 #sceneSection .sc-ai{border-color:color-mix(in srgb,var(--app-teal) 38%,var(--ws-line));background:linear-gradient(180deg,color-mix(in srgb,var(--app-teal) 8%,var(--ws-surface)),var(--ws-surface) 72%)}
+#sceneSection .sc-ai-head{display:flex;align-items:center;gap:9px;width:100%;min-height:40px;padding:0;border:0;background:transparent;color:var(--ws-text);font:inherit;text-align:left;cursor:pointer}
+#sceneSection .sc-ai-head-copy{flex:1;min-width:0}
+#sceneSection .sc-ai-head-copy b{display:block;font-size:12.5px;font-weight:750;line-height:1.35}
+#sceneSection .sc-ai-head-copy small{display:block;margin-top:3px;color:var(--ws-muted);font-size:10.5px;line-height:1.35}
+#sceneSection .sc-ai-head-arrow{display:flex;flex:none;width:16px;height:16px;color:var(--ws-muted);transform:rotate(90deg);transition:transform .2s}
+#sceneSection .sc-ai-head-arrow svg{width:100%;height:100%}
+#sceneSection .sc-ai-head[aria-expanded=true] .sc-ai-head-arrow{transform:rotate(-90deg)}
+#sceneSection .sc-ai-head:focus-visible{outline:2px solid var(--app-teal);outline-offset:3px;border-radius:8px}
+#sceneSection .sc-ai-body{margin-top:11px}
+@media(prefers-reduced-motion:reduce){#sceneSection .sc-ai-head-arrow{transition:none}}
 #sceneSection .sc-ai-sub{margin:-3px 0 11px;font-size:11px;line-height:1.6;color:var(--ws-muted)}
 #sceneSection .sc-ai-thumbs{display:flex;gap:8px;margin:0 -13px 11px;padding:2px 13px 4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 #sceneSection .sc-ai-thumbs::-webkit-scrollbar{display:none}
@@ -10264,6 +10274,9 @@ window.TascoScene=(()=>{
   }
   function aiCard(){
     const en=S.cur,ai=aiOf(en),n=ai.files.length,d=en.data;
+    const summary=ai.busy?'Đang phân tích…':ai.res?'Đã có đề xuất · chạm để xem':ai.err?'Có lỗi · chạm để xem':n?n+' ảnh đã chọn':'Phân tích ảnh bằng Antigravity';
+    const head='<button type="button" class="sc-ai-head" data-sc="ai-toggle" aria-expanded="'+!!ai.open+'"'+(ai.open?' aria-controls="scAIBody"':'')+'><span class="sc-scene-symbol" aria-hidden="true">'+I.spark+'</span><span class="sc-ai-head-copy"><b>AI đọc ảnh hiện trường</b><small>'+esc(summary)+'</small></span><span class="sc-ai-head-arrow" aria-hidden="true">'+I.chev+'</span></button>';
+    if(!ai.open)return '<section class="sc-t sc-ai" id="scAI">'+head+'</section>';
     if(!ai.modelsState)aiLoadModels(en);
     const selectedModel=(ai.models||[]).find(m=>m.id===ai.model);
     const thumbs=ai.files.map(f=>'<span class="sc-ai-th"><img src="'+f.url+'" alt=""><button type="button" data-sc="ai-del" data-id="'+f.id+'" aria-label="Bỏ ảnh này"'+(ai.busy?' disabled':'')+'>'+I.x+'</button></span>').join('');
@@ -10281,14 +10294,14 @@ window.TascoScene=(()=>{
         (rows?'<p class="sc-ai-hint">Chọn các mục muốn áp dụng. Nội dung đã có chỉ được thay thế khi bạn chọn.</p>'+rows+'<div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-drop">Bỏ qua</button><button type="button" class="dt-btn is-main" data-sc="ai-apply"'+(cnt?'':' disabled')+'>Áp dụng '+(cnt?cnt+' mục':'')+'</button></div>':'<p class="sc-ai-err">AI chưa thấy mục nào đủ rõ trong ảnh. Hãy thêm ảnh rõ hơn hoặc nhập tay.</p><div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-drop">Đóng</button></div>')+'</div>';
     }
     const run=ai.busy?'<button type="button" class="dt-btn sc-ai-processing" data-sc="ai-cancel" aria-label="Đang phân tích ảnh. Chạm để hủy"><span class="sc-ai-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="sc-ai-processing-text">Đang xử lý</span><span class="sc-ai-cancel-label">Hủy</span></button>':'<button type="button" class="dt-btn is-main" data-sc="ai-run"'+(n?'':' disabled')+'>'+I.spark+'Phân tích'+(n?' '+n+' ảnh':'')+'</button>';
-    return '<section class="sc-t sc-ai" id="scAI"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+I.spark+'</span><b>AI đọc ảnh hiện trường</b></div>'+
+    return '<section class="sc-t sc-ai" id="scAI">'+head+'<div class="sc-ai-body" id="scAIBody">'+
       '<p class="sc-ai-sub">Antigravity phân tích ảnh và đề xuất các mục nhìn thấy được. Bạn xem lại trước khi áp dụng. Ảnh chỉ gửi để phân tích, không lưu lại.</p>'+
       '<div class="sc-ai-model"><span class="sc-ai-model-label">Mô hình phân tích</span><button type="button" class="sc-ai-model-trigger" data-sc="ai-model-toggle" aria-expanded="'+!!ai.modelsOpen+'"'+(ai.modelsOpen?' aria-controls="scAIModelList"':'')+(ai.busy||!ai.models||!ai.models.length?' disabled':'')+'><span class="sc-ai-model-icon">'+I.spark+'</span><span class="sc-ai-model-name"><small>Antigravity</small><b>'+esc(selectedModel?selectedModel.model:ai.modelsState==='loading'?'Đang tải mô hình…':'Chưa có mô hình')+'</b></span><span class="sc-ai-model-arrow">'+I.chev+'</span></button>'+(ai.modelsOpen&&ai.models&&ai.models.length?'<div class="sc-ai-model-list" id="scAIModelList" role="group" aria-label="Mô hình phân tích">'+ai.models.map((m,i)=>'<button type="button" class="sc-ai-model-option" data-sc="ai-model-select" data-i="'+i+'" aria-pressed="'+(m.id===ai.model)+'"><span>'+esc(m.model)+'</span>'+I.ok+'</button>').join('')+'</div>':'')+'</div>'+
       (ai.modelsErr?'<p class="sc-ai-model-note" role="alert">'+esc(ai.modelsErr)+' <button type="button" class="sc-ai-refresh" data-sc="ai-model-retry">Thử lại</button></p>':'<p class="sc-ai-model-note">Chọn mô hình hỗ trợ phân tích hình ảnh. '+(ai.modelsState==='ready'?'<button type="button" class="sc-ai-refresh" data-sc="ai-model-retry"'+(ai.busy?' disabled':'')+'>Làm mới</button>':'')+'</p>')+
       (n?'<div class="sc-ai-thumbs">'+thumbs+'</div>':'')+
       '<div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-pick"'+(ai.busy?' disabled':'')+'>'+I.plus+(n?'Thêm ảnh':'Chọn ảnh')+'</button>'+run+'</div>'+
       '<input type="file" id="scAIFile" accept="image/*" multiple hidden tabindex="-1">'+
-      (ai.err?'<p class="sc-ai-err" role="alert">'+esc(ai.err)+'</p>':'')+res+'</section>';
+      (ai.err?'<p class="sc-ai-err" role="alert">'+esc(ai.err)+'</p>':'')+res+'</div></section>';
   }
   function paintAI(){const el=document.getElementById('scAI');if(!el||!S.cur||S.step!==2)return;const t=document.createElement('div');t.innerHTML=aiCard();el.replaceWith(t.firstElementChild);}
   function aiReset(en){const ai=en&&en.ai;if(!ai)return;try{ai.ctl&&ai.ctl.abort();}catch(_){}ai.files.forEach(f=>{try{URL.revokeObjectURL(f.url);}catch(_){}});en.ai=null;}
@@ -10630,6 +10643,7 @@ window.TascoScene=(()=>{
     const k=b.dataset.sc;
     if(k==='clear-field'){const field=document.getElementById(fid(b.dataset.field));if(field&&en){if(sceneVoice?.field===b.dataset.field)cancelSceneVoice();field.value='';field.dispatchEvent(new Event('input',{bubbles:true}));}}
     else if(k==='voice'){toggleSceneVoice(b.dataset.field,b);}
+    else if(k==='ai-toggle'&&en){const ai=aiOf(en);ai.open=!ai.open;if(!ai.open)ai.modelsOpen=false;paintAI();document.querySelector('#scAI [data-sc="ai-toggle"]')?.focus({preventScroll:true});}
     else if(k==='ai-pick'){const f=document.getElementById('scAIFile');if(f){f.value='';f.click();}}
     else if(k==='ai-del'){aiDel(b.dataset.id);}
     else if(k==='ai-run'){aiRun();}
