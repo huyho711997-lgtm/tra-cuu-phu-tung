@@ -9765,6 +9765,12 @@ html.dark #sceneSection .sc-scene-step .sc-sg.on,html.dark #sceneSection .sc-sce
 #sceneSection .sc-scene-step .sc-chips{margin:8px -10px -2px;padding:2px 10px 5px;scroll-padding-inline:10px}
 #sceneSection .sc-scene-step .sc-branch{padding:9px;margin-top:9px}
 #sceneSection .sc-scene-step textarea.sc-ta:not(.sc-auto-field){min-height:72px}
+
+/* Suggestions wrap inside the question card instead of clipping at its edge. */
+#sceneSection .sc-scene-step .sc-chips{flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 0;padding:0;overflow:visible;scroll-snap-type:none}
+#sceneSection .sc-scene-step .sc-chips-l{width:100%;gap:5px;margin-bottom:1px;font-size:10px;letter-spacing:.02em}
+#sceneSection .sc-scene-step .sc-chip{flex:0 1 auto;max-width:100%;min-height:34px;height:auto;padding:7px 10px;border-radius:10px;text-align:left;white-space:normal;overflow-wrap:anywhere;line-height:1.35}
+#sceneSection .sc-scene-step .sc-chip svg{flex:none}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
