@@ -9586,12 +9586,14 @@ html.dark #askSection .ak-jump{box-shadow:0 5px 18px rgba(0,0,0,.4)}
 .sc-c-go{position:absolute;right:12px;top:50%;width:18px;height:18px;margin-top:-9px;color:var(--ws-muted)}
 .sc-c-go svg{width:18px;height:18px}
 #sceneSection .sc-report-item{position:relative;min-width:0}
-#sceneSection .sc-report-item .sc-card{padding-right:57px}
+#sceneSection .sc-report-item .sc-card{padding-right:96px}
 #sceneSection .sc-report-item .sc-plate{font-size:14px;overflow-wrap:anywhere;line-height:1.4}
 #sceneSection .sc-report-item .sc-c-go{display:none}
-#sceneSection .sc-report-rename{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-surface);color:var(--ws-accent-text);cursor:pointer}
-#sceneSection .sc-report-rename svg{width:16px;height:16px}
-#sceneSection .sc-report-rename:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+#sceneSection .sc-report-actions{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;gap:5px}
+#sceneSection .sc-report-action{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-surface);color:var(--ws-accent-text);cursor:pointer}
+#sceneSection .sc-report-action svg{width:16px;height:16px}
+#sceneSection .sc-report-delete{color:#a64b4b}
+#sceneSection .sc-report-action:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
 .sc-rename-dialog{box-sizing:border-box;width:min(380px,calc(100% - 32px));padding:20px;border:1px solid var(--ws-line);border-radius:20px;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 18px 60px #0b1b3040}
 .sc-rename-dialog::backdrop{background:#0b1b3099;backdrop-filter:blur(3px)}
 .sc-rename-dialog h3{margin:0;font-size:16px}.sc-rename-dialog p{margin:6px 0 14px;color:var(--ws-muted);font-size:12px;line-height:1.5}
@@ -10019,7 +10021,7 @@ window.TascoScene=(()=>{
   const toast=t=>{const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3200);};
 
   let api=null,M=null,modelP=null,modelSrc='',docxFn=null,root=null;
-  const S={mode:'list',q:'',n:PER,cur:null,step:1,seq:0,pv:null,records:null,recordsBusy:false,recordsError:''};
+  const S={mode:'list',q:'',n:PER,cur:null,step:1,seq:0,pv:null,records:null,recordsBusy:false,recordsError:'',deletedIds:new Set()};
   const ENT=new Map();   // các biên bản đang mở/chưa lưu xong, theo khoá tài liệu
 
   /* ---------- khoá tài liệu: GIỐNG webapp (claimDocumentStorageKey) ---------- */
@@ -10178,13 +10180,13 @@ window.TascoScene=(()=>{
     if(S.recordsError){list.innerHTML='<div class="dr-empty"><b>Chưa tải được biên bản</b>'+esc(S.recordsError)+'<div class="dr-acts"><button type="button" class="dt-btn" data-sc="standalone-retry">Thử lại</button></div></div>';return;}
     const q=plain(S.q).trim(),all=Object.values(S.records||{}).filter(r=>r&&r.id&&(!q||q.split(/\s+/).every(w=>plain([r.title,r.plate,r.location].join(' ')).includes(w)))).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)),shown=all.slice(0,S.n);
     $('scCount').textContent=all.length?'Biên bản của bạn · '+all.length:'';
-    list.innerHTML=shown.length?shown.map(r=>'<div class="sc-report-item"><button type="button" class="sc-card" data-sc="standalone-open" data-k="'+esc(r.id)+'"><span class="sc-c-top"><b class="sc-plate">'+esc(r.title||r.plate||'Biên bản hiện trường')+'</b></span><span class="sc-c-sub">'+esc([r.title&&r.plate,dfmt(r.reportDate)||'Chưa có ngày lập'].filter(Boolean).join(' · '))+'</span>'+(r.location?'<span class="sc-c-loc">'+I.pin+'<span>'+esc(r.location)+'</span></span>':'')+'</button><button type="button" class="sc-report-rename" data-sc="standalone-rename" data-k="'+esc(r.id)+'" aria-label="Đổi tên '+esc(r.title||r.plate||'biên bản hiện trường')+'" title="Đổi tên">'+ico('<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>')+'</button></div>').join(''):'<div class="dr-empty"><b>'+(S.q?'Không tìm thấy biên bản':'Chưa có biên bản nào')+'</b>'+(S.q?'Thử tìm theo tên, biển số hoặc địa điểm.':'Tạo biên bản để bắt đầu, không cần hồ sơ.')+'</div>';
+    list.innerHTML=shown.length?shown.map(r=>'<div class="sc-report-item"><button type="button" class="sc-card" data-sc="standalone-open" data-k="'+esc(r.id)+'"><span class="sc-c-top"><b class="sc-plate">'+esc(r.title||r.plate||'Biên bản hiện trường')+'</b></span><span class="sc-c-sub">'+esc([r.title&&r.plate,dfmt(r.reportDate)||'Chưa có ngày lập'].filter(Boolean).join(' · '))+'</span>'+(r.location?'<span class="sc-c-loc">'+I.pin+'<span>'+esc(r.location)+'</span></span>':'')+'</button><span class="sc-report-actions"><button type="button" class="sc-report-action sc-report-rename" data-sc="standalone-rename" data-k="'+esc(r.id)+'" aria-label="Đổi tên '+esc(r.title||r.plate||'biên bản hiện trường')+'" title="Đổi tên">'+ico('<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>')+'</button><button type="button" class="sc-report-action sc-report-delete" data-sc="standalone-delete" data-k="'+esc(r.id)+'" aria-label="Xóa '+esc(r.title||r.plate||'biên bản hiện trường')+'" title="Xóa biên bản">'+ico('<path d="M4 7h16M10 4h4M6 7l1 13h10l1-13M10 11v5M14 11v5"/>')+'</button></span></div>').join(''):'<div class="dr-empty"><b>'+(S.q?'Không tìm thấy biên bản':'Chưa có biên bản nào')+'</b>'+(S.q?'Thử tìm theo tên, biển số hoặc địa điểm.':'Tạo biên bản để bắt đầu, không cần hồ sơ.')+'</div>';
     $('scMore').innerHTML=all.length>shown.length?'<button type="button" class="wk-more" data-sc="more">Xem thêm</button>':'';
   }
   async function loadStandalone(){
     if(S.recordsBusy)return;S.recordsBusy=true;S.recordsError='';paintList();
     const uid=api.me().uid;
-    try{if(!uid)throw new Error('Chưa đăng nhập.');const records=await getNode('/standalone_scene_reports/'+uid+'/index')||{};if(api.me().uid===uid)S.records=Object.assign({},records,S.records||{});}
+    try{if(!uid)throw new Error('Chưa đăng nhập.');const records=await getNode('/standalone_scene_reports/'+uid+'/index')||{};if(api.me().uid===uid){S.records=Object.assign({},records,S.records||{});S.deletedIds.forEach(id=>{delete S.records[id];});}}
     catch(e){if(api.me().uid===uid)S.recordsError='Kiểm tra kết nối hoặc đăng nhập lại.';}
     finally{if(api.me().uid===uid){S.recordsBusy=false;paintList();}}
   }
@@ -10200,6 +10202,28 @@ window.TascoScene=(()=>{
       try{const res=await fetch(await api.url('/standalone_scene_reports/'+uid+'/index/'+id+'/title'),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(value)});if(!res.ok)throw Error('HTTP '+res.status);if(api.me().uid!==uid){dialog.close();return;}if(S.records?.[id])S.records[id].title=value;paintList();dialog.close();toast('Đã đổi tên biên bản.');}
       catch(_){error.textContent='Chưa lưu được tên. Kiểm tra kết nối rồi thử lại.';error.hidden=false;save.disabled=false;cancel.disabled=false;}
     });dialog.showModal();input.focus();input.select();
+  }
+  async function removeStandaloneRecord(uid,id){
+    if(!uid||api.me().uid!==uid||!/^sc[a-z0-9]{12,40}$/.test(id))throw new Error('NOAUTH');
+    const body=JSON.stringify({['items/'+id]:null,['index/'+id]:null});
+    const url=await api.url('/standalone_scene_reports/'+uid);if(api.me().uid!==uid)throw new Error('NOAUTH');
+    const res=await fetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body});if(!res.ok)throw new Error('HTTP '+res.status);
+  }
+  function deleteStandalone(id,trigger){
+    const row=S.records?.[id],uid=api.me().uid;if(!row||!uid||!/^sc[a-z0-9]{12,40}$/.test(id))return;
+    const dialog=document.createElement('dialog');dialog.className='sc-rename-dialog';dialog.setAttribute('aria-labelledby','scDeleteReportTitle');
+    dialog.innerHTML='<form><h3 id="scDeleteReportTitle">Xóa biên bản?</h3><p data-description></p><p class="sc-rename-error" role="alert" hidden></p><div class="sc-rename-actions"><button type="button" class="dt-btn" data-cancel>Giữ lại</button><button type="submit" class="dt-btn sc-delete-confirm">Xóa biên bản</button></div></form>';
+    document.body.appendChild(dialog);const form=dialog.querySelector('form'),cancel=dialog.querySelector('[data-cancel]'),remove=form.querySelector('[type=submit]'),error=dialog.querySelector('.sc-rename-error');
+    dialog.querySelector('[data-description]').textContent='Biên bản “'+(row.title||row.plate||'Biên bản hiện trường')+'” và sơ đồ của biên bản sẽ bị xóa.';
+    dialog.addEventListener('close',()=>{dialog.remove();const target=document.querySelector('#sceneSection [data-sc="standalone-delete"][data-k="'+id+'"]')||trigger||document.querySelector('#sceneSection [data-sc="standalone-new"]');if(target?.isConnected)target.focus({preventScroll:true});else document.querySelector('#sceneSection [data-sc="standalone-new"]')?.focus({preventScroll:true});});
+    cancel.addEventListener('click',()=>dialog.close());dialog.addEventListener('cancel',e=>{if(remove.disabled)e.preventDefault();});
+    form.addEventListener('submit',async e=>{e.preventDefault();remove.disabled=true;cancel.disabled=true;error.hidden=true;
+      try{
+        const en=ENT.get(id);if(en?.dirty&&!(await flush(en)))throw new Error('UNSAVED');
+        await removeStandaloneRecord(uid,id);if(api.me().uid!==uid){dialog.close();return;}
+        if(en){clearTimeout(en.t);ENT.delete(id);}S.deletedIds.add(id);if(S.records)delete S.records[id];paintList();dialog.close();toast('Đã xóa biên bản hiện trường.');
+      }catch(_){error.textContent='Chưa xóa được biên bản. Kiểm tra kết nối rồi thử lại.';error.hidden=false;remove.disabled=false;cancel.disabled=false;}
+    });dialog.showModal();cancel.focus();
   }
   function deleteSceneMap(en,trigger){
     if(!en?.standalone||!en.map)return;
@@ -10757,6 +10781,7 @@ window.TascoScene=(()=>{
     if(k==='standalone-new'){openStandalone('');}
     else if(k==='standalone-open'){openStandalone(b.dataset.k);}
     else if(k==='standalone-rename'){renameStandalone(b.dataset.k,b);}
+    else if(k==='standalone-delete'){deleteStandalone(b.dataset.k,b);}
     else if(k==='standalone-retry'){loadStandalone();}
     else if(k==='add-person'&&en){
       const shown=en.extraPeople||(en.extraPeople=new Set()),people=en.data.participants;
@@ -10829,7 +10854,7 @@ window.TascoScene=(()=>{
     if(force||!b.querySelector('.sc-root')){b.innerHTML=listShell();}
     if(S.records===null&&!S.recordsBusy&&!S.recordsError)loadStandalone();else paintList();
   }
-  function reset(){cancelSceneVoice();ENT.forEach(en=>clearTimeout(en.t));ENT.clear();S.mode='list';S.cur=null;S.q='';S.n=PER;S.seq++;S.records=null;S.recordsBusy=false;S.recordsError='';closePreview();closeTime();M=null;modelP=null;docxFn=null;}
+  function reset(){cancelSceneVoice();ENT.forEach(en=>clearTimeout(en.t));ENT.clear();S.mode='list';S.cur=null;S.q='';S.n=PER;S.seq++;S.records=null;S.recordsBusy=false;S.recordsError='';S.deletedIds.clear();closePreview();closeTime();M=null;modelP=null;docxFn=null;}
   return {paint,reset,cancelVoice:cancelSceneVoice};
 })();
 </script>
