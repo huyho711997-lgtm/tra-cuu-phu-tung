@@ -8481,7 +8481,16 @@ window.TascoAsk=(()=>{
   const scrollBottom=()=>{const el=$('[data-ak-busy]')||$('[data-ak-thread]');if(el&&live())requestAnimationFrame(()=>el.scrollIntoView({block:'center',behavior:'smooth'}));};
   // Vào lại trang AI (hoặc đổi tab/mở cuộc khác): đưa thẳng tới cuối cuộc trò chuyện. Thử lại vài lần vì khung trang có thể tự cuộn lên đầu sau khi vẽ.
   // Nút nổi trên ô soạn: đang ở gần cuối → "Lên đầu"; còn xa cuối → "Xuống cuối". Chỉ hiện khi trang đủ dài để cuộn.
-  let jumpRaf=0;
+  let jumpRaf=0,jumpHideTimer=0;
+  function revealJump(){
+    const b=$('[data-ak-jump]');if(!b||!live()||!onAsk())return;
+    b.classList.add('is-active');clearTimeout(jumpHideTimer);
+    jumpHideTimer=setTimeout(()=>{
+      jumpHideTimer=0;
+      if(b.matches(':focus-visible'))return;
+      b.classList.remove('is-active');
+    },3000);
+  }
   function updateJump(){
     if(jumpRaf)return;
     jumpRaf=requestAnimationFrame(()=>{
@@ -8490,12 +8499,12 @@ window.TascoAsk=(()=>{
       const max=Math.max(0,document.documentElement.scrollHeight-innerHeight),y=window.scrollY||0,up=max-y<=220,thread=$('[data-ak-thread]'),show=S.messages.length>0&&!!thread&&thread.scrollHeight>innerHeight&&max>100,key=(show?1:0)+(up?2:0);
       if(b._k===key)return;b._k=key;   // chỉ đụng DOM khi trạng thái đổi: ghi liên tục lúc đang cuộn dễ làm WKWebView ngừng vẽ
       b.classList.toggle('is-on',show);b.classList.toggle('is-up',up);b.tabIndex=show?0:-1;
-      const t=up?'Lên đầu cuộc trò chuyện':'Xuống cuối cuộc trò chuyện';b.setAttribute('aria-label',t);b.title=up?'Lên đầu':'Xuống cuối';const label=b.querySelector('[data-jump-label]');if(label)label.textContent=b.title;
+      const t=up?'Lên đầu cuộc trò chuyện':'Xuống cuối cuộc trò chuyện';b.setAttribute('aria-label',t);b.title=up?'Lên đầu':'Xuống cuối';
     });
   }
   function jump(){
     const b=$('[data-ak-jump]');if(!b)return;
-    cancelEndScroll();
+    revealJump();cancelEndScroll();
     const top=b.classList.contains('is-up')?0:Math.max(0,document.documentElement.scrollHeight-innerHeight);
     const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
     window.scrollTo({top,left:0,behavior:reduced?'instant':'smooth'});
@@ -8870,7 +8879,7 @@ window.TascoAsk=(()=>{
 
   /* ---------- khung trang ---------- */
   function shell(){
-    host.innerHTML='<div class="ak-root" data-ak-root><div data-ak-top></div><div class="ak-thread" data-ak-thread aria-live="polite"></div><div class="ak-comp-wrap"><button type="button" class="ak-jump" data-ak="jump" data-ak-jump aria-label="Xuống cuối cuộc trò chuyện" title="Xuống cuối"><span data-jump-label>Xuống cuối</span>'+IC.chev+'</button><div class="ak-comp" data-ak-comp></div></div></div>';
+    host.innerHTML='<div class="ak-root" data-ak-root><div data-ak-top></div><div class="ak-thread" data-ak-thread aria-live="polite"></div><div class="ak-comp-wrap"><button type="button" class="ak-jump" data-ak="jump" data-ak-jump aria-label="Xuống cuối cuộc trò chuyện" title="Xuống cuối">'+IC.chev+'</button><div class="ak-comp" data-ak-comp></div></div></div>';
     watchComp();
   }
   // Ô chat cố định ở đáy: đo chiều cao thật để trang luôn chừa đủ chỗ phía dưới (nội dung cuối không bị che)
@@ -8920,7 +8929,7 @@ window.TascoAsk=(()=>{
     init();
   }
   function reset(){
-    S.gen++;try{S.ctl?.abort();}catch(_){}try{S.voice&&S.voice.ctl&&S.voice.ctl.abort();}catch(_){}voiceCleanup();stopTick();closeSheet();
+    clearTimeout(jumpHideTimer);jumpHideTimer=0;S.gen++;try{S.ctl?.abort();}catch(_){}try{S.voice&&S.voice.ctl&&S.voice.ctl.abort();}catch(_){}voiceCleanup();stopTick();closeSheet();
     B=null;bundleP=null;S=fresh();
   }
 
@@ -9005,7 +9014,9 @@ window.TascoAsk=(()=>{
     document.addEventListener('focusout',()=>{clearTimeout(t);t=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},160);},true);
   })();
   let scRaf=0;
-  window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;updateJump();});},{passive:true});
+  window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;revealJump();updateJump();});},{passive:true});
+  document.addEventListener('focusin',e=>{if(e.target.matches?.('#askSection [data-ak-jump]'))revealJump();});
+  document.addEventListener('focusout',e=>{if(e.target.matches?.('#askSection [data-ak-jump]'))revealJump();});
   window.addEventListener('resize',updateJump);
   window.addEventListener('pagehide',()=>{if(S.voice)voiceCancel();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.voice&&S.voice.phase==='rec')voiceCancel();});
@@ -9441,10 +9452,10 @@ html.dark #askSection .ak-head .ak-seg button[aria-pressed=true]{color:#0b1b30!i
 @media(prefers-reduced-motion:reduce){#askSection .ak-head .ak-seg::before,#askSection .ak-head .ak-seg button{transition:none}}
 
 /* Contextual chat navigation */
-#askSection .ak-jump{display:inline-flex;align-items:center;justify-content:center;gap:7px;width:auto;min-width:0;height:38px;top:-25px;right:18px;padding:0 12px 0 15px;border:1px solid color-mix(in srgb,var(--app-teal) 34%,var(--ws-line));border-radius:999px;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 5px 18px rgba(24,48,86,.16);font-size:11px;font-weight:750;white-space:nowrap;transform:translateY(4px);transition:opacity .18s ease,transform .18s ease}
-#askSection .ak-jump.is-on{transform:translateY(0)}
-#askSection .ak-jump svg{width:16px;height:16px;color:var(--ws-accent-text)}
-#askSection .ak-jump:active{transform:scale(.97)}
+#askSection .ak-jump{display:grid;place-items:center;width:42px;height:42px;top:-28px;right:18px;padding:0;border:1px solid color-mix(in srgb,var(--app-teal) 34%,var(--ws-line));border-radius:15px;background:var(--ws-surface);color:var(--ws-accent-text);box-shadow:0 5px 18px rgba(24,48,86,.16);opacity:0;pointer-events:none;transform:translateY(5px);transition:opacity .2s ease,transform .2s ease}
+#askSection .ak-jump.is-on.is-active{opacity:1;pointer-events:auto;transform:translateY(0)}
+#askSection .ak-jump svg{width:19px;height:19px}
+#askSection .ak-jump:active{transform:scale(.95)}
 html.kb-open #askSection .ak-jump{visibility:hidden;opacity:0;pointer-events:none}
 html.dark #askSection .ak-jump{box-shadow:0 5px 18px rgba(0,0,0,.4)}
 @media(prefers-reduced-motion:reduce){#askSection .ak-jump,#askSection .ak-jump svg{transition:none}}
