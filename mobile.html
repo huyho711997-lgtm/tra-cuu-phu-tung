@@ -8263,11 +8263,16 @@ window.TascoAsk=(()=>{
     send(question,keep);
   }
   async function copyAnswer(id){
-    const m=S.messages.find(x=>x.id===id);if(!m)return;
-    const text=Q().plainText(m.text);
-    try{await navigator.clipboard.writeText(text);}
-    catch(_){const t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(__){}t.remove();}
-    toast('Đã sao chép câu trả lời.');
+    const m=S.messages.find(x=>x.id===id);if(!m||!m.text)return;
+    const text=m.role==='user'?m.text:Q().plainText(m.text);
+    let copied=false;
+    try{await navigator.clipboard.writeText(text);copied=true;}
+    catch(_){
+      const previous=document.activeElement,t=document.createElement('textarea');t.value=text;t.readOnly=true;t.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';document.body.appendChild(t);t.select();
+      try{copied=document.execCommand('copy');}catch(__){}t.remove();
+      if(previous?.isConnected)previous.focus({preventScroll:true});
+    }
+    toast(copied?'Đã sao chép nội dung.':'Chưa sao chép được. Hãy thử lại.');
   }
 
 
@@ -8372,7 +8377,7 @@ window.TascoAsk=(()=>{
     const q=Q();
     if(m.role==='user'){
       const fl=(m.files||[]).map((f,i)=>{const pv=S.prev[m.id+':'+i];return pv?'<span class="ak-fchip is-img"><img src="'+esc(pv)+'" alt="">'+esc(f.name)+'</span>':'<span class="ak-fchip">'+(f.kind==='image'?IC.img:IC.doc)+'<em>'+esc(f.name)+'</em></span>';}).join('');
-      return '<div class="ak-msg is-user" data-ak-msg="'+esc(m.id)+'">'+(fl?'<div class="ak-files">'+fl+'</div>':'')+'<p>'+esc(m.text)+'</p></div>';
+      return '<div class="ak-msg is-user" data-ak-msg="'+esc(m.id)+'">'+(fl?'<div class="ak-files">'+fl+'</div>':'')+'<p>'+esc(m.text)+'</p>'+(m.text?'<div class="ak-acts ak-user-acts"><button type="button" class="ak-act" data-ak="copy" data-m="'+esc(m.id)+'" aria-label="Sao chép tin nhắn của bạn">'+IC.copy+'Sao chép</button></div>':'')+'</div>';
     }
     const sources=m.sources||[],cited=q.citedCodes(m.text),bad=q.unknownCodes(m.text,sources);
     const warn=m.error||m.empty||(m.free&&!sources.length)?'':bad.length?'<p class="ak-warn">AI dẫn mã nguồn không có trong các đoạn đã tra ('+esc(bad.join(', '))+') — đừng dùng phần đó khi chưa kiểm tra lại.</p>'
@@ -9325,6 +9330,7 @@ html.dark #askSection .ak-seg button[aria-pressed=true]{background:var(--app-tea
 html.dark #askSection .ak-chip-ico{background:#294e58;color:#a7dce1}
 html.dark #askSection .ak-ctl,html.dark #askSection .ak-card{box-shadow:0 8px 25px #0003}
 @media(max-width:360px){#askSection .ak-ctl{padding:9px}#askSection .ak-head{gap:5px}#askSection .ak-ico{width:36px;height:40px}#askSection .ak-seg button{font-size:11px}#askSection .ak-tool{padding-left:8px;padding-right:8px}}
+.ak-user-acts{justify-content:flex-end;margin-top:6px;padding:0}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
