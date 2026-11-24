@@ -14025,34 +14025,44 @@ window.TascoVoiceCloud?.configure({url:SUPABASE_PROJECT_URL,anonKey:SUPABASE_ANO
     </div>
 
     <!-- Modal Đổi Mật Khẩu -->
-    <div id="modalChangePassword" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
-            <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-[#fcfcfc]/50 dark:bg-zinc-900/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-50 dark:bg-orange-900/30 text-orange-500 rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-                    </div>
-                    <h3 class="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">Đổi mật khẩu</h3>
-                </div>
-                <button onclick="closeModal('modalChangePassword')" class="p-2 text-zinc-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <style>
+      #modalChangePassword { padding: 20px; background: rgba(13, 31, 55, .54); }
+      #modalChangePassword .password-dialog { width: 100%; max-width: 390px; max-height: calc(100dvh - 40px); overflow-y: auto; border: 1px solid var(--ws-line, #d1e4e8); border-radius: 24px; background: var(--ws-surface, #fff); color: var(--ws-text, #183056); box-shadow: 0 24px 65px rgba(10, 30, 53, .22); }
+      #modalChangePassword .password-header { display: flex; align-items: flex-start; gap: 13px; padding: 23px 22px 19px; border-bottom: 1px solid var(--ws-line, #d1e4e8); }
+      #modalChangePassword .password-icon { display: grid; flex: 0 0 42px; height: 42px; place-items: center; border-radius: 14px; background: #e6f2f3; color: #397c85; }
+      #modalChangePassword .password-icon svg { width: 21px; height: 21px; }
+      #modalChangePassword .password-heading { flex: 1; min-width: 0; padding-top: 1px; }
+      #modalChangePassword .password-heading h3 { margin: 0; font-size: 16px; line-height: 1.35; font-weight: 700; letter-spacing: -.3px; }
+      #modalChangePassword .password-heading p { margin: 5px 0 0; color: var(--ws-muted, #71889d); font-size: 11px; line-height: 1.5; }
+      #modalChangePassword .password-close { display: grid; flex: 0 0 34px; height: 34px; place-items: center; border: 1px solid var(--ws-line, #d1e4e8); border-radius: 11px; background: var(--ws-soft, #edf5f6); color: var(--ws-muted, #71889d); }
+      #modalChangePassword .password-close svg { width: 16px; height: 16px; }
+      #modalChangePassword .password-fields { display: grid; gap: 16px; padding: 21px 22px 23px; }
+      #modalChangePassword .password-field label { display: block; margin: 0 0 7px 2px; color: var(--ws-text, #183056); font-size: 11px; font-weight: 650; }
+      #modalChangePassword .password-field input { display: block; width: 100%; min-height: 46px; padding: 12px 14px; border: 1px solid var(--ws-line, #d1e4e8); border-radius: 12px; background: var(--ws-soft, #edf5f6); color: var(--ws-text, #183056); font-size: 16px; outline: none; transition: border-color .15s, box-shadow .15s; }
+      #modalChangePassword .password-field input::placeholder { color: #91a5b4; }
+      #modalChangePassword .password-field input:focus { border-color: #63aeb6; box-shadow: 0 0 0 3px rgba(99, 174, 182, .16); }
+      #modalChangePassword .password-actions { display: grid; grid-template-columns: 1fr 1.5fr; gap: 9px; padding: 0 22px 22px; }
+      #modalChangePassword .password-actions button { min-height: 46px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+      #modalChangePassword .password-cancel { border: 1px solid var(--ws-line, #d1e4e8); background: var(--ws-soft, #edf5f6); color: var(--ws-text, #183056); }
+      #modalChangePassword .password-save { border: 1px solid #183056; background: #183056; color: #fff; }
+      #modalChangePassword button:focus-visible { outline: 2px solid #63aeb6; outline-offset: 3px; }
+      @media (max-height: 600px) { #modalChangePassword { align-items: flex-start; overflow-y: auto; } #modalChangePassword .password-dialog { max-height: none; } }
+    </style>
+    <div id="modalChangePassword" class="fixed inset-0 z-[150] hidden flex items-center justify-center backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="changePasswordTitle" aria-describedby="changePasswordDescription">
+        <div class="password-dialog">
+            <div class="password-header">
+                <span class="password-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></svg></span>
+                <div class="password-heading"><h3 id="changePasswordTitle">Đổi mật khẩu</h3><p id="changePasswordDescription">Cập nhật mật khẩu tài khoản của bạn</p></div>
+                <button type="button" class="password-close" aria-label="Đóng" onclick="closeModal('modalChangePassword')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
             </div>
-            <div class="p-8 space-y-4">
-                <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu hiện tại</label>
-                    <input type="password" id="selfOldPass" placeholder="Nhập mật khẩu cũ..." class="premium-input">
-                </div>
-                <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Mật khẩu mới</label>
-                    <input type="password" id="selfNewPass" placeholder="Mật khẩu mới..." class="premium-input">
-                </div>
-                <div class="premium-input-group">
-                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-2 px-1">Xác nhận mật khẩu mới</label>
-                    <input type="password" id="selfConfirmPass" placeholder="Nhập lại mật khẩu mới..." class="premium-input">
-                </div>
+            <div class="password-fields">
+                <div class="password-field"><label for="selfOldPass">Mật khẩu hiện tại</label><input type="password" id="selfOldPass" autocomplete="current-password" placeholder="Nhập mật khẩu hiện tại"></div>
+                <div class="password-field"><label for="selfNewPass">Mật khẩu mới</label><input type="password" id="selfNewPass" autocomplete="new-password" placeholder="Nhập mật khẩu mới"></div>
+                <div class="password-field"><label for="selfConfirmPass">Xác nhận mật khẩu mới</label><input type="password" id="selfConfirmPass" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới"></div>
             </div>
-            <div class="p-6 bg-[#fcfcfc] dark:bg-zinc-800/50 flex gap-3">
-                <button onclick="closeModal('modalChangePassword')" class="flex-1 py-3.5 text-zinc-500 font-bold uppercase text-xs">Hủy</button>
-                <button id="btnSaveSelfPassword" class="flex-1 py-3.5 bg-orange-500 text-white font-bold rounded-2xl shadow-lg shadow-orange-500/20 hover:bg-orange-600 uppercase text-xs transition-all">Lưu thay đổi</button>
+            <div class="password-actions">
+                <button type="button" class="password-cancel" onclick="closeModal('modalChangePassword')">Hủy</button>
+                <button type="button" id="btnSaveSelfPassword" class="password-save">Lưu thay đổi</button>
             </div>
         </div>
     </div>
