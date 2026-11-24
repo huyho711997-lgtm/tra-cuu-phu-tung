@@ -8785,7 +8785,21 @@ window.TascoAsk=(()=>{
   }
 
   /* ---------- bottom sheet ---------- */
-  function closeSheet(){if(sheet){sheet.remove();sheet=null;document.removeEventListener('keydown',onKey);}}
+  let modelScrollLock=null;
+  function lockModelBackground(){
+    if(modelScrollLock)return;
+    const body=document.body,root=document.documentElement;
+    modelScrollLock={x:window.scrollX,y:window.scrollY,position:body.style.position,top:body.style.top,left:body.style.left,width:body.style.width,overflow:body.style.overflow,rootOverflow:root.style.overflow};
+    body.style.position='fixed';body.style.top=-modelScrollLock.y+'px';body.style.left=-modelScrollLock.x+'px';body.style.width='100%';body.style.overflow='hidden';root.style.overflow='hidden';
+  }
+  function unlockModelBackground(){
+    if(!modelScrollLock)return;
+    const saved=modelScrollLock;modelScrollLock=null;
+    Object.assign(document.body.style,{position:saved.position,top:saved.top,left:saved.left,width:saved.width,overflow:saved.overflow});
+    document.documentElement.style.overflow=saved.rootOverflow;
+    window.scrollTo({left:saved.x,top:saved.y,behavior:'instant'});
+  }
+  function closeSheet(){if(sheet){sheet.remove();sheet=null;document.removeEventListener('keydown',onKey);unlockModelBackground();}}
   const onKey=e=>{if(e.key==='Escape')closeSheet();};
   function openSheet(title,body,extra){
     closeSheet();
@@ -8870,7 +8884,7 @@ window.TascoAsk=(()=>{
     const M=B.Models,c=cfg(),a=active();
     const list=M.entries(c).filter(ORDER_OK).filter(e=>e.id===(a&&a.id)||!['groq','custom'].includes(e.provider)||(S.keys&&S.keys[e.provider]));
     openSheet('Mô hình AI','<div class="ak-model-intro"><span class="ak-model-intro-icon" aria-hidden="true">'+IC.spark+'</span><div><span>TRỢ LÝ NGHIỆP VỤ</span><strong>Chọn mô hình phù hợp</strong><small>Chọn một mô hình để sử dụng cho cuộc trò chuyện.</small></div></div>'+modelGroups(list,a)+'<details class="ak-agy"'+(keepAgyOpen?' open':'')+'><summary class="ak-agy-summary"><span class="ak-agy-icon" aria-hidden="true">'+IC.cpu+'</span><span class="ak-agy-heading"><b>Antigravity</b><small>Máy trung gian riêng</small></span><span class="ak-agy-status'+(agyBase()?' is-set':'')+'">'+(agyBase()?'Đã lưu địa chỉ':'Chưa thiết lập')+'</span>'+IC.chev+'</summary><div class="ak-agy-body"><p class="ak-hint">Bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian. Địa chỉ chỉ được lưu trên thiết bị này.</p><label for="akAgyAddress">Địa chỉ máy trung gian</label><input id="akAgyAddress" type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ địa chỉ</button>':'')+'</div>'+(agyBase()?'<button type="button" class="dt-btn is-sm ak-agy-fetch" data-ak="agyfetch">Lấy danh sách mô hình</button><p class="ak-hint ak-agy-n">'+(((cfg().providers.antigravity.models||[]).length)?'Đã lấy '+cfg().providers.antigravity.models.length+' mô hình từ máy trung gian.':'Đang dùng 2 mô hình mặc định. Bấm để tải danh sách từ máy trung gian.')+'</p>':'')+'</div></details><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
-    sheet.classList.add('ak-model-sheet-bg');
+    sheet.classList.add('ak-model-sheet-bg');lockModelBackground();
   }
   function historySheet(){
     const rows=kindChats(S.kind==='chat');
@@ -9461,6 +9475,8 @@ html.dark #askSection .ak-jump{box-shadow:0 5px 18px rgba(0,0,0,.4)}
 @media(prefers-reduced-motion:reduce){#askSection .ak-jump,#askSection .ak-jump svg{transition:none}}
 /* Active deep reasoning follows the system navy. */
 #askSection .ak-tool.is-deep.is-set{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
+.ak-model-sheet-bg{overscroll-behavior:contain}
+.ak-model-sheet-bg .ak-sheet-b{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
