@@ -8366,7 +8366,7 @@ window.TascoAsk=(()=>{
     const libText=ask||S.lib?(S.libInfo?(S.libInfo.err?esc(S.libInfo.err):'Thư viện tài liệu: '+S.libInfo.n+' văn bản (chỉ đọc)'):'Đang nạp Thư viện tài liệu…'):'';
     const hist='<button type="button" class="ak-ico" data-ak="history" aria-label="Lịch sử trò chuyện">'+IC.hist+'</button><button type="button" class="ak-ico" data-ak="new" aria-label="Cuộc trò chuyện mới"'+(S.busy?' disabled':'')+'>'+IC.plus+'</button>';
     const sw=on=>'<i class="ak-sw'+(on?' is-on':'')+'" aria-hidden="true"><u></u></i>';
-    return '<div class="ak-ctl"><div class="ak-control-label"><span>KHÔNG GIAN LÀM VIỆC</span><span class="ak-control-mode">'+(ask?'NGHIỆP VỤ':'TRÒ CHUYỆN')+'</span></div><div class="ak-head"><div class="dr-seg ak-seg" role="tablist" aria-label="Chế độ AI"><button type="button" role="tab" data-ak="kind" data-v="ask" aria-selected="'+ask+'" aria-pressed="'+ask+'">Hỏi nghiệp vụ</button><button type="button" role="tab" data-ak="kind" data-v="chat" aria-selected="'+!ask+'" aria-pressed="'+!ask+'">Trò chuyện AI</button></div>'+hist+'</div>'
+    return '<div class="ak-ctl"><div class="ak-control-label"><span>KHÔNG GIAN LÀM VIỆC</span><span class="ak-control-mode">'+(ask?'NGHIỆP VỤ':'TRÒ CHUYỆN')+'</span></div><div class="ak-head"><div class="dr-seg ak-seg" data-kind="'+S.kind+'" role="tablist" aria-label="Chế độ AI"><button type="button" role="tab" data-ak="kind" data-v="ask" aria-selected="'+ask+'" aria-pressed="'+ask+'">Hỏi nghiệp vụ</button><button type="button" role="tab" data-ak="kind" data-v="chat" aria-selected="'+!ask+'" aria-pressed="'+!ask+'">Trò chuyện AI</button></div>'+hist+'</div>'
       +(ask||S.lib?'<button type="button" class="ak-scope'+(S.pin.length?' is-set':'')+'" data-ak="docs" title="Chọn tài liệu để hỏi"><span class="ak-chip-ico">'+IC.book+'</span><span class="ak-chip-t"><small>Hỏi trong</small><span>'+esc(pinLabel())+'</span></span>'+(S.pin.length?'<i class="ak-scope-n">'+S.pin.length+'</i>':'')+IC.chev+'</button>':'')
       +(ask?'':'<div class="ak-bar is-chat"><button type="button" class="ak-chip is-toggle'+(S.lib?' is-set':'')+'" data-ak="lib" aria-pressed="'+S.lib+'" title="Bật để AI tra Thư viện tài liệu trước khi trả lời">'+IC.book+'<span>Tra Thư viện tài liệu</span>'+sw(S.lib)+'</button></div>')
       +(libText||usage?'<div class="ak-lib'+(libText?'':' is-solo')+(S.libInfo&&S.libInfo.err&&libText?' is-bad':'')+'">'+(libText?'<i class="ak-dot" aria-hidden="true"></i>':'')+'<span>'+libText+'</span><b class="ak-usage" data-ak-usage title="Token đã dùng trong cuộc trò chuyện này"'+(usage?'':' hidden')+'>'+esc(usage)+'</b></div>':'')+'</div>';
@@ -8406,10 +8406,28 @@ window.TascoAsk=(()=>{
   function busyHtml(){
     return '<div class="ak-msg is-ai ak-busy" data-ak-busy><div class="ak-who"><span class="ak-av is-spin" aria-hidden="true">'+IC.spark+'</span><b>'+(S.kind==='chat'?'Trợ lý AI':'AI nghiệp vụ')+'</b></div><div class="ak-body"><div class="ak-busy-row"><span data-ak-status>'+esc(S.status)+'</span><i class="ak-bar-ind" aria-hidden="true"></i></div><div class="ak-busy-f"><small data-ak-secs>'+fmtSecs(elapsed())+'</small><button type="button" class="ak-act" data-ak="stop">'+IC.stop+'Dừng</button></div></div></div>';
   }
-  function paintTop(){const el=$('[data-ak-top]');if(el&&live())el.innerHTML=topHtml();paintTools();}
-  function paintThread(){
+  function paintTop(){
+    const el=$('[data-ak-top]');
+    if(el&&live()){
+      const next=document.createElement('div');next.innerHTML=topHtml();
+      const ctl=el.querySelector('.ak-ctl'),newCtl=next.querySelector('.ak-ctl');
+      const head=ctl?.querySelector('.ak-head'),newHead=newCtl?.querySelector('.ak-head');
+      if(ctl&&head&&newHead){
+        head.querySelectorAll('[data-ak=kind]').forEach(tab=>{const selected=tab.dataset.v===S.kind;tab.setAttribute('aria-pressed',String(selected));tab.setAttribute('aria-selected',String(selected));});
+        const seg=head.querySelector('.ak-seg');if(seg)seg.dataset.kind=S.kind;
+        const newButton=head.querySelector('[data-ak=new]');if(newButton)newButton.disabled=S.busy;
+        const label=ctl.querySelector('.ak-control-label'),newLabel=newCtl.querySelector('.ak-control-label');
+        if(label&&newLabel)label.replaceWith(newLabel);
+        while(head.nextSibling)head.nextSibling.remove();
+        while(newHead.nextSibling)ctl.appendChild(newHead.nextSibling);
+      }else el.replaceChildren(...next.childNodes);
+    }
+    paintTools();
+  }
+  function paintThread(switching=false){
     const el=$('[data-ak-thread]');if(!el||!live())return;
     if(!B){return;}
+    el.classList.toggle('is-switching',switching);
     el.innerHTML=(S.messages.length?S.messages.map(msgHtml).join(''):emptyHtml())+(S.busy?busyHtml():'');
     updateJump();setTimeout(updateJump,300);
   }
@@ -8908,7 +8926,7 @@ window.TascoAsk=(()=>{
     if(cite){const msg=cite.closest('[data-ak-msg]');if(msg)sourceSheet(msg.dataset.akMsg,cite.dataset.olQaCite);return;}
     const b=e.target.closest('#askSection [data-ak],.ak-sheet-bg [data-ak]');if(!b)return;
     const k=b.dataset.ak;
-    if(k==='kind'){const v=b.dataset.v;if(v===S.kind||S.busy)return;openKind(v);savePrefs();paintTop();paintThread();paintComposer(true);scrollToEnd();}
+    if(k==='kind'){const v=b.dataset.v;if(v===S.kind||S.busy)return;cancelEndScroll();openKind(v);savePrefs();paintTop();paintThread(true);paintComposer(true);}
     else if(k==='deep'){S.deep=!S.deep;savePrefs();paintTop();}
     else if(k==='lib'){S.lib=!S.lib;savePrefs();paintTop();}
     else if(k==='model')modelSheet();
@@ -9406,6 +9424,17 @@ html.dark #askSection .ak-seg button[aria-pressed=true]{background:var(--app-tea
 .ak-loading-tabs{display:flex;gap:7px}.ak-loading-tabs i{width:38%;height:35px}.ak-loading-field{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px;border:1px solid var(--ws-line);border-radius:13px}.ak-loading-field>i{width:36px;height:36px;flex:none}.ak-loading-field span{display:grid;gap:6px;flex:1}.ak-loading-field span i:first-child{width:33%;height:7px}.ak-loading-field span i:last-child{width:62%;height:9px}
 .ak-loading-lines{display:flex;gap:6px;margin-top:13px}.ak-loading-lines i{width:7px;height:7px;border-radius:50%}.ak-loading-lines i+ i{width:40%;border-radius:5px}
 @media(prefers-reduced-motion:reduce){.ak-loading-spinner{animation:none;border-color:var(--app-teal)}}
+
+/* Keep the mode selector in place while changing conversations. */
+#askSection .ak-head .ak-seg{position:relative;isolation:isolate}
+#askSection .ak-head .ak-seg::before{content:"";position:absolute;z-index:0;top:3px;bottom:3px;left:3px;width:calc((100% - 9px)/2);border-radius:10px;background:var(--app-navy);box-shadow:0 3px 9px rgba(24,48,86,.2);transition:transform .22s ease}
+#askSection .ak-head .ak-seg[data-kind=chat]::before{transform:translateX(calc(100% + 3px))}
+#askSection .ak-head .ak-seg button{position:relative;z-index:1;background:transparent!important;box-shadow:none!important;transition:color .16s ease}
+#askSection .ak-head .ak-seg button[aria-pressed=true]{color:#fff!important}
+html.dark #askSection .ak-head .ak-seg::before{background:var(--app-teal)}
+html.dark #askSection .ak-head .ak-seg button[aria-pressed=true]{color:#0b1b30!important}
+.ak-thread.is-switching .ak-msg{animation:none}
+@media(prefers-reduced-motion:reduce){#askSection .ak-head .ak-seg::before,#askSection .ak-head .ak-seg button{transition:none}}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
