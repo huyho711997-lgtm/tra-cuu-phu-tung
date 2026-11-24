@@ -10081,7 +10081,7 @@ window.TascoScene=(()=>{
       sceneTile('4','[4]','Tính chất nền',seg('ground'))+
       sceneTile('5','[5]','Thời tiết & ánh sáng','<div class="sc-sub">Thời tiết</div>'+seg('weather')+'<div class="sc-sub">Ánh sáng</div>'+seg('light'))+
       sceneTile('6-7','[6–7]','Người điều khiển tại hiện trường',seg('driverPresence')+
-        '<div class="sc-branch"><div class="sc-sub">[6] Nếu vắng mặt</div>'+inp('absentReason',d.absentReason,'placeholder="Lý do: đi cấp cứu, làm việc với CSGT…"')+inp('absentDestination',d.absentDestination,'placeholder="Địa điểm đến"')+'</div>'+
+        '<div class="sc-branch" data-sc-absent'+(d.driverPresence==='present'?' hidden':'')+'><div class="sc-sub">[6] Nếu vắng mặt</div>'+inp('absentReason',d.absentReason,'placeholder="Lý do: đi cấp cứu, làm việc với CSGT…"')+inp('absentDestination',d.absentDestination,'placeholder="Địa điểm đến"')+'</div>'+
         '<div class="sc-branch"><div class="sc-sub">[7] Nếu có mặt · sắc mặt</div>'+seg('face')+'<div class="sc-sub">Hơi thở</div>'+seg('breath')+'</div>')+
       sceneTile('8','[8]','Giấy tờ cung cấp tại hiện trường','<div class="sc-tgs">'+docs+'</div>'+mini('docsall','Chọn tất cả')+inp('docNote',d.docNote,'placeholder="Ghi chú: lý do chưa có, hẹn bổ sung…"'))+
       sceneTile('9','[9]','Mô tả hiện trường, vị trí phương tiện',area('scene',3)+chips('scene',true))+
@@ -10151,7 +10151,13 @@ window.TascoScene=(()=>{
       else{const s=$('scSteps');if(s)s.scrollIntoView({block:'start',behavior:'smooth'});}
     },30);
   }
-  const syncCh=(g,v)=>document.querySelectorAll('#scPane [data-sc-ch="'+g+'"]').forEach(b=>{const on=b.dataset.v===v;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
+  const syncCh=(g,v)=>{
+    document.querySelectorAll('#scPane [data-sc-ch="'+g+'"]').forEach(b=>{const on=b.dataset.v===v;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
+    if(g==='driverPresence'){
+      const absent=document.querySelector('#scPane [data-sc-absent]');if(absent)absent.hidden=v==='present';
+      if(v==='present'&&sceneVoice&&['absentReason','absentDestination'].includes(sceneVoice.field))cancelSceneVoice();
+    }
+  };
   function syncChips(k){
     const d=S.cur.data;document.querySelectorAll('#scPane [data-sc-sg="'+k+'"]').forEach(b=>{const s=M.SUG[k][+b.dataset.i];if(!s)return;const used=String(d[k]||'').includes(snip(s[1],d.plate));b.classList.toggle('is-used',used);b.setAttribute('aria-pressed',String(used));b.innerHTML=(used?I.ok:I.plus)+esc(s[0]);});
   }
