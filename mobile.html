@@ -9857,8 +9857,26 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-ai-row .sc-ai-proposal{margin-top:6px}
 #sceneSection .sc-ai-row b{white-space:pre-wrap}
 #sceneSection .sc-ai-hint{margin:0 0 10px;font-size:11px;line-height:1.5;color:var(--ws-muted)}
-#sceneSection .sc-ai-model{display:block;margin:0 0 10px;color:var(--ws-muted);font-size:11px;font-weight:700}
-#sceneSection .sc-ai-model select{display:block;width:100%;margin-top:5px;padding:10px 32px 10px 12px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-bg);color:var(--ws-text);font:inherit;font-size:12px}
+#sceneSection .sc-ai-model{margin:0 0 10px}
+#sceneSection .sc-ai-model-label{display:block;margin:0 0 6px;color:var(--ws-muted);font-size:10.5px;font-weight:700}
+#sceneSection .sc-ai-model-trigger{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:8px 10px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-bg);color:var(--ws-text);font:inherit;text-align:left}
+#sceneSection .sc-ai-model-icon{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:10px;background:color-mix(in srgb,var(--app-teal) 14%,var(--ws-surface));color:var(--ws-accent-text)}
+#sceneSection .sc-ai-model-icon svg{width:16px;height:16px}
+#sceneSection .sc-ai-model-name{flex:1;min-width:0}
+#sceneSection .sc-ai-model-name small{display:block;color:var(--ws-muted);font-size:9.5px;font-weight:600}
+#sceneSection .sc-ai-model-name b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+#sceneSection .sc-ai-model-arrow{display:flex;flex:none;width:15px;height:15px;color:var(--ws-muted);transform:rotate(90deg);transition:transform .2s}
+#sceneSection .sc-ai-model-arrow svg{width:100%;height:100%}
+#sceneSection .sc-ai-model-trigger[aria-expanded=true] .sc-ai-model-arrow{transform:rotate(-90deg)}
+#sceneSection .sc-ai-model-trigger:disabled{opacity:.65}
+#sceneSection .sc-ai-model-list{display:grid;gap:5px;max-height:236px;margin-top:6px;padding:6px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-surface)}
+#sceneSection .sc-ai-model-option{display:flex;align-items:center;gap:8px;min-height:40px;padding:8px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--ws-text);font:inherit;font-size:12px;text-align:left;overflow-wrap:anywhere}
+#sceneSection .sc-ai-model-option span{flex:1;min-width:0}
+#sceneSection .sc-ai-model-option svg{flex:none;width:15px;height:15px;color:var(--ws-accent-text);visibility:hidden}
+#sceneSection .sc-ai-model-option[aria-pressed=true]{border-color:color-mix(in srgb,var(--app-teal) 35%,var(--ws-line));background:var(--ws-bg);font-weight:700}
+#sceneSection .sc-ai-model-option[aria-pressed=true] svg{visibility:visible}
+#sceneSection .sc-ai-model :is(button):focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#sceneSection .sc-ai-model-arrow{transition:none}}
 #sceneSection .sc-ai-model-note{margin:-4px 0 10px;font-size:10.5px;line-height:1.45;color:var(--ws-muted)}
 #sceneSection .sc-ai-refresh{padding:2px 4px;border:0;background:none;color:var(--app-teal);font:inherit;font-weight:700}
 #sceneSection .sc-ai-conf[data-c=hi]{color:#2f8f6f}
@@ -10208,7 +10226,7 @@ window.TascoScene=(()=>{
   const aiShow=(k,v)=>AI_ENUM.has(k)?((M.LB[k]&&M.LB[k][v])||v):v;
   const aiConf=c=>c>=.8?'Chắc':c>=.6?'Khá chắc':'Chưa chắc';
   async function aiLoadModels(en){
-    const ai=aiOf(en);if(ai.modelsState==='loading')return;ai.modelsState='loading';ai.modelsErr='';
+    const ai=aiOf(en);if(ai.modelsState==='loading')return;ai.modelsState='loading';ai.modelsOpen=false;ai.modelsErr='';
     try{
       if(!window.TascoAsk||!window.TascoAsk.sceneModels)throw new Error('Chưa tải được danh sách mô hình. Hãy tải lại trang.');
       ai.models=await window.TascoAsk.sceneModels();
@@ -10222,6 +10240,7 @@ window.TascoScene=(()=>{
   function aiCard(){
     const en=S.cur,ai=aiOf(en),n=ai.files.length,d=en.data;
     if(!ai.modelsState)aiLoadModels(en);
+    const selectedModel=(ai.models||[]).find(m=>m.id===ai.model);
     const thumbs=ai.files.map(f=>'<span class="sc-ai-th"><img src="'+f.url+'" alt=""><button type="button" data-sc="ai-del" data-id="'+f.id+'" aria-label="Bỏ ảnh này"'+(ai.busy?' disabled':'')+'>'+I.x+'</button></span>').join('');
     let res='';
     if(ai.res){
@@ -10239,7 +10258,7 @@ window.TascoScene=(()=>{
     const run=ai.busy?'<button type="button" class="dt-btn sc-ai-processing" data-sc="ai-cancel" aria-label="Đang phân tích ảnh. Chạm để hủy"><span class="sc-ai-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="sc-ai-processing-text">Đang xử lý</span><span class="sc-ai-cancel-label">Hủy</span></button>':'<button type="button" class="dt-btn is-main" data-sc="ai-run"'+(n?'':' disabled')+'>'+I.spark+'Phân tích'+(n?' '+n+' ảnh':'')+'</button>';
     return '<section class="sc-t sc-ai" id="scAI"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+I.spark+'</span><b>AI đọc ảnh hiện trường</b></div>'+
       '<p class="sc-ai-sub">Antigravity phân tích ảnh và đề xuất các mục nhìn thấy được. Bạn xem lại trước khi áp dụng. Ảnh chỉ gửi để phân tích, không lưu lại.</p>'+
-      '<label class="sc-ai-model" for="scAIModel">Mô hình phân tích<select id="scAIModel"'+(ai.busy||!ai.models||!ai.models.length?' disabled':'')+'>'+(ai.models&&ai.models.length?ai.models.map(m=>'<option value="'+esc(m.id)+'"'+(m.id===ai.model?' selected':'')+'>'+esc(m.model)+'</option>').join(''):'<option>'+(ai.modelsState==='loading'?'Đang tải mô hình…':'Chưa có mô hình')+'</option>')+'</select></label>'+
+      '<div class="sc-ai-model"><span class="sc-ai-model-label">Mô hình phân tích</span><button type="button" class="sc-ai-model-trigger" data-sc="ai-model-toggle" aria-expanded="'+!!ai.modelsOpen+'"'+(ai.modelsOpen?' aria-controls="scAIModelList"':'')+(ai.busy||!ai.models||!ai.models.length?' disabled':'')+'><span class="sc-ai-model-icon">'+I.spark+'</span><span class="sc-ai-model-name"><small>Antigravity</small><b>'+esc(selectedModel?selectedModel.model:ai.modelsState==='loading'?'Đang tải mô hình…':'Chưa có mô hình')+'</b></span><span class="sc-ai-model-arrow">'+I.chev+'</span></button>'+(ai.modelsOpen&&ai.models&&ai.models.length?'<div class="sc-ai-model-list" id="scAIModelList" role="group" aria-label="Mô hình phân tích">'+ai.models.map((m,i)=>'<button type="button" class="sc-ai-model-option" data-sc="ai-model-select" data-i="'+i+'" aria-pressed="'+(m.id===ai.model)+'"><span>'+esc(m.model)+'</span>'+I.ok+'</button>').join('')+'</div>':'')+'</div>'+
       (ai.modelsErr?'<p class="sc-ai-model-note" role="alert">'+esc(ai.modelsErr)+' <button type="button" class="sc-ai-refresh" data-sc="ai-model-retry">Thử lại</button></p>':'<p class="sc-ai-model-note">Chọn mô hình hỗ trợ phân tích hình ảnh. '+(ai.modelsState==='ready'?'<button type="button" class="sc-ai-refresh" data-sc="ai-model-retry"'+(ai.busy?' disabled':'')+'>Làm mới</button>':'')+'</p>')+
       (n?'<div class="sc-ai-thumbs">'+thumbs+'</div>':'')+
       '<div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-pick"'+(ai.busy?' disabled':'')+'>'+I.plus+(n?'Thêm ảnh':'Chọn ảnh')+'</button>'+run+'</div>'+
@@ -10262,7 +10281,7 @@ window.TascoScene=(()=>{
     const en=S.cur,ai=en&&en.ai;if(!ai||ai.busy||!ai.files.length)return;
     if(!window.TascoAsk||!window.TascoAsk.analyzeScene){toast('Chưa dùng được tính năng AI đọc ảnh. Hãy tải lại trang.');return;}
     if(!ai.model){toast('Hãy chọn mô hình Antigravity trước khi phân tích.');return;}
-    const ctl=new AbortController();ai.ctl=ctl;ai.busy=true;ai.err='';ai.res=null;paintAI();
+    const ctl=new AbortController();ai.ctl=ctl;ai.busy=true;ai.modelsOpen=false;ai.err='';ai.res=null;paintAI();
     try{
       const r=await window.TascoAsk.analyzeScene(ai.files.map(f=>f.file),{signal:ctl.signal,model:ai.model,limits:{terrain:M.LIM.terrain,scene:M.LIM.scene,traces:M.LIM.traces}});
       if(ctl.signal.aborted)return;
@@ -10345,7 +10364,7 @@ window.TascoScene=(()=>{
     paintDone();if(S.step===3)paintReview();paintSave(S.cur);growAll();
   }
   window.addEventListener('resize',()=>growAll());
-  document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='scAIFile'){const files=Array.from(t.files||[]);t.value='';if(files.length)aiAdd(files);}else if(t&&t.id==='scAIModel'&&S.cur){const ai=aiOf(S.cur);if(!ai.busy&&ai.models&&ai.models.some(m=>m.id===t.value)){ai.model=t.value;try{localStorage.setItem('tasco_scene_ai_model',ai.model);}catch(_){}}}});
+  document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='scAIFile'){const files=Array.from(t.files||[]);t.value='';if(files.length)aiAdd(files);}});
   function paintDone(){
     if(!S.cur)return;const d=S.cur.data;
     M.META.forEach(m=>{const el=document.querySelector('#scPane [data-sc-tile="'+m.tile+'"]');if(el)el.classList.toggle('is-done',m.idx.some(i=>M.CHECKS[i](d)));});
@@ -10585,6 +10604,8 @@ window.TascoScene=(()=>{
     else if(k==='ai-pick'){const f=document.getElementById('scAIFile');if(f){f.value='';f.click();}}
     else if(k==='ai-del'){aiDel(b.dataset.id);}
     else if(k==='ai-run'){aiRun();}
+    else if(k==='ai-model-toggle'&&en){const ai=aiOf(en);if(!ai.busy&&ai.models&&ai.models.length){ai.modelsOpen=!ai.modelsOpen;paintAI();document.querySelector('#scAI [data-sc="ai-model-toggle"]')?.focus({preventScroll:true});}}
+    else if(k==='ai-model-select'&&en){const ai=aiOf(en),model=ai.models&&ai.models[Number(b.dataset.i)];if(!ai.busy&&model){ai.model=model.id;ai.modelsOpen=false;try{localStorage.setItem('tasco_scene_ai_model',ai.model);}catch(_){}paintAI();document.querySelector('#scAI [data-sc="ai-model-toggle"]')?.focus({preventScroll:true});}}
     else if(k==='ai-model-retry'){if(en){aiLoadModels(en);paintAI();}}
     else if(k==='ai-cancel'){const ai=en&&en.ai;if(ai&&ai.ctl){ai.ctl.abort();ai.busy=false;ai.ctl=null;paintAI();}}
     else if(k==='ai-sel'){const ai=en&&en.ai;if(ai&&ai.res){const key=b.dataset.k;if(String(en.data[key]??'')!==(ai.review||{})[key]){delete ai.sel[key];paintAI();toast('Nội dung đã thay đổi. Hãy kiểm tra và chọn lại.');}else{ai.sel[key]=!ai.sel[key];ai.base=ai.base||{};if(ai.sel[key])ai.base[key]=String(en.data[key]??'');else delete ai.base[key];paintAI();}}}
@@ -10609,6 +10630,7 @@ window.TascoScene=(()=>{
     else if(k==='resave'&&en){flush(en);}
   });
   document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&S.cur?.ai?.modelsOpen&&e.target.closest?.('#scAI')){S.cur.ai.modelsOpen=false;paintAI();document.querySelector('#scAI [data-sc="ai-model-toggle"]')?.focus({preventScroll:true});e.stopPropagation();return;}
     if(e.key==='Escape'&&tp){e.stopPropagation();closeTime();return;}
     if(e.key==='Escape'&&S.pv){e.stopPropagation();closePreview();return;}
     /* Enter ở ô một dòng → sang ô kế tiếp thay vì gửi form/đóng bàn phím sớm */
