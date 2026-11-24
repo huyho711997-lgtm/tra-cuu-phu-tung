@@ -7143,6 +7143,7 @@ window.TascoWeekly=(()=>{
     catch(e){err=e.fb?e.message:'Không đăng nhập được. Kiểm tra kết nối rồi thử lại.';paintBody();}
   }
   function onNavigate(view){
+    if(view!=='scene')window.TascoScene?.cancelVoice?.();
     if(view!=='wkreport'&&view!=='progress'&&view!=='scene'&&view!=='ask'){window.TascoAsk?.leave?.();closeCal();closeMsh();closeX();closePgPick();closePgNote();if(onPage){onPage=false;stopStreams();}return;}
     page=view;onPage=true;paintAll();
     if(!can())return;
@@ -9034,7 +9035,14 @@ window.TascoAsk=(()=>{
   window.addEventListener('resize',updateJump);
   window.addEventListener('pagehide',()=>{if(S.voice)voiceCancel();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.voice&&S.voice.phase==='rec')voiceCancel();});
-  return {paint,reset,readPlate,normPlate,plateKey:plKey,leave:()=>{closeSheet();S.needEnd=true;if(S.voice)voiceCancel();}};
+  async function transcribeForScene(blob,signal){
+    try{api=await window.TascoWeekly?.askBridge?.();}catch(_){api=null;}
+    if(!api)throw new Error('Chưa đăng nhập tài khoản. Hãy đăng nhập rồi thử lại.');
+    await loadBundle();
+    if(signal.aborted)throw new DOMException('Đã huỷ','AbortError');
+    return transcribe(blob,{signal});
+  }
+  return {paint,reset,readPlate,normPlate,transcribeForScene,plateKey:plKey,leave:()=>{closeSheet();S.needEnd=true;if(S.voice)voiceCancel();}};
 })();
 </script>
 <style id="tascoAskStyles">
@@ -9663,7 +9671,7 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-people .sc-prow{row-gap:8px}
 #sceneSection .sc-people .sc-pc{display:contents}
 #sceneSection .sc-people .sc-ph{grid-column:2;align-self:center}
-#sceneSection .sc-people .sc-pc>.sc-in,#sceneSection .sc-people .sc-pc>.sc-g2{grid-column:1 / -1;min-width:0}
+#sceneSection .sc-people .sc-pc>.sc-in,#sceneSection .sc-people .sc-pc>.sc-voice-field,#sceneSection .sc-people .sc-pc>.sc-g2{grid-column:1 / -1;min-width:0}
 #sceneSection .sc-person-fields{padding-left:12px}
 /* Compact navigation for the report form. */
 #sceneSection .sc-nav{align-items:center;gap:8px;margin:4px 0 6px;padding:6px 7px 6px 12px;border-radius:16px;background:var(--ws-surface);box-shadow:0 5px 20px rgba(24,48,86,.12)}
@@ -9673,6 +9681,18 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-nav-context small{color:var(--ws-muted);font-size:9px;font-weight:750;letter-spacing:.08em}
 #sceneSection .sc-nav-context strong{color:var(--ws-text);font-size:12px;font-weight:700}
 #sceneSection .sc-auto-field{min-height:46px;overflow-y:hidden;resize:none;line-height:1.5;padding:12px 13px}
+
+/* Voice input for scene report fields. */
+#sceneSection .sc-voice-field{position:relative;display:block;min-width:0;width:100%}
+#sceneSection .sc-voice-field>.sc-in{padding-right:40px}
+#sceneSection .sc-voice-mic{position:absolute;right:5px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:30px;height:30px;padding:0;border:0;border-radius:11px;background:color-mix(in srgb,var(--app-teal) 12%,var(--ws-surface));color:var(--ws-accent-text);cursor:pointer}
+#sceneSection .sc-voice-field.sc-voice-area .sc-voice-mic{top:6px;transform:none}
+#sceneSection .sc-voice-mic svg{width:17px;height:17px}#sceneSection .sc-voice-mic.is-live{background:#a33d41;color:#fff}
+#sceneSection .sc-voice-mic:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+.sc-voice-panel{position:fixed;z-index:100050;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);box-sizing:border-box;display:flex;align-items:center;gap:8px;width:min(420px,calc(100% - 28px));padding:10px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 8px 28px #10244040;font:600 12px/1.4 'Plus Jakarta Sans',sans-serif}
+.sc-voice-status{flex:1;min-width:0}.sc-voice-dot{width:8px;height:8px;flex:none;border-radius:50%;background:#d34e4e}
+.sc-voice-panel button{flex:none;min-height:38px;padding:0 11px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-soft);color:var(--ws-text);font:700 12px 'Plus Jakarta Sans',sans-serif}
+.sc-voice-panel [data-sv-stop]{background:var(--app-navy);border-color:var(--app-navy);color:#fff}.sc-voice-panel button:disabled{opacity:.5}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -9880,7 +9900,7 @@ window.TascoScene=(()=>{
     }
   }
   async function leave(){
-    const en=S.cur;S.seq++;
+    const en=S.cur;S.seq++;cancelSceneVoice();
     if(en){clearTimeout(en.t);flush(en);}
     S.mode='list';S.cur=null;S.pv&&closePreview();closeTime();paint(root,api,true);
     if(en)ENT.forEach((e,k)=>{if(!e.dirty&&!e.busy)ENT.delete(k);});
@@ -9891,8 +9911,13 @@ window.TascoScene=(()=>{
   const setP=(o,p,v)=>{const ks=p.split('.');let n=o;for(let i=0;i<ks.length-1;i++)n=n[ks[i]];n[ks[ks.length-1]]=v;};
   const MANUAL={accidentDate:'accidentDate',accidentTime:'accidentTime',accidentLocation:'accidentLocation',plate:'plate',driver:'driver',withParty:'withParty','participants.0.name':'assessorName','participants.0.phone':'assessorPhone','participants.1.name':'driver','participants.1.phone':'driverPhone'};
   const fid=p=>'scf_'+p.replace(/[^a-zA-Z0-9_]/g,'_');
-  const inp=(p,v,a)=>'<input id="'+fid(p)+'" class="sc-in" data-sc-f="'+esc(p)+'" value="'+esc(v)+'" enterkeyhint="next" '+(a||'')+'>';
-  const area=(k,rows,ph)=>'<textarea id="'+fid(k)+'" class="sc-in sc-ta" data-sc-f="'+k+'" rows="'+rows+'" maxlength="'+M.LIM[k]+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+'>'+esc(S.cur.data[k])+'</textarea>';
+  const micIcon=ico('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/>');
+  const voiceField=(p,html)=>'<span class="sc-voice-field'+(html.startsWith('<textarea')?' sc-voice-area':'')+'">'+html+'<button type="button" class="sc-voice-mic" data-sc="voice" data-field="'+esc(p)+'" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói">'+micIcon+'</button></span>';
+  const inp=(p,v,a)=>{
+    const field='<input id="'+fid(p)+'" class="sc-in" data-sc-f="'+esc(p)+'" value="'+esc(v)+'" enterkeyhint="next" '+(a||'')+'>';
+    return /^(reportPlace|accidentLocation|driver|withParty|participants\.\d+\.(name|role)|damage\.[^.]+\.text)$/.test(p)?voiceField(p,field):field;
+  };
+  const area=(k,rows,ph)=>voiceField(k,'<textarea id="'+fid(k)+'" class="sc-in sc-ta" data-sc-f="'+k+'" rows="'+rows+'" maxlength="'+M.LIM[k]+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+'>'+esc(S.cur.data[k])+'</textarea>');
   const ICO_CAL=ico('<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>'),ICO_CLK=ico('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');
   const dfmt=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'')?v.slice(8)+'/'+v.slice(5,7)+'/'+v.slice(0,4):'';
   const isHm=v=>/^\d{2}:\d{2}$/.test(v||'');
@@ -9939,7 +9964,7 @@ window.TascoScene=(()=>{
         '<div class="sc-g2">'+dtf('d','accidentDate','Ngày xảy ra')+dtf('t','accidentTime','Giờ xảy ra')+'</div>'+
         '<div class="sc-g2">'+fld('plate','Biển số xe',inp('plate',d.plate,'autocapitalize="characters" autocomplete="off"'),autoTag('plate'))+fld('driver','Lái xe điều khiển',inp('driver',d.driver,'autocomplete="off"'),autoTag('driver'))+'</div>'+
         fld('accidentLocation','Địa điểm xảy ra tai nạn',inp('accidentLocation',d.accidentLocation,'placeholder="Cây số, đường, xã, huyện, tỉnh…"'),autoTag('accidentLocation'))+
-        fld('withParty','Va chạm / xảy ra với','<textarea id="'+fid('withParty')+'" class="sc-in sc-ta sc-auto-field" data-sc-f="withParty" data-sc-expand rows="1">'+esc(d.withParty)+'</textarea>',autoTag('withParty'))+
+        fld('withParty','Va chạm / xảy ra với',voiceField('withParty','<textarea id="'+fid('withParty')+'" class="sc-in sc-ta sc-auto-field" data-sc-f="withParty" data-sc-expand rows="1">'+esc(d.withParty)+'</textarea>'),autoTag('withParty'))+
         '<button type="button" class="sc-link" data-sc="resync">'+I.sync+'Đồng bộ lại theo hồ sơ</button>');
   }
   function step2(){
@@ -10015,7 +10040,7 @@ window.TascoScene=(()=>{
   }
   function goStep(n,focus){
     const en=S.cur;if(!en)return;
-    S.step=n;paintEditor();flush(en);
+    cancelSceneVoice();S.step=n;paintEditor();flush(en);
     const sel=focus?String(focus).replace('[data-sr-item-tile=','[data-sc-tile=').replace('[data-sr=','[data-sc-f='):'';
     setTimeout(()=>{
       const t=sel?document.querySelector('#scPane '+sel):null;
@@ -10118,6 +10143,55 @@ window.TascoScene=(()=>{
     requestAnimationFrame(()=>{goto('h',tp.h,false);goto('m',tp.m,false);});
   }
 
+  /* Ghi âm cho từng trường và dùng chung bộ chuyển giọng nói AI của ứng dụng. */
+  let sceneVoice=null;
+  function cancelSceneVoice(){
+    const v=sceneVoice;if(!v)return;sceneVoice=null;v.cancelled=true;v.abort.abort();clearTimeout(v.timer);
+    try{if(v.recorder&&v.recorder.state!=='inactive')v.recorder.stop();}catch(_){}
+    if(v.stream)v.stream.getTracks().forEach(track=>track.stop());
+    v.panel?.remove();if(v.button?.isConnected){v.button.classList.remove('is-live');v.button.setAttribute('aria-pressed','false');}
+  }
+  function stopSceneVoice(v){
+    if(sceneVoice!==v||!v.recorder||v.recorder.state==='inactive')return;
+    clearTimeout(v.timer);v.panel.querySelector('[data-sv-status]').textContent='Đang chuyển thành chữ…';
+    v.panel.querySelector('[data-sv-stop]').disabled=true;v.button.classList.remove('is-live');
+    try{v.recorder.stop();}catch(_){cancelSceneVoice();toast('Không xử lý được bản ghi. Hãy thử lại.');}
+  }
+  async function toggleSceneVoice(field,button){
+    if(sceneVoice){if(sceneVoice.field===field&&sceneVoice.recorder?.state==='recording')stopSceneVoice(sceneVoice);else toast('Hoàn tất hoặc huỷ bản ghi hiện tại trước.');return;}
+    if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){toast('Thiết bị chưa hỗ trợ ghi âm trong ứng dụng.');return;}
+    const target=document.getElementById(fid(field));if(!target||!S.cur)return;
+    const v=sceneVoice={field,button,target,owner:S.cur,abort:new AbortController(),chunks:[],cancelled:false};
+    const panel=document.createElement('div');v.panel=panel;panel.className='sc-voice-panel';panel.setAttribute('role','status');panel.innerHTML='<span class="sc-voice-dot" aria-hidden="true"></span><span class="sc-voice-status" data-sv-status>Đang mở micro…</span><button type="button" data-sv-cancel>Huỷ</button><button type="button" data-sv-stop disabled>Xong</button>';
+    document.body.appendChild(panel);button.setAttribute('aria-pressed','true');
+    panel.querySelector('[data-sv-cancel]').addEventListener('click',cancelSceneVoice);
+    panel.querySelector('[data-sv-stop]').addEventListener('click',()=>stopSceneVoice(v));
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+      if(sceneVoice!==v||v.cancelled){stream.getTracks().forEach(track=>track.stop());return;}
+      v.stream=stream;
+      const mime=['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+      v.recorder=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);
+      v.recorder.ondataavailable=e=>{if(e.data?.size)v.chunks.push(e.data);};
+      v.recorder.onerror=()=>{if(sceneVoice===v){cancelSceneVoice();toast('Ghi âm bị gián đoạn. Hãy thử lại.');}};
+      v.recorder.onstop=async()=>{
+        if(v.stream)v.stream.getTracks().forEach(track=>track.stop());
+        if(sceneVoice!==v||v.cancelled)return;
+        const blob=new Blob(v.chunks,{type:v.recorder.mimeType||mime||'audio/mp4'});
+        if(blob.size<800){cancelSceneVoice();toast('Bản ghi quá ngắn. Hãy thử lại.');return;}
+        try{
+          const text=await window.TascoAsk.transcribeForScene(blob,v.abort.signal);
+          if(sceneVoice!==v||v.cancelled)return;
+          if(S.cur!==v.owner||!v.target.isConnected){cancelSceneVoice();return;}
+          const before=v.target.value,combined=(before.trim()?before.replace(/\s+$/,'')+' ':'')+text;
+          const limit=M.LIM[v.field]||(/\.(name|role)$/.test(v.field)?120:120);v.target.value=combined.slice(0,limit);
+          v.target.dispatchEvent(new Event('input',{bubbles:true}));cancelSceneVoice();toast(combined.length>limit?'Nội dung vượt giới hạn, đã nhập phần đầu. Hãy kiểm tra lại.':'Đã nhập nội dung. Hãy kiểm tra lại.');
+        }catch(error){if(sceneVoice===v&&!v.abort.signal.aborted){cancelSceneVoice();toast(error?.message||'Không chuyển được giọng nói.');}}
+      };
+      v.recorder.start(250);panel.querySelector('[data-sv-status]').textContent='Đang nghe… nhấn Xong khi nói xong';panel.querySelector('[data-sv-stop]').disabled=false;button.classList.add('is-live');
+      v.timer=setTimeout(()=>stopSceneVoice(v),120000);
+    }catch(error){if(sceneVoice===v){cancelSceneVoice();toast(/NotAllowed|Permission|denied/i.test((error?.name||'')+(error?.message||''))?'Chưa được cấp quyền micro. Hãy cho phép micro rồi thử lại.':'Không mở được micro. Hãy thử lại.');}}
+  }
   /* ---------- sự kiện ---------- */
   const inScene=e=>e.target.closest&&e.target.closest('#sceneSection');
   document.addEventListener('input',e=>{
@@ -10158,7 +10232,8 @@ window.TascoScene=(()=>{
       b.classList.toggle('on',next);b.setAttribute('aria-pressed',String(next));const ds=b.closest('.sc-dspot');if(ds)ds.classList.toggle('on',next);commit();return;
     }
     const k=b.dataset.sc;
-    if(k==='open'){openClaim(b.dataset.k);}
+    if(k==='voice'){toggleSceneVoice(b.dataset.field,b);}
+    else if(k==='open'){openClaim(b.dataset.k);}
     else if(k==='list'){leave();}
     else if(k==='more'){S.n+=PER;paintList();}
     else if(k==='step'){goStep(+b.dataset.v);}
@@ -10199,8 +10274,8 @@ window.TascoScene=(()=>{
     if(force||!b.querySelector('.sc-root')){b.innerHTML=listShell();}
     paintList();
   }
-  function reset(){ENT.forEach(en=>clearTimeout(en.t));ENT.clear();S.mode='list';S.cur=null;S.q='';S.n=PER;S.seq++;closePreview();closeTime();M=null;modelP=null;docxFn=null;}
-  return {paint,reset};
+  function reset(){cancelSceneVoice();ENT.forEach(en=>clearTimeout(en.t));ENT.clear();S.mode='list';S.cur=null;S.q='';S.n=PER;S.seq++;closePreview();closeTime();M=null;modelP=null;docxFn=null;}
+  return {paint,reset,cancelVoice:cancelSceneVoice};
 })();
 </script>
 
