@@ -10084,8 +10084,8 @@ window.TascoScene=(()=>{
         '<div class="sc-branch" data-sc-absent'+(d.driverPresence==='present'?' hidden':'')+'><div class="sc-sub">[6] Nếu vắng mặt</div>'+inp('absentReason',d.absentReason,'placeholder="Lý do: đi cấp cứu, làm việc với CSGT…"')+inp('absentDestination',d.absentDestination,'placeholder="Địa điểm đến"')+'</div>'+
         '<div class="sc-branch"><div class="sc-sub">[7] Nếu có mặt · sắc mặt</div>'+seg('face')+'<div class="sc-sub">Hơi thở</div>'+seg('breath')+'</div>')+
       sceneTile('8','[8]','Giấy tờ cung cấp tại hiện trường','<div class="sc-tgs">'+docs+'</div>'+mini('docsall','Chọn tất cả')+inp('docNote',d.docNote,'placeholder="Ghi chú: lý do chưa có, hẹn bổ sung…"'))+
-      sceneTile('9','[9]','Mô tả hiện trường, vị trí phương tiện',area('scene',3)+chips('scene',true))+
-      sceneTile('10','[10]','Dấu vết tại hiện trường',area('traces',3)+chips('traces',true))+
+      sceneTile('9','[9]','Mô tả hiện trường, vị trí phương tiện',area('scene',3))+
+      sceneTile('10','[10]','Dấu vết tại hiện trường',area('traces',3))+
       sceneTile('11','[11]','Mẫu vật thu được',area('samples',2)+chips('samples',true)))+'</div>';
   }
   function step3(){
