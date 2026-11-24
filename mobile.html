@@ -9712,6 +9712,9 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
   #sceneSection .sc-vehicle-fields .sc-f{margin-bottom:3px}
   #sceneSection .sc-people .sc-g2>.sc-voice-field,#sceneSection .sc-vehicle-fields .sc-voice-field{width:100%;min-width:0}
 }
+/* Step navigation follows the form instead of covering it. */
+#sceneSection .sc-nav{position:static;inset:auto;z-index:auto;margin:18px 0 4px;padding:12px;border-radius:16px;background:var(--ws-soft);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+#sceneSection .sc-nav .dt-btn{min-height:44px}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -10044,10 +10047,9 @@ window.TascoScene=(()=>{
     if(state==='error'){b.innerHTML='<div class="sc-ed">'+head+'<div class="dr-empty"><b>Chưa mở được</b>'+esc(S.err)+'<div class="dr-acts"><button type="button" class="dt-btn is-main" data-sc="open" data-k="'+esc(k)+'">Thử lại</button></div></div></div>';return;}
     if(!S.cur||!M)return;
     b.innerHTML='<div class="sc-ed">'+head+'<div class="sc-steps" id="scSteps">'+stepsHtml()+'</div><div id="scPane">'+(S.step===1?step1():S.step===2?step2():step3())+'</div>'+navHtml()+'</div>';
-    paintDone();if(S.step===3)paintReview();paintSave(S.cur);growAll();setBn();
+    paintDone();if(S.step===3)paintReview();paintSave(S.cur);growAll();
   }
-  const setBn=()=>{const n=document.getElementById('bottomNav');const h=n&&n.offsetHeight?n.getBoundingClientRect().height:70;document.documentElement.style.setProperty('--sc-bn',Math.round(h)+'px');};
-  window.addEventListener('resize',()=>{setBn();growAll();});
+  window.addEventListener('resize',()=>growAll());
   function paintDone(){
     if(!S.cur)return;const d=S.cur.data;
     M.META.forEach(m=>{const el=document.querySelector('#scPane [data-sc-tile="'+m.tile+'"]');if(el)el.classList.toggle('is-done',m.idx.some(i=>M.CHECKS[i](d)));});
