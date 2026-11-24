@@ -8365,7 +8365,7 @@ window.TascoAsk=(()=>{
     const libText=ask||S.lib?(S.libInfo?(S.libInfo.err?esc(S.libInfo.err):'Thư viện tài liệu: '+S.libInfo.n+' văn bản (chỉ đọc)'):'Đang nạp Thư viện tài liệu…'):'';
     const hist='<button type="button" class="ak-ico" data-ak="history" aria-label="Lịch sử trò chuyện">'+IC.hist+'</button><button type="button" class="ak-ico" data-ak="new" aria-label="Cuộc trò chuyện mới"'+(S.busy?' disabled':'')+'>'+IC.plus+'</button>';
     const sw=on=>'<i class="ak-sw'+(on?' is-on':'')+'" aria-hidden="true"><u></u></i>';
-    return '<div class="ak-ctl"><div class="ak-head"><div class="dr-seg ak-seg" role="tablist" aria-label="Chế độ AI"><button type="button" role="tab" data-ak="kind" data-v="ask" aria-pressed="'+ask+'">Hỏi nghiệp vụ</button><button type="button" role="tab" data-ak="kind" data-v="chat" aria-pressed="'+!ask+'">Trò chuyện AI</button></div>'+hist+'</div>'
+    return '<div class="ak-ctl"><div class="ak-control-label"><span>KHÔNG GIAN LÀM VIỆC</span><span class="ak-control-mode">'+(ask?'NGHIỆP VỤ':'TRÒ CHUYỆN')+'</span></div><div class="ak-head"><div class="dr-seg ak-seg" role="tablist" aria-label="Chế độ AI"><button type="button" role="tab" data-ak="kind" data-v="ask" aria-selected="'+ask+'" aria-pressed="'+ask+'">Hỏi nghiệp vụ</button><button type="button" role="tab" data-ak="kind" data-v="chat" aria-selected="'+!ask+'" aria-pressed="'+!ask+'">Trò chuyện AI</button></div>'+hist+'</div>'
       +(ask||S.lib?'<button type="button" class="ak-scope'+(S.pin.length?' is-set':'')+'" data-ak="docs" title="Chọn tài liệu để hỏi"><span class="ak-chip-ico">'+IC.book+'</span><span class="ak-chip-t"><small>Hỏi trong</small><span>'+esc(pinLabel())+'</span></span>'+(S.pin.length?'<i class="ak-scope-n">'+S.pin.length+'</i>':'')+IC.chev+'</button>':'')
       +(ask?'':'<div class="ak-bar is-chat"><button type="button" class="ak-chip is-toggle'+(S.lib?' is-set':'')+'" data-ak="lib" aria-pressed="'+S.lib+'" title="Bật để AI tra Thư viện tài liệu trước khi trả lời">'+IC.book+'<span>Tra Thư viện tài liệu</span>'+sw(S.lib)+'</button></div>')
       +(libText||usage?'<div class="ak-lib'+(libText?'':' is-solo')+(S.libInfo&&S.libInfo.err&&libText?' is-bad':'')+'">'+(libText?'<i class="ak-dot" aria-hidden="true"></i>':'')+'<span>'+libText+'</span><b class="ak-usage" data-ak-usage title="Token đã dùng trong cuộc trò chuyện này"'+(usage?'':' hidden')+'>'+esc(usage)+'</b></div>':'')+'</div>';
@@ -9375,6 +9375,24 @@ html.dark .ak-model-sheet-bg .ak-mg-st.is-ok{color:#a3e0cc}
 html.dark .ak-agy-status.is-set{color:#a3e0cc}
 @media(max-width:350px){.ak-agy-summary{gap:7px;padding:12px}.ak-agy-icon{width:34px;height:34px}.ak-agy-status{font-size:9px;padding:5px 6px}}
 @media(prefers-reduced-motion:reduce){.ak-agy-summary>svg{transition:none}}
+
+/* Conversation controls */
+#askSection .ak-ctl{gap:12px;padding:15px;border-radius:20px;border-color:var(--ws-line);box-shadow:0 10px 28px rgba(24,48,86,.07)}
+.ak-control-label{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 2px;color:var(--ws-muted);font-size:9px;font-weight:800;letter-spacing:.1em}
+.ak-control-mode{color:var(--ws-accent-text);font-size:9px;letter-spacing:.06em}
+#askSection .ak-head{gap:7px}
+#askSection .ak-head .ak-seg{display:flex;gap:3px;padding:3px;background:var(--ws-soft);border:1px solid var(--ws-line);border-radius:13px}
+#askSection .ak-seg button{flex:1;min-width:0;min-height:38px;padding:0 5px;border-radius:10px;font-size:11px;font-weight:700}
+#askSection .ak-seg button[aria-pressed=true]{background:var(--app-navy);color:#fff!important;box-shadow:0 3px 9px rgba(24,48,86,.2)}
+#askSection .ak-ico{width:39px;height:44px;border-radius:12px;background:var(--ws-surface);color:var(--ws-text)}
+#askSection .ak-ico svg{width:17px;height:17px}
+#askSection .ak-scope,#askSection .ak-bar.is-chat .ak-chip{min-height:60px;padding:9px 12px;border-radius:14px;background:var(--ws-surface);border:1px solid var(--ws-line)}
+#askSection .ak-scope .ak-chip-ico{width:38px;height:38px;border-radius:12px;background:color-mix(in srgb,var(--app-teal) 15%,var(--ws-surface));color:var(--ws-accent-text)}
+#askSection .ak-scope .ak-chip-t{gap:4px}#askSection .ak-chip-t small{font-size:10px;font-weight:600}#askSection .ak-scope .ak-chip-t span{font-size:12px}
+#askSection .ak-scope.is-set,#askSection .ak-chip.is-toggle.is-set{border-color:color-mix(in srgb,var(--app-teal) 55%,var(--ws-line));background:color-mix(in srgb,var(--app-teal) 8%,var(--ws-surface))}
+#askSection .ak-lib{min-height:16px;padding:0 2px;font-size:10px;font-weight:600}
+html.dark #askSection .ak-seg button[aria-pressed=true]{background:var(--app-teal);color:#0b1b30!important}
+@media(max-width:360px){#askSection .ak-ctl{padding:12px}#askSection .ak-head{gap:5px}#askSection .ak-ico{width:36px}#askSection .ak-seg button{font-size:10px}.ak-control-label{font-size:8px}}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
