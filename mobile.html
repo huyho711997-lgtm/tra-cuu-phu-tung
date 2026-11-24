@@ -9724,6 +9724,35 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-location-actions button svg{width:15px;height:15px;flex:none}
 #sceneSection .sc-location-actions button:disabled{opacity:.6;cursor:wait}
 #sceneSection .sc-location-actions button:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+
+/* Scene step: clearer question cards and selectable answers. */
+#sceneSection .sc-scene-step>.sc-card2{padding:15px;border-radius:19px;background:var(--ws-bg);border-color:var(--ws-line)}
+#sceneSection .sc-scene-step>.sc-card2>.sc-sh{margin:0 1px 15px}
+#sceneSection .sc-scene-step>.sc-card2>.sc-sh h4{font-size:14px;line-height:1.4;letter-spacing:-.15px}
+#sceneSection .sc-scene-step>.sc-card2>.sc-sh p{margin-top:4px;font-size:11px;line-height:1.5}
+#sceneSection .sc-scene-step .sc-t{margin:0 0 10px;padding:13px;border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-surface);box-shadow:0 3px 12px rgba(24,48,86,.035)}
+#sceneSection .sc-scene-step .sc-t:last-child{margin-bottom:0}
+#sceneSection .sc-scene-step .sc-th{align-items:center;gap:9px;margin-bottom:11px}
+#sceneSection .sc-scene-step .sc-th b{font-size:12.5px;font-weight:750;line-height:1.4}
+#sceneSection .sc-scene-step .sc-tag{display:grid;place-items:center;min-width:29px;min-height:26px;padding:0 5px;border-radius:9px;background:color-mix(in srgb,var(--app-teal) 16%,var(--ws-surface));color:var(--ws-accent-text);font-size:10px;letter-spacing:0}
+#sceneSection .sc-scene-step .sc-seg{gap:7px}
+#sceneSection .sc-scene-step .sc-sg{min-width:0;min-height:42px;padding:8px 10px;border-color:var(--ws-line);border-radius:11px;background:var(--ws-bg);color:var(--ws-text);font-size:11.5px;font-weight:650;line-height:1.4}
+#sceneSection .sc-scene-step .sc-sg.on{border-color:var(--app-navy);background:var(--app-navy);color:#fff;box-shadow:0 3px 9px rgba(24,48,86,.14)}
+#sceneSection .sc-scene-step .sc-sub{margin:12px 0 7px;font-size:10.5px;font-weight:700}
+#sceneSection .sc-scene-step .sc-branch{margin-top:12px;padding:10px;border:1px solid var(--ws-line);border-radius:12px;background:var(--ws-bg)}
+#sceneSection .sc-scene-step .sc-branch>.sc-sub:first-child{margin-top:0}
+#sceneSection .sc-scene-step .sc-branch .sc-sg{background:var(--ws-surface)}
+#sceneSection .sc-scene-step .sc-branch .sc-sg.on{background:var(--app-navy);color:#fff}
+#sceneSection .sc-scene-step .sc-in{background:var(--ws-bg);border-radius:11px;font-size:13px}
+#sceneSection .sc-scene-step .sc-chips{gap:7px;margin:10px -13px -2px;padding:2px 13px 6px;scroll-padding-inline:13px}
+#sceneSection .sc-scene-step .sc-chip{min-height:34px;padding:0 10px;border-radius:11px;background:var(--ws-bg);font-size:11px}
+#sceneSection .sc-scene-step .sc-chip.is-used{background:color-mix(in srgb,var(--app-teal) 12%,var(--ws-surface));border-color:var(--app-teal)}
+#sceneSection .sc-scene-step .sc-t.is-done{border-color:color-mix(in srgb,#2f8f6f 45%,var(--ws-line))}
+#sceneSection .sc-scene-step :is(button,input,textarea):focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+html.dark #sceneSection .sc-scene-step .sc-t{box-shadow:none}
+html.dark #sceneSection .sc-scene-step .sc-sg.on,html.dark #sceneSection .sc-scene-step .sc-branch .sc-sg.on{background:var(--app-teal);border-color:var(--app-teal);color:#0b1b30}
+@media(max-width:350px){#sceneSection .sc-scene-step>.sc-card2{padding:12px}#sceneSection .sc-scene-step .sc-t{padding:11px}#sceneSection .sc-scene-step .sc-sg{padding-inline:8px;font-size:11px}}
+@supports (-webkit-touch-callout:none){#sceneSection .sc-scene-step .sc-in:focus{font-size:16px}}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -10003,7 +10032,7 @@ window.TascoScene=(()=>{
   function step2(){
     const d=S.cur.data;
     const docs=M.DOCS.map(([k,l])=>tg('docs.'+k,l,d.docs[k])).join('');
-    return sect('Hiện trường vụ tai nạn','Mục [1–11] của biểu mẫu '+esc(M.CODE),
+    return '<div class="sc-scene-step">'+sect('Hiện trường vụ tai nạn','Mục [1–11] của biểu mẫu '+esc(M.CODE),
       tile('1','[1]','Tình trạng hiện trường',seg('sceneIntact'))+
       tile('2','[2]','Nhiệt độ động cơ',seg('engineTemp'))+
       tile('3','[3]','Địa hình, vật liệu nền',inp('terrain',d.terrain,'placeholder="Mặt đường nhựa, bê tông, dốc…"')+chips('terrain'))+
@@ -10015,7 +10044,7 @@ window.TascoScene=(()=>{
       tile('8','[8]','Giấy tờ cung cấp tại hiện trường','<div class="sc-tgs">'+docs+'</div>'+mini('docsall','Chọn tất cả')+inp('docNote',d.docNote,'placeholder="Ghi chú: lý do chưa có, hẹn bổ sung…"'))+
       tile('9','[9]','Mô tả hiện trường, vị trí phương tiện',area('scene',4)+chips('scene'))+
       tile('10','[10]','Dấu vết tại hiện trường',area('traces',4)+chips('traces'))+
-      tile('11','[11]','Mẫu vật thu được',area('samples',2)+chips('samples')));
+      tile('11','[11]','Mẫu vật thu được',area('samples',2)+chips('samples')))+'</div>';
   }
   function step3(){
     const d=S.cur.data;
