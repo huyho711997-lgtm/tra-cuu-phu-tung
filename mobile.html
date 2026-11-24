@@ -9771,6 +9771,15 @@ html.dark #sceneSection .sc-scene-step .sc-sg.on,html.dark #sceneSection .sc-sce
 #sceneSection .sc-scene-step .sc-chips-l{width:100%;gap:5px;margin-bottom:1px;font-size:10px;letter-spacing:.02em}
 #sceneSection .sc-scene-step .sc-chip{flex:0 1 auto;max-width:100%;min-height:34px;height:auto;padding:7px 10px;border-radius:10px;text-align:left;white-space:normal;overflow-wrap:anywhere;line-height:1.35}
 #sceneSection .sc-scene-step .sc-chip svg{flex:none}
+/* Keep suggestions available without expanding every question. */
+#sceneSection .sc-scene-step .sc-suggestions{margin-top:8px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-bg)}
+#sceneSection .sc-scene-step .sc-suggestions summary{display:flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;list-style:none;cursor:pointer;color:var(--ws-accent-text)}
+#sceneSection .sc-scene-step .sc-suggestions summary::-webkit-details-marker{display:none}
+.sc-suggestions-title{display:inline-flex;align-items:center;gap:6px;flex:1;font-size:10.5px;font-weight:700}.sc-suggestions-title svg{width:14px;height:14px}
+.sc-suggestions-count{color:var(--ws-muted);font-size:10px;font-weight:700}.sc-suggestions-chevron{display:grid;place-items:center;color:var(--ws-muted);transition:transform .2s}.sc-suggestions-chevron svg{width:14px;height:14px}.sc-suggestions[open] .sc-suggestions-chevron{transform:rotate(90deg)}
+#sceneSection .sc-scene-step .sc-suggestions .sc-chips{margin:0;padding:0 9px 9px;gap:6px}
+#sceneSection .sc-scene-step .sc-suggestions summary:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px;border-radius:10px}
+@media(prefers-reduced-motion:reduce){.sc-suggestions-chevron{transition:none}}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -10014,11 +10023,13 @@ window.TascoScene=(()=>{
     return '<div class="sc-seg" role="group">'+M.CH[g].map(v=>'<button type="button" class="sc-sg'+(d[g]===v?' on':'')+'" data-sc-ch="'+g+'" data-v="'+v+'" aria-pressed="'+(d[g]===v)+'">'+esc(M.LB[g][v])+'</button>').join('')+'</div>';
   }
   const snip=(t,plate)=>String(t||'').replace(/\{plate\}/g,String(plate||'').trim()||'………').trim();
-  function chips(k){
+  function chips(k,compact=false){
     const list=M.SUG[k]||[];if(!list.length)return '';
     const d=S.cur.data,cur=String(d[k]||'');
-    return '<div class="sc-chips" aria-label="Gợi ý nhanh"><span class="sc-chips-l">'+I.spark+'Gợi ý</span>'+list.map((s,i)=>{const used=cur.includes(snip(s[1],d.plate));
-      return '<button type="button" class="sc-chip'+(used?' is-used':'')+'" data-sc-sg="'+k+'" data-i="'+i+'" aria-pressed="'+used+'">'+(used?I.ok:I.plus)+esc(s[0])+'</button>';}).join('')+'</div>';
+    const items=list.map((s,i)=>{const used=cur.includes(snip(s[1],d.plate));
+      return '<button type="button" class="sc-chip'+(used?' is-used':'')+'" data-sc-sg="'+k+'" data-i="'+i+'" aria-pressed="'+used+'">'+(used?I.ok:I.plus)+esc(s[0])+'</button>';}).join('');
+    if(compact)return '<details class="sc-suggestions"><summary><span class="sc-suggestions-title">'+I.spark+'Gợi ý nhanh</span><span class="sc-suggestions-count">'+list.length+'</span><span class="sc-suggestions-chevron" aria-hidden="true">'+I.chev+'</span></summary><div class="sc-chips" aria-label="Gợi ý nhanh">'+items+'</div></details>';
+    return '<div class="sc-chips" aria-label="Gợi ý nhanh"><span class="sc-chips-l">'+I.spark+'Gợi ý</span>'+items+'</div>';
   }
   const tile=(item,tag,title,inner)=>'<section class="sc-t" data-sc-tile="'+item+'"><div class="sc-th"><span class="sc-tag">'+tag+'</span><b>'+title+'</b><span class="sc-done">'+I.ok+'</span></div>'+inner+'</section>';
   const sect=(title,sub,inner)=>'<section class="sc-card2"><div class="sc-sh"><h4>'+title+'</h4>'+(sub?'<p>'+sub+'</p>':'')+'</div>'+inner+'</section>';
@@ -10066,16 +10077,16 @@ window.TascoScene=(()=>{
     return '<div class="sc-scene-step">'+sect('Hiện trường vụ tai nạn','Mục [1–11] của biểu mẫu '+esc(M.CODE),
       sceneTile('1','[1]','Tình trạng hiện trường',seg('sceneIntact'))+
       sceneTile('2','[2]','Nhiệt độ động cơ',seg('engineTemp'))+
-      sceneTile('3','[3]','Địa hình, vật liệu nền',inp('terrain',d.terrain,'placeholder="Mặt đường nhựa, bê tông, dốc…"')+chips('terrain'))+
+      sceneTile('3','[3]','Địa hình, vật liệu nền',inp('terrain',d.terrain,'placeholder="Mặt đường nhựa, bê tông, dốc…"')+chips('terrain',true))+
       sceneTile('4','[4]','Tính chất nền',seg('ground'))+
       sceneTile('5','[5]','Thời tiết & ánh sáng','<div class="sc-sub">Thời tiết</div>'+seg('weather')+'<div class="sc-sub">Ánh sáng</div>'+seg('light'))+
       sceneTile('6-7','[6–7]','Người điều khiển tại hiện trường',seg('driverPresence')+
         '<div class="sc-branch"><div class="sc-sub">[6] Nếu vắng mặt</div>'+inp('absentReason',d.absentReason,'placeholder="Lý do: đi cấp cứu, làm việc với CSGT…"')+inp('absentDestination',d.absentDestination,'placeholder="Địa điểm đến"')+'</div>'+
         '<div class="sc-branch"><div class="sc-sub">[7] Nếu có mặt · sắc mặt</div>'+seg('face')+'<div class="sc-sub">Hơi thở</div>'+seg('breath')+'</div>')+
       sceneTile('8','[8]','Giấy tờ cung cấp tại hiện trường','<div class="sc-tgs">'+docs+'</div>'+mini('docsall','Chọn tất cả')+inp('docNote',d.docNote,'placeholder="Ghi chú: lý do chưa có, hẹn bổ sung…"'))+
-      sceneTile('9','[9]','Mô tả hiện trường, vị trí phương tiện',area('scene',3)+chips('scene'))+
-      sceneTile('10','[10]','Dấu vết tại hiện trường',area('traces',3)+chips('traces'))+
-      sceneTile('11','[11]','Mẫu vật thu được',area('samples',2)+chips('samples')))+'</div>';
+      sceneTile('9','[9]','Mô tả hiện trường, vị trí phương tiện',area('scene',3)+chips('scene',true))+
+      sceneTile('10','[10]','Dấu vết tại hiện trường',area('traces',3)+chips('traces',true))+
+      sceneTile('11','[11]','Mẫu vật thu được',area('samples',2)+chips('samples',true)))+'</div>';
   }
   function step3(){
     const d=S.cur.data;
