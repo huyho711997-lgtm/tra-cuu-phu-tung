@@ -8394,7 +8394,7 @@ window.TascoAsk=(()=>{
   }
   function emptyHtml(){
     const ask=S.kind==='ask',list=ask?Q().SUGGESTIONS:Q().FREE_SUGGESTIONS;
-    return '<div class="ak-empty"><span class="ak-empty-ico">'+(ask?IC.book:IC.spark)+'</span><b>'+(ask?'Hỏi nghiệp vụ bảo hiểm':'Trò chuyện với AI')+'</b><p>'+(ask?'Trả lời dựa trên Thư viện tài liệu — Luật, Nghị định, quy tắc bảo hiểm — dẫn đúng mã nguồn <em>C1, C2…</em>. Bấm mã để xem nguyên văn điều khoản.':'Hỏi mọi thứ: viết lại câu chữ, tính toán, dịch, soạn email. Muốn đúng điều khoản bảo hiểm thì bật “Thư viện”.')+'</p>'
+    return '<div class="ak-empty"><span class="ak-empty-ico">'+(ask?IC.book:IC.spark)+'</span><span class="ak-empty-kicker">TRỢ LÝ CỦA BẠN</span><b>'+(ask?'Hỏi nghiệp vụ bảo hiểm':'Bạn cần hỗ trợ gì?')+'</b><p>'+(ask?'Tra cứu quy tắc, Luật và Nghị định từ Thư viện tài liệu. Chạm vào mã nguồn để xem điều khoản.':'Viết, phân tích và giải đáp cùng AI. Bật Thư viện khi cần tra cứu tài liệu nghiệp vụ.')+'</p>'
       +'<small class="ak-ideas-h">Gợi ý để bắt đầu</small><div class="ak-ideas">'+list.map(t=>'<button type="button" class="ak-idea" data-ak="idea" data-t="'+esc(t)+'"><span>'+esc(t)+'</span>'+IC.up+'</button>').join('')+'</div></div>';
   }
   function busyHtml(){
@@ -9306,6 +9306,48 @@ html.kb-open .ak-jump{top:-30px}
 #askSection .ws-journey-hero,[data-ak-root]>:not(.ak-comp-wrap){transition:opacity .28s cubic-bezier(.2,.7,.2,1)}
 html.ak-fx #askSection .ws-journey-hero,html.ak-fx [data-ak-root]>:not(.ak-comp-wrap){opacity:0;transition:opacity .14s ease-in}
 @media(prefers-reduced-motion:reduce){#askSection .ws-journey-hero,[data-ak-root]>:not(.ak-comp-wrap){transition:none}}
+
+/* AI conversation — premium visual treatment */
+#askSection .ws-journey-hero{background:radial-gradient(circle at 87% 65%,rgba(106,193,201,.24),transparent 37%),linear-gradient(145deg,#142c50,#1b3b63 74%,#244e6a);overflow:hidden}
+#askSection .ws-journey-hero:after{content:"";position:absolute;right:-35px;bottom:-100px;width:220px;height:220px;border:1px solid rgba(184,229,232,.13);border-radius:50%;box-shadow:0 0 0 30px rgba(184,229,232,.035),0 0 0 65px rgba(184,229,232,.025);pointer-events:none}
+#askSection .ws-journey-art{opacity:.65}
+#askSection .ws-search-panel{background:transparent;border:0;box-shadow:none}
+#askSection .ak-ctl{gap:10px;padding:12px;border:1px solid color-mix(in srgb,var(--app-teal) 20%,var(--ws-line));border-radius:22px;background:var(--ws-surface);box-shadow:0 9px 30px rgba(19,52,78,.08)}
+#askSection .ak-head .ak-seg{background:var(--ws-soft);border:1px solid var(--ws-line)}
+#askSection .ak-seg button{font-size:12px;font-weight:750}
+#askSection .ak-seg button[aria-pressed=true]{background:#1b3a60;box-shadow:0 4px 12px #18305626}
+#askSection .ak-ico{border:1px solid var(--ws-line);background:var(--ws-surface)}
+#askSection .ak-scope,#askSection .ak-bar.is-chat .ak-chip{min-height:57px;border:1px solid color-mix(in srgb,var(--app-teal) 22%,var(--ws-line));background:color-mix(in srgb,var(--app-teal) 8%,var(--ws-surface))}
+#askSection .ak-chip-ico{width:37px;height:37px;border-radius:12px;background:#d9eef0;color:#286d7a}
+#askSection .ak-lib{padding:2px 4px;color:var(--ws-muted);font-size:10.5px}
+#askSection .ak-thread{gap:24px;padding:25px 2px 14px}
+#askSection .ak-empty{gap:0;padding:20px 0 4px;text-align:left;align-items:flex-start}
+#askSection .ak-empty-ico{width:52px;height:52px;border-radius:17px;background:linear-gradient(145deg,#64b8be,#1c5c77);box-shadow:0 8px 22px rgba(34,112,126,.2)}
+#askSection .ak-empty-ico svg{width:24px;height:24px}
+#askSection .ak-empty-kicker{margin-top:22px;color:#448a96;font-size:10px;font-weight:800;letter-spacing:.14em}
+#askSection .ak-empty b{margin-top:7px;font-size:23px;line-height:1.25;letter-spacing:-.7px}
+#askSection .ak-empty p{max-width:390px;margin:9px 0 22px;font-size:13px;line-height:1.7}
+#askSection .ak-ideas-h{margin:0 0 10px;color:var(--ws-muted);font-size:10px;letter-spacing:.11em}
+#askSection .ak-ideas{gap:8px}
+#askSection .ak-idea{min-height:58px;padding:12px 12px 12px 15px;border-radius:16px;box-shadow:0 5px 17px rgba(24,48,86,.045);font-size:13px}
+#askSection .ak-idea svg{width:32px;height:32px;background:color-mix(in srgb,var(--app-teal) 14%,var(--ws-surface));color:var(--ws-accent-text)}
+#askSection .ak-msg.is-user p{padding:13px 16px;border-radius:19px 19px 5px 19px;background:linear-gradient(145deg,#234e74,#183456);box-shadow:0 7px 18px #1834561e}
+#askSection .ak-who{gap:9px}#askSection .ak-who b{color:var(--ws-text);font-size:12px}
+#askSection .ak-av{width:31px;height:31px;border-radius:11px;background:linear-gradient(145deg,#69b9bf,#266781);box-shadow:none}
+#askSection .ak-card{padding:18px;border-radius:8px 20px 20px 20px;box-shadow:0 8px 25px rgba(19,52,78,.055)}
+#askSection .ak-card .ak-srcs{margin:16px -18px -18px}
+#askSection .ak-text{font-size:14px;line-height:1.8}
+#askSection .ak-act{background:var(--ws-surface);border:1px solid var(--ws-line);font-size:11px}
+#askSection .ak-comp{padding:11px 10px 9px 16px;border-radius:22px;border-color:color-mix(in srgb,var(--app-teal) 25%,var(--ws-line));box-shadow:0 10px 35px rgba(24,48,86,.14)}
+#askSection .ak-tool{height:34px;font-size:11px;border:1px solid var(--ws-line)}
+#askSection .ak-tool.is-plus{width:34px}
+#askSection .ak-send{background:linear-gradient(145deg,#5eb4bb,#1d677d)}
+#askSection .ak-send:disabled{background:var(--ws-soft);color:var(--ws-muted)}
+#askSection :is(button,textarea):focus-visible{outline:2px solid var(--app-teal);outline-offset:3px}
+html.dark #askSection .ak-seg button[aria-pressed=true]{background:var(--app-teal);color:#0b1b30!important}
+html.dark #askSection .ak-chip-ico{background:#294e58;color:#a7dce1}
+html.dark #askSection .ak-ctl,html.dark #askSection .ak-card{box-shadow:0 8px 25px #0003}
+@media(max-width:360px){#askSection .ak-ctl{padding:9px}#askSection .ak-head{gap:5px}#askSection .ak-ico{width:36px;height:40px}#askSection .ak-seg button{font-size:11px}#askSection .ak-tool{padding-left:8px;padding-right:8px}}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
