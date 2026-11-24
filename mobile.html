@@ -9843,7 +9843,10 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-ai-row small{display:block;font-size:10.5px;font-weight:700;color:var(--ws-muted)}
 #sceneSection .sc-ai-row b{display:block;margin-top:3px;font-size:12.5px;font-weight:650;line-height:1.55;overflow-wrap:anywhere}
 #sceneSection .sc-ai-row em{display:block;margin-top:3px;font-size:10.5px;font-style:normal;color:var(--ws-muted)}
-#sceneSection .sc-ai-row.is-keep{opacity:.72;background:transparent}
+#sceneSection .sc-ai-row .sc-ai-current{margin-top:6px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
+#sceneSection .sc-ai-row .sc-ai-proposal{margin-top:6px}
+#sceneSection .sc-ai-row b{white-space:pre-wrap}
+#sceneSection .sc-ai-hint{margin:0 0 10px;font-size:11px;line-height:1.5;color:var(--ws-muted)}
 #sceneSection .sc-ai-conf[data-c=hi]{color:#2f8f6f}
 #sceneSection .sc-ai-conf[data-c=lo]{color:#b57a2c}
 #sceneSection .sc-ai-badge{display:inline-grid;place-items:center;min-width:24px;height:20px;padding:0 6px;border-radius:7px;background:color-mix(in srgb,var(--app-teal) 16%,var(--ws-surface));color:var(--app-teal);font-size:10px;font-weight:800;letter-spacing:.3px}
@@ -10195,15 +10198,16 @@ window.TascoScene=(()=>{
     const thumbs=ai.files.map(f=>'<span class="sc-ai-th"><img src="'+f.url+'" alt=""><button type="button" data-sc="ai-del" data-id="'+f.id+'" aria-label="Bỏ ảnh này"'+(ai.busy?' disabled':'')+'>'+I.x+'</button></span>').join('');
     let res='';
     if(ai.res){
+      ai.review={};
       const rows=AI_KEYS.filter(([k])=>ai.res.fields[k]).map(([k,,label])=>{
         const f=ai.res.fields[k],keep=!aiEmpty(d,k);
-        if(keep)return '<div class="sc-ai-row is-keep"><div><small>'+label+'</small><b>'+esc(aiShow(k,f.value))+'</b><em>Đã có nội dung — giữ nguyên, không ghi đè</em></div></div>';
+        ai.review[k]=String(d[k]??'');
         const on=!!ai.sel[k];
-        return '<button type="button" class="sc-ai-row" data-sc="ai-sel" data-k="'+k+'" aria-pressed="'+on+'"><i aria-hidden="true">'+I.ok+'</i><div><small>'+label+' · <span class="sc-ai-conf" data-c="'+(f.conf>=.8?'hi':f.conf>=.6?'mid':'lo')+'">'+aiConf(f.conf)+'</span></small><b>'+esc(aiShow(k,f.value))+'</b></div></button>';
+        return '<button type="button" class="sc-ai-row" data-sc="ai-sel" data-k="'+k+'" aria-pressed="'+on+'"><i aria-hidden="true">'+I.ok+'</i><div><small>'+label+' · <span class="sc-ai-conf" data-c="'+(f.conf>=.8?'hi':f.conf>=.6?'mid':'lo')+'">'+aiConf(f.conf)+'</span></small>'+(keep?'<em class="sc-ai-current">Hiện tại: '+esc(aiShow(k,d[k]))+'</em><small class="sc-ai-proposal">AI đề xuất</small>':'')+'<b>'+esc(aiShow(k,f.value))+'</b>'+(keep?'<em>'+(on?'Sẽ thay thế nội dung hiện tại':'Chọn để thay thế nội dung hiện tại')+'</em>':'')+'</div></button>';
       }).join('');
-      const cnt=AI_KEYS.filter(([k])=>ai.res.fields[k]&&ai.sel[k]&&aiEmpty(d,k)).length;
+      const cnt=AI_KEYS.filter(([k])=>ai.res.fields[k]&&ai.sel[k]).length;
       res='<div class="sc-ai-res"><div class="sc-ai-rh"><b>AI đề xuất</b><small>'+esc(ai.res.engine||'')+' · '+ai.res.photos+' ảnh</small></div>'+
-        (rows?rows+'<div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-drop">Bỏ qua</button><button type="button" class="dt-btn is-main" data-sc="ai-apply"'+(cnt?'':' disabled')+'>Áp dụng '+(cnt?cnt+' mục':'')+'</button></div>':'<p class="sc-ai-err">AI chưa thấy mục nào đủ rõ trong ảnh. Hãy thêm ảnh rõ hơn hoặc nhập tay.</p><div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-drop">Đóng</button></div>')+'</div>';
+        (rows?'<p class="sc-ai-hint">Chọn các mục muốn áp dụng. Nội dung đã có chỉ được thay thế khi bạn chọn.</p>'+rows+'<div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-drop">Bỏ qua</button><button type="button" class="dt-btn is-main" data-sc="ai-apply"'+(cnt?'':' disabled')+'>Áp dụng '+(cnt?cnt+' mục':'')+'</button></div>':'<p class="sc-ai-err">AI chưa thấy mục nào đủ rõ trong ảnh. Hãy thêm ảnh rõ hơn hoặc nhập tay.</p><div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-drop">Đóng</button></div>')+'</div>';
     }
     const run=ai.busy?'<button type="button" class="dt-btn sc-ai-processing" data-sc="ai-cancel" aria-label="Đang phân tích ảnh. Chạm để hủy"><span class="sc-ai-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="sc-ai-processing-text">Đang xử lý</span><span class="sc-ai-cancel-label">Hủy</span></button>':'<button type="button" class="dt-btn is-main" data-sc="ai-run"'+(n?'':' disabled')+'>'+I.spark+'Phân tích'+(n?' '+n+' ảnh':'')+'</button>';
     return '<section class="sc-t sc-ai" id="scAI"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+I.spark+'</span><b>AI đọc ảnh hiện trường</b></div>'+
@@ -10232,21 +10236,23 @@ window.TascoScene=(()=>{
     try{
       const r=await window.TascoAsk.analyzeScene(ai.files.map(f=>f.file),{signal:ctl.signal,limits:{terrain:M.LIM.terrain,scene:M.LIM.scene,traces:M.LIM.traces}});
       if(ctl.signal.aborted)return;
-      ai.res=r;ai.sel={};AI_KEYS.forEach(([k])=>{const f=r.fields[k];if(f&&f.conf>=.6&&aiEmpty(en.data,k))ai.sel[k]=true;});
+      ai.res=r;ai.sel={};ai.base={};AI_KEYS.forEach(([k])=>{const f=r.fields[k];if(f&&f.conf>=.6&&aiEmpty(en.data,k)){ai.sel[k]=true;ai.base[k]=String(en.data[k]??'');}});
     }catch(e){if(!ctl.signal.aborted)ai.err=(e&&e.message)||'Chưa phân tích được ảnh.';}
     finally{ai.busy=false;if(ai.ctl===ctl)ai.ctl=null;if(S.cur===en)paintAI();}
   }
   function aiApply(){
     const en=S.cur,ai=en&&en.ai;if(!ai||!ai.res)return;
-    const d=en.data,marks=en.aiMark||(en.aiMark=new Set());let n=0;
+    const d=en.data,changed=AI_KEYS.filter(([k])=>ai.res.fields[k]&&ai.sel[k]&&String(d[k]??'')!==(ai.base||{})[k]);
+    if(changed.length){changed.forEach(([k])=>{delete ai.sel[k];});paintAI();toast('Một số mục đã thay đổi. Hãy kiểm tra và chọn lại trước khi áp dụng.');return;}
+    const marks=en.aiMark||(en.aiMark=new Set());let n=0;
     for(const [k,tile] of AI_KEYS.map(a=>[a[0],a[1]])){
-      const f=ai.res.fields[k];if(!f||!ai.sel[k]||!aiEmpty(d,k))continue;   // không bao giờ ghi đè mục đã có nội dung
+      const f=ai.res.fields[k];if(!f||!ai.sel[k])continue;
       d[k]=f.value;n++;marks.add(tile);
       if(AI_ENUM.has(k))syncCh(k,f.value);
       else{const el=document.querySelector('#scPane [data-sc-f="'+k+'"]');if(el){el.value=f.value;syncFieldTools(el);grow(el);}}
       const head=document.querySelector('#scPane [data-sc-tile="'+tile+'"] .sc-th');if(head&&!head.querySelector('.sc-ai-badge')){const b=document.createElement('span');b.className='sc-ai-badge';b.title='AI điền từ ảnh — hãy kiểm tra lại';b.textContent='AI';head.querySelector('.sc-tag').before(b);}
     }
-    ai.res=null;ai.sel={};commit();paintAI();
+    ai.res=null;ai.sel={};ai.base={};commit();paintAI();
     toast(n?'Đã điền '+n+' mục. Hãy kiểm tra lại từng mục.':'Chưa có mục nào được áp dụng.');
   }
   function step2(){
@@ -10550,7 +10556,7 @@ window.TascoScene=(()=>{
     else if(k==='ai-del'){aiDel(b.dataset.id);}
     else if(k==='ai-run'){aiRun();}
     else if(k==='ai-cancel'){const ai=en&&en.ai;if(ai&&ai.ctl){ai.ctl.abort();ai.busy=false;ai.ctl=null;paintAI();}}
-    else if(k==='ai-sel'){const ai=en&&en.ai;if(ai&&ai.res){ai.sel[b.dataset.k]=!ai.sel[b.dataset.k];paintAI();}}
+    else if(k==='ai-sel'){const ai=en&&en.ai;if(ai&&ai.res){const key=b.dataset.k;if(String(en.data[key]??'')!==(ai.review||{})[key]){delete ai.sel[key];paintAI();toast('Nội dung đã thay đổi. Hãy kiểm tra và chọn lại.');}else{ai.sel[key]=!ai.sel[key];ai.base=ai.base||{};if(ai.sel[key])ai.base[key]=String(en.data[key]??'');else delete ai.base[key];paintAI();}}}
     else if(k==='ai-apply'){aiApply();}
     else if(k==='ai-drop'){const ai=en&&en.ai;if(ai){ai.res=null;ai.err='';paintAI();}}
     else if(k==='open'){openClaim(b.dataset.k);}
