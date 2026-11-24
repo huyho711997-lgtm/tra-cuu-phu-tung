@@ -8399,7 +8399,7 @@ window.TascoAsk=(()=>{
   }
   function emptyHtml(){
     const ask=S.kind==='ask',list=ask?Q().SUGGESTIONS:Q().FREE_SUGGESTIONS;
-    return '<div class="ak-empty"><span class="ak-empty-ico">'+(ask?IC.book:IC.spark)+'</span><span class="ak-empty-kicker">TRỢ LÝ CỦA BẠN</span><b>'+(ask?'Hỏi nghiệp vụ bảo hiểm':'Bạn cần hỗ trợ gì?')+'</b><p>'+(ask?'Tra cứu quy tắc, Luật và Nghị định từ Thư viện tài liệu. Chạm vào mã nguồn để xem điều khoản.':'Viết, phân tích và giải đáp cùng AI. Bật Thư viện khi cần tra cứu tài liệu nghiệp vụ.')+'</p>'
+    return '<div class="ak-empty"><span class="ak-empty-kicker">TRỢ LÝ CỦA BẠN</span><b>'+(ask?'Hỏi nghiệp vụ bảo hiểm':'Bạn cần hỗ trợ gì?')+'</b><p>'+(ask?'Tra cứu quy tắc, Luật và Nghị định từ Thư viện tài liệu. Chạm vào mã nguồn để xem điều khoản.':'Viết, phân tích và giải đáp cùng AI. Bật Thư viện khi cần tra cứu tài liệu nghiệp vụ.')+'</p>'
       +'<small class="ak-ideas-h">Gợi ý để bắt đầu</small><div class="ak-ideas">'+list.map(t=>'<button type="button" class="ak-idea" data-ak="idea" data-t="'+esc(t)+'"><span>'+esc(t)+'</span>'+IC.up+'</button>').join('')+'</div></div>';
   }
   function busyHtml(){
@@ -9303,7 +9303,7 @@ html.kb-open .ak-jump{top:-30px}
 #askSection .ak-empty{gap:0;padding:20px 0 4px;text-align:left;align-items:flex-start}
 #askSection .ak-empty-ico{width:52px;height:52px;border-radius:17px;background:linear-gradient(145deg,#64b8be,#1c5c77);box-shadow:0 8px 22px rgba(34,112,126,.2)}
 #askSection .ak-empty-ico svg{width:24px;height:24px}
-#askSection .ak-empty-kicker{margin-top:22px;color:#448a96;font-size:10px;font-weight:800;letter-spacing:.14em}
+#askSection .ak-empty-kicker{margin-top:0;color:#448a96;font-size:10px;font-weight:800;letter-spacing:.14em}
 #askSection .ak-empty b{margin-top:7px;font-size:23px;line-height:1.25;letter-spacing:-.7px}
 #askSection .ak-empty p{max-width:390px;margin:9px 0 22px;font-size:13px;line-height:1.7}
 #askSection .ak-ideas-h{margin:0 0 10px;color:var(--ws-muted);font-size:10px;letter-spacing:.11em}
