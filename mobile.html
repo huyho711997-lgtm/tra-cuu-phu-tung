@@ -4358,7 +4358,8 @@ window.TascoAppShell=(()=>{
     if(view==='admin'&&previous!=='admin')window.refreshUserList?.();
     window.TascoLookupFlow?.afterNavigate(view);
     if(previous!==view&&view!=='home'){const focusTitle=()=>{if(current!==view)return;(document.getElementById(view==='lookup'?'lookupPageTitle':view==='results'?'resultsPageTitle':view==='cloud'?'cloudPageTitle':view==='rescue'?'rescuePageTitle':view==='garage'?'garagePageTitle':view==='duty'?'dutyPageTitle':view==='directory'?'directoryPageTitle':view==='wkreport'?'wkreportPageTitle':view==='progress'?'progressPageTitle':view==='scene'?'scenePageTitle':view==='ask'?'askPageTitle':view==='assess'?'assessPageTitle':view==='forms'?'formsPageTitle':view==='account'?'accountPageTitle':'wsPageTitle')||document.getElementById('wsPageTitle')).focus({preventScroll:true});};if(typeof requestAnimationFrame==='function')requestAnimationFrame(focusTitle);else focusTitle();}
-    const top=options.restore?scrolls[view]||0:0;
+    const stay=previous===view&&options.replace===true&&view!=='login';   // làm mới phiên khi quay lại app: vẫn trang cũ → giữ nguyên vị trí cuộn, không đưa về đầu
+    const top=options.restore?scrolls[view]||0:stay?Math.max(0,window.scrollY):0;
     window.scrollTo({left:0,top,behavior:'instant'});
     if(previous!==view&&['lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','progress','scene','ask'].includes(view)&&!options.restore&&typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{if(current===view)window.scrollTo({left:0,top:0,behavior:'instant'});});
   }
