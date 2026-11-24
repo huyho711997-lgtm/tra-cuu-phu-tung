@@ -7119,7 +7119,8 @@ window.TascoWeekly=(()=>{
     const id=u?.id||u?.email||'';
     if(uidKey&&id!==uidKey){forget();phase='idle';window.TascoScene?.reset?.();window.TascoAsk?.reset?.();}   // đổi/đăng xuất tài khoản app → bỏ phiên Firebase trên máy
     uidKey=id;
-    if(onPage&&can()&&(phase==='idle'||(!was&&admin)))start();else if(onPage)paintAll();
+    if(onPage&&can()&&(phase==='idle'||(!was&&admin)))start();
+    else if(onPage&&!(page==='ask'&&phase==='ready'&&$('akBody')?.firstElementChild))paintAll();   // trang AI không phụ thuộc vai trò: quay lại app/làm mới phiên thì không vẽ lại
   }
   document.addEventListener('visibilitychange',()=>{
     if(!onPage||!can()||document.hidden||phase!=='ready'||!auth)return;
@@ -7207,7 +7208,7 @@ window.TascoWeekly=(()=>{
     return '<div class="dr-live'+(live?' is-on':'')+'" data-wk-live><i></i><b></b></div>'+tabsHtml()+ctl+'<div id="wkBody"></div>';
   }
   function paintAll(){
-    if(page==='ask'){const r=$('akPageRoot');if(!r)return;r.innerHTML='<div id="akBody"></div>';paintBody();return;}
+    if(page==='ask'){const r=$('akPageRoot');if(!r)return;const keep=$('akBody');if(!keep||!r.contains(keep))r.innerHTML='<div id="akBody"></div>';paintBody();return;}   // giữ nguyên khung đang có: xoá đi thì trang co lại và vị trí cuộn về đầu
     if(page==='scene'){const r=$('scPageRoot');if(!r)return;r.innerHTML='<div class="dr-live'+(live?' is-on':'')+'" data-wk-live><i></i><b></b></div><div id="scBody"></div>';paintLive();paintBody();return;}
     if(page==='progress'){const r=$('pgPageRoot');if(!r)return;r.innerHTML='<div class="dr-live'+(live?' is-on':'')+'" data-wk-live><i></i><b></b></div><div id="pgBody"></div>';paintLive();paintBody();return;}
     const r=$('wkRoot');if(!r)return;if(!admin){r.innerHTML=noAdminHtml;return;}r.innerHTML=shellHtml();paintLive();paintBody();}
