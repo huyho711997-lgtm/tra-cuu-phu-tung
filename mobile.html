@@ -9672,6 +9672,7 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-nav-context{display:grid;align-content:center;gap:3px;flex:1;min-width:0}
 #sceneSection .sc-nav-context small{color:var(--ws-muted);font-size:9px;font-weight:750;letter-spacing:.08em}
 #sceneSection .sc-nav-context strong{color:var(--ws-text);font-size:12px;font-weight:700}
+#sceneSection .sc-auto-field{min-height:46px;overflow-y:hidden;resize:none;line-height:1.5;padding:12px 13px}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -9938,7 +9939,7 @@ window.TascoScene=(()=>{
         '<div class="sc-g2">'+dtf('d','accidentDate','Ngày xảy ra')+dtf('t','accidentTime','Giờ xảy ra')+'</div>'+
         '<div class="sc-g2">'+fld('plate','Biển số xe',inp('plate',d.plate,'autocapitalize="characters" autocomplete="off"'),autoTag('plate'))+fld('driver','Lái xe điều khiển',inp('driver',d.driver,'autocomplete="off"'),autoTag('driver'))+'</div>'+
         fld('accidentLocation','Địa điểm xảy ra tai nạn',inp('accidentLocation',d.accidentLocation,'placeholder="Cây số, đường, xã, huyện, tỉnh…"'),autoTag('accidentLocation'))+
-        fld('withParty','Va chạm / xảy ra với',inp('withParty',d.withParty),autoTag('withParty'))+
+        fld('withParty','Va chạm / xảy ra với','<textarea id="'+fid('withParty')+'" class="sc-in sc-ta sc-auto-field" data-sc-f="withParty" data-sc-expand rows="1">'+esc(d.withParty)+'</textarea>',autoTag('withParty'))+
         '<button type="button" class="sc-link" data-sc="resync">'+I.sync+'Đồng bộ lại theo hồ sơ</button>');
   }
   function step2(){
@@ -10000,7 +10001,7 @@ window.TascoScene=(()=>{
     paintDone();if(S.step===3)paintReview();paintSave(S.cur);growAll();setBn();
   }
   const setBn=()=>{const n=document.getElementById('bottomNav');const h=n&&n.offsetHeight?n.getBoundingClientRect().height:70;document.documentElement.style.setProperty('--sc-bn',Math.round(h)+'px');};
-  window.addEventListener('resize',setBn);
+  window.addEventListener('resize',()=>{setBn();growAll();});
   function paintDone(){
     if(!S.cur)return;const d=S.cur.data;
     M.META.forEach(m=>{const el=document.querySelector('#scPane [data-sc-tile="'+m.tile+'"]');if(el)el.classList.toggle('is-done',m.idx.some(i=>M.CHECKS[i](d)));});
@@ -10183,7 +10184,7 @@ window.TascoScene=(()=>{
       if(nx){nx.focus();try{nx.scrollIntoView({block:'center',behavior:'smooth'});}catch(_){}}else e.target.blur();
     }
   },true);
-  const grow=t=>{t.style.height='auto';t.style.height=Math.min(t.scrollHeight+2,360)+'px';};
+  const grow=t=>{t.style.height='auto';t.style.height=(t.hasAttribute('data-sc-expand')?t.scrollHeight+2:Math.min(t.scrollHeight+2,360))+'px';};
   const growAll=()=>requestAnimationFrame(()=>document.querySelectorAll('#scPane textarea.sc-ta').forEach(grow));
 
   /* ---------- vào/ra trang ---------- */
