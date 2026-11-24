@@ -9693,6 +9693,18 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 .sc-voice-status{flex:1;min-width:0}.sc-voice-dot{width:8px;height:8px;flex:none;border-radius:50%;background:#d34e4e}
 .sc-voice-panel button{flex:none;min-height:38px;padding:0 11px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-soft);color:var(--ws-text);font:700 12px 'Plus Jakarta Sans',sans-serif}
 .sc-voice-panel [data-sv-stop]{background:var(--app-navy);border-color:var(--app-navy);color:#fff}.sc-voice-panel button:disabled{opacity:.5}
+
+/* Compact field controls and growing text. */
+#sceneSection .sc-voice-field>.sc-in{box-sizing:border-box;padding-right:13px}
+#sceneSection .sc-voice-field.has-mic>.sc-in,#sceneSection .sc-voice-field.has-value:not(.has-mic)>.sc-in{padding-right:40px}
+#sceneSection .sc-voice-field.has-mic.has-value>.sc-in{padding-right:70px}
+#sceneSection .sc-field-actions{position:absolute;right:5px;top:6px;display:flex;align-items:center;gap:2px}
+#sceneSection .sc-field-clear,#sceneSection .sc-field-actions .sc-voice-mic{position:static;transform:none;display:grid;place-items:center;width:28px;height:30px;padding:0;border:0;border-radius:9px;background:transparent;color:var(--ws-muted);cursor:pointer}
+#sceneSection .sc-field-clear svg,#sceneSection .sc-field-actions .sc-voice-mic svg{width:16px;height:16px}
+#sceneSection .sc-field-actions .sc-voice-mic{color:var(--ws-accent-text)}
+#sceneSection .sc-field-actions .sc-voice-mic.is-live{background:#a33d41;color:#fff}
+#sceneSection .sc-field-clear:focus-visible{outline:2px solid var(--app-teal);outline-offset:1px}
+#sceneSection .sc-branch>.sc-voice-field+.sc-voice-field{margin-top:8px}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -9912,12 +9924,14 @@ window.TascoScene=(()=>{
   const MANUAL={accidentDate:'accidentDate',accidentTime:'accidentTime',accidentLocation:'accidentLocation',plate:'plate',driver:'driver',withParty:'withParty','participants.0.name':'assessorName','participants.0.phone':'assessorPhone','participants.1.name':'driver','participants.1.phone':'driverPhone'};
   const fid=p=>'scf_'+p.replace(/[^a-zA-Z0-9_]/g,'_');
   const micIcon=ico('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/>');
-  const voiceField=(p,html)=>'<span class="sc-voice-field'+(html.startsWith('<textarea')?' sc-voice-area':'')+'">'+html+'<button type="button" class="sc-voice-mic" data-sc="voice" data-field="'+esc(p)+'" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói">'+micIcon+'</button></span>';
+  const clearIcon=ico('<path d="m7 7 10 10M17 7 7 17"/>');
+  const voiceField=(p,html,value,withMic=true)=>'<span class="sc-voice-field'+(html.startsWith('<textarea')?' sc-voice-area':'')+(withMic?' has-mic':'')+(String(value||'').length?' has-value':'')+'">'+html+'<span class="sc-field-actions"><button type="button" class="sc-field-clear" data-sc="clear-field" data-field="'+esc(p)+'" aria-label="Xóa nội dung" title="Xóa nội dung"'+(String(value||'').length?'':' hidden')+'>'+clearIcon+'</button>'+(withMic?'<button type="button" class="sc-voice-mic" data-sc="voice" data-field="'+esc(p)+'" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói">'+micIcon+'</button>':'')+'</span></span>';
   const inp=(p,v,a)=>{
-    const field='<input id="'+fid(p)+'" class="sc-in" data-sc-f="'+esc(p)+'" value="'+esc(v)+'" enterkeyhint="next" '+(a||'')+'>';
-    return /^(reportPlace|accidentLocation|driver|withParty|participants\.\d+\.(name|role)|damage\.[^.]+\.text)$/.test(p)?voiceField(p,field):field;
+    const single=p==='plate'||/\.phone$/.test(p);
+    const field=single?'<input id="'+fid(p)+'" class="sc-in" data-sc-f="'+esc(p)+'" value="'+esc(v)+'" enterkeyhint="next" '+(a||'')+'>':'<textarea id="'+fid(p)+'" class="sc-in sc-ta sc-auto-field" data-sc-f="'+esc(p)+'" data-sc-expand rows="1" '+(a||'')+'>'+esc(v)+'</textarea>';
+    return voiceField(p,field,v,!single);
   };
-  const area=(k,rows,ph)=>voiceField(k,'<textarea id="'+fid(k)+'" class="sc-in sc-ta" data-sc-f="'+k+'" rows="'+rows+'" maxlength="'+M.LIM[k]+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+'>'+esc(S.cur.data[k])+'</textarea>');
+  const area=(k,rows,ph)=>voiceField(k,'<textarea id="'+fid(k)+'" class="sc-in sc-ta" data-sc-f="'+k+'" rows="'+rows+'" maxlength="'+M.LIM[k]+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+'>'+esc(S.cur.data[k])+'</textarea>',S.cur.data[k]);
   const ICO_CAL=ico('<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>'),ICO_CLK=ico('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');
   const dfmt=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'')?v.slice(8)+'/'+v.slice(5,7)+'/'+v.slice(0,4):'';
   const isHm=v=>/^\d{2}:\d{2}$/.test(v||'');
@@ -9964,7 +9978,7 @@ window.TascoScene=(()=>{
         '<div class="sc-g2">'+dtf('d','accidentDate','Ngày xảy ra')+dtf('t','accidentTime','Giờ xảy ra')+'</div>'+
         '<div class="sc-g2">'+fld('plate','Biển số xe',inp('plate',d.plate,'autocapitalize="characters" autocomplete="off"'),autoTag('plate'))+fld('driver','Lái xe điều khiển',inp('driver',d.driver,'autocomplete="off"'),autoTag('driver'))+'</div>'+
         fld('accidentLocation','Địa điểm xảy ra tai nạn',inp('accidentLocation',d.accidentLocation,'placeholder="Cây số, đường, xã, huyện, tỉnh…"'),autoTag('accidentLocation'))+
-        fld('withParty','Va chạm / xảy ra với',voiceField('withParty','<textarea id="'+fid('withParty')+'" class="sc-in sc-ta sc-auto-field" data-sc-f="withParty" data-sc-expand rows="1">'+esc(d.withParty)+'</textarea>'),autoTag('withParty'))+
+        fld('withParty','Va chạm / xảy ra với',inp('withParty',d.withParty),autoTag('withParty'))+
         '<button type="button" class="sc-link" data-sc="resync">'+I.sync+'Đồng bộ lại theo hồ sơ</button>');
   }
   function step2(){
@@ -10198,9 +10212,9 @@ window.TascoScene=(()=>{
     const t=e.target;if(t.id==='scSearch'){S.q=t.value;S.n=PER;paintList();return;}
     const p=t.dataset?.scF,en=S.cur;if(!p||!en||!t.closest('#scPane'))return;
     const lim=M.LIM[p]||(/\.(name|role)$/.test(p)?120:/\.phone$/.test(p)?40:120);
-    const val=String(t.value).slice(0,lim),d=en.data;
-    setP(d,p,val);if(MANUAL[p]){d.manual[MANUAL[p]]=true;paintBadges();}
-    const person=t.closest('.sc-person-optional');if(person){const label=person.querySelector('.sc-person-summary small');if(label)label.textContent=[...person.querySelectorAll('input[data-sc-f]')].some(field=>field.value.trim())?'Đã có thông tin':'Thêm khi cần';}
+    const val=String(t.value).slice(0,lim),d=en.data;if(t.value!==val)t.value=val;
+    syncFieldTools(t);setP(d,p,val);if(MANUAL[p]){d.manual[MANUAL[p]]=true;paintBadges();}
+    const person=t.closest('.sc-person-optional');if(person){const label=person.querySelector('.sc-person-summary small');if(label)label.textContent=[...person.querySelectorAll('.sc-in[data-sc-f]')].some(field=>field.value.trim())?'Đã có thông tin':'Thêm khi cần';}
     if((p==='absentReason'||p==='absentDestination')&&val.trim()&&d.driverPresence===''){d.driverPresence='absent';syncCh('driverPresence','absent');}
     const dm=/^damage\.(\w+)\.text$/.exec(p);
     if(dm&&val.trim()&&d.damage[dm[1]]&&!d.damage[dm[1]].on){d.damage[dm[1]].on=true;const b=document.querySelector('#scPane [data-sc-tg="damage.'+dm[1]+'.on"]');if(b){b.classList.add('on');b.setAttribute('aria-pressed','true');b.closest('.sc-dspot').classList.add('on');}}
@@ -10220,19 +10234,20 @@ window.TascoScene=(()=>{
     if(b.dataset.scCh){
       if(!en)return;const d=en.data,g=b.dataset.scCh,v=b.dataset.v;d[g]=d[g]===v?'':v;syncCh(g,d[g]);
       if((g==='face'||g==='breath')&&d[g]&&d.driverPresence===''){d.driverPresence='present';syncCh('driverPresence','present');}
-      if(g==='propertyRange'){const o=$('scOther');if(o){o.hidden=d.propertyRange!=='other';if(!o.hidden)o.querySelector('input')?.focus();}}
+      if(g==='propertyRange'){const o=$('scOther');if(o){o.hidden=d.propertyRange!=='other';if(!o.hidden)o.querySelector('.sc-in')?.focus();}}
       commit();return;
     }
     if(b.dataset.scSg){
       if(!en)return;const d=en.data,k=b.dataset.scSg,s=M.SUG[k][+b.dataset.i];if(!s)return;
-      d[k]=M.insert(d[k],s[1],d.plate,M.LIM[k]);const f=document.querySelector('#scPane [data-sc-f="'+k+'"]');if(f){f.value=d[k];grow(f);}syncChips(k);commit();return;
+      d[k]=M.insert(d[k],s[1],d.plate,M.LIM[k]);const f=document.querySelector('#scPane [data-sc-f="'+k+'"]');if(f){f.value=d[k];syncFieldTools(f);grow(f);}syncChips(k);commit();return;
     }
     if(b.dataset.scTg){
       if(!en)return;const p=b.dataset.scTg,next=!getP(en.data,p);setP(en.data,p,next);
       b.classList.toggle('on',next);b.setAttribute('aria-pressed',String(next));const ds=b.closest('.sc-dspot');if(ds)ds.classList.toggle('on',next);commit();return;
     }
     const k=b.dataset.sc;
-    if(k==='voice'){toggleSceneVoice(b.dataset.field,b);}
+    if(k==='clear-field'){const field=document.getElementById(fid(b.dataset.field));if(field&&en){if(sceneVoice?.field===b.dataset.field)cancelSceneVoice();field.value='';field.dispatchEvent(new Event('input',{bubbles:true}));}}
+    else if(k==='voice'){toggleSceneVoice(b.dataset.field,b);}
     else if(k==='open'){openClaim(b.dataset.k);}
     else if(k==='list'){leave();}
     else if(k==='more'){S.n+=PER;paintList();}
@@ -10241,7 +10256,7 @@ window.TascoScene=(()=>{
     else if(k==='prev'){goStep(Math.max(1,S.step-1));}
     else if(k==='go'){goStep(+b.dataset.step,b.dataset.focus);}
     else if(k==='now'&&en){const f=b.dataset.f,v=nowHm();setP(en.data,f,v);const i=document.querySelector('#scPane [data-sc-f="'+f+'"]');if(i)i.value=v;commit();}
-    else if(k==='copyplace'&&en){const loc=String(en.data.accidentLocation||'').trim();if(!loc){toast('Chưa có địa điểm tai nạn để sao chép.');return;}en.data.reportPlace=loc.slice(0,M.LIM.reportPlace);const i=document.querySelector('#scPane [data-sc-f="reportPlace"]');if(i)i.value=en.data.reportPlace;commit();}
+    else if(k==='copyplace'&&en){const loc=String(en.data.accidentLocation||'').trim();if(!loc){toast('Chưa có địa điểm tai nạn để sao chép.');return;}en.data.reportPlace=loc.slice(0,M.LIM.reportPlace);const i=document.querySelector('#scPane [data-sc-f="reportPlace"]');if(i){i.value=en.data.reportPlace;syncFieldTools(i);grow(i);}commit();}
     else if(k==='docsall'&&en){const all=M.DOCS.every(([x])=>en.data.docs[x]);M.DOCS.forEach(([x])=>{en.data.docs[x]=!all;const bt=document.querySelector('#scPane [data-sc-tg="docs.'+x+'"]');if(bt){bt.classList.toggle('on',!all);bt.setAttribute('aria-pressed',String(!all));}});commit();}
     else if(k==='resync'&&en){M.AUTO.forEach(x=>{en.data.manual[x]=false;});en.data=M.normalize(en.data,defaultsOf(en.claim));paintEditor();commit();toast('Đã đồng bộ lại theo hồ sơ.');}
     else if(k==='pickdate'&&en){pickDate(b);}
@@ -10259,6 +10274,12 @@ window.TascoScene=(()=>{
       if(nx){nx.focus();try{nx.scrollIntoView({block:'center',behavior:'smooth'});}catch(_){}}else e.target.blur();
     }
   },true);
+  function syncFieldTools(field){
+    const wrap=field.closest('.sc-voice-field');if(!wrap)return;
+    const has=field.value.length>0;wrap.classList.toggle('has-value',has);
+    const clear=wrap.querySelector('.sc-field-clear');if(clear)clear.hidden=!has;
+  }
+  document.addEventListener('toggle',e=>{if(e.target.matches?.('#sceneSection details.sc-person-optional')&&e.target.open)growAll();},true);
   const grow=t=>{t.style.height='auto';t.style.height=(t.hasAttribute('data-sc-expand')?t.scrollHeight+2:Math.min(t.scrollHeight+2,360))+'px';};
   const growAll=()=>requestAnimationFrame(()=>document.querySelectorAll('#scPane textarea.sc-ta').forEach(grow));
 
