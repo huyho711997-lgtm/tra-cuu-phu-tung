@@ -9108,7 +9108,18 @@ window.TascoAsk=(()=>{
     let t=0;
     let raf=0;
     // Không đổi bố cục (ẩn thanh dưới, dời ô soạn…) ngay trong nhịp focus: iOS cần nhịp đó để vẽ dấu nháy. Hoãn 2 khung hình.
-    document.addEventListener('focusin',e=>{clearTimeout(t);cancelAnimationFrame(raf);if(typing(e.target)){raf=requestAnimationFrame(()=>{raf=requestAnimationFrame(()=>{if(typing(document.activeElement))root.classList.add('kb-open');});});}},true);
+    // Đổi bố cục NGAY khi chạm (trước lúc iOS focus): iOS vẽ dấu nháy và cuộn ô nhập vào vùng nhìn thấy theo bố cục cuối cùng,
+    // nên ô soạn không còn bị bàn phím che hay dấu nháy lệch chỗ như khi đổi bố cục sau focus.
+    let guard=0;
+    const early=e=>{
+      const el=e.target&&e.target.closest?e.target.closest('textarea,input,[contenteditable]'):null;
+      if(!el||!typing(el)||el.disabled||el.readOnly)return;
+      clearTimeout(t);clearTimeout(guard);root.classList.add('kb-open');
+      guard=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},700);
+    };
+    document.addEventListener('touchstart',early,{capture:true,passive:true});
+    document.addEventListener('mousedown',early,true);
+    document.addEventListener('focusin',e=>{clearTimeout(t);clearTimeout(guard);cancelAnimationFrame(raf);if(typing(e.target)){if(root.classList.contains('kb-open'))return;raf=requestAnimationFrame(()=>{raf=requestAnimationFrame(()=>{if(typing(document.activeElement))root.classList.add('kb-open');});});}},true);
     document.addEventListener('focusout',()=>{clearTimeout(t);cancelAnimationFrame(raf);t=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},160);},true);
   })();
   let scRaf=0;
