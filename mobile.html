@@ -8817,7 +8817,7 @@ window.TascoAsk=(()=>{
   const famOf=raw=>{const r=String(raw).toLowerCase();return r.includes('claude')?'Claude':r.includes('gemini')?'Gemini':r.includes('gpt')?'GPT-OSS':'Khác';};
   function modelRow(e,on){
     const pm=prettyModel(e.model);
-    return '<button type="button" class="ak-model'+(on?' is-on':'')+'" data-ak="pick" data-id="'+esc(e.id)+'"><span class="ak-mm"><span class="ak-mn"><b>'+esc(pm.name)+'</b>'+(pm.tier?'<i class="ak-tier is-'+pm.tier+'" title="Mức suy luận">Suy luận '+TIER[pm.tier].toLowerCase()+'</i>':'')+'</span><small>'+esc(e.model)+'</small></span>'+(on?IC.check:'')+'</button>';
+    return '<button type="button" class="ak-model'+(on?' is-on':'')+'" data-ak="pick" data-id="'+esc(e.id)+'" aria-pressed="'+on+'"><span class="ak-model-mark" aria-hidden="true">'+IC.spark+'</span><span class="ak-mm"><span class="ak-mn"><b>'+esc(pm.name)+'</b>'+(pm.tier?'<i class="ak-tier is-'+pm.tier+'" title="Mức suy luận">Suy luận '+TIER[pm.tier].toLowerCase()+'</i>':'')+'</span><small>'+esc(e.model)+'</small></span>'+(on?IC.check:'')+'</button>';
   }
   function modelGroups(list,a){
     const by=new Map();
@@ -8837,7 +8837,8 @@ window.TascoAsk=(()=>{
     await refreshKeys();
     const M=B.Models,c=cfg(),a=active();
     const list=M.entries(c).filter(ORDER_OK).filter(e=>e.id===(a&&a.id)||!['groq','custom'].includes(e.provider)||(S.keys&&S.keys[e.provider]));
-    openSheet('Mô hình AI',modelGroups(list,a)+'<div class="ak-agy"><b>Antigravity (máy trung gian riêng)</b><p class="ak-hint">Cần bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian (dạng https://ten-may.ten-mang.ts.net). Địa chỉ này chỉ được lưu trên điện thoại.</p><input type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ</button>':'')+'</div>'+(agyBase()?'<button type="button" class="dt-btn is-sm ak-agy-fetch" data-ak="agyfetch">Lấy danh sách mô hình từ Antigravity</button><p class="ak-hint ak-agy-n">'+(((cfg().providers.antigravity.models||[]).length)?'Đã lấy '+cfg().providers.antigravity.models.length+' mô hình từ máy trung gian.':'Đang dùng 2 mô hình mặc định. Bấm để dùng toàn bộ mô hình trong tài khoản Antigravity của bạn.')+'</p>':'')+'</div><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
+    openSheet('Mô hình AI','<div class="ak-model-intro"><span class="ak-model-intro-icon" aria-hidden="true">'+IC.spark+'</span><div><span>TRỢ LÝ NGHIỆP VỤ</span><strong>Chọn mô hình phù hợp</strong><small>Chọn một mô hình để sử dụng cho cuộc trò chuyện.</small></div></div>'+modelGroups(list,a)+'<div class="ak-agy"><span class="ak-agy-cap">KẾT NỐI RIÊNG</span><b>Antigravity</b><p class="ak-hint">Cần bật Tailscale trên điện thoại và nhập địa chỉ HTTPS của máy trung gian (dạng https://ten-may.ten-mang.ts.net). Địa chỉ này chỉ được lưu trên điện thoại.</p><input type="url" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" class="ak-agy-in" data-ak-agy placeholder="https://ten-may.ten-mang.ts.net" value="'+esc(agyBase().replace(/\/v1$/,''))+'"><div class="ak-agy-acts"><button type="button" class="dt-btn is-main is-sm" data-ak="agysave">Lưu địa chỉ</button>'+(agyBase()?'<button type="button" class="dt-btn is-sm" data-ak="agyclear">Gỡ</button>':'')+'</div>'+(agyBase()?'<button type="button" class="dt-btn is-sm ak-agy-fetch" data-ak="agyfetch">Lấy danh sách mô hình từ Antigravity</button><p class="ak-hint ak-agy-n">'+(((cfg().providers.antigravity.models||[]).length)?'Đã lấy '+cfg().providers.antigravity.models.length+' mô hình từ máy trung gian.':'Đang dùng 2 mô hình mặc định. Bấm để dùng toàn bộ mô hình trong tài khoản Antigravity của bạn.')+'</p>':'')+'</div><p class="ak-hint">Khoá AI lấy từ tài khoản đăng nhập (dùng chung với webapp) và chỉ được đọc lúc gọi AI, không lưu trên điện thoại. Muốn thêm hoặc đổi khoá: webapp giám định → Công văn AI → biểu tượng ⚙.</p>');
+    sheet.classList.add('ak-model-sheet-bg');
   }
   function historySheet(){
     const rows=kindChats(S.kind==='chat');
@@ -9331,6 +9332,35 @@ html.dark #askSection .ak-chip-ico{background:#294e58;color:#a7dce1}
 html.dark #askSection .ak-ctl,html.dark #askSection .ak-card{box-shadow:0 8px 25px #0003}
 @media(max-width:360px){#askSection .ak-ctl{padding:9px}#askSection .ak-head{gap:5px}#askSection .ak-ico{width:36px;height:40px}#askSection .ak-seg button{font-size:11px}#askSection .ak-tool{padding-left:8px;padding-right:8px}}
 .ak-user-acts{justify-content:flex-end;margin-top:6px;padding:0}
+
+/* Model picker */
+.ak-model-sheet-bg{background:rgba(8,24,43,.68);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.ak-model-sheet-bg .ak-sheet{max-height:min(90dvh,860px);border:1px solid var(--ws-line);border-radius:28px 28px 0 0;background:var(--ws-surface);box-shadow:0 -18px 70px #0b1b3038;overflow:hidden}
+.ak-model-sheet-bg .dr-sheet-h{padding:22px 22px 14px}
+.ak-model-sheet-bg .dr-sheet-h h4{font-size:20px;letter-spacing:-.5px}
+.ak-model-sheet-bg .dr-sheet-h button{width:38px;height:38px;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-soft);color:var(--ws-text)}
+.ak-model-sheet-bg .ak-sheet-b{padding:0 20px calc(24px + env(safe-area-inset-bottom,0px));overscroll-behavior:contain}
+.ak-model-intro{display:flex;align-items:center;gap:13px;margin:0 0 22px;padding:15px;border:1px solid color-mix(in srgb,var(--app-teal) 32%,var(--ws-line));border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--app-teal) 17%,var(--ws-surface)),var(--ws-surface))}
+.ak-model-intro-icon{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#62b4bc,#205c78);color:#fff;box-shadow:0 5px 14px #347e8a30}
+.ak-model-intro-icon svg{width:21px;height:21px}
+.ak-model-intro div{min-width:0}.ak-model-intro span:not(.ak-model-intro-icon){display:block;color:var(--ws-accent-text);font-size:9px;letter-spacing:.1em;font-weight:800}
+.ak-model-intro strong{display:block;margin-top:3px;color:var(--ws-text);font-size:14px}.ak-model-intro small{display:block;margin-top:3px;color:var(--ws-muted);font-size:11px;line-height:1.5}
+.ak-model-sheet-bg .ak-models{gap:22px}.ak-model-sheet-bg .ak-mg-h{align-items:center;margin:0 2px 9px}.ak-model-sheet-bg .ak-mg-h b{font-size:13px;letter-spacing:.01em}
+.ak-model-sheet-bg .ak-mg-st,.ak-model-sheet-bg .ak-mg-n{font-style:normal;font-size:10px;padding:5px 9px;border-radius:99px}
+.ak-model-sheet-bg .ak-mg-st.is-ok{color:#277b68;background:color-mix(in srgb,#53b69a 18%,var(--ws-surface))}
+.ak-model-sheet-bg .ak-mrows{display:grid;gap:7px;overflow:visible;border:0;background:transparent}
+.ak-model-sheet-bg .ak-model{gap:11px;min-height:66px;padding:11px 13px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-surface)}
+.ak-model-sheet-bg .ak-model+.ak-model{border-top:1px solid var(--ws-line)}
+.ak-model-sheet-bg .ak-model.is-on{border-color:color-mix(in srgb,var(--app-teal) 70%,var(--ws-line));background:color-mix(in srgb,var(--app-teal) 12%,var(--ws-surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--app-teal) 25%,transparent)}
+.ak-model-mark{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:12px;background:var(--ws-soft);color:var(--ws-accent-text)}
+.ak-model-sheet-bg .ak-model .ak-model-mark svg{width:17px;height:17px;color:inherit}.ak-model-sheet-bg .ak-model.is-on .ak-model-mark{background:#2f7884;color:white}
+.ak-model-sheet-bg .ak-model b{font-size:13px}.ak-model-sheet-bg .ak-model small{font-size:10px}.ak-model-sheet-bg .ak-model>svg{width:19px;height:19px;color:#268a73}
+.ak-model-sheet-bg .ak-agy{margin-top:22px;padding:16px;border-radius:18px;background:color-mix(in srgb,var(--app-teal) 7%,var(--ws-surface));border-color:color-mix(in srgb,var(--app-teal) 27%,var(--ws-line))}
+.ak-agy-cap{display:block;margin-bottom:5px;color:var(--ws-accent-text);font-size:9px;font-weight:800;letter-spacing:.12em}.ak-model-sheet-bg .ak-agy>b{display:block;color:var(--ws-text);font-size:15px}
+.ak-model-sheet-bg .ak-agy .ak-hint{margin:6px 0 12px;line-height:1.6}.ak-model-sheet-bg .ak-agy-in{min-height:46px;background:var(--ws-surface)!important}
+.ak-model-sheet-bg .ak-agy-acts{margin-top:10px}.ak-model-sheet-bg .ak-agy-acts button{min-height:40px;border-radius:12px}
+.ak-model-sheet-bg :is(button,input):focus-visible{outline:2px solid var(--app-teal);outline-offset:3px}
+html.dark .ak-model-sheet-bg .ak-mg-st.is-ok{color:#a3e0cc}
 </style>
 <style id="tascoSceneStyles">
 /* Biên bản hiện trường (#sceneSection) */
