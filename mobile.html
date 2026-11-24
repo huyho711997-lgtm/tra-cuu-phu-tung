@@ -9640,6 +9640,25 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-fdt button.wk-date small{font-size:10px}
 #sceneSection .sc-nav .dt-btn{font-size:12px}
 @supports (-webkit-touch-callout:none){#sceneSection .sc-in:focus{font-size:16px}}
+
+/* Participants */
+#sceneSection .sc-people{display:grid;gap:9px}
+#sceneSection .sc-prow{grid-template-columns:24px minmax(0,1fr);gap:10px;margin:0;padding:12px;border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-surface)}
+#sceneSection .sc-pi{width:24px;height:24px;margin:0;background:color-mix(in srgb,var(--app-teal) 15%,var(--ws-surface));color:var(--ws-accent-text);font-size:10px}
+#sceneSection .sc-pc{gap:8px}#sceneSection .sc-ph{min-height:24px;color:var(--ws-text);font-size:12px}
+#sceneSection .sc-people .sc-in{min-height:42px;background:var(--ws-bg);font-size:13px}
+#sceneSection .sc-people .sc-in::placeholder{font-size:12px}
+#sceneSection .sc-people .sc-g2{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:7px}
+#sceneSection .sc-person-optional{border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-surface);overflow:hidden}
+#sceneSection .sc-person-optional summary{display:flex;align-items:center;gap:10px;min-height:54px;padding:9px 12px;list-style:none;cursor:pointer}
+#sceneSection .sc-person-optional summary::-webkit-details-marker{display:none}
+.sc-person-summary{display:grid;gap:2px;flex:1;min-width:0}.sc-person-summary b{color:var(--ws-text);font-size:12px}.sc-person-summary small{color:var(--ws-muted);font-size:10px}
+.sc-person-chevron{display:grid;place-items:center;color:var(--ws-muted);transition:transform .2s}.sc-person-chevron svg{width:16px;height:16px}.sc-person-optional[open] .sc-person-chevron{transform:rotate(90deg)}
+.sc-person-fields{display:grid;gap:8px;padding:0 12px 12px 46px}
+#sceneSection .sc-person-optional summary:focus-visible{outline:2px solid var(--app-teal);outline-offset:-3px}
+@supports (-webkit-touch-callout:none){#sceneSection .sc-people .sc-in:focus{font-size:16px}}
+@media(max-width:350px){#sceneSection .sc-prow{padding:10px;gap:7px}.sc-person-fields{padding-left:42px}#sceneSection .sc-people .sc-g2{grid-template-columns:1fr;gap:7px}}
+@media(prefers-reduced-motion:reduce){.sc-person-chevron{transition:none}}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -9888,14 +9907,20 @@ window.TascoScene=(()=>{
 
   function step1(){
     const d=S.cur.data;
-    const people=d.participants.map((p,i)=>'<div class="sc-prow"><span class="sc-pi">'+(i+1)+'</span><div class="sc-pc">'+
-      '<div class="sc-ph">'+(i===0?'Giám định viên':i===1?'Lái xe':'Người tham gia')+(i<2?'<span class="sc-tagsync" data-sc-badge="'+(i===0?'assessorName':'driver')+'">'+(d.manual[i===0?'assessorName':'driver']?'Đã sửa':'Từ hồ sơ')+'</span>':'')+'</div>'+
-      inp('participants.'+i+'.name',p.name,'placeholder="Họ và tên" autocomplete="off"')+
-      '<div class="sc-g2">'+inp('participants.'+i+'.role',p.role,'placeholder="Vai trò"')+inp('participants.'+i+'.phone',p.phone,'placeholder="Số điện thoại" inputmode="tel"')+'</div></div></div>').join('');
+    const people=d.participants.map((p,i)=>{
+      const title=i===0?'Giám định viên':i===1?'Lái xe':'Người tham gia '+(i+1);
+      const fields=inp('participants.'+i+'.name',p.name,'placeholder="Họ và tên" aria-label="Họ và tên '+esc(title)+'" autocomplete="off"')+
+        '<div class="sc-g2">'+inp('participants.'+i+'.role',p.role,'placeholder="Vai trò" aria-label="Vai trò '+esc(title)+'"')+inp('participants.'+i+'.phone',p.phone,'placeholder="Số điện thoại" aria-label="Số điện thoại '+esc(title)+'" inputmode="tel"')+'</div>';
+      if(i>=2){
+        const filled=[p.name,p.role,p.phone].some(value=>String(value||'').trim());
+        return '<details class="sc-person-optional"'+(filled?' open':'')+'><summary><span class="sc-pi">'+(i+1)+'</span><span class="sc-person-summary"><b>'+title+'</b><small>'+(filled?'Đã có thông tin':'Thêm khi cần')+'</small></span><span class="sc-person-chevron" aria-hidden="true">'+I.chev+'</span></summary><div class="sc-person-fields">'+fields+'</div></details>';
+      }
+      return '<div class="sc-prow"><span class="sc-pi">'+(i+1)+'</span><div class="sc-pc"><div class="sc-ph">'+title+'<span class="sc-tagsync" data-sc-badge="'+(i===0?'assessorName':'driver')+'">'+(d.manual[i===0?'assessorName':'driver']?'Đã sửa':'Từ hồ sơ')+'</span></div>'+fields+'</div></div>';
+    }).join('');
     return sect('Thời gian & địa điểm lập biên bản','',
         '<div class="sc-g2">'+dtf('d','reportDate','Ngày lập')+dtf('t','reportTime','Giờ lập')+'</div>'+
         fld('reportPlace','Địa điểm lập biên bản',inp('reportPlace',d.reportPlace,'placeholder="Địa chỉ hoặc vị trí lập biên bản…"'),mini('copyplace','Như nơi tai nạn')))+
-      sect('Thành phần tham gia','Dòng 1–2 lấy từ hồ sơ, sửa tay thì giữ nguyên bản sửa.',people)+
+      sect('Thành phần tham gia','Thông tin từ hồ sơ có thể chỉnh sửa.', '<div class="sc-people">'+people+'</div>')+
       sect('Vụ tai nạn & phương tiện','Tự lấy từ hồ sơ; sửa tay sẽ không bị ghi đè.',
         '<div class="sc-g2">'+dtf('d','accidentDate','Ngày xảy ra')+dtf('t','accidentTime','Giờ xảy ra')+'</div>'+
         '<div class="sc-g2">'+fld('plate','Biển số xe',inp('plate',d.plate,'autocapitalize="characters" autocomplete="off"'),autoTag('plate'))+fld('driver','Lái xe điều khiển',inp('driver',d.driver,'autocomplete="off"'),autoTag('driver'))+'</div>'+
@@ -9980,7 +10005,7 @@ window.TascoScene=(()=>{
     const sel=focus?String(focus).replace('[data-sr-item-tile=','[data-sc-tile=').replace('[data-sr=','[data-sc-f='):'';
     setTimeout(()=>{
       const t=sel?document.querySelector('#scPane '+sel):null;
-      if(t){t.scrollIntoView({block:'center',behavior:'smooth'});if(t.matches('button[data-sc=pickdate],button[data-sc=picktime]')){setTimeout(()=>t.click(),350);}else{const f=t.matches('input,textarea')?t:t.querySelector('input,textarea');if(f){try{f.focus({preventScroll:true});}catch(_){}}}t.classList.add('is-flash');setTimeout(()=>t.classList.remove('is-flash'),1400);}
+      if(t){const details=t.closest('details.sc-person-optional');if(details)details.open=true;t.scrollIntoView({block:'center',behavior:'smooth'});if(t.matches('button[data-sc=pickdate],button[data-sc=picktime]')){setTimeout(()=>t.click(),350);}else{const f=t.matches('input,textarea')?t:t.querySelector('input,textarea');if(f){try{f.focus({preventScroll:true});}catch(_){}}}t.classList.add('is-flash');setTimeout(()=>t.classList.remove('is-flash'),1400);}
       else{const s=$('scSteps');if(s)s.scrollIntoView({block:'start',behavior:'smooth'});}
     },30);
   }
@@ -10087,6 +10112,7 @@ window.TascoScene=(()=>{
     const lim=M.LIM[p]||(/\.(name|role)$/.test(p)?120:/\.phone$/.test(p)?40:120);
     const val=String(t.value).slice(0,lim),d=en.data;
     setP(d,p,val);if(MANUAL[p]){d.manual[MANUAL[p]]=true;paintBadges();}
+    const person=t.closest('.sc-person-optional');if(person){const label=person.querySelector('.sc-person-summary small');if(label)label.textContent=[...person.querySelectorAll('input[data-sc-f]')].some(field=>field.value.trim())?'Đã có thông tin':'Thêm khi cần';}
     if((p==='absentReason'||p==='absentDestination')&&val.trim()&&d.driverPresence===''){d.driverPresence='absent';syncCh('driverPresence','absent');}
     const dm=/^damage\.(\w+)\.text$/.exec(p);
     if(dm&&val.trim()&&d.damage[dm[1]]&&!d.damage[dm[1]].on){d.damage[dm[1]].on=true;const b=document.querySelector('#scPane [data-sc-tg="damage.'+dm[1]+'.on"]');if(b){b.classList.add('on');b.setAttribute('aria-pressed','true');b.closest('.sc-dspot').classList.add('on');}}
