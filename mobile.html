@@ -9787,6 +9787,14 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-field-actions .sc-voice-mic{color:var(--ws-accent-text)}
 #sceneSection .sc-field-actions .sc-voice-mic.is-live{background:#a33d41;color:#fff}
 #sceneSection .sc-field-clear:focus-visible{outline:2px solid var(--app-teal);outline-offset:1px}
+#sceneSection .sc-voice-field.sc-voice-long{overflow:hidden;border:1px solid var(--ws-line);border-radius:13px;background:var(--ws-bg)}
+#sceneSection .sc-voice-field.sc-voice-long:focus-within{border-color:var(--app-teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-teal) 22%,transparent)}
+#sceneSection .sc-voice-field.sc-voice-long>.sc-in{width:100%;padding:11px 12px 4px;border:0;border-radius:0;background:transparent;box-shadow:none;resize:none}
+#sceneSection .sc-voice-field.sc-voice-long>.sc-in:focus{outline:0;box-shadow:none}
+#sceneSection .sc-voice-field.sc-voice-long .sc-field-actions{position:static;justify-content:flex-end;gap:4px;padding:2px 6px 5px}
+#sceneSection .sc-voice-field.sc-voice-long .sc-field-actions button{width:32px;height:30px;border-radius:9px;background:color-mix(in srgb,var(--app-teal) 10%,var(--ws-surface))}
+#sceneSection .sc-voice-field.sc-voice-long .sc-field-actions .sc-voice-mic.is-live{background:#a33d41;color:#fff}
+#sceneSection .sc-field-actions button[hidden]{display:none}
 #sceneSection .sc-branch>.sc-voice-field+.sc-voice-field{margin-top:8px}
 
 /* Give names and roles enough room beside their field controls on phones. */
@@ -10186,7 +10194,7 @@ window.TascoScene=(()=>{
   const fid=p=>'scf_'+p.replace(/[^a-zA-Z0-9_]/g,'_');
   const micIcon=ico('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/>');
   const clearIcon=ico('<path d="m7 7 10 10M17 7 7 17"/>');
-  const voiceField=(p,html,value,withMic=true)=>'<span class="sc-voice-field'+(html.startsWith('<textarea')?' sc-voice-area':'')+(withMic?' has-mic':'')+(String(value||'').length?' has-value':'')+'">'+html+'<span class="sc-field-actions"><button type="button" class="sc-field-clear" data-sc="clear-field" data-field="'+esc(p)+'" aria-label="Xóa nội dung" title="Xóa nội dung"'+(String(value||'').length?'':' hidden')+'>'+clearIcon+'</button>'+(withMic?'<button type="button" class="sc-voice-mic" data-sc="voice" data-field="'+esc(p)+'" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói">'+micIcon+'</button>':'')+'</span></span>';
+  const voiceField=(p,html,value,withMic=true)=>'<span class="sc-voice-field'+(html.startsWith('<textarea')?' sc-voice-area'+(html.includes('sc-auto-field')?'':' sc-voice-long'):'')+(withMic?' has-mic':'')+(String(value||'').length?' has-value':'')+'">'+html+'<span class="sc-field-actions"><button type="button" class="sc-field-clear" data-sc="clear-field" data-field="'+esc(p)+'" aria-label="Xóa nội dung" title="Xóa nội dung"'+(String(value||'').length?'':' hidden')+'>'+clearIcon+'</button>'+(withMic?'<button type="button" class="sc-voice-mic" data-sc="voice" data-field="'+esc(p)+'" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói">'+micIcon+'</button>':'')+'</span></span>';
   const inp=(p,v,a)=>{
     const single=p==='plate'||/\.phone$/.test(p);
     const field=single?'<input id="'+fid(p)+'" class="sc-in" data-sc-f="'+esc(p)+'" value="'+esc(v)+'" enterkeyhint="next" '+(a||'')+'>':'<textarea id="'+fid(p)+'" class="sc-in sc-ta sc-auto-field" data-sc-f="'+esc(p)+'" data-sc-expand rows="1" '+(a||'')+'>'+esc(v)+'</textarea>';
