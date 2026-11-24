@@ -9917,6 +9917,19 @@ html.dark #sceneSection .sc-scene-step .sc-sg.on,html.dark #sceneSection .sc-sce
 .sc-suggestions-count{color:var(--ws-muted);font-size:10px;font-weight:700}.sc-suggestions-chevron{display:grid;place-items:center;color:var(--ws-muted);transition:transform .2s}.sc-suggestions-chevron svg{width:14px;height:14px}.sc-suggestions[open] .sc-suggestions-chevron{transform:rotate(90deg)}
 #sceneSection .sc-scene-step .sc-suggestions .sc-chips{margin:0;padding:0 9px 9px;gap:6px}
 #sceneSection .sc-scene-step .sc-suggestions summary:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px;border-radius:10px}
+/* Damage step uses the same compact question cards as the scene step. */
+#sceneSection .sc-damage-step .sc-dspots{gap:7px}
+#sceneSection .sc-damage-step .sc-dspot{display:grid;grid-template-columns:minmax(92px,.75fr) minmax(0,1.25fr);align-items:stretch;gap:6px}
+#sceneSection .sc-damage-step .sc-dspot .sc-tgl{min-width:0;min-height:42px;gap:7px;padding:8px;border-radius:11px;font-size:11.5px;line-height:1.3}
+#sceneSection .sc-damage-step .sc-dspot .sc-tgl i{width:19px;height:19px;border-radius:6px}
+#sceneSection .sc-damage-step .sc-dspot .sc-voice-field{min-width:0}
+#sceneSection .sc-damage-step .sc-dspot .sc-in{min-height:42px;background:var(--ws-bg)}
+#sceneSection .sc-damage-step .sc-tgs{gap:7px}
+#sceneSection .sc-damage-step .sc-tgs .sc-tgl{min-height:42px;padding:8px 10px;border-radius:11px;font-size:11.5px;line-height:1.4}
+#sceneSection .sc-damage-step .sc-tgs .sc-tgl i{width:19px;height:19px;border-radius:6px}
+#sceneSection .sc-damage-step .sc-voice-area{display:block}
+#sceneSection .sc-damage-step #scOther{margin-top:8px}
+@media(max-width:330px){#sceneSection .sc-damage-step .sc-dspot{grid-template-columns:1fr;gap:5px}}
 @media(prefers-reduced-motion:reduce){.sc-suggestions-chevron{transition:none}}
 /* Subtle processing indicator with an explicit cancel action. */
 #sceneSection .sc-ai-btns .sc-ai-processing{gap:5px;padding:7px 8px;border:1px solid color-mix(in srgb,var(--app-teal) 35%,var(--ws-line));background:color-mix(in srgb,var(--app-teal) 9%,var(--ws-surface));color:var(--ws-text);font-size:11px;white-space:nowrap}
@@ -10215,7 +10228,14 @@ window.TascoScene=(()=>{
     '8':ico('<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/>'),
     '9':ico('<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>'),
     '10':ico('<path d="M4 18c2-4 4-4 6-8 1-2 3-3 5-3M13 4l3 3-3 3M5 20h.01M10 17h.01M16 15h.01"/>'),
-    '11':ico('<path d="M9 3h6M10 3v6l-4 8a3 3 0 0 0 3 4h6a3 3 0 0 0 3-4l-4-8V3M8 15h8"/>')
+    '11':ico('<path d="M9 3h6M10 3v6l-4 8a3 3 0 0 0 3 4h6a3 3 0 0 0 3-4l-4-8V3M8 15h8"/>'),
+    '12':ico('<path d="m5 16 1-6 2-4h8l2 4 1 6v2H5v-2ZM6 10h12M8 18v2m8-2v2M8 14h.01M16 14h.01"/>'),
+    '13':ico('<path d="M4 20h16M7 16v-4m5 4V5m5 11V9"/>'),
+    '14':ico('<path d="m3 10 9-7 9 7M5 9v11h14V9M9 20v-6h6v6"/>'),
+    '15':ico('<circle cx="12" cy="8" r="3"/><path d="M5 20a7 7 0 0 1 14 0M19 4v4m-2-2h4"/>'),
+    '16':ico('<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/>'),
+    'proposal':ico('<path d="M9 18h6M10 21h4M8 15c-1.5-1.3-2-2.7-2-4a6 6 0 1 1 12 0c0 1.3-.5 2.7-2 4l-1 1H9z"/>'),
+    'finish':ico('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>')
   };
   const sceneTile=(item,tag,title,inner)=>'<section class="sc-t" data-sc-tile="'+item+'"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+(sceneIcons[item]||'')+'</span><b>'+title+'</b>'+(S.cur&&S.cur.aiMark&&S.cur.aiMark.has(item)?'<span class="sc-ai-badge" title="AI điền từ ảnh — hãy kiểm tra lại">AI</span>':'')+'<span class="sc-tag">'+tag+'</span><span class="sc-done">'+I.ok+'</span></div>'+inner+'</section>';
   /* ---------- AI đọc ảnh hiện trường: người dùng xem lại và chọn các mục muốn áp dụng ---------- */
@@ -10324,19 +10344,20 @@ window.TascoScene=(()=>{
   }
   function step3(){
     const d=S.cur.data;
-    const spots=M.SPOTS.map(([k,l])=>'<div class="sc-dspot'+(d.damage[k].on?' on':'')+'" data-sc-dspot="'+k+'">'+tg('damage.'+k+'.on',l,d.damage[k].on)+inp('damage.'+k+'.text',d.damage[k].text,'placeholder="Trái / phải / chi tiết…"')+'</div>').join('');
+    const spots=M.SPOTS.map(([k,l])=>'<div class="sc-dspot'+(d.damage[k].on?' on':'')+'" data-sc-dspot="'+k+'">'+tg('damage.'+k+'.on',l,d.damage[k].on)+inp('damage.'+k+'.text',d.damage[k].text,'placeholder="Trái / phải / chi tiết…" aria-label="Chi tiết '+esc(l)+'"')+'</div>').join('');
     const prop=M.PROP.map(([k,l])=>tg('property.'+k,l,d.property[k])).join('');
-    return sect('Thiệt hại sơ bộ & kết luận','Mục [12–16]',
-      tile('12','[12]','Vị trí tổn thất trên xe','<div class="sc-dspots">'+spots+'</div>')+
-      tile('13','[13]','Đánh giá thiệt hại, ước thiệt hại',area('damageEval',3)+chips('damageEval'))+
-      tile('14','[14]','Thiệt hại về tài sản & mức ước tính','<div class="sc-tgs">'+prop+'</div><div class="sc-sub">Mức ước tính</div>'+seg('propertyRange')+
+    const extra=(icon,title,inner)=>'<section class="sc-t"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+sceneIcons[icon]+'</span><b>'+title+'</b></div>'+inner+'</section>';
+    return '<div class="sc-scene-step sc-damage-step">'+sect('Thiệt hại sơ bộ & kết luận','Mục [12–16] của biểu mẫu '+esc(M.CODE),
+      sceneTile('12','[12]','Vị trí tổn thất trên xe','<div class="sc-dspots">'+spots+'</div>')+
+      sceneTile('13','[13]','Đánh giá thiệt hại, ước thiệt hại',area('damageEval',3)+chips('damageEval',true))+
+      sceneTile('14','[14]','Thiệt hại về tài sản & mức ước tính','<div class="sc-tgs">'+prop+'</div><div class="sc-sub">Mức ước tính</div>'+seg('propertyRange')+
         '<div id="scOther"'+(d.propertyRange==='other'?'':' hidden')+'>'+inp('propertyOther',d.propertyOther,'placeholder="Mô tả mức ước tính / đối tượng khác"')+'</div>'+
-        '<div class="sc-sub">Liệt kê sơ bộ vật tư, phụ tùng thiệt hại</div>'+area('parts',2)+chips('parts'))+
-      tile('15','[15]','Thiệt hại về người',area('injuries',2)+chips('injuries'))+
-      tile('16','[16]','Ghi chú, lời khai lái xe & nhân chứng',area('notes',4)+chips('notes'))+
-      '<section class="sc-t"><div class="sc-th"><b>Đề xuất khác</b></div>'+area('proposals',2)+chips('proposals')+'</section>'+
-      '<section class="sc-t"><div class="sc-th"><b>Kết thúc biên bản</b></div>'+dtf('t','endTime','Giờ kết thúc')+
-        '<div class="sc-tgs">'+tg('includeDiagram','Kèm sơ đồ hiện trường (nếu đã vẽ trên webapp)',d.includeDiagram!==false)+'</div></section>')+
+        '<div class="sc-sub">Liệt kê sơ bộ vật tư, phụ tùng thiệt hại</div>'+area('parts',2)+chips('parts',true))+
+      sceneTile('15','[15]','Thiệt hại về người',area('injuries',2)+chips('injuries',true))+
+      sceneTile('16','[16]','Ghi chú, lời khai lái xe & nhân chứng',area('notes',4)+chips('notes',true))+
+      extra('proposal','Đề xuất khác',area('proposals',2)+chips('proposals',true))+
+      extra('finish','Kết thúc biên bản',dtf('t','endTime','Giờ kết thúc')+
+        '<div class="sc-tgs">'+tg('includeDiagram','Kèm sơ đồ hiện trường (nếu đã vẽ trên webapp)',d.includeDiagram!==false)+'</div>'))+'</div>'+
       '<div id="scReview"></div>';
   }
   function reviewHtml(){
