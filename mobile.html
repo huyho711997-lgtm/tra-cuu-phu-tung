@@ -6,6 +6,23 @@
 <style id="tascoNoZoom">
 /* Không cho trang tự phóng to: chạm đúp, chụm hai ngón, hay zoom khi focus ô nhập. Zoom có chủ đích (xem ảnh, bản đồ, tài liệu) vẫn dùng touch-action riêng của chúng. */
 :where(html,body,*){touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+
+/* Plate capture: a focused, reviewable album creation flow. */
+.cloud-plate-dialog{background:#f8fbfc;color:#18345a;border-color:#d3e4e9}
+.cloud-plate-dialog h2{font-weight:750;letter-spacing:-.7px}
+.cloud-plate-dialog .cloud-plate-scan{display:flex;align-items:center;gap:12px;text-align:left;padding:14px;margin-top:15px;border:1px solid #b6d9df;border-radius:17px;background:#e7f3f4;color:#17385c}
+.cloud-plate-dialog .cloud-plate-scan>span:nth-child(2){flex:1}
+.cloud-plate-dialog .cloud-plate-scan strong,.cloud-plate-dialog .cloud-plate-scan small{display:block}
+.cloud-plate-dialog .cloud-plate-scan strong{font-size:13px;font-weight:750}
+.cloud-plate-dialog .cloud-plate-scan small{font-size:10px;color:#55798b;margin-top:3px;font-weight:500}
+.cloud-plate-dialog .plate-scan-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:#17385c;color:#d8f5f4}
+.cloud-plate-dialog .plate-gallery{width:100%;margin-top:8px;background:#fff;color:#244765}
+.cloud-plate-dialog .plate-preview{position:relative;height:125px;margin-top:12px;overflow:hidden;border-radius:15px;background:#18345a}
+.cloud-plate-dialog .plate-preview[hidden]{display:none}
+.cloud-plate-dialog .plate-preview img{width:100%;height:100%;object-fit:contain}
+.cloud-plate-dialog .plate-preview span{position:absolute;bottom:8px;left:9px;padding:4px 7px;border-radius:6px;background:#142b40cc;color:white;font-size:9px;letter-spacing:.08em}
+.cloud-plate-dialog .cloud-plate-note{padding:10px 12px;border-radius:12px;background:#e5f4ef;color:#286b5c}
+.cloud-plate-dialog .cloud-plate-note[data-error=true]{background:#fff0eb;color:#a04439}
 </style>
 <script id="tascoNoZoomJs">
 (function(){
@@ -14092,9 +14109,19 @@ window.TascoCloud = (() => {
     if(state.albumDialog)return;
     const owner=state.user.id,focus=document.activeElement,overlay=document.createElement('div'),controller=new AbortController();let saving=false;
     overlay.className='cloud-album-overlay';overlay.innerHTML=`<section class="cloud-album-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudAlbumDialogTitle" aria-describedby="cloudAlbumDialogCopy"><header><span class="cloud-album-dialog-icon">${albumIcon}</span><button type="button" data-album-close aria-label="Đóng">${icon('close')}</button></header><h2 id="cloudAlbumDialogTitle">Tạo album mới</h2><p id="cloudAlbumDialogCopy">Mở album rồi chụp. Tất cả ảnh trong phiên chụp sẽ tự lưu vào album đó.</p><form><label for="cloudAlbumName">Tên album</label><input id="cloudAlbumName" name="albumName" maxlength="100" required autocomplete="off" placeholder="VD: Hồ sơ xe 51A · Nguyễn Văn A"><button type="button" class="cloud-plate-scan" data-plate-scan>${cameraIcon}Chụp biển số để đặt tên</button><input type="file" accept="image/*" capture="environment" data-plate-file hidden tabindex="-1"><p class="cloud-plate-note" data-plate-note role="status" hidden></p><p data-album-error role="alert" hidden></p><footer><button type="button" data-album-close>Hủy</button><button type="submit" data-album-submit>${plusIcon}Tạo và mở album</button></footer></form></section>`;
+    if(autoScan){
+      const dialog=overlay.querySelector('section');dialog.classList.add('cloud-plate-dialog');
+      overlay.querySelector('h2').textContent='Tạo album bằng biển số';
+      overlay.querySelector('#cloudAlbumDialogCopy').textContent='Chụp hoặc chọn ảnh rõ biển số. Kiểm tra kết quả trước khi tiếp tục.';
+      overlay.querySelector('label').textContent='Biển số / tên album';
+      overlay.querySelector('#cloudAlbumName').placeholder='Ví dụ: 47A-123.45';
+      const scan=overlay.querySelector('[data-plate-scan]');
+      scan.innerHTML=`<span class="plate-scan-icon">${cameraIcon}</span><span><strong>Chụp biển số</strong><small>Đặt biển số ở giữa và đủ sáng</small></span><span aria-hidden="true">↗</span>`;
+      scan.insertAdjacentHTML('afterend','<button type="button" class="plate-gallery" data-plate-gallery>Chọn ảnh từ thư viện</button><div class="plate-preview" data-plate-preview hidden><img alt="Ảnh biển số đã chọn"><span>ẢNH ĐÃ CHỌN</span></div><input type="file" accept="image/*" data-plate-gallery-file hidden tabindex="-1">');
+    }
     const form=overlay.querySelector('form'),input=overlay.querySelector('#cloudAlbumName'),scanBtn=overlay.querySelector('[data-plate-scan]'),fileInput=overlay.querySelector('[data-plate-file]'),noteNode=overlay.querySelector('[data-plate-note]'),submit=overlay.querySelector('[data-album-submit]'),errorNode=overlay.querySelector('[data-album-error]');
     const oldOverflow=document.body.style.overflow;
-    function close(force=false){if(saving&&!force)return;controller.abort();overlay.remove();document.body.style.overflow=oldOverflow;state.albumDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
+    function close(force=false){if(saving&&!force)return;controller.abort();if(previewUrl)URL.revokeObjectURL(previewUrl);overlay.remove();document.body.style.overflow=oldOverflow;state.albumDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
     // Album đã có cho biển số này (so theo biển số liền, VD "47A12345"; tên có thêm chữ phía sau như "47A-123.45 · Nguyễn Văn A" vẫn khớp)
     const plateAlbum=value=>{
       const T=window.TascoAsk,n=T?.normPlate?.(value);if(!n)return null;
@@ -14102,14 +14129,17 @@ window.TascoCloud = (() => {
     };
     const syncSubmit=()=>{if(saving)return;const hit=plateAlbum(input.value);submit.innerHTML=hit?albumIcon+'Mở album đã có':plusIcon+'Tạo và mở album';};
     input.addEventListener('input',()=>{noteNode.hidden=true;syncSubmit();},{signal:controller.signal});
-    let scanning=false;
+    let scanning=false,previewUrl='';
+    const galleryBtn=overlay.querySelector('[data-plate-gallery]'),galleryInput=overlay.querySelector('[data-plate-gallery-file]'),preview=overlay.querySelector('[data-plate-preview]');
     const say=(text,bad)=>{noteNode.textContent=text;noteNode.hidden=!text;noteNode.dataset.error=bad?'true':'false';};
     scanBtn.addEventListener('click',()=>{if(!saving&&!scanning)fileInput.click();},{signal:controller.signal});
-    fileInput.addEventListener('change',async()=>{
-      const file=fileInput.files&&fileInput.files[0];fileInput.value='';
+    galleryBtn?.addEventListener('click',()=>{if(!saving&&!scanning)galleryInput.click();},{signal:controller.signal});
+    const handlePlateFile=async source=>{
+      const file=source.files&&source.files[0];source.value='';
       if(!file||saving||scanning)return;
       if(!window.TascoAsk?.readPlate){say('Chưa dùng được tính năng đọc biển số. Hãy gõ tên album.',true);return;}
-      scanning=true;scanBtn.disabled=true;submit.disabled=true;errorNode.hidden=true;say('Đang đọc biển số…',false);
+      if(preview){if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=URL.createObjectURL(file);preview.querySelector('img').src=previewUrl;preview.hidden=false;}
+      scanning=true;scanBtn.disabled=true;if(galleryBtn)galleryBtn.disabled=true;submit.disabled=true;errorNode.hidden=true;say('Đang nhận diện biển số…',false);
       try{
         const r=await window.TascoAsk.readPlate(file,{signal:controller.signal});
         if(controller.signal.aborted)return;
@@ -14117,13 +14147,15 @@ window.TascoCloud = (() => {
         else{if(r.raw)input.value=r.raw;say(r.raw?'Đọc được “'+r.raw+'” nhưng chưa giống biển số Việt Nam. Hãy kiểm tra và sửa lại.':'Chưa thấy biển số trong ảnh. Chụp gần hơn, đủ sáng hoặc gõ tên album.',true);}
         input.focus({preventScroll:true});input.select?.();
       }catch(error){if(!controller.signal.aborted)say(message(error),true);}
-      finally{if(!controller.signal.aborted){scanning=false;scanBtn.disabled=false;submit.disabled=false;syncSubmit();}}
-    },{signal:controller.signal});
+      finally{if(!controller.signal.aborted){scanning=false;scanBtn.disabled=false;if(galleryBtn)galleryBtn.disabled=false;submit.disabled=false;syncSubmit();}}
+    };
+    fileInput.addEventListener('change',()=>handlePlateFile(fileInput),{signal:controller.signal});
+    galleryInput?.addEventListener('change',()=>handlePlateFile(galleryInput),{signal:controller.signal});
     state.albumDialog={cancel:()=>close(true)};
     overlay.addEventListener('click',event=>{if(event.target===overlay||event.target.closest('[data-album-close]'))close();},{signal:controller.signal});
     overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();}if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button:not(:disabled),input:not(:disabled):not([type=file])')];if(event.shiftKey&&document.activeElement===nodes[0]){event.preventDefault();nodes.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0].focus();}}},{signal:controller.signal});
     form.onsubmit=async event=>{
-      event.preventDefault();if(saving)return;if(state.user?.id!==owner){close(true);notify('Tài khoản đã thay đổi. Hãy mở lại Cloud.');return;}
+      event.preventDefault();if(saving||scanning)return;if(state.user?.id!==owner){close(true);notify('Tài khoản đã thay đổi. Hãy mở lại Cloud.');return;}
       const hit=plateAlbum(input.value);
       if(hit){saving=true;try{close(true);await openAlbum(hit.id);notify('Đã mở album “'+hit.name+'” (đã có sẵn).');}catch(error){notify(message(error));}finally{saving=false;}return;}
       saving=true;submit.disabled=true;input.disabled=true;scanBtn.disabled=true;errorNode.hidden=true;submit.textContent='Đang tạo album…';
@@ -14131,7 +14163,7 @@ window.TascoCloud = (() => {
       catch(error){errorNode.textContent=message(error);errorNode.hidden=false;}
       finally{saving=false;submit.disabled=false;input.disabled=false;scanBtn.disabled=false;syncSubmit();}
     };
-    document.body.style.overflow='hidden';document.body.append(overlay);if(autoScan)fileInput.click();else input.focus();
+    document.body.style.overflow='hidden';document.body.append(overlay);if(autoScan)scanBtn.focus();else input.focus();
   }
   async function renameLocalAlbum(album,owner){
     const db=await database(),tx=db.transaction(['photos','albums'],'readwrite'),photos=tx.objectStore('photos'),albums=tx.objectStore('albums');
