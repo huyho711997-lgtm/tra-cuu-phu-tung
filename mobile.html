@@ -23,6 +23,17 @@
 .cloud-plate-dialog .plate-preview span{position:absolute;bottom:8px;left:9px;padding:4px 7px;border-radius:6px;background:#142b40cc;color:white;font-size:9px;letter-spacing:.08em}
 .cloud-plate-dialog .cloud-plate-note{padding:10px 12px;border-radius:12px;background:#e5f4ef;color:#286b5c}
 .cloud-plate-dialog .cloud-plate-note[data-error=true]{background:#fff0eb;color:#a04439}
+
+.plate-camera{position:fixed;inset:0;z-index:100100;display:flex;flex-direction:column;background:#081421;color:#fff;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.plate-camera-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px}
+.cloud-album-dialog ~ .plate-camera button{color:#fff}
+.plate-camera-head button{border:0;background:#ffffff20;color:#fff;width:42px;height:42px;border-radius:50%;font-size:20px}
+.plate-camera-stage{position:relative;flex:1;min-height:0;overflow:hidden;background:#000}
+.plate-camera-stage video{width:100%;height:100%;object-fit:contain}
+.plate-camera-guide{position:absolute;left:12%;right:12%;top:38%;height:24%;border:2px solid #b1e2e2;border-radius:14px;pointer-events:none;box-shadow:0 0 0 999px #0003}
+.plate-camera p{text-align:center;margin:16px 20px 8px;color:#d2e5e8;font-size:13px}
+.plate-camera-shutter{display:grid;place-items:center;align-self:center;width:72px;height:72px;margin:12px auto 24px;border:3px solid #fff;border-radius:50%;background:transparent}
+.plate-camera-shutter span{width:56px;height:56px;border-radius:50%;background:#fff}.plate-camera-shutter:disabled{opacity:.4}
 </style>
 <script id="tascoNoZoomJs">
 (function(){
@@ -14121,7 +14132,7 @@ window.TascoCloud = (() => {
     }
     const form=overlay.querySelector('form'),input=overlay.querySelector('#cloudAlbumName'),scanBtn=overlay.querySelector('[data-plate-scan]'),fileInput=overlay.querySelector('[data-plate-file]'),noteNode=overlay.querySelector('[data-plate-note]'),submit=overlay.querySelector('[data-album-submit]'),errorNode=overlay.querySelector('[data-album-error]');
     const oldOverflow=document.body.style.overflow;
-    function close(force=false){if(saving&&!force)return;controller.abort();if(previewUrl)URL.revokeObjectURL(previewUrl);overlay.remove();document.body.style.overflow=oldOverflow;state.albumDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
+    function close(force=false){if(saving&&!force)return;closePlateCamera();controller.abort();if(previewUrl)URL.revokeObjectURL(previewUrl);overlay.remove();document.body.style.overflow=oldOverflow;state.albumDialog=null;if(focus?.isConnected)focus.focus({preventScroll:true});}
     // Album đã có cho biển số này (so theo biển số liền, VD "47A12345"; tên có thêm chữ phía sau như "47A-123.45 · Nguyễn Văn A" vẫn khớp)
     const plateAlbum=value=>{
       const T=window.TascoAsk,n=T?.normPlate?.(value);if(!n)return null;
@@ -14132,10 +14143,46 @@ window.TascoCloud = (() => {
     let scanning=false,previewUrl='';
     const galleryBtn=overlay.querySelector('[data-plate-gallery]'),galleryInput=overlay.querySelector('[data-plate-gallery-file]'),preview=overlay.querySelector('[data-plate-preview]');
     const say=(text,bad)=>{noteNode.textContent=text;noteNode.hidden=!text;noteNode.dataset.error=bad?'true':'false';};
-    scanBtn.addEventListener('click',()=>{if(!saving&&!scanning)fileInput.click();},{signal:controller.signal});
+    let cameraStream=null,cameraPanel=null,cameraGeneration=0;
+    function closePlateCamera(){
+      cameraGeneration++;
+      if(cameraStream){cameraStream.getTracks().forEach(track=>track.stop());cameraStream=null;}
+      if(cameraPanel){cameraPanel.remove();cameraPanel=null;}
+    }
+    async function openPlateCamera(){
+      if(saving||scanning||cameraPanel)return;
+      const generation=++cameraGeneration;
+      cameraPanel=document.createElement('div');cameraPanel.className='plate-camera';
+      cameraPanel.innerHTML='<div class="plate-camera-head"><strong>Chụp biển số</strong><button type="button" data-camera-close aria-label="Đóng camera">✕</button></div><div class="plate-camera-stage"><video autoplay playsinline muted></video><span class="plate-camera-guide" aria-hidden="true"></span></div><p data-camera-status role="status">Đưa biển số vào khung hình</p><button type="button" class="plate-camera-shutter" data-camera-shutter disabled aria-label="Chụp ảnh"><span></span></button>';
+      overlay.append(cameraPanel);
+      const panel=cameraPanel,video=panel.querySelector('video'),shutter=panel.querySelector('[data-camera-shutter]'),status=panel.querySelector('[data-camera-status]');
+      panel.querySelector('[data-camera-close]').addEventListener('click',()=>{closePlateCamera();scanBtn.focus({preventScroll:true});});
+      shutter.addEventListener('click',()=>{
+        if(!video.videoWidth||!video.videoHeight)return;
+        shutter.disabled=true;
+        const canvas=document.createElement('canvas');canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+        canvas.getContext('2d').drawImage(video,0,0);
+        canvas.toBlob(blob=>{
+          if(generation!==cameraGeneration||controller.signal.aborted)return;
+          if(!blob){status.textContent='Không chụp được ảnh. Vui lòng thử lại.';shutter.disabled=false;return;}
+          closePlateCamera();handlePlateFile(new File([blob],'bien-so.jpg',{type:'image/jpeg'}));
+        },'image/jpeg',.92);
+      });
+      try{
+        if(!navigator.mediaDevices?.getUserMedia)throw new Error('unsupported');
+        const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
+        if(generation!==cameraGeneration||controller.signal.aborted){stream.getTracks().forEach(track=>track.stop());return;}
+        cameraStream=stream;video.srcObject=stream;await video.play();
+        if(generation===cameraGeneration)shutter.disabled=false;
+      }catch(error){
+        if(generation!==cameraGeneration)return;
+        if(cameraStream){cameraStream.getTracks().forEach(track=>track.stop());cameraStream=null;}
+        status.textContent='Không mở được camera. Hãy cấp quyền truy cập camera hoặc chọn ảnh từ thư viện.';
+      }
+    }
+    scanBtn.addEventListener('click',openPlateCamera,{signal:controller.signal});
     galleryBtn?.addEventListener('click',()=>{if(!saving&&!scanning)galleryInput.click();},{signal:controller.signal});
-    const handlePlateFile=async source=>{
-      const file=source.files&&source.files[0];source.value='';
+    const handlePlateFile=async file=>{
       if(!file||saving||scanning)return;
       if(!window.TascoAsk?.readPlate){say('Chưa dùng được tính năng đọc biển số. Hãy gõ tên album.',true);return;}
       if(preview){if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=URL.createObjectURL(file);preview.querySelector('img').src=previewUrl;preview.hidden=false;}
@@ -14145,12 +14192,11 @@ window.TascoCloud = (() => {
         if(controller.signal.aborted)return;
         if(r.plate){input.value=r.plate;const hit=plateAlbum(r.plate);say(hit?'Đã đọc '+r.plate+'. Album này đã có — bấm “Mở album đã có”.':'Đã đọc '+r.plate+'. Kiểm tra lại cho đúng rồi bấm “Tạo và mở album”.',false);}
         else{if(r.raw)input.value=r.raw;say(r.raw?'Đọc được “'+r.raw+'” nhưng chưa giống biển số Việt Nam. Hãy kiểm tra và sửa lại.':'Chưa thấy biển số trong ảnh. Chụp gần hơn, đủ sáng hoặc gõ tên album.',true);}
-        input.focus({preventScroll:true});input.select?.();
       }catch(error){if(!controller.signal.aborted)say(message(error),true);}
       finally{if(!controller.signal.aborted){scanning=false;scanBtn.disabled=false;if(galleryBtn)galleryBtn.disabled=false;submit.disabled=false;syncSubmit();}}
     };
-    fileInput.addEventListener('change',()=>handlePlateFile(fileInput),{signal:controller.signal});
-    galleryInput?.addEventListener('change',()=>handlePlateFile(galleryInput),{signal:controller.signal});
+    fileInput.addEventListener('change',()=>{const file=fileInput.files?.[0];fileInput.value='';handlePlateFile(file);},{signal:controller.signal});
+    galleryInput?.addEventListener('change',()=>{const file=galleryInput.files?.[0];galleryInput.value='';handlePlateFile(file);},{signal:controller.signal});
     state.albumDialog={cancel:()=>close(true)};
     overlay.addEventListener('click',event=>{if(event.target===overlay||event.target.closest('[data-album-close]'))close();},{signal:controller.signal});
     overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();}if(event.key==='Tab'){const nodes=[...overlay.querySelectorAll('button:not(:disabled),input:not(:disabled):not([type=file])')];if(event.shiftKey&&document.activeElement===nodes[0]){event.preventDefault();nodes.at(-1).focus();}else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0].focus();}}},{signal:controller.signal});
