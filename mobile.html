@@ -9379,6 +9379,7 @@ html.kb-open .ak-jump{top:-30px}
 #askSection .ak-send{background:linear-gradient(145deg,#5eb4bb,#1d677d)}
 #askSection .ak-send:disabled{background:var(--ws-soft);color:var(--ws-muted)}
 #askSection :is(button,textarea):focus-visible{outline:2px solid var(--app-teal);outline-offset:3px}
+#askSection .ak-comp textarea:focus,#askSection .ak-comp textarea:focus-visible{outline:none!important;box-shadow:none!important;border-radius:0}   /* khung focus đã vẽ ở .ak-comp:focus-within, không vẽ thêm viền vuông quanh ô nhập */
 html.dark #askSection .ak-seg button[aria-pressed=true]{background:var(--app-teal);color:#0b1b30!important}
 html.dark #askSection .ak-chip-ico{background:#294e58;color:#a7dce1}
 html.dark #askSection .ak-ctl,html.dark #askSection .ak-card{box-shadow:0 8px 25px #0003}
