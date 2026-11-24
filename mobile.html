@@ -9705,6 +9705,13 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 #sceneSection .sc-field-actions .sc-voice-mic.is-live{background:#a33d41;color:#fff}
 #sceneSection .sc-field-clear:focus-visible{outline:2px solid var(--app-teal);outline-offset:1px}
 #sceneSection .sc-branch>.sc-voice-field+.sc-voice-field{margin-top:8px}
+
+/* Give names and roles enough room beside their field controls on phones. */
+@media(max-width:600px){
+  #sceneSection .sc-people .sc-g2,#sceneSection .sc-vehicle-fields{grid-template-columns:minmax(0,1fr);gap:7px}
+  #sceneSection .sc-vehicle-fields .sc-f{margin-bottom:3px}
+  #sceneSection .sc-people .sc-g2>.sc-voice-field,#sceneSection .sc-vehicle-fields .sc-voice-field{width:100%;min-width:0}
+}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -9976,7 +9983,7 @@ window.TascoScene=(()=>{
       sect('Thành phần tham gia','Thông tin từ hồ sơ có thể chỉnh sửa.', '<div class="sc-people">'+people+'</div>')+
       sect('Vụ tai nạn & phương tiện','Tự lấy từ hồ sơ; sửa tay sẽ không bị ghi đè.',
         '<div class="sc-g2">'+dtf('d','accidentDate','Ngày xảy ra')+dtf('t','accidentTime','Giờ xảy ra')+'</div>'+
-        '<div class="sc-g2">'+fld('plate','Biển số xe',inp('plate',d.plate,'autocapitalize="characters" autocomplete="off"'),autoTag('plate'))+fld('driver','Lái xe điều khiển',inp('driver',d.driver,'autocomplete="off"'),autoTag('driver'))+'</div>'+
+        '<div class="sc-g2 sc-vehicle-fields">'+fld('plate','Biển số xe',inp('plate',d.plate,'autocapitalize="characters" autocomplete="off"'),autoTag('plate'))+fld('driver','Lái xe điều khiển',inp('driver',d.driver,'autocomplete="off"'),autoTag('driver'))+'</div>'+
         fld('accidentLocation','Địa điểm xảy ra tai nạn',inp('accidentLocation',d.accidentLocation,'placeholder="Cây số, đường, xã, huyện, tỉnh…"'),autoTag('accidentLocation'))+
         fld('withParty','Va chạm / xảy ra với',inp('withParty',d.withParty),autoTag('withParty'))+
         '<button type="button" class="sc-link" data-sc="resync">'+I.sync+'Đồng bộ lại theo hồ sơ</button>');
