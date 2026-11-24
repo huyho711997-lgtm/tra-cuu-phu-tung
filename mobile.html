@@ -9883,6 +9883,15 @@ html.dark #sceneSection .sc-scene-step .sc-sg.on,html.dark #sceneSection .sc-sce
 #sceneSection .sc-scene-step .sc-suggestions .sc-chips{margin:0;padding:0 9px 9px;gap:6px}
 #sceneSection .sc-scene-step .sc-suggestions summary:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px;border-radius:10px}
 @media(prefers-reduced-motion:reduce){.sc-suggestions-chevron{transition:none}}
+/* Subtle processing indicator with an explicit cancel action. */
+#sceneSection .sc-ai-btns .sc-ai-processing{gap:5px;padding:7px 8px;border:1px solid color-mix(in srgb,var(--app-teal) 35%,var(--ws-line));background:color-mix(in srgb,var(--app-teal) 9%,var(--ws-surface));color:var(--ws-text);font-size:11px;white-space:nowrap}
+.sc-ai-dots{display:inline-flex;align-items:center;justify-content:center;gap:3px;flex:none;width:20px;height:18px}
+.sc-ai-dots i{width:4px;height:4px;border-radius:50%;background:var(--app-teal);animation:scAiDot 1.2s ease-in-out infinite}
+.sc-ai-dots i:nth-child(2){animation-delay:.15s}.sc-ai-dots i:nth-child(3){animation-delay:.3s}
+.sc-ai-processing-text{min-width:0}.sc-ai-cancel-label{padding-left:6px;border-left:1px solid var(--ws-line);color:var(--ws-accent-text);font-size:10px}
+@keyframes scAiDot{0%,60%,100%{opacity:.35;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+@media(max-width:350px){#sceneSection .sc-ai-btns .sc-ai-processing{gap:3px;padding-inline:5px;font-size:10px}.sc-ai-cancel-label{padding-left:4px}}
+@media(prefers-reduced-motion:reduce){.sc-ai-dots i{animation:none;opacity:.8}}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -10196,7 +10205,7 @@ window.TascoScene=(()=>{
       res='<div class="sc-ai-res"><div class="sc-ai-rh"><b>AI đề xuất</b><small>'+esc(ai.res.engine||'')+' · '+ai.res.photos+' ảnh</small></div>'+
         (rows?rows+'<div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-drop">Bỏ qua</button><button type="button" class="dt-btn is-main" data-sc="ai-apply"'+(cnt?'':' disabled')+'>Áp dụng '+(cnt?cnt+' mục':'')+'</button></div>':'<p class="sc-ai-err">AI chưa thấy mục nào đủ rõ trong ảnh. Hãy thêm ảnh rõ hơn hoặc nhập tay.</p><div class="sc-ai-btns"><button type="button" class="dt-btn" data-sc="ai-drop">Đóng</button></div>')+'</div>';
     }
-    const run=ai.busy?'<button type="button" class="dt-btn" data-sc="ai-cancel"><i class="sc-ai-spin" aria-hidden="true"></i>Đang phân tích… Huỷ</button>':'<button type="button" class="dt-btn is-main" data-sc="ai-run"'+(n?'':' disabled')+'>'+I.spark+'Phân tích'+(n?' '+n+' ảnh':'')+'</button>';
+    const run=ai.busy?'<button type="button" class="dt-btn sc-ai-processing" data-sc="ai-cancel" aria-label="Đang phân tích ảnh. Chạm để hủy"><span class="sc-ai-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="sc-ai-processing-text">Đang xử lý</span><span class="sc-ai-cancel-label">Hủy</span></button>':'<button type="button" class="dt-btn is-main" data-sc="ai-run"'+(n?'':' disabled')+'>'+I.spark+'Phân tích'+(n?' '+n+' ảnh':'')+'</button>';
     return '<section class="sc-t sc-ai" id="scAI"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+I.spark+'</span><b>AI đọc ảnh hiện trường</b></div>'+
       '<p class="sc-ai-sub">Antigravity phân tích ảnh và đề xuất các mục nhìn thấy được. Bạn xem lại trước khi áp dụng. Ảnh chỉ gửi để phân tích, không lưu lại.</p>'+
       (n?'<div class="sc-ai-thumbs">'+thumbs+'</div>':'')+
