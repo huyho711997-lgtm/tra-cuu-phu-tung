@@ -9659,6 +9659,12 @@ html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
 @supports (-webkit-touch-callout:none){#sceneSection .sc-people .sc-in:focus{font-size:16px}}
 @media(max-width:350px){#sceneSection .sc-prow{padding:10px;gap:7px}.sc-person-fields{padding-left:42px}#sceneSection .sc-people .sc-g2{grid-template-columns:1fr;gap:7px}}
 @media(prefers-reduced-motion:reduce){.sc-person-chevron{transition:none}}
+/* Let participant fields use the full card width. */
+#sceneSection .sc-people .sc-prow{row-gap:8px}
+#sceneSection .sc-people .sc-pc{display:contents}
+#sceneSection .sc-people .sc-ph{grid-column:2;align-self:center}
+#sceneSection .sc-people .sc-pc>.sc-in,#sceneSection .sc-people .sc-pc>.sc-g2{grid-column:1 / -1;min-width:0}
+#sceneSection .sc-person-fields{padding-left:12px}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
