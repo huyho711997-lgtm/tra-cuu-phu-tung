@@ -9929,6 +9929,11 @@ html.dark #sceneSection .sc-scene-step .sc-sg.on,html.dark #sceneSection .sc-sce
 #sceneSection .sc-damage-step .sc-tgs .sc-tgl i{width:19px;height:19px;border-radius:6px}
 #sceneSection .sc-damage-step .sc-voice-area{display:block}
 #sceneSection .sc-damage-step #scOther{margin-top:8px}
+#sceneSection .sc-docs-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;padding:0 1px}
+#sceneSection .sc-docs-count{color:var(--ws-muted);font-size:10.5px;font-weight:650}
+#sceneSection .sc-docs-all{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 10px;border:1px solid var(--ws-line);border-radius:10px;background:var(--ws-bg);color:var(--ws-accent-text);font:inherit;font-size:10.5px;font-weight:750;white-space:nowrap}
+#sceneSection .sc-docs-all:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+#sceneSection .sc-docs-note{margin-top:10px}
 @media(max-width:330px){#sceneSection .sc-damage-step .sc-dspot{grid-template-columns:1fr;gap:5px}}
 @media(prefers-reduced-motion:reduce){.sc-suggestions-chevron{transition:none}}
 /* Subtle processing indicator with an explicit cancel action. */
@@ -10327,6 +10332,7 @@ window.TascoScene=(()=>{
   function step2(){
     const d=S.cur.data;
     const docs=M.DOCS.map(([k,l])=>tg('docs.'+k,l,d.docs[k])).join('');
+    const docCount=M.DOCS.filter(([k])=>d.docs[k]).length,docsAll=docCount===M.DOCS.length&&docCount>0;
     return '<div class="sc-scene-step">'+sect('Hiện trường vụ tai nạn','Mục [1–11] của biểu mẫu '+esc(M.CODE),
       aiCard()+
       sceneTile('1','[1]','Tình trạng hiện trường',seg('sceneIntact'))+
@@ -10337,7 +10343,7 @@ window.TascoScene=(()=>{
       sceneTile('6-7','[6–7]','Người điều khiển tại hiện trường',seg('driverPresence')+
         '<div class="sc-branch" data-sc-absent'+(d.driverPresence==='present'?' hidden':'')+'><div class="sc-sub">[6] Nếu vắng mặt</div>'+inp('absentReason',d.absentReason,'placeholder="Lý do: đi cấp cứu, làm việc với CSGT…"')+inp('absentDestination',d.absentDestination,'placeholder="Địa điểm đến"')+'</div>'+
         '<div class="sc-branch"><div class="sc-sub">[7] Nếu có mặt · sắc mặt</div>'+seg('face')+'<div class="sc-sub">Hơi thở</div>'+seg('breath')+'</div>')+
-      sceneTile('8','[8]','Giấy tờ cung cấp tại hiện trường','<div class="sc-tgs">'+docs+'</div>'+mini('docsall','Chọn tất cả')+inp('docNote',d.docNote,'placeholder="Ghi chú: lý do chưa có, hẹn bổ sung…"'))+
+      sceneTile('8','[8]','Giấy tờ cung cấp tại hiện trường','<div class="sc-docs-bar"><span class="sc-docs-count" data-sc-doc-count>Đã chọn '+docCount+'/'+M.DOCS.length+'</span><button type="button" class="sc-docs-all" data-sc="docsall">'+(docsAll?'Bỏ chọn tất cả':'Chọn tất cả')+'</button></div><div class="sc-tgs">'+docs+'</div><div class="sc-docs-note">'+inp('docNote',d.docNote,'placeholder="Ghi chú: lý do chưa có, hẹn bổ sung…"')+'</div>')+
       sceneTile('9','[9]','Mô tả hiện trường, vị trí phương tiện',area('scene',3))+
       sceneTile('10','[10]','Dấu vết tại hiện trường',area('traces',3))+
       sceneTile('11','[11]','Mẫu vật thu được',area('samples',2)))+'</div>';
@@ -10388,6 +10394,8 @@ window.TascoScene=(()=>{
   document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='scAIFile'){const files=Array.from(t.files||[]);t.value='';if(files.length)aiAdd(files);}});
   function paintDone(){
     if(!S.cur)return;const d=S.cur.data;
+    const countEl=document.querySelector('[data-sc-doc-count]'),allBtn=document.querySelector('#scPane [data-sc="docsall"]');
+    if(countEl&&allBtn){const n=M.DOCS.filter(([k])=>d.docs[k]).length;countEl.textContent='Đã chọn '+n+'/'+M.DOCS.length;allBtn.textContent=n===M.DOCS.length&&n>0?'Bỏ chọn tất cả':'Chọn tất cả';}
     M.META.forEach(m=>{const el=document.querySelector('#scPane [data-sc-tile="'+m.tile+'"]');if(el)el.classList.toggle('is-done',m.idx.some(i=>M.CHECKS[i](d)));});
     const sp=M.stepProgress(d);
     STEPS.forEach(([n,,mi])=>{const s=sp[mi-1],e=document.querySelector('[data-sc-sp="'+n+'"]');if(e){e.textContent=s.done+'/'+s.total;e.closest('.sc-stp').classList.toggle('is-full',s.total>0&&s.done>=s.total);}});
