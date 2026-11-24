@@ -8507,7 +8507,7 @@ window.TascoAsk=(()=>{
     window.removeEventListener('touchstart',cancelEndScroll,true);
     window.removeEventListener('wheel',cancelEndScroll,true);
   }
-  function scrollToEnd(){
+  function scrollToEnd(smooth=false,onlyLong=false){
     if(!live())return;
     cancelEndScroll();
     const gen=S.gen;let attempts=0;
@@ -8523,7 +8523,11 @@ window.TascoAsk=(()=>{
         endFrame=requestAnimationFrame(()=>{
           if(live()&&onAsk()&&S.gen===gen){
             S.needEnd=false;
-            window.scrollTo({top:Math.max(0,document.documentElement.scrollHeight-innerHeight),left:0,behavior:'instant'});
+            const thread=$('[data-ak-thread]');
+            if(!onlyLong||(thread&&thread.scrollHeight>window.innerHeight)){
+              const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+              window.scrollTo({top:Math.max(0,document.documentElement.scrollHeight-innerHeight),left:0,behavior:smooth&&!reduced?'smooth':'instant'});
+            }
           }
           cancelEndScroll();updateJump();
         });
@@ -8926,7 +8930,7 @@ window.TascoAsk=(()=>{
     if(cite){const msg=cite.closest('[data-ak-msg]');if(msg)sourceSheet(msg.dataset.akMsg,cite.dataset.olQaCite);return;}
     const b=e.target.closest('#askSection [data-ak],.ak-sheet-bg [data-ak]');if(!b)return;
     const k=b.dataset.ak;
-    if(k==='kind'){const v=b.dataset.v;if(v===S.kind||S.busy)return;cancelEndScroll();openKind(v);savePrefs();paintTop();paintThread(true);paintComposer(true);}
+    if(k==='kind'){const v=b.dataset.v;if(v===S.kind||S.busy)return;cancelEndScroll();openKind(v);savePrefs();paintTop();paintThread(true);paintComposer(true);if(S.messages.length)scrollToEnd(true,true);}
     else if(k==='deep'){S.deep=!S.deep;savePrefs();paintTop();}
     else if(k==='lib'){S.lib=!S.lib;savePrefs();paintTop();}
     else if(k==='model')modelSheet();
