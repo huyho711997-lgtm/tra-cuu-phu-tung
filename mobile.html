@@ -9612,6 +9612,19 @@ html.dark #askSection .ak-jump{box-shadow:0 5px 18px rgba(0,0,0,.4)}
 .sc-pv-sheet iframe{display:block;width:826px;border:0;background:#fff}
 .sc-pv footer{display:flex;gap:10px;padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 10px);border-top:1px solid var(--ws-line);background:var(--ws-bg)}
 .sc-pv footer .dt-btn{flex:1}
+
+/* Scene report steps */
+#sceneSection .sc-steps{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;margin-bottom:14px;border:1px solid var(--ws-line);border-radius:16px;background:var(--ws-soft)}
+#sceneSection .sc-stp{box-sizing:border-box;min-width:0;min-height:68px;align-content:center;gap:3px;padding:7px 3px;border:1px solid transparent;border-radius:12px;color:var(--ws-muted);line-height:1.15;-webkit-tap-highlight-color:transparent}
+#sceneSection .sc-stp i{width:22px;height:22px;font-size:10px}
+#sceneSection .sc-stp span{max-width:100%;font-size:11px;font-weight:700;text-align:center;white-space:nowrap}
+#sceneSection .sc-stp em{font-size:10px;line-height:1;color:var(--ws-muted);opacity:1}
+#sceneSection .sc-stp.on{border-color:color-mix(in srgb,var(--app-teal) 28%,var(--ws-line));background:var(--ws-surface);color:var(--ws-text);box-shadow:0 2px 8px rgba(24,48,86,.08)}
+#sceneSection .sc-stp.on i{background:var(--app-navy);color:#fff}
+#sceneSection .sc-stp.is-full:not(.on) i{background:#2f8f6f;color:#fff}
+#sceneSection .sc-stp:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+html.dark #sceneSection .sc-stp.on i{background:var(--app-teal);color:#0b1b30}
+@media(max-width:350px){#sceneSection .sc-steps{gap:2px;padding:3px}#sceneSection .sc-stp{min-height:64px;padding:6px 2px}#sceneSection .sc-stp span{font-size:10px}}
 </style>
 <script id="tascoScene">
 window.TascoScene=(()=>{
@@ -9918,7 +9931,7 @@ window.TascoScene=(()=>{
   const STEPS=[[1,'Thông tin',1],[2,'Hiện trường',3],[3,'Thiệt hại',4]];
   function stepsHtml(){
     const sp=M.stepProgress(S.cur.data);
-    return STEPS.map(([n,l,mi])=>{const s=sp[mi-1];return '<button type="button" class="sc-stp'+(S.step===n?' on':'')+(s.done>=s.total&&s.total?' is-full':'')+'" data-sc="step" data-v="'+n+'"><i>'+n+'</i><span>'+l+'</span><em data-sc-sp="'+n+'">'+s.done+'/'+s.total+'</em></button>';}).join('');
+    return STEPS.map(([n,l,mi])=>{const s=sp[mi-1];return '<button type="button" class="sc-stp'+(S.step===n?' on':'')+(s.done>=s.total&&s.total?' is-full':'')+'" data-sc="step" data-v="'+n+'"'+(S.step===n?' aria-current="step"':'')+'><i aria-hidden="true">'+n+'</i><span>'+l+'</span><em data-sc-sp="'+n+'">'+s.done+'/'+s.total+'</em></button>';}).join('');
   }
   function navHtml(){
     return '<div class="sc-nav">'+(S.step>1?'<button type="button" class="dt-btn" data-sc="prev">'+I.back+'Quay lại</button>':'<span></span>')+(S.step<3?'<button type="button" class="dt-btn is-main" data-sc="next">Tiếp tục'+I.chev+'</button>':'')+'</div>';
