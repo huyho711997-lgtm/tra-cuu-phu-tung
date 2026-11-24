@@ -8462,7 +8462,7 @@ window.TascoAsk=(()=>{
     if(jumpRaf)return;
     jumpRaf=requestAnimationFrame(()=>{
       jumpRaf=0;
-      const b=$('[data-ak-jump]');if(!b||!live()||!onAsk()||gliding)return;
+      const b=$('[data-ak-jump]');if(!b||!live()||!onAsk())return;
       const max=document.documentElement.scrollHeight-innerHeight,y=window.scrollY||0,up=max-y<=220,show=max>420&&S.messages.length>0,key=(show?1:0)+(up?2:0);
       if(b._k===key)return;b._k=key;   // chỉ đụng DOM khi trạng thái đổi: ghi liên tục lúc đang cuộn dễ làm WKWebView ngừng vẽ
       b.classList.toggle('is-on',show);b.classList.toggle('is-up',up);b.tabIndex=show?0:-1;
@@ -8471,59 +8471,41 @@ window.TascoAsk=(()=>{
   }
   function jump(){
     const b=$('[data-ak-jump]');if(!b)return;
-    clearInterval(endTimer);endTimer=0;   // đang giữ ở cuối thì thôi
-    glide(b.classList.contains('is-up')?0:Math.max(0,document.documentElement.scrollHeight-innerHeight));
-  }
-  // Lên đầu / xuống cuối: KHÔNG trượt qua cả trang dài (trên iOS dễ làm WKWebView bỏ vẽ vùng cuộn → màn hình trống).
-  // Quãng xa: nhảy tức thì tới cách đích ~1 màn hình rồi mới trượt đoạn cuối (easeOutCubic, ~400–520ms). Xong thì "đánh thức" lại vùng vẽ.
-  let glideRaf=0,gliding=false,glideTm=0;
-  const jumpTo=y=>{try{window.scrollTo({top:y,left:0,behavior:'instant'});}catch(_){window.scrollTo(0,y);}};
-  const fx=on=>document.documentElement.classList.toggle('ak-fx',on);
-  function glideDone(){gliding=false;cancelAnimationFrame(glideRaf);glideRaf=0;clearTimeout(glideTm);glideTm=0;fx(false);window.removeEventListener('touchstart',glideDone,true);window.removeEventListener('wheel',glideDone,true);updateJump();}
-  // Quãng xa: mờ nhanh nội dung (~110ms) → nhảy tới cách đích ~1 màn hình lúc đang mờ → hiện lại trong khi trượt đoạn cuối.
-  // Che được cú "cắt cảnh" nên cảm giác liền mạch mà vẫn không phải trượt qua cả trang dài (dễ làm WKWebView bỏ vẽ → màn hình trống).
-  function glide(to){
-    cancelAnimationFrame(glideRaf);glideRaf=0;clearTimeout(glideTm);glideTm=0;
-    let from=window.scrollY||0;const vh=window.innerHeight||700;
-    if(Math.abs(to-from)<4||(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)){jumpTo(to);updateJump();return;}
-    const far=Math.abs(to-from)>vh*1.1;
-    gliding=true;
-    window.addEventListener('touchstart',glideDone,{capture:true,passive:true,once:true});window.addEventListener('wheel',glideDone,{capture:true,passive:true,once:true});
-    const run=()=>{
-      glideTm=0;
-      if(!gliding)return;
-      if(far){from=to+(from>to?1:-1)*Math.round(vh*.9);jumpTo(from);fx(false);}
-      const d=to-from,dur=far?480:Math.round(Math.min(520,Math.max(400,380+Math.abs(d)*.12)));let t0=0;
-      const step=ts=>{
-        if(!gliding)return;
-        if(!t0)t0=ts;
-        const k=Math.min(1,(ts-t0)/dur),e=1-Math.pow(1-k,3);
-        jumpTo(from+d*e);
-        if(k<1){glideRaf=requestAnimationFrame(step);return;}
-        jumpTo(to);glideDone();
-        // đánh thức lớp vẽ gốc của WebKit: lệch 1px rồi trả lại (chỉ khi còn chỗ để lệch)
-        requestAnimationFrame(()=>{const y=window.scrollY||0;jumpTo(y>0?y-1:y+1);requestAnimationFrame(()=>jumpTo(y));});
-      };
-      glideRaf=requestAnimationFrame(step);
-    };
-    if(far){fx(true);glideTm=setTimeout(run,160);}else run();
+    cancelEndScroll();
+    const top=b.classList.contains('is-up')?0:Math.max(0,document.documentElement.scrollHeight-innerHeight);
+    const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+    window.scrollTo({top,left:0,behavior:reduced?'instant':'smooth'});
   }
   const onAsk=()=>document.getElementById('mainApp')?.dataset.page==='ask';
-  let endTimer=0;
+  let endTimer=0,endFrame=0;
+  function cancelEndScroll(){
+    clearTimeout(endTimer);endTimer=0;cancelAnimationFrame(endFrame);endFrame=0;
+    window.removeEventListener('touchstart',cancelEndScroll,true);
+    window.removeEventListener('wheel',cancelEndScroll,true);
+  }
   function scrollToEnd(){
     if(!live())return;
-    clearInterval(endTimer);
-    const gen=S.gen;let tick=0;
-    const stopNow=()=>{clearInterval(endTimer);endTimer=0;window.removeEventListener('touchstart',stopNow,true);window.removeEventListener('wheel',stopNow,true);};
-    window.addEventListener('touchstart',stopNow,{capture:true,passive:true,once:true});window.addEventListener('wheel',stopNow,{capture:true,passive:true,once:true});
-    endTimer=setInterval(()=>{
-      tick++;
-      if(!live()||S.gen!==gen||tick>25){stopNow();return;}
-      if(!onAsk())return;   // trang chưa chuyển hẳn sang AI: đợi
-      S.needEnd=false;
-      const end=document.documentElement.scrollHeight-innerHeight;
-      if(Math.abs((window.scrollY||0)-end)>4)window.scrollTo(0,Math.max(0,end));   // khung trang đôi khi tự cuộn lại lên đầu sau khi vẽ: giữ ở cuối tới khi người dùng chạm/cuộn
-    },100);
+    cancelEndScroll();
+    const gen=S.gen;let attempts=0;
+    window.addEventListener('touchstart',cancelEndScroll,{capture:true,passive:true,once:true});
+    window.addEventListener('wheel',cancelEndScroll,{capture:true,passive:true,once:true});
+    const ready=()=>{
+      if(!live()||S.gen!==gen){cancelEndScroll();return;}
+      if(!onAsk()){
+        if(++attempts<20)endTimer=setTimeout(ready,50);else cancelEndScroll();
+        return;
+      }
+      endFrame=requestAnimationFrame(()=>{
+        endFrame=requestAnimationFrame(()=>{
+          if(live()&&onAsk()&&S.gen===gen){
+            S.needEnd=false;
+            window.scrollTo({top:Math.max(0,document.documentElement.scrollHeight-innerHeight),left:0,behavior:'instant'});
+          }
+          cancelEndScroll();updateJump();
+        });
+      });
+    };
+    ready();
   }
   function scrollToLastAnswer(){
     if(!live())return;
@@ -8994,7 +8976,7 @@ window.TascoAsk=(()=>{
     document.addEventListener('focusout',()=>{clearTimeout(t);t=setTimeout(()=>{if(!typing(document.activeElement))root.classList.remove('kb-open');},160);},true);
   })();
   let scRaf=0,scOn=false;
-  window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;const on=(window.scrollY||0)>24;if(on!==scOn){scOn=on;document.documentElement.classList.toggle('ak-scrolled',on);}if(gliding)return;updateJump();});},{passive:true});
+  window.addEventListener('scroll',()=>{if(scRaf)return;scRaf=requestAnimationFrame(()=>{scRaf=0;const on=(window.scrollY||0)>24;if(on!==scOn){scOn=on;document.documentElement.classList.toggle('ak-scrolled',on);}updateJump();});},{passive:true});
   window.addEventListener('resize',updateJump);
   window.addEventListener('pagehide',()=>{if(S.voice)voiceCancel();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.voice&&S.voice.phase==='rec')voiceCancel();});
@@ -9301,11 +9283,6 @@ html.kb-open .ak-jump{top:-30px}
 [data-ak-input].is-fresh{animation:akFresh 1.4s ease-out}
 @keyframes akFresh{0%{background:color-mix(in srgb,var(--app-teal) 18%,transparent)}100%{background:transparent}}
 @media(prefers-reduced-motion:reduce){.ak-rec-dot,[data-ak-input].is-fresh{animation:none}.ak-wave i{transition:none}}
-
-/* hiệu ứng mờ-rồi-hiện khi bấm Lên đầu / Xuống cuối ở quãng xa (ô soạn cố định không bị mờ) */
-#askSection .ws-journey-hero,[data-ak-root]>:not(.ak-comp-wrap){transition:opacity .28s cubic-bezier(.2,.7,.2,1)}
-html.ak-fx #askSection .ws-journey-hero,html.ak-fx [data-ak-root]>:not(.ak-comp-wrap){opacity:0;transition:opacity .14s ease-in}
-@media(prefers-reduced-motion:reduce){#askSection .ws-journey-hero,[data-ak-root]>:not(.ak-comp-wrap){transition:none}}
 
 /* AI conversation — premium visual treatment */
 #askSection .ws-journey-hero{background:radial-gradient(circle at 87% 65%,rgba(106,193,201,.24),transparent 37%),linear-gradient(145deg,#142c50,#1b3b63 74%,#244e6a);overflow:hidden}
