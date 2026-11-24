@@ -3881,7 +3881,7 @@ window.TascoBootSplash = (() => {
   <div class="ws-search-panel ws-search-panel--premium rc-panel">
     <div id="scPageRoot" aria-live="polite"><div class="dr-skel"><i></i><i></i><i></i></div></div>
   </div>
-  <p class="ws-journey-note"><span>Chỉ hiện hồ sơ thuộc tài khoản đăng nhập. Biên bản dùng chung dữ liệu với webapp giám định xe.</span></p>
+  <p class="ws-journey-note"><span>Biên bản độc lập được lưu theo tài khoản của bạn.</span></p>
 </section>
 <section id="askSection" data-shell-page="ask" class="ws-journey rc dr-page" hidden style="display:none" aria-labelledby="askPageTitle">
   <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('home')" aria-label="Quay lại trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · TRỢ LÝ NGHIỆP VỤ</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">THƯ VIỆN TÀI LIỆU</span><h2 id="askPageTitle" tabindex="-1">AI nghiệp vụ.</h2><p>Hỏi quy tắc, Luật, Nghị định — có dẫn nguồn.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><g transform="translate(13 -5) scale(6)" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5H7a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h1v3l4-3h5a3 3 0 0 0 3-3v-3" stroke-width=".32"/><path d="M8 11h5M8 14.5h8" stroke-width="1"/><path d="M17.5 2.5l1.2 3.1 3.1 1.2-3.1 1.2-1.2 3.1-1.2-3.1-3.1-1.2 3.1-1.2Z" stroke-width=".5"/></g></svg></header>
@@ -6940,7 +6940,7 @@ window.TascoWeekly=(()=>{
       kcalc=null,kcalcFail=false,kpi=null,kpiReady=false,kres=null,ares=null,tab='week',kSel=(()=>{const n=new Date();return {y:n.getFullYear(),m:n.getMonth()+1};})(),ySel=new Date().getFullYear();
   try{const p=JSON.parse(ls(K.per)||'null');if(p&&p.id){const m=/^(week|month)(\d+)?$/.exec(String(p.id));sel=m?{id:m[1],off:Number.isFinite(+p.off)&&p.off!==undefined?Math.max(0,+p.off|0):(+m[2]||0),s:String(p.s||''),e:String(p.e||'')}:{id:'custom',off:0,s:String(p.s||''),e:String(p.e||'')};}}catch(_){}
   {const t=ls(K.tab);if(t==='kpi'||t==='year'||t==='week')tab=t;}
-  const can=()=>page==='progress'||page==='scene'||page==='ask'||admin,T=()=>page==='progress'?'prog':page==='scene'?'scene':page==='ask'?'ask':tab,keys=()=>page==='ask'?[]:page==='scene'?['claims']:Object.keys(PATH);
+  const can=()=>page==='progress'||page==='scene'||page==='ask'||admin,T=()=>page==='progress'?'prog':page==='scene'?'scene':page==='ask'?'ask':tab,keys=()=>page==='ask'||page==='scene'?[]:Object.keys(PATH);
 
   /* ---------- nạp cấu hình + engine ---------- */
   async function getText(url){const r=await fetch(url,{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}
@@ -6985,7 +6985,7 @@ window.TascoWeekly=(()=>{
     const j=await res.json().catch(()=>({}));if(!res.ok)throw Object.assign(new Error('EXPIRED'),{fb:true});
     setTokens(j.id_token,j.refresh_token,j.expires_in,j.user_id,auth.email);
   }
-  const forget=()=>{stopStreams();auth=null;ls(K.auth,null);claims=null;rules=null;kpi=null;notes=null;users=null;me=null;claimsReady=rulesReady=kpiReady=notesReady=notesDenied=false;result=kres=ares=prog=null;closePgPick();closePgNote(false);};
+  const forget=()=>{stopStreams();auth=null;window.TascoScene?.reset?.();ls(K.auth,null);claims=null;rules=null;kpi=null;notes=null;users=null;me=null;claimsReady=rulesReady=kpiReady=notesReady=notesDenied=false;result=kres=ares=prog=null;closePgPick();closePgNote(false);};
 
   /* ---------- đọc dữ liệu: users một lần, claims + rules theo thời gian thực (SSE) ---------- */
   const dbUrl=(path,extra)=>cfg.dbUrl+path+'.json?auth='+encodeURIComponent(auth.idToken)+(extra||'');
@@ -7094,6 +7094,7 @@ window.TascoWeekly=(()=>{
   }
   function recompute(){
     if(T()==='ask')return;   // trang AI nghiệp vụ không dùng dữ liệu hồ sơ
+    if(T()==='scene'){if(users&&auth)paintBody();return;}
     if(!claimsReady||!users||!auth||(T()!=='prog'&&T()!=='scene'&&(!eng||!rulesReady)))return;
     if(T()==='scene'){paintBody();paintLive();return;}
     try{
@@ -7407,7 +7408,7 @@ window.TascoWeekly=(()=>{
     if(phase==='ready'&&T()==='ask'){window.TascoAsk?.paint(b,askApi);return;}
     if(T()==='ask'&&phase!=='ready'){b.innerHTML=document.getElementById('akLoadingTemplate').innerHTML;return;}
     if(phase==='ready'&&T()==='scene'){
-      if(!claimsReady||!users){b.innerHTML='<div class="wk-load">Đang tải danh sách hồ sơ…</div><div class="dr-skel"><i></i><i></i><i></i></div>';return;}
+      if(!users){b.innerHTML='<div class="wk-load">Đang chuẩn bị biên bản…</div><div class="dr-skel"><i></i><i></i><i></i></div>';return;}
       window.TascoScene?.paint(b,sceneApi);return;
     }
     const data=T()==='week'?result:T()==='kpi'?kres:T()==='prog'?prog:ares;
@@ -8818,11 +8819,13 @@ window.TascoAsk=(()=>{
       try{urls.push(await plateImage(f,1024));}catch(_){/* bỏ qua ảnh hỏng */}
     }
     if(!urls.length)throw new Error('Không đọc được ảnh nào. Hãy chọn lại ảnh.');
+    const diagram=opt&&typeof opt.diagramUrl==='string'&&/^data:image\/(png|jpeg);base64,/i.test(opt.diagramUrl)?opt.diagramUrl:'';
+    if(diagram)urls.push(diagram);
     const M=B.Models,c=cfg(),all=agyBase()?M.entries(c).filter(e=>e.provider==='antigravity'):[],chosen=opt&&opt.model;
     const cands=chosen?all.filter(e=>e.id===chosen):voiceCandidates().filter(e=>e.provider==='antigravity'),notes=[];
     if(chosen&&!cands.length)throw new Error('Mô hình đã chọn không còn trong danh sách Antigravity. Hãy chọn lại.');
     if(!cands.length)throw new Error('Chưa có mô hình Antigravity để đọc ảnh. Vào AI nghiệp vụ → Mô hình AI → Antigravity, lưu địa chỉ Tailscale và tải danh sách mô hình Gemini.');
-    const content=[{type:'text',text:'Đây là '+urls.length+' ảnh hiện trường. Điền JSON theo quy tắc.'}].concat(urls.map(u=>({type:'image_url',image_url:{url:u}})));
+    const content=[{type:'text',text:'Đây là '+files.length+' ảnh hiện trường. '+(diagram?'Ảnh cuối là sơ đồ bản đồ có chú thích do người dùng tự vẽ: A/B là xe, A1→A2 và B1→B2 là hướng đi; đây là mô tả của người dùng, không phải chứng cứ độc lập. Không suy đoán nguyên nhân hay lỗi. ':'')+'Điền JSON theo quy tắc.'}].concat(urls.map(u=>({type:'image_url',image_url:{url:u}})));
     for(const e of cands){
       if(ctl.aborted)throw new DOMException('Đã huỷ','AbortError');
       let key='';try{key=await M.getKey(e.provider);}catch(_){}
@@ -8853,7 +8856,7 @@ window.TascoAsk=(()=>{
           const max=lim[k]||600;if(v.length>max)v=v.slice(0,max).replace(/\s+\S*$/,'').trim()||v.slice(0,max);
           fields[k]={value:v,conf:Math.max(0,Math.min(1,Number(it&&it.c)||0))};
         }
-        return {fields,engine:name,photos:urls.length};
+        return {fields,engine:name,photos:files.length};
       }catch(err){
         if(ctl.aborted)throw err;
         notes.push(name+(err&&err.name==='TimeoutError'?' quá chậm':' không kết nối được'));
@@ -9968,6 +9971,8 @@ html.dark #sceneSection .sc-scene-step .sc-sg.on,html.dark #sceneSection .sc-sce
 @media(max-width:350px){#sceneSection .sc-ai-btns .sc-ai-processing{gap:3px;padding-inline:5px;font-size:10px}.sc-ai-cancel-label{padding-left:4px}}
 @media(prefers-reduced-motion:reduce){.sc-ai-dots i{animation:none;opacity:.8}}
 </style>
+<link rel="stylesheet" href="scene-standalone-map.css">
+<script src="scene-standalone-map.js"></script>
 <script id="tascoScene">
 window.TascoScene=(()=>{
   /* Biên bản hiện trường (BM.TASCO.XCG.01.04) trên điện thoại: dùng CHUNG logic với webapp giám định
@@ -9996,7 +10001,7 @@ window.TascoScene=(()=>{
   const toast=t=>{const e=document.createElement('div');e.className='al-toast';e.setAttribute('role','status');e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3200);};
 
   let api=null,M=null,modelP=null,modelSrc='',docxFn=null,root=null;
-  const S={mode:'list',q:'',n:PER,cur:null,step:1,seq:0,pv:null};
+  const S={mode:'list',q:'',n:PER,cur:null,step:1,seq:0,pv:null,records:null,recordsBusy:false,recordsError:''};
   const ENT=new Map();   // các biên bản đang mở/chưa lưu xong, theo khoá tài liệu
 
   /* ---------- khoá tài liệu: GIỐNG webapp (claimDocumentStorageKey) ---------- */
@@ -10050,6 +10055,7 @@ window.TascoScene=(()=>{
     return {rec:null,has:false,seed:null};
   }
   async function diagramUrl(en){
+    if(en.standalone)return en.map?.imageDataUrl||'';
     for(const k of [en.key,en.id]){
       try{const v=await getNode('/scene_diagrams/'+k+'/imageDataUrl');if(typeof v==='string'&&v.startsWith('data:'))return v;}catch(_){}
     }
@@ -10057,6 +10063,14 @@ window.TascoScene=(()=>{
   }
   async function write(en,snap){
     const me=api.me(),now=Date.now(),who=me.name||me.email||'';
+    if(en.standalone){
+      if(!me.uid||me.uid!==en.ownerUid)throw new Error('NOAUTH');
+      const record={id:en.id,createdAt:en.createdAt,updatedAt:now,data:snap,map:en.map||null};
+      const entry={id:en.id,updatedAt:now,plate:snap.plate||'',reportDate:snap.reportDate||'',location:snap.accidentLocation||snap.reportPlace||''};
+      const body=JSON.stringify({['items/'+en.id]:record,['index/'+en.id]:entry}),res=await fetch(await api.url('/standalone_scene_reports/'+me.uid),{method:'PATCH',headers:{'Content-Type':'application/json'},body,keepalive:body.length<60000});
+      if(!res.ok)throw Object.assign(new Error('HTTP '+res.status),{status:res.status});
+      S.records=Object.assign({},S.records||{},{[en.id]:entry});return;
+    }
     let body;
     if(en.has)body={'state/sceneReport':snap,updatedAt:now,savedByUid:me.uid,savedByName:who};
     else{
@@ -10085,7 +10099,7 @@ window.TascoScene=(()=>{
   async function flush(en){
     clearTimeout(en.t);
     if(!en.dirty)return true;
-    if(en.busy){en.again=true;return false;}
+    if(en.busy){en.again=true;while(en.busy)await new Promise(resolve=>setTimeout(resolve,100));return en.dirty?flush(en):en.st!=='error';}
     en.busy=true;let ok=true;
     try{
       do{
@@ -10135,15 +10149,37 @@ window.TascoScene=(()=>{
   }
   function listShell(){
     return '<div class="sc-root">'+
-      '<label class="dr-search">'+I.search+'<input id="scSearch" type="search" placeholder="Biển số, HSBT, chủ xe, địa điểm…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Tìm hồ sơ" value="'+esc(S.q)+'"></label>'+
+      '<button type="button" class="dt-btn is-main" style="width:100%;margin-bottom:12px" data-sc="standalone-new">'+I.plus+'Tạo biên bản mới</button>'+
+      '<label class="dr-search">'+I.search+'<input id="scSearch" type="search" placeholder="Biển số, địa điểm…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Tìm biên bản" value="'+esc(S.q)+'"></label>'+
       '<div class="dr-count" id="scCount"></div><div class="sc-list" id="scList"></div><div id="scMore"></div></div>';
   }
   function paintList(){
     const list=$('scList');if(!list)return;
-    const all=rows(),shown=all.slice(0,S.n);
-    $('scCount').textContent=all.length?(S.q?'Kết quả · '+all.length+' hồ sơ':'Hồ sơ của bạn · '+all.length):'';
-    list.innerHTML=shown.length?shown.map(card).join(''):'<div class="dr-empty"><b>'+(S.q?'Không tìm thấy hồ sơ':'Chưa có hồ sơ nào')+'</b>'+(S.q?'Thử biển số hoặc số HSBT khác.':'Chỉ hiện hồ sơ bạn tạo hoặc được phân công.')+'</div>';
-    $('scMore').innerHTML=all.length>shown.length?'<button type="button" class="wk-more" data-sc="more">Xem thêm '+Math.min(PER,all.length-shown.length)+' hồ sơ</button>':'';
+    if(S.recordsBusy){list.innerHTML='<div class="wk-load">Đang tải biên bản…</div>';return;}
+    if(S.recordsError){list.innerHTML='<div class="dr-empty"><b>Chưa tải được biên bản</b>'+esc(S.recordsError)+'<div class="dr-acts"><button type="button" class="dt-btn" data-sc="standalone-retry">Thử lại</button></div></div>';return;}
+    const q=plain(S.q).trim(),all=Object.values(S.records||{}).filter(r=>r&&r.id&&(!q||q.split(/\s+/).every(w=>plain([r.plate,r.location].join(' ')).includes(w)))).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)),shown=all.slice(0,S.n);
+    $('scCount').textContent=all.length?'Biên bản của bạn · '+all.length:'';
+    list.innerHTML=shown.length?shown.map(r=>'<button type="button" class="sc-card" data-sc="standalone-open" data-k="'+esc(r.id)+'"><span class="sc-c-top"><b class="sc-plate">'+esc(r.plate||'Biên bản hiện trường')+'</b></span><span class="sc-c-sub">'+esc(r.reportDate||'Chưa có ngày lập')+'</span>'+(r.location?'<span class="sc-c-loc">'+I.pin+'<span>'+esc(r.location)+'</span></span>':'')+'<i class="sc-c-go">'+I.chev+'</i></button>').join(''):'<div class="dr-empty"><b>'+(S.q?'Không tìm thấy biên bản':'Chưa có biên bản nào')+'</b>'+(S.q?'Thử tìm bằng biển số hoặc địa điểm.':'Tạo biên bản để bắt đầu, không cần hồ sơ.')+'</div>';
+    $('scMore').innerHTML=all.length>shown.length?'<button type="button" class="wk-more" data-sc="more">Xem thêm</button>':'';
+  }
+  async function loadStandalone(){
+    if(S.recordsBusy)return;S.recordsBusy=true;S.recordsError='';paintList();
+    const uid=api.me().uid;
+    try{if(!uid)throw new Error('Chưa đăng nhập.');const records=await getNode('/standalone_scene_reports/'+uid+'/index')||{};if(api.me().uid===uid)S.records=Object.assign({},records,S.records||{});}
+    catch(e){if(api.me().uid===uid)S.recordsError='Kiểm tra kết nối hoặc đăng nhập lại.';}
+    finally{if(api.me().uid===uid){S.recordsBusy=false;paintList();}}
+  }
+  async function openStandalone(id){
+    const creating=!id;if(!creating&&(!/^sc[a-z0-9]{12,40}$/.test(id)||!S.records?.[id])){toast('Không tìm thấy biên bản.');return;}
+    const seq=++S.seq;S.mode='edit';S.cur=null;S.step=1;paintEditor('loading');
+    try{
+      await ensureModel();if(seq!==S.seq)return;
+      const uid=api.me().uid;if(!uid)throw new Error('NOAUTH');
+      const record=creating?null:await getNode('/standalone_scene_reports/'+uid+'/items/'+id);if(seq!==S.seq||api.me().uid!==uid)return;if(!creating&&!record)throw new Error('NOTFOUND');
+      const key=creating?('sc'+Date.now().toString(36)+Array.from(crypto.getRandomValues(new Uint8Array(8)),n=>n.toString(16).padStart(2,'0')).join('')):id,claim={};
+      const en={id:key,key,claim,standalone:true,ownerUid:uid,createdAt:record?.createdAt||Date.now(),data:M.normalize(record?.data,defaultsOf(claim)),map:record?.map||null,ver:0,dirty:false,busy:false,st:'idle',at:'',msg:'',t:0};
+      ENT.set(key,en);S.cur=en;const defaultPhoneAdded=defaultAssessorPhone(en.data);if(defaultPhoneAdded)en.autoAssessorPhone=true;paintEditor();if(creating||defaultPhoneAdded)markDirty(en);
+    }catch(e){if(seq!==S.seq)return;S.err='Không mở được biên bản. Hãy kiểm tra kết nối.';S.cur=null;S.mode='list';paint(root,api,true);toast(S.err);}
   }
 
   /* ---------- mở hồ sơ ---------- */
@@ -10183,7 +10219,7 @@ window.TascoScene=(()=>{
   }
   async function leave(){
     const en=S.cur;S.seq++;cancelSceneVoice();
-    if(en){clearTimeout(en.t);flush(en);aiReset(en);}
+    if(en){clearTimeout(en.t);const saved=await flush(en);if(!saved){toast('Biên bản chưa lưu được. Hãy kiểm tra kết nối rồi thử lại.');return;}aiReset(en);}
     S.mode='list';S.cur=null;S.pv&&closePreview();closeTime();paint(root,api,true);
     if(en)ENT.forEach((e,k)=>{if(!e.dirty&&!e.busy)ENT.delete(k);});
   }
@@ -10211,7 +10247,7 @@ window.TascoScene=(()=>{
     return '<div class="sc-f sc-fdt">'+autoTag(p)+'<button type="button" class="wk-date'+(txt?'':' is-empty')+'" data-sc="'+(kind==='d'?'pickdate':'picktime')+'" data-sc-f="'+p+'" data-label="'+esc(label)+'" aria-haspopup="dialog"><span><small>'+esc(label)+'</small><b>'+(txt||(kind==='d'?'Chọn ngày':'Chọn giờ'))+'</b></span>'+(kind==='d'?ICO_CAL:ICO_CLK)+'</button></div>';
   }
   const fld=(p,label,inner,right)=>'<div class="sc-f"><div class="sc-fh"><label for="'+fid(p)+'">'+esc(label)+'</label>'+(right||'')+'</div>'+inner+'</div>';
-  const autoTag=k=>M.AUTO.includes(k)?'<span class="sc-tagsync" data-sc-badge="'+k+'">'+(S.cur.data.manual[k]?'Đã sửa':'Từ hồ sơ')+'</span>':'';
+  const autoTag=k=>!S.cur.standalone&&M.AUTO.includes(k)?'<span class="sc-tagsync" data-sc-badge="'+k+'">'+(S.cur.data.manual[k]?'Đã sửa':'Từ hồ sơ')+'</span>':'';
   const mini=(act,label,extra)=>'<button type="button" class="sc-mini" data-sc="'+act+'"'+(extra||'')+'>'+label+'</button>';
   function seg(g){
     const d=S.cur.data;
@@ -10239,7 +10275,7 @@ window.TascoScene=(()=>{
         const filled=personFilled(p);
         return '<details class="sc-person-optional" data-person-index="'+i+'"'+(filled||open?' open':'')+'><summary><span class="sc-pi">'+(i+1)+'</span><span class="sc-person-summary"><b>'+title+'</b><small>'+(filled?'Đã có thông tin':'Thêm thông tin')+'</small></span><span class="sc-person-chevron" aria-hidden="true">'+I.chev+'</span></summary><div class="sc-person-fields">'+fields+'</div></details>';
       }
-      return '<div class="sc-prow"><span class="sc-pi">'+(i+1)+'</span><div class="sc-pc"><div class="sc-ph">'+title+'<span class="sc-tagsync" data-sc-badge="'+(i===0?'assessorName':'driver')+'">'+(d.manual[i===0?'assessorName':'driver']?'Đã sửa':'Từ hồ sơ')+'</span></div>'+fields+'</div></div>';
+      return '<div class="sc-prow"><span class="sc-pi">'+(i+1)+'</span><div class="sc-pc"><div class="sc-ph">'+title+(S.cur.standalone?'':'<span class="sc-tagsync" data-sc-badge="'+(i===0?'assessorName':'driver')+'">'+(d.manual[i===0?'assessorName':'driver']?'Đã sửa':'Từ hồ sơ')+'</span>')+'</div>'+fields+'</div></div>';
   }
   function step1(){
     const en=S.cur,d=en.data,shown=en.extraPeople||(en.extraPeople=new Set());
@@ -10248,13 +10284,13 @@ window.TascoScene=(()=>{
     return sect('Thời gian & địa điểm lập biên bản','',
         '<div class="sc-g2">'+dtf('d','reportDate','Ngày lập')+dtf('t','reportTime','Giờ lập')+'</div>'+
         fld('reportPlace','Địa điểm lập biên bản',inp('reportPlace',d.reportPlace,'placeholder="Địa chỉ hoặc vị trí lập biên bản…"')+'<div class="sc-location-actions"><button type="button" class="sc-current-location" data-sc="report-location">'+I.pin+'<span>Vị trí hiện tại</span></button><button type="button" data-sc="copyplace">'+I.sync+'<span>Như nơi tai nạn</span></button></div>'))+
-      sect('Thành phần tham gia','Thông tin từ hồ sơ có thể chỉnh sửa.', '<div class="sc-people">'+people+(canAdd?'<button type="button" class="sc-add-person" data-sc="add-person">'+I.plus+'Thêm người tham gia</button>':'')+'</div>')+
-      sect('Vụ tai nạn & phương tiện','Tự lấy từ hồ sơ; sửa tay sẽ không bị ghi đè.',
+      sect('Thành phần tham gia',S.cur.standalone?'Nhập thông tin những người tham gia.':'Thông tin từ hồ sơ có thể chỉnh sửa.', '<div class="sc-people">'+people+(canAdd?'<button type="button" class="sc-add-person" data-sc="add-person">'+I.plus+'Thêm người tham gia</button>':'')+'</div>')+
+      sect('Vụ tai nạn & phương tiện',S.cur.standalone?'Nhập thông tin tại hiện trường.':'Tự lấy từ hồ sơ; sửa tay sẽ không bị ghi đè.',
         '<div class="sc-g2">'+dtf('d','accidentDate','Ngày xảy ra')+dtf('t','accidentTime','Giờ xảy ra')+'</div>'+
         '<div class="sc-g2 sc-vehicle-fields">'+fld('plate','Biển số xe',inp('plate',d.plate,'autocapitalize="characters" autocomplete="off"'),autoTag('plate'))+fld('driver','Lái xe điều khiển',inp('driver',d.driver,'autocomplete="off"'),autoTag('driver'))+'</div>'+
         fld('accidentLocation','Địa điểm xảy ra tai nạn',inp('accidentLocation',d.accidentLocation,'placeholder="Cây số, đường, xã, huyện, tỉnh…"'),autoTag('accidentLocation'))+
         fld('withParty','Va chạm / xảy ra với',inp('withParty',d.withParty),autoTag('withParty'))+
-        '<button type="button" class="sc-link" data-sc="resync">'+I.sync+'Đồng bộ lại theo hồ sơ</button>');
+        (S.cur.standalone?'':'<button type="button" class="sc-link" data-sc="resync">'+I.sync+'Đồng bộ lại theo hồ sơ</button>'));
   }
   const sceneIcons={
     '1':ico('<path d="M12 3 4 6v5c0 4.5 3.2 7.5 8 10 4.8-2.5 8-5.5 8-10V6z"/><path d="m9 12 2 2 4-4"/>'),
@@ -10318,7 +10354,7 @@ window.TascoScene=(()=>{
     }
     const run=ai.busy?'<button type="button" class="dt-btn sc-ai-processing" data-sc="ai-cancel" aria-label="Đang phân tích ảnh. Chạm để hủy"><span class="sc-ai-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="sc-ai-processing-text">Đang xử lý</span><span class="sc-ai-cancel-label">Hủy</span></button>':'<button type="button" class="dt-btn is-main" data-sc="ai-run"'+(n?'':' disabled')+'>'+I.spark+'Phân tích'+(n?' '+n+' ảnh':'')+'</button>';
     return '<section class="sc-t sc-ai" id="scAI">'+head+'<div class="sc-ai-body" id="scAIBody">'+
-      '<p class="sc-ai-sub">Antigravity phân tích ảnh và đề xuất các mục nhìn thấy được. Bạn xem lại trước khi áp dụng. Ảnh chỉ gửi để phân tích, không lưu lại.</p>'+
+      '<p class="sc-ai-sub">Antigravity phân tích ảnh và đề xuất các mục nhìn thấy được. Bạn xem lại trước khi áp dụng. Ảnh chỉ gửi để phân tích, không lưu lại.'+(en.standalone&&en.map?.imageDataUrl?' Sơ đồ hiện trường đã lưu cũng sẽ được gửi kèm.':'')+'</p>'+
       '<div class="sc-ai-model"><span class="sc-ai-model-label">Mô hình phân tích</span><button type="button" class="sc-ai-model-trigger" data-sc="ai-model-toggle" aria-expanded="'+!!ai.modelsOpen+'"'+(ai.modelsOpen?' aria-controls="scAIModelList"':'')+(ai.busy||!ai.models||!ai.models.length?' disabled':'')+'><span class="sc-ai-model-icon">'+I.spark+'</span><span class="sc-ai-model-name"><small>Antigravity</small><b>'+esc(selectedModel?selectedModel.model:ai.modelsState==='loading'?'Đang tải mô hình…':'Chưa có mô hình')+'</b></span><span class="sc-ai-model-arrow">'+I.chev+'</span></button>'+(ai.modelsOpen&&ai.models&&ai.models.length?'<div class="sc-ai-model-list" id="scAIModelList" role="group" aria-label="Mô hình phân tích">'+ai.models.map((m,i)=>'<button type="button" class="sc-ai-model-option" data-sc="ai-model-select" data-i="'+i+'" aria-pressed="'+(m.id===ai.model)+'"><span>'+esc(m.model)+'</span>'+I.ok+'</button>').join('')+'</div>':'')+'</div>'+
       (ai.modelsErr?'<p class="sc-ai-model-note" role="alert">'+esc(ai.modelsErr)+' <button type="button" class="sc-ai-refresh" data-sc="ai-model-retry">Thử lại</button></p>':'<p class="sc-ai-model-note">Chọn mô hình hỗ trợ phân tích hình ảnh. '+(ai.modelsState==='ready'?'<button type="button" class="sc-ai-refresh" data-sc="ai-model-retry"'+(ai.busy?' disabled':'')+'>Làm mới</button>':'')+'</p>')+
       (n?'<div class="sc-ai-thumbs">'+thumbs+'</div>':'')+
@@ -10344,7 +10380,7 @@ window.TascoScene=(()=>{
     if(!ai.model){toast('Hãy chọn mô hình Antigravity trước khi phân tích.');return;}
     const ctl=new AbortController();ai.ctl=ctl;ai.busy=true;ai.modelsOpen=false;ai.err='';ai.res=null;paintAI();
     try{
-      const r=await window.TascoAsk.analyzeScene(ai.files.map(f=>f.file),{signal:ctl.signal,model:ai.model,limits:{terrain:M.LIM.terrain,scene:M.LIM.scene,traces:M.LIM.traces}});
+      const r=await window.TascoAsk.analyzeScene(ai.files.map(f=>f.file),{signal:ctl.signal,model:ai.model,diagramUrl:en.standalone?en.map?.imageDataUrl:'',limits:{terrain:M.LIM.terrain,scene:M.LIM.scene,traces:M.LIM.traces}});
       if(ctl.signal.aborted)return;
       ai.res=r;ai.sel={};ai.base={};AI_KEYS.forEach(([k])=>{const f=r.fields[k];if(f&&f.conf>=.6&&aiEmpty(en.data,k)){ai.sel[k]=true;ai.base[k]=String(en.data[k]??'');}});
     }catch(e){if(!ctl.signal.aborted)ai.err=(e&&e.message)||'Chưa phân tích được ảnh.';}
@@ -10370,6 +10406,7 @@ window.TascoScene=(()=>{
     const docs=M.DOCS.map(([k,l])=>tg('docs.'+k,l,d.docs[k])).join('');
     const docCount=M.DOCS.filter(([k])=>d.docs[k]).length,docsAll=docCount===M.DOCS.length&&docCount>0;
     return '<div class="sc-scene-step">'+sect('Hiện trường vụ tai nạn','Mục [1–11] của biểu mẫu '+esc(M.CODE),
+      (S.cur.standalone?'<section class="sc-t scmap-card"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+I.pin+'</span><b>Sơ đồ hiện trường</b></div><p>'+(S.cur.map?'Đã lưu sơ đồ. Bạn có thể mở lại để chỉnh sửa.':'Định vị và đánh dấu hướng di chuyển, vị trí dừng của các xe.')+'</p><button type="button" class="dt-btn" data-sc="scene-map">'+(S.cur.map?'Xem / chỉnh sửa sơ đồ':'Tạo sơ đồ trên bản đồ')+'</button></section>':'')+
       aiCard()+
       sceneTile('1','[1]','Tình trạng hiện trường',seg('sceneIntact'))+
       sceneTile('2','[2]','Nhiệt độ động cơ',seg('engineTemp'))+
@@ -10399,7 +10436,7 @@ window.TascoScene=(()=>{
       sceneTile('16','[16]','Ghi chú, lời khai lái xe & nhân chứng',area('notes',4)+chips('notes',true))+
       extra('proposal','Đề xuất khác',area('proposals',2)+chips('proposals',true))+
       extra('finish','Kết thúc biên bản',dtf('t','endTime','Giờ kết thúc')+
-        '<div class="sc-tgs">'+tg('includeDiagram','Kèm sơ đồ hiện trường (nếu đã vẽ trên webapp)',d.includeDiagram!==false)+'</div>'))+'</div>'+
+        '<div class="sc-tgs">'+tg('includeDiagram',S.cur.standalone?'Kèm sơ đồ hiện trường khi in':'Kèm sơ đồ hiện trường (nếu đã vẽ trên webapp)',d.includeDiagram!==false)+'</div>'))+'</div>'+
       '<div id="scReview"></div>';
   }
   function reviewHtml(){
@@ -10419,7 +10456,7 @@ window.TascoScene=(()=>{
   function paintEditor(state,k){
     const b=$('scBody');if(!b)return;
     const c=S.cur?.claim||(k&&api.claims()[k])||{};
-    const head='<div class="sc-bar"><button type="button" class="sc-back" data-sc="list" aria-label="Về danh sách hồ sơ">'+I.back+'</button><div class="sc-ttl"><b>'+esc(c.bienSo||(S.cur?'—':'Biên bản hiện trường'))+'</b><small>'+esc(c.soHoSoBoiThuong||'')+'</small></div><span class="sc-save" id="scSave" hidden></span><button type="button" class="sc-retry" id="scRetry" data-sc="resave" hidden>Thử lại</button></div>';
+    const head='<div class="sc-bar"><button type="button" class="sc-back" data-sc="list" aria-label="Về danh sách biên bản">'+I.back+'</button><div class="sc-ttl"><b>'+esc(S.cur?.standalone?(S.cur.data.plate||'Biên bản hiện trường'):(c.bienSo||(S.cur?'—':'Biên bản hiện trường')))+'</b><small>'+esc(S.cur?.standalone?'Biên bản độc lập':c.soHoSoBoiThuong||'')+'</small></div><span class="sc-save" id="scSave" hidden></span><button type="button" class="sc-retry" id="scRetry" data-sc="resave" hidden>Thử lại</button></div>';
     if(state==='loading'){b.innerHTML='<div class="sc-ed">'+head+'<div class="wk-load">Đang mở biên bản…</div><div class="dr-skel"><i></i><i></i><i></i></div></div>';return;}
     if(state==='error'){b.innerHTML='<div class="sc-ed">'+head+'<div class="dr-empty"><b>Chưa mở được</b>'+esc(S.err)+'<div class="dr-acts"><button type="button" class="dt-btn is-main" data-sc="open" data-k="'+esc(k)+'">Thử lại</button></div></div></div>';return;}
     if(!S.cur||!M)return;
@@ -10650,7 +10687,7 @@ window.TascoScene=(()=>{
   document.addEventListener('change',e=>{
     const t=e.target,p=t.dataset?.scF;if(!p||!S.cur||!t.closest('#scPane'))return;
   });
-  document.addEventListener('click',e=>{
+  document.addEventListener('click',async e=>{
     const pv=e.target.closest('.sc-pv [data-sc]');
     if(pv){const k=pv.dataset.sc;if(k==='pvclose')closePreview();else if(k==='pvprint')printPreview();else if(k==='word')sendWord(pv);return;}
     if(!inScene(e))return;
@@ -10671,13 +10708,19 @@ window.TascoScene=(()=>{
       b.classList.toggle('on',next);b.setAttribute('aria-pressed',String(next));const ds=b.closest('.sc-dspot');if(ds)ds.classList.toggle('on',next);commit();return;
     }
     const k=b.dataset.sc;
-    if(k==='add-person'&&en){
+    if(k==='standalone-new'){openStandalone('');}
+    else if(k==='standalone-open'){openStandalone(b.dataset.k);}
+    else if(k==='standalone-retry'){loadStandalone();}
+    else if(k==='add-person'&&en){
       const shown=en.extraPeople||(en.extraPeople=new Set()),people=en.data.participants;
       const index=people.findIndex((person,i)=>i>=2&&!personFilled(person)&&!shown.has(i));
       if(index>=0){shown.add(index);const before=[...b.parentElement.querySelectorAll('[data-person-index]')].find(el=>Number(el.dataset.personIndex)>index)||b;before.insertAdjacentHTML('beforebegin',participantHtml(people[index],index,en.data,true));if(!people.some((person,i)=>i>=2&&!personFilled(person)&&!shown.has(i)))b.remove();growAll();document.getElementById(fid('participants.'+index+'.name'))?.focus({preventScroll:true});}
     }
     else if(k==='clear-field'){const field=document.getElementById(fid(b.dataset.field));if(field&&en){if(sceneVoice?.field===b.dataset.field)cancelSceneVoice();field.value='';field.dispatchEvent(new Event('input',{bubbles:true}));}}
     else if(k==='voice'){toggleSceneVoice(b.dataset.field,b);}
+    else if(k==='scene-map'&&en&&en.standalone){
+      try{await window.TascoSceneMap.open(en.map,async map=>{en.map=map;markDirty(en);while(en.busy)await new Promise(resolve=>setTimeout(resolve,100));if(!await flush(en))throw Error('Chưa lưu được sơ đồ. Kiểm tra kết nối rồi thử lại.');paintEditor();});}catch(e){toast(e.message||'Chưa mở được bản đồ.');}
+    }
     else if(k==='ai-toggle'&&en){const ai=aiOf(en);ai.open=!ai.open;if(!ai.open)ai.modelsOpen=false;paintAI();document.querySelector('#scAI [data-sc="ai-toggle"]')?.focus({preventScroll:true});}
     else if(k==='ai-pick'){const f=document.getElementById('scAIFile');if(f){f.value='';f.click();}}
     else if(k==='ai-del'){aiDel(b.dataset.id);}
@@ -10736,9 +10779,9 @@ window.TascoScene=(()=>{
       return;
     }
     if(force||!b.querySelector('.sc-root')){b.innerHTML=listShell();}
-    paintList();
+    if(S.records===null&&!S.recordsBusy&&!S.recordsError)loadStandalone();else paintList();
   }
-  function reset(){cancelSceneVoice();ENT.forEach(en=>clearTimeout(en.t));ENT.clear();S.mode='list';S.cur=null;S.q='';S.n=PER;S.seq++;closePreview();closeTime();M=null;modelP=null;docxFn=null;}
+  function reset(){cancelSceneVoice();ENT.forEach(en=>clearTimeout(en.t));ENT.clear();S.mode='list';S.cur=null;S.q='';S.n=PER;S.seq++;S.records=null;S.recordsBusy=false;S.recordsError='';closePreview();closeTime();M=null;modelP=null;docxFn=null;}
   return {paint,reset,cancelVoice:cancelSceneVoice};
 })();
 </script>
