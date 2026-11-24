@@ -8160,7 +8160,7 @@ window.TascoAsk=(()=>{
     S.messages.push(um);
     S.draft='';clearAtt(true);S.busy=true;S.status=status;S.since=Date.now();S.ctl=new AbortController();
     const mine=++S.gen,forceDeep=S.deepOnce;S.deepOnce=false;
-    paintTop();paintThread();paintComposer(true);scrollBottom();startTick();
+    userScrolled=false;    paintTop();paintThread();paintComposer(true);scrollBottom();startTick();
     const reply=m=>{if(mine!==S.gen)return;S.messages.push(Object.assign({id:q.newId(),role:'assistant',sources:[],question:text,secs:elapsed()},m));};
     const usage={onUsage:u=>{S.usage=B.AI.addUsage(S.usage,u);paintUsage();},onWait:t=>paintStatus(t),resumeText:status};
     return {mine,forceDeep,reply,usage};
@@ -8481,7 +8481,21 @@ window.TascoAsk=(()=>{
   function paintUsage(){if(!live())return;const u=S.usage&&S.usage.calls?B.AI.formatTokens(S.usage.total)+' token':'',n=$('[data-ak-usage]');if(!n){if(u)paintTop();return;}n.textContent=u;n.hidden=!u;}
   function startTick(){stopTick();tick=setInterval(()=>{const n=$('[data-ak-secs]');if(n&&live())n.textContent=fmtSecs(elapsed());},1000);}
   function stopTick(){clearInterval(tick);tick=0;}
-  const scrollBottom=()=>{const el=$('[data-ak-busy]')||$('[data-ak-thread]');if(el&&live())requestAnimationFrame(()=>el.scrollIntoView({block:'center',behavior:'smooth'}));};
+  // Sau khi gửi: cuộn hẳn xuống cuối (khối "đang trả lời" nằm trên ô soạn), rồi cuộn lại lần nữa khi bàn phím/thanh dưới đã đổi chỗ xong.
+  const scrollBottom=()=>{
+    if(!live())return;
+    scrollToEnd(false);
+    // Vài giây đầu bố cục còn đổi (bàn phím hạ, thanh dưới hiện, khối "đang trả lời" nở ra): bám cuối trang cho tới khi ổn định, trừ khi người dùng tự cuộn.
+    clearInterval(stickTimer);const until=Date.now()+2600;
+    stickTimer=setInterval(()=>{
+      if(!live()||!onAsk()||userScrolled||Date.now()>until){clearInterval(stickTimer);stickTimer=0;return;}
+      const end=Math.max(0,document.documentElement.scrollHeight-innerHeight);
+      if(end-(window.scrollY||0)>2)window.scrollTo({top:end,left:0,behavior:'instant'});
+    },120);
+  };
+  let stickTimer=0;
+  let userScrolled=false;
+  window.addEventListener('touchmove',()=>{userScrolled=true;},{capture:true,passive:true});window.addEventListener('wheel',()=>{userScrolled=true;},{capture:true,passive:true});
   // Vào lại trang AI (hoặc đổi tab/mở cuộc khác): đưa thẳng tới cuối cuộc trò chuyện. Thử lại vài lần vì khung trang có thể tự cuộn lên đầu sau khi vẽ.
   // Nút nổi trên ô soạn: đang ở gần cuối → "Lên đầu"; còn xa cuối → "Xuống cuối". Chỉ hiện khi trang đủ dài để cuộn.
   let jumpRaf=0,jumpHideTimer=0;
