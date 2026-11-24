@@ -9599,6 +9599,10 @@ html.dark #askSection .ak-jump{box-shadow:0 5px 18px rgba(0,0,0,.4)}
 .sc-rename-dialog input:focus{outline:2px solid var(--app-teal);outline-offset:1px}
 .sc-rename-dialog .sc-rename-error{margin:8px 0 0;color:#b24b48;font-size:11px}
 .sc-rename-actions{display:flex;gap:8px;margin-top:14px}.sc-rename-actions button{flex:1;min-height:42px}
+#sceneSection .scmap-card-actions{display:flex;gap:8px}
+#sceneSection .scmap-card-actions .dt-btn{min-width:0;flex:1;width:auto}
+#sceneSection .scmap-card-actions .scmap-delete{flex:0 0 auto;padding-inline:13px;color:#a64b4b}
+.sc-rename-actions .sc-delete-confirm{background:#a64747;border-color:#a64747;color:#fff}
 .sc-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;background:var(--ws-soft,var(--ws-line));color:var(--ws-muted);font-size:11px;font-weight:700;white-space:nowrap}
 .sc-pill svg{width:12px;height:12px}
 .sc-pill.is-full{background:color-mix(in srgb,#2f8f6f 16%,var(--ws-bg));color:#2f8f6f}
@@ -10197,6 +10201,20 @@ window.TascoScene=(()=>{
       catch(_){error.textContent='Chưa lưu được tên. Kiểm tra kết nối rồi thử lại.';error.hidden=false;save.disabled=false;cancel.disabled=false;}
     });dialog.showModal();input.focus();input.select();
   }
+  function deleteSceneMap(en,trigger){
+    if(!en?.standalone||!en.map)return;
+    const dialog=document.createElement('dialog');dialog.className='sc-rename-dialog';dialog.setAttribute('aria-labelledby','scDeleteMapTitle');
+    dialog.innerHTML='<form><h3 id="scDeleteMapTitle">Xóa sơ đồ hiện trường?</h3><p>Sơ đồ và các vị trí xe đã đánh dấu sẽ được xóa khỏi biên bản này.</p><p class="sc-rename-error" role="alert" hidden></p><div class="sc-rename-actions"><button type="button" class="dt-btn" data-cancel>Giữ lại</button><button type="submit" class="dt-btn sc-delete-confirm">Xóa sơ đồ</button></div></form>';
+    document.body.appendChild(dialog);const form=dialog.querySelector('form'),cancel=dialog.querySelector('[data-cancel]'),remove=form.querySelector('[type=submit]'),error=dialog.querySelector('.sc-rename-error');
+    dialog.addEventListener('close',()=>{dialog.remove();const target=document.querySelector('#sceneSection [data-sc="scene-map"]')||trigger;if(target?.isConnected)target.focus({preventScroll:true});});
+    cancel.addEventListener('click',()=>dialog.close());dialog.addEventListener('cancel',e=>{if(remove.disabled)e.preventDefault();});
+    form.addEventListener('submit',async e=>{e.preventDefault();if(S.cur!==en||!en.map){dialog.close();return;}remove.disabled=true;cancel.disabled=true;error.hidden=true;
+      if(!await flush(en)){error.textContent='Chưa lưu được biên bản. Kiểm tra kết nối rồi thử lại.';error.hidden=false;remove.disabled=false;cancel.disabled=false;return;}
+      const previous=en.map;en.map=null;markDirty(en);
+      if(!await flush(en)){en.map=previous;markDirty(en);error.textContent='Chưa xóa được sơ đồ. Sơ đồ vẫn được giữ lại; hãy kiểm tra kết nối rồi thử lại.';error.hidden=false;remove.disabled=false;cancel.disabled=false;return;}
+      if(S.cur===en&&S.step===2)paintEditor();dialog.close();toast('Đã xóa sơ đồ hiện trường.');
+    });dialog.showModal();cancel.focus();
+  }
   async function openStandalone(id){
     const creating=!id;if(!creating&&(!/^sc[a-z0-9]{12,40}$/.test(id)||!S.records?.[id])){toast('Không tìm thấy biên bản.');return;}
     const seq=++S.seq;S.mode='edit';S.cur=null;S.step=1;paintEditor('loading');
@@ -10434,7 +10452,7 @@ window.TascoScene=(()=>{
     const docs=M.DOCS.map(([k,l])=>tg('docs.'+k,l,d.docs[k])).join('');
     const docCount=M.DOCS.filter(([k])=>d.docs[k]).length,docsAll=docCount===M.DOCS.length&&docCount>0;
     return '<div class="sc-scene-step">'+sect('Hiện trường vụ tai nạn','Mục [1–11] của biểu mẫu '+esc(M.CODE),
-      (S.cur.standalone?'<section class="sc-t scmap-card"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+I.pin+'</span><b>Sơ đồ hiện trường</b></div><p>'+(S.cur.map?'Đã lưu sơ đồ. Bạn có thể mở lại để chỉnh sửa.':'Định vị và đánh dấu hướng di chuyển, vị trí dừng của các xe.')+'</p><button type="button" class="dt-btn" data-sc="scene-map">'+(S.cur.map?'Xem / chỉnh sửa sơ đồ':'Tạo sơ đồ trên bản đồ')+'</button></section>':'')+
+      (S.cur.standalone?'<section class="sc-t scmap-card"><div class="sc-th"><span class="sc-scene-symbol" aria-hidden="true">'+I.pin+'</span><b>Sơ đồ hiện trường</b></div><p>'+(S.cur.map?'Đã lưu sơ đồ. Bạn có thể mở lại để chỉnh sửa.':'Định vị và đánh dấu hướng di chuyển, vị trí dừng của các xe.')+'</p><div class="scmap-card-actions"><button type="button" class="dt-btn" data-sc="scene-map">'+(S.cur.map?'Xem / chỉnh sửa sơ đồ':'Tạo sơ đồ trên bản đồ')+'</button>'+(S.cur.map?'<button type="button" class="dt-btn scmap-delete" data-sc="scene-map-delete">Xóa sơ đồ</button>':'')+'</div></section>':'')+
       aiCard()+
       sceneTile('1','[1]','Tình trạng hiện trường',seg('sceneIntact'))+
       sceneTile('2','[2]','Nhiệt độ động cơ',seg('engineTemp'))+
@@ -10750,6 +10768,7 @@ window.TascoScene=(()=>{
     else if(k==='scene-map'&&en&&en.standalone){
       try{await window.TascoSceneMap.open(en.map,async map=>{en.map=map;markDirty(en);while(en.busy)await new Promise(resolve=>setTimeout(resolve,100));if(!await flush(en))throw Error('Chưa lưu được sơ đồ. Kiểm tra kết nối rồi thử lại.');paintEditor();});}catch(e){toast(e.message||'Chưa mở được bản đồ.');}
     }
+    else if(k==='scene-map-delete'&&en){deleteSceneMap(en,b);}
     else if(k==='ai-toggle'&&en){const ai=aiOf(en);ai.open=!ai.open;if(!ai.open)ai.modelsOpen=false;paintAI();document.querySelector('#scAI [data-sc="ai-toggle"]')?.focus({preventScroll:true});}
     else if(k==='ai-pick'){const f=document.getElementById('scAIFile');if(f){f.value='';f.click();}}
     else if(k==='ai-del'){aiDel(b.dataset.id);}
