@@ -38,10 +38,12 @@ function fixture({rows = [], rowsWithoutYear = rows, rpcRows = () => rows, table
                 return {abortSignal: async () => ({data: {rows:rpcRows(args),total:null}, error: rpcError, status})};
             },
             from(table) { calls.push(['from',table]); return query; }
-        }, AbortController, DOMException, setTimeout, clearTimeout, Intl
+        }, AbortController, AbortSignal, DOMException, setTimeout, clearTimeout, Intl
     });
     vm.runInContext(section('        window.parseDateForSort = function(value) {','        window.toggleExactPartName'), context);
-    vm.runInContext(section('        window.TascoSmartSearch = (() => {','            function apply(r) {')+'return {parse};})();', context);
+    const parser = section('        window.TascoSmartSearch = (() => {','            function apply(r) {');
+    const ground = section('            function ground(ai, local, cat) {','            function describe(r)');
+    vm.runInContext(parser+ground+'return {parse,ground,vehicleCatalog:()=>({brands:catalog()||[]})};})();', context);
     vm.runInContext(section('        window.TascoPriceAssistant = (() => {','        function getPriceSignalBadge'), context);
     return {bridge: context.window.TascoPriceAssistant, calls};
 }
@@ -80,7 +82,7 @@ test('kho chưa có khóa chuẩn hóa thì dùng API cũ với đủ bộ lọc
     const out = await f.bridge.search('cản trước hrv 2025 chính hãng giá bao nhiêu');
     assert.match(out,/Không tìm thấy báo giá/);
     assert.doesNotMatch(out,/1\.200\.000 VNĐ/);
-    const [,name,args] = f.calls.find(([method])=>method==='rpc');
+    const [,name,args] = f.calls.find(([method,,args])=>method==='rpc'&&args.p_exact);
     assert.equal(name,'tasco_search_parts_page_v4');
     assert.equal(args.p_kind,'genuine');
     assert.equal(args.p_exact,true);
@@ -220,4 +222,34 @@ test('short VF3 query and bare side follow-up both search the warehouse', async 
         assert.equal(args.p_hieus.join(),'VF 3 PLUS');
         assert.equal(args.p_nams.join(),'2025');
     }
+});
+
+test('semantic plan routes a paraphrase with no supported keyword, using context and only warehouse prices', async () => {
+    const row={...quote,ten_phu_tung:'Gương chiếu hậu trái',hang_xe:'HYUNDAI',hieu_xe:'I10',gia_duyet:1870000};
+    const f=fixture({rows:[row,{...row,ten_phu_tung:'Kính chiếu hậu phải',gia_duyet:999000}]});
+    const question='Cái để nhìn phía sau ở phía tài xế của con đó thì bao nhiêu?';
+    const previous={owner:'owner',brand:'HYUNDAI',models:['I10'],years:[2025],part:'Đèn hậu trái',kind:'all'};
+    assert.equal(f.bridge.isPriceQuestion(question,previous),false);
+    const intent=await f.bridge.plan(question,[{role:'user',text:'Đèn hậu i10 2025'}],previous,async request=>{
+        const input=JSON.parse(request.contents[0].parts[0].text);
+        assert.equal(input.question,question);
+        assert.equal(input.vehicle.models[0],'I10');
+        return JSON.stringify({route:'warehouse',brand:'Hyundai',model:'i10',years:[2025],kind:'all',
+            items:[{name:'Kính chiếu hậu trái',aliases:['Gương chiếu hậu trái','Kính chiếu hậu phải'],price:5000}]});
+    });
+    const out=await f.bridge.search(question,undefined,previous,undefined,intent);
+    assert.match(out,/Gương chiếu hậu trái — 1\.870\.000 VNĐ/);
+    assert.doesNotMatch(out,/999\.000|5\.000 VNĐ/);
+    assert.equal(await f.bridge.plan('Cách tháo đèn hậu i10?',[],previous,async()=> '{"route":"other"}'),null);
+});
+
+test('a warehouse statement timeout tries the lookup RPC with the same i10 and year', async () => {
+    const row={...quote,ten_phu_tung:'Đèn hậu trái',hang_xe:'HYUNDAI',hieu_xe:'I10'};
+    const f=fixture({tableError:{code:'57014'},status:504,rpcRows:()=>[row]});
+    const out=await f.bridge.search('Đèn hậu i10 2025');
+    assert.match(out,/Đèn hậu trái — 1\.200\.000 VNĐ/);
+    const calls=f.calls.filter(([method])=>method==='rpc');
+    assert.equal(calls.length,1);
+    assert.equal(calls[0][2].p_hieus.join(),'I10');
+    assert.equal(calls[0][2].p_nams.join(),'2025');
 });
