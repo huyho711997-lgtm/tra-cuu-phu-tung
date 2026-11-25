@@ -15,7 +15,7 @@ const quote = {ten_phu_tung:'Cản trước', hang_xe:'HONDA', hieu_xe:'HR-V', n
     gia_duyet:1200000, chinh_hang:'Chính hãng', ngay_bao_gia:'2026-10-15'};
 const question = 'cản trước hrv 2025 giá bao nhiêu';
 
-function fixture({rows = [], rowsWithoutYear = rows, tableError = null, rpcError = null, status = 200, catalogYears = [2025]} = {}) {
+function fixture({rows = [], rowsWithoutYear = rows, rpcRows = () => rows, tableError = null, rpcError = null, status = 200, catalogYears = [2025]} = {}) {
     const calls = [];
     const query = {};
     let hasYear = false;
@@ -35,7 +35,7 @@ function fixture({rows = [], rowsWithoutYear = rows, tableError = null, rpcError
         supabase: {
             rpc(name,args) {
                 calls.push(['rpc',name,args]);
-                return {abortSignal: async () => ({data: {rows,total:null}, error: rpcError, status})};
+                return {abortSignal: async () => ({data: {rows:rpcRows(args),total:null}, error: rpcError, status})};
             },
             from(table) { calls.push(['from',table]); return query; }
         }, AbortController, DOMException, setTimeout, clearTimeout, Intl
@@ -192,4 +192,32 @@ test('a recognized VF model missing from the catalog does not query other vehicl
     const f = fixture({rows: [quote]});
     assert.match(await f.bridge.search('giá cản trước vf 9'), /VinFast VF9.*danh mục/);
     assert.deepEqual(f.calls, []);
+});
+
+test('short VF3 query and bare side follow-up both search the warehouse', async () => {
+    const left={...quote,ten_phu_tung:'Đèn pha trái',hang_xe:'VINFAST',hieu_xe:'VF 3 PLUS',gia_duyet:2541000};
+    const right={...left,ten_phu_tung:'Đèn pha phải',gia_duyet:2700000};
+    const trim={...left,ten_phu_tung:'Ốp đèn pha trái',gia_duyet:999000};
+    const f=fixture({rpcRows:args=>args.p_exact?[]:[left,right,trim]});
+    const question='Đèn pha VF3 2025';
+    assert.equal(f.bridge.isPriceQuestion(question),true);
+    assert.equal(f.bridge.isPriceQuestion('Cách thay đèn pha VF3 2025'),false);
+    let previous;
+    const both=await f.bridge.search(question,undefined,undefined,value=>{previous=value;});
+    assert.match(both,/Đèn pha trái — 2\.541\.000 VNĐ/);
+    assert.match(both,/Đèn pha phải — 2\.700\.000 VNĐ/);
+    assert.doesNotMatch(both,/999\.000/);
+    for(const context of [previous,f.bridge.contextFromQuestion(question)]){
+        assert.equal(f.bridge.isPriceQuestion('Đèn pha trái',context),true);
+        const single=await f.bridge.search('Đèn pha trái',undefined,context);
+        assert.match(single,/Đèn pha trái — 2\.541\.000 VNĐ/);
+        assert.doesNotMatch(single,/Đèn pha phải|999\.000/);
+    }
+    const calls=f.calls.filter(([method,,args])=>method==='rpc'&&!args.p_exact);
+    assert.ok(calls.length);
+    for(const [,,args] of calls){
+        assert.equal(args.p_hang,'VINFAST');
+        assert.equal(args.p_hieus.join(),'VF 3 PLUS');
+        assert.equal(args.p_nams.join(),'2025');
+    }
 });
