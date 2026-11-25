@@ -8265,11 +8265,15 @@ window.TascoAsk=(()=>{
     finish(mine);
   }
   async function answerPriceQuestion(question){
-    const bridge=window.TascoPriceAssistant;if(!bridge||!bridge.isPriceQuestion(question))return false;
+    const bridge=window.TascoPriceAssistant;
+    const previous=S.messages.at(-1)?.priceContext;
+    if(!bridge||!bridge.isPriceQuestion(question,previous))return false;
     const ctx=begin(question,'Đang tra kho giá phụ tùng…',[]),mine=ctx.mine;
     try{
-      const result=await bridge.search(question,S.ctl.signal);if(mine!==S.gen)return true;
-      ctx.reply({text:result,free:true,priceLookup:true});
+      let priceContext;
+      const result=await bridge.search(question,S.ctl.signal,previous,value=>{priceContext=value;});
+      if(mine!==S.gen)return true;
+      ctx.reply({text:result,free:true,priceLookup:true,priceContext});
     }catch(error){if(mine===S.gen)failure(ctx,error,{free:true,priceLookup:true});}
     finish(mine);return true;
   }
@@ -13265,7 +13269,7 @@ window.searchData = async function(opts) {
             const $ = id => document.getElementById(id);
             const fold = v => String(v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
             const compact = v => fold(v).replace(/ /g, '');
-            const BRAND_ALIAS = { mec: 'mercedesbenz', merc: 'mercedesbenz', mercedes: 'mercedesbenz', vin: 'vinfast', huyndai: 'hyundai', mitsu: 'mitsubishi', chevy: 'chevrolet' };
+            const BRAND_ALIAS = { vinsfast: 'vinfast', vinfas: 'vinfast', vinfat: 'vinfast', mec: 'mercedesbenz', merc: 'mercedesbenz', mercedes: 'mercedesbenz', vin: 'vinfast', huyndai: 'hyundai', mitsu: 'mitsubishi', chevy: 'chevrolet' };
             // Cụm gây nhiễu luôn bỏ; từ nối chỉ bỏ khi đứng cạnh thông tin xe/năm để không làm hỏng tên phụ tùng ("giá đỡ", "xe nâng"…).
             const NOISE = ['tra cuu', 'tim kiem', 'tim giup', 'tim', 'cho toi', 'giup toi', 'giup minh', 'cho minh', 'gia bao nhieu', 'bao nhieu tien', 'la bao nhieu', 'bao nhieu', 'bao gia', 'gia ca', 'gia tien', 'vui long', 'giup', 'nhe', 'nha', 'phu tung', 'hay'].map(p => p.split(' '));
             const ADJ = new Set(['xe', 'doi', 'nam', 'dong', 'hang', 'loai', 'cua', 'cho', 'la', 'san', 'xuat']);
@@ -13282,6 +13286,11 @@ window.searchData = async function(opts) {
                 words.forEach(w => { acc += w; keys.push(acc); });
                 return keys;
             }
+            const modelAliases = new Map([
+                ['veepba', 'vf3'], ['veep3', 'vf3'], ['vfba', 'vf3'],
+                ['corove', 'crv'], ['viot', 'vios']
+            ]);
+            const vinfastModel = /^vf(?:3|5|6|7|8|9|e34)$/;
             function matchSeq(f, i, seq) { return seq.every((w, k) => f[i + k] === w); }
 
             function parse(text) {
@@ -13309,15 +13318,24 @@ window.searchData = async function(opts) {
                     if (hit && t.length >= 2) { brand = hit; take(i, n); }
                 }
                 // 3) dòng xe (n-gram 3→1 từ), ưu tiên cụm dài nhất
-                let models = [], modelQuery = '', modelBrands = new Set();
-                const pool = brand ? [brand] : cat;
+                let models = [], modelQuery = '', modelBrands = new Set(), unresolvedModel = '';
                 outer: for (let n = 3; n >= 1; n--) for (let i = 0; i + n <= f.length; i++) {
                     if (gone.slice(i, i + n).some(Boolean)) continue;
-                    const t = f.slice(i, i + n).join('').replace(/ /g,'');
+                    const tokenKey = f.slice(i, i + n).join('').replace(/ /g,'');
+                    const t = modelAliases.get(tokenKey) || tokenKey;
                     if (t.length < 2 || (!brand && (t.length < 3 || /^\d+$/.test(t)))) continue;
+                    const isVinfast = vinfastModel.test(t);
+                    const pool = isVinfast ? cat.filter(b => b.key === 'vinfast' && (!brand || brand === b)) : brand ? [brand] : cat;
                     const found = [];
                     pool.forEach(b => b.models.forEach(m => { if (modelKeys(m).includes(t)) found.push({ brand: b, model: m }); }));
-                    if (!found.length) continue;
+                    if (!found.length) {
+                        if (!isVinfast) continue;
+                        const vinfast = cat.find(b => b.key === 'vinfast');
+                        if (!brand) brand = vinfast || null;
+                        unresolvedModel = t.toUpperCase();
+                        take(i, n);
+                        break outer;
+                    }
                     found.forEach(x => modelBrands.add(x.brand.name));
                     models = found;
                     modelQuery = tokens.slice(i,i+n).join(' ').replace(/[,;:]+$/,'');
@@ -13331,7 +13349,14 @@ window.searchData = async function(opts) {
                 // 4) năm: "2025", "2022-2024", "từ 2020 đến 2023"
                 const years = new Set(), validYear = y => y >= 1990 && y <= 2100;
                 for (let i = 0; i < f.length; i++) {
-                    if (gone[i] || !/^(19|20)\d\d$/.test(f[i])) continue;
+                    if (gone[i]) continue;
+                    if (/^\d{2}$/.test(f[i]) && ['doi', 'nam'].includes(f[i - 1])) {
+                        const short = Number(f[i]);
+                        years.add(short >= 90 ? 1900 + short : 2000 + short);
+                        take(i, 1);
+                        continue;
+                    }
+                    if (!/^(19|20)\d\d$/.test(f[i])) continue;
                     const y1 = Number(f[i]);
                     if (!validYear(y1)) continue;
                     let j = i + 1;
@@ -13366,14 +13391,14 @@ window.searchData = async function(opts) {
                     }
                 }
                 const part = tokens.filter((_, i) => !gone[i]).join(' ').replace(/^[\s,.;:–-]+|[\s,.;:–-]+$/g, '').trim();
-                const found = !!(brand || modelNames.length || yearList.length || skippedYears.length || kind !== 'all');
+                const found = !!(brand || modelNames.length || unresolvedModel || yearList.length || skippedYears.length || kind !== 'all');
                 const heard = [];
                 if (part) heard.push(part);
                 if (brand) heard.push(brand.name);
                 if (modelNames.length) heard.push(modelNames.length === 1 ? modelNames[0] : modelNames[0] + ' +' + (modelNames.length - 1) + ' đời');
                 if (yearList.length) heard.push(yearList.length === 1 ? String(yearList[0]) : yearList[0] + '–' + yearList[yearList.length - 1]);
                 if (kind !== 'all') heard.push(kind === 'genuine' ? 'Chính hãng' : 'Không chính hãng');
-                return { found, part, brand: brand ? brand.name : '', models: modelNames, modelQuery, years: yearList, skippedYears, kind, heard };
+                return { found, part, brand: brand ? brand.name : '', models: modelNames, modelQuery, unresolvedModel, years: yearList, skippedYears, kind, heard };
             }
 
             function apply(r) {
@@ -13719,7 +13744,7 @@ window.searchData = async function(opts) {
                 // Bộ tách trên máy đã nhận đủ hãng + dòng xe + phụ tùng -> không cần hỏi AI (tiết kiệm ~5s và hạn mức).
                 // Còn số 2 hoặc 4 chữ số lẻ loi trong tên phụ tùng ("cản trước 25") = năm viết tắt chưa hiểu -> để AI xử lý.
                 const confident = !!(local && local.found && !local.ambiguousBrands && local.brand && local.models && local.models.length && local.part && !/(^|\s)(\d{2}|\d{4})(\s|$)/.test(local.part));
-                const useAi = !confident && !!cat && Date.now() > aiOffUntil && navigator.onLine !== false && (words >= 3 || (local && local.found) || (spoken && words >= 2));
+                const useAi = !confident && !local?.unresolvedModel && !local?.ambiguousBrands && !!cat && Date.now() > aiOffUntil && navigator.onLine !== false && (words >= 3 || (local && local.found) || (spoken && words >= 2));
                 if (window.TascoAiSearch && window.TascoAiSearch.clearOffer) window.TascoAiSearch.clearOffer();
                 hideAsk();
                 let r = local && local.found ? { ...local } : null, byAi = false;
@@ -13727,7 +13752,7 @@ window.searchData = async function(opts) {
                 if (useAi) {
                     busy = true; const mySeq = ++intentSeq;
                     setNote('AI đang hiểu câu của bạn…');
-                    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 3000);
+                    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 6500);
                     try {
                         const ai = await callIntent(raw, cat.map(b => b.name), ctl.signal, intentCatalog(cat));
                         if (mySeq !== intentSeq) return;
@@ -13747,6 +13772,7 @@ window.searchData = async function(opts) {
                         console.warn('AI intent lỗi, dùng bộ tách trên máy', e && e.message);
                     } finally { clearTimeout(timer); busy = false; setNote(''); }
                 }
+                if ($('searchInput').value.trim().replace(/\s+/g, ' ') !== raw) return;
                 // Nói/gõ mà chưa có thông tin xe: hỏi lại người dùng chọn (hoặc tra luôn nếu bộ lọc đã đủ).
                 if ((!r || !r.found) && spoken && cat && raw) return startAsk({ raw });
                 if (!r || !r.found) return window.searchData();
@@ -13755,9 +13781,18 @@ window.searchData = async function(opts) {
                     setNote('Dòng xe này có ở nhiều hãng (' + r.ambiguousBrands.join(', ') + '). Hãy ghi rõ hãng, ví dụ “… Honda CR-V”.');
                     return;
                 }
+                if (local?.unresolvedModel) {
+                    setNote('Đã nhận diện ' + local.unresolvedModel + ' của VinFast. Chưa xác định được dòng xe tương ứng trong kho.');
+                    return;
+                }
+                if (r.skippedYears?.length && !r.years.length) {
+                    setNote('Chưa có dữ liệu cho năm ' + r.skippedYears.join(', ') + '. Hãy chọn năm khác để tra cứu.');
+                    return;
+                }
+                if (r.models.length && r.models.some(model => !selectedHieuList.includes(model))) selectedNamList = [];
                 apply(r);
                 const noteParts = [];
-                if (r.skippedYears && r.skippedYears.length) noteParts.push('Chưa có dữ liệu năm ' + r.skippedYears.join(', ') + ' nên bỏ qua bộ lọc năm.');
+                if (r.skippedYears?.length) noteParts.push('Chưa có dữ liệu năm ' + r.skippedYears.join(', ') + '.');
                 if (!r.part) { noteParts.push('Đã chọn xe theo câu của bạn — nhập thêm tên phụ tùng để tra cứu.'); setNote(noteParts.join(' ')); $('searchInput').focus(); return; }
                 setNote(noteParts.join(' '));
                 const heard = r.heard && r.heard.length ? r.heard : describe(r);
@@ -13766,7 +13801,7 @@ window.searchData = async function(opts) {
                   if (spoken && cat && nextStep(makeAsk(ao))) return startAsk(ao); }
                 // Tra cứu ngay; AI gom tên tương đương chạy nền và gợi ý "Xem & chọn" khi xong.
                 const run = window.searchData();
-                if (r.brand && r.models.length) window.TascoAiSearch.prefetch({ heard, ai: byAi });
+                if (r.brand && r.models.length) window.TascoAiSearch?.prefetch({ heard, ai: byAi });
                 return run;
             }
             function vehicleCatalog() {
@@ -13783,7 +13818,24 @@ window.searchData = async function(opts) {
                 apply({brand:brand.name,models,years:[year],kind:'all',part:parsed?parsed.part:raw});
                 $('searchInput').dispatchEvent(new Event('input',{bubbles:true}));
             }
-            return { parse, search, vocabulary, ground, hideAsk, vehicleCatalog, applyVehicle, intentCatalog: () => { const c = catalog(); return c ? intentCatalog(c) : {}; } };
+            async function interpret(text, signal) {
+                const local = parse(text);
+                const cat = catalog();
+                if (!cat || local?.ambiguousBrands || local?.unresolvedModel || (local?.brand && local.models.length)
+                    || Date.now() < aiOffUntil || navigator.onLine === false || text.length > 300) return local;
+                const deadline = AbortSignal.timeout(6500);
+                try {
+                    const ai = await callIntent(text, cat.map(b => b.name), signal ? AbortSignal.any([signal, deadline]) : deadline, intentCatalog(cat));
+                    const result = ground(ai, local, cat);
+                    if (result.ambiguousBrands) return result;
+                    if (!result.brand || !result.models.length || (local?.brand && result.brand !== local.brand)) return local;
+                    return result;
+                } catch (error) {
+                    if (signal?.aborted) throw error;
+                    return local;
+                }
+            }
+            return { parse, search, vocabulary, interpret, ground, hideAsk, vehicleCatalog, applyVehicle, intentCatalog: () => { const c = catalog(); return c ? intentCatalog(c) : {}; } };
         })();
 
 
@@ -13796,15 +13848,26 @@ window.searchData = async function(opts) {
             const vehicleKey = value => String(value).trim().replace(/\s+/g,' ').toUpperCase();
             const partKey = value => String(value ?? '').normalize('NFC').trim().toLowerCase().replace(/\s+/g,' ');
             function partNames(part){
-                const exact=partKey(part);
+                const original=partKey(part);
+                const folded=foldQuestion(original);
+                const common=[
+                    [/^(?:can|cang|ba do so[ck]|badosoc) (truoc|sau)$/,m=>'cản '+(m[1]==='truoc'?'trước':'sau')],
+                    [/^den (pha|hau)(?: (?:ben )?(trai|phai))?$/,m=>'đèn '+(m[1]==='pha'?'pha':'hậu')+(m[2]?' '+(m[2]==='trai'?'trái':'phải'):'')],
+                    [/^guong chieu hau(?: (?:ben )?(trai|phai))?$/,m=>'gương chiếu hậu'+(m[1]?' '+(m[1]==='trai'?'trái':'phải'):'')]
+                ];
+                let exact=original;
+                for(const [pattern,canonical] of common){
+                    const match=folded.match(pattern);
+                    if(match){exact=canonical(match);break;}
+                }
                 const side=exact.match(/^(.*?)(?: bên)? (trái|phải)$/u);
-                if(side&&side[1])return [...new Set([exact,side[1]+' '+side[2],side[1]+' bên '+side[2]])];
+                if(side&&side[1])return [...new Set([original,exact,side[1]+' '+side[2],side[1]+' bên '+side[2]])];
                 const bumper=exact.match(/^(?:(?:cụm |bộ )?cản|cảng|ba đờ sóc|ba đờ sốc|badosoc) (trước|sau)$/u);
-                if(bumper)return [...new Set([exact,...['cản','cụm cản','bộ cản','ba đờ sóc','ba đờ sốc','badosoc'].map(name=>name+' '+bumper[1])])];
+                if(bumper)return [...new Set([original,exact,...['cản','cụm cản','bộ cản','ba đờ sóc','ba đờ sốc','badosoc'].map(name=>name+' '+bumper[1])])];
                 if(/^(?:cụm )?két nước(?: làm mát(?: động cơ)?)?$/u.test(exact)){
                     return [...new Set([exact,'két nước','cụm két nước','két nước làm mát','két nước làm mát động cơ'])];
                 }
-                return [exact];
+                return [...new Set([original,exact])];
             }
             const money = new Intl.NumberFormat('vi-VN');
             const dateFormat = new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'UTC'});
@@ -13844,20 +13907,51 @@ window.searchData = async function(opts) {
                 if(error.code==='57014'||status===504)return new Error('Kho giá phản hồi quá lâu. Hãy thử lại.');
                 return new Error('Chưa đọc được kho giá. Hãy thử lại sau ít phút.');
             }
-            function parseQuestion(question){
+            const foldQuestion = value => value.normalize('NFD').replace(/\p{M}/gu, '').replace(/[đĐ]/g,'d').toLowerCase();
+            function questionType(value,previous){
+                const folded=foldQuestion(value);
+                if(previous?.owner!==auth.currentUser?.uid)previous=null;
+                const follow=!!previous && /^(?:con|the con|the)\s+.+(?:thi sao|bao nhieu|\?)\s*\??$/u.test(folded);
+                const price=/(?:^|\s)(?:gia(?!\s+do\b)\b|bao\s+nhieu\s+tien|bao\s+gia|kho\s+gia)/u.test(folded);
+                const warehouse=/\b(?:kho gia|phu tung|can (?:truoc|sau)|den (?:pha|hau)|guong chieu hau|vf[ -]?(?:3|5|6|7|8|9|e34))\b/u.test(folded);
+                const parsed=(price||follow)?window.TascoSmartSearch?.parse(value):null;
+                const followPart=/\b(?:can|den|guong|kinh|cop|nap|ket nuoc|lop|ben trai|ben phai|trai|phai|chinh hang|zin|hang ngoai|nam|doi)\b/u.test(folded);
+                return Boolean(quickQuoteIntent.test(value)||(price&&(warehouse||parsed?.brand||parsed?.ambiguousBrands?.length))
+                    || (follow&&(price||followPart||parsed?.brand||parsed?.unresolvedModel||/\b(?:19|20)\d{2}\b/u.test(folded))));
+            }
+            async function parseQuestion(question,previous,signal){
                 const value=String(question||'').trim();
-                if(!/(?:^|\s)(?:giá(?!\s+đỡ(?=\s|$|[?:,.]))(?=\s|$|[?:,.])|bao\s+nhiêu\s+tiền|báo\s+giá|kho\s+giá)/iu.test(value))return null;
+                const follow=!!previous && /^(?:con|the con|the)\s+/u.test(foldQuestion(value));
                 const quick=quickQuoteIntent.test(value);
                 const input=value.replace(/^\s*(?:[-•]\s+|\d+[.)]\s+)/gm,'')
                     .replace(/\s*\r?\n\s*/g,'; ').replace(/([,;]|\d{4}:)(?=\S)/g,'$1 ');
-                const request=(quick?input.replace(quickQuoteIntent,' '):input)
+                const request=(follow?input.replace(/^(?:thế còn|thế con|the con|còn|con|thế|the)\s+/iu,'').replace(/\s+(?:thì sao|thi sao)[?\s]*$/iu,''):quick?input.replace(quickQuoteIntent,' '):input)
                     .replace(/^\s*(?:(?:lập|tạo|làm)\s+)?(?:báo\s+giá\s+)?(?:giúp\s+|cho\s+)?(?:tôi|mình)?\s*(?:một|1)?\s*(?:cho\s+)?/iu,'');
-                const parsed=window.TascoSmartSearch?.parse(request);
-                if(!parsed)return quick||/kho\s+giá/iu.test(value)?{quick}:null;
-                if(!quick&&!parsed.brand&&!/(?:kho\s+giá|phụ\s+tùng|cản\s+(?:trước|sau)|đèn\s+(?:pha|hậu)|gương\s+chiếu\s+hậu)/iu.test(value))return null;
-                const part=String(parsed.part||'').replace(/^(?:giá\s+(?!đỡ(?=\s|$|[?:,.]))|kho\s+giá\s*)/iu,'').trim()
+                const smart=window.TascoSmartSearch;
+                if (smart?.vehicleCatalog && !smart.vehicleCatalog().brands.length) await loadFilters();
+                if (signal?.aborted) throw new DOMException('Đã huỷ','AbortError');
+                const local=smart?.parse(request);
+                const parsed=(!quick&&!follow&&smart?.interpret)?await smart.interpret(request,signal):local;
+                if(!parsed)return {quick};
+                if(parsed.ambiguousBrands?.length||parsed.unresolvedModel)return parsed;
+                const vehicleChanged=follow && !!parsed.brand;
+                if(follow && !vehicleChanged && previous.owner===auth.currentUser?.uid){
+                    const available=smart.vehicleCatalog?.().brands.find(b=>b.name===previous.brand);
+                    if(!smart.vehicleCatalog||previous.models.every(model=>available?.models.includes(model))){
+                        parsed.brand=previous.brand;
+                        parsed.models=previous.models;
+                        if(!parsed.years.length&&!parsed.skippedYears.length)parsed.years=previous.years;
+                        if(parsed.kind==='all')parsed.kind=previous.kind;
+                    }
+                }
+                let part=String(parsed.part||'').replace(/^(?:gi[aá]\s+(?![đd][ỡo](?=\s|$|[?:,.]))|kho\s+gi[aá]\s*)/iu,'').trim()
                     .replace(/(trái|phải)\s*[/–-]\s*(trái|phải)/giu,'$1, $2')
                     .replace(/\s+(?:cả\s+)?hai\s+bên(?=\s*(?:[,;]|$))/giu,' bên trái, phải');
+                if(follow&&previous.owner===auth.currentUser?.uid){
+                    const side=foldQuestion(part).match(/^(?:ben )?(trai|phai)[?\s]*$/u);
+                    if(side)part=previous.part.replace(/\s+(?:bên\s+)?(?:trái|phải)$/iu,'')+' '+(side[1]==='trai'?'trái':'phải');
+                    else if(!part||/^[?\s]+$/u.test(part))part=previous.part;
+                }
                 const parts=new Map();
                 let sideBase='';
                 for(const entry of part.split(/[,;]+|\s+và\s+/iu)){
@@ -13886,9 +13980,9 @@ window.searchData = async function(opts) {
                 return '**Bảng báo giá nhanh**\n'+vehicle.map(cell).join(' · ')+'\n\n'
                     +'| Hạng mục | Đơn giá (VNĐ) | Phiên bản · Loại hàng · Ngày |\n| --- | --- | --- |\n'+table+'\n\n'+summary;
             }
-            async function search(question,signal){
-                const parsed=parseQuestion(question);
-                if(!parsed)return 'Tôi chưa xác định được thông tin cần tra trong kho giá.';
+            async function search(question,signal,previous,onContext){
+                const parsed=await parseQuestion(question,previous,signal);
+                if(parsed.unresolvedModel)return 'Đã nhận diện **VinFast '+parsed.unresolvedModel+'**. Chưa xác định được dòng xe tương ứng trong danh mục kho giá.';
                 if(parsed.ambiguousBrands?.length)return 'Có nhiều hãng xe phù hợp. Hãy cho biết rõ hãng, dòng xe và tên phụ tùng cần tra.';
                 const parts=parsed.parts||[];
                 const years=[...new Set([...(parsed.years||[]),...(parsed.skippedYears||[])])].filter(Number.isInteger).sort((a,b)=>a-b);
@@ -13903,6 +13997,7 @@ window.searchData = async function(opts) {
                     p_exact:true,p_kind:parsed.kind||'all',
                     p_offset:0,p_page_size:quoteLimit+1,p_include_total:false
                 };
+                if(!parsed.quick)onContext?.({owner,brand:params.p_hang,models:params.p_hieus,years:params.p_nams,kind:params.p_kind,part:parts[0]});
                 const timeout=new AbortController(),abort=()=>timeout.abort(),timer=setTimeout(abort,30000);
                 signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
                 function checkActive(){
@@ -13979,7 +14074,7 @@ window.searchData = async function(opts) {
                 }catch(error){if(signal?.aborted)throw error;if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');throw error;}
                 finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
             }
-            return {isPriceQuestion:question=>!!parseQuestion(question),search};
+            return {isPriceQuestion:(question,previous)=>questionType(String(question||'').trim(),previous),search};
         })();
 
         function getPriceSignalBadge(item) {

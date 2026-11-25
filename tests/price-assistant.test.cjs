@@ -10,7 +10,7 @@ function section(start, end) {
     return html.slice(a, b);
 }
 
-const catalog = {HONDA: {'HR-V': {}, 'CR-V': {}},VINFAST: {'VF5 PLUS': {}},HYUNDAI: {I10: {}}};
+const catalog = {HONDA: {'HR-V': {}, 'CR-V': {}},VINFAST: {'VF5 PLUS': {}, 'VF 3 PLUS': {}},HYUNDAI: {I10: {}}};
 const quote = {ten_phu_tung:'Cản trước', hang_xe:'HONDA', hieu_xe:'HR-V', nam_sx:2025,
     gia_duyet:1200000, chinh_hang:'Chính hãng', ngay_bao_gia:'2026-10-15'};
 const question = 'cản trước hrv 2025 giá bao nhiêu';
@@ -166,4 +166,30 @@ test('bảng báo giá hỗ trợ danh sách xuống dòng và yêu cầu một 
     const out=await f.bridge.search(prompt+' 2025:\n1. Cản trước\n2. Đèn pha trái');
     assert.match(out,/\| Cản trước \| 1\.200\.000 \|/);
     assert.match(out,/\| Đèn pha trái \| Chưa có giá \|/);
+});
+
+test('VF3 without a brand uses the VinFast warehouse entry and understands a short year', async () => {
+    const f = fixture({rows: [{...quote, hang_xe:'VINFAST', hieu_xe:'VF 3 PLUS'}]});
+    const request = 'can truoc vf-3 doi 25 gia bao nhieu';
+    assert.equal(f.bridge.isPriceQuestion(request), true);
+    assert.match(await f.bridge.search(request), /1\.200\.000 VNĐ/);
+    assert.ok(f.calls.some(([method,key,value])=>method==='eq'&&key==='_kgpt_ai_brand_key'&&value==='VINFAST'));
+    assert.ok(f.calls.some(([method,key,value])=>method==='in'&&key==='_kgpt_ai_model_key'&&value.join() === 'VF 3 PLUS'));
+    assert.ok(f.calls.some(([method,key,value])=>method==='in'&&key==='nam_sx'&&value.join() === '2025'));
+});
+
+test('a warehouse follow-up keeps the vehicle and changes the requested side', async () => {
+    const f = fixture({rows: [{...quote, ten_phu_tung:'Đèn pha bên phải'}]});
+    let previous;
+    await f.bridge.search('giá đèn pha trái HR-V đời 25', undefined, undefined, value=>{previous=value;});
+    const request = 'Còn bên phải thì sao?';
+    assert.equal(f.bridge.isPriceQuestion(request, previous), true);
+    assert.match(await f.bridge.search(request, undefined, previous), /Đèn pha bên phải — 1\.200\.000 VNĐ/);
+    assert.equal(f.bridge.isPriceQuestion('Còn thời tiết thì sao?', previous), false);
+});
+
+test('a recognized VF model missing from the catalog does not query other vehicles', async () => {
+    const f = fixture({rows: [quote]});
+    assert.match(await f.bridge.search('giá cản trước vf 9'), /VinFast VF9.*danh mục/);
+    assert.deepEqual(f.calls, []);
 });
