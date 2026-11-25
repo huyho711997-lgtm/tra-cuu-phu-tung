@@ -8193,6 +8193,7 @@ window.TascoAsk=(()=>{
   async function askQuestion(question,att){
     const q=Q(),L=B.Legal,imp=att&&att.length?{intent:false}:q.importRequest(question);
     att=att||[];
+    if(!att.length&&await answerPriceQuestion(question))return;
     const askFiles=att.filter(a=>a.kind==='text').map(a=>({name:a.name,text:a.text,truncated:a.truncated,note:a.note})),askImages=att.filter(a=>a.kind==='image');
     if(imp.intent){
       S.messages.push({id:q.newId(),role:'user',text:question});
@@ -8240,6 +8241,7 @@ window.TascoAsk=(()=>{
   async function askFree(question,att){
     const q=Q(),L=B.Legal,history=S.messages.slice();
     att=att||[];
+    if(!att.length&&await answerPriceQuestion(question))return;
     const files=att.filter(a=>a.kind==='text').map(a=>({name:a.name,text:a.text,truncated:a.truncated,note:a.note})),images=att.filter(a=>a.kind==='image');
     const ctx=begin(question,'Đang soạn câu trả lời…',att),{mine,forceDeep,usage}=ctx;
     try{
@@ -8261,6 +8263,15 @@ window.TascoAsk=(()=>{
       ctx.reply({quick:quick||undefined,text,free:true,sources:read?sources.filter(s=>cited.includes(s.code)):sources,queries,read:read||undefined});
     }catch(error){failure(ctx,error,{free:true});}
     finish(mine);
+  }
+  async function answerPriceQuestion(question){
+    const bridge=window.TascoPriceAssistant;if(!bridge||!bridge.isPriceQuestion(question))return false;
+    const ctx=begin(question,'Đang tra kho giá phụ tùng…',[]),mine=ctx.mine;
+    try{
+      const result=await bridge.search(question,S.ctl.signal);if(mine!==S.gen)return true;
+      ctx.reply({text:result,free:true});
+    }catch(error){if(mine===S.gen)failure(ctx,error,{free:true});}
+    finish(mine);return true;
   }
   function send(raw,keep){
     if(!B||S.busy)return;
@@ -13748,6 +13759,49 @@ window.searchData = async function(opts) {
             return { parse, search, vocabulary, ground, hideAsk, vehicleCatalog, applyVehicle, intentCatalog: () => { const c = catalog(); return c ? intentCatalog(c) : {}; } };
         })();
 
+
+        window.TascoPriceAssistant = (() => {
+            const clean = value => String(value ?? '').replace(/[\r\n\t]+/g, ' ').replace(/[<>`*_\[\]]/g, '').trim().slice(0,160);
+            function parseQuestion(question){
+                const value=String(question||'').trim();
+                if(!/(?:^|\s)(?:giá(?!\s+đỡ(?=\s|$|[?:,.]))(?=\s|$|[?:,.])|bao\s+nhiêu\s+tiền|báo\s+giá|kho\s+giá)/iu.test(value))return null;
+                const parsed=window.TascoSmartSearch?.parse(value);
+                if(!parsed)return /kho\s+giá/iu.test(value)?{}:null;
+                if(!parsed.brand&&!/(?:kho\s+giá|phụ\s+tùng|cản\s+(?:trước|sau)|đèn\s+(?:pha|hậu)|gương\s+chiếu\s+hậu)/iu.test(value))return null;
+                return parsed;
+            }
+            async function search(question,signal){
+                const parsed=parseQuestion(question);
+                if(!parsed)return 'Tôi chưa xác định được thông tin cần tra trong kho giá.';
+                if(parsed.ambiguousBrands?.length)return 'Có nhiều hãng xe phù hợp. Hãy cho biết rõ hãng, dòng xe và tên phụ tùng cần tra.';
+                const part=String(parsed.part||'').replace(/^(?:giá\s+(?!đỡ(?=\s|$|[?:,.]))|kho\s+giá\s*)/iu,'').trim();
+                if(!parsed.brand||!parsed.models?.length||!part)return 'Để tra đúng kho giá, hãy cho tôi biết **tên phụ tùng, hãng xe và dòng xe**. Ví dụ: “Giá cản trước Honda CR-V 2025”.';
+                const owner=auth.currentUser?.uid;if(!owner)throw new Error('Hãy đăng nhập để tra kho giá.');
+                const timeout=new AbortController(),abort=()=>timeout.abort(),timer=setTimeout(abort,30000);
+                signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
+                try{
+                    const result=await supabase.rpc('tasco_search_parts_page_v4',{p_hang:parsed.brand,p_hieus:parsed.models.slice(0,30),p_nams:(parsed.years||[]).slice(0,30),p_keyword:part.toLowerCase(),p_exact:false,p_kind:parsed.kind||'all',p_offset:0,p_page_size:10,p_include_total:true}).abortSignal(timeout.signal);
+                    if(signal?.aborted)throw new DOMException('Đã huỷ','AbortError');
+                    if(auth.currentUser?.uid!==owner)throw new Error('Tài khoản đã thay đổi. Hãy tra cứu lại.');
+                    if(result.error)throw new Error('Chưa đọc được kho giá. Hãy kiểm tra kết nối và thử lại.');
+                    const rows=result.data?.rows,total=result.data?.total;
+                    if(!Array.isArray(rows)||!Number.isSafeInteger(total)||total<rows.length||(total>0&&!rows.length))throw new Error('Kho giá trả về dữ liệu chưa đầy đủ. Hãy thử lại.');
+                    const criteria=[clean(part),clean(parsed.brand),parsed.models.map(clean).join(', '),(parsed.years||[]).join(', ')].filter(Boolean).join(' · ');
+                    if(!rows.length)return `Không tìm thấy báo giá trong kho cho **${criteria}**. Hãy kiểm tra lại tên phụ tùng, dòng xe hoặc năm sản xuất.`;
+                    const lines=rows.map((row,index)=>{
+                        const amount=typeof row.gia_duyet==='number'?row.gia_duyet:Number(String(row.gia_duyet??'').replace(/[^0-9]/g,''));
+                        const price=Number.isFinite(amount)&&amount>0?new Intl.NumberFormat('vi-VN').format(amount)+' VNĐ':'Chưa có giá';
+                        const kind=window.TascoPartKind?.classify(row.chinh_hang);
+                        const details=[clean(row.hang_xe),clean(row.hieu_xe),clean(row.nam_sx),kind==='genuine'?'Chính hãng':kind==='aftermarket'?'Không chính hãng':'Chưa phân loại'].filter(Boolean).join(' · ');
+                        const date=clean(row.ngay_bao_gia);
+                        return `${index+1}. **${clean(row.ten_phu_tung)||'Phụ tùng'} — ${price}**\n   ${details}${date?' · Ngày báo giá: '+date:''}`;
+                    });
+                    return `**Kết quả từ kho giá** · ${criteria}\nTìm thấy ${total} báo giá${total>rows.length?`; hiển thị ${rows.length} kết quả đầu`:''}.\n\n${lines.join('\n\n')}\n\nGiá theo dữ liệu báo giá đã lưu; hãy đối chiếu đúng phiên bản xe và loại hàng trước khi sử dụng.`;
+                }catch(error){if(signal?.aborted)throw error;if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');throw error;}
+                finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
+            }
+            return {isPriceQuestion:question=>!!parseQuestion(question),search};
+        })();
 
         function getPriceSignalBadge(item) {
             return ''; // Báo giá cao thấp chỉ hoạt động khi dùng tính năng Lọc đúng tên (Desktop)
