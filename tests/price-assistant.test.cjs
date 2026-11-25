@@ -303,9 +303,9 @@ test('editable repair quote keeps stock prices, multiplies quantities and exclud
 });
 
 test('phone quote cards use a sourced paint estimate only after applying the selected rate', () => {
-    const f=fixture(),context=vm.createContext({Intl,esc:String});
+    const f=fixture(),context=vm.createContext({Intl,esc:String,IC:{chev:''}});
     vm.runInContext(section('  const quoteMoney=new Intl.NumberFormat','  function quoteMessage(element){')
-        +'this.applyRate=applyPaintRate;this.render=editableQuoteHtml;this.rows=quoteSheetRows;',context);
+        +'this.applyRate=applyPaintRate;this.render=editableQuoteHtml;this.rows=quoteSheetRows;this.parseField=parseQuoteField;',context);
     const quote=f.bridge.withServiceEstimate('VINFAST · VF5 · 2025',[]);
     const paint=quote.lines[0];
     paint.paintId='bumper';
@@ -317,6 +317,16 @@ test('phone quote cards use a sourced paint estimate only after applying the sel
     assert.ok(context.applyRate(paint));
     paint.quantity=2;
     const row=context.rows(quote)[4];
+    assert.match(context.render(quote,'',{}),/<details class="ak-quote-line" data-quote-line="0">/);
+    assert.match(context.render(quote,'',{0:true}),/data-quote-line="0" open/);
+    assert.match(context.render(quote,'',{}),/data-quote-field="proposed" value="1\.050\.000"/);
+    assert.equal(context.parseField('proposed','1.050.000',false),1050000);
+    assert.equal(context.parseField('proposed','1050000',false),1050000);
+    assert.equal(context.parseField('proposed','1 050 000',false),1050000);
+    assert.equal(context.parseField('proposed','',false),null);
+    assert.equal(context.parseField('quantity','1,25',true),1.25);
+    assert.ok(Number.isNaN(context.parseField('proposed','1.05.000',false)));
+    assert.ok(Number.isNaN(context.parseField('quantity','1,5',false)));
     assert.equal(row[4],1050000);
     assert.equal(row[5],2100000);
     assert.match(row[6],/kiểm tra 26\/11\/2026/);
