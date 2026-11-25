@@ -8289,11 +8289,11 @@ window.TascoAsk=(()=>{
     }
     paintStatus('Đang tra kho giá phụ tùng…');
     try{
-      let priceContext;
-      const result=await bridge.search(question,signal,previous,value=>{priceContext=value;},intent);
+      let priceContext,quote;
+      const result=await bridge.search(question,signal,previous,value=>{priceContext=value;},intent,value=>{quote=value;});
       if(ctx.mine!==S.gen)return true;
       const prefix=localFallback?'Chưa lấy được phân tích từ mô hình AI. Kết quả dưới đây dùng bộ tra cứu cơ bản.\n\n':'';
-      ctx.reply({text:prefix+result,free:true,priceLookup:true,priceContext});
+      ctx.reply({text:prefix+result,free:true,priceLookup:true,priceContext,quote,quoteNote:prefix.trim()});
     }catch(error){if(ctx.mine===S.gen)failure(ctx,error,{free:true,priceLookup:true});}
     return true;
   }
@@ -8318,7 +8318,8 @@ window.TascoAsk=(()=>{
   }
   async function copyAnswer(id){
     const m=S.messages.find(x=>x.id===id);if(!m||!m.text)return;
-    const text=m.role==='user'||quoteTableHtml(m.text)?m.text:Q().plainText(m.text);
+    const quote=businessQuote(m);
+    const text=quote?quoteSheetRows(quote).map(row=>row.join('\t')).join('\n'):m.role==='user'||quoteTableHtml(m.text)?m.text:Q().plainText(m.text);
     let copied=false;
     try{await navigator.clipboard.writeText(text);copied=true;}
     catch(_){
@@ -8427,6 +8428,112 @@ window.TascoAsk=(()=>{
   function srcHtml(m,s,cited){
     return '<button type="button" class="ak-src'+(cited?' is-cited':'')+'" data-ak="src" data-m="'+esc(m.id)+'" data-c="'+esc(s.code)+'"><b>'+esc(s.code)+'</b><span>'+esc(s.doc+(s.title?' – '+s.title:''))+'</span>'+(cited?'<em>được dẫn</em>':'')+(s.via?'<i>'+(/dẫn chiếu/i.test(s.via)?'dẫn chiếu':'liền kề')+'</i>':'')+'</button>';
   }
+  const quoteMoney=new Intl.NumberFormat('vi-VN',{maximumFractionDigits:0});
+  const quoteHeaders=['Hạng mục','ĐVT','Số lượng','Giá kho (VNĐ)','Đơn giá đề xuất (VNĐ)','Thành tiền (VNĐ)','Nguồn / Ghi chú'];
+  function businessQuote(message){
+    if(message.quote)return message.quote;
+    if(!message.priceLookup||message.role!=='assistant')return null;
+    const marker='**Bảng báo giá nhanh**\n',offset=String(message.text||'').indexOf(marker);
+    if(offset<0)return null;
+    const [heading,table]=message.text.slice(offset).split('\n\n');
+    const [header,separator,...rows]=(table||'').split('\n');
+    if(!header||separator!=='| --- | --- | --- |'||!rows.length)return null;
+    const lines=[];
+    for(const row of rows){
+      const [name,price,details]=row.split('|').slice(1,-1).map(cell=>cell.trim());
+      if(!name||!price)return null;
+      const stock=/^[0-9]+(?:[.][0-9]{3})*$/.test(price)?Number(price.replaceAll('.','')):null;
+      lines.push({type:'part',name,unit:'cái',quantity:1,stock,proposed:stock,source:stock!=null?details:price});
+    }
+    message.quoteNote=message.text.slice(0,offset).trim();
+    const bridge=window.TascoPriceAssistant;
+    if(!bridge)return null;
+    return message.quote=bridge.withServiceEstimate(heading.split('\n')[1]||'',lines);
+  }
+  function quoteLineTotal(line){
+    return line.proposed==null ? null : Math.round(line.quantity*line.proposed);
+  }
+  function quoteSummary(quote){
+    const totals={part:0,paint:0,labor:0};
+    let pending=0;
+    for(const line of quote.lines){
+      const amount=quoteLineTotal(line);
+      if(amount==null){pending++;continue;}
+      totals[line.type]+=amount;
+    }
+    return {totals,total:totals.part+totals.paint+totals.labor,pending};
+  }
+  function quoteSource(line){
+    if(line.type!=='part')return line.proposed==null?'Chưa nhập đơn giá ước tính':'Ước tính nhập tay';
+    if(line.proposed!=null&&line.proposed!==line.stock)return [line.source,'Đơn giá đề xuất nhập tay'].filter(Boolean).join(' · ');
+    return line.source;
+  }
+  function quoteSheetRows(quote){
+    const {totals,total,pending}=quoteSummary(quote);
+    return [['BẢNG BÁO GIÁ SỬA CHỮA'],[quote.vehicle],[],quoteHeaders,
+      ...quote.lines.map(line=>[line.name,line.unit,line.quantity,line.stock,line.proposed,quoteLineTotal(line),quoteSource(line)]),
+      [],['Tạm tính phụ tùng',null,null,null,null,totals.part],
+      ['Ước tính sơn',null,null,null,null,quote.lines.some(line=>line.type==='paint'&&line.proposed!=null)?totals.paint:null],
+      ['Ước tính nhân công',null,null,null,null,quote.lines.some(line=>line.type==='labor'&&line.proposed!=null)?totals.labor:null],
+      ['Tổng tạm tính (VNĐ)',null,null,null,null,total],
+      ['Hạng mục chưa có đơn giá: '+pending]];
+  }
+  function quoteSummaryHtml(quote){
+    const {totals,total,pending}=quoteSummary(quote);
+    const category=(type,label)=>'<dt>'+label+'</dt><dd>'
+      +(quote.lines.some(line=>line.type===type&&line.proposed!=null)?quoteMoney.format(totals[type])+' VNĐ':'Chưa tính')+'</dd>';
+    return '<dl class="ak-quote-breakdown">'+category('part','Phụ tùng')+category('paint','Sơn')+category('labor','Nhân công')
+      +'<dt><strong>Tổng tạm tính</strong></dt><dd><strong>'+quoteMoney.format(total)+' VNĐ</strong></dd></dl>'
+      +(pending?'<p>'+pending+' hạng mục chưa có đơn giá, chưa cộng vào tổng.</p>':'');
+  }
+  function editableQuoteHtml(quote,note){
+    const cell=value=>value==null?'—':quoteMoney.format(value);
+    const input=(line,i,field,label,step,max)=>'<input type="number" min="'+(field==='quantity'?step:0)+'" max="'+max+'" step="'+step+'" inputmode="'+(step===1?'numeric':'decimal')+'" aria-label="'+esc(label+' '+line.name)+'" data-quote-row="'+i+'" data-quote-field="'+field+'" value="'+esc(line[field]??'')+'"'+(field==='proposed'?' placeholder="Chưa có"':'')+'>';
+    const rows=quote.lines.map((line,i)=>'<tr><th scope="row">'+esc(line.name)+'</th><td>'+esc(line.unit)+'</td><td>'
+      +input(line,i,'quantity','Số lượng',line.type==='labor'?0.25:1,1000)+'</td><td>'+cell(line.stock)+'</td><td>'
+      +input(line,i,'proposed','Đơn giá đề xuất',1,100000000000)+'</td><td data-quote-total>'+cell(quoteLineTotal(line))+'</td><td data-quote-source>'
+      +esc(quoteSource(line)||'—')+'</td></tr>').join('');
+    return '<div class="ak-text ak-quote ak-quote-edit"><p><strong>Bảng báo giá nhanh</strong><br>'+esc(quote.vehicle)+'</p>'
+      +(note?'<p>'+esc(note)+'</p>':'')+'<p class="ak-quote-tip">Vuốt ngang để xem bảng. Có thể chỉnh số lượng và đơn giá trước khi xuất.</p>'
+      +'<div class="ak-quote-scroll" role="region" aria-label="Bảng báo giá nhanh" tabindex="0"><table><thead><tr>'
+      +quoteHeaders.map(label=>'<th scope="col">'+esc(label)+'</th>').join('')+'</tr></thead><tbody>'+rows
+      +'</tbody></table></div><div data-quote-summary aria-live="polite">'+quoteSummaryHtml(quote)+'</div></div>';
+  }
+  function editQuote(input){
+    const message=input.closest('[data-ak-msg]')?.dataset.akMsg;
+    const quote=S.messages.find(m=>m.id===message)?.quote;
+    const line=quote?.lines[Number(input.dataset.quoteRow)],field=input.dataset.quoteField;
+    if(!line||!['quantity','proposed'].includes(field))return;
+    const value=input.value===''?null:input.valueAsNumber;
+    if(!input.validity.valid||(field==='quantity'&&value==null)){
+      input.value=line[field]??'';
+      toast('Kiểm tra số lượng hoặc đơn giá vừa nhập.');
+      return;
+    }
+    line[field]=value;
+    const total=quoteLineTotal(line),row=input.closest('tr');
+    row.querySelector('[data-quote-total]').textContent=total==null?'—':quoteMoney.format(total);
+    row.querySelector('[data-quote-source]').textContent=quoteSource(line)||'—';
+    input.closest('.ak-quote-edit').querySelector('[data-quote-summary]').innerHTML=quoteSummaryHtml(quote);
+    saveChats();
+  }
+  async function exportBusinessQuote(id){
+    const message=S.messages.find(m=>m.id===id),quote=message?.quote;
+    if(!quote)return;
+    try{
+      await loadXlsx();
+      if(!S.messages.includes(message))return;
+      const X=window.XLSX,rows=quoteSheetRows(quote),sheet=X.utils.aoa_to_sheet(rows);
+      sheet['!cols']=[36,11,12,20,24,20,65].map(wch=>({wch}));
+      for(let r=4;r<rows.length;r++)for(let c=3;c<=5;c++){
+        const cell=sheet[X.utils.encode_cell({r,c})];
+        if(cell?.t==='n')cell.z='#,##0';
+      }
+      const book=X.utils.book_new();
+      X.utils.book_append_sheet(book,sheet,'Báo giá');
+      X.writeFile(book,'Bao-gia-sua-chua.xlsx');
+    }catch(error){toast(error?.message||'Chưa xuất được bảng báo giá.');}
+  }
   function quoteTableHtml(text){
     if(!String(text||'').startsWith('**Bảng báo giá nhanh**\n'))return '';
     const [heading,table,summary]=text.split('\n\n');
@@ -8447,13 +8554,14 @@ window.TascoAsk=(()=>{
       const fl=(m.files||[]).map((f,i)=>{const pv=S.prev[m.id+':'+i];return pv?'<span class="ak-fchip is-img"><img src="'+esc(pv)+'" alt="">'+esc(f.name)+'</span>':'<span class="ak-fchip">'+(f.kind==='image'?IC.img:IC.doc)+'<em>'+esc(f.name)+'</em></span>';}).join('');
       return '<div class="ak-msg is-user" data-ak-msg="'+esc(m.id)+'">'+(fl?'<div class="ak-files">'+fl+'</div>':'')+'<p>'+esc(m.text)+'</p>'+(m.text?'<div class="ak-acts ak-user-acts"><button type="button" class="ak-act" data-ak="copy" data-m="'+esc(m.id)+'" aria-label="Sao chép tin nhắn của bạn">'+IC.copy+'Sao chép</button></div>':'')+'</div>';
     }
+    const quote=businessQuote(m);
     const sources=m.sources||[],cited=q.citedCodes(m.text),bad=q.unknownCodes(m.text,sources);
     const warn=m.error||m.empty||(m.free&&!sources.length)?'':bad.length?'<p class="ak-warn">AI dẫn mã nguồn không có trong các đoạn đã tra ('+esc(bad.join(', '))+') — đừng dùng phần đó khi chưa kiểm tra lại.</p>'
       :(sources.length&&!cited.length&&!m.free)?'<p class="ak-warn">Câu trả lời không dẫn nguồn nào — hãy đối chiếu với các đoạn bên dưới trước khi dùng.</p>':'';
     const stopped=m.empty&&/^Đã dừng/.test(m.text||'');
     const note=(cls,ico,title,text)=>'<div class="ak-note'+cls+'"><span class="ak-note-ico">'+ico+'</span><div><b>'+title+'</b><p>'+esc(text)+'</p></div></div>';
     const body=m.error?note(' is-error',IC.warn,m.priceLookup?'Chưa tra được kho giá':'Chưa nhận được câu trả lời',m.text):stopped?note(' is-stop',IC.stop,'Đã dừng','Bạn đã dừng câu trả lời này. Có thể hỏi lại hoặc đổi cách đặt câu hỏi.'):m.empty?note('',IC.search,'Chưa tìm thấy trong Thư viện',m.text)
-      :m.free?(quoteTableHtml(m.text)||'<div class="ak-text ak-md">'+(sources.length?q.chatHtml(m.text).replace(/\[C(\d{1,3})\]/g,'<button type="button" class="ola-cite" data-ol-qa-cite="C$1">C$1</button>'):q.chatHtml(m.text))+'</div>')
+      :m.free?(quote?editableQuoteHtml(quote,m.quoteNote):quoteTableHtml(m.text)||'<div class="ak-text ak-md">'+(sources.length?q.chatHtml(m.text).replace(/\[C(\d{1,3})\]/g,'<button type="button" class="ola-cite" data-ol-qa-cite="C$1">C$1</button>'):q.chatHtml(m.text))+'</div>')
       :'<div class="ak-text">'+q.answerHtml(m.text,sources).replace(/(<b class="ola-h">[^<]*<\/b>)\s*:\s*/g,'$1 ')+'</div>';
     const open=!!S.open[m.id+':*'];
     const read=m.read&&m.read.included&&m.read.included.length?'<p class="ak-queries">Đã đọc toàn văn: '+m.read.included.map(d=>esc(d.name)+' ('+d.chunks+' đoạn)').join(' · ')+(m.read.skipped&&m.read.skipped.length?' — chỉ trích đoạn: '+m.read.skipped.map(d=>esc(d.name)).join(', '):'')+'</p>':'';
@@ -8461,6 +8569,7 @@ window.TascoAsk=(()=>{
       +'<div class="ak-srcs-body"'+(open?'':' hidden')+'>'+read+(m.queries&&m.queries.length?'<p class="ak-queries">Đã tra: '+m.queries.map(esc).join(' · ')+'</p>':'')+sources.map(s=>srcHtml(m,s,cited.includes(s.code))).join('')+'</div></div>':'';
     const acts=m.error?'<button type="button" class="ak-act" data-ak="retry" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.retry+'Thử lại</button>'+(m.priceLookup?'':'<button type="button" class="ak-act" data-ak="model">'+IC.cpu+'Đổi mô hình</button>')
       :m.empty?'':'<button type="button" class="ak-act" data-ak="copy" data-m="'+esc(m.id)+'">'+IC.copy+'Sao chép</button>'
+        +(quote?'<button type="button" class="ak-act" data-ak="quote-export" data-m="'+esc(m.id)+'">'+IC.doc+'Xuất Excel</button>':'')
         +(m.quick&&deepSupported()?'<button type="button" class="ak-act" data-ak="deeper" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.spark+'Suy luận sâu lại</button>':'');
     const plain=m.error||m.empty,who='<div class="ak-who"><span class="ak-av" aria-hidden="true">'+IC.spark+'</span><b>'+(m.free?'Trợ lý AI':'AI nghiệp vụ')+'</b></div>';
     return '<div class="ak-msg is-ai" data-ak-msg="'+esc(m.id)+'">'+who+'<div class="ak-body">'+(plain?body:'<div class="ak-card">'+body+warn+srcs+'</div>')+(acts||m.secs?'<div class="ak-acts">'+acts+(!m.error&&!m.empty&&m.secs?'<span class="ak-took" title="Thời gian AI trả lời câu hỏi này">'+fmtSecs(m.secs)+'</span>':'')+'</div>':'')+'</div></div>';
@@ -9287,11 +9396,14 @@ window.TascoAsk=(()=>{
     else if(k==='src')sourceSheet(b.dataset.m,b.dataset.c);
     else if(k==='srcs'){const key=b.dataset.m+':*';S.open[key]=!S.open[key];const box=b.closest('.ak-srcs');box.classList.toggle('is-open',!!S.open[key]);box.querySelector('.ak-srcs-body').hidden=!S.open[key];b.setAttribute('aria-expanded',String(!!S.open[key]));}
     else if(k==='copy')copyAnswer(b.dataset.m);
+    else if(k==='quote-export')exportBusinessQuote(b.dataset.m);
     else if(k==='deeper')retryAnswer(b.dataset.m,true);
     else if(k==='retry')retryAnswer(b.dataset.m,false);
     else if(k==='reload'){S.err='';S.ready=false;init();paintAll();}
   });
   document.addEventListener('change',e=>{
+    const quoteInput=e.target.closest?.('#askSection [data-quote-field]');
+    if(quoteInput){editQuote(quoteInput);return;}
     const f=e.target.closest&&e.target.closest('#askSection [data-ak-file]');if(!f)return;
     const list=[...f.files];f.value='';addFiles(list);
   });
@@ -9433,6 +9545,17 @@ html.dark .ak-msg.is-user p{background:linear-gradient(135deg,#3b78a8,#2c5d86)}
 .ak-quote td:nth-child(3){font-size:11px;color:var(--ws-muted)}
 .ak-quote tbody tr:last-child :is(th,td){border-bottom:0}
 .ak-quote-total{margin-top:10px!important;font-weight:700}
+.ak-quote-edit table{min-width:760px}
+.ak-quote-edit tbody th{width:auto;min-width:130px}
+.ak-quote-edit td:nth-child(2){width:auto}
+.ak-quote-edit td:nth-child(3){font-size:inherit;color:inherit}
+.ak-quote-edit input{box-sizing:border-box;width:105px;padding:6px 8px;border:1px solid var(--ws-line);border-radius:6px;background:var(--ws-card,#fff);color:inherit;font-size:16px}
+.ak-quote-edit input[data-quote-field=quantity]{width:74px}
+.ak-quote-edit [data-quote-total]{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:700}
+.ak-quote-edit .ak-quote-tip{font-size:.85em;color:var(--ws-muted)}
+.ak-quote-breakdown{display:grid;grid-template-columns:1fr auto;gap:4px 14px;margin:12px 0 4px}
+.ak-quote-breakdown dd{margin:0;text-align:right}
+
 .ak-text :is(ul,ol){margin:0 0 10px;padding-left:19px}.ak-text ul{list-style:disc}.ak-text ol{list-style:decimal}.ak-text li{margin:0 0 6px}.ak-text li::marker{color:var(--app-teal);font-weight:700}
 .ak-text .ola-h{display:inline-block;margin:0 4px 0 0;padding:1px 9px;border:0;border-radius:8px;background:color-mix(in srgb,var(--app-teal) 20%,var(--ws-surface));color:var(--ws-accent-text);font-size:12px;font-weight:700;letter-spacing:.01em;line-height:1.7}
 .ak-text p>.ola-h:only-child,.ak-text :is(ul,ol)+p>.ola-h:first-child{margin-top:6px}
@@ -14006,7 +14129,7 @@ window.searchData = async function(opts) {
                 'route="warehouse" khi người dùng muốn tìm, kiểm giá, lập báo giá phụ tùng hoặc tiếp nối một lượt tra. Tên phụ tùng + xe là một yêu cầu tra dù thiếu chữ giá.',
                 'route="other" cho câu hỏi cách sửa, cách thay, tư vấn kỹ thuật, tài liệu, bảo hiểm, giá xe nguyên chiếc hoặc hội thoại thông thường.',
                 'Với warehouse, trả brand, model (tên dòng xe, không kèm năm), years (mảng năm bốn chữ số), kind (all/genuine/aftermarket), quick (boolean) và items. Đặt mixedVehicles=true nếu yêu cầu tra từ hai dòng xe trở lên.',
-                'items là mảng {name, aliases}. Tách từng phụ tùng. Sửa lỗi gõ và nhận dạng giọng nói. Có thể đưa tối đa 2 tên đồng nghĩa thật sự, giữ nguyên bên, vị trí, công nghệ và loại cụm.',
+                'items là mảng {name, aliases, quantity}. Tách từng phụ tùng. quantity là số lượng người dùng nói rõ, nếu không nói lấy 1. Nếu người dùng nói cả hai bên, tách bên trái và bên phải thành hai mục, mỗi bên 1 trừ khi họ nêu số lượng riêng. Chi phí sơn và nhân công không phải phụ tùng. Sửa lỗi gõ và nhận dạng giọng nói. Có thể đưa tối đa 2 tên đồng nghĩa thật sự, giữ nguyên bên, vị trí, công nghệ và loại cụm.',
                 'Ví dụ “bóng trong cụm soi biển số” không đồng nghĩa với nguyên cụm đèn. Không thêm phụ tùng chỉ gần giống.',
                 'Suy ra hãng từ dòng xe khi chắc chắn (i10 là Hyundai, VF3 là VinFast). Nếu không đủ thông tin, trả trường rỗng.',
                 'Ngữ cảnh chỉ dùng khi câu sau nhắc lại hoặc sửa tiêu chí. Nếu đổi xe, không giữ năm/phiên bản cũ trừ khi người dùng nói rõ. Giữ nguyên bên nếu không yêu cầu đổi.',
@@ -14038,6 +14161,7 @@ window.searchData = async function(opts) {
                 const items=(Array.isArray(data.items)?data.items:[]).slice(0,quickQuoteLimit+1);
                 const parts=new Map();
                 const seen=new Set();
+                const quantities=new Map();
                 for(const item of items){
                     const name=planText(item?.name);
                     if(!name||seen.has(partKey(name))||!/[\p{L}\p{N}]/u.test(name))continue;
@@ -14045,6 +14169,7 @@ window.searchData = async function(opts) {
                     const aliases=(Array.isArray(item.aliases)?item.aliases:[]).slice(0,2).map(planText)
                         .filter(alias=>alias&&features(alias)===features(name));
                     parts.set(name,aliases);
+                    if(Number.isInteger(item.quantity)&&item.quantity>=1&&item.quantity<=1000)quantities.set(name,item.quantity);
                 }
                 const smart=window.TascoSmartSearch;
                 if(!smart.vehicleCatalog().brands.length)await loadFilters();
@@ -14062,9 +14187,9 @@ window.searchData = async function(opts) {
                     grounded=(brand&&!result.brand&&!result.ambiguousBrands)?{brand:'',models:[]}:result;
                 }
                 const explicitYears=[...(local?.years||[]),...(local?.skippedYears||[])];
-                return resultFor({...grounded,years:explicitYears.length?explicitYears:years,skippedYears:[],parts:[...parts.keys()],aliases:parts,
+                return resultFor({...grounded,years:explicitYears.length?explicitYears:years,skippedYears:[],parts:[...parts.keys()],aliases:parts,quantities,
                     kind:local?.kind&&local.kind!=='all'?local.kind:['genuine','aftermarket'].includes(data.kind)?data.kind:'all',
-                    quick:data.quick===true||parts.size>1});
+                    quick:data.quick===true||parts.size>1||[...quantities.values()].some(n=>n>1)});
             }
             async function parseQuestion(question,previous,signal){
                 const value=String(question||'').trim();
@@ -14101,15 +14226,23 @@ window.searchData = async function(opts) {
                     else if(!part||/^[?\s]+$/u.test(part))part=previous.part;
                 }
                 const parts=new Map();
+                const quantities=new Map();
                 let sideBase='';
                 for(const entry of part.split(/[,;]+|\s+và\s+/iu)){
                     let name=entry.replace(/^\s*(?:(?:bao\s+)?gồm|các\s+hạng\s+mục|hạng\s+mục)\s*:?\s*/iu,'')
                         .replace(/^[\s,.;:?!]+|[\s,.;:?!]+$/g,'');
                     if(/^(?:bên\s+)?(?:trái|phải)$/iu.test(name)&&sideBase)name=sideBase+' '+name;
+                    const leading=name.match(/^(\d{1,4})\s+(?:cái|chiếc|bộ)\s+(.+)$/iu);
+                    const trailing=leading?null:name.match(/^(.+?)\s+[×x]\s*(\d{1,4})$/iu);
+                    const count=Number(leading?.[1]||trailing?.[2]);
+                    name=leading?.[2]||trailing?.[1]||name;
                     sideBase=name.match(/^(.*?)(?:\s+bên)?\s+(?:trái|phải)$/iu)?.[1]||'';
-                    if(name&&!parts.has(partKey(name)))parts.set(partKey(name),name);
+                    if(name&&!parts.has(partKey(name))){
+                        parts.set(partKey(name),name);
+                        if(count>=1&&count<=1000)quantities.set(name,count);
+                    }
                 }
-                return {...parsed,parts:[...parts.values()],quick:quick||parts.size>1};
+                return {...parsed,parts:[...parts.values()],quantities,quick:quick||parts.size>1||[...quantities.values()].some(n=>n>1)};
             }
 
             function formatQuickQuote(params, modelName, items){
@@ -14128,7 +14261,21 @@ window.searchData = async function(opts) {
                 return '**Bảng báo giá nhanh**\n'+vehicle.map(cell).join(' · ')+'\n\n'
                     +'| Hạng mục | Đơn giá (VNĐ) | Phiên bản · Loại hàng · Ngày |\n| --- | --- | --- |\n'+table+'\n\n'+summary;
             }
-            async function search(question,signal,previous,onContext,intent){
+            function makeQuote(params,model,items,quantities){
+                const lines=items.map(({name,row,details,error,needsPart})=>{
+                    const stock=details?.amount||null;
+                    const source=row?[row.ten_phu_tung,row.hieu_xe,details.kind,details.date].filter(Boolean).join(' · ')
+                        :needsPart?'Cần tên phụ tùng':error?'Tra cứu chưa hoàn tất':'Chưa có giá trong kho';
+                    return {type:'part',name,unit:'cái',quantity:quantities?.get(name)||1,stock,proposed:stock,source};
+                });
+                return withServiceEstimate([params.p_hang,model,params.p_nams[0]].filter(Boolean).join(' · '),lines);
+            }
+            function withServiceEstimate(vehicle,parts){
+                return {vehicle,lines:[...parts,
+                    {type:'paint',name:'Chi phí sơn',unit:'hạng mục',quantity:1,stock:null,proposed:null,source:''},
+                    {type:'labor',name:'Chi phí nhân công',unit:'giờ',quantity:1,stock:null,proposed:null,source:''}]};
+            }
+            async function search(question,signal,previous,onContext,intent,onQuote){
                 const parsed=intent||await parseQuestion(question,previous,signal);
                 if(parsed.mixedVehicles)return 'Hãy gửi từng dòng xe riêng để tôi tra đúng giá cho từng xe.';
                 if(parsed.unresolvedModel)return 'Đã nhận diện **VinFast '+parsed.unresolvedModel+'**. Chưa xác định được dòng xe tương ứng trong danh mục kho giá.';
@@ -14210,7 +14357,9 @@ window.searchData = async function(opts) {
                             items.push(...batch.map((item,j)=>item.status==='fulfilled'?item.value:{name:parts[i+j],error:item.reason}));
                         }
                         if(items.every(item=>item.error))throw items[0].error;
-                        return formatQuickQuote(params,parsed.modelQuery||params.p_hieus[0],items);
+                        const model=parsed.modelQuery||params.p_hieus[0];
+                        onQuote?.(makeQuote(params,model,items,parsed.quantities));
+                        return formatQuickQuote(params,model,items);
                     }
                     const part=parts[0],rows=await loadQuotes(part,false);
                     const criteria=[clean(part),clean(params.p_hang),params.p_hieus.map(clean).join(', '),params.p_nams.join(', ')].filter(Boolean).join(' · ');
@@ -14240,7 +14389,7 @@ window.searchData = async function(opts) {
                 }catch(error){if(signal?.aborted)throw error;if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');throw error;}
                 finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
             }
-            return {isPriceQuestion:(question,previous)=>questionType(String(question||'').trim(),previous),contextFromQuestion,plan,search};
+            return {isPriceQuestion:(question,previous)=>questionType(String(question||'').trim(),previous),contextFromQuestion,plan,search,withServiceEstimate};
         })();
 
         function getPriceSignalBadge(item) {

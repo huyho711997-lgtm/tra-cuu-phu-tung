@@ -274,3 +274,30 @@ test('audio analysis returns a warehouse plan alongside the transcript in one mo
     assert.equal(other.question,'Cảm ơn bạn');
     assert.equal(other.intent,null);
 });
+
+test('editable repair quote keeps stock prices, multiplies quantities and excludes missing rates', async () => {
+    const f=fixture({rows:[quote]});
+    const prompt='Báo giá 2 cản trước và 1 đèn pha trái Honda HR-V 2025';
+    const intent=await f.bridge.plan(prompt,[],null,async()=>JSON.stringify({route:'warehouse',brand:'HONDA',
+        model:'HR-V',years:[2025],quick:true,items:[{name:'Cản trước',quantity:2},{name:'Đèn pha trái',quantity:1}]}));
+    let saved;
+    await f.bridge.search(prompt,undefined,null,undefined,intent,data=>{saved=data;});
+    const ctx=vm.createContext({Intl,window:{TascoPriceAssistant:f.bridge}});
+    vm.runInContext(section('  const quoteMoney=new Intl.NumberFormat','  function quoteSummaryHtml(quote){')
+        +'this.rows=quoteSheetRows;this.summary=quoteSummary;this.migrate=businessQuote;',ctx);
+    assert.equal(ctx.summary(saved).total,2400000);
+    assert.equal(ctx.summary(saved).pending,3);
+    saved.lines[0].proposed=1100000;
+    saved.lines[2].proposed=800000;
+    saved.lines[3].quantity=1.5;
+    saved.lines[3].proposed=300000;
+    assert.equal(ctx.summary(saved).total,3450000);
+    assert.equal(ctx.summary(saved).pending,1);
+    const rows=ctx.rows(saved);
+    assert.deepEqual(Array.from(rows[4].slice(2,6)),[2,1200000,1100000,2200000]);
+    assert.equal(rows[5][5],null);
+    assert.equal(rows.find(row=>row[0]==='Tổng tạm tính (VNĐ)')[5],3450000);
+    const legacy={role:'assistant',priceLookup:true,text:'**Bảng báo giá nhanh**\nHONDA · HR-V · 2025\n\n| Tên | Giá | Nguồn |\n| --- | --- | --- |\n| Cản trước | 1.200.000 | Chính hãng |\n\nTạm tính'};
+    assert.equal(ctx.migrate(legacy).lines[0].stock,1200000);
+    assert.equal(ctx.migrate(legacy).lines.length,3);
+});
