@@ -59,7 +59,7 @@ test('applying OCR replaces stale vehicle filters while preserving part query an
  const a=html.indexOf('            function vehicleCatalog() {'),b=html.indexOf('            return { parse, search, vocabulary',a);assert.ok(a>0&&b>a);
  let applied,cleared=0;const ctx={catalog:()=>catalog.brands,parse:()=>null,NAM_ALL:catalog.years,selectedHieuList:['OLD MODEL'],selectedNamList:[2022],$:()=>({value:'Cản trước',dispatchEvent:()=>{}}),Event,window:{cancelLookupSearch:()=>cleared++,TascoAiSearch:{clearOffer:()=>{}}},hideAsk:()=>{},apply:r=>applied=r};vm.createContext(ctx);vm.runInContext(html.slice(a,b)+'\nthis.applyVehicle=applyVehicle;',ctx);
  assert.throws(()=>ctx.applyVehicle({brand:'HONDA',model:'made up',year:2024}));
- ctx.applyVehicle({brand:'HONDA',model:'CR-V',year:2024});
- assert.equal(applied.part,'Cản trước');assert.equal(applied.models[0],'CR-V');assert.equal(applied.years[0],2024);assert.equal(cleared,1);
+ ctx.applyVehicle({brand:'HONDA',models:['CR-V','CIVIC'],year:2024});
+ assert.equal(applied.part,'Cản trước');assert.deepEqual(Array.from(applied.models),['CR-V','CIVIC']);assert.equal(applied.years[0],2024);assert.equal(cleared,1);
  assert.equal(ctx.selectedHieuList.length,0);assert.equal(ctx.selectedNamList.length,0);
 });

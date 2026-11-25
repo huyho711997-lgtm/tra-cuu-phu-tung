@@ -13709,12 +13709,13 @@ window.searchData = async function(opts) {
             }
             function applyVehicle(vehicle) {
                 const cat=vehicleCatalog(),brand=cat.brands.find(b=>b.name===vehicle.brand),year=Number(vehicle.year);
-                if(!brand||!brand.models.includes(vehicle.model))throw new Error('Hãy chọn hãng và dòng xe có trong danh mục.');
+                const models=[...new Set(Array.isArray(vehicle.models)?vehicle.models:vehicle.model?[vehicle.model]:[])];
+                if(!brand||!models.length||models.length>30||models.some(m=>!brand.models.includes(m)))throw new Error('Hãy chọn từ 1 đến 30 dòng xe có trong danh mục.');
                 if(!cat.years.includes(year))throw new Error('Năm sản xuất chưa có trong danh mục tra cứu.');
                 window.cancelLookupSearch?.();hideAsk();window.TascoAiSearch?.clearOffer?.();
                 selectedHieuList=[];selectedNamList=[];
                 const raw=$('searchInput').value,parsed=parse(raw);
-                apply({brand:brand.name,models:[vehicle.model],years:[year],kind:'all',part:parsed?parsed.part:raw});
+                apply({brand:brand.name,models,years:[year],kind:'all',part:parsed?parsed.part:raw});
                 $('searchInput').dispatchEvent(new Event('input',{bubbles:true}));
             }
             return { parse, search, vocabulary, ground, hideAsk, vehicleCatalog, applyVehicle, intentCatalog: () => { const c = catalog(); return c ? intentCatalog(c) : {}; } };
