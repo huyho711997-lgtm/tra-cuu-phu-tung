@@ -8266,8 +8266,11 @@ window.TascoAsk=(()=>{
   }
   async function answerPriceQuestion(question){
     const bridge=window.TascoPriceAssistant;
-    const previous=S.messages.at(-1)?.priceContext;
-    if(!bridge||!bridge.isPriceQuestion(question,previous))return false;
+    if(!bridge)return false;
+    const last=S.messages.at(-1), prior=S.messages.at(-2);
+    const previous=last?.priceContext||(last?.role==='assistant'&&prior?.role==='user'&&!prior.files?.length
+      ?bridge.contextFromQuestion(prior.text):null);
+    if(!bridge.isPriceQuestion(question,previous))return false;
     const ctx=begin(question,'Đang tra kho giá phụ tùng…',[]),mine=ctx.mine;
     try{
       let priceContext;
@@ -13860,6 +13863,9 @@ window.searchData = async function(opts) {
                     const match=folded.match(pattern);
                     if(match){exact=canonical(match);break;}
                 }
+                if(/^đèn (?:pha|hậu)$/u.test(exact)){
+                    return [...new Set([original,exact,...['trái','phải'].flatMap(side=>[exact+' '+side,exact+' bên '+side])])];
+                }
                 const side=exact.match(/^(.*?)(?: bên)? (trái|phải)$/u);
                 if(side&&side[1])return [...new Set([original,exact,side[1]+' '+side[2],side[1]+' bên '+side[2]])];
                 const bumper=exact.match(/^(?:(?:cụm |bộ )?cản|cảng|ba đờ sóc|ba đờ sốc|badosoc) (trước|sau)$/u);
@@ -13908,20 +13914,33 @@ window.searchData = async function(opts) {
                 return new Error('Chưa đọc được kho giá. Hãy thử lại sau ít phút.');
             }
             const foldQuestion = value => value.normalize('NFD').replace(/\p{M}/gu, '').replace(/[đĐ]/g,'d').toLowerCase();
+            const partFragment=/^(?:cum |bo )?(?:den (?:pha|hau|suong mu)|can (?:truoc|sau)|guong chieu hau|ket nuoc|kinh chan gio)(?: (?:led|xenon|halogen|ben|trai|phai|chinh|hang|zin|ca|hai))*[?.! ]*$/u;
+            const vehicleMention=/\bvf[ -]?(?:3|5|6|7|8|9|e34)\b/u;
+            function contextFromQuestion(value){
+                if(!questionType(String(value||'').trim()))return null;
+                const parsed=window.TascoSmartSearch?.parse(value);
+                const owner=auth.currentUser?.uid;
+                if(!owner||!parsed?.brand||!parsed.models?.length||!parsed.part||/[,;]/u.test(parsed.part))return null;
+                return {owner,brand:parsed.brand,models:parsed.models,part:parsed.part,kind:parsed.kind,
+                    years:[...parsed.years,...parsed.skippedYears]};
+            }
             function questionType(value,previous){
                 const folded=foldQuestion(value);
                 if(previous?.owner!==auth.currentUser?.uid)previous=null;
                 const follow=!!previous && /^(?:con|the con|the)\s+.+(?:thi sao|bao nhieu|\?)\s*\??$/u.test(folded);
                 const price=/(?:^|\s)(?:gia(?!\s+do\b)\b|bao\s+nhieu\s+tien|bao\s+gia|kho\s+gia)/u.test(folded);
                 const warehouse=/\b(?:kho gia|phu tung|can (?:truoc|sau)|den (?:pha|hau)|guong chieu hau|vf[ -]?(?:3|5|6|7|8|9|e34))\b/u.test(folded);
-                const parsed=(price||follow)?window.TascoSmartSearch?.parse(value):null;
+                const parsed=window.TascoSmartSearch?.parse(value);
+                const shortLookup=partFragment.test(foldQuestion(parsed?.part||folded))
+                    && (previous || parsed?.models?.length || parsed?.ambiguousBrands?.length || vehicleMention.test(folded));
                 const followPart=/\b(?:can|den|guong|kinh|cop|nap|ket nuoc|lop|ben trai|ben phai|trai|phai|chinh hang|zin|hang ngoai|nam|doi)\b/u.test(folded);
-                return Boolean(quickQuoteIntent.test(value)||(price&&(warehouse||parsed?.brand||parsed?.ambiguousBrands?.length))
+                return Boolean(shortLookup||quickQuoteIntent.test(value)||(price&&(warehouse||parsed?.brand||parsed?.ambiguousBrands?.length))
                     || (follow&&(price||followPart||parsed?.brand||parsed?.unresolvedModel||/\b(?:19|20)\d{2}\b/u.test(folded))));
             }
             async function parseQuestion(question,previous,signal){
                 const value=String(question||'').trim();
-                const follow=!!previous && /^(?:con|the con|the)\s+/u.test(foldQuestion(value));
+                const hasContext=!!previous && previous.owner===auth.currentUser?.uid;
+                const follow=hasContext && /^(?:con|the con|the)\s+/u.test(foldQuestion(value));
                 const quick=quickQuoteIntent.test(value);
                 const input=value.replace(/^\s*(?:[-•]\s+|\d+[.)]\s+)/gm,'')
                     .replace(/\s*\r?\n\s*/g,'; ').replace(/([,;]|\d{4}:)(?=\S)/g,'$1 ');
@@ -13931,11 +13950,12 @@ window.searchData = async function(opts) {
                 if (smart?.vehicleCatalog && !smart.vehicleCatalog().brands.length) await loadFilters();
                 if (signal?.aborted) throw new DOMException('Đã huỷ','AbortError');
                 const local=smart?.parse(request);
-                const parsed=(!quick&&!follow&&smart?.interpret)?await smart.interpret(request,signal):local;
+                const followPart=hasContext && partFragment.test(foldQuestion(local?.part||request));
+                const useContext=follow||followPart;
+                const parsed=(!quick&&!useContext&&smart?.interpret)?await smart.interpret(request,signal):local;
                 if(!parsed)return {quick};
                 if(parsed.ambiguousBrands?.length||parsed.unresolvedModel)return parsed;
-                const vehicleChanged=follow && !!parsed.brand;
-                if(follow && !vehicleChanged && previous.owner===auth.currentUser?.uid){
+                if(useContext && !parsed.brand){
                     const available=smart.vehicleCatalog?.().brands.find(b=>b.name===previous.brand);
                     if(!smart.vehicleCatalog||previous.models.every(model=>available?.models.includes(model))){
                         parsed.brand=previous.brand;
@@ -13947,7 +13967,7 @@ window.searchData = async function(opts) {
                 let part=String(parsed.part||'').replace(/^(?:gi[aá]\s+(?![đd][ỡo](?=\s|$|[?:,.]))|kho\s+gi[aá]\s*)/iu,'').trim()
                     .replace(/(trái|phải)\s*[/–-]\s*(trái|phải)/giu,'$1, $2')
                     .replace(/\s+(?:cả\s+)?hai\s+bên(?=\s*(?:[,;]|$))/giu,' bên trái, phải');
-                if(follow&&previous.owner===auth.currentUser?.uid){
+                if(follow){
                     const side=foldQuestion(part).match(/^(?:ben )?(trai|phai)[?\s]*$/u);
                     if(side)part=previous.part.replace(/\s+(?:bên\s+)?(?:trái|phải)$/iu,'')+' '+(side[1]==='trai'?'trái':'phải');
                     else if(!part||/^[?\s]+$/u.test(part))part=previous.part;
@@ -14012,21 +14032,30 @@ window.searchData = async function(opts) {
                     let result=await readVehicleQuotes(request,names,timeout.signal,newestFirst);
                     checkActive();
                     let rows=result.data;
-                    // Older warehouse schemas may not expose the normalized vehicle columns.
-                    if(result.error&&['42703','PGRST204'].includes(result.error.code)){
+                    // Dùng cùng API với màn hình Tra cứu khi truy vấn trực tiếp không thấy giá.
+                    if((result.error&&['42703','PGRST204'].includes(result.error.code))
+                        || (!result.error&&Array.isArray(rows)&&!rows.some(row=>names.includes(partKey(row?.ten_phu_tung))&&quoteAmount(row.gia_duyet)))){
+
                         rows=[];
                         for(const name of names){
-                            result=await supabase.rpc('tasco_search_parts_page_v4',{...request,p_keyword:name}).abortSignal(timeout.signal);
+                            result=await supabase.rpc('tasco_search_parts_page_v4',{...request,p_keyword:name.toLowerCase().trim()}).abortSignal(timeout.signal);
                             checkActive();
                             if(result.error||!Array.isArray(result.data?.rows))break;
-                            rows.push(...result.data.rows);
-                            if(rows.length)break;
+                            rows.push(...result.data.rows.filter(row=>partKey(row?.ten_phu_tung)===name));
                         }
                         if(!result.error&&!Array.isArray(result.data?.rows))rows=null;
+                        if(Array.isArray(rows)&&!result.error&&!rows.some(row=>quoteAmount(row.gia_duyet))){
+                            result=await supabase.rpc('tasco_search_parts_page_v4',{
+                                ...request,p_keyword:partKey(part),p_exact:false,p_page_size:200
+                            }).abortSignal(timeout.signal);
+                            checkActive();
+                            if(Array.isArray(result.data?.rows))rows=result.data.rows;
+                            else rows=null;
+                        }
                     }
                     if(result.error)throw quoteError(result);
                     if(!Array.isArray(rows))throw new Error('Kho giá trả về dữ liệu chưa đầy đủ. Hãy thử lại.');
-                    return rows.filter(row=>names.includes(partKey(row?.ten_phu_tung)));
+                    return rows.filter(row=>names.includes(partKey(row?.ten_phu_tung))).slice(0,request.p_page_size);
                 }
                 try{
                     if(parsed.quick){
@@ -14074,7 +14103,7 @@ window.searchData = async function(opts) {
                 }catch(error){if(signal?.aborted)throw error;if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');throw error;}
                 finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
             }
-            return {isPriceQuestion:(question,previous)=>questionType(String(question||'').trim(),previous),search};
+            return {isPriceQuestion:(question,previous)=>questionType(String(question||'').trim(),previous),contextFromQuestion,search};
         })();
 
         function getPriceSignalBadge(item) {
