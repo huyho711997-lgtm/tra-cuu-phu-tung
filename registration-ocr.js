@@ -69,10 +69,28 @@
     const s=session={box,opener,oldOverflow,catalog,file:null,url:'',result:null,controller:null,revision:0,suggestCtl:null,suggestRevision:0,selected:new Set()};
     document.body.append(box);document.body.style.overflow='hidden';
     const q=selector=>box.querySelector(selector),status=q('[data-status]'),error=q('[data-error]'),read=q('[data-reg="read"]'),review=q('[data-review]');
-    function options(node,items,value,placeholder){node.innerHTML='<option value="">'+esc(placeholder)+'</option>'+items.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('');node.value=value||'';}
+    let picker=null;
+    const pickerNames={regOcrBrand:'Hãng xe',regOcrModel:'Dòng xe',regOcrYear:'Năm sản xuất'};
+    for(const id of Object.keys(pickerNames)){
+      const select=q('#'+id),trigger=document.createElement('button');
+      select.required=false;select.hidden=true;trigger.type='button';trigger.className='reg-picker-trigger';trigger.id=id+'Trigger';trigger.setAttribute('aria-haspopup','dialog');trigger.innerHTML='<span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>';
+      select.before(trigger);select.closest('.reg-ocr-field').querySelector('label').htmlFor=trigger.id;
+      trigger.addEventListener('click',()=>openPicker(select,trigger));
+    }
+    function syncPicker(node){const trigger=q('#'+node.id+'Trigger');if(!trigger)return;trigger.querySelector('span').textContent=node.selectedOptions[0]?.textContent||'Chọn';trigger.disabled=node.disabled;trigger.classList.toggle('is-placeholder',!node.value);}
+    function options(node,items,value,placeholder){node.innerHTML='<option value="">'+esc(placeholder)+'</option>'+items.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('');node.value=value||'';syncPicker(node);}
+    function closePicker(){if(!picker)return;const {layer,trigger}=picker;picker=null;layer.remove();trigger.focus();}
+    function openPicker(select,trigger){
+      if(select.disabled||picker)return;
+      const layer=document.createElement('div');layer.className='reg-picker-overlay';layer.innerHTML='<div class="reg-picker-sheet" role="dialog" aria-modal="true" aria-labelledby="regPickerTitle"><header><div><span>CHỌN THÔNG TIN XE</span><h3 id="regPickerTitle"></h3></div><button type="button" class="reg-picker-close" aria-label="Đóng danh sách">'+I.close+'</button></header><div class="reg-picker-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" autocomplete="off" placeholder="Tìm nhanh…" aria-label="Tìm trong danh sách"></div><div class="reg-picker-list" role="group"></div></div>';
+      layer.querySelector('h3').textContent=pickerNames[select.id];layer.querySelector('.reg-picker-list').setAttribute('aria-label',pickerNames[select.id]);box.append(layer);picker={layer,trigger};
+      const search=layer.querySelector('input'),list=layer.querySelector('.reg-picker-list');
+      function paint(){const query=key(search.value),items=[...select.options].filter(o=>o.value&&(!query||key(o.textContent).includes(query)));list.replaceChildren();for(const option of items){const button=document.createElement('button');button.type='button';button.className='reg-picker-option';button.setAttribute('aria-pressed',String(select.value===option.value));const label=document.createElement('span');label.textContent=option.textContent;button.append(label);if(select.value===option.value){const mark=document.createElement('span');mark.className='reg-picker-check';mark.setAttribute('aria-hidden','true');mark.textContent='✓';button.append(mark);}button.addEventListener('click',()=>{select.value=option.value;syncPicker(select);select.dispatchEvent(new Event('change',{bubbles:true}));syncPicker(select);closePicker();});list.append(button);}if(!items.length){const empty=document.createElement('p');empty.className='reg-picker-empty';empty.textContent='Không tìm thấy kết quả phù hợp.';list.append(empty);}}
+      search.addEventListener('input',paint);layer.addEventListener('click',e=>{if(e.target===layer||e.target.closest('.reg-picker-close'))closePicker();});paint();layer.querySelector('.reg-picker-close').focus();
+    }
     function models(value=''){
       const brand=s.catalog.brands.find(b=>b.name===q('#regOcrBrand').value);
-      options(q('#regOcrModel'),brand?.models||[],'','Thêm dòng xe');q('#regOcrModel').disabled=!brand;
+      options(q('#regOcrModel'),brand?.models||[],'','Thêm dòng xe');q('#regOcrModel').disabled=!brand;syncPicker(q('#regOcrModel'));
       if(value)s.selected.add(value);renderSelected();
     }
     function renderSelected(){
@@ -165,9 +183,10 @@
       }catch(err){showError(err.message);}
     });
     s.keydown=e=>{
-      if(e.key==='Escape'){e.preventDefault();close();return;}
+      if(e.key==='Escape'){e.preventDefault();if(picker)closePicker();else close();return;}
       if(e.key!=='Tab')return;
-      const nodes=[...box.querySelectorAll('button:not(:disabled),select:not(:disabled),[tabindex="0"]')].filter(n=>!n.hidden&&n.getClientRects().length);
+      const scope=picker?picker.layer:box;
+      const nodes=[...scope.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),[tabindex="0"]')].filter(n=>!n.hidden&&n.getClientRects().length);
       const first=nodes[0],last=nodes[nodes.length-1];
       if(e.shiftKey&&(document.activeElement===first||!box.contains(document.activeElement))){e.preventDefault();last?.focus();}
       else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}
