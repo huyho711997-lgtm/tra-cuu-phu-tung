@@ -13765,14 +13765,15 @@ window.searchData = async function(opts) {
             const clean = value => String(value ?? '').replace(/[\r\n\t]+/g, ' ').replace(/[<>`*_\[\]]/g, '').trim().slice(0,160);
             const regexLiteral = value => String(value).replace(/[.*+?^$(){}|[\]\\]/g, '\\$&');
             const vehicleKey = value => String(value).trim().replace(/\s+/g,' ').toUpperCase();
+            const partKey = value => String(value ?? '').normalize('NFC').trim().toLowerCase().replace(/\s+/g,' ');
 
             function readVehicleQuotes(params, signal){
-                // Use the existing brand/model/year index to scope the rows before matching the part name.
+                const exactPart = '^[[:space:]]*' + params.p_keyword.split(' ').map(regexLiteral).join('[[:space:]]+') + '[[:space:]]*$';
                 let query = supabase.from('lich_su_bao_gia')
                     .select('ten_phu_tung,hang_xe,hieu_xe,nam_sx,chinh_hang,gia_duyet,ngay_bao_gia')
                     .eq('_kgpt_ai_brand_key', vehicleKey(params.p_hang))
                     .in('_kgpt_ai_model_key', params.p_hieus.map(vehicleKey))
-                    .regexIMatch('ten_phu_tung', regexLiteral(params.p_keyword));
+                    .regexIMatch('ten_phu_tung', exactPart);
                 if(params.p_nams.length)query=query.in('nam_sx',params.p_nams);
                 if(params.p_kind==='genuine')query=query.regexIMatch('chinh_hang','^[[:space:]]*ch[íi]nh[[:space:]_-]+h[àa]ng[[:space:]]*$');
                 if(params.p_kind==='aftermarket')query=query.regexIMatch('chinh_hang','^[[:space:]]*(kh[ôo]ng[[:space:]_-]+ch[íi]nh[[:space:]_-]+h[àa]ng|h[àa]ng[[:space:]_-]+ngo[àa]i)[[:space:]]*$');
@@ -13803,7 +13804,7 @@ window.searchData = async function(opts) {
                 const years=[...new Set([...(parsed.years||[]),...(parsed.skippedYears||[])])].filter(Number.isInteger).sort((a,b)=>a-b);
                 const params={
                     p_hang:parsed.brand,p_hieus:parsed.models.slice(0,30),p_nams:years.slice(0,30),
-                    p_keyword:part.toLowerCase(),p_exact:false,p_kind:parsed.kind||'all',
+                    p_keyword:partKey(part),p_exact:true,p_kind:parsed.kind||'all',
                     p_offset:0,p_page_size:quoteLimit+1,p_include_total:false
                 };
                 const timeout=new AbortController(),abort=()=>timeout.abort(),timer=setTimeout(abort,30000);
@@ -13826,6 +13827,7 @@ window.searchData = async function(opts) {
                     }
                     if(result.error)throw quoteError(result);
                     if(!Array.isArray(rows))throw new Error('Kho giá trả về dữ liệu chưa đầy đủ. Hãy thử lại.');
+                    rows=rows.filter(row=>partKey(row?.ten_phu_tung)===params.p_keyword);
                     const criteria=[clean(part),clean(params.p_hang),params.p_hieus.map(clean).join(', '),params.p_nams.join(', ')].filter(Boolean).join(' · ');
                     if(!rows.length)return `Không tìm thấy báo giá trong kho cho **${criteria}**. Hãy kiểm tra lại tên phụ tùng, dòng xe hoặc năm sản xuất.`;
                     const lines=rows.slice(0,quoteLimit).map((row,index)=>{

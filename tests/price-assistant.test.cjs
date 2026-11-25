@@ -39,28 +39,40 @@ function fixture({rows = [], tableError = null, rpcError = null, status = 200, c
     return {bridge: context.window.TascoPriceAssistant, calls};
 }
 
-test('câu hỏi HR-V tra bằng các khóa hãng, dòng xe và năm đã có chỉ mục', async () => {
-    const f = fixture({rows:[quote],catalogYears:[2024]});
+test('câu hỏi giá cản trước HR-V chỉ hiển thị đúng tên phụ tùng', async () => {
+    const f = fixture({
+        rows:[
+            {...quote,ten_phu_tung:'Ốp bạc cản trước',gia_duyet:3214000},
+            {...quote,ten_phu_tung:'Ốp đen cản trước',gia_duyet:2612000},
+            {...quote,ten_phu_tung:'Cản trước dưới',gia_duyet:1820000},
+            {...quote,ten_phu_tung:' CẢN   TRƯỚC '}
+        ],
+        catalogYears:[2024]
+    });
     assert.ok(f.bridge.isPriceQuestion(question));
     const out = await f.bridge.search(question);
     assert.match(out,/1\.200\.000 VNĐ/);
     assert.match(out,/Chính hãng/);
+    assert.match(out,/Tìm thấy 1 báo giá/);
+    assert.doesNotMatch(out,/Ốp bạc|Ốp đen|Cản trước dưới/);
     assert.deepEqual(f.calls[0],['from','lich_su_bao_gia']);
     assert.deepEqual(f.calls.find(([method])=>method==='eq'),['eq','_kgpt_ai_brand_key','HONDA']);
     assert.deepEqual(Array.from(f.calls.find(([,field])=>field==='_kgpt_ai_model_key')[2]),['HR-V']);
     assert.deepEqual(Array.from(f.calls.find(([,field])=>field==='nam_sx')[2]),[2025]);
-    assert.deepEqual(f.calls.find(([method])=>method==='regexIMatch'),['regexIMatch','ten_phu_tung','cản trước']);
+    assert.deepEqual(f.calls.find(([method])=>method==='regexIMatch'),['regexIMatch','ten_phu_tung','^[[:space:]]*cản[[:space:]]+trước[[:space:]]*$']);
     assert.deepEqual(f.calls.at(-1),['limit',11]);
     assert.ok(!f.calls.some(([method])=>method==='rpc'));
 });
 
 test('kho chưa có khóa chuẩn hóa thì dùng API cũ với đủ bộ lọc', async () => {
-    const f = fixture({rows:[quote],tableError:{code:'42703'},status:400});
+    const f = fixture({rows:[{...quote,ten_phu_tung:'Ốp đen cản trước'}],tableError:{code:'42703'},status:400});
     const out = await f.bridge.search('cản trước hrv 2025 chính hãng giá bao nhiêu');
-    assert.match(out,/1\.200\.000 VNĐ/);
+    assert.match(out,/Không tìm thấy báo giá/);
+    assert.doesNotMatch(out,/1\.200\.000 VNĐ/);
     const [,name,args] = f.calls.at(-1);
     assert.equal(name,'tasco_search_parts_page_v4');
     assert.equal(args.p_kind,'genuine');
+    assert.equal(args.p_exact,true);
     assert.deepEqual(Array.from(args.p_hieus),['HR-V']);
     assert.deepEqual(Array.from(args.p_nams),[2025]);
     assert.equal(args.p_include_total,false);
