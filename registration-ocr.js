@@ -80,13 +80,15 @@
       for(const name of s.selected){const btn=document.createElement('button');btn.type='button';btn.className='reg-selected-model';btn.textContent=name+' ×';btn.setAttribute('aria-label','Bỏ dòng xe '+name);btn.addEventListener('click',()=>{s.selected.delete(name);renderSelected();});target.append(btn);}
       q('[data-suggestions]').querySelectorAll('[data-model]').forEach(btn=>btn.setAttribute('aria-pressed',String(s.selected.has(btn.dataset.model))));
     }
-    function clearSuggestions(){s.suggestRevision++;s.suggestCtl?.abort();s.suggestCtl=null;q('[data-suggestions]').replaceChildren();q('[data-suggest-status]').textContent='';q('[data-reg="suggest"]').disabled=false;}
+    function clearSuggestions(){s.suggestRevision++;s.suggestCtl?.abort();s.suggestCtl=null;q('[data-suggestions]').replaceChildren();q('[data-suggest-status]').textContent='';q('[data-suggest-status]').classList.remove('is-loading');q('[data-reg="suggest"]').disabled=false;}
     async function suggest(){
       const brand=q('#regOcrBrand').value,source=s.result?.fields.model.value,entry=s.catalog.brands.find(b=>b.name===brand);
       if(!brand||!entry){q('[data-suggest-status]').textContent='Chọn hãng xe để tự động tìm các dòng tương tự.';return;}
       if(!source){q('[data-suggest-status]').textContent='Chưa đọc được hiệu xe trên giấy. Hãy chọn dòng xe thủ công hoặc quét lại ảnh rõ hơn.';return;}
       clearSuggestions();const ctl=s.suggestCtl=new AbortController(),revision=++s.suggestRevision,button=q('[data-reg="suggest"]');
-      button.disabled=true;button.hidden=true;q('[data-suggest-status]').textContent='AI đang đối chiếu các dòng xe tương tự…';
+      button.disabled=true;button.hidden=true;
+      const indicator=q('[data-suggest-status]');indicator.classList.add('is-loading');
+      indicator.innerHTML='<span class="reg-model-loading-icon" aria-hidden="true"><span></span></span><span><strong>Đang tìm dòng xe tương tự</strong><small>AI đang đối chiếu với danh mục xe</small></span>';
       try{
         if(!window.TascoAsk?.suggestInspectionModels)throw new Error('Chưa tải xong AI. Hãy thử lại.');
         const list=await window.TascoAsk.suggestInspectionModels({brand,model:source,models:entry.models},{signal:ctl.signal});
@@ -95,7 +97,7 @@
         const target=q('[data-suggestions]');
         for(const item of list){const btn=document.createElement('button');btn.type='button';btn.className='reg-model-suggestion';btn.dataset.model=item.model;const title=document.createElement('strong');title.textContent=item.model;const reason=document.createElement('small');reason.textContent=item.reason||'Xem và đối chiếu';btn.append(title,reason);btn.addEventListener('click',()=>{if(s.selected.has(item.model))s.selected.delete(item.model);else if(s.selected.size<30)s.selected.add(item.model);else{q('[data-suggest-status]').textContent='Chọn tối đa 30 dòng xe.';return;}renderSelected();});target.append(btn);}renderSelected();
       }catch(err){if(session===s&&revision===s.suggestRevision&&!ctl.signal.aborted){q('[data-suggest-status]').textContent=err.message||'Chưa phân tích được. Hãy chọn thủ công.';button.hidden=false;}}
-      finally{if(session===s&&revision===s.suggestRevision){s.suggestCtl=null;button.disabled=false;}}
+      finally{if(session===s&&revision===s.suggestRevision){s.suggestCtl=null;button.disabled=false;indicator.classList.remove('is-loading');}}
     }
     function showError(message){error.textContent=message;error.hidden=false;}
     function busy(on){
