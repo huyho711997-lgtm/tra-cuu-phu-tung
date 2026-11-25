@@ -8,7 +8,7 @@
 const CACHE_VERSION = 'v3';
 const SHELL_CACHE = 'tasco-shell-' + CACHE_VERSION;
 const CDN_CACHE = 'tasco-cdn-' + CACHE_VERSION;
-const SHELL_URLS = ['./mobile', './tailwind.css', './registration-ocr.js?v=model-20261125', './registration-ocr.css?v=model-20261125', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png'];
+const SHELL_URLS = ['./mobile', './tailwind.css', './registration-ocr.js?v=voice-20261125', './registration-ocr.css?v=voice-20261125', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png'];
 const CDN_HOSTS = new Set([
   'cdn.tailwindcss.com',
   'cdnjs.cloudflare.com',

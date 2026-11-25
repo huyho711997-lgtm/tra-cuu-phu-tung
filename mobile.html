@@ -8712,10 +8712,12 @@ window.TascoAsk=(()=>{
     const g=all.find(e=>e.provider==='gemini');if(g)out.push(g);
     return out;
   }
-  async function transcribe(blob,ctl){
+  async function transcribe(blob,ctl,opt={}){
     let wav;
     try{wav=await toWavBase64(blob);}catch(_){throw new Error('Không đọc được bản ghi âm trên máy này. Hãy thử lại hoặc dùng nút micro trên bàn phím iPhone.');}
-    const M=B.Models,c=cfg(),cands=voiceCandidates(),notes=[];
+    const M=B.Models,c=cfg(),chosen=opt.lookup?lookupSelectedModel():null,notes=[];
+    if(chosen&&(!/^(antigravity|gemini)$/.test(chosen.provider)||!/^gemini/i.test(chosen.model)))throw new Error('Mô hình đã chọn chưa hỗ trợ nhận âm thanh. Hãy chọn mô hình Gemini hoặc Tự động trong cài đặt AI.');
+    const cands=chosen?[chosen]:voiceCandidates();
     if(!cands.length)throw new Error('Chưa có Antigravity hay khoá Gemini để chuyển giọng nói. Hãy cài địa chỉ Antigravity (nút mô hình) hoặc dùng nút micro trên bàn phím iPhone.');
     for(const e of cands){
       if(ctl.signal.aborted)throw new DOMException('Đã huỷ','AbortError');
@@ -9244,7 +9246,16 @@ window.TascoAsk=(()=>{
     if(signal.aborted)throw new DOMException('Đã huỷ','AbortError');
     return transcribe(blob,{signal});
   }
-  return {paint,reset,readPlate,readInspection,suggestInspectionModels,lookupModels,setLookupModel,analyzeScene,sceneModels,normPlate,transcribeForScene,plateKey:plKey,leave:()=>{closeSheet();S.needEnd=true;if(S.voice)voiceCancel();}};
+  async function transcribeForLookup(blob,signal){
+    try{api=await window.TascoWeekly?.askBridge?.();}catch(_){api=null;}
+    const owner=api?.me?.()?.uid;if(!owner)throw new Error('Hãy đăng nhập AI nghiệp vụ và cấu hình Antigravity hoặc Gemini trước khi dùng micro.');
+    await loadBundle();if(signal.aborted)throw new DOMException('Đã huỷ','AbortError');
+    const text=await transcribe(blob,{signal},{lookup:true});
+    if(signal.aborted)throw new DOMException('Đã huỷ','AbortError');
+    if(api?.me?.()?.uid!==owner)throw new Error('Tài khoản đã thay đổi. Hãy thử lại.');
+    return text;
+  }
+  return {paint,reset,readPlate,readInspection,suggestInspectionModels,lookupModels,setLookupModel,analyzeScene,sceneModels,normPlate,transcribeForScene,transcribeForLookup,plateKey:plKey,leave:()=>{closeSheet();S.needEnd=true;if(S.voice)voiceCancel();}};
 })();
 </script>
 <style id="tascoAskStyles">
@@ -20251,7 +20262,7 @@ window.TascoCategories = (function () {
     function plugin() { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SpeechRecognition || null; }
     function webApi() { return isApp() ? null : (window.SpeechRecognition || window.webkitSpeechRecognition || null); }
     /* hiện nút: app (kể cả bản cũ chưa có plugin, để báo cần cập nhật) hoặc trình duyệt có hỗ trợ */
-    function visible() { return isApp() || !!webApi() || cloudCapable(); }
+    function visible() { return isApp() || !!webApi() || cloudCapable() || !!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia); }
     function available() { return !!(plugin() || webApi()); }
     /* "cản trước phẩy đèn pha trái xuống dòng tai xe" -> "Cản trước, Đèn pha trái, Tai xe" */
     function tidy(text, multi) {
@@ -20437,10 +20448,12 @@ window.TascoCategories = (function () {
       if (winding) { ui.error('Đang kết thúc lần nói trước. Thử lại sau một giây.'); return; }
       if (session) { session.stop(); return; }
       var native = plugin(), Web = webApi();
-      if (!native && !Web && !cloudCapable()) { ui.error(isApp() ? 'Cần cập nhật app bản mới để nói nhập (cài lại file IPA mới nhất).' : 'Trình duyệt này chưa hỗ trợ nhập bằng giọng nói.'); return; }
+      var useAI = typeof ui.aiTranscribe === 'function', canRecord = !!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+      if (useAI && !canRecord) { ui.error('Thiết bị chưa hỗ trợ ghi âm trên trình duyệt này. Hãy dùng bàn phím để nhập.'); return; }
+      if (!useAI && !native && !Web && !cloudCapable()) { ui.error(isApp() ? 'Cần cập nhật app bản mới để nói nhập (cài lại file IPA mới nhất).' : 'Trình duyệt này chưa hỗ trợ nhập bằng giọng nói.'); return; }
       var known = (ui.known || []).filter(Boolean);
       var idx = ui.plate ? null : makeIndex(ui), alts = [];
-      var useCloud = cloudCapable(), cloudCtl = null, done = false, handles = [], rec = null, parts = [], last = '', stopRequested = false, restarts = 0, startedAt = Date.now(), lastChange = 0, tick = 0, stopTimer = 0, onDevice = false;
+      var useCloud = useAI || cloudCapable(), cloudCtl = null, done = false, handles = [], rec = null, parts = [], last = '', stopRequested = false, restarts = 0, startedAt = Date.now(), lastChange = 0, tick = 0, stopTimer = 0, onDevice = false;
       function text() { return parts.concat(last ? [last] : []).join(ui.multi ? ', ' : ' '); }
       /* Chọn phương án tốt nhất trong các phương án iOS trả về: theo bộ chọn riêng của tính năng (vd biển số) hoặc theo từ điển chuyên ngành */
       function choose(list) {
@@ -20550,6 +20563,7 @@ window.TascoCategories = (function () {
           if (ctx) { try { ctx.close(); } catch (_) {} ctx = null; }
         }
         function cloudFail(err) {
+          if (useAI) { fail((err && err.message) || 'Chưa chuyển được giọng nói bằng AI. Hãy thử lại.'); return; }
           var st = err && err.status, canFall = !!(native || Web), msg;
           if (st === 401) msg = 'Phiên đăng nhập hết hạn. Hãy đăng nhập lại rồi thử lại.';
           else if (st === 409 || st === 403) { cloudBadUntil = Infinity; msg = 'Tài khoản này chưa bật nhận dạng nâng cao.' + (canFall ? ' Lần nói sau sẽ dùng bộ nhận dạng có sẵn của máy.' : ''); }
@@ -20568,7 +20582,7 @@ window.TascoCategories = (function () {
           if (!ui.plate && sttCtx === 'search' && ui.vocab && ui.vocab.length) { var head = 'Tra cứu phụ tùng ô tô: cản trước Honda CR-V 2025. ' + hints(known, true).slice(0, 8).join(', ') + '. Hãng, dòng xe: ', names = []; for (var vi = 0; vi < ui.vocab.length && head.length + names.join(', ').length + String(ui.vocab[vi]).length + 2 < 640; vi++) names.push(ui.vocab[vi]); prompt = head + names.join(', '); }
           var vocab = ui.plate ? '' : ((ui.vocab && ui.vocab.length ? ui.vocab : hints(known, ui.onlyKnown)).join(', ')).slice(0, 1700);
           try {
-            var text = await transcribe(blob, prompt.slice(0, 650), { context: sttCtx, vocab: vocab });
+            var text = useAI ? await ui.aiTranscribe(blob) : await transcribe(blob, prompt.slice(0, 650), { context: sttCtx, vocab: vocab });
             if (done) return;
             text = text.replace(/[.!?…]+\s*$/, '').trim();
             if (ui.multi) text = text.replace(/[.!?]\s+/g, ', ');
@@ -20606,9 +20620,9 @@ window.TascoCategories = (function () {
             if (elapsed > MAX_MS) requestStop();
             else if (!blind) { if (speech && now - lastVoice > SILENCE) requestStop(); else if (!speech && elapsed > NO_SPEECH_MS) requestStop(); }
           }, 80);
-        }).catch(function () { release(); cloudCtl = null; if (done) return; if (native || Web) fallback(); else fail('Chưa cấp quyền micro. Hãy cho phép micro rồi thử lại.'); });
+        }).catch(function () { release(); cloudCtl = null; if (done) return; if (!useAI && (native || Web)) fallback(); else fail('Chưa cấp quyền micro. Hãy cho phép micro rồi thử lại.'); });
       }
-      if (useCloud) runCloud(function () { if (native || Web) runNative(); else fail('Chưa bật được micro.'); }); else runNative();
+      if (useCloud) runCloud(function () { if (!useAI && (native || Web)) runNative(); else fail('Chưa bật được micro.'); }); else runNative();
     }
     window.TascoVoiceCloud = { configure: function (cfg) { cloudCfg = cfg && cfg.url && cfg.token ? cfg : null; }, disable: function (off) { try { if (off) window.localStorage.setItem(CLOUD_OFF_KEY, '1'); else window.localStorage.removeItem(CLOUD_OFF_KEY); } catch (_) {} }, enabled: function () { return cloudCapable(); } };
     return { visible: visible, available: available, start: start, stop: stop, tidy: tidy, snap: snap, norm: norm, explain: explain, learn: learn, fix: function (t, multi, known) { return fixText(t, multi, makeIndex({ known: known })); }, rerank: function (a, known) { return rerank(a, makeIndex({ known: known })); }, active: function () { return !!session; } };
@@ -20849,6 +20863,7 @@ window.TascoCategories = (function () {
     try { input.blur(); } catch (_) {}
     V.start({
       multi: false, known: known(), sttContext: 'search', vocab: (window.TascoSmartSearch && window.TascoSmartSearch.vocabulary()) || [],
+      aiTranscribe: async function (blob) { if (!window.TascoAsk?.transcribeForLookup) throw new Error('Chưa tải xong AI. Hãy thử lại.'); var ctl = new AbortController(); return window.TascoAsk.transcribeForLookup(blob, ctl.signal); },
       level: function (v) { mic.style.setProperty('--lvl', v.toFixed(2)); },
       begin: function () { mic.classList.add('is-live'); mic.setAttribute('aria-pressed', 'true'); mic.setAttribute('aria-label', 'Dừng nghe'); say('Đang nghe… nói tự nhiên, ví dụ “cản trước Honda CRV 2025”'); },
       live: function (t) { setValue(t); say('Đang nghe: ' + t); },
@@ -24442,8 +24457,8 @@ window.TascoVersion = (function () {
   window.addEventListener('load', function () { setTimeout(show, 3500); });
 })();
 </script>
-<link rel="stylesheet" href="registration-ocr.css?v=model-20261125">
-<script src="registration-ocr.js?v=model-20261125"></script>
+<link rel="stylesheet" href="registration-ocr.css?v=voice-20261125">
+<script src="registration-ocr.js?v=voice-20261125"></script>
 </body>
 </html>
 
