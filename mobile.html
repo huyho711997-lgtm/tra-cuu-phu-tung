@@ -8055,6 +8055,7 @@ window.TascoAsk=(()=>{
     S.kind=c.free?'chat':'ask';S.activeId=c.id;S.pin=pinList(c.pin);S.messages=c.messages;S.usage=c.usage;S.open=Object.create(null);S.draft='';clearAtt();
   }
   function openKind(kind){
+    if(S.voice)voiceCancel();
     S.kind=kind==='chat'?'chat':'ask';
     const last=kindChats(S.kind==='chat')[0];
     if(last)openChat(last.id);else newChat(true);
@@ -8191,7 +8192,7 @@ window.TascoAsk=(()=>{
     if(error&&error.name==='AbortError'){ctx.reply(Object.assign({text:'Đã dừng theo yêu cầu của bạn.',empty:true},extra));return;}
     ctx.reply(Object.assign({text:(error&&error.message)||'Không gọi được AI. Hãy thử lại.',error:true},extra));
   }
-  async function askQuestion(question,att){
+  async function askQuestion(question,att,spoken){
     const q=Q(),L=B.Legal,imp=att&&att.length?{intent:false}:q.importRequest(question);
     att=att||[];
     const askFiles=att.filter(a=>a.kind==='text').map(a=>({name:a.name,text:a.text,truncated:a.truncated,note:a.note})),askImages=att.filter(a=>a.kind==='image');
@@ -8203,7 +8204,7 @@ window.TascoAsk=(()=>{
     const history=S.messages.slice();
     const ctx=begin(question,'Đang tra Thư viện tài liệu…',att),{mine,forceDeep,usage}=ctx;
     try{
-      if(!att.length&&await answerPriceQuestion(question,history,ctx))return finish(mine);
+      if(!att.length&&await answerPriceQuestion(question,history,ctx,spoken))return finish(mine);
       let plan={issue:'',queries:[]},chat=!att.length&&q.isSmallTalk(question);
       if(!chat&&L){
         paintStatus('Đang phân tích câu hỏi…');
@@ -8239,13 +8240,13 @@ window.TascoAsk=(()=>{
     }catch(error){failure(ctx,error);}
     finish(mine);
   }
-  async function askFree(question,att){
+  async function askFree(question,att,spoken){
     const q=Q(),L=B.Legal,history=S.messages.slice();
     att=att||[];
     const files=att.filter(a=>a.kind==='text').map(a=>({name:a.name,text:a.text,truncated:a.truncated,note:a.note})),images=att.filter(a=>a.kind==='image');
     const ctx=begin(question,'Đang soạn câu trả lời…',att),{mine,forceDeep,usage}=ctx;
     try{
-      if(!att.length&&await answerPriceQuestion(question,history,ctx))return finish(mine);
+      if(!att.length&&await answerPriceQuestion(question,history,ctx,spoken))return finish(mine);
       let sources=[],queries=[],read=null;
       if(S.lib&&L){
         paintStatus('Đang đọc Thư viện tài liệu…');
@@ -8265,16 +8266,19 @@ window.TascoAsk=(()=>{
     }catch(error){failure(ctx,error,{free:true});}
     finish(mine);
   }
-  async function answerPriceQuestion(question,history,ctx){
+  function previousPriceContext(bridge,history){
+    const last=history.at(-1),prior=history.at(-2);
+    return last?.priceContext||(last?.role==='assistant'&&prior?.role==='user'&&!prior.files?.length
+      ?bridge.contextFromQuestion(prior.text):null);
+  }
+  async function answerPriceQuestion(question,history,ctx,spoken){
     const bridge=window.TascoPriceAssistant;
     if(!bridge)return false;
-    const last=history.at(-1),prior=history.at(-2),signal=S.ctl.signal;
-    const previous=last?.priceContext||(last?.role==='assistant'&&prior?.role==='user'&&!prior.files?.length
-      ?bridge.contextFromQuestion(prior.text):null);
+    const signal=S.ctl.signal,previous=previousPriceContext(bridge,history);
     paintStatus('AI đang phân tích yêu cầu…');
     let intent,localFallback=false;
     try{
-      intent=await bridge.plan(question,history,previous,
+      intent=spoken?spoken.intent:await bridge.plan(question,history,previous,
         request=>callAI(request,{...ctx.usage,maxTokens:1800,deadlineMs:18000,singleAttempt:true}),signal);
       if(ctx.mine!==S.gen)return true;
       if(!intent)return false;
@@ -8293,13 +8297,13 @@ window.TascoAsk=(()=>{
     }catch(error){if(ctx.mine===S.gen)failure(ctx,error,{free:true,priceLookup:true});}
     return true;
   }
-  function send(raw,keep){
-    if(!B||S.busy)return;
+  function send(raw,keep,spoken){
+    if(!B||S.busy||S.voice)return;
     if(S.attBusy){toast('Đang đọc tệp đính kèm — đợi một chút.');return;}
     const text=String(raw!==undefined?raw:S.draft).trim(),att=keep||S.att.slice();
     if(!text&&!att.length){$('[data-ak-input]')?.focus();return;}
     const t=text||'Hãy đọc và tóm tắt nội dung tệp/ảnh đính kèm.';
-    return S.kind==='chat'?askFree(t,att):askQuestion(t,att);
+    return S.kind==='chat'?askFree(t,att,spoken):askQuestion(t,att,spoken);
   }
   function stop(){if(S.busy)S.ctl?.abort();}
   function retryAnswer(id,deep){
@@ -8514,7 +8518,7 @@ window.TascoAsk=(()=>{
   }
   function updateSend(){
     const btn=$('[data-ak=send],[data-ak=stop]');
-    if(btn)btn.disabled=S.busy?false:(!B||S.attBusy>0||(!S.draft.trim()&&!S.att.length));
+    if(btn)btn.disabled=S.busy?false:(!B||!!S.voice||S.attBusy>0||(!S.draft.trim()&&!S.att.length));
   }
   function clearAtt(silent){
     S.att=[];S.attBusy=0;S.attGen++;
@@ -8628,7 +8632,7 @@ window.TascoAsk=(()=>{
   }
 
 
-  /* ---------- nhập bằng giọng nói: ghi âm → WAV 16 kHz → Antigravity (Gemini) chép chữ, dự phòng khoá Gemini ---------- */
+  /* ---------- gửi ghi âm trực tiếp cho AI nghiệp vụ ---------- */
   const VOICE_MAX=120,VOICE_BARS=30,TRANS_NONE='KHONG_CO_LOI';
   const TRANS_SYS='Bạn là công cụ chép lời nói thành chữ (speech-to-text) tiếng Việt cho nghiệp vụ giám định, bồi thường bảo hiểm xe cơ giới. Hãy chép lại CHÍNH XÁC những gì người nói trong bản ghi âm: không thêm, không bớt, không trả lời, không giải thích, không dịch. Tự thêm dấu câu và viết hoa hợp lý. Giữ nguyên thuật ngữ chuyên môn (giám định, bồi thường, khấu hao, hợp đồng, Nghị định, điều, khoản…), viết biển số xe, số tiền, ngày tháng bằng chữ số (VD 47A-123.45, 15 triệu đồng, ngày 20/11). Chỉ trả về đúng phần chữ đã chép. Nếu không có lời nói nào nghe được, chỉ trả về đúng chuỗi '+TRANS_NONE+'.';
   let rec=null;
@@ -8646,8 +8650,8 @@ window.TascoAsk=(()=>{
     el.innerHTML=phase==='init'
       ?'<button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ ghi âm">'+IC.x+'</button><div class="ak-rec-mid"><div class="ak-wave" aria-hidden="true">'+'<i></i>'.repeat(VOICE_BARS)+'</div><div class="ak-rec-t"><i class="ak-spin" aria-hidden="true"></i><span>Đang bật micro…</span></div></div><button type="button" class="ak-rec-ok" disabled aria-label="Chưa sẵn sàng">'+IC.check+'</button>'
     :phase==='rec'
-      ?'<button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ ghi âm">'+IC.x+'</button><div class="ak-rec-mid"><div class="ak-wave" data-ak-wave>'+'<i></i>'.repeat(VOICE_BARS)+'</div><div class="ak-rec-t"><i class="ak-rec-dot" aria-hidden="true"></i><span data-ak-rect>0:00</span><em>Đang nghe — cứ nói tự nhiên</em></div></div><button type="button" class="ak-rec-ok" data-ak="micstop" aria-label="Xong — chuyển thành chữ">'+IC.check+'</button>'
-      :'<i class="ak-spin" aria-hidden="true"></i><div class="ak-rec-mid"><b>Đang chuyển thành chữ…</b><em data-ak-eng>'+esc(S.voice.engine||'Đang chọn bộ nhận dạng giọng nói')+'</em></div><button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ">'+IC.x+'</button>';
+      ?'<button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ ghi âm">'+IC.x+'</button><div class="ak-rec-mid"><div class="ak-wave" data-ak-wave>'+'<i></i>'.repeat(VOICE_BARS)+'</div><div class="ak-rec-t"><i class="ak-rec-dot" aria-hidden="true"></i><span data-ak-rect>0:00</span><em>Bấm ✓ để gửi ghi âm</em></div></div><button type="button" class="ak-rec-ok" data-ak="micstop" aria-label="Xong và gửi ghi âm cho AI">'+IC.check+'</button>'
+      :'<i class="ak-spin" aria-hidden="true"></i><div class="ak-rec-mid"><b>AI đang nghe bản ghi…</b><em data-ak-eng>'+esc(S.voice.engine||'Đang kết nối mô hình AI')+'</em></div><button type="button" class="ak-rec-x" data-ak="miccancel" aria-label="Huỷ">'+IC.x+'</button>';
   }
   function voiceCleanup(){
     if(!rec)return;
@@ -8666,18 +8670,19 @@ window.TascoAsk=(()=>{
   }
   async function voiceStart(){
     if(!B||S.busy||S.voice)return;
+    if(S.attBusy){toast('Đang đọc tệp đính kèm — đợi một chút.');return;}
     if(!window.isSecureContext||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast('Thiết bị này chưa hỗ trợ ghi âm trong ứng dụng.');return;}
-    const v0=S.voice={phase:'init'};paintVoice();const m0=$('[data-ak=mic]');if(m0)m0.disabled=true;
+    const v0=S.voice={phase:'init'};paintVoice();updateSend();const m0=$('[data-ak=mic]');if(m0)m0.disabled=true;
     // chạy song song: tạo + đánh thức AudioContext ngay trong cử chỉ chạm (iOS cần), không đợi xin micro xong
     let ctx0=null;try{const Ctx0=window.AudioContext||window.webkitAudioContext;if(Ctx0){ctx0=new Ctx0();if(ctx0.state==='suspended')ctx0.resume().catch(()=>{});}}catch(_){ctx0=null;}
     v0.ctx0=ctx0;
     const dropCtx=()=>{try{if(ctx0&&ctx0.state!=='closed')ctx0.close().catch(()=>{});}catch(_){}};
     let stream;
     try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});}
-    catch(e){dropCtx();if(S.voice===v0)S.voice=null;paintVoice();const m1=$('[data-ak=mic]');if(m1)m1.disabled=!B||S.busy;toast(/NotAllowed|Permission|denied/i.test((e&&e.name||'')+(e&&e.message||''))?'Chưa được cấp quyền micro. Vào Cài đặt iPhone → Tasco DLK → bật Micro.':'Không mở được micro. Hãy thử lại.');return;}
+    catch(e){dropCtx();if(S.voice===v0)S.voice=null;paintVoice();updateSend();const m1=$('[data-ak=mic]');if(m1)m1.disabled=!B||S.busy;toast(/NotAllowed|Permission|denied/i.test((e&&e.name||'')+(e&&e.message||''))?'Chưa được cấp quyền micro. Vào Cài đặt iPhone → Tasco DLK → bật Micro.':'Không mở được micro. Hãy thử lại.');return;}
     if(S.voice!==v0||!live()){stream.getTracks().forEach(t=>t.stop());dropCtx();return;}   // người dùng đã huỷ/chuyển trang trong lúc chờ cấp quyền
     const mime=['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
-    let mr;try{mr=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);}catch(_){stream.getTracks().forEach(t=>t.stop());dropCtx();S.voice=null;paintVoice();toast('Không khởi động được ghi âm.');return;}
+    let mr;try{mr=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);}catch(_){stream.getTracks().forEach(t=>t.stop());dropCtx();S.voice=null;paintVoice();updateSend();toast('Không khởi động được ghi âm.');return;}
     const r=rec={stream,mr,chunks:[],t0:Date.now(),peak:0,hist:new Array(VOICE_BARS).fill(0),cancelled:false,mime:mr.mimeType||mime||'audio/mp4'};
     mr.ondataavailable=e=>{if(e.data&&e.data.size)r.chunks.push(e.data);};
     mr.onstop=()=>{if(!r.cancelled&&r.finish)r.finish();};
@@ -8705,30 +8710,37 @@ window.TascoAsk=(()=>{
   function voiceStop(){
     const r=rec;if(!r||!S.voice||S.voice.phase!=='rec')return;
     const dur=(Date.now()-r.t0)/1000;
-    S.voice={phase:'busy',ctl:new AbortController()};paintVoice();
+    const voice=S.voice={phase:'busy',ctl:new AbortController()};
+    const signal=voice.ctl.signal,thread=S.messages,owner=S.uid,draft=S.draft.trim();
+    const current=()=>S.voice===voice&&!signal.aborted&&S.messages===thread&&S.uid===owner&&live();
+    const release=()=>{if(S.voice===voice){S.voice=null;paintVoice();updateSend();}};
+    paintVoice();
     cancelAnimationFrame(r.raf);clearInterval(r.clock);
     r.finish=async()=>{
-      const mime=r.mime,blob=new Blob(r.chunks,{type:mime}),peak=r.peak,ctl=S.voice&&S.voice.ctl;
+      r.finish=null;
+      const blob=new Blob(r.chunks,{type:r.mime});
       voiceCleanup();
-      if(dur<0.7||blob.size<800){S.voice=null;paintVoice();toast('Ghi âm quá ngắn — hãy giữ lâu hơn một chút rồi bấm ✓.');return;}
-      if(r.an&&peak<0.02){S.voice=null;paintVoice();toast('Không thu được tiếng nói. Kiểm tra micro rồi thử lại.');return;}
+      if(!current()){release();return;}
+      if(dur<0.7||blob.size<800){release();toast('Ghi âm quá ngắn. Hãy nói lâu hơn rồi bấm ✓.');return;}
+      if(r.an&&r.peak<0.02){release();toast('Không thu được tiếng nói. Kiểm tra micro rồi thử lại.');return;}
       try{
-        const text=await transcribe(blob,ctl);
-        if(!S.voice||ctl.signal.aborted)return;
-        S.voice=null;paintVoice();voiceInsert(text);
-      }catch(e){
-        if(!S.voice||ctl.signal.aborted)return;
-        S.voice=null;paintVoice();toast(String(e&&e.message||'Không chuyển được giọng nói thành chữ.'));
+        const bridge=window.TascoPriceAssistant;
+        if(!bridge)throw new Error('AI nghiệp vụ chưa sẵn sàng. Hãy thử lại.');
+        const wav=await toWavBase64(blob);
+        if(!current()){release();return;}
+        const history=thread.slice();
+        const spoken=await bridge.plan(draft,history,previousPriceContext(bridge,history),
+          request=>callVoiceModel(request,wav,signal),signal,{audio:true});
+        if(!current()){release();return;}
+        release();
+        send(spoken.question,undefined,spoken);
+      }catch(error){
+        const show=current();
+        release();
+        if(show)toast(error?.message||'Chưa gửi được ghi âm cho AI. Hãy thử lại.');
       }
     };
-    try{if(r.mr.state!=='inactive')r.mr.stop();else r.finish();}catch(_){r.finish();}
-  }
-  function voiceInsert(text){
-    const ta=$('[data-ak-input]');if(!ta)return;
-    S.draft=(S.draft&&S.draft.trim()?S.draft.replace(/\s+$/,'')+' ':'')+text;
-    ta.value=S.draft;autosize(ta);updateSend();
-    ta.classList.add('is-fresh');setTimeout(()=>ta.classList.remove('is-fresh'),1400);
-    toast('Đã chuyển thành chữ — kiểm tra lại rồi bấm gửi.');
+    try{if(r.mr.state!=='inactive')r.mr.stop();else r.finish();}catch(_){r.finish?.();}
   }
   // Ghi âm (mp4/webm/ogg tuỳ máy) → mono 16 kHz WAV 16-bit: định dạng mà API Gemini tương thích OpenAI nhận (input_audio: wav/mp3).
   async function toWavBase64(blob){
@@ -8756,6 +8768,45 @@ window.TascoAsk=(()=>{
     }
     const g=all.find(e=>e.provider==='gemini');if(g)out.push(g);
     return out;
+  }
+  async function callVoiceModel(request,wav,signal){
+    const selected=active(),models=B.Models;
+    const acceptsAudio=entry=>entry&&/^(antigravity|gemini)$/.test(entry.provider)&&/^gemini/i.test(entry.model);
+    const candidates=[selected,...voiceCandidates().map(entry=>models.resolve(cfg(),entry.id))]
+      .filter(acceptsAudio).filter((entry,index,list)=>list.findIndex(other=>other.provider===entry.provider&&other.model===entry.model)===index);
+    if(!candidates.length)throw new Error('Chưa có mô hình Gemini nhận giọng nói. Hãy chọn Gemini rồi thử lại.');
+    const system=request.system_instruction.parts.map(part=>part.text).join(' ');
+    const input=request.contents[0].parts[0].text;
+    const notes=[];
+    for(const candidate of candidates){
+      if(signal.aborted)throw new DOMException('Đã huỷ','AbortError');
+      try{
+        const key=await models.getKey(candidate.provider);
+        if(signal.aborted)throw new DOMException('Đã huỷ','AbortError');
+        if(!key){notes.push('thiếu khoá '+candidate.providerLabel);continue;}
+        const name=candidate.providerLabel+' · '+candidate.model;
+        if(S.voice?.ctl?.signal===signal){S.voice.engine=name;const el=$('[data-ak-eng]');if(el)el.textContent=name;}
+        const body={model:candidate.model,stream:false,temperature:0,max_tokens:4000,messages:[
+          {role:'system',content:system},
+          {role:'user',content:[{type:'text',text:input},{type:'input_audio',input_audio:{data:wav,format:'wav'}}]}
+        ]};
+        const deadline=AbortSignal.any([signal,AbortSignal.timeout(30000)]);
+        const response=await fetch(candidate.endpoint,{method:'POST',signal:deadline,
+          headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},body:JSON.stringify(body)});
+        if(!response.ok){notes.push('HTTP '+response.status);continue;}
+        const result=await response.json();
+        const content=result?.choices?.[0]?.message?.content;
+        const text=Array.isArray(content)?content.map(part=>part?.text||'').join(''):String(content||'');
+        const data=JSON.parse(text.trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,''));
+        if(['warehouse','other','inaudible'].includes(data?.route)
+          &&(data.route==='inaudible'||typeof data.transcript==='string'&&data.transcript.trim()))return text;
+        notes.push('phản hồi thiếu nội dung');
+      }catch(error){
+        if(signal.aborted)throw error;
+        notes.push(error?.name==='TimeoutError'?'mô hình phản hồi quá lâu':'không nhận được yêu cầu hợp lệ');
+      }
+    }
+    throw new Error('Chưa gửi được ghi âm cho AI ('+notes.slice(0,2).join(', ')+'). Hãy thử lại.');
   }
   async function transcribe(blob,ctl,opt={}){
     let wav;
@@ -13963,22 +14014,27 @@ window.searchData = async function(opts) {
             ].join(' ');
             const planText = value => typeof value==='string'?value.replace(/\s+/g,' ').trim().slice(0,120):'';
             const features = value => (foldQuestion(value).match(/\b(?:trai|phai|truoc|sau|tren|duoi|trong|ngoai|led|halogen|xenon|vo|op|mat|nep|chan|bong)\b/g)||[]).sort().join(' ');
-            async function plan(question,history,previous,callModel,signal){
+            async function plan(question,history,previous,callModel,signal,{audio=false}={}){
                 const context=previous?.owner===auth.currentUser?.uid?previous:null;
                 const prior=history.filter(message=>message.role==='user'&&!message.files?.length)
                     .slice(-3).map(message=>planText(message.text));
                 const input={question:question.slice(0,2400),prior,
                     vehicle:context?{brand:context.brand,models:context.models.slice(0,8),years:context.years,part:context.part,kind:context.kind}:null};
                 const output=await callModel({
-                    system_instruction:{parts:[{text:quotePlanSystem}]},
+                    system_instruction:{parts:[{text:quotePlanSystem+(audio?' Nghe trực tiếp audio đính kèm. Trả thêm transcript ghi lại chính xác lời nói. Ghép nội dung lời nói với trường question (chữ gõ kèm, nếu có) để lập kế hoạch. Nếu không nghe được lời nào, trả route=inaudible.':'')}]},
                     contents:[{role:'user',parts:[{text:JSON.stringify(input)}]}],
                     generationConfig:{responseMimeType:'application/json',temperature:0}
                 });
                 if(signal?.aborted)throw new DOMException('Đã huỷ','AbortError');
                 const data=JSON.parse(String(output).trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,''));
-                if(data?.route==='other')return null;
+                if(data?.route==='inaudible'&&audio)throw new Error('Không nghe rõ lời nói. Hãy ghi âm lại gần micro hơn.');
+                const transcript=audio&&typeof data?.transcript==='string'?data.transcript.trim().slice(0,8000):'';
+                if(audio&&!transcript)throw new Error('Mô hình chưa nhận được nội dung ghi âm. Hãy thử lại.');
+                const combined=[question.trim(),transcript].filter(Boolean).join(' ');
+                const resultFor=intent=>audio?{question:combined,intent}:intent;
+                if(data?.route==='other')return resultFor(null);
                 if(data?.route!=='warehouse')throw new Error('Mô hình trả về kế hoạch tra cứu không hợp lệ.');
-                if(data.mixedVehicles===true)return {mixedVehicles:true};
+                if(data.mixedVehicles===true)return resultFor({mixedVehicles:true});
                 const items=(Array.isArray(data.items)?data.items:[]).slice(0,quickQuoteLimit+1);
                 const parts=new Map();
                 const seen=new Set();
@@ -13996,7 +14052,7 @@ window.searchData = async function(opts) {
                 const rawYears=Array.isArray(data.years)?data.years:[];
                 const years=[...new Set(rawYears.filter(year=>Number.isInteger(year)&&year>=1990&&year<=new Date().getFullYear()+1))].slice(0,15);
                 const catalog=smart.vehicleCatalog().brands;
-                const local=smart.parse(question);
+                const local=smart.parse(combined);
                 let grounded;
                 if(local?.unresolvedModel||local?.ambiguousBrands?.length)grounded=local;
                 else if(local?.brand&&local.models?.length)grounded={brand:local.brand,models:local.models,modelQuery:local.modelQuery};
@@ -14006,9 +14062,9 @@ window.searchData = async function(opts) {
                     grounded=(brand&&!result.brand&&!result.ambiguousBrands)?{brand:'',models:[]}:result;
                 }
                 const explicitYears=[...(local?.years||[]),...(local?.skippedYears||[])];
-                return {...grounded,years:explicitYears.length?explicitYears:years,skippedYears:[],parts:[...parts.keys()],aliases:parts,
+                return resultFor({...grounded,years:explicitYears.length?explicitYears:years,skippedYears:[],parts:[...parts.keys()],aliases:parts,
                     kind:local?.kind&&local.kind!=='all'?local.kind:['genuine','aftermarket'].includes(data.kind)?data.kind:'all',
-                    quick:data.quick===true||parts.size>1};
+                    quick:data.quick===true||parts.size>1});
             }
             async function parseQuestion(question,previous,signal){
                 const value=String(question||'').trim();
