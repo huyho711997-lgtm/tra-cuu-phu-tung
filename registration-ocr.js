@@ -23,6 +23,16 @@
     }
     return fields;
   }
+  function normalizeSuggestions(raw,models){
+    if(typeof raw!=='string')throw new Error('Kết quả AI không hợp lệ.');
+    const start=raw.indexOf('{'),end=raw.lastIndexOf('}');
+    if(start<0||end<start)throw new Error('Kết quả AI không hợp lệ.');
+    const data=JSON.parse(raw.slice(start,end+1));
+    if(!Array.isArray(data.suggestions))throw new Error('Kết quả AI không hợp lệ.');
+    const found=[],seen=new Set();
+    for(const item of data.suggestions){const index=item?.index;if(!Number.isInteger(index)||index<0||index>=models.length||seen.has(index))continue;seen.add(index);found.push({model:models[index],reason:text(item.reason)});if(found.length===5)break;}
+    return found;
+  }
   function matchVehicle(fields,catalog){
     const brands=catalog.brands||[],brandKey=key(fields.brand?.value),modelKey=key(fields.model?.value);
     const aliases={mercedes:'mercedesbenz',merc:'mercedesbenz',chevy:'chevrolet',huyndai:'hyundai'};
@@ -53,14 +63,32 @@
     const opener=document.activeElement,box=document.createElement('div');
     box.className='reg-ocr-overlay';
     box.innerHTML='<section class="reg-ocr-sheet" role="dialog" aria-modal="true" aria-labelledby="regOcrTitle" aria-describedby="regOcrDesc" tabindex="-1"><header class="reg-ocr-head"><span class="reg-ocr-emblem">'+I.scan+'</span><div><h2 id="regOcrTitle">Quét đăng kiểm</h2><p id="regOcrDesc">Nhận diện thông tin xe từ giấy đăng kiểm</p></div><button type="button" class="reg-ocr-close" data-reg="close" aria-label="Đóng OCR đăng kiểm">'+I.close+'</button></header><div class="reg-ocr-content"><div class="reg-ocr-preview" data-preview><span>'+I.scan+'</span><strong>Chụp rõ phần thông tin phương tiện</strong><p>Đủ nhãn hiệu, số loại và năm sản xuất.<br>Ảnh chỉ dùng để đọc, không lưu vào hồ sơ.</p></div><div class="reg-ocr-pickers"><button type="button" data-reg="camera">'+I.camera+'Chụp đăng kiểm</button><button type="button" data-reg="photo">'+I.photo+'Chọn ảnh</button></div><input type="file" accept="image/*" capture="environment" data-file="camera" hidden><input type="file" accept="image/*" data-file="photo" hidden><p class="reg-ocr-status" role="status" aria-live="polite" data-status>Hỗ trợ ảnh JPG, PNG, WebP · tối đa 20 MB</p><button type="button" class="reg-ocr-read" data-reg="read" hidden>'+I.scan+'Đọc thông tin xe</button><form class="reg-ocr-review" data-review hidden><div class="reg-ocr-review-heading"><span>'+I.check+'</span><div><h3>Kiểm tra thông tin</h3><p>Đối chiếu với giấy đăng kiểm trước khi áp dụng</p></div></div><div class="reg-ocr-field"><label for="regOcrBrand">Hãng xe</label><select id="regOcrBrand" required></select><small data-raw="brand"></small></div><div class="reg-ocr-field"><label for="regOcrModel">Hiệu / dòng xe</label><select id="regOcrModel" required></select><small data-raw="model"></small></div><div class="reg-ocr-field"><label for="regOcrYear">Năm sản xuất</label><select id="regOcrYear" required></select><small data-raw="year"></small></div><p class="reg-ocr-engine" data-engine></p><button type="submit" class="reg-ocr-apply">'+I.check+'Điền vào bộ lọc tra cứu</button></form><p class="reg-ocr-error" role="alert" data-error hidden></p><button type="button" class="reg-ocr-settings" data-reg="settings" hidden>Cài đặt mô hình AI</button></div></section>';
+    box.querySelector('[data-raw="model"]').insertAdjacentHTML('afterend','<div class="reg-model-ai"><button type="button" data-reg="suggest">✦ Tìm hiệu xe tương tự</button><div data-suggest-status role="status" aria-live="polite"></div><div data-suggestions></div></div>');
     const oldOverflow=document.body.style.overflow;
-    const s=session={box,opener,oldOverflow,catalog,file:null,url:'',result:null,controller:null,revision:0};
+    const s=session={box,opener,oldOverflow,catalog,file:null,url:'',result:null,controller:null,revision:0,suggestCtl:null,suggestRevision:0};
     document.body.append(box);document.body.style.overflow='hidden';
     const q=selector=>box.querySelector(selector),status=q('[data-status]'),error=q('[data-error]'),read=q('[data-reg="read"]'),review=q('[data-review]');
     function options(node,items,value,placeholder){node.innerHTML='<option value="">'+esc(placeholder)+'</option>'+items.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('');node.value=value||'';}
     function models(value=''){
       const brand=s.catalog.brands.find(b=>b.name===q('#regOcrBrand').value);
       options(q('#regOcrModel'),brand?.models||[],value,'Chọn dòng xe');q('#regOcrModel').disabled=!brand;
+    }
+    function clearSuggestions(){s.suggestRevision++;s.suggestCtl?.abort();s.suggestCtl=null;q('[data-suggestions]').replaceChildren();q('[data-suggest-status]').textContent='';q('[data-reg="suggest"]').disabled=false;}
+    async function suggest(){
+      const brand=q('#regOcrBrand').value,source=s.result?.fields.model.value,entry=s.catalog.brands.find(b=>b.name===brand);
+      if(!brand||!entry){q('[data-suggest-status]').textContent='Hãy chọn hãng xe trước.';return;}
+      if(!source){q('[data-suggest-status]').textContent='Chưa đọc được hiệu xe trên giấy. Hãy chọn dòng xe thủ công.';return;}
+      clearSuggestions();const ctl=s.suggestCtl=new AbortController(),revision=++s.suggestRevision,button=q('[data-reg="suggest"]');
+      button.disabled=true;q('[data-suggest-status]').textContent='AI đang đối chiếu danh mục…';
+      try{
+        if(!window.TascoAsk?.suggestInspectionModels)throw new Error('Chưa tải xong AI. Hãy thử lại.');
+        const list=await window.TascoAsk.suggestInspectionModels({brand,model:source,models:entry.models},{signal:ctl.signal});
+        if(session!==s||revision!==s.suggestRevision||ctl.signal.aborted)return;
+        q('[data-suggest-status]').textContent=list.length?'Gợi ý theo tên xe; hãy kiểm tra đúng phiên bản trước khi chọn.':'Chưa tìm thấy hiệu xe tương tự. Bạn có thể chọn thủ công.';
+        const target=q('[data-suggestions]');
+        for(const item of list){const btn=document.createElement('button');btn.type='button';btn.className='reg-model-suggestion';const title=document.createElement('strong');title.textContent=item.model;const reason=document.createElement('small');reason.textContent=item.reason||'Xem và đối chiếu';btn.append(title,reason);btn.addEventListener('click',()=>{q('#regOcrModel').value=item.model;q('#regOcrModel').dispatchEvent(new Event('change',{bubbles:true}));q('[data-suggest-status]').textContent='Đã chọn '+item.model+'. Hãy đối chiếu trước khi áp dụng.';});target.append(btn);}
+      }catch(err){if(session===s&&revision===s.suggestRevision&&!ctl.signal.aborted)q('[data-suggest-status]').textContent=err.message||'Chưa phân tích được. Hãy chọn thủ công.';}
+      finally{if(session===s&&revision===s.suggestRevision){s.suggestCtl=null;button.disabled=false;}}
     }
     function showError(message){error.textContent=message;error.hidden=false;}
     function busy(on){
@@ -102,15 +130,16 @@
       if(e.target===box||action==='close')close();
       else if(action==='camera'||action==='photo')q('[data-file="'+action+'"]').click();
       else if(action==='read')analyze();
+      else if(action==='suggest')suggest();
       else if(action==='settings'){close();window.updateView?.('ask');}
     });
     box.addEventListener('change',e=>{
-      if(e.target.id==='regOcrBrand'){models();return;}
+      if(e.target.id==='regOcrBrand'){clearSuggestions();models();return;}
       if(!e.target.matches('[data-file]'))return;
       const file=e.target.files?.[0];e.target.value='';if(!file)return;
       error.hidden=true;
       if(!/^image\//i.test(file.type)||file.size>20*1024*1024){showError('Chọn ảnh đăng kiểm dưới 20 MB (JPG, PNG hoặc WebP).');return;}
-      s.revision++;s.controller?.abort();s.controller=null;busy(false);
+      clearSuggestions();s.revision++;s.controller?.abort();s.controller=null;busy(false);
       if(s.url)URL.revokeObjectURL(s.url);
       q('.reg-ocr-sheet').classList.remove('is-reviewed');
       s.file=file;s.url=URL.createObjectURL(file);s.result=null;review.hidden=true;read.hidden=false;q('[data-reg="settings"]').hidden=true;
@@ -136,7 +165,7 @@
     document.addEventListener('keydown',s.keydown);q('[data-reg="close"]').focus();
   }
   function close(){
-    const s=session;if(!s)return;session=null;s.revision++;s.controller?.abort();if(s.url)URL.revokeObjectURL(s.url);
+    const s=session;if(!s)return;session=null;s.revision++;s.suggestRevision++;s.suggestCtl?.abort();s.controller?.abort();if(s.url)URL.revokeObjectURL(s.url);
     document.removeEventListener('keydown',s.keydown);s.box.remove();document.body.style.overflow=s.oldOverflow;
     if(s.opener?.isConnected)s.opener.focus();
   }
@@ -144,5 +173,5 @@
     window.addEventListener('tasco:cloud-access',e=>{const next=e.detail?.user?.id||null;if(session&&next!==accountId)close();accountId=next;});
     window.addEventListener('pagehide',close);
   }
-  return {normalizeResponse,matchVehicle,open,close};
+  return {normalizeResponse,normalizeSuggestions,matchVehicle,open,close};
 });

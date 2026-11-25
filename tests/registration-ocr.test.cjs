@@ -26,6 +26,13 @@ test('ambiguous family, unknown brand and model codes are never guessed',()=>{
  assert.equal(OCR.matchVehicle(fields('Toyota','Vioss','2024'),catalog).model,'');
  assert.equal(OCR.matchVehicle(fields('Honda','CR V','2030'),catalog).year,'');
 });
+test('AI suggestions are limited to distinct entries from the selected catalog',()=>{
+ const models=['TERA-STAR','TERA 100'];
+ const suggestions=OCR.normalizeSuggestions(JSON.stringify({suggestions:[{index:1,reason:'Tên gần giống'},{index:4,reason:'ngoài danh mục'},{index:1},{index:'0'},{index:0,reason:'cùng dòng'}]}),models);
+ assert.deepEqual(suggestions,[{model:'TERA 100',reason:'Tên gần giống'},{model:'TERA-STAR',reason:'cùng dòng'}]);
+ assert.deepEqual(OCR.normalizeSuggestions('{"suggestions":[]}',models),[]);
+ assert.throws(()=>OCR.normalizeSuggestions('{"suggestions":{}}',models));
+});
 const html=fs.readFileSync('mobile.html','utf8');
 function readFn(){const a=html.indexOf('  async function readInspection('),b=html.indexOf('  /* ---------- AI đọc ảnh hiện trường',a);assert.ok(a>0&&b>a);return html.slice(a,b);}
 function aiContext(fetchImpl){
