@@ -1,7 +1,10 @@
 /* Đọc đăng kiểm: dùng cùng bảng màu và khoảng cách với trang tra cứu. */
-.reg-ocr-launch{display:flex;align-items:center;gap:11px;width:100%;margin:14px 0 0;padding:12px;border:1px solid var(--ws-line,#d1e4e8);border-radius:14px;background:var(--ws-surface,#fff);color:var(--ws-text,#183056);text-align:left;cursor:pointer;font-family:inherit}
-.reg-ocr-launch-icon{display:grid;place-items:center;flex:0 0 36px;height:36px;border-radius:11px;background:var(--ws-soft,#edf5f6);color:var(--ws-accent-text,#39747e)}
-.reg-ocr-launch-icon svg{width:21px;height:21px}.reg-ocr-launch>span:nth-child(2){flex:1;min-width:0}.reg-ocr-launch strong{display:block;font-size:12px;font-weight:700}.reg-ocr-launch small{display:block;margin-top:4px;font-size:10px;color:var(--ws-muted,#71889d);line-height:1.5}.reg-ocr-arrow{width:15px;height:15px;flex:none;color:var(--ws-muted,#71889d)}
+#traCuuSection .ws-search-field>.reg-ocr-launch{display:grid;place-items:center;flex:0 0 34px;width:34px;height:40px;margin:0;padding:0;border:0;border-radius:10px;background:transparent;color:var(--ws-accent-text,#39747e);cursor:pointer;-webkit-tap-highlight-color:transparent}
+#traCuuSection .ws-search-field>.reg-ocr-launch svg{width:19px;height:19px}
+#traCuuSection .ws-search-field>.reg-ocr-launch:active{background:var(--ws-line,#d1e4e8)}
+#traCuuSection .ws-search-field{gap:5px}
+#traCuuSection .ws-search-field>.ws-icon{margin-right:5px}
+#traCuuSection .ws-search-clear{margin-right:0}
 .reg-ocr-overlay{position:fixed;inset:0;z-index:250;display:flex;align-items:flex-end;justify-content:center;padding:20px 12px 0;background:rgba(13,31,55,.58);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ws-text,#183056)}
 .reg-ocr-overlay *{box-sizing:border-box}.reg-ocr-overlay [hidden]{display:none!important}
 .reg-ocr-sheet{width:100%;max-width:440px;max-height:calc(100dvh - 28px);overflow:auto;overscroll-behavior:contain;border:1px solid var(--ws-line,#d1e4e8);border-radius:24px 24px 0 0;background:var(--ws-surface,#fff);box-shadow:0 24px 70px #0b1b3033;padding-bottom:env(safe-area-inset-bottom,0px)}
