@@ -253,3 +253,24 @@ test('a warehouse statement timeout tries the lookup RPC with the same i10 and y
     assert.equal(calls[0][2].p_hieus.join(),'I10');
     assert.equal(calls[0][2].p_nams.join(),'2025');
 });
+
+test('audio analysis returns a warehouse plan alongside the transcript in one model call', async () => {
+    const item={...quote,hang_xe:'HYUNDAI',hieu_xe:'I10',ten_phu_tung:'Đèn hậu trái'};
+    const f=fixture({rows:[item]});
+    let requests=0;
+    const spoken=await f.bridge.plan('',[],null,async request=>{
+        requests++;
+        assert.match(request.system_instruction.parts[0].text,/Nghe trực tiếp audio/);
+        return JSON.stringify({route:'warehouse',transcript:'Đèn hậu trái i10 đời 25',
+            brand:'HYUNDAI',model:'I10',years:[2025],items:[{name:'Đèn hậu trái'}]});
+    },undefined,{audio:true});
+    assert.equal(spoken.question,'Đèn hậu trái i10 đời 25');
+    assert.equal(spoken.intent.brand,'HYUNDAI');
+    const result=await f.bridge.search(spoken.question,undefined,null,undefined,spoken.intent);
+    assert.match(result,/Đèn hậu trái — 1\.200\.000 VNĐ/);
+    assert.equal(requests,1);
+    const other=await f.bridge.plan('',[],null,async()=> '{"route":"other","transcript":"Cảm ơn bạn"}',
+        undefined,{audio:true});
+    assert.equal(other.question,'Cảm ơn bạn');
+    assert.equal(other.intent,null);
+});
