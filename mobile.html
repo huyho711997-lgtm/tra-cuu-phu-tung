@@ -13764,20 +13764,19 @@ window.searchData = async function(opts) {
             const quoteLimit = 10;
             const clean = value => String(value ?? '').replace(/[\r\n\t]+/g, ' ').replace(/[<>`*_\[\]]/g, '').trim().slice(0,160);
             const regexLiteral = value => String(value).replace(/[.*+?^$(){}|[\]\\]/g, '\\$&');
-            const catalogPattern = values => '^[[:space:]]*(' + values.map(value =>
-                String(value).trim().split(/\s+/).map(regexLiteral).join('[[:space:]]+')
-            ).join('|') + ')[[:space:]]*$';
+            const vehicleKey = value => String(value).trim().replace(/\s+/g,' ').toUpperCase();
 
-            function readQuoteSample(params, signal){
+            function readVehicleQuotes(params, signal){
+                // Use the existing brand/model/year index to scope the rows before matching the part name.
                 let query = supabase.from('lich_su_bao_gia')
-                    .select('id,ten_phu_tung,hang_xe,hieu_xe,nam_sx,chinh_hang,gia_duyet,ngay_bao_gia')
-                    .regexIMatch('hang_xe', catalogPattern([params.p_hang]))
-                    .regexIMatch('hieu_xe', catalogPattern(params.p_hieus))
+                    .select('ten_phu_tung,hang_xe,hieu_xe,nam_sx,chinh_hang,gia_duyet,ngay_bao_gia')
+                    .eq('_kgpt_ai_brand_key', vehicleKey(params.p_hang))
+                    .in('_kgpt_ai_model_key', params.p_hieus.map(vehicleKey))
                     .regexIMatch('ten_phu_tung', regexLiteral(params.p_keyword));
                 if(params.p_nams.length)query=query.in('nam_sx',params.p_nams);
                 if(params.p_kind==='genuine')query=query.regexIMatch('chinh_hang','^[[:space:]]*ch[íi]nh[[:space:]_-]+h[àa]ng[[:space:]]*$');
                 if(params.p_kind==='aftermarket')query=query.regexIMatch('chinh_hang','^[[:space:]]*(kh[ôo]ng[[:space:]_-]+ch[íi]nh[[:space:]_-]+h[àa]ng|h[àa]ng[[:space:]_-]+ngo[àa]i)[[:space:]]*$');
-                return query.order('id').limit(quoteLimit+1).abortSignal(signal);
+                return query.limit(quoteLimit+1).abortSignal(signal);
             }
 
             function quoteError({error,status}){
@@ -13816,14 +13815,14 @@ window.searchData = async function(opts) {
                 }
                 try{
                     checkActive();
-                    let result=await supabase.rpc('tasco_search_parts_page_v4',params).abortSignal(timeout.signal);
+                    let result=await readVehicleQuotes(params,timeout.signal);
                     checkActive();
-                    let rows=result.data?.rows;
-                    // Dùng cùng phiên Supabase và quyền đọc bảng khi hàm tra cứu lỗi hoặc quá hạn trên máy chủ.
-                    if(result.error&&(['57014','PGRST202','42883'].includes(result.error.code)||result.status>=500)){
-                        result=await readQuoteSample(params,timeout.signal);
+                    let rows=result.data;
+                    // Older warehouse schemas may not expose the normalized vehicle columns.
+                    if(result.error&&['42703','PGRST204'].includes(result.error.code)){
+                        result=await supabase.rpc('tasco_search_parts_page_v4',params).abortSignal(timeout.signal);
                         checkActive();
-                        rows=result.data;
+                        rows=result.data?.rows;
                     }
                     if(result.error)throw quoteError(result);
                     if(!Array.isArray(rows))throw new Error('Kho giá trả về dữ liệu chưa đầy đủ. Hãy thử lại.');
@@ -13837,7 +13836,7 @@ window.searchData = async function(opts) {
                         const date=clean(row.ngay_bao_gia);
                         return `${index+1}. **${clean(row.ten_phu_tung)||'Phụ tùng'} — ${price}**\n   ${details}${date?' · Ngày báo giá: '+date:''}`;
                     });
-                    const summary=rows.length>quoteLimit?'Hiển thị '+quoteLimit+' báo giá đầu tiên.':'Tìm thấy '+rows.length+' báo giá.';
+                    const summary=rows.length>quoteLimit?'Hiển thị '+quoteLimit+' báo giá phù hợp.':'Tìm thấy '+rows.length+' báo giá.';
                     return `**Kết quả từ kho giá** · ${criteria}\n${summary}\n\n${lines.join('\n\n')}\n\nGiá theo dữ liệu báo giá đã lưu; hãy đối chiếu đúng phiên bản xe và loại hàng trước khi sử dụng.`;
                 }catch(error){if(signal?.aborted)throw error;if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');throw error;}
                 finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
