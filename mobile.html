@@ -8429,6 +8429,24 @@ window.TascoAsk=(()=>{
     return '<button type="button" class="ak-src'+(cited?' is-cited':'')+'" data-ak="src" data-m="'+esc(m.id)+'" data-c="'+esc(s.code)+'"><b>'+esc(s.code)+'</b><span>'+esc(s.doc+(s.title?' – '+s.title:''))+'</span>'+(cited?'<em>được dẫn</em>':'')+(s.via?'<i>'+(/dẫn chiếu/i.test(s.via)?'dẫn chiếu':'liền kề')+'</i>':'')+'</button>';
   }
   const quoteMoney=new Intl.NumberFormat('vi-VN',{maximumFractionDigits:0});
+  const quoteQuantity=new Intl.NumberFormat('vi-VN',{maximumFractionDigits:2});
+  function quoteFieldText(field,value){
+    if(value==null)return '';
+    return (field==='quantity'?quoteQuantity:quoteMoney).format(value);
+  }
+  function parseQuoteField(field,value,labor){
+    const text=value.trim();
+    if(!text&&field==='proposed')return null;
+    const fractional=field==='quantity'&&labor;
+    const parts=text.split(',');
+    if(parts.length>1&&(!fractional||parts.length!==2||!/^\d{1,2}$/.test(parts[1])))return NaN;
+    const whole=parts[0].replace(/[ \u00A0\u202F]/g,'.');
+    if(!/^(?:\d+|\d{1,3}(?:\.\d{3})+)$/.test(whole))return NaN;
+    const number=Number(whole.replaceAll('.','')+(parts.length===2?'.'+parts[1]:''));
+    const max=field==='quantity'?1000:100000000000;
+    const step=fractional?0.25:1;
+    return number<=max&&number>=(field==='quantity'?step:0)&&Number.isInteger(number/step)?number:NaN;
+  }
   const quoteHeaders=['Hạng mục','ĐVT','Số lượng','Giá kho (VNĐ)','Đơn giá đề xuất (VNĐ)','Thành tiền (VNĐ)','Nguồn / Ghi chú'];
   const paintSources=[
     ['1CAR GARA','https://1cargara.vn/bao-gia-son-xe-o-to.html'],
@@ -8511,11 +8529,10 @@ window.TascoAsk=(()=>{
       ['Hạng mục chưa có đơn giá: '+pending]];
   }
   function quoteSummaryHtml(quote){
-    const {totals,total,pending}=quoteSummary(quote);
+    const {totals,pending}=quoteSummary(quote);
     const category=(type,label)=>'<dt>'+label+'</dt><dd>'
       +(quote.lines.some(line=>line.type===type&&line.proposed!=null)?quoteMoney.format(totals[type])+' VNĐ':'Chưa tính')+'</dd>';
-    return '<dl class="ak-quote-breakdown">'+category('part','Phụ tùng')+category('paint','Sơn')+category('labor','Nhân công')
-      +'<dt><strong>Tổng tạm tính</strong></dt><dd><strong>'+quoteMoney.format(total)+' VNĐ</strong></dd></dl>'
+    return '<dl class="ak-quote-breakdown">'+category('part','Phụ tùng')+category('paint','Sơn')+category('labor','Nhân công')+'</dl>'
       +(pending?'<p>'+pending+' hạng mục chưa có đơn giá, chưa cộng vào tổng.</p>':'');
   }
   function paintRateHtml(line,i){
@@ -8527,48 +8544,62 @@ window.TascoAsk=(()=>{
         +rate.sources.map(key=>{const [name,url]=paintSources[key];return '<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(name)+'</a>';}).join(' · ')
         +' · Đối chiếu 26/11/2026</span></p><button type="button" class="ak-act" data-ak="apply-paint-rate" data-quote-row="'+i+'">Dùng '+quoteMoney.format(paintMidpoint(rate))+' VNĐ</button>':'');
   }
-  function editableQuoteHtml(quote,note){
-    const cell=value=>value==null?'—':quoteMoney.format(value)+' VNĐ';
-    const input=(line,i,field,label,step,max)=>'<label class="ak-quote-field"><span>'+esc(label)+'</span>'
-      +'<input type="number" min="'+(field==='quantity'?step:0)+'" max="'+max+'" step="'+step+'" inputmode="'+(step===1?'numeric':'decimal')
-      +'" aria-label="'+esc(label+' '+line.name)+'" data-quote-row="'+i+'" data-quote-field="'+field+'" value="'+esc(line[field]??'')
-      +'"'+(field==='proposed'?' placeholder="Chưa có"':'')+'></label>';
+  function editableQuoteHtml(quote,note,open={},showBreakdown=false){
+    const currency=value=>value==null?'—':quoteMoney.format(value)+' VNĐ';
+    const input=(line,i,field,label)=>'<label class="ak-quote-field"><span>'+esc(label)+'</span>'
+      +'<input type="text" inputmode="'+(field==='quantity'&&line.type==='labor'?'decimal':'numeric')
+      +'" autocomplete="off" aria-label="'+esc(label+' '+line.name)+'" data-quote-row="'+i+'" data-quote-field="'+field
+      +'" value="'+esc(quoteFieldText(field,line[field]))+'"'+(field==='proposed'?' placeholder="Chưa có"':'')+'></label>';
     const multiplePaint=quote.lines.filter(line=>line.type==='paint').length>1;
-    const cards=quote.lines.map((line,i)=>'<div class="ak-quote-line" role="group" aria-label="'+esc(line.name)+'">'
-      +'<div class="ak-quote-line-head"><strong>'+esc(line.name)+'</strong><strong data-quote-total aria-label="Thành tiền">'+cell(quoteLineTotal(line))+'</strong></div>'
-      +(line.type==='part'?'<small>Giá kho: '+cell(line.stock)+'</small>':'')
-      +'<div class="ak-quote-fields">'+input(line,i,'quantity','Số lượng ('+line.unit+')',line.type==='labor'?0.25:1,1000)
-      +input(line,i,'proposed','Đơn giá (VNĐ)',1,100000000000)+'</div>'
+    const rows=quote.lines.map((line,i)=>{
+      const name=line.name.charAt(0).toLocaleUpperCase('vi')+line.name.slice(1);
+      return '<details class="ak-quote-line" data-quote-line="'+i+'"'+(open[i]?' open':'')+'>'
+      +'<summary><span class="ak-quote-line-name">'+esc(name)+'<small data-quote-qty>'+esc(quoteFieldText('quantity',line.quantity)+' '+line.unit)+'</small></span>'
+      +'<strong data-quote-total aria-label="Thành tiền">'+currency(quoteLineTotal(line))+'</strong>'+IC.chev+'</summary>'
+      +'<div class="ak-quote-line-body"><div class="ak-quote-fields">'+input(line,i,'quantity','Số lượng ('+line.unit+')')
+      +input(line,i,'proposed','Đơn giá (VNĐ)')+'</div>'
+      +(line.type==='part'?'<small>Giá kho: '+currency(line.stock)+'</small>':'')
       +(line.type==='paint'?paintRateHtml(line,i):'')
       +'<small data-quote-source>'+esc(quoteSource(line,true)||'—')+'</small>'
       +(line.type==='paint'&&multiplePaint?'<button type="button" class="ak-act ak-quote-remove" data-ak="remove-paint-line" data-quote-row="'+i+'">Bỏ dòng sơn</button>':'')
-      +'</div>').join('');
-    return '<div class="ak-text ak-quote ak-quote-edit"><p><strong>Bảng báo giá nhanh</strong><br>'+esc(quote.vehicle)+'</p>'
-      +(note?'<p>'+esc(note)+'</p>':'')+'<div class="ak-quote-lines">'+cards+'</div>'
+      +'</div></details>';
+    }).join('');
+    const {total,pending}=quoteSummary(quote);
+    return '<div class="ak-text ak-quote ak-quote-edit"><div class="ak-quote-heading">'
+      +'<div><strong>Báo giá nhanh</strong><small>'+esc(quote.vehicle)+'</small></div>'
+      +'<div><small>Tổng tạm tính</small><strong data-quote-grand aria-live="polite">'+currency(total)+'</strong></div></div>'
+      +(note?'<p>'+esc(note)+'</p>':'')+'<div class="ak-quote-lines">'+rows+'</div>'
       +'<button type="button" class="ak-act" data-ak="add-paint-line">Thêm chi tiết sơn</button>'
-      +'<p class="ak-quote-tip">Đơn giá sơn tham khảo là giá dịch vụ theo chi tiết. Kiểm tra phạm vi trước khi cộng thêm công sơn.</p>'
-      +'<div data-quote-summary aria-live="polite">'+quoteSummaryHtml(quote)+'</div></div>';
+      +'<details class="ak-quote-summary"'+(showBreakdown?' open':'')+'><summary>Chi tiết tổng <small data-quote-pending>'+pendingQuoteLabel(pending)+'</small>'+IC.chev+'</summary>'
+      +'<div data-quote-summary>'+quoteSummaryHtml(quote)+'</div>'
+      +'<p class="ak-quote-tip">Giá sơn tham khảo là giá dịch vụ theo chi tiết. Kiểm tra phạm vi trước khi cộng thêm công sơn.</p></details></div>';
   }
+  function pendingQuoteLabel(n){return n?n+' mục chưa có giá':'';}
   function quoteMessage(element){
     const id=element.closest('[data-ak-msg]')?.dataset.akMsg;
     return S.messages.find(message=>message.id===id&&message.quote);
   }
-  function refreshQuote(element,message){
-    element.closest('.ak-quote-edit').outerHTML=editableQuoteHtml(message.quote,message.quoteNote);
+  function refreshQuote(element,message,index){
+    const root=element.closest('.ak-quote-edit'),open={};
+    if(Number.isInteger(index)&&index>=0)open[index]=true;
+    root.outerHTML=editableQuoteHtml(message.quote,message.quoteNote,open,root.querySelector('.ak-quote-summary')?.open);
     saveChats();
   }
   function quotePaintAction(element,action){
     const message=quoteMessage(element);
     if(!message)return;
     const lines=message.quote.lines,index=Number(element.dataset.quoteRow),line=lines[index];
+    let openIndex=index;
     if(action==='add-paint-line'){
       if(lines.filter(entry=>entry.type==='paint').length>=20){toast('Mỗi báo giá nhận tối đa 20 chi tiết sơn.');return;}
       const labor=lines.findIndex(entry=>entry.type==='labor');
-      lines.splice(labor<0?lines.length:labor,0,{type:'paint',name:'Chi phí sơn',unit:'hạng mục',quantity:1,stock:null,proposed:null,source:''});
+      openIndex=labor<0?lines.length:labor;
+      lines.splice(openIndex,0,{type:'paint',name:'Chi phí sơn',unit:'hạng mục',quantity:1,stock:null,proposed:null,source:''});
     }else if(action==='remove-paint-line'&&line?.type==='paint'&&lines.filter(entry=>entry.type==='paint').length>1){
       lines.splice(index,1);
+      openIndex=-1;
     }else if(action!=='apply-paint-rate'||!line||!applyPaintRate(line))return;
-    refreshQuote(element,message);
+    refreshQuote(element,message,openIndex);
   }
   function editQuote(input){
     const message=quoteMessage(input),quote=message?.quote;
@@ -8576,22 +8607,27 @@ window.TascoAsk=(()=>{
     if(!line)return;
     if(field==='paintId'&&line.type==='paint'){
       line.paintId=paintRate(input.value)?.id||'';
-      refreshQuote(input,message);
+      refreshQuote(input,message,Number(input.dataset.quoteRow));
       return;
     }
     if(!['quantity','proposed'].includes(field))return;
-    const value=input.value===''?null:input.valueAsNumber;
-    if(!input.validity.valid||(field==='quantity'&&value==null)){
-      input.value=line[field]??'';
+    const value=parseQuoteField(field,input.value,line.type==='labor');
+    if(Number.isNaN(value)){
+      input.value=quoteFieldText(field,line[field]);
       toast('Kiểm tra số lượng hoặc đơn giá vừa nhập.');
       return;
     }
     if(field==='proposed'&&line.proposed!==value)delete line.marketRate;
     line[field]=value;
+    input.value=quoteFieldText(field,value);
     const total=quoteLineTotal(line),card=input.closest('.ak-quote-line');
+    card.querySelector('[data-quote-qty]').textContent=quoteFieldText('quantity',line.quantity)+' '+line.unit;
     card.querySelector('[data-quote-total]').textContent=total==null?'—':quoteMoney.format(total)+' VNĐ';
     card.querySelector('[data-quote-source]').textContent=quoteSource(line,true)||'—';
-    input.closest('.ak-quote-edit').querySelector('[data-quote-summary]').innerHTML=quoteSummaryHtml(quote);
+    const root=input.closest('.ak-quote-edit'),summary=quoteSummary(quote);
+    root.querySelector('[data-quote-grand]').textContent=quoteMoney.format(summary.total)+' VNĐ';
+    root.querySelector('[data-quote-pending]').textContent=pendingQuoteLabel(summary.pending);
+    root.querySelector('[data-quote-summary]').innerHTML=quoteSummaryHtml(quote);
     saveChats();
   }
   async function exportBusinessQuote(id){
@@ -9623,19 +9659,30 @@ html.dark .ak-msg.is-user p{background:linear-gradient(135deg,#3b78a8,#2c5d86)}
 .ak-quote td:nth-child(3){font-size:11px;color:var(--ws-muted)}
 .ak-quote tbody tr:last-child :is(th,td){border-bottom:0}
 .ak-quote-total{margin-top:10px!important;font-weight:700}
-.ak-quote-lines{display:grid;gap:8px;margin:0 0 10px;min-width:0}
-.ak-quote-line{border:1px solid var(--ws-line);border-radius:12px;padding:10px;display:grid;gap:7px;min-width:0}
-.ak-quote-line-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
-.ak-quote-line-head strong:first-child{min-width:0;overflow-wrap:anywhere}
-.ak-quote-line [data-quote-total]{white-space:nowrap;font-variant-numeric:tabular-nums}
-.ak-quote-edit small{display:block;color:var(--ws-muted);overflow-wrap:anywhere}
+.ak-quote-edit{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.45;font-variant-numeric:tabular-nums}
+.ak-quote-heading{display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;column-gap:10px;row-gap:4px;margin-bottom:9px}
+.ak-quote-heading div:last-child{text-align:right;margin-left:auto}
+.ak-quote-heading strong{font-size:15px}
+.ak-quote-edit small{display:block;color:var(--ws-muted);overflow-wrap:anywhere;font-size:11px}
+.ak-quote-lines{min-width:0;margin-bottom:8px;border-block:1px solid var(--ws-line)}
+.ak-quote-line + .ak-quote-line{border-top:1px solid var(--ws-line)}
+.ak-quote-edit summary{display:flex;align-items:center;gap:7px;min-height:42px;padding:5px 0;cursor:pointer;list-style:none}
+.ak-quote-edit summary::-webkit-details-marker{display:none}
+.ak-quote-edit summary svg{width:14px;height:14px;flex:none;color:var(--ws-muted)}
+.ak-quote-edit details[open]>summary svg{transform:rotate(180deg)}
+.ak-quote-line-name{font-weight:650;flex:1;min-width:0;overflow-wrap:anywhere}
+.ak-quote-line-name small{font-weight:500}
+.ak-quote-line [data-quote-total],.ak-quote-heading [data-quote-grand]{white-space:nowrap;font-weight:750}
+.ak-quote-line-body{display:grid;gap:6px;padding:5px 9px 9px;margin-bottom:7px;border-radius:8px;background:var(--ws-soft)}
 .ak-quote-fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:8px}
-.ak-quote-field{min-width:0;display:grid;gap:3px;color:var(--ws-muted);font-size:12px}
-.ak-quote-edit :is(input,select){box-sizing:border-box;width:100%;min-width:0;min-height:38px;padding:5px 8px;border:1px solid var(--ws-line);border-radius:7px;background:var(--ws-card,#fff);color:var(--ws-ink,#172b4d);font:inherit;font-size:16px}
-.ak-quote-edit :is(.ak-quote-tip,.ak-quote-market){margin:2px 0;font-size:.85em;color:var(--ws-muted)}
+.ak-quote-field{min-width:0;display:grid;gap:2px;color:var(--ws-muted);font-size:11px}
+#askSection .ak-quote-edit :is(input,select){box-sizing:border-box;width:100%;min-width:0;min-height:35px;padding:4px 7px;border:1px solid var(--ws-line);border-radius:6px;background:var(--ws-surface);color:inherit;font:600 16px/1.2 'Plus Jakarta Sans',sans-serif;font-variant-numeric:tabular-nums}
+.ak-quote-edit :is(.ak-quote-tip,.ak-quote-market){margin:2px 0;font-size:11px;color:var(--ws-muted)}
 .ak-quote-market span{display:block}
-.ak-quote-line .ak-act{justify-self:start}
-.ak-quote-breakdown{display:grid;grid-template-columns:1fr auto;gap:4px 14px;margin:12px 0 4px}
+.ak-quote-line-body .ak-act{justify-self:start}
+.ak-quote-summary summary{min-height:35px}
+.ak-quote-summary summary small{margin-left:auto}
+.ak-quote-breakdown{display:grid;grid-template-columns:1fr auto;gap:3px 8px;margin:2px 0 4px}
 .ak-quote-breakdown dd{margin:0;text-align:right}
 
 .ak-text :is(ul,ol){margin:0 0 10px;padding-left:19px}.ak-text ul{list-style:disc}.ak-text ol{list-style:decimal}.ak-text li{margin:0 0 6px}.ak-text li::marker{color:var(--app-teal);font-weight:700}
