@@ -301,3 +301,24 @@ test('editable repair quote keeps stock prices, multiplies quantities and exclud
     assert.equal(ctx.migrate(legacy).lines[0].stock,1200000);
     assert.equal(ctx.migrate(legacy).lines.length,3);
 });
+
+test('phone quote cards use a sourced paint estimate only after applying the selected rate', () => {
+    const f=fixture(),context=vm.createContext({Intl,esc:String});
+    vm.runInContext(section('  const quoteMoney=new Intl.NumberFormat','  function quoteMessage(element){')
+        +'this.applyRate=applyPaintRate;this.render=editableQuoteHtml;this.rows=quoteSheetRows;',context);
+    const quote=f.bridge.withServiceEstimate('VINFAST · VF5 · 2025',[]);
+    const paint=quote.lines[0];
+    paint.paintId='bumper';
+    assert.equal(paint.proposed,null);
+    const cards=context.render(quote,'');
+    assert.doesNotMatch(cards,/<table|Vuốt ngang/);
+    assert.match(cards,/800\.000–1\.300\.000 VNĐ/);
+    assert.match(cards,/https:\/\/1cargara\.vn\//);
+    assert.ok(context.applyRate(paint));
+    paint.quantity=2;
+    const row=context.rows(quote)[4];
+    assert.equal(row[4],1050000);
+    assert.equal(row[5],2100000);
+    assert.match(row[6],/kiểm tra 26\/11\/2026/);
+    assert.match(row[6],/https:\/\/gtxautocare\.vn\//);
+});
