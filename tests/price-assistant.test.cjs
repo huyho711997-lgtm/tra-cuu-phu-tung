@@ -10,7 +10,7 @@ function section(start, end) {
     return html.slice(a, b);
 }
 
-const catalog = {HONDA: {'HR-V': {}, 'CR-V': {}}};
+const catalog = {HONDA: {'HR-V': {}, 'CR-V': {}},VINFAST: {'VF5 PLUS': {}},HYUNDAI: {I10: {}}};
 const quote = {ten_phu_tung:'Cản trước', hang_xe:'HONDA', hieu_xe:'HR-V', nam_sx:2025,
     gia_duyet:1200000, chinh_hang:'Chính hãng', ngay_bao_gia:'2026-10-15'};
 const question = 'cản trước hrv 2025 giá bao nhiêu';
@@ -18,7 +18,7 @@ const question = 'cản trước hrv 2025 giá bao nhiêu';
 function fixture({rows = [], tableError = null, rpcError = null, status = 200, catalogYears = [2025]} = {}) {
     const calls = [];
     const query = {};
-    for (const method of ['select', 'regexIMatch', 'eq', 'in', 'limit']) {
+    for (const method of ['select', 'regexIMatch', 'eq', 'in', 'order', 'limit']) {
         query[method] = (...args) => { calls.push([method, ...args]); return query; };
     }
     query.abortSignal = async () => ({data: rows, error: tableError, status});
@@ -60,7 +60,11 @@ test('câu hỏi giá cản trước HR-V chỉ hiển thị đúng tên phụ t
     assert.deepEqual(f.calls.find(([method])=>method==='eq'),['eq','_kgpt_ai_brand_key','HONDA']);
     assert.deepEqual(Array.from(f.calls.find(([,field])=>field==='_kgpt_ai_model_key')[2]),['HR-V']);
     assert.deepEqual(Array.from(f.calls.find(([,field])=>field==='nam_sx')[2]),[2025]);
-    assert.deepEqual(f.calls.find(([method])=>method==='regexIMatch'),['regexIMatch','ten_phu_tung','^[[:space:]]*cản[[:space:]]+trước[[:space:]]*$']);
+    const [,column,pattern]=f.calls.find(([method])=>method==='regexIMatch');
+    assert.equal(column,'ten_phu_tung');
+    const matches=new RegExp(pattern.replaceAll('[[:space:]]','\\s'),'iu');
+    assert.ok(matches.test('Cụm cản trước'));
+    assert.ok(!matches.test('Ốp bạc cản trước'));
     assert.deepEqual(f.calls.at(-1),['limit',11]);
     assert.ok(!f.calls.some(([method])=>method==='rpc'));
 });
@@ -110,4 +114,38 @@ test('thiếu dòng xe thì hỏi lại và phân biệt tên phụ tùng giá �
     assert.equal(f.calls.length,0);
     assert.equal(f.bridge.isPriceQuestion('giá đỡ Honda CR-V'),false);
     assert.equal(f.bridge.isPriceQuestion('giá giá đỡ Honda CR-V'),true);
+});
+
+test('báo giá tự động tách hạng mục và mở rộng đèn pha bên trái, phải', async () => {
+    const f=fixture({rows:[
+        {...quote,ten_phu_tung:'Cản trước',hieu_xe:'VF5 PLUS'},
+        {...quote,ten_phu_tung:'Đèn pha trái',hieu_xe:'VF5 PLUS',gia_duyet:800000},
+        {...quote,ten_phu_tung:'Đèn pha bên phải',hieu_xe:'VF5 PLUS',gia_duyet:900000},
+        {...quote,ten_phu_tung:'Ốp đèn pha bên phải',hieu_xe:'VF5 PLUS',gia_duyet:50000}
+    ]});
+    const out=await f.bridge.search('Báo giá cho tôi cản trước, đèn pha bên trái, phải, két nước, VinFast VF5 Plus 2025.');
+    assert.match(out,/^\*\*Bảng báo giá nhanh\*\*/);
+    assert.match(out,/\| cản trước \| 1\.200\.000 \|/);
+    assert.match(out,/\| đèn pha bên trái \| 800\.000 \|/);
+    assert.match(out,/\| đèn pha phải \| 900\.000 \|/);
+    assert.match(out,/\| két nước \| Chưa có giá \|/);
+    assert.match(out,/Tạm tính 3\/4 hạng mục.*2\.900\.000 VNĐ/);
+    assert.equal(f.calls.filter(([method])=>method==='from').length,4);
+    assert.doesNotMatch(out,/Ốp đèn pha/);
+});
+
+test('nhận diện lỗi chính tả cảng trước với Hyundai i10 đời 2014', async () => {
+    const f=fixture({rows:[{...quote,hang_xe:'HYUNDAI',hieu_xe:'I10',nam_sx:2014}]});
+    const out=await f.bridge.search('Cảng trước Hyundai i10 2014 bao nhiêu tiền?');
+    assert.match(out,/Cản trước — 1\.200\.000 VNĐ/);
+    assert.deepEqual(Array.from(f.calls.find(([,field])=>field==='nam_sx')[2]),[2014]);
+});
+
+test('bảng báo giá hỗ trợ danh sách xuống dòng và yêu cầu một năm sản xuất', async () => {
+    const f=fixture({rows:[quote]});
+    const prompt='Làm cho tôi 1 bảng báo giá nhanh Honda HR-V';
+    assert.match(await f.bridge.search(prompt+'\n- Cản trước\n- Đèn pha trái'),/một năm sản xuất/);
+    const out=await f.bridge.search(prompt+' 2025:\n1. Cản trước\n2. Đèn pha trái');
+    assert.match(out,/\| Cản trước \| 1\.200\.000 \|/);
+    assert.match(out,/\| Đèn pha trái \| Chưa có giá \|/);
 });

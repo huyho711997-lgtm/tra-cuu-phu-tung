@@ -8294,7 +8294,7 @@ window.TascoAsk=(()=>{
   }
   async function copyAnswer(id){
     const m=S.messages.find(x=>x.id===id);if(!m||!m.text)return;
-    const text=m.role==='user'?m.text:Q().plainText(m.text);
+    const text=m.role==='user'||quoteTableHtml(m.text)?m.text:Q().plainText(m.text);
     let copied=false;
     try{await navigator.clipboard.writeText(text);copied=true;}
     catch(_){
@@ -8403,6 +8403,20 @@ window.TascoAsk=(()=>{
   function srcHtml(m,s,cited){
     return '<button type="button" class="ak-src'+(cited?' is-cited':'')+'" data-ak="src" data-m="'+esc(m.id)+'" data-c="'+esc(s.code)+'"><b>'+esc(s.code)+'</b><span>'+esc(s.doc+(s.title?' – '+s.title:''))+'</span>'+(cited?'<em>được dẫn</em>':'')+(s.via?'<i>'+(/dẫn chiếu/i.test(s.via)?'dẫn chiếu':'liền kề')+'</i>':'')+'</button>';
   }
+  function quoteTableHtml(text){
+    if(!String(text||'').startsWith('**Bảng báo giá nhanh**\n'))return '';
+    const [heading,table,summary]=text.split('\n\n');
+    const [header,separator,...rows]=(table||'').split('\n');
+    if(!rows.length||separator!=='| --- | --- | --- |')return '';
+    const cells=row=>row.split('|').slice(1,-1).map(value=>value.trim());
+    const labels=cells(header),values=rows.map(cells);
+    if(labels.length!==3||values.some(row=>row.length!==3))return '';
+    return '<div class="ak-text ak-quote"><p><strong>Bảng báo giá nhanh</strong><br>'+esc(heading.split('\n')[1]||'')+'</p>'
+      +'<div class="ak-quote-scroll" role="region" aria-label="Bảng báo giá nhanh" tabindex="0"><table aria-label="Báo giá theo hạng mục"><thead><tr>'
+      +labels.map(label=>'<th scope="col">'+esc(label)+'</th>').join('')+'</tr></thead><tbody>'
+      +values.map(([part,amount,details])=>'<tr><th scope="row">'+esc(part)+'</th><td>'+esc(amount)+'</td><td>'+esc(details)+'</td></tr>').join('')
+      +'</tbody></table></div><p class="ak-quote-total">'+esc(summary||'')+'</p></div>';
+  }
   function msgHtml(m){
     const q=Q();
     if(m.role==='user'){
@@ -8415,7 +8429,7 @@ window.TascoAsk=(()=>{
     const stopped=m.empty&&/^Đã dừng/.test(m.text||'');
     const note=(cls,ico,title,text)=>'<div class="ak-note'+cls+'"><span class="ak-note-ico">'+ico+'</span><div><b>'+title+'</b><p>'+esc(text)+'</p></div></div>';
     const body=m.error?note(' is-error',IC.warn,m.priceLookup?'Chưa tra được kho giá':'Chưa nhận được câu trả lời',m.text):stopped?note(' is-stop',IC.stop,'Đã dừng','Bạn đã dừng câu trả lời này. Có thể hỏi lại hoặc đổi cách đặt câu hỏi.'):m.empty?note('',IC.search,'Chưa tìm thấy trong Thư viện',m.text)
-      :m.free?'<div class="ak-text ak-md">'+(sources.length?q.chatHtml(m.text).replace(/\[C(\d{1,3})\]/g,'<button type="button" class="ola-cite" data-ol-qa-cite="C$1">C$1</button>'):q.chatHtml(m.text))+'</div>'
+      :m.free?(quoteTableHtml(m.text)||'<div class="ak-text ak-md">'+(sources.length?q.chatHtml(m.text).replace(/\[C(\d{1,3})\]/g,'<button type="button" class="ola-cite" data-ol-qa-cite="C$1">C$1</button>'):q.chatHtml(m.text))+'</div>')
       :'<div class="ak-text">'+q.answerHtml(m.text,sources).replace(/(<b class="ola-h">[^<]*<\/b>)\s*:\s*/g,'$1 ')+'</div>';
     const open=!!S.open[m.id+':*'];
     const read=m.read&&m.read.included&&m.read.included.length?'<p class="ak-queries">Đã đọc toàn văn: '+m.read.included.map(d=>esc(d.name)+' ('+d.chunks+' đoạn)').join(' · ')+(m.read.skipped&&m.read.skipped.length?' — chỉ trích đoạn: '+m.read.skipped.map(d=>esc(d.name)).join(', '):'')+'</p>':'';
@@ -9337,6 +9351,17 @@ html.dark .ak-msg.is-user p{background:linear-gradient(135deg,#3b78a8,#2c5d86)}
 .ak-card{padding:16px 16px 15px;border:1px solid var(--ws-line);border-radius:6px 22px 22px 22px;background:var(--ws-surface);box-shadow:var(--ak-sh);overflow:hidden}
 .ak-text{font-size:14.5px;line-height:1.75;color:var(--ws-text);word-break:break-word;overflow-wrap:anywhere}
 .ak-text p{margin:0 0 10px}.ak-text p:last-child{margin-bottom:0}
+.ak-quote-scroll{overflow-x:auto;border:1px solid var(--ws-line);border-radius:12px}
+.ak-quote-scroll:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+.ak-quote table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.5}
+.ak-quote :is(th,td){padding:9px 8px;text-align:left;vertical-align:top;border-bottom:1px solid var(--ws-line)}
+.ak-quote thead{background:var(--ws-soft)}
+.ak-quote thead th{font-weight:700}
+.ak-quote tbody th{width:32%;font-weight:650}
+.ak-quote td:nth-child(2){width:27%;font-weight:700;font-variant-numeric:tabular-nums}
+.ak-quote td:nth-child(3){font-size:11px;color:var(--ws-muted)}
+.ak-quote tbody tr:last-child :is(th,td){border-bottom:0}
+.ak-quote-total{margin-top:10px!important;font-weight:700}
 .ak-text :is(ul,ol){margin:0 0 10px;padding-left:19px}.ak-text ul{list-style:disc}.ak-text ol{list-style:decimal}.ak-text li{margin:0 0 6px}.ak-text li::marker{color:var(--app-teal);font-weight:700}
 .ak-text .ola-h{display:inline-block;margin:0 4px 0 0;padding:1px 9px;border:0;border-radius:8px;background:color-mix(in srgb,var(--app-teal) 20%,var(--ws-surface));color:var(--ws-accent-text);font-size:12px;font-weight:700;letter-spacing:.01em;line-height:1.7}
 .ak-text p>.ola-h:only-child,.ak-text :is(ul,ol)+p>.ola-h:first-child{margin-top:6px}
@@ -13279,7 +13304,7 @@ window.searchData = async function(opts) {
                 let brand = null;
                 for (let n = 2; n >= 1 && !brand; n--) for (let i = 0; i + n <= f.length && !brand; i++) {
                     if (gone.slice(i, i + n).some(Boolean)) continue;
-                    let t = f.slice(i, i + n).join(''); t = BRAND_ALIAS[t] || t;
+                    let t = f.slice(i, i + n).join('').replace(/ /g,''); t = BRAND_ALIAS[t] || t;
                     const hit = cat.find(b => b.key === t);
                     if (hit && t.length >= 2) { brand = hit; take(i, n); }
                 }
@@ -13288,7 +13313,7 @@ window.searchData = async function(opts) {
                 const pool = brand ? [brand] : cat;
                 outer: for (let n = 3; n >= 1; n--) for (let i = 0; i + n <= f.length; i++) {
                     if (gone.slice(i, i + n).some(Boolean)) continue;
-                    const t = f.slice(i, i + n).join('');
+                    const t = f.slice(i, i + n).join('').replace(/ /g,'');
                     if (t.length < 2 || (!brand && (t.length < 3 || /^\d+$/.test(t)))) continue;
                     const found = [];
                     pool.forEach(b => b.models.forEach(m => { if (modelKeys(m).includes(t)) found.push({ brand: b, model: m }); }));
@@ -13762,13 +13787,43 @@ window.searchData = async function(opts) {
 
         window.TascoPriceAssistant = (() => {
             const quoteLimit = 10;
+            const quickQuoteLimit = 20;
+            const quickQuoteIntent = /(?:bảng\s+(?:báo\s+)?giá(?:\s+nhanh)?|báo\s+giá\s+nhanh)/iu;
             const clean = value => String(value ?? '').replace(/[\r\n\t]+/g, ' ').replace(/[<>`*_\[\]]/g, '').trim().slice(0,160);
             const regexLiteral = value => String(value).replace(/[.*+?^$(){}|[\]\\]/g, '\\$&');
             const vehicleKey = value => String(value).trim().replace(/\s+/g,' ').toUpperCase();
             const partKey = value => String(value ?? '').normalize('NFC').trim().toLowerCase().replace(/\s+/g,' ');
+            function partNames(part){
+                const exact=partKey(part);
+                const side=exact.match(/^(.*?)(?: bên)? (trái|phải)$/u);
+                if(side&&side[1])return [...new Set([exact,side[1]+' '+side[2],side[1]+' bên '+side[2]])];
+                const bumper=exact.match(/^(?:(?:cụm |bộ )?cản|cảng|ba đờ sóc|ba đờ sốc|badosoc) (trước|sau)$/u);
+                if(bumper)return [...new Set([exact,...['cản','cụm cản','bộ cản','ba đờ sóc','ba đờ sốc','badosoc'].map(name=>name+' '+bumper[1])])];
+                if(/^(?:cụm )?két nước(?: làm mát(?: động cơ)?)?$/u.test(exact)){
+                    return [...new Set([exact,'két nước','cụm két nước','két nước làm mát','két nước làm mát động cơ'])];
+                }
+                return [exact];
+            }
+            const money = new Intl.NumberFormat('vi-VN');
+            const dateFormat = new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'UTC'});
+            function quoteAmount(value){
+                const raw=String(value??'').trim();
+                const amount=/^-?\d+(?:\.\d{1,2})?$/.test(raw)?Number(raw):Number(raw.replace(/[^\d-]/g,''));
+                return Number.isFinite(amount)&&amount>0?amount:0;
+            }
+            function quoteDetails(row){
+                const timestamp=window.parseDateForSort(row.ngay_bao_gia);
+                const kind=window.TascoPartKind?.classify(row.chinh_hang);
+                return {
+                    amount:quoteAmount(row.gia_duyet),timestamp,
+                    date:timestamp?dateFormat.format(timestamp):'',
+                    kind:kind==='genuine'?'Chính hãng':kind==='aftermarket'?'Không chính hãng':'Chưa phân loại'
+                };
+            }
 
-            function readVehicleQuotes(params, signal){
-                const exactPart = '^[[:space:]]*' + params.p_keyword.split(' ').map(regexLiteral).join('[[:space:]]+') + '[[:space:]]*$';
+            function readVehicleQuotes(params, names, signal, newestFirst){
+                const namePatterns=names.map(name=>name.split(' ').map(regexLiteral).join('[[:space:]]+'));
+                const exactPart='^[[:space:]]*'+(namePatterns.length===1?namePatterns[0]:'('+namePatterns.join('|')+')')+'[[:space:]]*$';
                 let query = supabase.from('lich_su_bao_gia')
                     .select('ten_phu_tung,hang_xe,hieu_xe,nam_sx,chinh_hang,gia_duyet,ngay_bao_gia')
                     .eq('_kgpt_ai_brand_key', vehicleKey(params.p_hang))
@@ -13777,7 +13832,8 @@ window.searchData = async function(opts) {
                 if(params.p_nams.length)query=query.in('nam_sx',params.p_nams);
                 if(params.p_kind==='genuine')query=query.regexIMatch('chinh_hang','^[[:space:]]*ch[íi]nh[[:space:]_-]+h[àa]ng[[:space:]]*$');
                 if(params.p_kind==='aftermarket')query=query.regexIMatch('chinh_hang','^[[:space:]]*(kh[ôo]ng[[:space:]_-]+ch[íi]nh[[:space:]_-]+h[àa]ng|h[àa]ng[[:space:]_-]+ngo[àa]i)[[:space:]]*$');
-                return query.limit(quoteLimit+1).abortSignal(signal);
+                if(newestFirst)query=query.order('ngay_bao_gia',{ascending:false,nullsFirst:false});
+                return query.limit(params.p_page_size).abortSignal(signal);
             }
 
             function quoteError({error,status}){
@@ -13789,22 +13845,60 @@ window.searchData = async function(opts) {
             function parseQuestion(question){
                 const value=String(question||'').trim();
                 if(!/(?:^|\s)(?:giá(?!\s+đỡ(?=\s|$|[?:,.]))(?=\s|$|[?:,.])|bao\s+nhiêu\s+tiền|báo\s+giá|kho\s+giá)/iu.test(value))return null;
-                const parsed=window.TascoSmartSearch?.parse(value);
-                if(!parsed)return /kho\s+giá/iu.test(value)?{}:null;
-                if(!parsed.brand&&!/(?:kho\s+giá|phụ\s+tùng|cản\s+(?:trước|sau)|đèn\s+(?:pha|hậu)|gương\s+chiếu\s+hậu)/iu.test(value))return null;
-                return parsed;
+                const quick=quickQuoteIntent.test(value);
+                const input=value.replace(/^\s*(?:[-•]\s+|\d+[.)]\s+)/gm,'')
+                    .replace(/\s*\r?\n\s*/g,'; ').replace(/([,;]|\d{4}:)(?=\S)/g,'$1 ');
+                const request=(quick?input.replace(quickQuoteIntent,' '):input)
+                    .replace(/^\s*(?:(?:lập|tạo|làm)\s+)?(?:báo\s+giá\s+)?(?:giúp\s+|cho\s+)?(?:tôi|mình)?\s*(?:một|1)?\s*(?:cho\s+)?/iu,'');
+                const parsed=window.TascoSmartSearch?.parse(request);
+                if(!parsed)return quick||/kho\s+giá/iu.test(value)?{quick}:null;
+                if(!quick&&!parsed.brand&&!/(?:kho\s+giá|phụ\s+tùng|cản\s+(?:trước|sau)|đèn\s+(?:pha|hậu)|gương\s+chiếu\s+hậu)/iu.test(value))return null;
+                const part=String(parsed.part||'').replace(/^(?:giá\s+(?!đỡ(?=\s|$|[?:,.]))|kho\s+giá\s*)/iu,'').trim()
+                    .replace(/(trái|phải)\s*[/–-]\s*(trái|phải)/giu,'$1, $2')
+                    .replace(/\s+(?:cả\s+)?hai\s+bên(?=\s*(?:[,;]|$))/giu,' bên trái, phải');
+                const parts=new Map();
+                let sideBase='';
+                for(const entry of part.split(/[,;]+|\s+và\s+/iu)){
+                    let name=entry.replace(/^\s*(?:(?:bao\s+)?gồm|các\s+hạng\s+mục|hạng\s+mục)\s*:?\s*/iu,'')
+                        .replace(/^[\s,.;:?!]+|[\s,.;:?!]+$/g,'');
+                    if(/^(?:bên\s+)?(?:trái|phải)$/iu.test(name)&&sideBase)name=sideBase+' '+name;
+                    sideBase=name.match(/^(.*?)(?:\s+bên)?\s+(?:trái|phải)$/iu)?.[1]||'';
+                    if(name&&!parts.has(partKey(name)))parts.set(partKey(name),name);
+                }
+                return {...parsed,parts:[...parts.values()],quick:quick||parts.size>1};
+            }
+
+            function formatQuickQuote(params, items){
+                const cell=value=>clean(value).replace(/\|/g,'/');
+                const vehicle=[params.p_hang,params.p_hieus.length===1?params.p_hieus[0]:'',params.p_nams[0]].filter(Boolean);
+                const matched=items.filter(item=>item.row);
+                const total=matched.reduce((sum,item)=>sum+item.details.amount,0);
+                const entries=items.map(({name,row,details,error,needsPart})=>{
+                    if(needsPart)return [name,'Cần tên phụ tùng','—'];
+                    if(!row)return [name,error?'Tra cứu chưa hoàn tất':'Chưa có giá','—'];
+                    const warehouseName=partKey(row.ten_phu_tung)===partKey(name)?'':row.ten_phu_tung;
+                    return [name,money.format(details.amount),[warehouseName,row.hieu_xe,details.kind,details.date].filter(Boolean).join(' · ')];
+                });
+                const table=entries.map(values=>'| '+values.map(cell).join(' | ')+' |').join('\n');
+                const summary=matched.length?'Tạm tính '+matched.length+'/'+items.length+' hạng mục (mỗi mục 1 cái): '+money.format(total)+' VNĐ.':'Chưa có hạng mục nào có giá.';
+                return '**Bảng báo giá nhanh**\n'+vehicle.map(cell).join(' · ')+'\n\n'
+                    +'| Hạng mục | Đơn giá (VNĐ) | Phiên bản · Loại hàng · Ngày |\n| --- | --- | --- |\n'+table+'\n\n'+summary;
             }
             async function search(question,signal){
                 const parsed=parseQuestion(question);
                 if(!parsed)return 'Tôi chưa xác định được thông tin cần tra trong kho giá.';
                 if(parsed.ambiguousBrands?.length)return 'Có nhiều hãng xe phù hợp. Hãy cho biết rõ hãng, dòng xe và tên phụ tùng cần tra.';
-                const part=String(parsed.part||'').replace(/^(?:giá\s+(?!đỡ(?=\s|$|[?:,.]))|kho\s+giá\s*)/iu,'').trim();
-                if(!parsed.brand||!parsed.models?.length||!part)return 'Để tra đúng kho giá, hãy cho tôi biết **tên phụ tùng, hãng xe và dòng xe**. Ví dụ: “Giá cản trước Honda CR-V 2025”.';
-                const owner=auth.currentUser?.uid;if(!owner)throw new Error('Hãy đăng nhập để tra kho giá.');
+                const parts=parsed.parts||[];
                 const years=[...new Set([...(parsed.years||[]),...(parsed.skippedYears||[])])].filter(Number.isInteger).sort((a,b)=>a-b);
+                if(parsed.quick&&(!parsed.brand||!parsed.models?.length||years.length!==1||!parts.length)){
+                    return 'Để lập bảng, hãy gửi **một dòng xe, một năm sản xuất và danh sách hạng mục**. Ví dụ “Bảng báo giá nhanh Honda HR-V 2025 gồm cản trước, đèn pha trái và gương chiếu hậu phải”.';
+                }
+                if(!parsed.brand||!parsed.models?.length||!parts.length)return 'Để tra đúng kho giá, hãy cho tôi biết **tên phụ tùng, hãng xe và dòng xe**. Ví dụ: “Giá cản trước Honda CR-V 2025”.';
+                if(parts.length>quickQuoteLimit)return 'Mỗi bảng nhận tối đa '+quickQuoteLimit+' hạng mục. Hãy chia danh sách thành các nhóm nhỏ hơn.';
+                const owner=auth.currentUser?.uid;if(!owner)throw new Error('Hãy đăng nhập để tra kho giá.');
                 const params={
                     p_hang:parsed.brand,p_hieus:parsed.models.slice(0,30),p_nams:years.slice(0,30),
-                    p_keyword:partKey(part),p_exact:true,p_kind:parsed.kind||'all',
+                    p_exact:true,p_kind:parsed.kind||'all',
                     p_offset:0,p_page_size:quoteLimit+1,p_include_total:false
                 };
                 const timeout=new AbortController(),abort=()=>timeout.abort(),timer=setTimeout(abort,30000);
@@ -13814,29 +13908,53 @@ window.searchData = async function(opts) {
                     if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');
                     if(auth.currentUser?.uid!==owner)throw new Error('Tài khoản đã thay đổi. Hãy tra cứu lại.');
                 }
-                try{
+                async function loadQuotes(part,newestFirst){
                     checkActive();
-                    let result=await readVehicleQuotes(params,timeout.signal);
+                    const names=partNames(part);
+                    let result=await readVehicleQuotes(params,names,timeout.signal,newestFirst);
                     checkActive();
                     let rows=result.data;
                     // Older warehouse schemas may not expose the normalized vehicle columns.
                     if(result.error&&['42703','PGRST204'].includes(result.error.code)){
-                        result=await supabase.rpc('tasco_search_parts_page_v4',params).abortSignal(timeout.signal);
-                        checkActive();
-                        rows=result.data?.rows;
+                        rows=[];
+                        for(const name of names){
+                            result=await supabase.rpc('tasco_search_parts_page_v4',{...params,p_keyword:name}).abortSignal(timeout.signal);
+                            checkActive();
+                            if(result.error||!Array.isArray(result.data?.rows))break;
+                            rows.push(...result.data.rows);
+                            if(rows.length)break;
+                        }
+                        if(!result.error&&!Array.isArray(result.data?.rows))rows=null;
                     }
                     if(result.error)throw quoteError(result);
                     if(!Array.isArray(rows))throw new Error('Kho giá trả về dữ liệu chưa đầy đủ. Hãy thử lại.');
-                    rows=rows.filter(row=>partKey(row?.ten_phu_tung)===params.p_keyword);
+                    return rows.filter(row=>names.includes(partKey(row?.ten_phu_tung)));
+                }
+                try{
+                    if(parsed.quick){
+                        // Bound concurrency while preserving the order of the user's list.
+                        const items=[];
+                        for(let i=0;i<parts.length;i+=4){
+                            const batch=await Promise.allSettled(parts.slice(i,i+4).map(async name=>{
+                                if(/^(?:bên\s+)?(?:trái|phải)$/iu.test(name))return {name,needsPart:true};
+                                const rows=await loadQuotes(name,true);
+                                const latest=rows.map(row=>({row,details:quoteDetails(row)}))
+                                    .filter(item=>item.details.amount>0).sort((a,b)=>b.details.timestamp-a.details.timestamp)[0];
+                                return {name,...latest};
+                            }));
+                            if(signal?.aborted||auth.currentUser?.uid!==owner)checkActive();
+                            items.push(...batch.map((item,j)=>item.status==='fulfilled'?item.value:{name:parts[i+j],error:item.reason}));
+                        }
+                        if(items.every(item=>item.error))throw items[0].error;
+                        return formatQuickQuote(params,items);
+                    }
+                    const part=parts[0],rows=await loadQuotes(part,false);
                     const criteria=[clean(part),clean(params.p_hang),params.p_hieus.map(clean).join(', '),params.p_nams.join(', ')].filter(Boolean).join(' · ');
                     if(!rows.length)return `Không tìm thấy báo giá trong kho cho **${criteria}**. Hãy kiểm tra lại tên phụ tùng, dòng xe hoặc năm sản xuất.`;
                     const lines=rows.slice(0,quoteLimit).map((row,index)=>{
-                        const amount=typeof row.gia_duyet==='number'?row.gia_duyet:Number(String(row.gia_duyet??'').replace(/[^0-9]/g,''));
-                        const price=Number.isFinite(amount)&&amount>0?new Intl.NumberFormat('vi-VN').format(amount)+' VNĐ':'Chưa có giá';
-                        const kind=window.TascoPartKind?.classify(row.chinh_hang);
-                        const details=[clean(row.hang_xe),clean(row.hieu_xe),clean(row.nam_sx),kind==='genuine'?'Chính hãng':kind==='aftermarket'?'Không chính hãng':'Chưa phân loại'].filter(Boolean).join(' · ');
-                        const timestamp=window.parseDateForSort(row.ngay_bao_gia);
-                        const date=timestamp?new Date(timestamp).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'UTC'}):'';
+                        const {amount,kind,date}=quoteDetails(row);
+                        const price=amount?money.format(amount)+' VNĐ':'Chưa có giá';
+                        const details=[clean(row.hang_xe),clean(row.hieu_xe),clean(row.nam_sx),kind].filter(Boolean).join(' · ');
                         return `${index+1}. **${clean(row.ten_phu_tung)||'Phụ tùng'} — ${price}**\n   ${details}${date?' · Ngày báo giá: '+date:''}`;
                     });
                     const summary=rows.length>quoteLimit?'Hiển thị '+quoteLimit+' báo giá phù hợp.':'Tìm thấy '+rows.length+' báo giá.';
