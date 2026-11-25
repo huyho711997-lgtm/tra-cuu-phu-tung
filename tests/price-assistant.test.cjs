@@ -15,13 +15,19 @@ const quote = {ten_phu_tung:'Cản trước', hang_xe:'HONDA', hieu_xe:'HR-V', n
     gia_duyet:1200000, chinh_hang:'Chính hãng', ngay_bao_gia:'2026-10-15'};
 const question = 'cản trước hrv 2025 giá bao nhiêu';
 
-function fixture({rows = [], tableError = null, rpcError = null, status = 200, catalogYears = [2025]} = {}) {
+function fixture({rows = [], rowsWithoutYear = rows, tableError = null, rpcError = null, status = 200, catalogYears = [2025]} = {}) {
     const calls = [];
     const query = {};
+    let hasYear = false;
     for (const method of ['select', 'regexIMatch', 'eq', 'in', 'order', 'limit']) {
-        query[method] = (...args) => { calls.push([method, ...args]); return query; };
+        query[method] = (...args) => {
+            if(method==='select')hasYear=false;
+            if(method==='in'&&args[0]==='nam_sx')hasYear=true;
+            calls.push([method, ...args]);
+            return query;
+        };
     }
-    query.abortSignal = async () => ({data: rows, error: tableError, status});
+    query.abortSignal = async () => ({data: hasYear?rows:rowsWithoutYear, error: tableError, status});
     const context = vm.createContext({
         window: {TascoPartKind:{classify:value=>value === 'Chính hãng' ? 'genuine' : 'unknown'}},
         auth: {currentUser:{uid:'owner'}},
@@ -74,7 +80,7 @@ test('kho chưa có khóa chuẩn hóa thì dùng API cũ với đủ bộ lọc
     const out = await f.bridge.search('cản trước hrv 2025 chính hãng giá bao nhiêu');
     assert.match(out,/Không tìm thấy báo giá/);
     assert.doesNotMatch(out,/1\.200\.000 VNĐ/);
-    const [,name,args] = f.calls.at(-1);
+    const [,name,args] = f.calls.find(([method])=>method==='rpc');
     assert.equal(name,'tasco_search_parts_page_v4');
     assert.equal(args.p_kind,'genuine');
     assert.equal(args.p_exact,true);
@@ -125,6 +131,7 @@ test('báo giá tự động tách hạng mục và mở rộng đèn pha bên t
     ]});
     const out=await f.bridge.search('Báo giá cho tôi cản trước, đèn pha bên trái, phải, két nước, VinFast VF5 Plus 2025.');
     assert.match(out,/^\*\*Bảng báo giá nhanh\*\*/);
+    assert.match(out,/VINFAST · VF5 Plus · 2025/);
     assert.match(out,/\| cản trước \| 1\.200\.000 \|/);
     assert.match(out,/\| đèn pha bên trái \| 800\.000 \|/);
     assert.match(out,/\| đèn pha phải \| 900\.000 \|/);
@@ -139,6 +146,17 @@ test('nhận diện lỗi chính tả cảng trước với Hyundai i10 đời 2
     const out=await f.bridge.search('Cảng trước Hyundai i10 2014 bao nhiêu tiền?');
     assert.match(out,/Cản trước — 1\.200\.000 VNĐ/);
     assert.deepEqual(Array.from(f.calls.find(([,field])=>field==='nam_sx')[2]),[2014]);
+});
+
+test('năm yêu cầu thiếu báo giá thì chỉ gợi ý đời khác, không gán nhầm giá', async () => {
+    const f=fixture({rowsWithoutYear:[
+        {...quote,hang_xe:'HYUNDAI',hieu_xe:'I10',nam_sx:2019},
+        {...quote,hang_xe:'HYUNDAI',hieu_xe:'I10',nam_sx:2020}
+    ]});
+    const out=await f.bridge.search('Cảng trước Hyundai i10 2014 bao nhiêu tiền?');
+    assert.match(out,/Không tìm thấy báo giá.*2014/);
+    assert.match(out,/đời khác như 2019, 2020/);
+    assert.doesNotMatch(out,/1\.200\.000 VNĐ/);
 });
 
 test('bảng báo giá hỗ trợ danh sách xuống dòng và yêu cầu một năm sản xuất', async () => {

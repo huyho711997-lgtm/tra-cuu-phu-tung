@@ -13309,7 +13309,7 @@ window.searchData = async function(opts) {
                     if (hit && t.length >= 2) { brand = hit; take(i, n); }
                 }
                 // 3) dòng xe (n-gram 3→1 từ), ưu tiên cụm dài nhất
-                let models = [], modelBrands = new Set();
+                let models = [], modelQuery = '', modelBrands = new Set();
                 const pool = brand ? [brand] : cat;
                 outer: for (let n = 3; n >= 1; n--) for (let i = 0; i + n <= f.length; i++) {
                     if (gone.slice(i, i + n).some(Boolean)) continue;
@@ -13319,7 +13319,9 @@ window.searchData = async function(opts) {
                     pool.forEach(b => b.models.forEach(m => { if (modelKeys(m).includes(t)) found.push({ brand: b, model: m }); }));
                     if (!found.length) continue;
                     found.forEach(x => modelBrands.add(x.brand.name));
-                    models = found; take(i, n); break outer;
+                    models = found;
+                    modelQuery = tokens.slice(i,i+n).join(' ').replace(/[,;:]+$/,'');
+                    take(i, n); break outer;
                 }
                 if (!brand && models.length) {
                     if (modelBrands.size === 1) brand = cat.find(b => b.name === [...modelBrands][0]);
@@ -13371,7 +13373,7 @@ window.searchData = async function(opts) {
                 if (modelNames.length) heard.push(modelNames.length === 1 ? modelNames[0] : modelNames[0] + ' +' + (modelNames.length - 1) + ' đời');
                 if (yearList.length) heard.push(yearList.length === 1 ? String(yearList[0]) : yearList[0] + '–' + yearList[yearList.length - 1]);
                 if (kind !== 'all') heard.push(kind === 'genuine' ? 'Chính hãng' : 'Không chính hãng');
-                return { found, part, brand: brand ? brand.name : '', models: modelNames, years: yearList, skippedYears, kind, heard };
+                return { found, part, brand: brand ? brand.name : '', models: modelNames, modelQuery, years: yearList, skippedYears, kind, heard };
             }
 
             function apply(r) {
@@ -13868,9 +13870,9 @@ window.searchData = async function(opts) {
                 return {...parsed,parts:[...parts.values()],quick:quick||parts.size>1};
             }
 
-            function formatQuickQuote(params, items){
+            function formatQuickQuote(params, modelName, items){
                 const cell=value=>clean(value).replace(/\|/g,'/');
-                const vehicle=[params.p_hang,params.p_hieus.length===1?params.p_hieus[0]:'',params.p_nams[0]].filter(Boolean);
+                const vehicle=[params.p_hang,modelName,params.p_nams[0]].filter(Boolean);
                 const matched=items.filter(item=>item.row);
                 const total=matched.reduce((sum,item)=>sum+item.details.amount,0);
                 const entries=items.map(({name,row,details,error,needsPart})=>{
@@ -13908,17 +13910,18 @@ window.searchData = async function(opts) {
                     if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');
                     if(auth.currentUser?.uid!==owner)throw new Error('Tài khoản đã thay đổi. Hãy tra cứu lại.');
                 }
-                async function loadQuotes(part,newestFirst){
+                async function loadQuotes(part,newestFirst,selectedYears=params.p_nams){
                     checkActive();
                     const names=partNames(part);
-                    let result=await readVehicleQuotes(params,names,timeout.signal,newestFirst);
+                    const request={...params,p_nams:selectedYears};
+                    let result=await readVehicleQuotes(request,names,timeout.signal,newestFirst);
                     checkActive();
                     let rows=result.data;
                     // Older warehouse schemas may not expose the normalized vehicle columns.
                     if(result.error&&['42703','PGRST204'].includes(result.error.code)){
                         rows=[];
                         for(const name of names){
-                            result=await supabase.rpc('tasco_search_parts_page_v4',{...params,p_keyword:name}).abortSignal(timeout.signal);
+                            result=await supabase.rpc('tasco_search_parts_page_v4',{...request,p_keyword:name}).abortSignal(timeout.signal);
                             checkActive();
                             if(result.error||!Array.isArray(result.data?.rows))break;
                             rows.push(...result.data.rows);
@@ -13946,11 +13949,25 @@ window.searchData = async function(opts) {
                             items.push(...batch.map((item,j)=>item.status==='fulfilled'?item.value:{name:parts[i+j],error:item.reason}));
                         }
                         if(items.every(item=>item.error))throw items[0].error;
-                        return formatQuickQuote(params,items);
+                        return formatQuickQuote(params,parsed.modelQuery||params.p_hieus[0],items);
                     }
                     const part=parts[0],rows=await loadQuotes(part,false);
                     const criteria=[clean(part),clean(params.p_hang),params.p_hieus.map(clean).join(', '),params.p_nams.join(', ')].filter(Boolean).join(' · ');
-                    if(!rows.length)return `Không tìm thấy báo giá trong kho cho **${criteria}**. Hãy kiểm tra lại tên phụ tùng, dòng xe hoặc năm sản xuất.`;
+                    if(!rows.length){
+                        const empty=`Không tìm thấy báo giá trong kho cho **${criteria}**.`;
+                        if(years.length===1){
+                            try{
+                                const alternatives=await loadQuotes(part,false,[]);
+                                const availableYears=[...new Set(alternatives.filter(row=>quoteAmount(row.gia_duyet))
+                                    .map(row=>Number(row.nam_sx)).filter(year=>Number.isInteger(year)&&year>=1990&&year<=2100&&year!==years[0]))]
+                                    .sort((a,b)=>Math.abs(a-years[0])-Math.abs(b-years[0])).slice(0,5);
+                                if(availableYears.length)return empty+' Kho có báo giá cho một số đời khác như '+availableYears.join(', ')+'.';
+                            }catch(error){
+                                if(signal?.aborted||auth.currentUser?.uid!==owner)throw error;
+                            }
+                        }
+                        return empty;
+                    }
                     const lines=rows.slice(0,quoteLimit).map((row,index)=>{
                         const {amount,kind,date}=quoteDetails(row);
                         const price=amount?money.format(amount)+' VNĐ':'Chưa có giá';
