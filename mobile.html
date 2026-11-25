@@ -8269,8 +8269,8 @@ window.TascoAsk=(()=>{
     const ctx=begin(question,'Đang tra kho giá phụ tùng…',[]),mine=ctx.mine;
     try{
       const result=await bridge.search(question,S.ctl.signal);if(mine!==S.gen)return true;
-      ctx.reply({text:result,free:true});
-    }catch(error){if(mine===S.gen)failure(ctx,error,{free:true});}
+      ctx.reply({text:result,free:true,priceLookup:true});
+    }catch(error){if(mine===S.gen)failure(ctx,error,{free:true,priceLookup:true});}
     finish(mine);return true;
   }
   function send(raw,keep){
@@ -8414,14 +8414,14 @@ window.TascoAsk=(()=>{
       :(sources.length&&!cited.length&&!m.free)?'<p class="ak-warn">Câu trả lời không dẫn nguồn nào — hãy đối chiếu với các đoạn bên dưới trước khi dùng.</p>':'';
     const stopped=m.empty&&/^Đã dừng/.test(m.text||'');
     const note=(cls,ico,title,text)=>'<div class="ak-note'+cls+'"><span class="ak-note-ico">'+ico+'</span><div><b>'+title+'</b><p>'+esc(text)+'</p></div></div>';
-    const body=m.error?note(' is-error',IC.warn,'Chưa nhận được câu trả lời',m.text):stopped?note(' is-stop',IC.stop,'Đã dừng','Bạn đã dừng câu trả lời này. Có thể hỏi lại hoặc đổi cách đặt câu hỏi.'):m.empty?note('',IC.search,'Chưa tìm thấy trong Thư viện',m.text)
+    const body=m.error?note(' is-error',IC.warn,m.priceLookup?'Chưa tra được kho giá':'Chưa nhận được câu trả lời',m.text):stopped?note(' is-stop',IC.stop,'Đã dừng','Bạn đã dừng câu trả lời này. Có thể hỏi lại hoặc đổi cách đặt câu hỏi.'):m.empty?note('',IC.search,'Chưa tìm thấy trong Thư viện',m.text)
       :m.free?'<div class="ak-text ak-md">'+(sources.length?q.chatHtml(m.text).replace(/\[C(\d{1,3})\]/g,'<button type="button" class="ola-cite" data-ol-qa-cite="C$1">C$1</button>'):q.chatHtml(m.text))+'</div>'
       :'<div class="ak-text">'+q.answerHtml(m.text,sources).replace(/(<b class="ola-h">[^<]*<\/b>)\s*:\s*/g,'$1 ')+'</div>';
     const open=!!S.open[m.id+':*'];
     const read=m.read&&m.read.included&&m.read.included.length?'<p class="ak-queries">Đã đọc toàn văn: '+m.read.included.map(d=>esc(d.name)+' ('+d.chunks+' đoạn)').join(' · ')+(m.read.skipped&&m.read.skipped.length?' — chỉ trích đoạn: '+m.read.skipped.map(d=>esc(d.name)).join(', '):'')+'</p>':'';
     const srcs=sources.length||read?'<div class="ak-srcs'+(open?' is-open':'')+'"><button type="button" class="ak-srcs-head" data-ak="srcs" data-m="'+esc(m.id)+'" aria-expanded="'+open+'"><span class="ak-srcs-i">'+IC.book+'</span><span>'+(m.read?'Căn cứ từ Thư viện · ':'Nguồn đã tra · ')+sources.length+' đoạn'+(cited.length?'<em>Đã dẫn: '+esc(cited.filter(c=>sources.some(s=>s.code===c)).join(', '))+'</em>':'')+'</span>'+IC.chev+'</button>'
       +'<div class="ak-srcs-body"'+(open?'':' hidden')+'>'+read+(m.queries&&m.queries.length?'<p class="ak-queries">Đã tra: '+m.queries.map(esc).join(' · ')+'</p>':'')+sources.map(s=>srcHtml(m,s,cited.includes(s.code))).join('')+'</div></div>':'';
-    const acts=m.error?'<button type="button" class="ak-act" data-ak="retry" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.retry+'Thử lại</button><button type="button" class="ak-act" data-ak="model">'+IC.cpu+'Đổi mô hình</button>'
+    const acts=m.error?'<button type="button" class="ak-act" data-ak="retry" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.retry+'Thử lại</button>'+(m.priceLookup?'':'<button type="button" class="ak-act" data-ak="model">'+IC.cpu+'Đổi mô hình</button>')
       :m.empty?'':'<button type="button" class="ak-act" data-ak="copy" data-m="'+esc(m.id)+'">'+IC.copy+'Sao chép</button>'
         +(m.quick&&deepSupported()?'<button type="button" class="ak-act" data-ak="deeper" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.spark+'Suy luận sâu lại</button>':'');
     const plain=m.error||m.empty,who='<div class="ak-who"><span class="ak-av" aria-hidden="true">'+IC.spark+'</span><b>'+(m.free?'Trợ lý AI':'AI nghiệp vụ')+'</b></div>';
@@ -13761,7 +13761,31 @@ window.searchData = async function(opts) {
 
 
         window.TascoPriceAssistant = (() => {
+            const quoteLimit = 10;
             const clean = value => String(value ?? '').replace(/[\r\n\t]+/g, ' ').replace(/[<>`*_\[\]]/g, '').trim().slice(0,160);
+            const regexLiteral = value => String(value).replace(/[.*+?^$(){}|[\]\\]/g, '\\$&');
+            const catalogPattern = values => '^[[:space:]]*(' + values.map(value =>
+                String(value).trim().split(/\s+/).map(regexLiteral).join('[[:space:]]+')
+            ).join('|') + ')[[:space:]]*$';
+
+            function readQuoteSample(params, signal){
+                let query = supabase.from('lich_su_bao_gia')
+                    .select('id,ten_phu_tung,hang_xe,hieu_xe,nam_sx,chinh_hang,gia_duyet,ngay_bao_gia')
+                    .regexIMatch('hang_xe', catalogPattern([params.p_hang]))
+                    .regexIMatch('hieu_xe', catalogPattern(params.p_hieus))
+                    .regexIMatch('ten_phu_tung', regexLiteral(params.p_keyword));
+                if(params.p_nams.length)query=query.in('nam_sx',params.p_nams);
+                if(params.p_kind==='genuine')query=query.regexIMatch('chinh_hang','^[[:space:]]*ch[íi]nh[[:space:]_-]+h[àa]ng[[:space:]]*$');
+                if(params.p_kind==='aftermarket')query=query.regexIMatch('chinh_hang','^[[:space:]]*(kh[ôo]ng[[:space:]_-]+ch[íi]nh[[:space:]_-]+h[àa]ng|h[àa]ng[[:space:]_-]+ngo[àa]i)[[:space:]]*$');
+                return query.order('id').limit(quoteLimit+1).abortSignal(signal);
+            }
+
+            function quoteError({error,status}){
+                if(status===401||['PGRST301','PGRST303'].includes(error.code))return new Error('Phiên kho giá không còn hiệu lực. Hãy đăng nhập lại ứng dụng rồi thử lại.');
+                if(status===403||error.code==='42501')return new Error('Tài khoản này chưa có quyền đọc kho giá.');
+                if(error.code==='57014'||status===504)return new Error('Kho giá phản hồi quá lâu. Hãy thử lại.');
+                return new Error('Chưa đọc được kho giá. Hãy thử lại sau ít phút.');
+            }
             function parseQuestion(question){
                 const value=String(question||'').trim();
                 if(!/(?:^|\s)(?:giá(?!\s+đỡ(?=\s|$|[?:,.]))(?=\s|$|[?:,.])|bao\s+nhiêu\s+tiền|báo\s+giá|kho\s+giá)/iu.test(value))return null;
@@ -13777,18 +13801,35 @@ window.searchData = async function(opts) {
                 const part=String(parsed.part||'').replace(/^(?:giá\s+(?!đỡ(?=\s|$|[?:,.]))|kho\s+giá\s*)/iu,'').trim();
                 if(!parsed.brand||!parsed.models?.length||!part)return 'Để tra đúng kho giá, hãy cho tôi biết **tên phụ tùng, hãng xe và dòng xe**. Ví dụ: “Giá cản trước Honda CR-V 2025”.';
                 const owner=auth.currentUser?.uid;if(!owner)throw new Error('Hãy đăng nhập để tra kho giá.');
+                const years=[...new Set([...(parsed.years||[]),...(parsed.skippedYears||[])])].filter(Number.isInteger).sort((a,b)=>a-b);
+                const params={
+                    p_hang:parsed.brand,p_hieus:parsed.models.slice(0,30),p_nams:years.slice(0,30),
+                    p_keyword:part.toLowerCase(),p_exact:false,p_kind:parsed.kind||'all',
+                    p_offset:0,p_page_size:quoteLimit+1,p_include_total:false
+                };
                 const timeout=new AbortController(),abort=()=>timeout.abort(),timer=setTimeout(abort,30000);
                 signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
-                try{
-                    const result=await supabase.rpc('tasco_search_parts_page_v4',{p_hang:parsed.brand,p_hieus:parsed.models.slice(0,30),p_nams:(parsed.years||[]).slice(0,30),p_keyword:part.toLowerCase(),p_exact:false,p_kind:parsed.kind||'all',p_offset:0,p_page_size:10,p_include_total:true}).abortSignal(timeout.signal);
+                function checkActive(){
                     if(signal?.aborted)throw new DOMException('Đã huỷ','AbortError');
+                    if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');
                     if(auth.currentUser?.uid!==owner)throw new Error('Tài khoản đã thay đổi. Hãy tra cứu lại.');
-                    if(result.error)throw new Error('Chưa đọc được kho giá. Hãy kiểm tra kết nối và thử lại.');
-                    const rows=result.data?.rows,total=result.data?.total;
-                    if(!Array.isArray(rows)||!Number.isSafeInteger(total)||total<rows.length||(total>0&&!rows.length))throw new Error('Kho giá trả về dữ liệu chưa đầy đủ. Hãy thử lại.');
-                    const criteria=[clean(part),clean(parsed.brand),parsed.models.map(clean).join(', '),(parsed.years||[]).join(', ')].filter(Boolean).join(' · ');
+                }
+                try{
+                    checkActive();
+                    let result=await supabase.rpc('tasco_search_parts_page_v4',params).abortSignal(timeout.signal);
+                    checkActive();
+                    let rows=result.data?.rows;
+                    // Dùng cùng phiên Supabase và quyền đọc bảng khi hàm tra cứu lỗi hoặc quá hạn trên máy chủ.
+                    if(result.error&&(['57014','PGRST202','42883'].includes(result.error.code)||result.status>=500)){
+                        result=await readQuoteSample(params,timeout.signal);
+                        checkActive();
+                        rows=result.data;
+                    }
+                    if(result.error)throw quoteError(result);
+                    if(!Array.isArray(rows))throw new Error('Kho giá trả về dữ liệu chưa đầy đủ. Hãy thử lại.');
+                    const criteria=[clean(part),clean(params.p_hang),params.p_hieus.map(clean).join(', '),params.p_nams.join(', ')].filter(Boolean).join(' · ');
                     if(!rows.length)return `Không tìm thấy báo giá trong kho cho **${criteria}**. Hãy kiểm tra lại tên phụ tùng, dòng xe hoặc năm sản xuất.`;
-                    const lines=rows.map((row,index)=>{
+                    const lines=rows.slice(0,quoteLimit).map((row,index)=>{
                         const amount=typeof row.gia_duyet==='number'?row.gia_duyet:Number(String(row.gia_duyet??'').replace(/[^0-9]/g,''));
                         const price=Number.isFinite(amount)&&amount>0?new Intl.NumberFormat('vi-VN').format(amount)+' VNĐ':'Chưa có giá';
                         const kind=window.TascoPartKind?.classify(row.chinh_hang);
@@ -13796,7 +13837,8 @@ window.searchData = async function(opts) {
                         const date=clean(row.ngay_bao_gia);
                         return `${index+1}. **${clean(row.ten_phu_tung)||'Phụ tùng'} — ${price}**\n   ${details}${date?' · Ngày báo giá: '+date:''}`;
                     });
-                    return `**Kết quả từ kho giá** · ${criteria}\nTìm thấy ${total} báo giá${total>rows.length?`; hiển thị ${rows.length} kết quả đầu`:''}.\n\n${lines.join('\n\n')}\n\nGiá theo dữ liệu báo giá đã lưu; hãy đối chiếu đúng phiên bản xe và loại hàng trước khi sử dụng.`;
+                    const summary=rows.length>quoteLimit?'Hiển thị '+quoteLimit+' báo giá đầu tiên.':'Tìm thấy '+rows.length+' báo giá.';
+                    return `**Kết quả từ kho giá** · ${criteria}\n${summary}\n\n${lines.join('\n\n')}\n\nGiá theo dữ liệu báo giá đã lưu; hãy đối chiếu đúng phiên bản xe và loại hàng trước khi sử dụng.`;
                 }catch(error){if(signal?.aborted)throw error;if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');throw error;}
                 finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
             }
