@@ -83,8 +83,8 @@
     function clearSuggestions(){s.suggestRevision++;s.suggestCtl?.abort();s.suggestCtl=null;q('[data-suggestions]').replaceChildren();q('[data-suggest-status]').textContent='';q('[data-reg="suggest"]').disabled=false;}
     async function suggest(){
       const brand=q('#regOcrBrand').value,source=s.result?.fields.model.value,entry=s.catalog.brands.find(b=>b.name===brand);
-      if(!brand||!entry){q('[data-suggest-status]').textContent='Hãy chọn hãng xe trước.';return;}
-      if(!source){q('[data-suggest-status]').textContent='Chưa đọc được hiệu xe trên giấy. Hãy chọn dòng xe thủ công.';return;}
+      if(!brand||!entry){q('[data-suggest-status]').textContent='Chọn hãng xe để tự động tìm các dòng tương tự.';return;}
+      if(!source){q('[data-suggest-status]').textContent='Chưa đọc được hiệu xe trên giấy. Hãy chọn dòng xe thủ công hoặc quét lại ảnh rõ hơn.';return;}
       clearSuggestions();const ctl=s.suggestCtl=new AbortController(),revision=++s.suggestRevision,button=q('[data-reg="suggest"]');
       button.disabled=true;button.hidden=true;q('[data-suggest-status]').textContent='AI đang đối chiếu các dòng xe tương tự…';
       try{
@@ -126,7 +126,7 @@
         if(!window.TascoAsk?.readInspection)throw new Error('Chưa tải xong AI đọc ảnh. Hãy thử lại sau ít giây.');
         const result=await window.TascoAsk.readInspection(s.file,{signal:ctl.signal});
         if(session!==s||s.revision!==revision||ctl.signal.aborted)return;
-        s.result=result;renderResult();if(q('#regOcrBrand').value&&result.fields.model.value)suggest();
+        s.result=result;renderResult();suggest();
       }catch(e){
         if(session!==s||s.revision!==revision||ctl.signal.aborted)return;
         showError(e.message||'Chưa đọc được ảnh. Hãy chụp lại và thử lại.');status.textContent='Bạn có thể chọn ảnh khác hoặc thử đọc lại.';q('[data-reg="settings"]').hidden=false;
