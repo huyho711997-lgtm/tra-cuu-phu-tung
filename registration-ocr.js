@@ -55,7 +55,25 @@
   const icon=paths=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
   const I={close:icon('<path d="m6 6 12 12M18 6 6 18"/>'),scan:icon('<path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3M7 8h10M7 12h7M7 16h9"/>'),camera:icon('<path d="m8 5 1-2h6l1 2h4a1 1 0 0 1 1 1v13H3V6a1 1 0 0 1 1-1z"/><circle cx="12" cy="12" r="4"/>'),photo:icon('<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1"/><path d="m3 17 5-5 4 4 4-6 5 7"/>'),check:icon('<path d="m5 12 4 4L19 6"/>')};
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let session=null,accountId=null;
+  let session=null,accountId=null,settings=null;
+  async function openSettings(){
+    if(settings)return;
+    const opener=document.activeElement,layer=document.createElement('div'),oldOverflow=document.body.style.overflow;
+    layer.className='reg-ocr-overlay';layer.innerHTML='<section class="reg-ocr-sheet lookup-model-sheet" role="dialog" aria-modal="true" aria-labelledby="lookupModelTitle"><header class="reg-ocr-head"><span class="reg-ocr-emblem" aria-hidden="true">'+I.scan+'</span><div><h2 id="lookupModelTitle">Mô hình AI tra cứu</h2><p>Chọn mô hình đọc và đối chiếu đăng kiểm</p></div><button type="button" class="reg-ocr-close" aria-label="Đóng">'+I.close+'</button></header><div class="reg-ocr-content"><p class="lookup-model-note">Áp dụng khi đọc ảnh đăng kiểm và tìm dòng xe tương tự. Tìm phụ tùng bằng AI và nhập giọng nói hiện dùng dịch vụ riêng.</p><div class="lookup-model-list" role="group" aria-label="Mô hình AI"><p role="status">Đang tải mô hình…</p></div><p class="lookup-model-error" role="alert" hidden></p><p class="lookup-model-hint">Lựa chọn lưu trên thiết bị này theo tài khoản. Cấu hình Antigravity và các khoá AI tại mục AI nghiệp vụ.</p></div></section>';
+    const current=settings={layer,opener,oldOverflow};document.body.append(layer);document.body.style.overflow='hidden';
+    const list=layer.querySelector('.lookup-model-list'),error=layer.querySelector('.lookup-model-error');
+    function dismiss(){if(settings!==current)return;settings=null;document.removeEventListener('keydown',onKey);layer.remove();document.body.style.overflow=oldOverflow;if(opener?.isConnected)opener.focus();}
+    function onKey(e){if(e.key==='Escape'){e.preventDefault();dismiss();return;}if(e.key!=='Tab')return;const nodes=[...layer.querySelectorAll('button:not(:disabled)')].filter(n=>n.getClientRects().length);const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}
+    current.close=dismiss;layer.addEventListener('click',e=>{if(e.target===layer||e.target.closest('.reg-ocr-close'))dismiss();});document.addEventListener('keydown',onKey);layer.querySelector('.reg-ocr-close').focus();
+    try{
+      if(!window.TascoAsk?.lookupModels)throw new Error('Chưa tải xong AI nghiệp vụ. Hãy thử lại.');
+      const data=await window.TascoAsk.lookupModels();if(settings!==current)return;
+      list.replaceChildren();const choices=[{id:'',model:'Tự động',provider:'Dùng mô hình khả dụng'},...data.entries.filter(e=>e.vision)];
+      if(data.selected&&!choices.some(e=>e.id===data.selected)){const p=document.createElement('p');p.className='lookup-model-error';p.textContent='Mô hình đã lưu không còn khả dụng. Hãy chọn lại.';list.append(p);}
+      for(const choice of choices){const button=document.createElement('button');button.type='button';button.className='lookup-model-option';button.setAttribute('aria-pressed',String(choice.id===data.selected));const label=document.createElement('span'),title=document.createElement('strong'),sub=document.createElement('small'),mark=document.createElement('span');title.textContent=choice.model;sub.textContent=choice.provider;label.append(title,sub);mark.className='lookup-model-mark';mark.setAttribute('aria-hidden','true');mark.textContent='✓';button.append(label,mark);button.addEventListener('click',async()=>{button.disabled=true;error.hidden=true;try{await window.TascoAsk.setLookupModel(choice.id);if(settings!==current)return;list.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));}catch(e){if(settings===current){error.textContent=e.message||'Không lưu được mô hình.';error.hidden=false;}}finally{button.disabled=false;}});list.append(button);}
+      if(choices.length===1){const p=document.createElement('p');p.textContent='Chưa có mô hình đọc ảnh. Hãy cấu hình AI nghiệp vụ.';list.append(p);}
+    }catch(e){if(settings===current){list.textContent=e.message||'Chưa tải được mô hình.';}}
+  }
   function open(){
     if(session)return;
     const catalog=window.TascoSmartSearch?.vehicleCatalog?.();
@@ -199,8 +217,8 @@
     if(s.opener?.isConnected)s.opener.focus();
   }
   if(typeof window!=='undefined'){
-    window.addEventListener('tasco:cloud-access',e=>{const next=e.detail?.user?.id||null;if(session&&next!==accountId)close();accountId=next;});
-    window.addEventListener('pagehide',close);
+    window.addEventListener('tasco:cloud-access',e=>{const next=e.detail?.user?.id||null;if(next!==accountId){if(session)close();settings?.close();}accountId=next;});
+    window.addEventListener('pagehide',()=>{close();settings?.close();});
   }
-  return {normalizeResponse,normalizeSuggestions,matchVehicle,open,close};
+  return {normalizeResponse,normalizeSuggestions,matchVehicle,open,close,openSettings};
 });

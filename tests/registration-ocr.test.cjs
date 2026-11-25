@@ -35,9 +35,9 @@ test('AI suggestions are limited to distinct entries from the selected catalog',
 });
 const html=fs.readFileSync('mobile.html','utf8');
 function readFn(){const a=html.indexOf('  async function readInspection('),b=html.indexOf('  /* ---------- AI đọc ảnh hiện trường',a);assert.ok(a>0&&b>a);return html.slice(a,b);}
-function aiContext(fetchImpl){
+function aiContext(fetchImpl,chosen=null){
  let owner='owner';const selected={id:'antigravity:gemini',provider:'antigravity',model:'gemini',profile:{vision:true}};
- const context={AbortController,DOMException,setTimeout,clearTimeout,api:{me:()=>({uid:owner})},loadBundle:async()=>{},plateImage:async()=> 'data:image/jpeg;base64,AA',B:{Models:{getKey:async()=> 'test-key',resolve:()=>({endpoint:'https://test.invalid',providerLabel:'Antigravity'})}},cfg:()=>({}),active:()=>selected,voiceCandidates:()=>[selected],ORDER_OK:()=>true,window:{TascoRegistrationOCR:OCR},fetch:fetchImpl};
+ const context={AbortController,DOMException,setTimeout,clearTimeout,api:{me:()=>({uid:owner})},loadBundle:async()=>{},plateImage:async()=> 'data:image/jpeg;base64,AA',B:{Models:{getKey:async()=> 'test-key',resolve:(cfg,id)=>({...((chosen&&id===chosen.id)?chosen:selected),endpoint:'https://test.invalid',providerLabel:'Antigravity'})}},cfg:()=>({}),active:()=>selected,lookupSelectedModel:()=>chosen,voiceCandidates:()=>[selected],ORDER_OK:()=>true,window:{TascoRegistrationOCR:OCR},fetch:fetchImpl};
  vm.createContext(context);vm.runInContext(readFn()+'\nthis.readInspection=readInspection;',context);
  return {read:context.readInspection,setOwner:value=>{owner=value}};
 }
@@ -48,6 +48,11 @@ test('image request returns review fields and uses shared authenticated AI endpo
  assert.equal(result.fields.brand.value,'Honda');assert.equal(request.opts.method,'POST');
  const body=JSON.parse(request.opts.body);assert.equal(body.messages[1].content[1].image_url.url,'data:image/jpeg;base64,AA');assert.match(body.messages[0].content,/Không dùng ngày kiểm định/);
  await assert.rejects(()=>c.read({type:'application/pdf',size:1000}),/Chọn ảnh/);
+});
+test('explicitly selected model is used for OCR without silently falling back',async()=>{
+ const chosen={id:'antigravity:custom',provider:'antigravity',model:'custom-vision',profile:{vision:true}};let sent=[];
+ const ctx=aiContext(async(url,opts)=>{sent.push(JSON.parse(opts.body).model);return {ok:false,status:503}},chosen);
+ await assert.rejects(()=>ctx.read(photo),/503/);assert.deepEqual(sent,['custom-vision']);
 });
 test('abort and account changes prevent late OCR results',async()=>{
  let controller=new AbortController();const aborted=aiContext(async()=>{controller.abort();return {ok:true,json:async()=>({choices:[{message:{content:JSON.stringify(fields('Honda','CR-V','2024'))}}]})}});
