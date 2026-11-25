@@ -34,6 +34,7 @@ function fixture({rows = [], tableError = null, rpcError = null, status = 200, c
             from(table) { calls.push(['from',table]); return query; }
         }, AbortController, DOMException, setTimeout, clearTimeout, Intl
     });
+    vm.runInContext(section('        window.parseDateForSort = function(value) {','        window.toggleExactPartName'), context);
     vm.runInContext(section('        window.TascoSmartSearch = (() => {','            function apply(r) {')+'return {parse};})();', context);
     vm.runInContext(section('        window.TascoPriceAssistant = (() => {','        function getPriceSignalBadge'), context);
     return {bridge: context.window.TascoPriceAssistant, calls};
@@ -86,6 +87,21 @@ test('phân biệt lỗi phiên, lỗi quyền và kết quả rỗng', async ()
     assert.ok(!denied.calls.some(([method])=>method==='rpc'));
     const empty = fixture();
     assert.match(await empty.bridge.search(question),/Không tìm thấy báo giá/);
+});
+
+test('ngày báo giá hiển thị ngày/tháng/năm đúng với ngày trong kho', async () => {
+    const f = fixture({rows:[
+        {...quote,ngay_bao_gia:'2026-08-24T00:00:00+00:00'},
+        {...quote,ngay_bao_gia:'2025-10-19'},
+        {...quote,ngay_bao_gia:'6/1/2026'},
+        {...quote,ngay_bao_gia:null}
+    ]});
+    const out = await f.bridge.search(question);
+    assert.match(out,/Ngày báo giá: 24\/08\/2026/);
+    assert.match(out,/Ngày báo giá: 19\/10\/2025/);
+    assert.match(out,/Ngày báo giá: 06\/01\/2026/);
+    assert.doesNotMatch(out,/T00:00:00/);
+    assert.equal((out.match(/Ngày báo giá:/g)||[]).length,3);
 });
 
 test('thiếu dòng xe thì hỏi lại và phân biệt tên phụ tùng giá đỡ', async () => {

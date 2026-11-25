@@ -13835,7 +13835,8 @@ window.searchData = async function(opts) {
                         const price=Number.isFinite(amount)&&amount>0?new Intl.NumberFormat('vi-VN').format(amount)+' VNĐ':'Chưa có giá';
                         const kind=window.TascoPartKind?.classify(row.chinh_hang);
                         const details=[clean(row.hang_xe),clean(row.hieu_xe),clean(row.nam_sx),kind==='genuine'?'Chính hãng':kind==='aftermarket'?'Không chính hãng':'Chưa phân loại'].filter(Boolean).join(' · ');
-                        const date=clean(row.ngay_bao_gia);
+                        const timestamp=window.parseDateForSort(row.ngay_bao_gia);
+                        const date=timestamp?new Date(timestamp).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'UTC'}):'';
                         return `${index+1}. **${clean(row.ten_phu_tung)||'Phụ tùng'} — ${price}**\n   ${details}${date?' · Ngày báo giá: '+date:''}`;
                     });
                     const summary=rows.length>quoteLimit?'Hiển thị '+quoteLimit+' báo giá phù hợp.':'Tìm thấy '+rows.length+' báo giá.';
