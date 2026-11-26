@@ -29,7 +29,7 @@ function fixture({rows = [], rowsWithoutYear = rows, rpcRows = () => rows, table
     }
     query.abortSignal = async () => ({data: hasYear?rows:rowsWithoutYear, error: tableError, status});
     const context = vm.createContext({
-        window: {TascoPartKind:{classify:value=>value === 'Chính hãng' ? 'genuine' : 'unknown'}},
+        window: {TascoPartKind:{classify:value=>value === 'Chính hãng' ? 'genuine' : value === 'Không chính hãng' ? 'aftermarket' : 'unknown'}},
         auth: {currentUser:{uid:'owner'}},
         CAY_GIA_PHA: catalog, NAM_ALL: catalogYears,
         supabase: {
@@ -332,4 +332,22 @@ test('phone quote table uses a sourced paint estimate only after applying the se
     assert.equal(row[5],2100000);
     assert.match(row[6],/kiểm tra 26\/11\/2026/);
     assert.match(row[6],/https:\/\/gtxautocare\.vn\//);
+});
+
+test('expanded quote line shows duplicate-price count and genuine vs outside-garage prices', async () => {
+    const mk=(gia,chinh_hang,ngay)=>({...quote,gia_duyet:gia,chinh_hang,ngay_bao_gia:ngay});
+    const f=fixture({rows:[mk('1200000','Chính hãng','2026-03-01'),mk('1200000','Chính hãng','2026-02-01'),mk('900000','Không chính hãng','2026-01-15'),mk('1000000','Không chính hãng','2025-12-01')]});
+    const prompt='Báo giá cản trước Honda HR-V 2025';
+    const intent=await f.bridge.plan(prompt,[],null,async()=>JSON.stringify({route:'warehouse',brand:'HONDA',model:'HR-V',years:[2025],quick:true,items:[{name:'Cản trước',quantity:1}]}));
+    let saved;
+    await f.bridge.search(prompt,undefined,null,undefined,intent,data=>{saved=data;});
+    const info=saved.lines[0].info;
+    assert.equal(info.total,4);assert.equal(info.same,2);
+    assert.equal(info.genuine.count,2);assert.equal(info.outside.count,2);
+    assert.equal(info.outside.min,900000);assert.equal(info.outside.max,1000000);
+    const context=vm.createContext({Intl,esc:String,IC:{chev:''}});
+    vm.runInContext(section('  const quoteMoney=new Intl.NumberFormat','  function quoteMessage(element){')+'this.render=editableQuoteHtml;',context);
+    const html=context.render(saved,'',{0:true});
+    assert.match(html,/Giá trùng/);assert.match(html,/2 \/ 4 báo giá/);
+    assert.match(html,/Gara ngoài/);assert.match(html,/900\.000–1\.000\.000/);
 });

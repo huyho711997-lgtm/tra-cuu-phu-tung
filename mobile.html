@@ -8544,6 +8544,15 @@ window.TascoAsk=(()=>{
         +rate.sources.map(key=>{const [name,url]=paintSources[key];return '<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(name)+'</a>';}).join(' · ')
         +' · Đối chiếu 26/11/2026</span></p><button type="button" class="ak-act" data-ak="apply-paint-rate" data-quote-row="'+i+'">Dùng '+quoteMoney.format(paintMidpoint(rate))+' VNĐ</button>':'');
   }
+  function priceInfoHtml(info,currency){
+    if(!info)return '';
+    const part=(label,g)=>'<div class="ak-quote-info-row"><dt>'+label+'</dt><dd>'
+      +(g?'<strong>'+currency(g.amount)+'</strong><span>'+g.count+' báo giá'+(g.date?' · mới nhất '+esc(g.date):'')
+        +(g.min!==g.max?' · '+quoteMoney.format(g.min)+'–'+quoteMoney.format(g.max):'')+'</span>':'<span>Chưa có báo giá</span>')+'</dd></div>';
+    return '<dl class="ak-quote-info" aria-label="Giá trùng và giá gara ngoài">'
+      +'<div class="ak-quote-info-row"><dt>Giá trùng</dt><dd><strong>'+info.same+' / '+info.total+' báo giá</strong><span>cùng mức giá đang dùng, trong các báo giá gần nhất</span></dd></div>'
+      +part('Chính hãng',info.genuine)+part('Gara ngoài',info.outside)+'</dl>';
+  }
   function editableQuoteHtml(quote,note,open={},showBreakdown=false){
     const currency=value=>value==null?'—':quoteMoney.format(value)+' VNĐ';
     const input=(line,i,field,label)=>'<label class="ak-quote-field"><span>'+esc(label)+'</span>'
@@ -8569,6 +8578,7 @@ window.TascoAsk=(()=>{
       +'<div class="ak-quote-fields">'+input(line,i,'quantity','Số lượng ('+line.unit+')')
       +input(line,i,'proposed','Đơn giá (VNĐ)')+'</div>'
       +(line.type==='part'?'<small>Giá kho: '+currency(line.stock)+'</small>':'')
+      +(line.type==='part'?priceInfoHtml(line.info,currency):'')
       +(line.type==='paint'?paintRateHtml(line,i):'')
       +(line.type==='paint'&&multiplePaint?'<button type="button" class="ak-act ak-quote-remove" data-ak="remove-paint-line" data-quote-row="'+i+'">Bỏ dòng sơn</button>':'')
       +'</div></td></tr></tbody>';
@@ -9707,6 +9717,12 @@ html.dark .ak-msg.is-user p{background:linear-gradient(135deg,#3b78a8,#2c5d86)}
 .ak-quote-summary[open]>summary svg{transform:rotate(180deg)}
 .ak-quote-actions{margin-top:7px}
 .ak-quote-line-body{display:grid;gap:6px;padding:5px 9px 9px;margin-bottom:7px;border-radius:8px;background:var(--ws-soft)}
+.ak-quote-info{display:grid;gap:5px;margin:2px 0 0;padding-top:7px;border-top:1px dashed var(--ws-line)}
+.ak-quote-info-row{display:grid;grid-template-columns:78px minmax(0,1fr);gap:8px;align-items:baseline}
+.ak-quote-info dt{margin:0;font-size:11px;font-weight:700;color:var(--ws-muted)}
+.ak-quote-info dd{margin:0;display:grid;gap:1px;min-width:0}
+.ak-quote-info dd strong{font-size:13px;color:var(--ws-text,inherit)}
+.ak-quote-info dd span{font-size:11px;color:var(--ws-muted);overflow-wrap:anywhere}
 .ak-quote-fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:8px}
 .ak-quote-field{min-width:0;display:grid;gap:2px;color:var(--ws-muted);font-size:11px}
 #askSection .ak-quote-edit :is(input,select){box-sizing:border-box;width:100%;min-width:0;min-height:35px;padding:4px 7px;border:1px solid var(--ws-line);border-radius:6px;background:var(--ws-surface);color:inherit;font:600 16px/1.2 'Plus Jakarta Sans',sans-serif;font-variant-numeric:tabular-nums}
@@ -14423,12 +14439,24 @@ window.searchData = async function(opts) {
                 return '**Bảng báo giá nhanh**\n'+vehicle.map(cell).join(' · ')+'\n\n'
                     +'| Hạng mục | Đơn giá (VNĐ) | Phiên bản · Loại hàng · Ngày |\n| --- | --- | --- |\n'+table+'\n\n'+summary;
             }
+            // Từ các báo giá gần nhất của một hạng mục: bao nhiêu báo giá trùng với giá đang lấy, và giá chính hãng / gara ngoài (không chính hãng).
+            function priceInfo(history){
+                if(!history?.length)return null;
+                const latest=history[0].details.amount;
+                const group=kind=>{
+                    const g=history.filter(item=>item.details.kind===kind);
+                    if(!g.length)return null;
+                    const amounts=g.map(item=>item.details.amount);
+                    return {amount:g[0].details.amount,date:g[0].details.date,count:g.length,min:Math.min(...amounts),max:Math.max(...amounts)};
+                };
+                return {total:history.length,same:history.filter(item=>item.details.amount===latest).length,genuine:group('Chính hãng'),outside:group('Không chính hãng')};
+            }
             function makeQuote(params,model,items,quantities){
-                const lines=items.map(({name,row,details,error,needsPart})=>{
+                const lines=items.map(({name,row,details,error,needsPart,history})=>{
                     const stock=details?.amount||null;
                     const source=row?[row.ten_phu_tung,row.hieu_xe,details.kind,details.date].filter(Boolean).join(' · ')
                         :needsPart?'Cần tên phụ tùng':error?'Tra cứu chưa hoàn tất':'Chưa có giá trong kho';
-                    return {type:'part',name,unit:'cái',quantity:quantities?.get(name)||1,stock,proposed:stock,source};
+                    return {type:'part',name,unit:'cái',quantity:quantities?.get(name)||1,stock,proposed:stock,source,info:priceInfo(history)};
                 });
                 return withServiceEstimate([params.p_hang,model,params.p_nams[0]].filter(Boolean).join(' · '),lines);
             }
@@ -14511,9 +14539,9 @@ window.searchData = async function(opts) {
                             const batch=await Promise.allSettled(parts.slice(i,i+4).map(async name=>{
                                 if(/^(?:bên\s+)?(?:trái|phải)$/iu.test(name))return {name,needsPart:true};
                                 const rows=await loadQuotes(name,true);
-                                const latest=rows.map(row=>({row,details:quoteDetails(row)}))
-                                    .filter(item=>item.details.amount>0).sort((a,b)=>b.details.timestamp-a.details.timestamp)[0];
-                                return {name,...latest};
+                                const history=rows.map(row=>({row,details:quoteDetails(row)}))
+                                    .filter(item=>item.details.amount>0).sort((a,b)=>b.details.timestamp-a.details.timestamp);
+                                return {name,...history[0],history};
                             }));
                             if(signal?.aborted||auth.currentUser?.uid!==owner)checkActive();
                             items.push(...batch.map((item,j)=>item.status==='fulfilled'?item.value:{name:parts[i+j],error:item.reason}));
