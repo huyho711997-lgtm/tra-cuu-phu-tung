@@ -20734,18 +20734,24 @@ html.tasco-cover:not(.tasco-locked) #tascoLock .al-btn,html.tasco-cover:not(.tas
 @keyframes alGraceIn{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
 @media(prefers-reduced-motion:reduce){.al-grace-dialog[open]{animation:none}}
 .al-grace-panel{padding:18px 18px calc(16px + env(safe-area-inset-bottom,0px))}
-.al-grace-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:14px}
-.al-grace-head h2{margin:0;font-size:17px;font-weight:750;line-height:1.4}
+.al-grace-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:16px}
+.al-grace-head h2{margin:0;font-size:19px;font-weight:800;line-height:1.35;letter-spacing:-.2px}
 .al-grace-head p{margin:4px 0 0;color:var(--ws-muted);font-size:12px;line-height:1.5}
 .al-grace-close,.al-grace-options button{font:inherit;color:inherit;cursor:pointer}
 .al-grace-close{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:var(--ws-soft)}
 .al-grace-close svg,.al-grace-options svg{width:18px;height:18px}
-.al-grace-options{overflow:hidden;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-surface)}
-.al-grace-options button{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:46px;padding:0 13px;border:0;background:transparent;text-align:left;font-size:13px;font-weight:650}
-.al-grace-options button+button{border-top:1px solid var(--ws-line)}
-.al-grace-options button[aria-pressed=true]{background:var(--ws-accent);color:var(--ws-accent-text)}
-.al-grace-options button[aria-pressed=false] svg{visibility:hidden}
-.al-grace-dialog button:focus-visible{outline:2px solid var(--ws-accent-text);outline-offset:-3px}
+.al-grace-options{display:grid;gap:10px}
+.al-grace-options button{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:'t c' 'd c';align-items:center;column-gap:12px;row-gap:2px;width:100%;min-height:66px;padding:12px 14px 12px 16px;border:1px solid var(--ws-line);border-radius:18px;background:var(--ws-bg);text-align:left;box-shadow:0 1px 2px rgba(24,48,86,.04);transition:transform .12s,border-color .15s,background .15s}
+.al-grace-options button:active{transform:scale(.985)}
+.al-grace-options button>span{grid-area:t;font-size:15px;font-weight:750;line-height:1.25}
+.al-grace-options button>small{grid-area:d;color:var(--ws-muted);font-size:12px;font-weight:500;line-height:1.4}
+.al-grace-options button>svg{grid-area:c;width:26px;height:26px;padding:5px;box-sizing:border-box;border-radius:50%;border:1.5px solid var(--ws-line);color:transparent}
+.al-grace-options button[aria-pressed=true]{border-color:var(--app-teal);background:color-mix(in srgb,var(--app-teal) 9%,var(--ws-bg));box-shadow:0 0 0 3px color-mix(in srgb,var(--app-teal) 12%,transparent)}
+.al-grace-options button[aria-pressed=true]>span{color:color-mix(in srgb,var(--app-teal) 78%,var(--ws-text))}
+.al-grace-options button[aria-pressed=true]>svg{border-color:var(--app-teal);background:var(--app-teal);color:#fff}
+.al-grace-panel::before{content:'';display:block;width:40px;height:4px;margin:-8px auto 12px;border-radius:4px;background:var(--ws-line)}
+.al-grace-dialog button:focus-visible{outline:2px solid var(--app-teal);outline-offset:2px}
+.al-grace-dialog .al-grace-close:focus-visible{outline:0}
 .al-toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:2147483601;max-width:calc(100vw - 40px);padding:12px 18px;border-radius:14px;background:#183056;color:#fff;font-size:12.5px;line-height:1.5;text-align:center;transform:translateX(-50%);box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
 </style>
 <dialog id="alGraceDialog" class="al-grace-dialog" aria-labelledby="alGraceDialogTitle" aria-describedby="alGraceDialogHelp">
@@ -20754,9 +20760,9 @@ html.tasco-cover:not(.tasco-locked) #tascoLock .al-btn,html.tasco-cover:not(.tas
       <button type="button" class="al-grace-close" data-al-grace-close aria-label="Đóng"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m7 7 10 10M17 7 7 17"/></svg></button>
     </header>
     <div class="al-grace-options">
-      <button type="button" data-al-grace="30" aria-pressed="false"><span>30 giây</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></button>
-      <button type="button" data-al-grace="120" aria-pressed="false"><span>2 phút</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></button>
-      <button type="button" data-al-grace="600" aria-pressed="false"><span>10 phút</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></button>
+      <button type="button" data-al-grace="30" aria-pressed="false"><span>30 giây</span><small>Khoá nhanh, xác thực lại thường xuyên hơn</small><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></button>
+      <button type="button" data-al-grace="120" aria-pressed="false"><span>2 phút</span><small>Cân bằng giữa tiện dụng và an toàn</small><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></button>
+      <button type="button" data-al-grace="600" aria-pressed="false"><span>10 phút</span><small>Ít phải xác thực lại khi làm việc liên tục</small><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></button>
     </div>
   </div>
 </dialog>
