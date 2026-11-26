@@ -6668,6 +6668,9 @@ html.dark .c0{--cc:#3987e5}html.dark .c1{--cc:#d95926}html.dark .c2{--cc:#199e70
 .pg-facts small{display:block;color:var(--ws-muted);font-size:10.5px;font-weight:700}
 .pg-facts b,.pg-tel{display:block;margin-top:2px;font-size:13px;font-weight:700;overflow-wrap:anywhere}
 .pg-tel{color:var(--app-teal);text-decoration:none;font-variant-numeric:tabular-nums}
+.pg-end{display:flex;align-items:stretch;gap:8px}
+.pg-end>.pg-note{flex:1 1 auto;min-width:0;align-content:center}
+.pg-end>.pg-det{flex:none;width:auto;min-width:112px;pointer-events:auto;z-index:2}
 .pg-det{pointer-events:auto;z-index:2;display:flex;align-items:center;gap:8px;width:100%;min-height:40px;padding:0 12px;border:1px solid var(--ws-line);border-radius:12px;background:transparent;color:var(--ws-muted);font:700 12.5px 'Plus Jakarta Sans',sans-serif;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .pg-det:active{background:var(--ws-soft)}
 .pg-det span{flex:1;min-width:0}
@@ -7524,9 +7527,9 @@ window.TascoWeekly=(()=>{
       ((c.moTaTonThat||c.nguyenNhan)?'<div class="pg-dmg">'+esc(c.moTaTonThat||c.nguyenNhan)+'</div>':'')+
       '<div class="pg-foot"><span class="pg-who"><i class="pg-av'+(unk?' is-0':'')+'" style="--h:'+pgHue(r.gdv)+'">'+esc(unk?'?':pgInit(r.gdv))+'</i><span>'+esc(unk?'Chưa phân công':r.gdv)+'</span></span>'+
         (r.phone?'<span class="pg-ph">'+(dial?'<a class="pg-call" href="tel:'+esc(r.phone)+'" aria-label="Gọi lái xe '+esc(r.phone)+'">'+PGI.phone+esc(r.phone)+'</a>':'<span class="pg-call is-text">'+esc(r.phone)+'</span>')+(pgZaloUrl(r.phone)?'<a class="pg-zalo" href="'+pgZaloUrl(r.phone)+'" target="_blank" rel="noopener" aria-label="Tìm Zalo của '+esc(r.phone)+'">'+PGI.zalo+'<b>Zalo</b></a>':'')+'</span>':'')+'</div>'+
-      (last?'<div class="pg-note'+(r.stale?' is-old':'')+'"><p>'+esc(last.content)+'</p><small><span>'+esc(last.author||'—')+' · '+esc(pgAgo(Number(last.timestamp),Date.now()))+'</span>'+pgDue(r)+(r.stale?'<span class="pg-need">Cần cập nhật</span>':'')+'</small></div>'
-        :'<div class="pg-note is-empty">'+PGI.note+'<span>Chưa có ghi chú · chạm để thêm</span></div>')+
-      '<button type="button" class="pg-det" data-wk="pgdet" data-id="'+esc(r.id)+'" aria-label="Xem chi tiết hồ sơ '+esc(c.bienSo||c.soHoSoBoiThuong||'')+'">'+PGI.info+'<span>Xem chi tiết hồ sơ</span>'+PGI.chevR+'</button></article>';
+      '<div class="pg-end">'+(last?'<div class="pg-note'+(r.stale?' is-old':'')+'"><p>'+esc(last.content)+'</p><small><span>'+esc(last.author||'—')+' · '+esc(pgAgo(Number(last.timestamp),Date.now()))+'</span>'+pgDue(r)+(r.stale?'<span class="pg-need">Cần cập nhật</span>':'')+'</small></div>'
+        :'<div class="pg-note is-empty">'+PGI.note+'<span>Chưa có ghi chú</span></div>')+
+      '<button type="button" class="pg-det" data-wk="pgdet" data-id="'+esc(r.id)+'" aria-label="Xem chi tiết hồ sơ '+esc(c.bienSo||c.soHoSoBoiThuong||'')+'">'+PGI.info+'<span>Chi tiết</span>'+PGI.chevR+'</button></div></article>';
   }
   const pgTile=(q,l,v,m,h)=>'<button type="button" class="dr-kpi pg-tile'+(pg.quick===q?' is-on':'')+'" style="--h:'+h+'" data-wk="pgq" data-v="'+q+'" aria-pressed="'+(pg.quick===q)+'"><small>'+esc(l)+'</small><b>'+v.toLocaleString('vi-VN')+'</b><span>'+esc(m)+'</span></button>';
   function pgShell(){
