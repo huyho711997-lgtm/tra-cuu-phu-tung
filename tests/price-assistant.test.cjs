@@ -302,7 +302,7 @@ test('editable repair quote keeps stock prices, multiplies quantities and exclud
     assert.equal(ctx.migrate(legacy).lines.length,3);
 });
 
-test('phone quote cards use a sourced paint estimate only after applying the selected rate', () => {
+test('phone quote table uses a sourced paint estimate only after applying the selected rate', () => {
     const f=fixture(),context=vm.createContext({Intl,esc:String,IC:{chev:''}});
     vm.runInContext(section('  const quoteMoney=new Intl.NumberFormat','  function quoteMessage(element){')
         +'this.applyRate=applyPaintRate;this.render=editableQuoteHtml;this.rows=quoteSheetRows;this.parseField=parseQuoteField;',context);
@@ -311,14 +311,15 @@ test('phone quote cards use a sourced paint estimate only after applying the sel
     paint.paintId='bumper';
     assert.equal(paint.proposed,null);
     const cards=context.render(quote,'');
-    assert.doesNotMatch(cards,/<table|Vuốt ngang/);
+    assert.match(cards,/<table aria-label="Bảng báo giá nhanh">/);
+    assert.doesNotMatch(cards,/Vuốt ngang/);
     assert.match(cards,/800\.000–1\.300\.000 VNĐ/);
     assert.match(cards,/https:\/\/1cargara\.vn\//);
     assert.ok(context.applyRate(paint));
     paint.quantity=2;
     const row=context.rows(quote)[4];
-    assert.match(context.render(quote,'',{}),/<details class="ak-quote-line" data-quote-line="0">/);
-    assert.match(context.render(quote,'',{0:true}),/data-quote-line="0" open/);
+    assert.match(context.render(quote,'',{}),/class="ak-quote-expansion" hidden/);
+    assert.match(context.render(quote,'',{0:true}),/data-ak="quote-toggle" aria-expanded="true"/);
     assert.match(context.render(quote,'',{}),/data-quote-field="proposed" value="1\.050\.000"/);
     assert.equal(context.parseField('proposed','1.050.000',false),1050000);
     assert.equal(context.parseField('proposed','1050000',false),1050000);

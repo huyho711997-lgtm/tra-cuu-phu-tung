@@ -8553,26 +8553,44 @@ window.TascoAsk=(()=>{
     const multiplePaint=quote.lines.filter(line=>line.type==='paint').length>1;
     const rows=quote.lines.map((line,i)=>{
       const name=line.name.charAt(0).toLocaleUpperCase('vi')+line.name.slice(1);
-      return '<details class="ak-quote-line" data-quote-line="'+i+'"'+(open[i]?' open':'')+'>'
-      +'<summary><span class="ak-quote-line-name">'+esc(name)+'<small data-quote-qty>'+esc(quoteFieldText('quantity',line.quantity)+' '+line.unit)+'</small></span>'
-      +'<strong data-quote-total aria-label="Thành tiền">'+currency(quoteLineTotal(line))+'</strong>'+IC.chev+'</summary>'
-      +'<div class="ak-quote-line-body"><div class="ak-quote-fields">'+input(line,i,'quantity','Số lượng ('+line.unit+')')
+      const expanded=!!open[i],hasMultiple=line.quantity!==1;
+      const source=quoteSource(line,true)||'—';
+      const priceLabel=line.proposed==null
+        ?line.source==='Tra cứu chưa hoàn tất'?line.source:'Chưa có giá'
+        :quoteMoney.format(line.proposed);
+      return '<tbody class="ak-quote-line" data-quote-line="'+i+'"><tr>'
+      +'<th scope="row"><button type="button" data-ak="quote-toggle" aria-expanded="'+expanded
+      +'" class="ak-quote-line-name">'+esc(name)+IC.chev+'</button>'
+      +'<small data-quote-qty'+(hasMultiple?'':' hidden')+'>'+esc(quoteFieldText('quantity',line.quantity)+' '+line.unit)+'</small></th>'
+      +'<td class="ak-quote-price"><strong data-quote-unit>'+esc(priceLabel)+'</strong>'
+      +'<small data-quote-total'+(hasMultiple&&line.proposed!=null?'':' hidden')+'>'+currency(quoteLineTotal(line))+'</small></td>'
+      +'<td class="ak-quote-origin" data-quote-source>'+esc(source)+'</td></tr>'
+      +'<tr class="ak-quote-expansion"'+(expanded?'':' hidden')+'><td colspan="3"><div class="ak-quote-line-body">'
+      +'<div class="ak-quote-fields">'+input(line,i,'quantity','Số lượng ('+line.unit+')')
       +input(line,i,'proposed','Đơn giá (VNĐ)')+'</div>'
       +(line.type==='part'?'<small>Giá kho: '+currency(line.stock)+'</small>':'')
       +(line.type==='paint'?paintRateHtml(line,i):'')
-      +'<small data-quote-source>'+esc(quoteSource(line,true)||'—')+'</small>'
       +(line.type==='paint'&&multiplePaint?'<button type="button" class="ak-act ak-quote-remove" data-ak="remove-paint-line" data-quote-row="'+i+'">Bỏ dòng sơn</button>':'')
-      +'</div></details>';
+      +'</div></td></tr></tbody>';
     }).join('');
     const {total,pending}=quoteSummary(quote);
-    return '<div class="ak-text ak-quote ak-quote-edit"><div class="ak-quote-heading">'
-      +'<div><strong>Báo giá nhanh</strong><small>'+esc(quote.vehicle)+'</small></div>'
-      +'<div><small>Tổng tạm tính</small><strong data-quote-grand aria-live="polite">'+currency(total)+'</strong></div></div>'
-      +(note?'<p>'+esc(note)+'</p>':'')+'<div class="ak-quote-lines">'+rows+'</div>'
-      +'<button type="button" class="ak-act" data-ak="add-paint-line">Thêm chi tiết sơn</button>'
+    return '<div class="ak-text ak-quote ak-quote-edit">'
+      +'<p class="ak-quote-heading"><strong>Bảng báo giá nhanh</strong><br>'+esc(quote.vehicle)+'</p>'
+      +(note?'<p>'+esc(note)+'</p>':'')
+      +'<div class="ak-quote-table"><table aria-label="Bảng báo giá nhanh"><colgroup><col><col><col></colgroup>'
+      +'<thead><tr><th scope="col">Hạng mục</th><th scope="col">Đơn giá (VNĐ)</th>'
+      +'<th scope="col">Phiên bản · Loại hàng · Ngày</th></tr></thead>'+rows+'</table></div>'
+      +'<p class="ak-quote-total">Tạm tính: <strong data-quote-grand aria-live="polite">'+currency(total)+'</strong></p>'
+      +'<div class="ak-quote-actions"><button type="button" class="ak-act" data-ak="add-paint-line">Thêm chi tiết sơn</button>'
       +'<details class="ak-quote-summary"'+(showBreakdown?' open':'')+'><summary>Chi tiết tổng <small data-quote-pending>'+pendingQuoteLabel(pending)+'</small>'+IC.chev+'</summary>'
       +'<div data-quote-summary>'+quoteSummaryHtml(quote)+'</div>'
-      +'<p class="ak-quote-tip">Giá sơn tham khảo là giá dịch vụ theo chi tiết. Kiểm tra phạm vi trước khi cộng thêm công sơn.</p></details></div>';
+      +'<p class="ak-quote-tip">Giá sơn tham khảo là giá dịch vụ theo chi tiết. Kiểm tra phạm vi trước khi cộng thêm công sơn.</p></details></div></div>';
+  }
+  function toggleQuoteRow(button){
+    const expansion=button.closest('.ak-quote-line')?.querySelector('.ak-quote-expansion');
+    if(!expansion)return;
+    expansion.hidden=!expansion.hidden;
+    button.setAttribute('aria-expanded',String(!expansion.hidden));
   }
   function pendingQuoteLabel(n){return n?n+' mục chưa có giá':'';}
   function quoteMessage(element){
@@ -8621,8 +8639,13 @@ window.TascoAsk=(()=>{
     line[field]=value;
     input.value=quoteFieldText(field,value);
     const total=quoteLineTotal(line),card=input.closest('.ak-quote-line');
-    card.querySelector('[data-quote-qty]').textContent=quoteFieldText('quantity',line.quantity)+' '+line.unit;
-    card.querySelector('[data-quote-total]').textContent=total==null?'—':quoteMoney.format(total)+' VNĐ';
+    const qty=card.querySelector('[data-quote-qty]'),amount=card.querySelector('[data-quote-total]');
+    qty.textContent=quoteFieldText('quantity',line.quantity)+' '+line.unit;
+    qty.hidden=line.quantity===1;
+    card.querySelector('[data-quote-unit]').textContent=line.proposed!=null?quoteMoney.format(line.proposed)
+      :line.source==='Tra cứu chưa hoàn tất'?line.source:'Chưa có giá';
+    amount.textContent=total==null?'—':quoteMoney.format(total)+' VNĐ';
+    amount.hidden=line.quantity===1||total==null;
     card.querySelector('[data-quote-source]').textContent=quoteSource(line,true)||'—';
     const root=input.closest('.ak-quote-edit'),summary=quoteSummary(quote);
     root.querySelector('[data-quote-grand]').textContent=quoteMoney.format(summary.total)+' VNĐ';
@@ -9510,6 +9533,7 @@ window.TascoAsk=(()=>{
     else if(k==='srcs'){const key=b.dataset.m+':*';S.open[key]=!S.open[key];const box=b.closest('.ak-srcs');box.classList.toggle('is-open',!!S.open[key]);box.querySelector('.ak-srcs-body').hidden=!S.open[key];b.setAttribute('aria-expanded',String(!!S.open[key]));}
     else if(k==='copy')copyAnswer(b.dataset.m);
     else if(k==='quote-export')exportBusinessQuote(b.dataset.m);
+    else if(k==='quote-toggle')toggleQuoteRow(b);
     else if(['apply-paint-rate','add-paint-line','remove-paint-line'].includes(k))quotePaintAction(b,k);
     else if(k==='deeper')retryAnswer(b.dataset.m,true);
     else if(k==='retry')retryAnswer(b.dataset.m,false);
@@ -9660,19 +9684,28 @@ html.dark .ak-msg.is-user p{background:linear-gradient(135deg,#3b78a8,#2c5d86)}
 .ak-quote tbody tr:last-child :is(th,td){border-bottom:0}
 .ak-quote-total{margin-top:10px!important;font-weight:700}
 .ak-quote-edit{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.45;font-variant-numeric:tabular-nums}
-.ak-quote-heading{display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;column-gap:10px;row-gap:4px;margin-bottom:9px}
-.ak-quote-heading div:last-child{text-align:right;margin-left:auto}
+.ak-quote-heading{line-height:1.55}
 .ak-quote-heading strong{font-size:15px}
 .ak-quote-edit small{display:block;color:var(--ws-muted);overflow-wrap:anywhere;font-size:11px}
-.ak-quote-lines{min-width:0;margin-bottom:8px;border-block:1px solid var(--ws-line)}
-.ak-quote-line + .ak-quote-line{border-top:1px solid var(--ws-line)}
-.ak-quote-edit summary{display:flex;align-items:center;gap:7px;min-height:42px;padding:5px 0;cursor:pointer;list-style:none}
-.ak-quote-edit summary::-webkit-details-marker{display:none}
-.ak-quote-edit summary svg{width:14px;height:14px;flex:none;color:var(--ws-muted)}
-.ak-quote-edit details[open]>summary svg{transform:rotate(180deg)}
-.ak-quote-line-name{font-weight:650;flex:1;min-width:0;overflow-wrap:anywhere}
-.ak-quote-line-name small{font-weight:500}
-.ak-quote-line [data-quote-total],.ak-quote-heading [data-quote-grand]{white-space:nowrap;font-weight:750}
+.ak-quote-edit [hidden]{display:none!important}
+.ak-quote-table{border:1px solid var(--ws-line);border-radius:12px;overflow:hidden}
+.ak-quote-table table{table-layout:fixed;font-size:12px;line-height:1.45}
+.ak-quote-table col:nth-child(1){width:32%}
+.ak-quote-table col:nth-child(2){width:27%}
+.ak-quote-table col:nth-child(3){width:41%}
+.ak-quote-table :is(th,td){padding:8px 7px;overflow-wrap:anywhere}
+.ak-quote-table tbody + tbody{border-top:1px solid var(--ws-line)}
+.ak-quote-table .ak-quote-origin{color:var(--ws-muted);font-size:11px}
+.ak-quote-table .ak-quote-price{font-variant-numeric:tabular-nums}
+.ak-quote-table .ak-quote-expansion>td{padding:0 7px 5px}
+#askSection .ak-quote-line-name{display:inline-flex;align-items:flex-start;gap:2px;text-align:left;font:inherit;font-weight:700;color:inherit;border:0;background:none;padding:0;cursor:pointer;overflow-wrap:anywhere}
+.ak-quote-line-name svg{width:10px;height:10px;flex:none;margin-top:4px;color:var(--ws-muted)}
+.ak-quote-line-name[aria-expanded=true] svg{transform:rotate(180deg)}
+.ak-quote-summary summary{display:flex;align-items:center;gap:6px;list-style:none;cursor:pointer}
+.ak-quote-summary summary::-webkit-details-marker{display:none}
+.ak-quote-summary summary svg{width:14px;height:14px;flex:none;color:var(--ws-muted)}
+.ak-quote-summary[open]>summary svg{transform:rotate(180deg)}
+.ak-quote-actions{margin-top:7px}
 .ak-quote-line-body{display:grid;gap:6px;padding:5px 9px 9px;margin-bottom:7px;border-radius:8px;background:var(--ws-soft)}
 .ak-quote-fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:8px}
 .ak-quote-field{min-width:0;display:grid;gap:2px;color:var(--ws-muted);font-size:11px}
