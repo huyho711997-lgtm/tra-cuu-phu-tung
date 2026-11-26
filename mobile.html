@@ -23882,7 +23882,7 @@ window.TascoPhotoFX = (function () {
 </script>
 <style id="tascoCameraCardStyles">
 /* Thanh chuyển hạng mục + chế độ chụp giấy tờ (nằm sát đáy vùng camera) */
-.custom-camera-modal .camera-cat-nav{position:absolute;left:10px;right:10px;bottom:10px;z-index:7;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
+.custom-camera-modal .camera-cat-nav{position:absolute;left:10px;right:10px;top:calc(var(--camera-safe-top,env(safe-area-inset-top,0px)) + 76px);z-index:7;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
 .custom-camera-modal .camera-cat-nav>*{pointer-events:auto}
 .custom-camera-modal .camera-cat-step[type=button]{flex:0 1 31%;min-width:44px;min-height:38px;display:inline-flex;align-items:center;gap:4px;padding:0 10px 0 6px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(7,20,35,.58);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#edf5f7;font:inherit;font-size:11.5px;font-weight:650;-webkit-tap-highlight-color:transparent}
 .custom-camera-modal .camera-cat-step.is-next{padding:0 6px 0 10px;justify-content:flex-end}
@@ -23897,7 +23897,7 @@ window.TascoPhotoFX = (function () {
 html.tasco-native-cam #customCameraModal :is(.camera-cat-step,.camera-card-tools){transition:transform .25s ease}
 html.tasco-native-cam #customCameraModal[data-native-turn="180"] :is(.camera-cat-step,.camera-card-tools){transform:rotate(180deg)}
 html.tasco-native-cam #customCameraModal[data-native-turn="180"] .camera-cat-nav{flex-direction:row-reverse}
-html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-nav{left:auto;right:8px;top:92px;bottom:18px;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:10px}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-nav{left:auto;right:8px;top:calc(var(--camera-safe-top,env(safe-area-inset-top,0px)) + 76px + 8px);bottom:18px;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:10px}
 html.tasco-native-cam #customCameraModal[data-native-turn="-90"] .camera-cat-nav{right:auto;left:8px;flex-direction:column-reverse;align-items:flex-start}
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) :is(.camera-cat-step[type=button],.camera-card-tools){writing-mode:vertical-rl}
 html.tasco-native-cam #customCameraModal[data-native-turn="-90"] :is(.camera-cat-step[type=button],.camera-card-tools){transform:rotate(180deg)}
