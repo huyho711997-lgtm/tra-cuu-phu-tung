@@ -15653,12 +15653,12 @@ window.TascoVoiceCloud?.configure({url:SUPABASE_PROJECT_URL,anonKey:SUPABASE_ANO
       <div class="camera-flash-effect" id="cameraFlashEffect"></div>
       <div class="camera-target-crosshair" aria-hidden="true"></div><div id="cameraFocusRing" class="camera-focus-ring" aria-hidden="true"></div><div id="cameraCategoryToast" class="camera-category-toast" aria-live="polite" hidden></div>
       <div class="camera-cat-nav" id="cameraCatNav">
-        <button type="button" class="camera-cat-step" data-cam-step="-1" aria-label="Hạng mục trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg><span></span></button>
+        <button type="button" class="camera-cat-step" data-cam-step="-1" aria-label="Hạng mục trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg><span class="cs-t"><small>Trước</small><b></b></span></button>
         <div class="camera-card-tools">
           <button type="button" class="camera-card-toggle" id="btnCameraCard" aria-pressed="false" title="Chụp giấy tờ: có khung, tự cắt đúng vùng trong khung"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8.5" cy="11" r="1.6"/><path d="M13 10h5M13 13.5h4M6.5 15.5c.6-1.2 3.4-1.2 4 0"/></svg>Giấy tờ</button>
           <button type="button" class="camera-card-shape" id="btnCameraCardShape" hidden></button>
         </div>
-        <button type="button" class="camera-cat-step is-next" data-cam-step="1" aria-label="Hạng mục kế tiếp"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+        <button type="button" class="camera-cat-step is-next" data-cam-step="1" aria-label="Hạng mục kế tiếp"><span class="cs-t"><small>Tiếp</small><b></b></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
       </div>
     </div>
     <div class="camera-footer">
@@ -19181,9 +19181,20 @@ function cameraHandleDeviceOrientation(event) {
   const beta=event.beta*Math.PI/180,gamma=event.gamma*Math.PI/180;
   // The earth-up vector in device coordinates, independent of front/rear camera selection.
   const upX=-Math.sin(gamma)*Math.cos(beta),upY=Math.sin(beta);
-  if(Math.hypot(upX,upY)<.55)return; // Keep the last reliable direction while the phone lies flat.
-  const rawAngle=Math.atan2(upX,upY)*180/Math.PI,old=cameraUiState.physicalOrientation,angle=old&&Math.abs(cameraAngleDifference(rawAngle,old.angle))<55?old.angle:cameraAngle(rawAngle);
-  cameraUiState.physicalOrientation={angle,orientation:angle%180===90?'landscape':'portrait',at:Date.now()};
+  if(Math.hypot(upX,upY)<.68)return; // Máy gần nằm phẳng: giữ hướng tin cậy gần nhất, không nhảy theo nhiễu.
+  /* Chống nhạy: chỉ đổi hướng khi máy nghiêng quá 70° so với hướng đang dùng (lệch hẳn sang góc mới) VÀ giữ ổn định ≥ 0,4 giây.
+     Chạm góc 180° (lộn ngược, cổng sạc lên trên) được tính như mọi góc khác. */
+  const rawAngle=Math.atan2(upX,upY)*180/Math.PI,old=cameraUiState.physicalOrientation,cand=cameraAngle(rawAngle),now=Date.now();
+  let angle;
+  if(!old)angle=cand;
+  else if(Math.abs(cameraAngleDifference(rawAngle,old.angle))<70){angle=old.angle;cameraUiState.sensorCandidate=null;}
+  else{
+    const c=cameraUiState.sensorCandidate;
+    if(!c||c.angle!==cand){cameraUiState.sensorCandidate={angle:cand,since:now};return;}
+    if(now-c.since<400)return;
+    angle=cand;cameraUiState.sensorCandidate=null;
+  }
+  cameraUiState.physicalOrientation={angle,orientation:angle%180===90?'landscape':'portrait',at:now};
   clearTimeout(cameraUiState.sensorFallbackTimer);cameraUiState.sensorFallbackTimer=null;
   const manual=document.getElementById('btnCameraOrientation');if(manual)manual.hidden=true;
   if(!old||old.angle!==angle)syncCameraViewport();
@@ -23907,6 +23918,21 @@ html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step svg{transform:rotate(90deg)}
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-card-tools{gap:8px}
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-card-tools button[type=button]{min-width:40px;min-height:0;padding:12px 0}
+/* Giao diện chuyển hạng mục: viên kính mờ, huy hiệu mũi tên tròn, hai dòng (nhãn nhỏ + tên) */
+.custom-camera-modal .camera-cat-step[type=button]{min-height:48px;padding:5px 14px 5px 5px;gap:9px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(20,42,66,.74),rgba(8,20,34,.78));box-shadow:0 8px 22px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.14);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);transition:transform .12s ease,background .2s ease}
+.custom-camera-modal .camera-cat-step.is-next[type=button]{padding:5px 5px 5px 14px}
+.custom-camera-modal .camera-cat-step svg{box-sizing:border-box;flex:none;width:34px;height:34px;padding:8px;border-radius:50%;background:linear-gradient(180deg,rgba(132,191,199,.34),rgba(132,191,199,.16));color:#d4f1f4;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.custom-camera-modal .camera-cat-step .cs-t{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;min-height:0;line-height:1.15;text-align:left}
+.custom-camera-modal .camera-cat-step.is-next .cs-t{align-items:flex-end;text-align:right}
+.custom-camera-modal .camera-cat-step .cs-t small{font-size:8.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#8fb8c0;white-space:nowrap}
+.custom-camera-modal .camera-cat-step .cs-t b{max-width:100%;min-width:0;min-height:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px;font-weight:700;letter-spacing:-.1px;color:#f4fafb}
+.custom-camera-modal .camera-cat-step:active{transform:scale(.96);background:linear-gradient(180deg,rgba(40,80,100,.8),rgba(14,34,52,.82))}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step[type=button]{padding:8px 5px 6px}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step.is-next[type=button]{padding:6px 5px 8px}
+.custom-camera-modal .camera-cat-step[type=button]{flex:0 1 auto;max-width:46%;min-width:0}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step[type=button]{max-width:none;min-width:42px}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step .cs-t small{display:none}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step .cs-t b{max-width:none;max-height:150px;min-height:0;font-size:12px}
 .custom-camera-modal .camera-card-tools{flex:0 0 auto;display:flex;gap:6px;align-items:center}
 .custom-camera-modal button.camera-card-toggle[type=button],.custom-camera-modal button.camera-card-shape[type=button]{display:none;align-items:center;gap:6px;min-height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(7,20,35,.62);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font:inherit;font-size:12.5px;font-weight:700;-webkit-tap-highlight-color:transparent}
 html.tasco-native-cam .custom-camera-modal[data-native-mode="photo"] button.camera-card-toggle[type=button]{display:inline-flex}
@@ -23998,7 +24024,8 @@ window.TascoCardCam = (function () {
     nav.dataset.single = String(n < 2);
     if (n < 2) return;
     var p = nav.querySelector('[data-cam-step="-1"]'), q = nav.querySelector('[data-cam-step="1"]');
-    p.querySelector('span').textContent = name(i - 1); q.querySelector('span').textContent = name(i + 1);
+    p.querySelector('.cs-t b').textContent = name(i - 1); q.querySelector('.cs-t b').textContent = name(i + 1);
+    p.querySelector('.cs-t small').textContent = 'Trước · ' + (((i - 1 + n) % n) + 1) + '/' + n; q.querySelector('.cs-t small').textContent = 'Tiếp · ' + (((i + 1) % n) + 1) + '/' + n;
     p.setAttribute('aria-label', 'Hạng mục trước: ' + name(i - 1)); q.setAttribute('aria-label', 'Hạng mục kế tiếp: ' + name(i + 1));
   }
   function cropRect(sw, sh, c) {
@@ -25592,7 +25619,8 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     try { origSync(); } catch (_) {}
     var modal = cameraModal();
     if (!modal || modal.style.display === 'none' || !root.classList.contains('tasco-native-cam')) return;
-    var land = isLandscape(), turn = land ? 0 : (Number(modal.dataset.uiRotation) || 0), vv = window.visualViewport, sv = stableViewport();
+    /* Xoay biểu tượng theo chiều máy kể cả khi màn hình đang ngang mà máy lộn ngược hoặc đứng. */
+    var land = isLandscape(), turn = Number(modal.dataset.uiRotation) || 0, vv = window.visualViewport, sv = stableViewport();
     modal.style.transform = 'none'; modal.style.left = '0px'; modal.style.top = (vv ? vv.offsetTop : 0) + 'px';
     modal.style.setProperty('--camera-viewport-width', sv.w + 'px');
     modal.style.setProperty('--camera-viewport-height', sv.h + 'px');
