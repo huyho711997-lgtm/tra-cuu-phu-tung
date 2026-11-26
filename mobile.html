@@ -23964,7 +23964,7 @@ window.TascoCardCam = (function () {
   }
   function toggle() {
     set(!on);
-    try { cameraFeedback(on ? 'Chụp giấy tờ: ' + SHAPES[shape].hint.toLowerCase() + '. Chụp xong có thể chỉnh lại khung cắt.' : 'Đã tắt chế độ chụp giấy tờ.', 2600); } catch (_) {}
+    try { cameraFeedback(on ? 'Chụp giấy tờ: ' + SHAPES[shape].hint.toLowerCase() + '. Ảnh tự cắt đúng vùng trong khung.' : 'Đã tắt chế độ chụp giấy tờ.', 2600); } catch (_) {}
   }
   function cycleShape() {
     var keys = Object.keys(SHAPES); shape = keys[(keys.indexOf(shape) + 1) % keys.length];
@@ -25778,11 +25778,8 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     try {
       var shot = await withTimeout(CP.capture({ quality: 92, orientation: Orient.available && cameraOrientLock === 'landscape' && isLandscape() ? 'preview' : 'device', photoQualityPrioritization: pro.priority === 'speed' ? 'speed' : 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront }), 20000);
       if (session !== cameraUiState.session) return;
-      if (window.TascoCardCam && TascoCardCam.on()) {   // chụp giấy tờ: xem lại và chỉnh khung cắt trước khi lưu
-        var crop = await TascoCardCam.review('data:image/jpeg;base64,' + shot.value);
-        if (session !== cameraUiState.session) return;
-        if (!crop) { shot = null; feedback('Đã bỏ ảnh. Chụp lại khi sẵn sàng.', 1400); return; }
-        metadata.cardCrop = crop; metadata.doc = false;
+      if (window.TascoCardCam && TascoCardCam.on()) {   // chụp giấy tờ: tự cắt đúng vùng trong khung, không hỏi chỉnh lại sau mỗi lần chụp
+        metadata.cardCrop = TascoCardCam.frame(); metadata.doc = false;
       }
       enqueueStamp({
         session: session, metadata: metadata, b64: shot.value, seq: shotSeq++,
