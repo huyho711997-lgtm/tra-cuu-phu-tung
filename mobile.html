@@ -15119,6 +15119,7 @@ window.TascoVoiceCloud?.configure({url:SUPABASE_PROJECT_URL,anonKey:SUPABASE_ANO
   <div id="customCameraModal" class="custom-camera-modal mobile-cloud-camera" data-camera-version="2026-10-08-v12-premium-home" role="dialog" aria-modal="true" aria-label="Chụp ảnh lưu Cloud của tôi" style="display:none">
     <div class="camera-stream-container">
       <div id="cameraImagePlane" class="camera-image-plane"><video id="customCameraVideo" autoplay playsinline muted onclick="triggerCustomCameraFocus(event)"></video>
+      <div id="cameraCardFrame" class="camera-card-frame" hidden aria-hidden="true"><i></i><i></i><i></i><i></i><span></span></div>
       <div id="cameraLocationStatus" class="camera-location-status camera-live-stamp" data-state="pending">
         <div id="cameraLiveStampLines" class="camera-live-stamp-lines"></div>
         <div class="camera-location-copy"><strong>Đang định vị</strong><span id="cameraLocationDetail" role="status" aria-live="polite">Đang lấy vị trí và địa chỉ…</span></div>
@@ -15142,6 +15143,14 @@ window.TascoVoiceCloud?.configure({url:SUPABASE_PROJECT_URL,anonKey:SUPABASE_ANO
       <div class="camera-feedback" id="cameraFeedback" role="status" aria-live="polite" hidden></div>
       <div class="camera-flash-effect" id="cameraFlashEffect"></div>
       <div class="camera-target-crosshair" aria-hidden="true"></div><div id="cameraFocusRing" class="camera-focus-ring" aria-hidden="true"></div><div id="cameraCategoryToast" class="camera-category-toast" aria-live="polite" hidden></div>
+      <div class="camera-cat-nav" id="cameraCatNav">
+        <button type="button" class="camera-cat-step" data-cam-step="-1" aria-label="Hạng mục trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg><span></span></button>
+        <div class="camera-card-tools">
+          <button type="button" class="camera-card-toggle" id="btnCameraCard" aria-pressed="false" title="Chụp giấy tờ: có khung, tự cắt đúng vùng trong khung"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8.5" cy="11" r="1.6"/><path d="M13 10h5M13 13.5h4M6.5 15.5c.6-1.2 3.4-1.2 4 0"/></svg>Giấy tờ</button>
+          <button type="button" class="camera-card-shape" id="btnCameraCardShape" hidden></button>
+        </div>
+        <button type="button" class="camera-cat-step is-next" data-cam-step="1" aria-label="Hạng mục kế tiếp"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+      </div>
     </div>
     <div class="camera-footer">
       <div class="camera-select-row">
@@ -17912,7 +17921,7 @@ function applyCameraDisplayPreferences(){
 
 function createCameraPhotoMetadata(capturedAt=Date.now()) {
   const pose=cameraOrientLock==='landscape'?cameraDevicePose():null;
-  return {capturedAt,source:'camera',appearance:cameraAppearanceSnapshot(),locationPromise:cameraCaptureLocation(),category:mobileCameraCategory||'',doc:Boolean(cameraDocMode),orientLock:pose&&pose.orientation==='landscape'?{angle:pose.angle}:null};
+  return {capturedAt,source:'camera',appearance:cameraAppearanceSnapshot(),locationPromise:cameraCaptureLocation(),category:mobileCameraCategory||'',doc:Boolean(cameraDocMode&&!window.TascoCardCam?.on()),orientLock:pose&&pose.orientation==='landscape'?{angle:pose.angle}:null};
 }
 /* Hạng mục đang chụp: nhớ theo album. Dải hạng mục trên nút chụp: chạm để đổi, vuốt ngang trên khung hình để chuyển nhanh,
    mỗi hạng mục hiện số ảnh đã chụp trong lần mở camera này. */
@@ -18020,6 +18029,7 @@ function renderCameraCategory(){
   btn.dataset.empty=String(!mobileCameraCategory);
   btn.setAttribute('aria-label','Hạng mục chụp: '+name+', '+sub+'. Chạm để đổi hạng mục');
   btn.innerHTML='<span class="cat-btn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12.2V5a1.5 1.5 0 0 1 1.5-1.5h7.2l8.3 8.3a1.5 1.5 0 0 1 0 2.1l-7.1 7.1a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.4"/></svg></span><span class="cat-btn-txt"><strong>'+esc(name)+'</strong><small>'+esc(sub)+'</small></span>';
+  try{window.TascoCardCam?.paintNav();}catch(_){}
 }
 function showCameraCategoryToast(){
   const toast=document.getElementById('cameraCategoryToast');if(!toast)return;
@@ -18093,6 +18103,8 @@ async function addWatermarkToImageFile(file,categoryName,options={}) {
       /* Chế độ tài liệu: tìm trang giấy, nắn thẳng, làm trắng nền & rõ chữ trước khi đóng dấu; khung giữ nguyên tỉ lệ của trang. */
       let docScanned=false;
       if(metadata.doc&&window.TascoDocScan){try{const scanned=await TascoDocScan.process(image.source,{maxSide:(metadata.quality||cameraQuality()).maxSide||3024});if(scanned){image.release();image=scanned;docScanned=true;appearance={...appearance,aspectRatio:'native'};}}catch(_){}}
+      /* Chụp giấy tờ: chỉ giữ vùng người dùng đã chốt trong khung (toạ độ theo tỉ lệ ảnh), phần còn lại bỏ đi. */
+      if(metadata.cardCrop&&window.TascoCardCam){try{const cropped=TascoCardCam.crop(image.source,metadata.cardCrop,(metadata.quality||cameraQuality()).maxSide||3024);if(cropped){image.release();image=cropped;docScanned=true;appearance={...appearance,aspectRatio:'native'};}}catch(_){}}
       const imageWidth=image.source.naturalWidth||image.source.width,imageHeight=image.source.naturalHeight||image.source.height;
       // Đang khoá ngang mà camera gốc trả ảnh dọc (máy đứng/nằm phẳng): xoay ảnh về ngang theo góc cảm biến lúc chụp.
       const lockRotation=!docScanned&&metadata.orientLock&&imageHeight>imageWidth?cameraAngleDifference(0,metadata.orientLock.angle):0,
@@ -23284,6 +23296,193 @@ window.TascoPhotoFX = (function () {
   return { presets: presets, fromPro: fromPro, apply: apply };
 })();
 </script>
+<style id="tascoCameraCardStyles">
+/* Thanh chuyển hạng mục + chế độ chụp giấy tờ (nằm sát đáy vùng camera) */
+.custom-camera-modal .camera-cat-nav{position:absolute;left:10px;right:10px;bottom:10px;z-index:7;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
+.custom-camera-modal .camera-cat-nav>*{pointer-events:auto}
+.custom-camera-modal .camera-cat-step[type=button]{flex:0 1 31%;min-width:44px;min-height:38px;display:inline-flex;align-items:center;gap:4px;padding:0 10px 0 6px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(7,20,35,.58);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#edf5f7;font:inherit;font-size:11.5px;font-weight:650;-webkit-tap-highlight-color:transparent}
+.custom-camera-modal .camera-cat-step.is-next{padding:0 6px 0 10px;justify-content:flex-end}
+.custom-camera-modal .camera-cat-step svg{flex:none;width:18px;height:18px}
+.custom-camera-modal .camera-cat-step span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.custom-camera-modal .camera-cat-step:active{background:rgba(132,191,199,.32)}
+.custom-camera-modal .camera-cat-nav[data-single="true"] .camera-cat-step{visibility:hidden}
+.custom-camera-modal .camera-card-tools{flex:0 0 auto;display:flex;gap:6px;align-items:center}
+.custom-camera-modal button.camera-card-toggle[type=button],.custom-camera-modal button.camera-card-shape[type=button]{display:none;align-items:center;gap:6px;min-height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(7,20,35,.62);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font:inherit;font-size:12.5px;font-weight:700;-webkit-tap-highlight-color:transparent}
+html.tasco-native-cam .custom-camera-modal[data-native-mode="photo"] button.camera-card-toggle[type=button]{display:inline-flex}
+html.tasco-native-cam .custom-camera-modal[data-native-mode="photo"] button.camera-card-shape[type=button]:not([hidden]){display:inline-flex}
+.custom-camera-modal button.camera-card-toggle svg{width:18px;height:18px}
+.custom-camera-modal button.camera-card-toggle[aria-pressed="true"]{background:var(--cam-gold,#84bfc7);border-color:var(--cam-gold,#84bfc7);color:#183056}
+.custom-camera-modal button.camera-card-shape[type=button]{background:rgba(132,191,199,.9);border-color:transparent;color:#183056}
+.custom-camera-modal[data-card="on"] #cameraImagePlane{overflow:hidden}
+.camera-card-frame{position:absolute;z-index:3;display:none;box-sizing:border-box;border:2px solid #b1e2e2;border-radius:10px;box-shadow:0 0 0 9999px rgba(3,10,18,.52);pointer-events:none}
+.custom-camera-modal[data-card="on"][data-native-mode="photo"] .camera-card-frame:not([hidden]){display:block}
+.camera-card-frame i{position:absolute;width:22px;height:22px;border:0 solid #fff}
+.camera-card-frame i:nth-child(1){left:-2px;top:-2px;border-left-width:4px;border-top-width:4px;border-top-left-radius:10px}
+.camera-card-frame i:nth-child(2){right:-2px;top:-2px;border-right-width:4px;border-top-width:4px;border-top-right-radius:10px}
+.camera-card-frame i:nth-child(3){left:-2px;bottom:-2px;border-left-width:4px;border-bottom-width:4px;border-bottom-left-radius:10px}
+.camera-card-frame i:nth-child(4){right:-2px;bottom:-2px;border-right-width:4px;border-bottom-width:4px;border-bottom-right-radius:10px}
+.camera-card-frame span{position:absolute;left:50%;top:-30px;transform:translateX(-50%);padding:4px 10px;border-radius:999px;background:rgba(7,20,35,.7);color:#e4f2f4;font-size:11.5px;font-weight:650;white-space:nowrap}
+/* Màn chỉnh khung cắt */
+.cam-crop{position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;background:#06111d;color:#fff;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.cam-crop header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px}
+.cam-crop header strong{font-size:15px}
+.cam-crop button{font:inherit;-webkit-tap-highlight-color:transparent}
+.cam-crop header button,.cam-crop footer button{min-height:44px;padding:0 18px;border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(255,255,255,.1);color:#fff;font-size:14px;font-weight:700}
+.cam-crop footer{display:flex;gap:10px;padding:10px 14px 14px}
+.cam-crop footer button{flex:1}
+.cam-crop footer button.is-primary{flex:1.6;border-color:transparent;background:linear-gradient(135deg,#4f9fa8,#2b6f80)}
+.cam-crop-stage{flex:1;min-height:0;position:relative;display:grid;place-items:center;padding:6px 18px;touch-action:none}
+.cam-crop-wrap{position:relative;overflow:hidden;border-radius:4px;background:#000;touch-action:none;user-select:none;-webkit-user-select:none}
+.cam-crop-wrap img{display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none}
+.cam-crop-box{position:absolute;box-sizing:border-box;border:2px solid #b1e2e2;box-shadow:0 0 0 9999px rgba(3,10,18,.62);cursor:move;touch-action:none}
+.cam-crop-box::before,.cam-crop-box::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(255,255,255,.28),rgba(255,255,255,.28)) 33.3% 0/1px 100% no-repeat,linear-gradient(rgba(255,255,255,.28),rgba(255,255,255,.28)) 66.6% 0/1px 100% no-repeat}
+.cam-crop-box::after{background:linear-gradient(rgba(255,255,255,.28),rgba(255,255,255,.28)) 0 33.3%/100% 1px no-repeat,linear-gradient(rgba(255,255,255,.28),rgba(255,255,255,.28)) 0 66.6%/100% 1px no-repeat}
+.cam-crop-box b{position:absolute;width:44px;height:44px;touch-action:none}
+.cam-crop-box b::after{content:"";position:absolute;width:20px;height:20px;border:0 solid #fff}
+.cam-crop-box b[data-h="nw"]{left:-22px;top:-22px}.cam-crop-box b[data-h="ne"]{right:-22px;top:-22px}.cam-crop-box b[data-h="sw"]{left:-22px;bottom:-22px}.cam-crop-box b[data-h="se"]{right:-22px;bottom:-22px}
+.cam-crop-box b[data-h="nw"]::after{left:20px;top:20px;border-left-width:4px;border-top-width:4px}.cam-crop-box b[data-h="ne"]::after{right:20px;top:20px;border-right-width:4px;border-top-width:4px}.cam-crop-box b[data-h="sw"]::after{left:20px;bottom:20px;border-left-width:4px;border-bottom-width:4px}.cam-crop-box b[data-h="se"]::after{right:20px;bottom:20px;border-right-width:4px;border-bottom-width:4px}
+.cam-crop p{margin:0;padding:2px 18px 4px;text-align:center;font-size:12.5px;color:#b8d2d8}
+</style>
+<script id="tascoCameraCard">
+/* Chụp giấy tờ xe: khung cố định trên màn hình camera, chụp xong có màn chỉnh lại khung rồi cắt chỉ giữ vùng trong khung.
+   Toạ độ khung luôn là tỉ lệ (0–1) so với toàn ảnh nên không phụ thuộc kích thước màn hình hay độ phân giải ảnh. */
+window.TascoCardCam = (function () {
+  'use strict';
+  var SHAPES = { card: { label: 'Thẻ', hint: 'Đặt thẻ / giấy trọn trong khung', ratio: 85.6 / 54 }, a4: { label: 'A4 dọc', hint: 'Đặt tờ giấy A4 trọn trong khung', ratio: 210 / 297 } };
+  var KEY = 'tasco_camera_card_shape_v1', on = false, shape = 'card', ro = null;
+  try { var v = localStorage.getItem(KEY); if (SHAPES[v]) shape = v; } catch (_) {}
+  function $(id) { return document.getElementById(id); }
+  function modal() { return $('customCameraModal'); }
+  /* Khung trong lớp ảnh, theo tỉ lệ so với lớp ảnh (= toàn bộ ảnh vì chế độ này luôn dùng tỉ lệ gốc). */
+  function frameRect(pw, ph) {
+    if (!(pw > 0 && ph > 0)) return { x: .06, y: .2, w: .88, h: .6 };
+    var r = SHAPES[shape].ratio, fw = pw * .9, fh = fw / r;
+    if (fh > ph * .78) { fh = ph * .78; fw = fh * r; }
+    return { x: (1 - fw / pw) / 2, y: (1 - fh / ph) / 2, w: fw / pw, h: fh / ph };
+  }
+  function planeSize() { var p = $('cameraImagePlane'); return p ? { w: p.offsetWidth, h: p.offsetHeight } : { w: 0, h: 0 }; }
+  function layout() {
+    var f = $('cameraCardFrame'), m = modal(); if (!f || !m) return;
+    m.dataset.card = on ? 'on' : 'off'; f.hidden = !on;
+    var t = $('btnCameraCard'), sb = $('btnCameraCardShape');
+    if (t) { t.setAttribute('aria-pressed', String(on)); t.setAttribute('aria-label', on ? 'Đang bật chế độ chụp giấy tờ. Chạm để tắt' : 'Chụp giấy tờ có khung'); }
+    if (sb) { sb.hidden = !on; sb.textContent = SHAPES[shape].label; sb.setAttribute('aria-label', 'Dạng khung: ' + SHAPES[shape].label + '. Chạm để đổi'); }
+    if (!on) return;
+    var s = planeSize(), r = frameRect(s.w, s.h);
+    f.style.left = r.x * 100 + '%'; f.style.top = r.y * 100 + '%'; f.style.width = r.w * 100 + '%'; f.style.height = r.h * 100 + '%';
+    var tip = f.querySelector('span'); if (tip) tip.textContent = SHAPES[shape].hint;
+  }
+  function currentFrame() { var s = planeSize(); return frameRect(s.w, s.h); }
+  function set(next) {
+    on = !!next; layout();
+    try { var p = $('cameraImagePlane'); if (p && window.ResizeObserver) { if (!ro) ro = new ResizeObserver(function () { if (on) layout(); }); ro.disconnect(); if (on) ro.observe(p); } } catch (_) {}
+    try { syncCameraViewport(); } catch (_) {}
+  }
+  function toggle() {
+    set(!on);
+    try { cameraFeedback(on ? 'Chụp giấy tờ: ' + SHAPES[shape].hint.toLowerCase() + '. Chụp xong có thể chỉnh lại khung cắt.' : 'Đã tắt chế độ chụp giấy tờ.', 2600); } catch (_) {}
+  }
+  function cycleShape() {
+    var keys = Object.keys(SHAPES); shape = keys[(keys.indexOf(shape) + 1) % keys.length];
+    try { localStorage.setItem(KEY, shape); } catch (_) {}
+    layout();
+  }
+  /* Nhãn hạng mục trước / sau */
+  function paintNav() {
+    var nav = $('cameraCatNav'); if (!nav) return;
+    var list = [], cur = '';
+    try { list = cameraCategoryList(); cur = mobileCameraCategory || ''; } catch (_) {}
+    var i = Math.max(0, list.indexOf(cur)), n = list.length;
+    var name = function (k) { return list[(k + n) % n] || 'Chưa phân loại'; };
+    nav.dataset.single = String(n < 2);
+    if (n < 2) return;
+    var p = nav.querySelector('[data-cam-step="-1"]'), q = nav.querySelector('[data-cam-step="1"]');
+    p.querySelector('span').textContent = name(i - 1); q.querySelector('span').textContent = name(i + 1);
+    p.setAttribute('aria-label', 'Hạng mục trước: ' + name(i - 1)); q.setAttribute('aria-label', 'Hạng mục kế tiếp: ' + name(i + 1));
+  }
+  function cropRect(sw, sh, c) {
+    var x = Math.max(0, Math.min(1, c.x)), y = Math.max(0, Math.min(1, c.y));
+    var w = Math.max(.02, Math.min(1 - x, c.w)), h = Math.max(.02, Math.min(1 - y, c.h));
+    return { sx: Math.round(x * sw), sy: Math.round(y * sh), sw: Math.max(1, Math.round(w * sw)), sh: Math.max(1, Math.round(h * sh)) };
+  }
+  /* Cắt vùng c ({x,y,w,h} theo tỉ lệ ảnh), thu nhỏ nếu cạnh dài hơn maxSide. */
+  function crop(source, c, maxSide) {
+    var W = source.videoWidth || source.naturalWidth || source.width, H = source.videoHeight || source.naturalHeight || source.height;
+    if (!W || !H || !c) return null;
+    var r = cropRect(W, H, c), k = Math.min(1, (maxSide || 3024) / Math.max(r.sw, r.sh));
+    var canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(r.sw * k)); canvas.height = Math.max(1, Math.round(r.sh * k));
+    var ctx = canvas.getContext('2d', { alpha: false }); if (!ctx) return null;
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(source, r.sx, r.sy, r.sw, r.sh, 0, 0, canvas.width, canvas.height);
+    return { source: canvas, width: canvas.width, height: canvas.height, release: function () { canvas.width = canvas.height = 0; } };
+  }
+  /* Màn chỉnh khung cắt. Trả về {x,y,w,h} hoặc null nếu bỏ ảnh. */
+  function review(src) {
+    return new Promise(function (resolve) {
+      var host = modal(); if (!host) { resolve(currentFrame()); return; }
+      var init = currentFrame(), box = { x: init.x, y: init.y, w: init.w, h: init.h };
+      var el = document.createElement('div'); el.className = 'cam-crop'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Chỉnh khung cắt giấy tờ');
+      el.innerHTML = '<header><button type="button" data-x="retake">Chụp lại</button><strong>Chỉnh khung cắt</strong><span style="width:92px" aria-hidden="true"></span></header>'
+        + '<div class="cam-crop-stage"><div class="cam-crop-wrap"><img alt="Ảnh vừa chụp"><div class="cam-crop-box" data-h="move"><b data-h="nw"></b><b data-h="ne"></b><b data-h="sw"></b><b data-h="se"></b></div></div></div>'
+        + '<p>Kéo bốn góc để chỉnh, kéo trong khung để dời. Chỉ phần trong khung được lưu.</p>'
+        + '<footer><button type="button" data-x="reset">Đặt lại</button><button type="button" data-x="use" class="is-primary">Dùng ảnh</button></footer>';
+      var img = el.querySelector('img'), wrap = el.querySelector('.cam-crop-wrap'), stage = el.querySelector('.cam-crop-stage'), bx = el.querySelector('.cam-crop-box');
+      var done = false;
+      function finish(v) { if (done) return; done = true; window.removeEventListener('resize', fit); document.removeEventListener('keydown', onKey, true); el.remove(); try { img.src = ''; } catch (_) {} resolve(v); }
+      function onKey(e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); finish(null); } }
+      function paint() { bx.style.left = box.x * 100 + '%'; bx.style.top = box.y * 100 + '%'; bx.style.width = box.w * 100 + '%'; bx.style.height = box.h * 100 + '%'; }
+      function fit() {
+        var iw = img.naturalWidth, ih = img.naturalHeight; if (!iw || !ih) return;
+        var cs = getComputedStyle(stage), aw = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), ah = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+        var k = Math.min(aw / iw, ah / ih); wrap.style.width = Math.floor(iw * k) + 'px'; wrap.style.height = Math.floor(ih * k) + 'px';
+      }
+      var drag = null, MIN = .08;
+      function down(e) {
+        var h = e.target.closest('[data-h]'); if (!h) return;
+        e.preventDefault(); try { h.setPointerCapture(e.pointerId); } catch (_) {}
+        var rc = wrap.getBoundingClientRect();
+        drag = { h: h.dataset.h, id: e.pointerId, x: e.clientX, y: e.clientY, w: rc.width, hh: rc.height, b: { x: box.x, y: box.y, w: box.w, h: box.h } };
+      }
+      function move(e) {
+        if (!drag || e.pointerId !== drag.id) return;
+        var dx = (e.clientX - drag.x) / drag.w, dy = (e.clientY - drag.y) / drag.hh, b = drag.b, n = { x: b.x, y: b.y, w: b.w, h: b.h }, k = drag.h;
+        if (k === 'move') { n.x = Math.max(0, Math.min(1 - b.w, b.x + dx)); n.y = Math.max(0, Math.min(1 - b.h, b.y + dy)); }
+        else {
+          var l = b.x, t = b.y, r = b.x + b.w, bt = b.y + b.h;
+          if (k.indexOf('w') >= 0) l = Math.max(0, Math.min(r - MIN, b.x + dx));
+          if (k.indexOf('e') >= 0) r = Math.min(1, Math.max(l + MIN, r + dx));
+          if (k.indexOf('n') >= 0) t = Math.max(0, Math.min(bt - MIN, b.y + dy));
+          if (k.indexOf('s') >= 0) bt = Math.min(1, Math.max(t + MIN, bt + dy));
+          n = { x: l, y: t, w: r - l, h: bt - t };
+        }
+        box = n; paint();
+      }
+      function up(e) { if (drag && e.pointerId === drag.id) drag = null; }
+      bx.addEventListener('pointerdown', down); bx.addEventListener('pointermove', move); bx.addEventListener('pointerup', up); bx.addEventListener('pointercancel', up);
+      el.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-x]'); if (!b) return;
+        if (b.dataset.x === 'retake') finish(null);
+        else if (b.dataset.x === 'reset') { box = { x: init.x, y: init.y, w: init.w, h: init.h }; paint(); }
+        else if (b.dataset.x === 'use') finish({ x: box.x, y: box.y, w: box.w, h: box.h });
+      });
+      img.onload = function () { fit(); paint(); };
+      img.onerror = function () { finish(currentFrame()); };   // không hiện được ảnh để chỉnh: cắt theo khung lúc chụp
+      window.addEventListener('resize', fit); document.addEventListener('keydown', onKey, true);
+      host.appendChild(el); img.src = src;
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var step = e.target.closest && e.target.closest('#cameraCatNav [data-cam-step]');
+    if (step) { try { stepCameraCategory(Number(step.dataset.camStep)); } catch (_) {} return; }
+    if (e.target.closest && e.target.closest('#btnCameraCard')) { toggle(); return; }
+    if (e.target.closest && e.target.closest('#btnCameraCardShape')) { cycleShape(); }
+  });
+  // Đóng camera thì tắt chế độ giấy tờ để lần mở sau chụp ảnh thường như cũ.
+  try { var mm = modal(); if (mm) new MutationObserver(function () { if (mm.style.display === 'none' && on) set(false); }).observe(mm, { attributes: true, attributeFilter: ['style'] }); } catch (_) {}
+  if (document.readyState !== 'loading') paintNav(); else document.addEventListener('DOMContentLoaded', paintNav);
+  return { on: function () { return on; }, review: review, crop: crop, paintNav: paintNav, frame: currentFrame, set: set, toggle: toggle };
+})();
+</script>
 <script id="tascoDocScan">
 /* Chế độ chụp tài liệu (camera native): tự tìm trang giấy, nắn thẳng theo phối cảnh, làm trắng nền (bù sáng không đều) và làm rõ chữ.
    Chạy hoàn toàn trên máy, theo từng dải dòng để không tốn RAM với ảnh 12 MP. Không tìm được trang rõ ràng thì giữ nguyên khung, chỉ làm rõ chữ. */
@@ -24566,7 +24765,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     /* Khung xem trước = đúng vùng sẽ được lưu: ảnh sẽ cắt theo tỉ lệ đã chọn (vd. 9:16), nên khung và lớp che
        phải cắt cùng tỉ lệ, nếu không thấy đủ nhưng ảnh lưu lại thiếu hai bên. */
     try {
-      var crop = cameraCropFrame(w, h, cameraOrientedRatio(cameraDocMode ? 'native' : cameraAppearance.aspectRatio, w > h ? 'landscape' : 'portrait', w, h));
+      var crop = cameraCropFrame(w, h, cameraOrientedRatio((cameraDocMode || window.TascoCardCam?.on()) ? 'native' : cameraAppearance.aspectRatio, w > h ? 'landscape' : 'portrait', w, h));
       if (crop && crop.width > 0 && crop.height > 0) { w = crop.width; h = crop.height; }
     } catch (_) {}
     plane.style.width = w + 'px'; plane.style.height = h + 'px';
@@ -24576,7 +24775,7 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
   }
   /* Tỉ lệ rộng/cao của vùng sẽ được LƯU theo "Tỷ lệ ảnh" đã chọn, đúng hướng đang cầm. Ảnh gốc 4:3 nên 3:4 dọc / 4:3 ngang là kín khung. */
   function shotRatio(land) {
-    var sel = cameraDocMode ? 'native' : cameraAppearance.aspectRatio, parts = cameraAspectRatios[sel];
+    var sel = (cameraDocMode || window.TascoCardCam?.on()) ? 'native' : cameraAppearance.aspectRatio, parts = cameraAspectRatios[sel];
     if (!parts) return land ? 4 / 3 : 3 / 4;
     var s = Math.min(parts[0], parts[1]), l = Math.max(parts[0], parts[1]);
     return land ? l / s : s / l;
@@ -24995,6 +25194,12 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     try {
       var shot = await withTimeout(CP.capture({ quality: 92, orientation: Orient.available && cameraOrientLock === 'landscape' && isLandscape() ? 'preview' : 'device', photoQualityPrioritization: pro.priority === 'speed' ? 'speed' : 'balanced', mirrorFrontCamera: !!cameraAppearance.mirrorFront }), 20000);
       if (session !== cameraUiState.session) return;
+      if (window.TascoCardCam && TascoCardCam.on()) {   // chụp giấy tờ: xem lại và chỉnh khung cắt trước khi lưu
+        var crop = await TascoCardCam.review('data:image/jpeg;base64,' + shot.value);
+        if (session !== cameraUiState.session) return;
+        if (!crop) { shot = null; feedback('Đã bỏ ảnh. Chụp lại khi sẵn sàng.', 1400); return; }
+        metadata.cardCrop = crop; metadata.doc = false;
+      }
       enqueueStamp({
         session: session, metadata: metadata, b64: shot.value, seq: shotSeq++,
         quality: Object.assign({}, cameraQuality(), { maxSide: MAX_SIDE[cameraControlsState.quality] || 3024, jpeg: cameraControlsState.quality === 'economy' ? .88 : .95 }),
