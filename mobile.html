@@ -6676,9 +6676,9 @@ html.dark .c0{--cc:#3987e5}html.dark .c1{--cc:#d95926}html.dark .c2{--cc:#199e70
 .pg-facts small{display:block;color:var(--ws-muted);font-size:10.5px;font-weight:700}
 .pg-facts b,.pg-tel{display:block;margin-top:2px;font-size:13px;font-weight:700;overflow-wrap:anywhere}
 .pg-tel{color:var(--app-teal);text-decoration:none;font-variant-numeric:tabular-nums}
-.pgd-cx{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;margin-top:12px;padding:0 14px;border:1px solid color-mix(in srgb,#dc2626 26%,var(--ws-line));border-radius:16px;background:color-mix(in srgb,#dc2626 6%,var(--ws-bg));color:color-mix(in srgb,#b91c1c 88%,var(--ws-text));font:700 13.5px 'Plus Jakarta Sans',sans-serif;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.pgd-cx:active{background:color-mix(in srgb,#dc2626 12%,var(--ws-bg))}.pgd-cx span{flex:1;min-width:0}.pgd-cx svg{flex:none;width:18px;height:18px}.pgd-cx svg:last-child{width:15px;height:15px;opacity:.6}
-.pgd-cx.is-done{cursor:default;border-color:var(--ws-line);background:var(--ws-soft);color:var(--ws-muted)}
+.pgd-act[data-pgd=cancel]{border-color:color-mix(in srgb,#dc2626 28%,var(--ws-line));background:color-mix(in srgb,#dc2626 6%,var(--ws-bg));color:color-mix(in srgb,#b91c1c 88%,var(--ws-text))}
+.pgd-act[data-pgd=cancel] i{background:color-mix(in srgb,#dc2626 12%,transparent);color:inherit}
+.pgd-acts{gap:8px}.pgd-acts .pgd-act{font-size:11px;padding-left:1px;padding-right:1px;white-space:nowrap;letter-spacing:-.1px}
 .pgx-card{display:grid;gap:3px;padding:12px 14px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-soft)}.pgx-card b{font-size:17px}.pgx-card span{font-size:12.5px;font-weight:700;color:var(--ws-muted)}.pgx-card small{font-size:12px;color:var(--ws-muted)}
 .pgx-sel{width:100%;min-height:46px;font:600 13px 'Plus Jakarta Sans',sans-serif}.pgx-hint{margin:12px 2px 0;font-size:12px;line-height:1.5;color:var(--ws-muted)}.pgx-hint b{color:var(--ws-text)}
 .pgx-go{background:#dc2626!important;border-color:#dc2626!important;color:#fff!important}
@@ -7680,8 +7680,7 @@ window.TascoWeekly=(()=>{
         '<div class="pgd-metrics"><div><small>Tồn</small><b class="age">'+(r.age!==null?r.age+'<i>ngày</i>':'—')+'</b></div><div><small>Ngày mở</small><b>'+esc(r.openText||'—')+'</b></div><div><small>Ghi chú</small><b'+(r.stale?' class="warn"':'')+'>'+esc(noteTxt)+'</b></div></div>'+
         (step?'<div class="pgd-steps" role="img" aria-label="Bước '+step+' trên '+total+'">'+PG_TON.map((_,i)=>'<i'+(i<step?' class="on"':'')+'></i>').join('')+'</div><p class="pgd-stepcap">Bước '+step+'/'+total+' · '+esc(st[0])+'</p>':'')+
       '</section>'+
-      '<div class="pgd-acts">'+act(PGI.phone,'Gọi',r.phone&&dial?'href="tel:'+esc(r.phone)+'"':'disabled',!(r.phone&&dial))+(pgZaloUrl(r.phone)?act(PGI.zalo,'Zalo','href="'+pgZaloUrl(r.phone)+'" target="_blank" rel="noopener"'):'')+act(PGI.copy,'Sao chép','data-pgd="copy"')+(fromNote?'':act(PGI.note,'Ghi chú','data-pgd="note"'))+'</div>'+
-      (pgCancelled(c)?'<div class="pgd-cx is-done">'+PGI.cancel+'<span>Hồ sơ đã được đề xuất huỷ</span></div>':'<button type="button" class="pgd-cx" data-pgd="cancel">'+PGI.cancel+'<span>Đề xuất huỷ hồ sơ</span>'+PGI.chevR+'</button>')+
+      '<div class="pgd-acts">'+act(PGI.phone,'Gọi',r.phone&&dial?'href="tel:'+esc(r.phone)+'"':'disabled',!(r.phone&&dial))+(pgZaloUrl(r.phone)?act(PGI.zalo,'Zalo','href="'+pgZaloUrl(r.phone)+'" target="_blank" rel="noopener"'):'')+act(PGI.copy,'Sao chép','data-pgd="copy"')+(fromNote?'':act(PGI.note,'Ghi chú','data-pgd="note"'))+(pgCancelled(c)?act(PGI.cancel,'Đã đề xuất','disabled',true):act(PGI.cancel,'Huỷ hồ sơ','data-pgd="cancel" aria-label="Đề xuất huỷ hồ sơ"'))+'</div>'+
       secs+
       '<section class="pgd-sec"><h5>Ghi chú tiến độ gần nhất</h5>'+(last?'<div class="pgd-note"><p>'+esc(last.content)+'</p><small><b>'+esc(last.author||'—')+'</b><span>'+esc(pgDT(Number(last.timestamp)))+'</span>'+(isYmd(last.due)?'<span class="pg-dchip">'+CAL_ICO+'Hẹn '+esc(fmtYmd(last.due))+'</span>':'')+'</small></div>':'<div class="pgd-note is-empty">Chưa có ghi chú tiến độ cho hồ sơ này.</div>')+'</section>'+
       '</div></div>';
