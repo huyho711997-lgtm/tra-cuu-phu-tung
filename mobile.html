@@ -8163,7 +8163,10 @@ window.TascoAsk=(()=>{
       return {sources,fresh:sources.length,error:'',read:{included:read.included,skipped:read.skipped}};
     }
     const found=await L.retrieve(queries,options(pin));
-    return {sources:q.carrySources(history,found.sources),fresh:found.sources.length,error:found.error||(read&&read.error)||'',read:null};
+    // Đoạn "đã dẫn ở câu trước" có thể đến từ văn bản KHÁC phạm vi đang chọn: khi đã chọn tài liệu thì bỏ các đoạn mang sang không thuộc tài liệu đó, rồi đánh lại mã C1…Cn.
+    let carried=q.carrySources(history,found.sources);
+    if(pin.length)carried=carried.filter(s=>!s.carried||pin.includes(String(s.id||'').split(':')[0])).map((s,i)=>({...s,code:'C'+(i+1)}));
+    return {sources:carried,fresh:found.sources.length,error:found.error||(read&&read.error)||'',read:null};
   }
   const elapsed=()=>Math.max(0,Math.round((Date.now()-(S.since||Date.now()))/1000));
   function begin(text,status,att){
@@ -8233,7 +8236,10 @@ window.TascoAsk=(()=>{
         paintStatus(lead+(thinking?'đang suy luận sâu (có thể mất 30–90 giây)…':quick?'câu hỏi ngắn, đang trả lời nhanh…':'đang soạn câu trả lời…'));
         usage.resumeText=S.status;
         warnVision(askImages);
-        const answer=await callAI(q.buildRequest({question,history,sources,libraryError:found.error,dossier:'',issue:plan.issue,files:askFiles,images:askImages,read:found.read}),Object.assign({thinking,effort:'high'},usage));
+        const pinNames=(S.docs||[]).filter(d=>pinList(S.pin).includes(d.id)).map(d=>d.name);
+        // Đã chọn tài liệu: ép AI chỉ dùng đúng phạm vi đó, không lan sang quy tắc/nghiệp vụ khác (kể cả từ nội dung các câu trả lời trước).
+        const scope=pinList(S.pin).length?'\n\n[PHẠM VI NGƯỜI DÙNG ĐÃ CHỌN — bắt buộc: chỉ trả lời dựa trên '+(pinNames.length?pinNames.join('; '):'các văn bản đã chọn')+'. Không viện dẫn, không suy sang văn bản, quy tắc hay loại hình bảo hiểm khác nằm ngoài phạm vi này (kể cả nội dung các câu trả lời trước nếu lấy từ văn bản khác). Nếu các văn bản đã chọn không nêu điều được hỏi, nói rõ là không có trong tài liệu đã chọn, không bổ sung bằng kiến thức ngoài.]':'';
+        const answer=await callAI(q.buildRequest({question:question+scope,history,sources,libraryError:found.error,dossier:'',issue:plan.issue,files:askFiles,images:askImages,read:found.read}),Object.assign({thinking,effort:'high'},usage));
         const text=String(answer).trim(),cited=q.citedCodes(text);
         ctx.reply({quick:quick||undefined,text,sources:found.read?sources.filter(s=>cited.includes(s.code)):sources,queries,issue:plan.issue,read:found.read||undefined});
       }
