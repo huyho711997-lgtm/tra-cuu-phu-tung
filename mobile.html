@@ -8575,8 +8575,8 @@ window.TascoAsk=(()=>{
       +'<small data-quote-total'+(hasMultiple&&line.proposed!=null?'':' hidden')+'>'+currency(quoteLineTotal(line))+'</small></td>'
       +'<td class="ak-quote-origin" data-quote-source>'+esc(source)+'</td></tr>'
       +'<tr class="ak-quote-expansion"'+(expanded?'':' hidden')+'><td colspan="3"><div class="ak-quote-line-body">'
-      +'<div class="ak-quote-fields">'+input(line,i,'quantity','Số lượng ('+line.unit+')')
-      +input(line,i,'proposed','Đơn giá (VNĐ)')+'</div>'
+      +(line.type==='part'?'':'<div class="ak-quote-fields">'+input(line,i,'quantity','Số lượng ('+line.unit+')')
+      +input(line,i,'proposed','Đơn giá (VNĐ)')+'</div>')
       +(line.type==='part'?'<small>Giá kho: '+currency(line.stock)+'</small>':'')
       +(line.type==='part'?priceInfoHtml(line.info,currency):'')
       +(line.type==='paint'?paintRateHtml(line,i):'')
