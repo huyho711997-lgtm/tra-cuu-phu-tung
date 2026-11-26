@@ -7523,7 +7523,7 @@ window.TascoWeekly=(()=>{
       ((r.car||place||tags)?'<div class="pg-meta">'+(r.car?'<span>'+esc(r.car)+'</span>':'')+(place?'<span>'+(r.car?'· ':'')+esc(place)+'</span>':'')+tags+'</div>':'')+
       ((c.moTaTonThat||c.nguyenNhan)?'<div class="pg-dmg">'+esc(c.moTaTonThat||c.nguyenNhan)+'</div>':'')+
       '<div class="pg-foot"><span class="pg-who"><i class="pg-av'+(unk?' is-0':'')+'" style="--h:'+pgHue(r.gdv)+'">'+esc(unk?'?':pgInit(r.gdv))+'</i><span>'+esc(unk?'Chưa phân công':r.gdv)+'</span></span>'+
-        (r.phone?'<span class="pg-ph">'+(dial?'<a class="pg-call" href="tel:'+esc(r.phone)+'" aria-label="Gọi lái xe '+esc(r.phone)+'">'+PGI.phone+esc(r.phone)+'</a>':'<span class="pg-call is-text">'+esc(r.phone)+'</span>')+(pgZaloUrl(r.phone)?'<button type="button" class="pg-zalo" data-wk="pgzalo" data-v="'+esc(r.phone)+'" aria-label="Mở Zalo của '+esc(r.phone)+'">'+PGI.zalo+'<b>Zalo</b></button>':'')+'</span>':'')+'</div>'+
+        (r.phone?'<span class="pg-ph">'+(dial?'<a class="pg-call" href="tel:'+esc(r.phone)+'" aria-label="Gọi lái xe '+esc(r.phone)+'">'+PGI.phone+esc(r.phone)+'</a>':'<span class="pg-call is-text">'+esc(r.phone)+'</span>')+(pgZaloUrl(r.phone)?'<a class="pg-zalo" href="'+pgZaloUrl(r.phone)+'" target="_blank" rel="noopener" aria-label="Tìm Zalo của '+esc(r.phone)+'">'+PGI.zalo+'<b>Zalo</b></a>':'')+'</span>':'')+'</div>'+
       (last?'<div class="pg-note'+(r.stale?' is-old':'')+'"><p>'+esc(last.content)+'</p><small><span>'+esc(last.author||'—')+' · '+esc(pgAgo(Number(last.timestamp),Date.now()))+'</span>'+pgDue(r)+(r.stale?'<span class="pg-need">Cần cập nhật</span>':'')+'</small></div>'
         :'<div class="pg-note is-empty">'+PGI.note+'<span>Chưa có ghi chú · chạm để thêm</span></div>')+
       '<button type="button" class="pg-det" data-wk="pgdet" data-id="'+esc(r.id)+'" aria-label="Xem chi tiết hồ sơ '+esc(c.bienSo||c.soHoSoBoiThuong||'')+'">'+PGI.info+'<span>Xem chi tiết hồ sơ</span>'+PGI.chevR+'</button></article>';
@@ -7659,7 +7659,7 @@ window.TascoWeekly=(()=>{
         '<div class="pgd-metrics"><div><small>Tồn</small><b class="age">'+(r.age!==null?r.age+'<i>ngày</i>':'—')+'</b></div><div><small>Ngày mở</small><b>'+esc(r.openText||'—')+'</b></div><div><small>Ghi chú</small><b'+(r.stale?' class="warn"':'')+'>'+esc(noteTxt)+'</b></div></div>'+
         (step?'<div class="pgd-steps" role="img" aria-label="Bước '+step+' trên '+total+'">'+PG_TON.map((_,i)=>'<i'+(i<step?' class="on"':'')+'></i>').join('')+'</div><p class="pgd-stepcap">Bước '+step+'/'+total+' · '+esc(st[0])+'</p>':'')+
       '</section>'+
-      '<div class="pgd-acts">'+act(PGI.phone,'Gọi',r.phone&&dial?'href="tel:'+esc(r.phone)+'"':'disabled',!(r.phone&&dial))+(pgZaloUrl(r.phone)?act(PGI.zalo,'Zalo','data-pgd="zalo" data-v="'+esc(r.phone)+'"'):'')+act(PGI.copy,'Sao chép','data-pgd="copy"')+(fromNote?'':act(PGI.note,'Ghi chú','data-pgd="note"'))+'</div>'+
+      '<div class="pgd-acts">'+act(PGI.phone,'Gọi',r.phone&&dial?'href="tel:'+esc(r.phone)+'"':'disabled',!(r.phone&&dial))+(pgZaloUrl(r.phone)?act(PGI.zalo,'Zalo','href="'+pgZaloUrl(r.phone)+'" target="_blank" rel="noopener"'):'')+act(PGI.copy,'Sao chép','data-pgd="copy"')+(fromNote?'':act(PGI.note,'Ghi chú','data-pgd="note"'))+'</div>'+
       secs+
       '<section class="pgd-sec"><h5>Ghi chú tiến độ gần nhất</h5>'+(last?'<div class="pgd-note"><p>'+esc(last.content)+'</p><small><b>'+esc(last.author||'—')+'</b><span>'+esc(pgDT(Number(last.timestamp)))+'</span>'+(isYmd(last.due)?'<span class="pg-dchip">'+CAL_ICO+'Hẹn '+esc(fmtYmd(last.due))+'</span>':'')+'</small></div>':'<div class="pgd-note is-empty">Chưa có ghi chú tiến độ cho hồ sơ này.</div>')+'</section>'+
       '</div></div>';
@@ -7667,7 +7667,6 @@ window.TascoWeekly=(()=>{
       if(e.target===el)return closePgDetail();const b=e.target.closest('[data-pgd]');if(!b)return;const a=b.dataset.pgd;
       if(a==='close')closePgDetail();
       else if(a==='copyno')pgCopy(b.dataset.v);
-      else if(a==='zalo')pgZalo(b.dataset.v);
       else if(a==='copy')pgCopy(pgDetailText(r),'Đã sao chép thông tin hồ sơ '+(c.bienSo||''));
       else if(a==='note'){closePgDetail();openPgNote(r.id);}
     });
@@ -7754,13 +7753,6 @@ window.TascoWeekly=(()=>{
     else if(a==='due'){const d=+b.dataset.d;if(d===0)m.due='';else{const x=new Date(Date.now()+d*PG_DAY);m.due=mkYmd(x.getFullYear(),x.getMonth(),x.getDate());}m.err='';paintPgDue();}
     else if(a==='datepick')openCal('due',{title:'Hẹn xử lý tiếp',value:m.due,min:todayYmd(),onPick:v=>{if(pgm===m){m.due=v;paintPgDue();}}});
     else if(a==='save')savePgNote();
-  }
-  /* Bấm là mở thẳng cuộc trò chuyện Zalo theo SĐT: thử zalo://phonenumber?+84… (mở app, không qua Safari); nếu app không bật lên thì quay về zalo.me */
-  function pgZalo(phone){
-    const url=pgZaloUrl(phone);if(!url)return;const d=url.replace('https://zalo.me/','');let left=false;
-    const gone=()=>{left=true;};document.addEventListener('visibilitychange',gone,{once:true});window.addEventListener('pagehide',gone,{once:true});
-    try{window.location.href='zalo://phonenumber?+84'+d.slice(1);}catch(_){}
-    setTimeout(()=>{document.removeEventListener('visibilitychange',gone);if(left||document.hidden)return;window.open(url,'_blank','noopener');},1400);
   }
   async function pgCopy(v,label){
     try{await navigator.clipboard.writeText(v);}catch(_){const t=document.createElement('textarea');t.value=v;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(__){}t.remove();}
@@ -7949,7 +7941,6 @@ window.TascoWeekly=(()=>{
     else if(k==='pgopen')openPgNote(b.dataset.id);
     else if(k==='pgdet')openPgDetail(b.dataset.id);
     else if(k==='pgcopy')pgCopy(b.dataset.v);
-    else if(k==='pgzalo')pgZalo(b.dataset.v);
     else if(k==='pgmore'){pg.n+=PG_PAGE;paintProgList();}
     else if(k==='pgrm'){const v=b.dataset.v;if(v==='gdv')pg.gdv='all';else pg.quick='all';pg.n=PG_PAGE;paintProg();}
     else if(k==='pgreset'){pg={...pg,q:'',status:'all',gdv:'all',quick:'all',n:PG_PAGE};const i=$('pgSearch');if(i)i.value='';paintProg();}
