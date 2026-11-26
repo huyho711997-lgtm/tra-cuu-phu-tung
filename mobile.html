@@ -23937,8 +23937,9 @@ html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native
 #customCameraModal[data-native-turn="90"]{--cam-turn:90deg}
 #customCameraModal[data-native-turn="-90"]{--cam-turn:-90deg}
 #customCameraModal[data-native-turn="180"]{--cam-turn:180deg}
-html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-heading{position:absolute;left:62px;top:calc(var(--camera-safe-top,env(safe-area-inset-top,0px)) + 74px);flex:none;width:auto;max-height:min(38vh,300px);display:flex;flex-direction:column;gap:4px;writing-mode:vertical-rl}
-html.tasco-native-cam #customCameraModal[data-native-turn="-90"] .camera-heading{transform:rotate(180deg)}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-heading{position:absolute;left:auto;right:66px;top:calc(var(--camera-safe-top,env(safe-area-inset-top,0px)) + 84px);flex:none;width:auto;max-height:min(38vh,300px);display:flex;flex-direction:column;gap:4px;writing-mode:vertical-rl}
+html.tasco-native-cam #customCameraModal[data-native-turn="-90"] .camera-heading{transform:rotate(180deg);right:auto;left:66px}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-header-actions{margin-left:auto}
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-heading>span{margin:0;max-height:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-current-category{display:block;-webkit-line-clamp:unset;max-width:none;max-height:min(38vh,300px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 html.tasco-native-cam #customCameraModal[data-native-turn="180"] .camera-heading{transform:rotate(180deg)}
