@@ -6773,6 +6773,27 @@ html.dark .c0{--cc:#3987e5}html.dark .c1{--cc:#d95926}html.dark .c2{--cc:#199e70
 .um-btn:active{transform:scale(.98)}
 .um-btn.is-primary{background:var(--app-navy);border-color:var(--app-navy);color:#fff}
 .um-btn.is-danger{background:#dc2626;border-color:#dc2626}
+.um-hist{max-height:88dvh;min-height:50dvh}
+.um-hsum{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:2px 16px 10px}
+.um-hsum div{display:flex;flex-direction:column;gap:1px;padding:9px 12px;border-radius:14px;background:var(--ws-soft)}
+.um-hsum b{font-size:18px;font-weight:700;color:var(--ws-text);font-variant-numeric:tabular-nums;line-height:1.2}
+.um-hsum small{font-size:10.5px;font-weight:600;color:var(--ws-muted)}
+.um-hlist{padding:0 16px 8px!important}
+.um-hday{position:sticky;top:0;z-index:1;margin:0 -16px;padding:10px 16px 6px;background:var(--ws-surface);color:var(--ws-muted);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.um-hi{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid color-mix(in srgb,var(--ws-line) 60%,transparent)}
+.um-hi:last-of-type{border-bottom:0}
+.um-hi-i{flex:none;width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:var(--ws-accent);color:var(--ws-accent-text)}
+.um-hi.is-login .um-hi-i{background:#e3f6ec;color:#17794a}
+.um-hi-i svg{width:17px;height:17px}
+.um-hi-b{flex:1;min-width:0}
+.um-hi-t{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.um-hi-t b{font-size:13.5px;font-weight:700;color:var(--ws-text)}
+.um-hi-t time{flex:none;font-size:11.5px;font-weight:600;color:var(--ws-muted);font-variant-numeric:tabular-nums}
+.um-hi-b p{margin:3px 0 0;font-size:13px;font-weight:600;line-height:1.45;color:var(--ws-text);word-break:break-word}
+.um-hi-m{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.um-hi-m i{font-style:normal;padding:2px 9px;border-radius:99px;background:var(--ws-soft);color:var(--ws-muted);font-size:11px;font-weight:600;line-height:1.5}
+.um-hmore{margin:10px 0 4px;text-align:center;font-size:11.5px;color:var(--ws-muted)}
+.dark .um-hi.is-login .um-hi-i{background:rgba(23,121,74,.28);color:#7ee0ab}
 .um-bg{z-index:9100}
 .um-toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:9300;display:flex;align-items:center;gap:8px;max-width:calc(100vw - 40px);padding:11px 16px;border-radius:99px;background:var(--app-navy);color:#fff;font:600 13px 'Plus Jakarta Sans',sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;transform:translate(-50%,12px);pointer-events:none;transition:opacity .2s,transform .2s}
 .um-toast svg{flex:none;width:17px;height:17px;color:var(--app-teal)}
@@ -12618,6 +12639,7 @@ window.TascoScene=(()=>{
             copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>',
             check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>',
             close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+            search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>',
             history:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>',
             edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
             lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
@@ -12805,43 +12827,38 @@ window.TascoScene=(()=>{
         }
 
         window.viewUserHistory = async (email) => {
-            document.getElementById('historyEmailText').innerText = email;
-            const container = document.getElementById('historyListContainer');
-            container.innerHTML = '<p class="text-center text-sm font-bold text-zinc-400 py-10">Đang tải dữ liệu...</p>';
-            openModal('modalHistory');
-
+            const x = UM.users.find(y => y.email === email), name = (x && x.name) || email;
+            const bg = umOpenSheet('<div class="dr-sheet-h"><div class="um-sh-t"><h4>Lịch sử hoạt động</h4><small>' + umEsc(name) + (name !== email ? ' · ' + umEsc(email) : '') + '</small></div><button type="button" data-umx="close" aria-label="Đóng">' + UMI.close + '</button></div>' +
+                '<div class="um-hsum" id="umHSum"></div><div class="dr-opts um-hlist" id="umHList"><div class="um-empty">Đang tải dữ liệu…</div></div>', 'Lịch sử hoạt động');
+            bg.firstElementChild.classList.add('um-hist');
+            const box = bg.querySelector('#umHList');
             try {
-                const q = query(collection(db, "user_logs"), where("email", "==", email));
-                const snap = await getDocs(q);
-                let logs = [];
+                const snap = await getDocs(query(collection(db, "user_logs"), where("email", "==", email)));
+                if (umSheet !== bg) return;
+                const logs = [];
                 snap.forEach(d => logs.push(d.data()));
-                
-                if (logs.length === 0) {
-                    container.innerHTML = '<p class="text-center text-sm font-bold text-zinc-400 py-10">Chưa có hoạt động nào</p>';
-                    return;
-                }
-
-                // Sắp xếp mới nhất lên đầu (Client-side để tránh lỗi index)
+                if (!logs.length) { box.innerHTML = '<div class="um-empty"><b>Chưa có hoạt động nào</b><span>Người dùng này chưa đăng nhập hoặc tra cứu.</span></div>'; return; }
+                // Sắp xếp mới nhất lên đầu (client-side để tránh lỗi index)
                 logs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
-                // FIX (XSS): log.action / log.details chứa dữ liệu do người dùng nhập (vd. từ khóa tra cứu)
-                // nên bắt buộc escape trước khi chèn vào innerHTML, nếu không admin xem lịch sử sẽ bị chạy script lạ.
-                const escLog = value => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-                container.innerHTML = logs.map(log => {
-                    const time = log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString('vi-VN') : 'N/A';
-                    const actionColor = log.action === 'Đăng nhập' ? 'text-green-600 bg-green-50 border-green-200' : 'text-navy-500 bg-navy-50 border-navy-200';
-                    return `
-                        <div class="bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-sm border border-zinc-100 dark:border-zinc-700">
-                            <div class="flex items-center justify-between mb-1.5">
-                                <span class="px-2.5 py-1 text-[9px] font-black rounded-lg border ${actionColor} uppercase tracking-widest">${escLog(log.action)}</span>
-                                <span class="text-[11px] font-bold text-zinc-400">${time}</span>
-                            </div>
-                            ${log.details ? `<p class="text-xs font-bold text-zinc-600 dark:text-zinc-300 mt-2">${escLog(log.details)}</p>` : ''}
-                        </div>
-                    `;
-                }).join('');
+                const MAX = 200, shown = logs.slice(0, MAX);
+                const logins = logs.filter(l => l.action === 'Đăng nhập').length;
+                bg.querySelector('#umHSum').innerHTML = '<div><b>' + logs.length + '</b><small>Hoạt động</small></div><div><b>' + logins + '</b><small>Đăng nhập</small></div><div><b>' + (logs.length - logins) + '</b><small>Tra cứu</small></div>';
+                const today = new Date().toLocaleDateString('vi-VN'), yest = new Date(Date.now() - 864e5).toLocaleDateString('vi-VN');
+                let html = '', lastDay = '';
+                // FIX (XSS): action/details chứa dữ liệu người dùng nhập (từ khoá tra cứu) → bắt buộc escape
+                shown.forEach(l => {
+                    const d = l.timestamp?.seconds ? new Date(l.timestamp.seconds * 1000) : null;
+                    const day = d ? d.toLocaleDateString('vi-VN') : 'Không rõ ngày';
+                    if (day !== lastDay) { lastDay = day; html += '<div class="um-hday">' + (day === today ? 'Hôm nay' : day === yest ? 'Hôm qua' : day) + '</div>'; }
+                    const login = l.action === 'Đăng nhập';
+                    const parts = String(l.details || '').split(' — ').map(t => t.trim()).filter(Boolean);
+                    html += '<div class="um-hi' + (login ? ' is-login' : '') + '"><span class="um-hi-i">' + (login ? UMI.unlock : UMI.search) + '</span><div class="um-hi-b"><div class="um-hi-t"><b>' + umEsc(l.action || 'Hoạt động') + '</b><time>' + (d ? d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '') + '</time></div>' +
+                        (parts.length ? '<p>' + umEsc(parts[0]) + '</p>' + (parts.length > 1 ? '<div class="um-hi-m">' + parts.slice(1).map(t => '<i>' + umEsc(t) + '</i>').join('') + '</div>' : '') : '') + '</div></div>';
+                });
+                if (logs.length > MAX) html += '<p class="um-hmore">Hiển thị ' + MAX + ' hoạt động gần nhất trong ' + logs.length + '.</p>';
+                box.innerHTML = html;
             } catch (error) {
-                container.innerHTML = '<p class="text-center text-sm font-bold text-red-500 py-10">Lỗi khi tải lịch sử!</p>';
+                if (umSheet === bg) box.innerHTML = '<div class="um-empty is-err"><b>Không tải được lịch sử</b><span>Kiểm tra kết nối rồi thử lại.</span></div>';
             }
         }
 
