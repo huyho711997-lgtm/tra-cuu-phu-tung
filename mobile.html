@@ -22513,10 +22513,10 @@ window.TascoCategories = (function () {
 .custom-camera-modal[data-orientation="landscape"] .camera-select-row .camera-lens-bar button{width:32px;min-width:32px;max-width:32px;height:32px;min-height:32px;max-height:32px;flex:0 0 32px}
 .custom-camera-modal[data-orientation="landscape"] button.camera-cat-btn[type=button]{min-height:42px}
 
-.custom-camera-modal .camera-category-toast{position:absolute;left:50%;top:38%;z-index:6;max-width:80%;padding:12px 22px;border-radius:18px;background:rgba(7,20,35,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font-size:22px;font-weight:700;text-align:center;letter-spacing:-.3px;pointer-events:none;transform:translate(-50%,-50%)}
+.custom-camera-modal .camera-category-toast{position:absolute;left:50%;top:38%;z-index:6;max-width:80%;padding:12px 22px;border-radius:18px;background:rgba(7,20,35,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font-size:22px;font-weight:700;text-align:center;letter-spacing:-.3px;pointer-events:none;transform:translate(-50%,-50%) rotate(var(--cam-turn,0deg))}
 .custom-camera-modal .camera-category-toast[data-empty="true"]{font-size:16px;color:#a7c3d0}
 .custom-camera-modal .camera-category-toast.is-in{animation:camCatIn .9s ease forwards}
-@keyframes camCatIn{0%{opacity:0;transform:translate(-50%,-40%) scale(.96)}15%{opacity:1;transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0}}
+@keyframes camCatIn{0%{opacity:0;transform:translate(-50%,-40%) rotate(var(--cam-turn,0deg)) scale(.96)}15%{opacity:1;transform:translate(-50%,-50%) rotate(var(--cam-turn,0deg)) scale(1)}75%{opacity:1}100%{opacity:0}}
 .custom-camera-modal .camera-category-chip{display:flex;align-items:center;gap:8px;align-self:center;max-width:100%;min-height:36px;padding:0 14px;margin:0 auto;border:1px solid rgba(132,191,199,.5);border-radius:999px;background:rgba(7,20,35,.6);color:#edf5f7;font-size:13px;font-weight:600}
 .custom-camera-modal .camera-category-chip svg{width:16px;height:16px;flex:none;color:#84bfc7}
 .custom-camera-modal .camera-category-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -23933,6 +23933,15 @@ html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step[type=button]{max-width:none;min-width:42px}
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step .cs-t small{display:none}
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step .cs-t b{max-width:none;max-height:150px;min-height:0;font-size:12px}
+/* Thông báo đổi hạng mục + dòng hạng mục đang chụp xoay theo chiều máy */
+#customCameraModal[data-native-turn="90"]{--cam-turn:90deg}
+#customCameraModal[data-native-turn="-90"]{--cam-turn:-90deg}
+#customCameraModal[data-native-turn="180"]{--cam-turn:180deg}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-heading{position:absolute;left:62px;top:calc(var(--camera-safe-top,env(safe-area-inset-top,0px)) + 74px);flex:none;width:auto;max-height:min(38vh,300px);display:flex;flex-direction:column;gap:4px;writing-mode:vertical-rl}
+html.tasco-native-cam #customCameraModal[data-native-turn="-90"] .camera-heading{transform:rotate(180deg)}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-heading>span{margin:0;max-height:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-current-category{display:block;-webkit-line-clamp:unset;max-width:none;max-height:min(38vh,300px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+html.tasco-native-cam #customCameraModal[data-native-turn="180"] .camera-heading{transform:rotate(180deg)}
 .custom-camera-modal .camera-card-tools{flex:0 0 auto;display:flex;gap:6px;align-items:center}
 .custom-camera-modal button.camera-card-toggle[type=button],.custom-camera-modal button.camera-card-shape[type=button]{display:none;align-items:center;gap:6px;min-height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(7,20,35,.62);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font:inherit;font-size:12.5px;font-weight:700;-webkit-tap-highlight-color:transparent}
 html.tasco-native-cam .custom-camera-modal[data-native-mode="photo"] button.camera-card-toggle[type=button]{display:inline-flex}
