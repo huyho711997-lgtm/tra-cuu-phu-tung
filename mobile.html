@@ -6676,6 +6676,12 @@ html.dark .c0{--cc:#3987e5}html.dark .c1{--cc:#d95926}html.dark .c2{--cc:#199e70
 .pg-facts small{display:block;color:var(--ws-muted);font-size:10.5px;font-weight:700}
 .pg-facts b,.pg-tel{display:block;margin-top:2px;font-size:13px;font-weight:700;overflow-wrap:anywhere}
 .pg-tel{color:var(--app-teal);text-decoration:none;font-variant-numeric:tabular-nums}
+.pgd-cx{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;margin-top:12px;padding:0 14px;border:1px solid color-mix(in srgb,#dc2626 26%,var(--ws-line));border-radius:16px;background:color-mix(in srgb,#dc2626 6%,var(--ws-bg));color:color-mix(in srgb,#b91c1c 88%,var(--ws-text));font:700 13.5px 'Plus Jakarta Sans',sans-serif;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pgd-cx:active{background:color-mix(in srgb,#dc2626 12%,var(--ws-bg))}.pgd-cx span{flex:1;min-width:0}.pgd-cx svg{flex:none;width:18px;height:18px}.pgd-cx svg:last-child{width:15px;height:15px;opacity:.6}
+.pgd-cx.is-done{cursor:default;border-color:var(--ws-line);background:var(--ws-soft);color:var(--ws-muted)}
+.pgx-card{display:grid;gap:3px;padding:12px 14px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-soft)}.pgx-card b{font-size:17px}.pgx-card span{font-size:12.5px;font-weight:700;color:var(--ws-muted)}.pgx-card small{font-size:12px;color:var(--ws-muted)}
+.pgx-sel{width:100%;min-height:46px;font:600 13px 'Plus Jakarta Sans',sans-serif}.pgx-hint{margin:12px 2px 0;font-size:12px;line-height:1.5;color:var(--ws-muted)}.pgx-hint b{color:var(--ws-text)}
+.pgx-go{background:#dc2626!important;border-color:#dc2626!important;color:#fff!important}
 .pg-end{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-height:34px;margin-top:2px;padding-top:9px;border-top:1px solid color-mix(in srgb,var(--ws-line) 70%,transparent)}
 .pg-add{display:inline-flex;align-items:center;gap:7px;margin-right:auto;color:color-mix(in srgb,#b45309 82%,var(--ws-text));font-size:12.5px;font-weight:700}
 .pg-add svg{width:15px;height:15px}
@@ -7448,6 +7454,7 @@ window.TascoWeekly=(()=>{
   const PG_QUICK=[['all','Tất cả'],['over30','Quá 30 ngày'],['stale','Cần cập nhật'],['overdue','Quá hẹn'],['fresh','Đã cập nhật']];
   const PG_QT={all:()=>true,mine:r=>r.mine,over30:r=>r.bucket==='over30',b1:r=>r.bucket==='b1',b2:r=>r.bucket==='b2',b3:r=>r.bucket==='b3',stale:r=>r.stale,overdue:r=>r.overdue,fresh:r=>r.fresh};
   const PGI={
+    cancel:svg('<circle cx="12" cy="12" r="9.5"/><path d="m8 8 8 8M16 8l-8 8"/>'),
     zalo:svg('<path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 20.5l1.5-5.2A8.5 8.5 0 1 1 21 11.5z"/><path d="M8.5 9.5h5l-5 5.5h5.5"/>'),
     note:svg('<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>'),
     copy:svg('<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),
@@ -7503,7 +7510,7 @@ window.TascoWeekly=(()=>{
       if(!phone||/^[—–-]$/.test(phone)){const m=/(?:\+?84|0)(?:[\s.\-]?\d){9}/.exec(String(c.laiXe||''));phone=m?m[0].replace(/[\s.\-]/g,''):'';}
       if(/^\+?84\d{9}$/.test(phone))phone='0'+phone.replace(/^\+?84/,'');else if(/^\d{9}$/.test(phone))phone='0'+phone;
       const car=((c.hangXe||'')+' '+(c.hieuXe||'')).trim();
-      rows.push({id,identifier,c,gdv,status,age,bucket:bk?bk[0]:null,tone:bk?bk[2]:'na',history,last,nd,stale:!last||nd>PG_STALE,fresh:!!last&&nd<=PG_STALE,dueIso,dueIn,overdue:dueIn!==null&&dueIn<0,
+      rows.push({id,key,identifier,c,gdv,status,age,bucket:bk?bk[0]:null,tone:bk?bk[2]:'na',history,last,nd,stale:!last||nd>PG_STALE,fresh:!!last&&nd<=PG_STALE,dueIso,dueIn,overdue:dueIn!==null&&dueIn<0,
         mine:isMine(c,gdv),owner,phone,car,openText:String(c.ngayMoHs||'').trim().split(/\s+/)[0]||'',
         hay:pgPlain([c.bienSo,c.soHoSoBoiThuong,phone,gdv,owner,c.moTaTonThat,car].join(' '))});
     });
@@ -7674,6 +7681,7 @@ window.TascoWeekly=(()=>{
         (step?'<div class="pgd-steps" role="img" aria-label="Bước '+step+' trên '+total+'">'+PG_TON.map((_,i)=>'<i'+(i<step?' class="on"':'')+'></i>').join('')+'</div><p class="pgd-stepcap">Bước '+step+'/'+total+' · '+esc(st[0])+'</p>':'')+
       '</section>'+
       '<div class="pgd-acts">'+act(PGI.phone,'Gọi',r.phone&&dial?'href="tel:'+esc(r.phone)+'"':'disabled',!(r.phone&&dial))+(pgZaloUrl(r.phone)?act(PGI.zalo,'Zalo','href="'+pgZaloUrl(r.phone)+'" target="_blank" rel="noopener"'):'')+act(PGI.copy,'Sao chép','data-pgd="copy"')+(fromNote?'':act(PGI.note,'Ghi chú','data-pgd="note"'))+'</div>'+
+      (pgCancelled(c)?'<div class="pgd-cx is-done">'+PGI.cancel+'<span>Hồ sơ đã được đề xuất huỷ</span></div>':'<button type="button" class="pgd-cx" data-pgd="cancel">'+PGI.cancel+'<span>Đề xuất huỷ hồ sơ</span>'+PGI.chevR+'</button>')+
       secs+
       '<section class="pgd-sec"><h5>Ghi chú tiến độ gần nhất</h5>'+(last?'<div class="pgd-note"><p>'+esc(last.content)+'</p><small><b>'+esc(last.author||'—')+'</b><span>'+esc(pgDT(Number(last.timestamp)))+'</span>'+(isYmd(last.due)?'<span class="pg-dchip">'+CAL_ICO+'Hẹn '+esc(fmtYmd(last.due))+'</span>':'')+'</small></div>':'<div class="pgd-note is-empty">Chưa có ghi chú tiến độ cho hồ sơ này.</div>')+'</section>'+
       '</div></div>';
@@ -7681,6 +7689,7 @@ window.TascoWeekly=(()=>{
       if(e.target===el)return closePgDetail();const b=e.target.closest('[data-pgd]');if(!b)return;const a=b.dataset.pgd;
       if(a==='close')closePgDetail();
       else if(a==='copyno')pgCopy(b.dataset.v);
+      else if(a==='cancel'){closePgDetail();openPgCancel(r.id);}
       else if(a==='copy')pgCopy(pgDetailText(r),'Đã sao chép thông tin hồ sơ '+(c.bienSo||''));
       else if(a==='note'){closePgDetail();openPgNote(r.id);}
     });
@@ -7768,6 +7777,50 @@ window.TascoWeekly=(()=>{
     else if(a==='datepick')openCal('due',{title:'Hẹn xử lý tiếp',value:m.due,min:todayYmd(),onPick:v=>{if(pgm===m){m.due=v;paintPgDue();}}});
     else if(a==='save')savePgNote();
   }
+  /* ---- Đề xuất huỷ: ghi đúng cấu trúc webapp (claim_cancellations/<id> + cờ trong pending_claims/<id>) để hiện ở trang Đề xuất huỷ hồ sơ ---- */
+  const PG_CANCEL=[['HUY_10','Huỷ 10 - Không thuộc phạm vi bảo hiểm (hao mòn, bảo hành, cố ý...)'],['HUY_01','Huỷ 01 - Trùng vụ tổn thất (đã xử lý trong vụ tổn thất khác)'],['HUY_02','Huỷ 02 - Treo quá lâu / Mất liên lạc với khách hàng'],['HUY_03','Huỷ 03 - Khách hàng chủ động rút yêu cầu bồi thường'],['HUY_05','Huỷ 05 - Khách tự làm và không yêu cầu bồi thường nữa'],['HUY_NGOAI_THO','Ngoài lãnh thổ - Tổn thất xảy ra ngoài lãnh thổ Việt Nam'],['HUY_KHAC','Lý do khác (nhập cụ thể)']];
+  function pgCancelled(c){return c.deXuatHuy===true||c.deXuatHuy==='co'||c.isCancelProposal===true||c.cancelStatus==='da_duyet'||c.cancelStatus==='cho_duyet';}
+  let pgx=null;
+  function closePgCancel(){if(pgx){pgx.el.remove();pgx=null;}}
+  function openPgCancel(id){
+    const r=pgRowOf(id);if(!r)return;closePgCancel();
+    const c=r.c,el=document.createElement('div');el.className='dr-sheet-bg wk-cal-bg pg-bg';
+    el.innerHTML='<div class="dr-sheet wk-cal pg-sheet" role="dialog" aria-modal="true" aria-label="Đề xuất huỷ hồ sơ">'+
+      '<div class="dr-sheet-h"><h4>Đề xuất huỷ hồ sơ</h4><button type="button" data-pgx="close" aria-label="Đóng">'+PGI.close+'</button></div>'+
+      '<div class="wk-xbody"><div class="pgx-card"><b>'+esc(c.bienSo||'Hồ sơ')+'</b><span>'+esc(c.soHoSoBoiThuong||'—')+'</span><small>'+esc([r.owner,r.gdv==='Chưa rõ'?'':'GĐV '+r.gdv].filter(Boolean).join(' · '))+'</small></div>'+
+      '<div class="pg-lb">Lý do huỷ</div><select id="pgxReason" class="pg-ta pgx-sel" aria-label="Lý do huỷ">'+PG_CANCEL.map(x=>'<option value="'+x[0]+'">'+esc(x[1])+'</option>').join('')+'</select>'+
+      '<div class="pg-lb">Giải trình chi tiết</div><textarea id="pgxNotes" class="pg-ta" rows="3" placeholder="Nêu rõ lý do đề xuất huỷ hồ sơ…" aria-label="Giải trình">'+esc(PG_CANCEL[0][1])+'</textarea>'+
+      '<p class="pgx-hint">Hồ sơ sẽ được chuyển sang <b>Chờ duyệt huỷ</b> và hiện trong mục Đề xuất huỷ hồ sơ của webapp giám định.</p></div>'+
+      '<div class="wk-xfoot"><div id="pgxErr"></div><button type="button" class="dt-btn wk-xsave pgx-go" data-pgx="save">'+PGI.cancel+'<span>Gửi đề xuất huỷ</span></button></div></div>';
+    el.addEventListener('click',onPgxClick);el.addEventListener('change',e=>{if(e.target.id==='pgxReason'&&pgx){const ta=el.querySelector('#pgxNotes'),prev=PG_CANCEL.map(x=>x[1]);if(!ta.value.trim()||prev.includes(ta.value.trim()))ta.value=(PG_CANCEL.find(x=>x[0]===e.target.value)||PG_CANCEL[0])[1];}});
+    document.body.appendChild(el);pgx={id:r.id,el,busy:false};
+  }
+  function paintPgx(err){const m=pgx;if(!m)return;const b=m.el.querySelector('[data-pgx=save]'),e=m.el.querySelector('#pgxErr');if(b){b.disabled=m.busy;b.lastElementChild.textContent=m.busy?'Đang gửi…':'Gửi đề xuất huỷ';}if(e)e.innerHTML=err?'<div class="wk-err" role="alert">'+esc(err)+'</div>':'';}
+  async function savePgCancel(){
+    const m=pgx;if(!m||m.busy)return;const r=pgRowOf(m.id);if(!r)return closePgCancel();
+    const code=m.el.querySelector('#pgxReason').value,notes=m.el.querySelector('#pgxNotes').value.trim();
+    if(!notes){paintPgx('Vui lòng nhập giải trình chi tiết lý do huỷ.');return;}
+    const c=r.c,key=r.key||r.id,reason=(PG_CANCEL.find(x=>x[0]===code)||PG_CANCEL[0])[1],now=Date.now(),
+      by=String(users?.[auth?.uid]?.profile?.displayName||me?.displayName||auth?.email||'Hệ thống').trim()||'Hệ thống';
+    const rec={id:key,claimId:key,bienSo:c.bienSo||c.bienSoXe||'',soHoSoBoiThuong:c.soHoSoBoiThuong||c.soHsbt||'',chuXe:c.chuXe||c.khachHang||c.tenLaiXe||c.hoTen||'',khachHang:c.khachHang||c.chuXe||'',
+      gdvTiepNhan:c.gdvTiepNhan||c.canBoXuLy||c.gdvHo||by,canBoXuLy:c.canBoXuLy||c.gdvTiepNhan||'',gdvHienTruong:c.gdvHienTruong||'',gdvHo:c.gdvHo||'',
+      donViCapDon:c.donViCapDon||c.chiNhanh||'',chiNhanh:c.chiNhanh||c.donViCapDon||'',ngayVTT:c.ngayVTT||c.ngayTonThat||'',ngayTonThat:c.ngayTonThat||c.ngayVTT||'',ngayMoHs:c.ngayMoHs||'',
+      duPhongBoiThuong:c.duPhongBoiThuong||'0',cancelReasonCode:code,lyDoHuy:reason,cancelNotes:notes,cancelProposedBy:by,cancelProposedAt:now,cancelStatus:'cho_duyet',trangThai:'cho_duyet',
+      hangXe:c.hangXe||'',hieuXe:c.hieuXe||'',createdAt:c.createdAt||now,updatedAt:now};
+    const flags={deXuatHuy:true,cancelReasonCode:code,lyDoHuy:reason,cancelNotes:notes,cancelProposedBy:by,cancelProposedAt:now,cancelStatus:'cho_duyet',updatedAt:now};
+    const send=()=>Promise.all([fetch(dbUrl('/claim_cancellations/'+encodeURIComponent(key)),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)}),
+      fetch(dbUrl('/pending_claims/'+encodeURIComponent(key)),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(flags)})]);
+    m.busy=true;paintPgx('');
+    try{
+      if(!auth.idToken||auth.exp-Date.now()<60000)await refresh();
+      let rs=await send();if(rs.some(x=>x.status===401)){await refresh();rs=await send();}
+      if(!rs[0].ok)throw Object.assign(new Error('HTTP '+rs[0].status),{http:rs[0].status});
+      applyEvent('claims','/'+key,flags,true);
+      if(pgx===m){closePgCancel();}
+      pgToast('Đã gửi đề xuất huỷ hồ sơ '+(c.bienSo||''));recompute();
+    }catch(e){m.busy=false;paintPgx(e.http===401||e.http===403?'Tài khoản chưa đủ quyền ghi dữ liệu.':'Chưa gửi được đề xuất huỷ. Kiểm tra mạng rồi thử lại.');}
+  }
+  function onPgxClick(e){const m=pgx;if(!m)return;if(e.target===m.el)return closePgCancel();const b=e.target.closest('[data-pgx]');if(!b)return;if(b.dataset.pgx==='close')closePgCancel();else if(b.dataset.pgx==='save')savePgCancel();}
   async function pgCopy(v,label){
     try{await navigator.clipboard.writeText(v);}catch(_){const t=document.createElement('textarea');t.value=v;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(__){}t.remove();}
     pgToast(label||('Đã sao chép số HSBT: '+v));
