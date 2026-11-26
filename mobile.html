@@ -6763,7 +6763,12 @@ html.dark .c0{--cc:#3987e5}html.dark .c1{--cc:#d95926}html.dark .c2{--cc:#199e70
 .pg-hist .m{display:flex;flex-wrap:wrap;align-items:center;gap:3px 8px;color:var(--ws-muted);font-size:11px;font-weight:600}.pg-hist .m b{color:var(--ws-text);font-size:12px}
 .pg-hist p{margin:5px 0 0;font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
 .pg-hist li.pg-h0{border-style:dashed;color:var(--ws-muted);font-size:12.5px;text-align:center}
-.pg-tpls,.pg-dq{display:flex;flex-wrap:wrap;gap:7px}
+.pg-tpls{display:flex;gap:8px;margin:0 -16px;padding:2px 16px 4px;overflow-x:auto;scroll-snap-type:x proximity;scroll-padding:0 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 28px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 28px),transparent 100%)}
+.pg-tpls::-webkit-scrollbar{display:none}
+.pg-tpls .pg-tp{flex:none;scroll-snap-align:start;display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 13px 0 10px;border-color:color-mix(in srgb,var(--app-teal) 24%,var(--ws-line));background:color-mix(in srgb,var(--app-teal) 7%,var(--ws-bg));color:color-mix(in srgb,var(--app-teal) 70%,var(--ws-text));font-size:12.5px;white-space:nowrap}
+.pg-tpls .pg-tp::before{content:'+';display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:color-mix(in srgb,var(--app-teal) 16%,transparent);font-size:13px;font-weight:800;line-height:1}
+.pg-dq{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.pg-dq .pg-tp{width:100%;min-height:38px;padding:0 4px;border-radius:12px;text-align:center}
 .pg-tp{min-height:36px;padding:0 12px;border:1px solid var(--ws-line);border-radius:99px;background:var(--ws-bg);color:var(--ws-text);font:600 12px 'Plus Jakarta Sans',sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s}
 .pg-tp:active{transform:scale(.96);background:var(--ws-soft)}
 .pg-tp[aria-pressed=true]{border-color:var(--app-teal);background:color-mix(in srgb,var(--app-teal) 13%,var(--ws-bg));font-weight:700}
@@ -7722,7 +7727,7 @@ window.TascoWeekly=(()=>{
         (r.phone?'<div class="r"><dt>SĐT lái xe</dt><dd>'+(dial?'<a class="pg-tel" href="tel:'+esc(r.phone)+'">'+esc(r.phone)+'</a>':esc(r.phone))+'</dd></div>':'')+'</dl>'+
       '<button type="button" class="pg-det is-sheet" data-pgm="detail">'+PGI.info+'<span>Xem chi tiết hồ sơ</span>'+PGI.chevR+'</button>'+
       '<div class="pg-lb">Lịch sử ghi chú <small id="pgHistN"></small></div><ul class="pg-hist" id="pgHist"></ul>'+
-      '<div class="pg-lb">Ghi chú mới</div><div class="pg-tpls">'+PG_TPL.map(t=>'<button type="button" class="pg-tp" data-pgm="tpl" data-v="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div>'+
+      '<div class="pg-lb">Ghi chú mới <small>· chạm để chèn nhanh</small></div><div class="pg-tpls">'+PG_TPL.map(t=>'<button type="button" class="pg-tp" data-pgm="tpl" data-v="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div>'+
       '<textarea id="pgNoteTa" class="pg-ta" rows="3" placeholder="VD: Đã liên hệ khách hàng, hẹn bổ sung đăng kiểm trong tuần…" aria-label="Nội dung ghi chú">'+esc(m.draft||'')+'</textarea>'+
       '<div class="pg-lb">Hẹn xử lý tiếp <small>(tuỳ chọn)</small></div><div class="pg-dq">'+[['1','+1 ngày'],['3','+3 ngày'],['7','+7 ngày'],['0','Bỏ hẹn']].map(([d,l])=>'<button type="button" class="pg-tp" data-pgm="due" data-d="'+d+'">'+l+'</button>').join('')+'</div>'+
       '<button type="button" class="wk-date pg-dpick" data-pgm="datepick" aria-haspopup="dialog"><span><small>Ngày hẹn</small><b id="pgDueV"></b></span>'+CAL_ICO+'</button></div>'+
