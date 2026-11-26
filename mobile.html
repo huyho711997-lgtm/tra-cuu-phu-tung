@@ -3895,37 +3895,30 @@ window.TascoBootSplash = (() => {
 </section>
 
 
-        <div id="sysMgrSection" data-shell-page="admin" hidden class="um-page" style="display: none;">
-            <div class="um-hero">
-                <div class="um-top">
-                    <button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button>
-                    <span>TASCO DLK · QUẢN TRỊ</span>
-                    <button type="button" onclick="refreshUserList()" aria-label="Tải lại danh sách"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v5h.58m15.36 2A8 8 0 0 0 4.58 9m0 0H9m11 11v-5h-.58m0 0A8 8 0 0 1 4.06 13m15.36 2H15"/></svg></button>
-                </div>
-                <h2 id="umTitle">Quản lý người dùng</h2>
-                <p>Tài khoản truy cập hệ thống &amp; quyền Cloud</p>
-                <div class="um-stats" id="umStats" aria-live="polite">
-                    <div><b data-um-stat="total">–</b><small>Tổng</small></div>
-                    <div><b data-um-stat="active">–</b><small>Hoạt động</small></div>
-                    <div><b data-um-stat="locked">–</b><small>Đã khoá</small></div>
-                    <div><b data-um-stat="cloud">–</b><small>Có Cloud</small></div>
-                </div>
-            </div>
-            <div class="um-body">
-                <div class="um-bar">
-                    <label class="um-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="umSearch" type="search" autocomplete="off" enterkeyhint="search" placeholder="Tìm theo tên hoặc email…" aria-label="Tìm người dùng"></label>
-                    <button type="button" class="um-add" onclick="openAddUserModal()" aria-label="Thêm người dùng mới"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-                </div>
-                <div class="um-filters" id="umFilters" role="group" aria-label="Lọc người dùng">
-                    <button type="button" data-um-filter="all" aria-pressed="true">Tất cả<i></i></button>
-                    <button type="button" data-um-filter="active" aria-pressed="false">Hoạt động<i></i></button>
-                    <button type="button" data-um-filter="locked" aria-pressed="false">Đã khoá<i></i></button>
-                    <button type="button" data-um-filter="cloud" aria-pressed="false">Có Cloud<i></i></button>
-                </div>
-                <div id="umNote"></div>
-                <div id="umList" class="um-list" aria-label="Danh sách người dùng"><div class="um-empty">Đang tải danh sách…</div></div>
-            </div>
-        </div>
+        <section id="sysMgrSection" data-shell-page="admin" class="ws-journey rc um-page" hidden style="display: none;" aria-labelledby="umTitle">
+  <header class="ws-journey-hero"><div class="ws-journey-top"><button type="button" onclick="updateView('account')" aria-label="Quay lại tài khoản"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><span>TASCO DLK · QUẢN TRỊ</span><button type="button" onclick="updateView('home')" aria-label="Về trang chủ"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg></button></div><div class="ws-journey-heading"><span class="ws-journey-eyebrow">TÀI KHOẢN HỆ THỐNG</span><h2 id="umTitle" tabindex="-1">Quản lý<br>người dùng.</h2><p>Phân quyền, khoá tài khoản và theo dõi hoạt động của từng người dùng.</p></div><svg class="ws-journey-art" viewBox="0 0 180 140" fill="none" aria-hidden="true"><circle cx="90" cy="48" r="26" stroke="currentColor" stroke-width="1.8"/><path d="M38 124c0-24 23-40 52-40s52 16 52 40" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><circle cx="90" cy="48" r="9" stroke="currentColor" stroke-width="6"/></svg></header>
+  <div class="ws-search-panel ws-search-panel--premium rc-panel">
+    <div class="um-stats" id="umStats" aria-live="polite">
+      <div><b data-um-stat="total">–</b><small>Tổng</small></div>
+      <div><b data-um-stat="active">–</b><small>Hoạt động</small></div>
+      <div><b data-um-stat="locked">–</b><small>Đã khoá</small></div>
+      <div><b data-um-stat="cloud">–</b><small>Có Cloud</small></div>
+    </div>
+    <div class="um-bar">
+      <label class="um-search"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="umSearch" type="search" autocomplete="off" enterkeyhint="search" placeholder="Tìm tên, email…" aria-label="Tìm người dùng"></label>
+      <button type="button" class="um-ic" id="umRefresh" onclick="refreshUserList()" aria-label="Tải lại danh sách"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v5h.58m15.36 2A8 8 0 0 0 4.58 9m0 0H9m11 11v-5h-.58m0 0A8 8 0 0 1 4.06 13m15.36 2H15"/></svg></button>
+      <button type="button" class="um-add" onclick="openAddUserModal()" aria-label="Thêm người dùng mới"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
+    <div class="um-filters" id="umFilters" role="group" aria-label="Lọc người dùng">
+      <button type="button" data-um-filter="all" aria-pressed="true">Tất cả<i></i></button>
+      <button type="button" data-um-filter="active" aria-pressed="false">Hoạt động<i></i></button>
+      <button type="button" data-um-filter="locked" aria-pressed="false">Đã khoá<i></i></button>
+      <button type="button" data-um-filter="cloud" aria-pressed="false">Có Cloud<i></i></button>
+    </div>
+    <div id="umNote"></div>
+    <div id="umList" class="um-list" aria-label="Danh sách người dùng"><div class="um-empty">Đang tải danh sách…</div></div>
+  </div>
+</section>
 
         <div id="modalAddUser" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
             <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[scale_0.2s_ease-out]">
@@ -6691,27 +6684,17 @@ html.dark .c0{--cc:#3987e5}html.dark .c1{--cc:#d95926}html.dark .c2{--cc:#199e70
 .pgx-opt span{display:grid;gap:2px;flex:1;min-width:0}.pgx-opt b{font-weight:800}.pgx-opt em{font-style:normal;font-weight:500;font-size:13px;color:var(--ws-muted);line-height:1.4}.pgx-hint{margin:12px 2px 0;font-size:12px;line-height:1.5;color:var(--ws-muted)}.pgx-hint b{color:var(--ws-text)}
 .pgx-go{background:#dc2626!important;border-color:#dc2626!important;color:#fff!important}
 /* ===== Quản lý người dùng — giao diện mới ===== */
-#sysMgrSection.um-page{padding:0!important;font-family:'Plus Jakarta Sans',sans-serif}
-.um-hero{position:relative;isolation:isolate;overflow:hidden;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 22px;border-radius:0 0 30px 30px;background:var(--app-navy);color:#fff}
-.um-hero::before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 92% 40%,rgba(99,173,182,.2),transparent 65%)}
-.um-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
-.um-top span{font-size:10.5px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.62)}
-.um-top button{width:40px;height:40px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.16);border-radius:13px;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.um-top button:active{background:rgba(255,255,255,.18)}
-.um-top svg{width:19px;height:19px}
-.um-top .is-spin svg{animation:umSpin .8s linear infinite}
-@keyframes umSpin{to{transform:rotate(360deg)}}
-#sysMgrSection .um-hero h2{margin:0;font-size:25px;font-weight:700;letter-spacing:-.7px;line-height:1.15;color:#fff}
-.um-hero p{margin:5px 0 0;font-size:13px;font-weight:500;color:rgba(255,255,255,.66)}
-.um-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
-.um-stats div{display:flex;flex-direction:column;gap:2px;padding:11px 6px 10px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.07);text-align:center}
-.um-stats b{font-size:21px;font-weight:700;letter-spacing:-.6px;line-height:1.1;font-variant-numeric:tabular-nums}
-.um-stats small{font-size:10.5px;font-weight:600;color:rgba(255,255,255,.62)}
-.um-body{padding:16px 16px 28px}
-.um-bar{display:flex;gap:10px}
+#sysMgrSection.um-page{font-family:'Plus Jakarta Sans',sans-serif;padding-bottom:24px}
+#sysMgrSection .ws-journey-hero{min-height:246px;padding-bottom:54px}
+#sysMgrSection .ws-search-panel{padding:16px}
+.um-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.um-stats div{display:flex;flex-direction:column;gap:2px;padding:11px 4px 10px;border-radius:16px;background:var(--ws-soft);text-align:center}
+.um-stats b{font-size:21px;font-weight:700;letter-spacing:-.6px;line-height:1.1;color:var(--ws-text);font-variant-numeric:tabular-nums}
+.um-stats small{font-size:10px;font-weight:600;color:var(--ws-muted)}
+.um-bar{display:flex;gap:8px}.um-ic{flex:none;width:48px;height:48px;display:grid;place-items:center;border:0;border-radius:15px;background:var(--ws-soft);color:var(--ws-muted);cursor:pointer;-webkit-tap-highlight-color:transparent}.um-ic svg{width:19px;height:19px}.um-ic.is-spin svg{animation:umSpin .8s linear infinite}@keyframes umSpin{to{transform:rotate(360deg)}}
 .um-search{position:relative;flex:1;min-width:0;display:block}
 .um-search svg{position:absolute;left:14px;top:50%;width:17px;height:17px;transform:translateY(-50%);color:var(--ws-muted);pointer-events:none}
-.um-search input{width:100%;height:48px;padding:0 14px 0 42px;border:1px solid var(--ws-line);border-radius:15px;background:var(--ws-surface);color:var(--ws-text);font:600 16px 'Plus Jakarta Sans',sans-serif;box-sizing:border-box;-webkit-appearance:none;appearance:none;outline:none}
+.um-search input{width:100%;height:48px;padding:0 14px 0 42px;border:1px solid transparent;border-radius:15px;background:var(--ws-soft);color:var(--ws-text);font:600 16px 'Plus Jakarta Sans',sans-serif;box-sizing:border-box;-webkit-appearance:none;appearance:none;outline:none}
 .um-search input::placeholder{color:var(--ws-muted);font-weight:500}
 .um-search input:focus{border-color:var(--app-teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-teal) 25%,transparent)}
 .um-add{flex:none;width:48px;height:48px;display:grid;place-items:center;border:0;border-radius:15px;background:var(--app-teal);color:var(--app-navy);cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -12702,7 +12685,7 @@ window.TascoScene=(()=>{
         window.refreshUserList=async function(){
             const list=document.getElementById('umList');
             if(!UM.loaded&&list)list.innerHTML='<div class="um-empty">Đang tải danh sách…</div>';
-            const btn=document.querySelector('.um-top button[aria-label="Tải lại danh sách"]');btn&&btn.classList.add('is-spin');
+            const btn=document.getElementById('umRefresh');btn&&btn.classList.add('is-spin');
             try{
                 const snap=await getDocs(collection(db,"sub_users"));
                 let perms=[];UM.cloudErr='';
