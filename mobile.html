@@ -4382,7 +4382,7 @@ window.TascoAppShell=(()=>{
     const main=document.getElementById('mainApp'),login=document.getElementById('loginOverlay'),nav=document.getElementById('bottomNav');
     login.style.display=view==='login'?'flex':'none';main.style.display=view==='login'?'none':'block';nav.style.display=view==='login'?'none':'flex';main.dataset.page=view;
     Object.entries(ids).forEach(([page,id])=>{const node=document.getElementById(id),show=page===view;if(node.hidden===!show&&node.style.display===(show?'block':'none'))return;node.hidden=!show;node.style.display=show?'block':'none';});
-    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','progress','scene','ask','forms','account'].includes(view);
+    document.getElementById('mainHeader').style.display=view==='home'?'flex':'none';document.getElementById('wsChildbar').hidden=['home','login','lookup','results','cloud','rescue','garage','assess','duty','directory','wkreport','progress','scene','ask','forms','account','admin'].includes(view);
     setText('#wsPageTitle',pages[view]||'');
     document.querySelectorAll('[data-shell-nav]').forEach(node=>{const selected=node.dataset.shellNav===(view==='results'?'lookup':view==='rescue'||view==='garage'||view==='assess'||view==='duty'||view==='directory'||view==='progress'||view==='scene'?'home':view);node.classList.toggle('active',selected);if(selected)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});
     window.TascoNavigationMotion?.sync(view,previous);
@@ -6335,6 +6335,9 @@ html[data-tasco-page=wkreport]{background:var(--app-navy)}
 #wkreportSection .ws-journey-art{width:138px;right:-12px;bottom:34px;opacity:.4;transform:rotate(-8deg)}
 .tasco-workspace #wkreportSection .rc-panel{margin:-28px 14px 0;padding:18px;border-radius:26px;border-color:var(--ws-line)}
 #wkreportSection :is(button,input){font-family:'Plus Jakarta Sans',sans-serif}
+.tasco-workspace #mainApp[data-shell][data-page=admin]{max-width:760px;padding:0 0 calc(118px + env(safe-area-inset-bottom,0px))!important}
+.tasco-workspace #mainApp[data-page=admin]>#mainHeader,.tasco-workspace #mainApp[data-page=admin]>#wsChildbar{display:none!important}
+@media(max-width:767px){.tasco-workspace #mainApp[data-shell][data-page=admin]{padding-left:0!important;padding-right:0!important;max-width:600px}}
 .tasco-workspace #mainApp[data-shell][data-page=progress]{max-width:760px;padding:0 0 calc(118px + env(safe-area-inset-bottom,0px))!important}
 .tasco-workspace #mainApp[data-page=progress]>#mainHeader,.tasco-workspace #mainApp[data-page=progress]>#wsChildbar{display:none!important}
 html[data-tasco-page=progress]{background:var(--app-navy)}
