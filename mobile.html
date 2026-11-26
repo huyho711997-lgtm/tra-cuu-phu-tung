@@ -9318,7 +9318,8 @@ window.TascoAsk=(()=>{
   async function callVoiceModel(request,wav,signal){
     const selected=active(),models=B.Models;
     const acceptsAudio=entry=>entry&&/^(antigravity|gemini)$/.test(entry.provider)&&/^gemini/i.test(entry.model);
-    const candidates=[selected,...voiceCandidates().map(entry=>models.resolve(cfg(),entry.id))]
+    /* Ưu tiên Gemini Flash (nhanh, rẻ) cho bước nghe-hiểu; mô hình đang chọn (thường nặng/suy luận sâu) chỉ làm phương án dự phòng. */
+    const candidates=[...voiceCandidates().map(entry=>models.resolve(cfg(),entry.id)),selected]
       .filter(acceptsAudio).filter((entry,index,list)=>list.findIndex(other=>other.provider===entry.provider&&other.model===entry.model)===index);
     if(!candidates.length)throw new Error('Chưa có mô hình Gemini nhận giọng nói. Hãy chọn Gemini rồi thử lại.');
     const system=request.system_instruction.parts.map(part=>part.text).join(' ');
@@ -9336,7 +9337,7 @@ window.TascoAsk=(()=>{
           {role:'system',content:system},
           {role:'user',content:[{type:'text',text:input},{type:'input_audio',input_audio:{data:wav,format:'wav'}}]}
         ]};
-        const deadline=AbortSignal.any([signal,AbortSignal.timeout(30000)]);
+        const deadline=AbortSignal.any([signal,AbortSignal.timeout(candidates.length>1&&candidate!==candidates[candidates.length-1]?15000:30000)]);   // mô hình nhanh quá 15 giây thì sang dự phòng, không bắt người dùng chờ
         const response=await fetch(candidate.endpoint,{method:'POST',signal:deadline,
           headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},body:JSON.stringify(body)});
         if(!response.ok){notes.push('HTTP '+response.status);continue;}
