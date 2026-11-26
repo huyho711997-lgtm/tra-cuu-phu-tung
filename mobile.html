@@ -7523,7 +7523,7 @@ window.TascoWeekly=(()=>{
       ((r.car||place||tags)?'<div class="pg-meta">'+(r.car?'<span>'+esc(r.car)+'</span>':'')+(place?'<span>'+(r.car?'· ':'')+esc(place)+'</span>':'')+tags+'</div>':'')+
       ((c.moTaTonThat||c.nguyenNhan)?'<div class="pg-dmg">'+esc(c.moTaTonThat||c.nguyenNhan)+'</div>':'')+
       '<div class="pg-foot"><span class="pg-who"><i class="pg-av'+(unk?' is-0':'')+'" style="--h:'+pgHue(r.gdv)+'">'+esc(unk?'?':pgInit(r.gdv))+'</i><span>'+esc(unk?'Chưa phân công':r.gdv)+'</span></span>'+
-        (r.phone?'<span class="pg-ph">'+(dial?'<a class="pg-call" href="tel:'+esc(r.phone)+'" aria-label="Gọi lái xe '+esc(r.phone)+'">'+PGI.phone+esc(r.phone)+'</a>':'<span class="pg-call is-text">'+esc(r.phone)+'</span>')+(pgZaloUrl(r.phone)?'<button type="button" class="pg-zalo" data-wk="pgzalo" data-v="'+esc(r.phone)+'" aria-label="Chép số và mở Zalo '+esc(r.phone)+'">'+PGI.zalo+'<b>Zalo</b></button>':'')+'</span>':'')+'</div>'+
+        (r.phone?'<span class="pg-ph">'+(dial?'<a class="pg-call" href="tel:'+esc(r.phone)+'" aria-label="Gọi lái xe '+esc(r.phone)+'">'+PGI.phone+esc(r.phone)+'</a>':'<span class="pg-call is-text">'+esc(r.phone)+'</span>')+(pgZaloUrl(r.phone)?'<button type="button" class="pg-zalo" data-wk="pgzalo" data-v="'+esc(r.phone)+'" aria-label="Mở Zalo của '+esc(r.phone)+'">'+PGI.zalo+'<b>Zalo</b></button>':'')+'</span>':'')+'</div>'+
       (last?'<div class="pg-note'+(r.stale?' is-old':'')+'"><p>'+esc(last.content)+'</p><small><span>'+esc(last.author||'—')+' · '+esc(pgAgo(Number(last.timestamp),Date.now()))+'</span>'+pgDue(r)+(r.stale?'<span class="pg-need">Cần cập nhật</span>':'')+'</small></div>'
         :'<div class="pg-note is-empty">'+PGI.note+'<span>Chưa có ghi chú · chạm để thêm</span></div>')+
       '<button type="button" class="pg-det" data-wk="pgdet" data-id="'+esc(r.id)+'" aria-label="Xem chi tiết hồ sơ '+esc(c.bienSo||c.soHoSoBoiThuong||'')+'">'+PGI.info+'<span>Xem chi tiết hồ sơ</span>'+PGI.chevR+'</button></article>';
@@ -7755,11 +7755,12 @@ window.TascoWeekly=(()=>{
     else if(a==='datepick')openCal('due',{title:'Hẹn xử lý tiếp',value:m.due,min:todayYmd(),onPick:v=>{if(pgm===m){m.due=v;paintPgDue();}}});
     else if(a==='save')savePgNote();
   }
-  /* Zalo không có link mở thẳng theo SĐT; zalo.me phải qua trang chuyển của Safari. Nên: chép số rồi mở thẳng app Zalo (zalo://), chỉ cần dán vào ô tìm kiếm */
-  async function pgZalo(phone){
-    const d=pgZaloUrl(phone).replace('https://zalo.me/','');if(!d)return;
-    await pgCopy(d,'Đã chép '+d+' · dán vào ô tìm kiếm của Zalo');
-    setTimeout(()=>{try{window.location.href='zalo://';}catch(_){}},350);
+  /* Bấm là mở thẳng cuộc trò chuyện Zalo theo SĐT: thử zalo://phonenumber?+84… (mở app, không qua Safari); nếu app không bật lên thì quay về zalo.me */
+  function pgZalo(phone){
+    const url=pgZaloUrl(phone);if(!url)return;const d=url.replace('https://zalo.me/','');let left=false;
+    const gone=()=>{left=true;};document.addEventListener('visibilitychange',gone,{once:true});window.addEventListener('pagehide',gone,{once:true});
+    try{window.location.href='zalo://phonenumber?+84'+d.slice(1);}catch(_){}
+    setTimeout(()=>{document.removeEventListener('visibilitychange',gone);if(left||document.hidden)return;window.open(url,'_blank','noopener');},1400);
   }
   async function pgCopy(v,label){
     try{await navigator.clipboard.writeText(v);}catch(_){const t=document.createElement('textarea');t.value=v;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(__){}t.remove();}
