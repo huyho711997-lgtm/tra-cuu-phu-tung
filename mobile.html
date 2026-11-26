@@ -23890,6 +23890,15 @@ window.TascoPhotoFX = (function () {
 .custom-camera-modal .camera-cat-step span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .custom-camera-modal .camera-cat-step:active{background:rgba(132,191,199,.32)}
 .custom-camera-modal .camera-cat-nav[data-single="true"] .camera-cat-step{visibility:hidden}
+/* Phần chụp giấy tờ (Giấy tờ / Thẻ) chỉ hiện khi đang ở chế độ tài liệu */
+#customCameraModal:not([data-doc-mode="on"]) .camera-card-tools{display:none!important}
+/* Máy cầm ngang mà màn hình còn dọc: xoay cả nút chuyển hạng mục và nút giấy tờ theo chiều máy, giống các biểu tượng khác */
+html.tasco-native-cam #customCameraModal :is(.camera-cat-step,.camera-card-tools){transition:transform .25s ease}
+html.tasco-native-cam #customCameraModal[data-native-turn="90"] :is(.camera-cat-step,.camera-card-tools){transform:rotate(90deg)}
+html.tasco-native-cam #customCameraModal[data-native-turn="-90"] :is(.camera-cat-step,.camera-card-tools){transform:rotate(-90deg)}
+html.tasco-native-cam #customCameraModal[data-native-turn="180"] :is(.camera-cat-step,.camera-card-tools){transform:rotate(180deg)}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-nav{bottom:66px}
+html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-step[type=button]{max-width:112px}
 .custom-camera-modal .camera-card-tools{flex:0 0 auto;display:flex;gap:6px;align-items:center}
 .custom-camera-modal button.camera-card-toggle[type=button],.custom-camera-modal button.camera-card-shape[type=button]{display:none;align-items:center;gap:6px;min-height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(7,20,35,.62);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font:inherit;font-size:12.5px;font-weight:700;-webkit-tap-highlight-color:transparent}
 html.tasco-native-cam .custom-camera-modal[data-native-mode="photo"] button.camera-card-toggle[type=button]{display:inline-flex}
@@ -25583,6 +25592,8 @@ html.dark .as-actions .as-zalo{background:var(--ws-accent-text);border-color:var
     /* Màn hình iPhone xoay thật nên không xoay giao diện bằng CSS nữa; chỉ khi màn còn dọc mà máy đã nghiêng thì xoay biểu tượng. */
     modal.dataset.orientation = land ? 'landscape' : 'portrait'; modal.dataset.uiRotation = '0'; modal.dataset.nativeTurn = String(turn);
     modal.dataset.compact = String(sv.h <= 380);
+    modal.dataset.docMode = cameraDocMode ? 'on' : 'off';
+    if (!cameraDocMode && window.TascoCardCam && TascoCardCam.on()) { try { TascoCardCam.set(false); } catch (_) {} }   // rời chế độ tài liệu thì tắt luôn khung giấy tờ
     if (!st.running) return;
     placePlane(); scheduleRefit();   // đổi Tỷ lệ ảnh / bố cục: đo lại khung camera
     var shutter = document.getElementById('cameraCaptureButton');
