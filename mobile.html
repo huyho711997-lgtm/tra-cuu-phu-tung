@@ -3677,14 +3677,11 @@ window.TascoBootSplash = (() => {
     <div class="ws-settings-list"><span class="ws-settings-label">Thiết lập cá nhân</span>
     <button type="button" class="ws-setting-row" data-theme-toggle onclick="toggleTheme()" aria-pressed="false"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span><strong>Giao diện sáng / tối</strong><small>Chọn giao diện phù hợp với bạn</small></span><span class="ws-theme-pill" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg></span></button>
     <button type="button" class="ws-setting-row al-row" data-applock-row hidden aria-pressed="false"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1.5M15 10v1.5M12 10v4h-1M9 16.2c1.7 1.2 4.3 1.2 6 0"/></svg><span><strong data-applock-title>Mở khoá bằng Face ID</strong><small data-applock-sub>Khoá ứng dụng khi mở lại</small></span><span class="al-switch" aria-hidden="true"><i></i></span></button>
-    <label class="ws-setting-row al-grace" data-applock-grace hidden>
+    <button type="button" class="ws-setting-row al-grace" data-applock-grace hidden aria-haspopup="dialog" aria-controls="alGraceDialog" aria-expanded="false">
       <svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9 2.5h6"/></svg>
       <span><strong id="alGraceTitle">Khoá lại sau</strong><small id="alGraceHelp">Sau khi rời ứng dụng</small></span>
-      <select data-al-grace aria-labelledby="alGraceTitle" aria-describedby="alGraceHelp">
-        <option value="30">30 giây</option><option value="120">2 phút</option><option value="600">10 phút</option>
-      </select>
-      <span class="al-grace-picker" aria-hidden="true"><span data-al-grace-value>2 phút</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 6.5 3.5 3.5 3.5-3.5"/></svg></span>
-    </label>
+      <span class="al-grace-picker"><span data-al-grace-value>2 phút</span><svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 6.5 3.5 3.5 3.5-3.5"/></svg></span>
+    </button>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="TascoPersonalStorage.open()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/><path d="m9 14 2 2 4-4"/></svg><span><strong>Tài khoản lưu trữ</strong><small data-storage-setting-status>Thêm tài khoản lưu trữ</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="TascoDesktopLogin.open()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2.5"/><path d="M8 20h8M12 16v4"/></svg><span><strong>Đăng nhập máy tính</strong><small>Quét mã QR để xem Cloud trên máy tính</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" onclick="openChangePasswordModal()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span><strong>Đổi mật khẩu</strong><small>Cập nhật mật khẩu tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
@@ -20728,12 +20725,41 @@ html.tasco-cover:not(.tasco-locked) #tascoLock .al-btn,html.tasco-cover:not(.tas
 .al-row[aria-pressed=true] .al-switch i{transform:translateX(20px)}
 .al-row[data-disabled]{opacity:.6}
 .al-grace[hidden]{display:none}
-.al-grace select{position:absolute;inset:0;z-index:1;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
 .al-grace-picker{display:inline-flex;align-items:center;gap:4px;flex:none;min-height:31px;padding:0 8px 0 10px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-soft);color:var(--ws-accent-text,#39747e);font-size:11px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
 .al-grace-picker svg{width:13px;height:13px;flex:none}
-.al-grace select:focus-visible + .al-grace-picker{outline:2px solid currentColor;outline-offset:2px}
+.al-grace:focus-visible .al-grace-picker{outline:2px solid currentColor;outline-offset:2px}
+.al-grace-dialog{position:fixed;inset:auto 0 0;margin:0 auto;width:min(100%,440px);max-width:100%;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 12px);box-sizing:border-box;padding:0;border:1px solid var(--ws-line);border-radius:24px 24px 0 0;background:var(--ws-surface);color:var(--ws-text);box-shadow:0 -12px 44px rgba(12,30,53,.18);font-family:'Plus Jakarta Sans',sans-serif}
+.al-grace-dialog::backdrop{background:rgba(11,27,48,.40)}
+.al-grace-dialog[open]{animation:alGraceIn .2s ease-out}
+@keyframes alGraceIn{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.al-grace-dialog[open]{animation:none}}
+.al-grace-panel{padding:18px 18px calc(16px + env(safe-area-inset-bottom,0px))}
+.al-grace-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:14px}
+.al-grace-head h2{margin:0;font-size:17px;font-weight:750;line-height:1.4}
+.al-grace-head p{margin:4px 0 0;color:var(--ws-muted);font-size:12px;line-height:1.5}
+.al-grace-close,.al-grace-options button{font:inherit;color:inherit;cursor:pointer}
+.al-grace-close{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:var(--ws-soft)}
+.al-grace-close svg,.al-grace-options svg{width:18px;height:18px}
+.al-grace-options{overflow:hidden;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-surface)}
+.al-grace-options button{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:46px;padding:0 13px;border:0;background:transparent;text-align:left;font-size:13px;font-weight:650}
+.al-grace-options button+button{border-top:1px solid var(--ws-line)}
+.al-grace-options button[aria-pressed=true]{background:var(--ws-accent);color:var(--ws-accent-text)}
+.al-grace-options button[aria-pressed=false] svg{visibility:hidden}
+.al-grace-dialog button:focus-visible{outline:2px solid var(--ws-accent-text);outline-offset:-3px}
 .al-toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:2147483601;max-width:calc(100vw - 40px);padding:12px 18px;border-radius:14px;background:#183056;color:#fff;font-size:12.5px;line-height:1.5;text-align:center;transform:translateX(-50%);box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
 </style>
+<dialog id="alGraceDialog" class="al-grace-dialog" aria-labelledby="alGraceDialogTitle" aria-describedby="alGraceDialogHelp">
+  <div class="al-grace-panel">
+    <header class="al-grace-head"><div><h2 id="alGraceDialogTitle">Khoá lại sau</h2><p id="alGraceDialogHelp">Thời gian rời ứng dụng trước khi cần xác thực lại.</p></div>
+      <button type="button" class="al-grace-close" data-al-grace-close aria-label="Đóng"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m7 7 10 10M17 7 7 17"/></svg></button>
+    </header>
+    <div class="al-grace-options">
+      <button type="button" data-al-grace="30" aria-pressed="false"><span>30 giây</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></button>
+      <button type="button" data-al-grace="120" aria-pressed="false"><span>2 phút</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></button>
+      <button type="button" data-al-grace="600" aria-pressed="false"><span>10 phút</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></button>
+    </div>
+  </div>
+</dialog>
 <script id="tascoAppLock">
 /* Khoá ứng dụng bằng Face ID / Touch ID / mã khoá máy (plugin native NativeBiometric, chỉ có trong app iOS TASCO). */
 (function(){
@@ -20765,6 +20791,7 @@ function msg(t){var m=$('[data-al-msg]');if(m)m.textContent=t||'';}
 function setBtn(){var t=$('[data-al-btn-text]');if(t)t.textContent='Mở khoá bằng '+kind();}
 function lock(){
   if(!native||!cfg.on)return;
+  closeGracePicker();
   root.classList.remove('tasco-cover');root.classList.add('tasco-locked');
   var l=$('#tascoLock');if(l)l.setAttribute('aria-hidden','false');
   msg('');setBtn();
@@ -20811,6 +20838,7 @@ document.addEventListener('click',function(e){if(e.target.closest('[data-al-unlo
 document.addEventListener('visibilitychange',function(){
   if(!native||!cfg.on)return;
   if(document.visibilityState==='hidden'){
+    closeGracePicker();
     hiddenAt=Date.now();stamp();
     if(!root.classList.contains('tasco-locked'))root.classList.add('tasco-cover');
   }else{
@@ -20850,21 +20878,45 @@ function refreshRow(){
   else{delete row.dataset.disabled;if(sub)sub.textContent=cfg.on?'Đang bật · khoá app khi mở lại':'Khoá ứng dụng khi mở lại';}
   if(gr){
     gr.hidden=!(cfg.on&&!missing);
-    var select=$('[data-al-grace]',gr),value=$('[data-al-grace-value]',gr);
-    if(select&&value){
-      select.value=String(cfg.grace);
-      value.textContent=select.selectedOptions[0].textContent;
-    }
+    var dialog=$('#alGraceDialog'),selected=null;
+    if(gr.hidden)closeGracePicker();
+    if(dialog)dialog.querySelectorAll('[data-al-grace]').forEach(function(button){
+      var active=Number(button.dataset.alGrace)===cfg.grace;
+      button.setAttribute('aria-pressed',String(active));
+      if(active)selected=button;
+    });
+    var value=$('[data-al-grace-value]',gr);
+    if(value&&selected)value.textContent=$('span',selected).textContent;
   }
 }
-document.addEventListener('change',function(e){
-  var select=e.target.closest('select[data-al-grace]');
-  if(!select||!native||!cfg.on||!plugin())return;
-  var grace=Number(select.value);
-  if([30,120,600].indexOf(grace)>=0){cfg.grace=grace;save();}
-  refreshRow();
+function closeGracePicker(){
+  var dialog=$('#alGraceDialog');
+  if(dialog&&dialog.open)dialog.close();
+}
+var graceDialog=$('#alGraceDialog');
+graceDialog.addEventListener('close',function(){
+  var button=$('[data-applock-grace]');
+  if(button)button.setAttribute('aria-expanded',String(graceDialog.open));
+});
+graceDialog.addEventListener('click',function(e){
+  var choice=e.target.closest('[data-al-grace]');
+  if(choice&&native&&cfg.on&&plugin()&&graceDialog.open){
+    var grace=Number(choice.dataset.alGrace);
+    if([30,120,600].indexOf(grace)>=0){cfg.grace=grace;save();refreshRow();}
+    closeGracePicker();
+  }else if(e.target===graceDialog||e.target.closest('[data-al-grace-close]'))closeGracePicker();
 });
 document.addEventListener('click',async function(e){
+  var picker=e.target.closest('[data-applock-grace]');
+  if(picker){
+    if(!native||!cfg.on||busy||!plugin()||graceDialog.open||root.classList.contains('tasco-locked'))return;
+    refreshRow();
+    graceDialog.showModal();
+    picker.setAttribute('aria-expanded','true');
+    var selected=$('[data-al-grace][aria-pressed=true]',graceDialog);
+    if(selected)selected.focus({preventScroll:true});
+    return;
+  }
   var row=e.target.closest('[data-applock-row]');if(!row||busy)return;
   if(!plugin()){toast('Cần cài bản app mới (IPA) để dùng Face ID.');return;}
   busy=true;
