@@ -6650,8 +6650,16 @@ html.dark .c0{--cc:#3987e5}html.dark .c1{--cc:#d95926}html.dark .c2{--cc:#199e70
 .pg-zalo:active{transform:scale(.96)}.pg-zalo svg{width:17px;height:17px}.pg-zalo b{font-weight:800}
 .pg-call:active{transform:scale(.96)}.pg-call svg{width:14px;height:14px}
 .pg-call.is-text{pointer-events:none;background:var(--ws-soft);color:var(--ws-muted)}
-.pg-note{display:grid;gap:4px;padding:9px 11px;border-radius:12px;background:var(--ws-soft)}
-.pg-note p{display:-webkit-box;margin:0;overflow:hidden;font-size:12.5px;line-height:1.5;overflow-wrap:anywhere;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.pg-note{position:relative;display:grid;gap:5px;padding:10px 12px 10px 14px;border:1px solid var(--ws-line);border-radius:14px;background:color-mix(in srgb,var(--ws-text) 4%,var(--ws-bg));overflow:hidden}
+.pg-note::before{content:'';position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--app-teal)}
+.pg-note.is-old::before{background:#d97706}
+.pg-nh{display:flex;align-items:center;gap:6px;min-width:0;color:var(--ws-muted);font-size:11.5px;font-weight:600}
+.pg-nh svg{flex:none;width:13px;height:13px;color:var(--app-teal)}
+.pg-nh b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ws-text);font-weight:800}
+.pg-nh time{flex:none;margin-left:auto}
+.pg-nt{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:1px}
+.pg-end.is-n{margin-top:0;padding-top:0;border-top:0}
+.pg-note p{display:-webkit-box;margin:0;overflow:hidden;color:var(--ws-text);font-size:13px;line-height:1.5;overflow-wrap:anywhere;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .pg-note small{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;color:var(--ws-muted);font-size:11px;font-weight:600}
 .pg-note.is-empty{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,#d97706 10%,var(--ws-bg));color:color-mix(in srgb,#b45309 85%,var(--ws-text));font-size:12px;font-weight:700}
 .pg-note.is-empty svg{flex:none;width:15px;height:15px}
@@ -7530,8 +7538,8 @@ window.TascoWeekly=(()=>{
       ((c.moTaTonThat||c.nguyenNhan)?'<div class="pg-dmg">'+esc(c.moTaTonThat||c.nguyenNhan)+'</div>':'')+
       '<div class="pg-foot"><span class="pg-who"><i class="pg-av'+(unk?' is-0':'')+'" style="--h:'+pgHue(r.gdv)+'">'+esc(unk?'?':pgInit(r.gdv))+'</i><span>'+esc(unk?'Chưa phân công':r.gdv)+'</span></span>'+
         (r.phone?'<span class="pg-ph">'+(dial?'<a class="pg-call" href="tel:'+esc(r.phone)+'" aria-label="Gọi lái xe '+esc(r.phone)+'">'+PGI.phone+esc(r.phone)+'</a>':'<span class="pg-call is-text">'+esc(r.phone)+'</span>')+(pgZaloUrl(r.phone)?'<a class="pg-zalo" href="'+pgZaloUrl(r.phone)+'" target="_blank" rel="noopener" aria-label="Tìm Zalo của '+esc(r.phone)+'">'+PGI.zalo+'</a>':'')+'</span>':'')+'</div>'+
-      (last?'<div class="pg-note'+(r.stale?' is-old':'')+'"><p>'+esc(last.content)+'</p><small><span>'+esc(last.author||'—')+' · '+esc(pgAgo(Number(last.timestamp),Date.now()))+'</span>'+pgDue(r)+(r.stale?'<span class="pg-need">Cần cập nhật</span>':'')+'</small></div>':'')+
-      '<div class="pg-end">'+(last?'':'<span class="pg-add">'+PGI.note+'<span>Thêm ghi chú</span></span>')+
+      (last?'<div class="pg-note'+(r.stale?' is-old':'')+'"><small class="pg-nh">'+PGI.note+'<b>'+esc(last.author||'—')+'</b><time>'+esc(pgAgo(Number(last.timestamp),Date.now()))+'</time></small><p>'+esc(last.content)+'</p>'+((r.dueIso||r.stale)?'<small class="pg-nt">'+pgDue(r)+(r.stale?'<span class="pg-need">Cần cập nhật</span>':'')+'</small>':'')+'</div>':'')+
+      '<div class="pg-end'+(last?' is-n':'')+'">'+(last?'':'<span class="pg-add">'+PGI.note+'<span>Thêm ghi chú</span></span>')+
       '<button type="button" class="pg-det" data-wk="pgdet" data-id="'+esc(r.id)+'" aria-label="Xem chi tiết hồ sơ '+esc(c.bienSo||c.soHoSoBoiThuong||'')+'"><span>Xem chi tiết</span>'+PGI.chevR+'</button></div></article>';
   }
   const pgTile=(q,l,v,m,h)=>'<button type="button" class="dr-kpi pg-tile'+(pg.quick===q?' is-on':'')+'" style="--h:'+h+'" data-wk="pgq" data-v="'+q+'" aria-pressed="'+(pg.quick===q)+'"><small>'+esc(l)+'</small><b>'+v.toLocaleString('vi-VN')+'</b><span>'+esc(m)+'</span></button>';
