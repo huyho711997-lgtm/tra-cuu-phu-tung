@@ -4157,7 +4157,7 @@ window.TascoFeatures=(()=>{
   }
   const recheck=()=>{if(identity&&!document.hidden)refresh();};
   window.addEventListener('focus',recheck);window.addEventListener('online',recheck);document.addEventListener('visibilitychange',recheck);setInterval(recheck,60000);
-  return {KEYS,configure:v=>{options=v;},setIdentity,refresh,has,apply,known:()=>Boolean(state),
+  return {KEYS,configure:v=>{options=v;},setIdentity,refresh,has,apply,known:()=>Boolean(state),isAdmin:()=>Boolean(state?.all),
     list:async()=>{const rows=await rpc('tasco_list_feature_permissions');if(!Array.isArray(rows))throw new Error('Chưa tải được phân quyền chức năng.');return rows;},
     set:async(userId,features)=>{const r=await rpc('tasco_set_features',{p_user_id:userId,p_features:features});if(r?.user_id!==userId)throw new Error('Máy chủ chưa xác nhận thay đổi quyền.');return r;},
     errorText:e=>['PGRST202','42P01','42883'].includes(e?.code)?'Chưa cài phân quyền chức năng trên Supabase.':e?.code==='42501'?'Chỉ admin được phân quyền chức năng.':(e?.message||'Chưa kiểm tra được phân quyền.')};
@@ -8367,7 +8367,10 @@ window.TascoAsk=(()=>{
   function cfg(){return S.cfg||(S.cfg=B.Models.load());}
   // Antigravity chỉ dùng được trên điện thoại khi đã khai báo địa chỉ HTTPS Tailscale (*.ts.net) của máy trung gian; mặc định 127.0.0.1 là chính điện thoại nên bị ẩn.
   const agyBase=()=>{try{const g=cfg().providers&&cfg().providers.antigravity;return (g&&B.Models.normalizeAntigravityBase(g.base))||'';}catch(_){return '';}};
-  const ORDER_OK=e=>e&&(e.provider!=='antigravity'||!!agyBase());
+  // DeepSeek chỉ dành cho tài khoản admin (state.all của TascoFeatures = admin); chưa xác định được quyền thì coi như không phải admin.
+  const isAdminUser=()=>{try{return window.TascoFeatures?.isAdmin?.()===true;}catch(_){return false;}};
+  const isDeepSeek=e=>/deepseek/i.test(String(e&&(e.provider||'')+' '+(e&&e.model||'')));
+  const ORDER_OK=e=>e&&(e.provider!=='antigravity'||!!agyBase())&&(!isDeepSeek(e)||isAdminUser());
   const failedAt=Object.create(null);   // mô hình Antigravity nào vừa thất bại hẳn → 10 phút tới dùng thẳng mô hình dự phòng
   function active(){
     const M=B.Models,c=cfg();let e=M.resolve(c);
@@ -8387,7 +8390,8 @@ window.TascoAsk=(()=>{
     const {entries}=await lookupModels();if(id&&!entries.some(e=>e.id===id))throw new Error('Mô hình không còn trong danh sách.');
     try{if(id)localStorage.setItem(lookupModelKey(),id);else localStorage.removeItem(lookupModelKey());}catch(_){throw new Error('Không lưu được lựa chọn trên thiết bị này.');}
   }
-  function lookupSelectedModel(){let id='';try{id=localStorage.getItem(lookupModelKey())||'';}catch(_){}if(!id)return null;const c=cfg(),entry=B.Models.entries(c).find(e=>e.id===id&&ORDER_OK(e));if(!entry)throw new Error('Mô hình tra cứu đã chọn không còn khả dụng. Hãy chọn lại trong cài đặt AI.');return entry;}
+  function lookupSelectedModel(){let id='';try{id=localStorage.getItem(lookupModelKey())||'';}catch(_){}if(!id)return null;const c=cfg(),entry=B.Models.entries(c).find(e=>e.id===id&&ORDER_OK(e));if(!entry&&B.Models.entries(c).some(e=>e.id===id&&isDeepSeek(e)))return null;/* DeepSeek chỉ admin: quay về Tự động */
+    if(!entry)throw new Error('Mô hình tra cứu đã chọn không còn khả dụng. Hãy chọn lại trong cài đặt AI.');return entry;}
   const deepSupported=()=>{const a=active();return !a||a.profile.reasoning!=='none';};
   const deepOn=()=>S.deep&&deepSupported();
   const modelCap=name=>{const a=active();return a&&a.profile[name]?a.profile[name]:0;};
