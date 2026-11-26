@@ -7489,7 +7489,9 @@ window.TascoWeekly=(()=>{
     });
     /* quản trị chọn Của tôi / Toàn zone (mặc định: Của tôi nếu có hồ sơ của mình); tài khoản thường chỉ có phần được phép xem */
     const isAdm=me?.role==='admin',scope=isAdm?(pgScope==='mine'||pgScope==='all'?pgScope:(rows.some(r=>r.mine)?'mine':'all')):'mine';
-    return {rows:isAdm&&scope==='mine'?rows.filter(r=>r.mine):rows,allCount:rows.length,mineCount:rows.filter(r=>r.mine).length,scope,isAdmin:isAdm,at:now};
+    /* tài khoản thường: CHỈ hồ sơ của chính mình (bỏ hồ sơ cũ không có người tạo mà visibleClaims cho xem chung); chỉ admin mới có Toàn zone */
+    const mineRows=rows.filter(r=>r.mine);
+    return {rows:isAdm?(scope==='mine'?mineRows:rows):mineRows,allCount:isAdm?rows.length:mineRows.length,mineCount:mineRows.length,scope,isAdmin:isAdm,at:now};
   }
   function pgSorted(list){
     const by={age:(a,b)=>(b.age??-1)-(a.age??-1),stale:(a,b)=>(a.last?1:0)-(b.last?1:0)||(b.nd??0)-(a.nd??0)||(b.age??-1)-(a.age??-1),
