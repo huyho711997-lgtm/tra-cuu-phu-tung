@@ -23943,6 +23943,11 @@ html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-heading>span{margin:0;max-height:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 html.tasco-native-cam #customCameraModal:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-current-category{display:block;-webkit-line-clamp:unset;max-width:none;max-height:min(38vh,300px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 html.tasco-native-cam #customCameraModal[data-native-turn="180"] .camera-heading{transform:rotate(180deg)}
+/* Đang ở chế độ chụp giấy tờ: ẩn nút chuyển hạng mục và dòng hạng mục, chỉ còn khung và nút Giấy tờ / Thẻ cho đỡ rối */
+#customCameraModal[data-doc-mode="on"] .camera-cat-step{display:none!important}
+#customCameraModal[data-doc-mode="on"] .camera-cat-nav{justify-content:center}
+html.tasco-native-cam #customCameraModal[data-doc-mode="on"]:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-heading{display:none}
+html.tasco-native-cam #customCameraModal[data-doc-mode="on"]:is([data-native-turn="90"],[data-native-turn="-90"]) .camera-cat-nav{justify-content:center}
 .custom-camera-modal .camera-card-tools{flex:0 0 auto;display:flex;gap:6px;align-items:center}
 .custom-camera-modal button.camera-card-toggle[type=button],.custom-camera-modal button.camera-card-shape[type=button]{display:none;align-items:center;gap:6px;min-height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(7,20,35,.62);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font:inherit;font-size:12.5px;font-weight:700;-webkit-tap-highlight-color:transparent}
 html.tasco-native-cam .custom-camera-modal[data-native-mode="photo"] button.camera-card-toggle[type=button]{display:inline-flex}
