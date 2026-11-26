@@ -3547,8 +3547,8 @@ window.TascoBootSplash = (() => {
         (function initializeTheme() {
             let savedTheme = null;
             try { savedTheme = localStorage.getItem('theme'); } catch (_) {}
-            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.classList.toggle('dark', savedTheme === 'dark' || (!savedTheme && systemDark));
+            // Mặc định là giao diện sáng; chỉ tối khi người dùng tự chọn.
+            document.documentElement.classList.toggle('dark', savedTheme === 'dark');
         })();
 
         function toggleTheme() {
