@@ -3677,7 +3677,14 @@ window.TascoBootSplash = (() => {
     <div class="ws-settings-list"><span class="ws-settings-label">Thiết lập cá nhân</span>
     <button type="button" class="ws-setting-row" data-theme-toggle onclick="toggleTheme()" aria-pressed="false"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span><strong>Giao diện sáng / tối</strong><small>Chọn giao diện phù hợp với bạn</small></span><span class="ws-theme-pill" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg></span></button>
     <button type="button" class="ws-setting-row al-row" data-applock-row hidden aria-pressed="false"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1.5M15 10v1.5M12 10v4h-1M9 16.2c1.7 1.2 4.3 1.2 6 0"/></svg><span><strong data-applock-title>Mở khoá bằng Face ID</strong><small data-applock-sub>Khoá ứng dụng khi mở lại</small></span><span class="al-switch" aria-hidden="true"><i></i></span></button>
-    <div class="ws-setting-row al-grace" data-applock-grace hidden role="group" aria-label="Khoá lại sau"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9 2.5h6"/></svg><span><strong>Khoá lại sau</strong><small>Thời gian rời app trước khi cần mở khoá</small></span><div class="al-chips"><button type="button" data-al-grace="30">30 giây</button><button type="button" data-al-grace="120">2 phút</button><button type="button" data-al-grace="600">10 phút</button></div></div>
+    <label class="ws-setting-row al-grace" data-applock-grace hidden>
+      <svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9 2.5h6"/></svg>
+      <span><strong id="alGraceTitle">Khoá lại sau</strong><small id="alGraceHelp">Sau khi rời ứng dụng</small></span>
+      <select data-al-grace aria-labelledby="alGraceTitle" aria-describedby="alGraceHelp">
+        <option value="30">30 giây</option><option value="120">2 phút</option><option value="600">10 phút</option>
+      </select>
+      <span class="al-grace-picker" aria-hidden="true"><span data-al-grace-value>2 phút</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 6.5 3.5 3.5 3.5-3.5"/></svg></span>
+    </label>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="TascoPersonalStorage.open()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.3A7.5 7.5 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/><path d="m9 14 2 2 4-4"/></svg><span><strong>Tài khoản lưu trữ</strong><small data-storage-setting-status>Thêm tài khoản lưu trữ</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" data-cloud-only hidden onclick="TascoDesktopLogin.open()"><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2.5"/><path d="M8 20h8M12 16v4"/></svg><span><strong>Đăng nhập máy tính</strong><small>Quét mã QR để xem Cloud trên máy tính</small></span><svg class="ws-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
     <button type="button" class="ws-setting-row" onclick="openChangePasswordModal()"><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span><strong>Đổi mật khẩu</strong><small>Cập nhật mật khẩu tài khoản</small></span><svg class="ws-icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
@@ -20720,11 +20727,11 @@ html.tasco-cover:not(.tasco-locked) #tascoLock .al-btn,html.tasco-cover:not(.tas
 .al-row[aria-pressed=true] .al-switch{background:var(--ws-accent-text,#39747e)}
 .al-row[aria-pressed=true] .al-switch i{transform:translateX(20px)}
 .al-row[data-disabled]{opacity:.6}
-.al-grace{align-items:flex-start;flex-wrap:wrap}
 .al-grace[hidden]{display:none}
-.al-chips{display:flex;gap:6px;width:100%;margin:2px 0 0 0;padding-left:34px;box-sizing:border-box}
-.al-chips button[type=button]{flex:1;min-height:36px;padding:0 6px;border:1px solid var(--ws-line);border-radius:11px;background:var(--ws-soft);color:var(--ws-muted);font:inherit;font-size:11.5px;font-weight:650}
-.al-chips button[type=button][aria-pressed=true]{border-color:var(--ws-accent-text,#39747e);background:var(--ws-accent);color:var(--ws-accent-text,#39747e)}
+.al-grace select{position:absolute;inset:0;z-index:1;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
+.al-grace-picker{display:inline-flex;align-items:center;gap:4px;flex:none;min-height:31px;padding:0 8px 0 10px;border:1px solid var(--ws-line);border-radius:999px;background:var(--ws-soft);color:var(--ws-accent-text,#39747e);font-size:11px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.al-grace-picker svg{width:13px;height:13px;flex:none}
+.al-grace select:focus-visible + .al-grace-picker{outline:2px solid currentColor;outline-offset:2px}
 .al-toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:2147483601;max-width:calc(100vw - 40px);padding:12px 18px;border-radius:14px;background:#183056;color:#fff;font-size:12.5px;line-height:1.5;text-align:center;transform:translateX(-50%);box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
 </style>
 <script id="tascoAppLock">
@@ -20841,11 +20848,23 @@ function refreshRow(){
   row.setAttribute('aria-pressed',String(cfg.on&&!missing));
   if(missing){row.dataset.disabled='1';if(sub)sub.textContent='Cần cài bản app mới (IPA) để dùng tính năng này';}
   else{delete row.dataset.disabled;if(sub)sub.textContent=cfg.on?'Đang bật · khoá app khi mở lại':'Khoá ứng dụng khi mở lại';}
-  if(gr){gr.hidden=!(cfg.on&&!missing);gr.querySelectorAll('[data-al-grace]').forEach(function(b){b.setAttribute('aria-pressed',String(Number(b.dataset.alGrace)===cfg.grace));});}
+  if(gr){
+    gr.hidden=!(cfg.on&&!missing);
+    var select=$('[data-al-grace]',gr),value=$('[data-al-grace-value]',gr);
+    if(select&&value){
+      select.value=String(cfg.grace);
+      value.textContent=select.selectedOptions[0].textContent;
+    }
+  }
 }
+document.addEventListener('change',function(e){
+  var select=e.target.closest('select[data-al-grace]');
+  if(!select||!native||!cfg.on||!plugin())return;
+  var grace=Number(select.value);
+  if([30,120,600].indexOf(grace)>=0){cfg.grace=grace;save();}
+  refreshRow();
+});
 document.addEventListener('click',async function(e){
-  var g=e.target.closest('[data-al-grace]');
-  if(g){cfg.grace=Number(g.dataset.alGrace);save();refreshRow();return;}
   var row=e.target.closest('[data-applock-row]');if(!row||busy)return;
   if(!plugin()){toast('Cần cài bản app mới (IPA) để dùng Face ID.');return;}
   busy=true;
