@@ -8497,13 +8497,13 @@ window.TascoAsk=(()=>{
   async function askQuestion(question,att,spoken){
     const q=Q(),L=B.Legal,imp=att&&att.length?{intent:false}:q.importRequest(question);
     att=att||[];
+    const history=S.messages.slice();   // phải khai báo TRƯỚC khi dùng (trước đây dùng trước const => ReferenceError, nút Gửi không phản hồi)
     const askFilesP=filesForTurn(att,question,history),askImages=att.filter(a=>a.kind==='image');
     if(imp.intent){
       S.messages.push({id:q.newId(),role:'user',text:question});
       S.messages.push({id:q.newId(),role:'assistant',text:'Trên app chỉ tra cứu Thư viện tài liệu (chỉ đọc). Để thêm quy tắc/văn bản mới, hãy nạp trên webapp giám định (Thư viện tài liệu) — app sẽ thấy ngay sau đó.',empty:true,sources:[]});
       S.draft='';saveChats();paintThread();paintComposer(true);scrollToLastAnswer();return;
     }
-    const history=S.messages.slice();
     const ctx=begin(question,'Đang tra Thư viện tài liệu…',att),{mine,forceDeep,usage}=ctx;
     try{
       if(!att.length&&await answerPriceQuestion(question,history,ctx,spoken))return finish(mine);
@@ -8608,7 +8608,9 @@ window.TascoAsk=(()=>{
     const text=String(raw!==undefined?raw:S.draft).trim(),att=keep||S.att.slice();
     if(!text&&!att.length){$('[data-ak-input]')?.focus();return;}
     const t=text||'Hãy đọc và tóm tắt nội dung tệp/ảnh đính kèm.';
-    return S.kind==='chat'?askFree(t,att,spoken):askQuestion(t,att,spoken);
+    // Lỗi bất ngờ không được nuốt im: báo cho người dùng thay vì để nút Gửi "không phản hồi".
+    const run=S.kind==='chat'?askFree(t,att,spoken):askQuestion(t,att,spoken);
+    return Promise.resolve(run).catch(e=>{console.error(e);if(S.busy&&!S.ctl?.signal?.aborted){S.busy=false;S.status='';stopTick();paintTop();paintThread();paintComposer(true);}toast('Chưa gửi được: '+((e&&e.message)||'lỗi không xác định')+'. Hãy thử lại.');});
   }
   function stop(){if(S.busy)S.ctl?.abort();}
   function retryAnswer(id,deep){
