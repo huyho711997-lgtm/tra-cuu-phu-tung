@@ -14186,7 +14186,16 @@ window.searchData = async function(opts) {
                 show();
                 renderResult(data);
             }
-            return { open, close, prefetch, clearOffer };
+            /* Dùng cho chat AI: lấy TÊN THỰC TẾ trong kho cho đúng hãng/dòng/đời rồi chỉ giữ tên cùng loại chi tiết với yêu cầu. */
+            async function resolve(ctx, signal) {
+                const { data, error } = await supabase.functions.invoke('kgpt-ai-part-search', { body: ctx, signal });
+                if (error) throw error;
+                if (!data || !Array.isArray(data.candidates)) throw new Error('bad-response');
+                const list = prepare(data.candidates, ctx.query);
+                const pack = it => ({ name: it.name, names: it.names.slice(), count: it.count });
+                return { selected: list.filter(i => i.selected).map(pack), maybe: list.filter(i => !i.selected && !i.related).map(pack) };
+            }
+            return { open, close, prefetch, clearOffer, resolve };
         })();
 
         /* ===== TascoSmartSearch: hiểu câu tự nhiên, ví dụ "cản trước Honda CRV 2025 giá bao nhiêu" =====
@@ -15070,9 +15079,29 @@ window.searchData = async function(opts) {
                     if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');
                     if(auth.currentUser?.uid!==owner)throw new Error('Tài khoản đã thay đổi. Hãy tra cứu lại.');
                 }
+                // Tên phụ tùng THẬT trong kho cho đúng xe (hãng · dòng · đời · loại hàng) — cùng bộ lọc AI của màn hình Tra cứu.
+                const aiNames=new Map();
+                function stockNames(part,models=params.p_hieus,yearList=params.p_nams){
+                    const api=window.TascoAiSearch;
+                    if(!api?.resolve||!models.length)return Promise.resolve({selected:[],maybe:[]});
+                    const key=JSON.stringify([partKey(part),models,yearList]);
+                    if(!aiNames.has(key))aiNames.set(key,(async()=>{
+                        try{
+                            const stop=AbortSignal.any([timeout.signal,AbortSignal.timeout(12000)].concat(signal?[signal]:[]));
+                            return await api.resolve({query:clean(part),brand:params.p_hang,models:models.slice(0,30),years:yearList.slice(0,30),kind:params.p_kind||'all'},stop);
+                        }catch(error){
+                            if(signal?.aborted)throw error;
+                            return {selected:[],maybe:[]};   // AI không kịp/lỗi → dùng danh sách tên đồng nghĩa có sẵn
+                        }
+                    })());
+                    return aiNames.get(key);
+                }
                 async function loadQuotes(part,newestFirst,selectedYears=params.p_nams,models){
                     checkActive();
-                    const names=[...new Set([...partNames(part),...(parsed.aliases?.get(part)||[]).flatMap(partNames)])];
+                    const stock=await stockNames(part,models||params.p_hieus,selectedYears);
+                    checkActive();
+                    const fromStock=stock.selected.flatMap(item=>item.names).map(partKey).filter(Boolean);
+                    const names=[...new Set([...partNames(part),...(parsed.aliases?.get(part)||[]).flatMap(partNames),...fromStock])].slice(0,40);
                     const request={...params,p_nams:selectedYears,...(models?{p_hieus:models}:{}),...(parsed.quick?{}:{p_page_size:60})};   // tra 1 hạng mục: lấy dư để gộp trùng rồi mới cắt 10 báo giá mới nhất
                     const directDeadline=AbortSignal.timeout(4500);
                     const directSignal=AbortSignal.any([timeout.signal,directDeadline]);
@@ -15165,6 +15194,13 @@ window.searchData = async function(opts) {
                     }
                     const criteria=[clean(part),clean(params.p_hang),params.p_hieus.map(clean).join(', '),params.p_nams.join(', ')].filter(Boolean).join(' · ');
                     if(!rows.length){
+                        const stock=await stockNames(part);
+                        if(stock.maybe.length&&onChoices){
+                            const model=params.p_hieus[0];
+                            onChoices({options:stock.maybe.slice(0,6).map(item=>({label:item.name,hint:item.count?item.count.toLocaleString('vi-VN')+' bản ghi trong kho':'Tên có trong kho',
+                                text:'Giá '+item.name+' '+params.p_hang+' '+model+(years.length===1?' '+years[0]:'')}))});
+                            return 'Kho không có đúng tên **'+clean(part)+'** cho xe này, nhưng có các tên gần giống bên dưới. **Bạn muốn xem tên nào?**';
+                        }
                         const ask=await relatedChoices([part],model=>'Giá '+part+' '+params.p_hang+' '+model+(years.length===1?' '+years[0]:''));
                         if(ask)return ask;
                         const empty=`Không tìm thấy báo giá trong kho cho **${criteria}**.`;
