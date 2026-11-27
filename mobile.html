@@ -15073,7 +15073,7 @@ window.searchData = async function(opts) {
                 async function loadQuotes(part,newestFirst,selectedYears=params.p_nams,models){
                     checkActive();
                     const names=[...new Set([...partNames(part),...(parsed.aliases?.get(part)||[]).flatMap(partNames)])];
-                    const request={...params,p_nams:selectedYears,...(models?{p_hieus:models}:{})};
+                    const request={...params,p_nams:selectedYears,...(models?{p_hieus:models}:{}),...(parsed.quick?{}:{p_page_size:60})};   // tra 1 hạng mục: lấy dư để gộp trùng rồi mới cắt 10 báo giá mới nhất
                     const directDeadline=AbortSignal.timeout(4500);
                     const directSignal=AbortSignal.any([timeout.signal,directDeadline]);
                     let result;
@@ -15155,7 +15155,14 @@ window.searchData = async function(opts) {
                         onQuote?.(makeQuote(params,model,items,parsed.quantities));
                         return formatQuickQuote(params,model,items);
                     }
-                    const part=parts[0],rows=await loadQuotes(part,false);
+                    const part=parts[0];
+                    // Giống màn hình Tra cứu: báo giá MỚI NHẤT trước, gộp các dòng trùng (cùng tên · dòng xe · đời · loại hàng · giá).
+                    const rawRows=await loadQuotes(part,true),rows=[],seenQuote=new Set();
+                    for(const row of rawRows.slice().sort((a,b)=>(quoteDetails(b).timestamp||0)-(quoteDetails(a).timestamp||0))){
+                        const d=quoteDetails(row),key=[partKey(row.ten_phu_tung),vehicleKey(row.hieu_xe||''),row.nam_sx,d.kind,d.amount].join('|');
+                        if(seenQuote.has(key))continue;
+                        seenQuote.add(key);rows.push(row);
+                    }
                     const criteria=[clean(part),clean(params.p_hang),params.p_hieus.map(clean).join(', '),params.p_nams.join(', ')].filter(Boolean).join(' · ');
                     if(!rows.length){
                         const ask=await relatedChoices([part],model=>'Giá '+part+' '+params.p_hang+' '+model+(years.length===1?' '+years[0]:''));
@@ -15191,9 +15198,9 @@ window.searchData = async function(opts) {
                         const {amount,kind,date}=quoteDetails(row);
                         const price=amount?money.format(amount)+' VNĐ':'Chưa có giá';
                         const details=[clean(row.hang_xe),clean(row.hieu_xe),clean(row.nam_sx),kind].filter(Boolean).join(' · ');
-                        return `${index+1}. **${clean(row.ten_phu_tung)||'Phụ tùng'} — ${price}**\n   ${details}${date?' · Ngày báo giá: '+date:''}`;
+                        return `**${index+1}) ${clean(row.ten_phu_tung)||'Phụ tùng'} — ${price}**\n${details}${date?' · Ngày báo giá: '+date:''}`;
                     });
-                    const summary=rows.length>quoteLimit?'Hiển thị '+quoteLimit+' báo giá phù hợp.':'Tìm thấy '+rows.length+' báo giá.';
+                    const summary=rows.length>quoteLimit?'Hiển thị '+quoteLimit+' báo giá mới nhất (đã gộp các báo giá trùng).':'Tìm thấy '+rows.length+' báo giá (mới nhất trước).';
                     return `**Kết quả từ kho giá** · ${criteria}\n${summary}\n\n${lines.join('\n\n')}\n\nGiá theo dữ liệu báo giá đã lưu; hãy đối chiếu đúng phiên bản xe và loại hàng trước khi sử dụng.`;
                 }catch(error){if(signal?.aborted)throw error;if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');throw error;}
                 finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
