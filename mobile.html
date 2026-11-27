@@ -15160,12 +15160,22 @@ window.searchData = async function(opts) {
                         if(years.length===1){
                             try{
                                 const alternatives=await loadQuotes(part,false,[]);
-                                const availableYears=[...new Set(alternatives.filter(row=>quoteAmount(row.gia_duyet))
-                                    .map(row=>Number(row.nam_sx)).filter(year=>Number.isInteger(year)&&year>=1990&&year<=2100&&year!==years[0]))]
-                                    .sort((a,b)=>Math.abs(a-years[0])-Math.abs(b-years[0])).slice(0,5);
+                                const best=new Map();
+                                for(const row of alternatives){
+                                    const year=Number(row.nam_sx),details=quoteDetails(row);
+                                    if(!details.amount||!Number.isInteger(year)||year<1990||year>2100||year===years[0])continue;
+                                    const old=best.get(year);
+                                    if(!old||details.timestamp>old.details.timestamp)best.set(year,{row,details});
+                                }
+                                const availableYears=[...best.keys()].sort((x,y)=>Math.abs(x-years[0])-Math.abs(y-years[0])).slice(0,5);
                                 if(availableYears.length){
-                                    onChoices?.({options:availableYears.map(year=>({label:String(year),hint:'Đời có giá trong kho',text:'Giá '+part+' '+params.p_hang+' '+params.p_hieus[0]+' '+year}))});
-                                    return empty+' Kho có báo giá cho một số đời khác. **Bạn muốn xem đời nào?**';
+                                    onChoices?.({options:availableYears.map(year=>{
+                                        const {row,details}=best.get(year);
+                                        return {label:year+' · '+money.format(details.amount)+' VNĐ',
+                                            hint:[clean(row.ten_phu_tung),clean(row.hieu_xe),details.kind].filter(Boolean).join(' · '),
+                                            text:'Giá '+part+' '+params.p_hang+' '+params.p_hieus[0]+' '+year};
+                                    })});
+                                    return 'Kho chưa có báo giá **'+clean(part)+'** đời '+years[0]+', nhưng đã tra thấy các đời gần nhất bên dưới. **Chạm vào đời bạn muốn xem chi tiết.**';
                                 }
                             }catch(error){
                                 if(signal?.aborted||auth.currentUser?.uid!==owner)throw error;
