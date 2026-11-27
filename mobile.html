@@ -9187,7 +9187,7 @@ window.TascoAsk=(()=>{
 
   /* ---------- gửi ghi âm trực tiếp cho AI nghiệp vụ ---------- */
   const VOICE_MAX=120,VOICE_BARS=30,TRANS_NONE='KHONG_CO_LOI';
-  const TRANS_SYS='Bạn là công cụ chép lời nói thành chữ (speech-to-text) tiếng Việt cho nghiệp vụ giám định, bồi thường bảo hiểm xe cơ giới. Hãy chép lại CHÍNH XÁC những gì người nói trong bản ghi âm: không thêm, không bớt, không trả lời, không giải thích, không dịch. Tự thêm dấu câu và viết hoa hợp lý. Giữ nguyên thuật ngữ chuyên môn (giám định, bồi thường, khấu hao, hợp đồng, Nghị định, điều, khoản…), viết biển số xe, số tiền, ngày tháng bằng chữ số (VD 47A-123.45, 15 triệu đồng, ngày 20/11). Chỉ trả về đúng phần chữ đã chép. Nếu không có lời nói nào nghe được, chỉ trả về đúng chuỗi '+TRANS_NONE+'.';
+  const TRANS_SYS='Bạn là công cụ chép lời nói thành chữ (speech-to-text) tiếng Việt cho nghiệp vụ giám định, bồi thường bảo hiểm xe cơ giới. Hãy chép lại CHÍNH XÁC những gì người nói trong bản ghi âm: không thêm, không bớt, không trả lời, không giải thích, không dịch. Tự thêm dấu câu và viết hoa hợp lý. Người nói là giọng Việt, có thể nói nhanh, nhỏ hoặc có tiếng ồn nền: hãy nghe kỹ và ưu tiên từ có nghĩa trong ngữ cảnh. Giữ nguyên thuật ngữ chuyên môn (giám định, bồi thường, khấu hao, hợp đồng, Nghị định, điều, khoản…), tên phụ tùng xe (cản trước, cản sau, đèn pha, đèn gầm, lưới tản nhiệt, vè, ba đờ sốc, ốp gắn biển số, két nước, dàn nóng…) và tên hãng/dòng xe (Hyundai Grand i10, Toyota Vios, Honda CR-V, Kia Morning, VinFast VF8…), viết biển số xe, số tiền, ngày tháng bằng chữ số (VD 47A-123.45, 15 triệu đồng, ngày 20/11). Chỉ trả về đúng phần chữ đã chép. Nếu không có lời nói nào nghe được, chỉ trả về đúng chuỗi '+TRANS_NONE+'.';
   let rec=null;
   const fmtClock=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
   function paintVoice(){
@@ -9312,12 +9312,16 @@ window.TascoAsk=(()=>{
     }finally{try{ctx.close&&ctx.close();}catch(_){}}
   }
   // Thứ tự thử: Antigravity (Gemini Flash, rồi mô hình Gemini khác) → khoá Gemini trong tài khoản. Mô hình/dịch vụ không nhận âm thanh thì tự chuyển sang bước sau.
-  function voiceCandidates(){
+  function voiceCandidates(fast){
     const M=B.Models,c=cfg(),all=M.entries(c),out=[];
     if(agyBase()){
       const agy=all.filter(e=>e.provider==='antigravity'&&/^gemini/i.test(e.model));
-      const score=e=>/lite/i.test(e.model)?3:/flash/i.test(e.model)&&!/(high|medium|low|tiered)$/i.test(e.model)?0:/flash/i.test(e.model)?1:2;   // Flash thường nhanh và rẻ nhất cho chép chữ
-      agy.slice().sort((x,y)=>score(x)-score(y)).slice(0,2).forEach(e=>out.push(e));
+      // Ưu tiên độ chính xác: Pro (nghe tiếng Việt chuẩn nhất) → Flash mức suy luận cao/vừa → Flash thường → còn lại → Lite/mức thấp cuối cùng.
+      // Mô hình chậm quá 15 giây sẽ tự chuyển sang mô hình kế tiếp nên không bị treo.
+      const ver=e=>Number((String(e.model).match(/gemini-(\d+(?:\.\d+)?)/i)||[])[1])||0;
+      const score=e=>/lite|(?:-|\b)low$/i.test(e.model)?5:/pro/i.test(e.model)?(/(?:-|\b)low$/i.test(e.model)?3:0):/flash/i.test(e.model)?(/(?:high|medium)$/i.test(e.model)?1:2):4;
+      const speed=e=>/lite/i.test(e.model)?3:/flash/i.test(e.model)&&!/(high|medium|low|tiered)$/i.test(e.model)?0:/flash/i.test(e.model)?1:2;   // việc ngắn như hiểu ý tìm kiếm: Flash nhanh nhất
+      agy.slice().sort(fast?(x,y)=>speed(x)-speed(y):(x,y)=>score(x)-score(y)||ver(y)-ver(x)).slice(0,fast?2:3).forEach(e=>out.push(e));
     }
     const g=all.find(e=>e.provider==='gemini');if(g)out.push(g);
     return out;
@@ -9942,10 +9946,10 @@ window.TascoAsk=(()=>{
       return !!agyBase();
     }catch(_){return false;}
   }
-  const relayModels=()=>voiceCandidates().filter(e=>e.provider==='antigravity');
-  async function relayChat(messages,signal,limit){
+  const relayModels=fast=>voiceCandidates(fast).filter(e=>e.provider==='antigravity');
+  async function relayChat(messages,signal,limit,fast){
     const M=B.Models,c=cfg();
-    for(const e of relayModels()){
+    for(const e of relayModels(fast)){
       if(signal&&signal.aborted)throw new DOMException('Đã huỷ','AbortError');
       let key='';try{key=await M.getKey(e.provider);}catch(_){}
       if(!key)continue;
@@ -9982,7 +9986,7 @@ window.TascoAsk=(()=>{
     const list=Array.isArray(brands)?brands:[],cat={};let total=0;
     for(const [b,ms] of Object.entries(catalog||{})){if(!list.includes(b)||!Array.isArray(ms)||total+ms.length>1200)continue;cat[b]=ms.slice(0,60);total+=cat[b].length;}
     try{
-      const out=await relayChat([{role:'system',content:RELAY_INTENT_SYS+' Trả đúng một đối tượng JSON: {"part":"","brand":"","model":"","years":[],"kind":"all|genuine|aftermarket","asks_price":false}, không kèm chữ nào khác.'},{role:'user',content:JSON.stringify({brands:list,catalog:cat,current_year:new Date().getFullYear(),text:String(text||'').slice(0,300)})}],signal,5000);
+      const out=await relayChat([{role:'system',content:RELAY_INTENT_SYS+' Trả đúng một đối tượng JSON: {"part":"","brand":"","model":"","years":[],"kind":"all|genuine|aftermarket","asks_price":false}, không kèm chữ nào khác.'},{role:'user',content:JSON.stringify({brands:list,catalog:cat,current_year:new Date().getFullYear(),text:String(text||'').slice(0,300)})}],signal,5000,true);
       const m=out&&String(out).replace(/```[a-z]*/gi,'').match(/\{[\s\S]*\}/);
       const clean=m?relayClean(JSON.parse(m[0]),list,cat):null;
       if(!clean){relayBadUntil=Date.now()+RELAY_COOL;return null;}
@@ -9995,7 +9999,7 @@ window.TascoAsk=(()=>{
     let wav;try{wav=await toWavBase64(blob);}catch(_){return null;}
     const vocab=extra&&extra.vocab?String(extra.vocab).slice(0,600):'',ctx=extra&&extra.context?String(extra.context).slice(0,200):'';
     try{
-      const t0=await relayChat([{role:'system',content:TRANS_SYS+(vocab?' Từ vựng thường gặp (ưu tiên khi nghe giống): '+vocab+'.':'')+(ctx?' Ngữ cảnh: '+ctx+'.':'')},{role:'user',content:[{type:'text',text:'Chép lại bản ghi âm sau (tiếng Việt).'},{type:'input_audio',input_audio:{data:wav,format:'wav'}}]}],signal,20000);
+      const t0=await relayChat([{role:'system',content:TRANS_SYS+(vocab?' Từ vựng thường gặp (ưu tiên khi nghe giống): '+vocab+'.':'')+(ctx?' Ngữ cảnh: '+ctx+'.':'')},{role:'user',content:[{type:'text',text:'Chép lại bản ghi âm sau (tiếng Việt).'},{type:'input_audio',input_audio:{data:wav,format:'wav'}}]}],signal,15000);
       if(t0===null){relayBadUntil=Date.now()+RELAY_COOL;return null;}
       const t=String(t0).replace(/^```[a-z]*\n?|```$/gi,'').trim().replace(/^["“”']+|["“”']+$/g,'').trim();
       if(!t||t.includes(TRANS_NONE)||/^\[?(không nghe rõ|không có lời nói)/i.test(t))return '';
