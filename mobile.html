@@ -14842,6 +14842,41 @@ window.searchData = async function(opts) {
                 return query.limit(params.p_page_size).abortSignal(signal);
             }
 
+            /* Suy luận giá chuẩn từ lịch sử báo giá của một hạng mục:
+               ưu tiên báo giá trong QUÝ hiện tại → trong NĂM → 12 tháng gần nhất → toàn bộ; tách riêng Chính hãng / Không chính hãng;
+               loại giá lệch bất thường rồi lấy trung vị (không bị kéo bởi vài giá quá cao/thấp). */
+            function adviseQuote(history,now=new Date()){
+                const quarter=d=>d.getUTCFullYear()*4+Math.floor(d.getUTCMonth()/3);
+                const nowQ=quarter(now),year=now.getUTCFullYear(),YEAR_MS=365*864e5;
+                const roman=['I','II','III','IV'];
+                const items=(history||[]).filter(h=>h.details.amount>0).map(h=>{
+                    const t=h.details.timestamp?new Date(h.details.timestamp):null;
+                    const tier=!t||Number.isNaN(t.getTime())?4:quarter(t)>=nowQ?1:t.getUTCFullYear()===year?2:now-t<=YEAR_MS?3:4;
+                    return {...h,t,tier};
+                });
+                const median=list=>{const a=list.slice().sort((x,y)=>x-y),m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;};
+                const scopes={1:'quý '+roman[Math.floor(now.getUTCMonth()/3)]+'/'+year,2:'năm '+year,3:'12 tháng gần đây',4:'toàn bộ lịch sử'};
+                const groups=new Map();
+                items.forEach(item=>{const k=item.details.kind;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(item);});
+                const order=['Chính hãng','Không chính hãng','Chưa phân loại'];
+                return [...groups.entries()].sort((a,b)=>order.indexOf(a[0])-order.indexOf(b[0])).map(([kind,list])=>{
+                    let tier=4,pool=list;
+                    for(const k of [1,2,3,4]){const part=list.filter(item=>item.tier<=k);if(part.length>=2||k===4){tier=k;pool=part;break;}}
+                    let kept=pool,dropped=0;
+                    if(pool.length>=3){
+                        const m=median(pool.map(item=>item.details.amount));
+                        const inside=pool.filter(item=>item.details.amount>=m*0.6&&item.details.amount<=m*1.7);
+                        if(inside.length>=2){dropped=pool.length-inside.length;kept=inside;}
+                    }
+                    const amounts=kept.map(item=>item.details.amount),price=Math.round(median(amounts)),min=Math.min(...amounts),max=Math.max(...amounts);
+                    const rep=kept.slice().sort((a,b)=>Math.abs(a.details.amount-price)-Math.abs(b.details.amount-price)||(b.details.timestamp||0)-(a.details.timestamp||0))[0];
+                    const spread=max/min;
+                    const confidence=tier===1&&kept.length>=3&&spread<=1.25?'cao':tier<=2&&kept.length>=2&&spread<=1.5?'khá':'thấp, nên xác nhận thêm';
+                    return {kind,price,min,max,count:kept.length,total:list.length,dropped,scope:scopes[tier],tier,confidence,rep,
+                        note:'giá trung vị '+kept.length+' báo giá '+scopes[tier]};
+                });
+            }
+
             function quoteError({error,status}){
                 if(status===401||['PGRST301','PGRST303'].includes(error.code))return new Error('Phiên kho giá không còn hiệu lực. Hãy đăng nhập lại ứng dụng rồi thử lại.');
                 if(status===403||error.code==='42501')return new Error('Tài khoản này chưa có quyền đọc kho giá.');
@@ -14998,11 +15033,11 @@ window.searchData = async function(opts) {
                 const vehicle=[params.p_hang,modelName,params.p_nams[0]].filter(Boolean);
                 const matched=items.filter(item=>item.row);
                 const total=matched.reduce((sum,item)=>sum+item.details.amount,0);
-                const entries=items.map(({name,row,details,error,needsPart})=>{
+                const entries=items.map(({name,row,details,error,needsPart,advice})=>{
                     if(needsPart)return [name,'Cần tên phụ tùng','—'];
                     if(!row)return [name,error?'Tra cứu chưa hoàn tất':'Chưa có giá','—'];
                     const warehouseName=partKey(row.ten_phu_tung)===partKey(name)?'':row.ten_phu_tung;
-                    return [name,money.format(details.amount),[warehouseName,row.hieu_xe,details.kind,details.date].filter(Boolean).join(' · ')];
+                    return [name,money.format(details.amount),[warehouseName,row.hieu_xe,details.kind,details.date,advice?.note].filter(Boolean).join(' · ')];
                 });
                 const table=entries.map(values=>'| '+values.map(cell).join(' | ')+' |').join('\n');
                 const summary=matched.length?'Tạm tính '+matched.length+'/'+items.length+' hạng mục (mỗi mục 1 cái): '+money.format(total)+' VNĐ.':'Chưa có hạng mục nào có giá.';
@@ -15022,9 +15057,9 @@ window.searchData = async function(opts) {
                 return {total:history.length,same:history.filter(item=>item.details.amount===latest).length,genuine:group('Chính hãng'),outside:group('Không chính hãng')};
             }
             function makeQuote(params,model,items,quantities){
-                const lines=items.map(({name,row,details,error,needsPart,history})=>{
+                const lines=items.map(({name,row,details,error,needsPart,history,advice})=>{
                     const stock=details?.amount||null;
-                    const source=row?[row.ten_phu_tung,row.hieu_xe,details.kind,details.date].filter(Boolean).join(' · ')
+                    const source=row?[row.ten_phu_tung,row.hieu_xe,details.kind,details.date,advice?.note].filter(Boolean).join(' · ')
                         :needsPart?'Cần tên phụ tùng':error?'Tra cứu chưa hoàn tất':'Chưa có giá trong kho';
                     return {type:'part',name,unit:'cái',quantity:quantities?.get(name)||1,stock,proposed:stock,source,info:priceInfo(history)};
                 });
@@ -15102,7 +15137,7 @@ window.searchData = async function(opts) {
                     checkActive();
                     const fromStock=stock.selected.flatMap(item=>item.names).map(partKey).filter(Boolean);
                     const names=[...new Set([...partNames(part),...(parsed.aliases?.get(part)||[]).flatMap(partNames),...fromStock])].slice(0,40);
-                    const request={...params,p_nams:selectedYears,...(models?{p_hieus:models}:{}),...(parsed.quick?{}:{p_page_size:60})};   // tra 1 hạng mục: lấy dư để gộp trùng rồi mới cắt 10 báo giá mới nhất
+                    const request={...params,p_nams:selectedYears,...(models?{p_hieus:models}:{}),...{p_page_size:parsed.quick?40:60}};   // lấy dư để gộp trùng + suy luận giá chuẩn theo quý/năm, rồi mới cắt phần hiển thị
                     const directDeadline=AbortSignal.timeout(4500);
                     const directSignal=AbortSignal.any([timeout.signal,directDeadline]);
                     let result;
@@ -15169,7 +15204,9 @@ window.searchData = async function(opts) {
                                 const rows=await loadQuotes(name,true);
                                 const history=rows.map(row=>({row,details:quoteDetails(row)}))
                                     .filter(item=>item.details.amount>0).sort((a,b)=>b.details.timestamp-a.details.timestamp);
-                                return {name,...history[0],history};
+                                const advice=adviseQuote(history);
+                                const best=advice.find(a=>a.kind==='Chính hãng')||advice[0];
+                                return best?{name,row:best.rep.row,details:best.rep.details,history,advice:best}:{name,...history[0],history};
                             }));
                             if(signal?.aborted||auth.currentUser?.uid!==owner)checkActive();
                             items.push(...batch.map((item,j)=>item.status==='fulfilled'?item.value:{name:parts[i+j],error:item.reason}));
@@ -15237,7 +15274,12 @@ window.searchData = async function(opts) {
                         return `**${index+1}) ${clean(row.ten_phu_tung)||'Phụ tùng'} — ${price}**\n${details}${date?' · Ngày báo giá: '+date:''}`;
                     });
                     const summary=rows.length>quoteLimit?'Hiển thị '+quoteLimit+' báo giá mới nhất (đã gộp các báo giá trùng).':'Tìm thấy '+rows.length+' báo giá (mới nhất trước).';
-                    return `**Kết quả từ kho giá** · ${criteria}\n${summary}\n\n${lines.join('\n\n')}\n\nGiá theo dữ liệu báo giá đã lưu; hãy đối chiếu đúng phiên bản xe và loại hàng trước khi sử dụng.`;
+                    const advice=adviseQuote(rows.map(row=>({row,details:quoteDetails(row)})).filter(item=>item.details.amount>0));
+                    const adviceText=advice.length?advice.map(a=>'**Giá đề xuất · '+a.kind+': '+money.format(a.price)+' VNĐ**\n'
+                        +(a.min===a.max?'':'Khoảng '+money.format(a.min)+' – '+money.format(a.max)+' VNĐ · ')+a.count+' báo giá '+a.scope
+                        +(a.dropped?' (đã bỏ '+a.dropped+' giá lệch bất thường)':'')+' · độ tin cậy '+a.confidence).join('\n\n')
+                        +'\n\n_Cách chọn: ưu tiên báo giá trong quý hiện tại, rồi trong năm; tách riêng chính hãng/không chính hãng; lấy giá trung vị sau khi loại giá lệch._\n\n':'';
+                    return `**Kết quả từ kho giá** · ${criteria}\n\n${adviceText}**Chi tiết các báo giá** · ${summary}\n\n${lines.join('\n\n')}\n\nGiá theo dữ liệu báo giá đã lưu; hãy đối chiếu đúng phiên bản xe và loại hàng trước khi sử dụng.`;
                 }catch(error){if(signal?.aborted)throw error;if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');throw error;}
                 finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
             }
