@@ -14842,38 +14842,45 @@ window.searchData = async function(opts) {
                 return query.limit(params.p_page_size).abortSignal(signal);
             }
 
-            /* Suy luận giá chuẩn từ lịch sử báo giá của một hạng mục:
-               ưu tiên báo giá trong QUÝ hiện tại → trong NĂM → 12 tháng gần nhất → toàn bộ; tách riêng Chính hãng / Không chính hãng;
-               loại giá lệch bất thường rồi lấy trung vị (không bị kéo bởi vài giá quá cao/thấp). */
+            /* Suy luận giá chuẩn từ lịch sử báo giá của một hạng mục (tách riêng Chính hãng / Không chính hãng):
+               gom các báo giá cùng mức (lệch ≤5%) thành cụm; mỗi báo giá có trọng số giảm dần theo tuổi (nửa trọng số sau 60 ngày,
+               nên báo giá trong quý/năm nặng hơn báo giá cũ). Mức giá được CHỌN là cụm có tổng trọng số cao nhất = mức giá
+               lặp lại nhiều và mới nhất — không bị kéo lệch bởi vài giá quá cao/thấp như trung bình hay trung vị. */
             function adviseQuote(history,now=new Date()){
+                const HALF=60,CLUSTER=1.05;
                 const quarter=d=>d.getUTCFullYear()*4+Math.floor(d.getUTCMonth()/3);
-                const nowQ=quarter(now),year=now.getUTCFullYear(),YEAR_MS=365*864e5;
-                const roman=['I','II','III','IV'];
+                const nowQ=quarter(now),year=now.getUTCFullYear(),roman=['I','II','III','IV'];
+                const median=list=>{const x=list.slice().sort((p,q)=>p-q),m=x.length>>1;return x.length%2?x[m]:(x[m-1]+x[m])/2;};
                 const items=(history||[]).filter(h=>h.details.amount>0).map(h=>{
-                    const t=h.details.timestamp?new Date(h.details.timestamp):null;
-                    const tier=!t||Number.isNaN(t.getTime())?4:quarter(t)>=nowQ?1:t.getUTCFullYear()===year?2:now-t<=YEAR_MS?3:4;
-                    return {...h,t,tier};
+                    const t=h.details.timestamp?new Date(h.details.timestamp):null,ok=t&&!Number.isNaN(t.getTime());
+                    const age=ok?Math.max(0,(now-t)/864e5):730;
+                    return {...h,t:ok?t:null,age,w:Math.pow(0.5,age/HALF)};
                 });
-                const median=list=>{const a=list.slice().sort((x,y)=>x-y),m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;};
-                const scopes={1:'quý '+roman[Math.floor(now.getUTCMonth()/3)]+'/'+year,2:'năm '+year,3:'12 tháng gần đây',4:'toàn bộ lịch sử'};
                 const groups=new Map();
                 items.forEach(item=>{const k=item.details.kind;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(item);});
                 const order=['Chính hãng','Không chính hãng','Chưa phân loại'];
-                return [...groups.entries()].sort((a,b)=>order.indexOf(a[0])-order.indexOf(b[0])).map(([kind,list])=>{
-                    let tier=4,pool=list;
-                    for(const k of [1,2,3,4]){const part=list.filter(item=>item.tier<=k);if(part.length>=2||k===4){tier=k;pool=part;break;}}
-                    let kept=pool,dropped=0;
-                    if(pool.length>=3){
-                        const m=median(pool.map(item=>item.details.amount));
-                        const inside=pool.filter(item=>item.details.amount>=m*0.6&&item.details.amount<=m*1.7);
-                        if(inside.length>=2){dropped=pool.length-inside.length;kept=inside;}
-                    }
-                    const amounts=kept.map(item=>item.details.amount),price=Math.round(median(amounts)),min=Math.min(...amounts),max=Math.max(...amounts);
-                    const rep=kept.slice().sort((a,b)=>Math.abs(a.details.amount-price)-Math.abs(b.details.amount-price)||(b.details.timestamp||0)-(a.details.timestamp||0))[0];
-                    const spread=max/min;
-                    const confidence=tier===1&&kept.length>=3&&spread<=1.25?'cao':tier<=2&&kept.length>=2&&spread<=1.5?'khá':'thấp, nên xác nhận thêm';
-                    return {kind,price,min,max,count:kept.length,total:list.length,dropped,scope:scopes[tier],tier,confidence,rep,
-                        note:'giá trung vị '+kept.length+' báo giá '+scopes[tier]};
+                return [...groups.entries()].sort((x,y)=>order.indexOf(x[0])-order.indexOf(y[0])).map(([kind,list])=>{
+                    const sorted=list.slice().sort((x,y)=>x.details.amount-y.details.amount),clusters=[];
+                    sorted.forEach(item=>{
+                        const last=clusters[clusters.length-1];
+                        if(last&&item.details.amount<=last.base*CLUSTER){last.items.push(item);last.w+=item.w;}
+                        else clusters.push({base:item.details.amount,items:[item],w:item.w});
+                    });
+                    clusters.forEach(c=>{
+                        c.price=Math.round(median(c.items.map(i=>i.details.amount)));
+                        c.latest=c.items.reduce((m,i)=>i.t&&(!m||i.t>m)?i.t:m,null);
+                    });
+                    clusters.sort((x,y)=>y.w-x.w||y.items.length-x.items.length||(y.latest||0)-(x.latest||0));
+                    const best=clusters[0],totalW=clusters.reduce((n,c)=>n+c.w,0),share=totalW?best.w/totalW:0;
+                    const amounts=list.map(i=>i.details.amount);
+                    const rep=best.items.slice().sort((x,y)=>Math.abs(x.details.amount-best.price)-Math.abs(y.details.amount-best.price)||(y.t||0)-(x.t||0))[0];
+                    const tier=!best.latest?4:quarter(best.latest)>=nowQ?1:best.latest.getUTCFullYear()===year?2:3;
+                    const confidence=best.items.length>=3&&share>=0.5&&tier<=2?'cao':best.items.length>=2&&share>=0.3&&tier<=3?'khá':'thấp, nên xác nhận thêm';
+                    const scope=tier===1?'quý '+roman[Math.floor(now.getUTCMonth()/3)]+'/'+year:tier===2?'năm '+year:'đã cũ';
+                    return {kind,price:best.price,min:Math.min(...amounts),max:Math.max(...amounts),count:best.items.length,total:list.length,
+                        dropped:0,scope,tier,confidence,rep,latest:best.latest,
+                        others:clusters.slice(1,3).map(c=>({price:c.price,count:c.items.length,latest:c.latest})),
+                        note:'mức giá lặp lại '+best.items.length+'/'+list.length+' báo giá'+(best.latest?', gần nhất '+dateFormat.format(best.latest):'')};
                 });
             }
 
@@ -15274,11 +15281,12 @@ window.searchData = async function(opts) {
                         return `**${index+1}) ${clean(row.ten_phu_tung)||'Phụ tùng'} — ${price}**\n${details}${date?' · Ngày báo giá: '+date:''}`;
                     });
                     const summary=rows.length>quoteLimit?'Hiển thị '+quoteLimit+' báo giá mới nhất (đã gộp các báo giá trùng).':'Tìm thấy '+rows.length+' báo giá (mới nhất trước).';
-                    const advice=adviseQuote(rows.map(row=>({row,details:quoteDetails(row)})).filter(item=>item.details.amount>0));
+                    const advice=adviseQuote(rawRows.map(row=>({row,details:quoteDetails(row)})).filter(item=>item.details.amount>0));
                     const adviceText=advice.length?advice.map(a=>'**Giá đề xuất · '+a.kind+': '+money.format(a.price)+' VNĐ**\n'
-                        +(a.min===a.max?'':'Khoảng '+money.format(a.min)+' – '+money.format(a.max)+' VNĐ · ')+a.count+' báo giá '+a.scope
-                        +(a.dropped?' (đã bỏ '+a.dropped+' giá lệch bất thường)':'')+' · độ tin cậy '+a.confidence).join('\n\n')
-                        +'\n\n_Cách chọn: ưu tiên báo giá trong quý hiện tại, rồi trong năm; tách riêng chính hãng/không chính hãng; lấy giá trung vị sau khi loại giá lệch._\n\n':'';
+                        +'Mức này lặp lại '+a.count+'/'+a.total+' báo giá'+(a.latest?', gần nhất '+dateFormat.format(a.latest):'')+' · độ tin cậy '+a.confidence
+                        +(a.others.length?'\nMức khác: '+a.others.map(o=>money.format(o.price)+' ('+o.count+' lần)').join(' · '):'')
+                        +(a.min===a.max?'':'\nToàn bộ khoảng giá: '+money.format(a.min)+' – '+money.format(a.max)+' VNĐ')).join('\n\n')
+                        +'\n\n_Cách chọn: gom các báo giá cùng mức (lệch ≤5%), ưu tiên mức lặp lại nhiều và mới nhất (báo giá trong quý/năm nặng hơn báo giá cũ), tách riêng chính hãng/không chính hãng._\n\n':'';
                     return `**Kết quả từ kho giá** · ${criteria}\n\n${adviceText}**Chi tiết các báo giá** · ${summary}\n\n${lines.join('\n\n')}\n\nGiá theo dữ liệu báo giá đã lưu; hãy đối chiếu đúng phiên bản xe và loại hàng trước khi sử dụng.`;
                 }catch(error){if(signal?.aborted)throw error;if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');throw error;}
                 finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
