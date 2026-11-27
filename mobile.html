@@ -8435,10 +8435,23 @@ window.TascoAsk=(()=>{
   /* ---------- hỏi nghiệp vụ / trò chuyện (cùng luồng với webapp) ---------- */
   const NO_MATCH='Thư viện tài liệu chưa có đoạn nào khớp câu hỏi này. Hãy thử nêu bằng thuật ngữ trong văn bản (VD "giảm trừ", "loại trừ", "thời hạn") hoặc nhờ quản trị thêm văn bản vào Thư viện trên webapp.';
   const NO_MATCH_PIN='Các tài liệu đã chọn chưa có đoạn nào khớp câu hỏi này. Hãy thử nêu bằng thuật ngữ trong văn bản, chọn thêm tài liệu, hoặc bỏ chọn để AI tự tìm trong cả Thư viện.';
+  const FULL_READ_BUDGET=320000;
+  const PART_RE=/\s*\(phần\s+(\d+)\/(\d+)\)\s*$/i;
+  async function withSiblings(ids){
+    if(!ids.length)return ids;
+    const docs=await loadDocs(),out=new Set(ids);
+    const key=d=>{const m=PART_RE.exec(d.name||'');return m?String(d.name).replace(PART_RE,'').trim().toLowerCase()+'|'+m[2]:'';};
+    const keys=new Set(docs.filter(d=>out.has(d.id)).map(key).filter(Boolean));
+    if(keys.size)docs.forEach(d=>{if(keys.has(key(d)))out.add(d.id);});
+    return [...out];
+  }
   async function gatherSources(queries,history){
     const q=Q(),L=B.Legal,small=modelCap('maxSources');
     const options=ids=>Object.assign({limit:Math.min(q.SOURCE_LIMIT,small||q.SOURCE_LIMIT),minCoverage:q.QA_COVERAGE,expand:true,maxSources:Math.min(q.MAX_SOURCES,small||q.MAX_SOURCES),perArticle:2},ids&&ids.length?{docIds:ids}:{});
-    const pin=pinList(S.pin),read=L.readFull?await L.readFull(queries,{docIds:pin,budget:small?24000:undefined}):null;
+    // Tài liệu dài được Thư viện lưu thành nhiều tài liệu "Tên (phần i/n)": chọn một phần thì tự kèm đủ các phần còn lại, tránh bỏ sót điều khoản nằm ở phần khác.
+    const pin=await withSiblings(pinList(S.pin));
+    // Mô hình ngữ cảnh lớn (Gemini/Antigravity) đọc được nhiều hơn mức 160.000 ký tự mặc định; mô hình nhỏ vẫn giữ 24.000.
+    const read=L.readFull?await L.readFull(queries,{docIds:pin,budget:small?24000:FULL_READ_BUDGET}):null;
     if(read&&read.sources.length){
       let sources=read.sources;
       if(read.skipped.length){
@@ -9101,9 +9114,12 @@ window.TascoAsk=(()=>{
       :m.free?(quote?editableQuoteHtml(quote,m.quoteNote):quoteTableHtml(m.text)||'<div class="ak-text ak-md">'+(sources.length?q.chatHtml(m.text).replace(/\[C(\d{1,3})\]/g,'<button type="button" class="ola-cite" data-ol-qa-cite="C$1">C$1</button>'):q.chatHtml(m.text))+'</div>')
       :'<div class="ak-text">'+q.answerHtml(m.text,sources).replace(/(<b class="ola-h">[^<]*<\/b>)\s*:\s*/g,'$1 ')+'</div>';
     const open=!!S.open[m.id+':*'];
-    const read=m.read&&m.read.included&&m.read.included.length?'<p class="ak-queries">Đã đọc toàn văn: '+m.read.included.map(d=>esc(d.name)+' ('+d.chunks+' đoạn)').join(' · ')+(m.read.skipped&&m.read.skipped.length?' — chỉ trích đoạn: '+m.read.skipped.map(d=>esc(d.name)).join(', '):'')+'</p>':'';
-    const srcs=sources.length||read?'<div class="ak-srcs'+(open?' is-open':'')+'"><button type="button" class="ak-srcs-head" data-ak="srcs" data-m="'+esc(m.id)+'" aria-expanded="'+open+'"><span class="ak-srcs-i">'+IC.book+'</span><span>'+(m.read?'Căn cứ từ Thư viện · ':'Nguồn đã tra · ')+sources.length+' đoạn'+(cited.length?'<em>Đã dẫn: '+esc(cited.filter(c=>sources.some(s=>s.code===c)).join(', '))+'</em>':'')+'</span>'+IC.chev+'</button>'
-      +'<div class="ak-srcs-body"'+(open?'':' hidden')+'>'+read+(m.queries&&m.queries.length?'<p class="ak-queries">Đã tra: '+m.queries.map(esc).join(' · ')+'</p>':'')+sources.map(s=>srcHtml(m,s,cited.includes(s.code))).join('')+'</div></div>':'';
+    const skipped=m.read&&m.read.skipped&&m.read.skipped.length?m.read.skipped:[];
+    const warnHtml=skipped.length?'<p class="ak-queries ak-warn">⚠ Chưa đọc toàn văn (quá dài so với giới hạn mô hình, chỉ lấy trích đoạn): '+skipped.map(d=>esc(d.name)).join(', ')+'. Để không sót, hãy chọn riêng tài liệu này trong "Chọn tài liệu" hoặc dùng mô hình ngữ cảnh lớn hơn.</p>':'';
+    const read=(m.read&&m.read.included&&m.read.included.length?'<p class="ak-queries">Đã đọc toàn văn: '+m.read.included.map(d=>esc(d.name)+' ('+d.chunks+' đoạn)').join(' · ')+'</p>':'')
+      ;
+    const srcs=warnHtml+(sources.length||read?'<div class="ak-srcs'+(open?' is-open':'')+'"><button type="button" class="ak-srcs-head" data-ak="srcs" data-m="'+esc(m.id)+'" aria-expanded="'+open+'"><span class="ak-srcs-i">'+IC.book+'</span><span>'+(m.read?'Căn cứ từ Thư viện · ':'Nguồn đã tra · ')+sources.length+' đoạn'+(cited.length?'<em>Đã dẫn: '+esc(cited.filter(c=>sources.some(s=>s.code===c)).join(', '))+'</em>':'')+'</span>'+IC.chev+'</button>'
+      +'<div class="ak-srcs-body"'+(open?'':' hidden')+'>'+read+(m.queries&&m.queries.length?'<p class="ak-queries">Đã tra: '+m.queries.map(esc).join(' · ')+'</p>':'')+sources.map(s=>srcHtml(m,s,cited.includes(s.code))).join('')+'</div></div>':'');
     const acts=m.error?'<button type="button" class="ak-act" data-ak="retry" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.retry+'Thử lại</button>'+(m.priceLookup?'':'<button type="button" class="ak-act" data-ak="model">'+IC.cpu+'Đổi mô hình</button>')
       :m.empty?'':'<button type="button" class="ak-act" data-ak="copy" data-m="'+esc(m.id)+'">'+IC.copy+'Sao chép</button>'
         +(quote?'<button type="button" class="ak-act" data-ak="quote-export" data-m="'+esc(m.id)+'">'+IC.doc+'Xuất Excel</button>':'')
@@ -10279,6 +10295,7 @@ html.dark .ak-note.is-error :is(b,.ak-note-ico){color:#f0a08a}
 .ak-srcs-head>svg{width:16px;height:16px;flex:none;color:var(--ws-muted);transition:transform .2s}.ak-srcs.is-open .ak-srcs-head>svg{transform:rotate(180deg)}
 .ak-srcs-body{display:grid;gap:7px;padding:0 12px 12px}
 .ak-queries{margin:0;color:var(--ws-muted);font-size:11.5px;line-height:1.6}
+.ak-warn{color:#b45309;font-weight:600}
 .ak-src{display:flex;align-items:center;gap:9px;width:100%;min-height:46px;padding:8px 11px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-surface);color:var(--ws-text);text-align:left;font-size:12px;line-height:1.4;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
 .ak-src:active{transform:scale(.985)}
 .ak-src b{flex:none;min-width:32px;padding:3px 8px;border-radius:99px;background:var(--ws-soft);color:var(--ws-text);font-size:11px;text-align:center}
