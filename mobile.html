@@ -9052,7 +9052,7 @@ window.TascoAsk=(()=>{
   }
   function paintTools(){const el=$('[data-ak-tools]');if(el&&live())el.innerHTML=toolsHtml();}
   function attsHtml(){
-    const items=S.att.map((a,i)=>'<span class="ak-att'+(a.kind==='image'?' is-img':'')+'">'+(a.kind==='image'&&a.preview?'<img src="'+esc(a.preview)+'" alt="">':'<i class="ak-att-ico">'+(a.kind==='image'?IC.img:IC.doc)+'</i>')+'<em>'+esc(a.name)+(a.truncated?' · đã cắt bớt':'')+'</em><button type="button" data-ak="attdel" data-i="'+i+'" aria-label="Bỏ tệp '+esc(a.name)+'">'+IC.x+'</button></span>').join('');
+    const items=S.att.map((a,i)=>'<span class="ak-att'+(a.kind==='image'?' is-img':'')+'" data-ak="attview" data-i="'+i+'" role="button" tabindex="0" aria-label="Xem '+esc(a.name)+'">'+(a.kind==='image'&&a.preview?'<img src="'+esc(a.preview)+'" alt="">':'<i class="ak-att-ico">'+(a.kind==='image'?IC.img:IC.doc)+'</i>')+'<em>'+esc(a.name)+(a.truncated?' · đã cắt bớt':'')+'</em><button type="button" data-ak="attdel" data-i="'+i+'" aria-label="Bỏ tệp '+esc(a.name)+'">'+IC.x+'</button></span>').join('');
     const busy=S.attBusy?'<span class="ak-att is-busy"><i class="ak-spin" aria-hidden="true"></i><em>Đang đọc '+S.attBusy+' tệp…</em></span>':'';
     return items+busy;
   }
@@ -9780,6 +9780,29 @@ window.TascoAsk=(()=>{
     B=null;bundleP=null;S=fresh();
   }
 
+  /* Xem tệp đính kèm trước khi gửi: ảnh phóng to toàn màn hình (chạm hai lần để phóng/thu), tệp văn bản hiện nội dung. */
+  function attViewer(i){
+    const a=S.att[i];if(!a)return;
+    try{document.activeElement&&document.activeElement.blur&&document.activeElement.blur();}catch(_){}
+    document.querySelector('.ak-view-bg')?.remove();
+    const bg=document.createElement('div');bg.className='ak-view-bg';bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');bg.setAttribute('aria-label',a.name);
+    const img=a.kind==='image'&&a.data;
+    bg.innerHTML='<div class="ak-view-top"><span>'+esc(a.name)+'</span><button type="button" class="ak-view-x" aria-label="Đóng">'+IC.x+'</button></div>'
+      +(img?'<div class="ak-view-stage"><img alt="" src="data:'+esc(a.mimeType||'image/jpeg')+';base64,'+a.data+'"></div><div class="ak-view-hint">Chạm hai lần để phóng to</div>'
+        :'<div class="ak-view-doc"><pre></pre></div>');
+    if(!img)bg.querySelector('pre').textContent=String(a.text||'(Không có nội dung xem trước)')+(a.truncated?'\n\n… (đã cắt bớt)':'');
+    const close=()=>{bg.remove();document.removeEventListener('keydown',onKey);};
+    const onKey=ev=>{if(ev.key==='Escape')close();};
+    document.addEventListener('keydown',onKey);
+    bg.addEventListener('click',ev=>{if(ev.target===bg||ev.target.closest('.ak-view-x'))close();});
+    const st=bg.querySelector('.ak-view-stage');
+    if(st){let last=0;st.addEventListener('click',ev=>{
+      if(ev.target.closest('img')&&Date.now()-last<320){st.classList.toggle('is-zoom');if(!st.classList.contains('is-zoom')){st.scrollLeft=0;st.scrollTop=0;}last=0;}
+      else{last=Date.now();if(!ev.target.closest('img'))close();}
+    });}
+    document.body.appendChild(bg);
+  }
+
   /* ---------- sự kiện ---------- */
   document.addEventListener('click',e=>{
     const cite=e.target.closest('#askSection [data-ol-qa-cite]');
@@ -9793,6 +9816,7 @@ window.TascoAsk=(()=>{
     else if(k==='attach')attachSheet();
     else if(k==='attpick'){const inp=document.querySelector('#askSection [data-ak-file="'+b.dataset.k+'"]');closeSheet();if(inp){inp.value='';inp.click();}}
     else if(k==='attdel'){S.att.splice(Number(b.dataset.i),1);paintAtts();}
+    else if(k==='attview')attViewer(Number(b.dataset.i));
     else if(k==='pick'){const c=cfg();c.selected=b.dataset.id;S.cfg=B.Models.save(c);closeSheet();paintTop();}
     else if(k==='agysave'||k==='agyclear'){
       const inp=document.querySelector('.ak-sheet-bg [data-ak-agy]'),raw=k==='agyclear'?'':(inp?inp.value.trim():'');
@@ -10197,6 +10221,18 @@ html.dark .ak-comp{box-shadow:0 14px 34px rgba(0,0,0,.4)}
 @media(max-width:380px){.ak-tool.is-deep .ak-lg{display:none}.ak-tool.is-deep{padding:0 10px 0 9px}}
 .ak-atts{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;margin-right:-4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .ak-atts::-webkit-scrollbar{display:none}.ak-atts[hidden]{display:none}
+.ak-att[data-ak=attview]{cursor:pointer;-webkit-tap-highlight-color:transparent}.ak-att[data-ak=attview]:active{transform:scale(.97)}
+.ak-view-bg{position:fixed;inset:0;z-index:9200;display:flex;flex-direction:column;background:rgba(6,14,26,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:akvIn .18s ease}
+@keyframes akvIn{from{opacity:0}}
+.ak-view-top{flex:none;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px}
+.ak-view-top span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#eaf3f5;font-size:13px;font-weight:700}
+.ak-view-x{flex:none;width:38px;height:38px;display:grid;place-items:center;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff}.ak-view-x svg{width:18px;height:18px}
+.ak-view-stage{flex:1;min-height:0;overflow:auto;display:flex;align-items:center;justify-content:center;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom}
+.ak-view-stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;user-select:none;-webkit-user-drag:none}
+.ak-view-stage.is-zoom{display:block}.ak-view-stage.is-zoom img{max-width:none;max-height:none;width:260%;border-radius:0}
+.ak-view-hint{flex:none;padding:6px 0 calc(14px + env(safe-area-inset-bottom,0px));text-align:center;color:#8fb0b8;font-size:11px}
+.ak-view-doc{flex:1;min-height:0;overflow:auto;margin:0 12px calc(14px + env(safe-area-inset-bottom,0px));padding:14px;border-radius:16px;background:rgba(255,255,255,.06);-webkit-overflow-scrolling:touch}
+.ak-view-doc pre{margin:0;white-space:pre-wrap;word-break:break-word;color:#e3eef0;font:12.5px/1.6 inherit}
 .ak-att{position:relative;flex:none;display:inline-flex;align-items:center;gap:8px;max-width:210px;height:48px;padding:0 8px 0 6px;border:1px solid var(--ws-line);border-radius:14px;background:var(--ws-soft)}
 .ak-att img{width:36px;height:36px;border-radius:9px;object-fit:cover;flex:none}
 .ak-att-ico{flex:none;width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:var(--ak-grad);color:#fff}
