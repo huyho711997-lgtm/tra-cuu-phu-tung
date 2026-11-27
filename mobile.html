@@ -8580,11 +8580,11 @@ window.TascoAsk=(()=>{
     }
     paintStatus('Đang tra kho giá phụ tùng…');
     try{
-      let priceContext,quote;
-      const result=await bridge.search(question,signal,previous,value=>{priceContext=value;},intent,value=>{quote=value;});
+      let priceContext,quote,choices;
+      const result=await bridge.search(question,signal,previous,value=>{priceContext=value;},intent,value=>{quote=value;},value=>{choices=value;});
       if(ctx.mine!==S.gen)return true;
       const prefix=localFallback?'Chưa lấy được phân tích từ mô hình AI. Kết quả dưới đây dùng bộ tra cứu cơ bản.\n\n':'';
-      ctx.reply({text:prefix+result,free:true,priceLookup:true,priceContext,quote,quoteNote:prefix.trim()});
+      ctx.reply({text:prefix+result,free:true,priceLookup:true,priceContext,quote,choices,quoteNote:prefix.trim()});
     }catch(error){if(ctx.mine===S.gen)failure(ctx,error,{free:true,priceLookup:true});}
     return true;
   }
@@ -9009,7 +9009,14 @@ window.TascoAsk=(()=>{
         +(quote?'<button type="button" class="ak-act" data-ak="quote-export" data-m="'+esc(m.id)+'">'+IC.doc+'Xuất Excel</button>':'')
         +(m.quick&&deepSupported()?'<button type="button" class="ak-act" data-ak="deeper" data-m="'+esc(m.id)+'"'+(S.busy?' disabled':'')+'>'+IC.spark+'Suy luận sâu lại</button>':'');
     const plain=m.error||m.empty,who='<div class="ak-who"><span class="ak-av" aria-hidden="true">'+IC.spark+'</span><b>'+(m.free?'Trợ lý AI':'AI nghiệp vụ')+'</b></div>';
-    return '<div class="ak-msg is-ai" data-ak-msg="'+esc(m.id)+'">'+who+'<div class="ak-body">'+(plain?body:'<div class="ak-card">'+body+warn+srcs+'</div>')+(acts||m.secs?'<div class="ak-acts">'+acts+(!m.error&&!m.empty&&m.secs?'<span class="ak-took" title="Thời gian AI trả lời câu hỏi này">'+fmtSecs(m.secs)+'</span>':'')+'</div>':'')+'</div></div>';
+    return '<div class="ak-msg is-ai" data-ak-msg="'+esc(m.id)+'">'+who+'<div class="ak-body">'+(plain?body:'<div class="ak-card">'+body+warn+srcs+'</div>')+choicesHtml(m)+(acts||m.secs?'<div class="ak-acts">'+acts+(!m.error&&!m.empty&&m.secs?'<span class="ak-took" title="Thời gian AI trả lời câu hỏi này">'+fmtSecs(m.secs)+'</span>':'')+'</div>':'')+'</div></div>';
+  }
+  /* Phương án để người dùng xác nhận khi trợ lý chưa chắc (đời xe gần giống, năm khác, hãng trùng tên…). */
+  function choicesHtml(m){
+    const c=m.choices,list=c&&Array.isArray(c.options)?c.options:[];
+    if(!list.length)return '';
+    const used=!!m.choiceUsed;
+    return '<div class="ak-choices" role="group" aria-label="Chọn phương án">'+list.map((o,i)=>'<button type="button" class="ak-choice'+(m.choiceUsed===i?' is-on':'')+'" data-ak="qchoice" data-m="'+esc(m.id)+'" data-i="'+i+'"'+(S.busy?' disabled':'')+'><span>'+esc(o.label)+'</span>'+(o.hint?'<small>'+esc(o.hint)+'</small>':'')+'</button>').join('')+'</div>';
   }
   function emptyHtml(){
     const ask=S.kind==='ask',list=ask?Q().SUGGESTIONS:Q().FREE_SUGGESTIONS;
@@ -9817,6 +9824,7 @@ window.TascoAsk=(()=>{
     else if(k==='attpick'){const inp=document.querySelector('#askSection [data-ak-file="'+b.dataset.k+'"]');closeSheet();if(inp){inp.value='';inp.click();}}
     else if(k==='attdel'){S.att.splice(Number(b.dataset.i),1);paintAtts();}
     else if(k==='attview')attViewer(Number(b.dataset.i));
+    else if(k==='qchoice'){const m=S.messages.find(x=>x.id===b.dataset.m),i=Number(b.dataset.i),o=m&&m.choices&&m.choices.options&&m.choices.options[i];if(o&&!S.busy){m.choiceUsed=i;send(o.text);}}
     else if(k==='pick'){const c=cfg();c.selected=b.dataset.id;S.cfg=B.Models.save(c);closeSheet();paintTop();}
     else if(k==='agysave'||k==='agyclear'){
       const inp=document.querySelector('.ak-sheet-bg [data-ak-agy]'),raw=k==='agyclear'?'':(inp?inp.value.trim():'');
@@ -10221,6 +10229,9 @@ html.dark .ak-comp{box-shadow:0 14px 34px rgba(0,0,0,.4)}
 @media(max-width:380px){.ak-tool.is-deep .ak-lg{display:none}.ak-tool.is-deep{padding:0 10px 0 9px}}
 .ak-atts{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;margin-right:-4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .ak-atts::-webkit-scrollbar{display:none}.ak-atts[hidden]{display:none}
+.ak-choices{display:flex;flex-wrap:wrap;gap:8px;margin:10px 2px 2px}
+.ak-choice{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;padding:9px 14px;border:1px solid var(--ak-line,rgba(24,60,86,.22));border-radius:14px;background:var(--ak-card,#fff);color:inherit;font:inherit;font-size:13.5px;font-weight:700;text-align:left;-webkit-tap-highlight-color:transparent;transition:transform .12s,border-color .12s}
+.ak-choice small{font-size:11px;font-weight:500;opacity:.65}.ak-choice:active{transform:scale(.97)}.ak-choice.is-on{border-color:#2a8f8f;box-shadow:0 0 0 1px #2a8f8f inset}.ak-choice:disabled{opacity:.55}
 .ak-att[data-ak=attview]{cursor:pointer;-webkit-tap-highlight-color:transparent}.ak-att[data-ak=attview]:active{transform:scale(.97)}
 .ak-view-bg{position:fixed;inset:0;z-index:9200;display:flex;flex-direction:column;background:rgba(6,14,26,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:akvIn .18s ease}
 @keyframes akvIn{from{opacity:0}}
@@ -15011,11 +15022,29 @@ window.searchData = async function(opts) {
                     {type:'paint',name:'Chi phí sơn',unit:'hạng mục',quantity:1,stock:null,proposed:null,source:''},
                     {type:'labor',name:'Chi phí nhân công',unit:'giờ',quantity:1,stock:null,proposed:null,source:''}]};
             }
-            async function search(question,signal,previous,onContext,intent,onQuote){
+            // Dòng xe "cùng loại": bỏ chữ đệm (Grand, New, All…) rồi so lõi — "Grand i10" ~ "i10".
+            const MODEL_FILLER=new Set(['grand','new','all','moi','facelift','plus','sedan','hatchback','hb','sd','cvt','turbo','mpv','suv','xe']);
+            const modelCore=text=>foldQuestion(text).split(/[^a-z0-9]+/).filter(w=>w&&!MODEL_FILLER.has(w)).join('');
+            function relatedModels(brandName,requested,current){
+                const brand=(window.TascoSmartSearch?.vehicleCatalog?.().brands||[]).find(b=>b.name===brandName);
+                const want=modelCore(requested);
+                if(!brand||want.length<2)return [];
+                const have=new Set(current);
+                return brand.models.filter(m=>{
+                    if(have.has(m))return false;
+                    const core=modelCore(m);
+                    return core&&(core===want||core.startsWith(want)||(core.length>=3&&want.startsWith(core)));
+                }).sort((a,b)=>a.length-b.length||a.localeCompare(b,'vi')).slice(0,4);
+            }
+            async function search(question,signal,previous,onContext,intent,onQuote,onChoices){
                 const parsed=intent||await parseQuestion(question,previous,signal);
                 if(parsed.mixedVehicles)return 'Hãy gửi từng dòng xe riêng để tôi tra đúng giá cho từng xe.';
                 if(parsed.unresolvedModel)return 'Đã nhận diện **VinFast '+parsed.unresolvedModel+'**. Chưa xác định được dòng xe tương ứng trong danh mục kho giá.';
-                if(parsed.ambiguousBrands?.length)return 'Có nhiều hãng xe phù hợp. Hãy cho biết rõ hãng, dòng xe và tên phụ tùng cần tra.';
+                if(parsed.ambiguousBrands?.length){
+                    const base=String(question||'').trim();
+                    onChoices?.({options:parsed.ambiguousBrands.slice(0,6).map(brand=>({label:brand,text:base+' '+brand}))});
+                    return 'Dòng xe này có ở nhiều hãng. **Bạn muốn tra hãng nào?**';
+                }
                 const parts=parsed.parts||[];
                 const years=[...new Set([...(parsed.years||[]),...(parsed.skippedYears||[])])].filter(Number.isInteger).sort((a,b)=>a-b);
                 if(parsed.quick&&(!parsed.brand||!parsed.models?.length||years.length!==1||!parts.length)){
@@ -15037,10 +15066,10 @@ window.searchData = async function(opts) {
                     if(timeout.signal.aborted)throw new Error('Tra kho giá quá lâu. Hãy thử lại.');
                     if(auth.currentUser?.uid!==owner)throw new Error('Tài khoản đã thay đổi. Hãy tra cứu lại.');
                 }
-                async function loadQuotes(part,newestFirst,selectedYears=params.p_nams){
+                async function loadQuotes(part,newestFirst,selectedYears=params.p_nams,models){
                     checkActive();
                     const names=[...new Set([...partNames(part),...(parsed.aliases?.get(part)||[]).flatMap(partNames)])];
-                    const request={...params,p_nams:selectedYears};
+                    const request={...params,p_nams:selectedYears,...(models?{p_hieus:models}:{})};
                     const directDeadline=AbortSignal.timeout(4500);
                     const directSignal=AbortSignal.any([timeout.signal,directDeadline]);
                     let result;
@@ -15077,6 +15106,26 @@ window.searchData = async function(opts) {
                     if(!Array.isArray(rows))throw new Error('Kho giá trả về dữ liệu chưa đầy đủ. Hãy thử lại.');
                     return rows.filter(row=>names.includes(partKey(row?.ten_phu_tung))).slice(0,request.p_page_size);
                 }
+                // Kho không có đúng dòng xe → tìm dòng cùng loại thực sự có giá và hỏi người dùng chọn.
+                async function relatedChoices(sampleParts,build){
+                    const cands=relatedModels(params.p_hang,parsed.modelQuery||params.p_hieus[0],params.p_hieus);
+                    if(!cands.length||!onChoices)return null;
+                    const probes=await Promise.all(cands.map(async model=>{
+                        for(const part of sampleParts.slice(0,2)){
+                            try{
+                                const rows=await loadQuotes(part,true,undefined,[model]);
+                                if(rows.some(row=>quoteAmount(row.gia_duyet)))return model;
+                            }catch(error){if(signal?.aborted)throw error;}
+                        }
+                        return null;
+                    }));
+                    checkActive();
+                    const ok=probes.filter(Boolean);
+                    if(!ok.length)return null;
+                    const asked=clean(parsed.modelQuery||params.p_hieus[0]);
+                    onChoices({options:ok.map(model=>({label:model,hint:'Dòng cùng loại có giá trong kho',text:build(model)}))});
+                    return 'Kho chưa có báo giá cho **'+asked+'** ('+(years[0]||'')+'), nhưng có dòng cùng loại. **Bạn muốn tra theo dòng nào?**';
+                }
                 try{
                     if(parsed.quick){
                         // Bound concurrency while preserving the order of the user's list.
@@ -15093,6 +15142,11 @@ window.searchData = async function(opts) {
                             items.push(...batch.map((item,j)=>item.status==='fulfilled'?item.value:{name:parts[i+j],error:item.reason}));
                         }
                         if(items.every(item=>item.error))throw items[0].error;
+                        if(!items.some(item=>item.row)){
+                            const names=parts.map(name=>name+((parsed.quantities?.get(name)||1)>1?' x'+parsed.quantities.get(name):'')).join(', ');
+                            const ask=await relatedChoices(parts,model=>'Bảng báo giá nhanh '+params.p_hang+' '+model+' '+years[0]+' gồm '+names);
+                            if(ask)return ask;
+                        }
                         const model=parsed.modelQuery||params.p_hieus[0];
                         onQuote?.(makeQuote(params,model,items,parsed.quantities));
                         return formatQuickQuote(params,model,items);
@@ -15100,6 +15154,8 @@ window.searchData = async function(opts) {
                     const part=parts[0],rows=await loadQuotes(part,false);
                     const criteria=[clean(part),clean(params.p_hang),params.p_hieus.map(clean).join(', '),params.p_nams.join(', ')].filter(Boolean).join(' · ');
                     if(!rows.length){
+                        const ask=await relatedChoices([part],model=>'Giá '+part+' '+params.p_hang+' '+model+(years.length===1?' '+years[0]:''));
+                        if(ask)return ask;
                         const empty=`Không tìm thấy báo giá trong kho cho **${criteria}**.`;
                         if(years.length===1){
                             try{
@@ -15107,7 +15163,10 @@ window.searchData = async function(opts) {
                                 const availableYears=[...new Set(alternatives.filter(row=>quoteAmount(row.gia_duyet))
                                     .map(row=>Number(row.nam_sx)).filter(year=>Number.isInteger(year)&&year>=1990&&year<=2100&&year!==years[0]))]
                                     .sort((a,b)=>Math.abs(a-years[0])-Math.abs(b-years[0])).slice(0,5);
-                                if(availableYears.length)return empty+' Kho có báo giá cho một số đời khác như '+availableYears.join(', ')+'.';
+                                if(availableYears.length){
+                                    onChoices?.({options:availableYears.map(year=>({label:String(year),hint:'Đời có giá trong kho',text:'Giá '+part+' '+params.p_hang+' '+params.p_hieus[0]+' '+year}))});
+                                    return empty+' Kho có báo giá cho một số đời khác. **Bạn muốn xem đời nào?**';
+                                }
                             }catch(error){
                                 if(signal?.aborted||auth.currentUser?.uid!==owner)throw error;
                             }
