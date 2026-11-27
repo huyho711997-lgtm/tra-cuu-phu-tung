@@ -838,30 +838,72 @@ const NO_CAT = 'Chưa phân hạng mục', folderMap = new Map();
 function catFolder(r) { const raw = safe(r.category).replace(/[. ]+$/, '') || NO_CAT, k = raw.toLowerCase(); if (!folderMap.has(k)) folderMap.set(k, raw); return folderMap.get(k); }
 let jszipP = null;
 const loadJSZip = () => jszipP || (jszipP = new Promise((ok, fail) => { if (window.JSZip) return ok(window.JSZip); const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'; s.onload = () => ok(window.JSZip); s.onerror = () => { jszipP = null; fail(new Error('Không tải được bộ nén ZIP. Kiểm tra mạng.')); }; document.head.append(s); }));
+/* Ghi ZIP (kiểu STORE, không nén) trực tiếp xuống đĩa bằng File System Access: một hồ sơ = MỘT tệp ZIP, không giới hạn bộ nhớ trình duyệt. */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = u8 => { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+function zipStream(writable) {
+  const enc = new TextEncoder(), list = []; let offset = 0, chain = Promise.resolve(), dead = null;
+  const d = new Date(), dosT = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dosD = ((Math.max(d.getFullYear(), 1980) - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  const put = u8 => { offset += u8.length; return writable.write(u8); };
+  const add = (name, u8) => (chain = chain.then(async () => {
+    if (dead) throw dead;
+    try {
+      const nm = enc.encode(name), crc = crc32(u8), at = offset, h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true); h.setUint16(10, dosT, true); h.setUint16(12, dosD, true);
+      h.setUint32(14, crc, true); h.setUint32(18, u8.length, true); h.setUint32(22, u8.length, true); h.setUint16(26, nm.length, true); h.setUint16(28, 0, true);
+      await put(new Uint8Array(h.buffer)); await put(nm); await put(u8); list.push({ nm, crc, size: u8.length, at });
+    } catch (e) { dead = e; throw e; }
+  }));
+  const finish = () => (chain = chain.then(async () => {
+    const start = offset;
+    for (const e of list) {
+      const h = new DataView(new ArrayBuffer(46));
+      h.setUint32(0, 0x02014b50, true); h.setUint16(4, 20, true); h.setUint16(6, 20, true); h.setUint16(8, 0x0800, true); h.setUint16(10, 0, true); h.setUint16(12, dosT, true); h.setUint16(14, dosD, true);
+      h.setUint32(16, e.crc, true); h.setUint32(20, e.size, true); h.setUint32(24, e.size, true); h.setUint16(28, e.nm.length, true); h.setUint32(42, e.at, true);
+      await put(new Uint8Array(h.buffer)); await put(e.nm);
+    }
+    const end = new DataView(new ArrayBuffer(22)); end.setUint32(0, 0x06054b50, true); end.setUint16(8, list.length, true); end.setUint16(10, list.length, true); end.setUint32(12, offset - start, true); end.setUint32(16, start, true);
+    await put(new Uint8Array(end.buffer));
+  }));
+  return { add, finish };
+}
 let job = null;
 async function zipDownload(rows, label) {
   if (job) return; if (!rows.length) return;
+  // Một hồ sơ (album) → tên tệp theo biển số/tên album; nếu có File System Access thì ghi thẳng thành 1 tệp ZIP duy nhất.
+  const albumIds = new Set(rows.map(r => r.album_id || '')), oneAlbum = albumIds.size === 1 ? safe(albumName([...albumIds][0])) : '';
+  const sd = new Date(), baseName = (oneAlbum ? oneAlbum + '_' : 'TASCO_Cloud_') + sd.getFullYear() + pad(sd.getMonth() + 1) + pad(sd.getDate());
+  const totalBytes = rows.reduce((t, r) => t + (Number(r.bytes) || 0), 0);
+  let handle = null;
+  if (typeof window.showSaveFilePicker === 'function' && rows.length < 60000 && totalBytes < 3.8 * 1024 ** 3) {
+    try { handle = await window.showSaveFilePicker({ suggestedName: baseName + '.zip', types: [{ description: 'Tệp ZIP', accept: { 'application/zip': ['.zip'] } }] }); }
+    catch (e) { if (e && e.name === 'AbortError') return; handle = null; }
+  }
   const ui = document.createElement('div'); ui.className = 'job';
   ui.innerHTML = `<div class="job-card"><h3>Đang chuẩn bị tệp ZIP</h3><p id="jTxt">${esc(label)}</p><div class="bar"><i id="jBar"></i></div><div class="row"><span id="jCnt">0/${rows.length}</span><span id="jPct">0%</span></div><button class="cancel" id="jCancel">Huỷ</button></div>`;
   document.body.append(ui); const ctl = new AbortController(); job = ctl; $('#jCancel', ui).onclick = () => ctl.abort();
   const set = (done, text) => { const p = Math.round(done / rows.length * 100); $('#jBar', ui).style.width = p + '%'; $('#jPct', ui).textContent = p + '%'; $('#jCnt', ui).textContent = done + '/' + rows.length; if (text) $('#jTxt', ui).textContent = text; };
   try {
-    const JSZip = await loadJSZip(); const stamp = new Date(); const base = 'TASCO_Cloud_' + stamp.getFullYear() + pad(stamp.getMonth() + 1) + pad(stamp.getDate());
-    const MAXB = 350 * 1024 * 1024, MAXN = 500, multi = rows.length > MAXN || rows.reduce((t, r) => t + (Number(r.bytes) || 0), 0) > MAXB; let zip = new JSZip(), part = 1, bytes = 0, count = 0, done = 0, failed = 0; const flush = async () => { if (!count) return; set(done, 'Đang nén phần ' + part + '…'); const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' }); saveBlob(blob, base + (multi ? '_phan' + part : '') + '.zip'); part++; zip = new JSZip(); bytes = 0; count = 0; await new Promise(r => setTimeout(r, 500)); };
+    const direct = handle ? await handle.createWritable() : null, zs = direct ? zipStream(direct) : null;
+    const JSZip = zs ? null : await loadJSZip(); const base = baseName;
+    const MAXB = zs ? Infinity : 600 * 1024 * 1024, MAXN = zs ? Infinity : 1000, multi = rows.length > MAXN || rows.reduce((t, r) => t + (Number(r.bytes) || 0), 0) > MAXB; let zip = JSZip ? new JSZip() : null, part = 1, bytes = 0, count = 0, done = 0, failed = 0; const flush = async () => { if (!count) return; set(done, 'Đang nén phần ' + part + '…'); const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' }); saveBlob(blob, base + (multi ? '_phan' + part : '') + '.zip'); part++; zip = new JSZip(); bytes = 0; count = 0; await new Promise(r => setTimeout(r, 500)); };
     folderMap.clear(); let next = 0; const names = new Set(); const queue = rows.map((r, i) => [r, i]);
     async function worker() {
       while (!ctl.signal.aborted) {
         const k = next++; if (k >= queue.length) return; const [r, i] = queue[k]; const url = cldURL(r.secure_url);
         try { if (!url) throw 0; const res = await fetch(url, { signal: ctl.signal, referrerPolicy: 'no-referrer' }); if (!res.ok) throw 0; const b = await res.blob(); const dir = catFolder(r); let base0 = fileName(r, i, true); while (names.has(dir.toLowerCase() + '/' + base0.toLowerCase())) base0 = '_' + base0; const n = dir + '/' + base0; names.add(n.toLowerCase());
-          while ((bytes + b.size > MAXB || count >= MAXN) && count) await flushLock(); zip.file(n, b); bytes += b.size; count++; } catch (e) { if (ctl.signal.aborted) return; failed++; }
+          if (zs) { await zs.add(n, new Uint8Array(await b.arrayBuffer())); count++; }
+          else { while ((bytes + b.size > MAXB || count >= MAXN) && count) await flushLock(); zip.file(n, b); bytes += b.size; count++; } } catch (e) { if (ctl.signal.aborted) return; if (zs && /write|disk|quota|NotAllowed|stream/i.test(String(e && (e.name + ' ' + e.message)))) throw e; failed++; }
         done++; set(done, 'Đang tải ' + done + '/' + rows.length + '…');
       }
     }
     let lock = Promise.resolve(); const flushLock = () => (lock = lock.then(flush));
-    await Promise.all(Array.from({ length: 4 }, worker));
-    if (ctl.signal.aborted) { toast('Đã huỷ tải ZIP.'); return; }
-    await flushLock(); await lock;
-    toast(failed ? `Đã tải xong, ${failed} tệp không tải được.` : 'Đã tạo tệp ZIP xong.', failed > 0);
+    try { await Promise.all(Array.from({ length: 4 }, worker)); }
+    catch (e) { if (direct) { try { await direct.abort(); } catch (_) {} } throw e; }
+    if (ctl.signal.aborted) { if (direct) { try { await direct.abort(); } catch (_) {} } toast('Đã huỷ tải ZIP.'); return; }
+    if (zs) { set(rows.length, 'Đang hoàn tất tệp ZIP…'); await zs.finish(); await direct.close(); }
+    else { await flushLock(); await lock; }
+    toast(failed ? `Đã tải xong, ${failed} tệp không tải được.` : (zs ? 'Đã lưu 1 tệp ZIP.' : 'Đã tạo tệp ZIP xong.'), failed > 0);
   } catch (e) { toast(friendly(e), true); }
   finally { job = null; ui.remove(); }
 }
