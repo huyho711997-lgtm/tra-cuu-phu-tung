@@ -8459,7 +8459,8 @@ window.TascoAsk=(()=>{
     att=att||[];
     const um={id:q.newId(),role:'user',text};
     if(att.length){
-      um.files=att.map(a=>({name:a.name,kind:a.kind,text:a.kind==='text'?String(a.text||'').slice(0,HIST_CHARS):'',truncated:!!a.truncated}));
+      um.files=att.map(a=>({name:a.name,kind:a.kind,text:a.kind==='text'?String(a.text||'').slice(0,HIST_CHARS):'',truncated:!!a.truncated,docId:a.docId||'',chars:a.chars||0}));
+      att.forEach(a=>{if(a.kind==='text'&&a.docId&&(a.full||a.text))DocStore.put(a.docId,a.full||a.text);});
       att.forEach((a,i)=>{if(a.preview)S.prev[um.id+':'+i]=a.preview;});
     }
     S.messages.push(um);
@@ -8483,7 +8484,7 @@ window.TascoAsk=(()=>{
   async function askQuestion(question,att,spoken){
     const q=Q(),L=B.Legal,imp=att&&att.length?{intent:false}:q.importRequest(question);
     att=att||[];
-    const askFiles=att.filter(a=>a.kind==='text').map(a=>({name:a.name,text:a.text,truncated:a.truncated,note:a.note})),askImages=att.filter(a=>a.kind==='image');
+    const askFilesP=filesForTurn(att,question,history),askImages=att.filter(a=>a.kind==='image');
     if(imp.intent){
       S.messages.push({id:q.newId(),role:'user',text:question});
       S.messages.push({id:q.newId(),role:'assistant',text:'Trên app chỉ tra cứu Thư viện tài liệu (chỉ đọc). Để thêm quy tắc/văn bản mới, hãy nạp trên webapp giám định (Thư viện tài liệu) — app sẽ thấy ngay sau đó.',empty:true,sources:[]});
@@ -8524,7 +8525,7 @@ window.TascoAsk=(()=>{
         const pinNames=(S.docs||[]).filter(d=>pinList(S.pin).includes(d.id)).map(d=>d.name);
         // Đã chọn tài liệu: ép AI chỉ dùng đúng phạm vi đó, không lan sang quy tắc/nghiệp vụ khác (kể cả từ nội dung các câu trả lời trước).
         const scope=pinList(S.pin).length?'\n\n[PHẠM VI NGƯỜI DÙNG ĐÃ CHỌN — bắt buộc: chỉ trả lời dựa trên '+(pinNames.length?pinNames.join('; '):'các văn bản đã chọn')+'. Không viện dẫn, không suy sang văn bản, quy tắc hay loại hình bảo hiểm khác nằm ngoài phạm vi này (kể cả nội dung các câu trả lời trước nếu lấy từ văn bản khác). Nếu các văn bản đã chọn không nêu điều được hỏi, nói rõ là không có trong tài liệu đã chọn, không bổ sung bằng kiến thức ngoài.]':'';
-        const answer=await callAI(q.buildRequest({question:question+scope,history,sources,libraryError:found.error,dossier:'',issue:plan.issue,files:askFiles,images:askImages,read:found.read}),Object.assign({thinking,effort:'high'},usage));
+        const answer=await callAI(q.buildRequest({question:question+scope,history,sources,libraryError:found.error,dossier:'',issue:plan.issue,files:await askFilesP,images:askImages,read:found.read}),Object.assign({thinking,effort:'high'},usage));
         const text=String(answer).trim(),cited=q.citedCodes(text);
         ctx.reply({quick:quick||undefined,text,sources:found.read?sources.filter(s=>cited.includes(s.code)):sources,queries,issue:plan.issue,read:found.read||undefined});
       }
@@ -8534,7 +8535,7 @@ window.TascoAsk=(()=>{
   async function askFree(question,att,spoken){
     const q=Q(),L=B.Legal,history=S.messages.slice();
     att=att||[];
-    const files=att.filter(a=>a.kind==='text').map(a=>({name:a.name,text:a.text,truncated:a.truncated,note:a.note})),images=att.filter(a=>a.kind==='image');
+    const filesP=filesForTurn(att,question,history),images=att.filter(a=>a.kind==='image');
     const ctx=begin(question,'Đang soạn câu trả lời…',att),{mine,forceDeep,usage}=ctx;
     try{
       if(!att.length&&await answerPriceQuestion(question,history,ctx,spoken))return finish(mine);
@@ -8551,7 +8552,7 @@ window.TascoAsk=(()=>{
       paintStatus(thinking?'Đang suy luận sâu (có thể mất 30–90 giây)…':quick?'Câu hỏi ngắn — đang trả lời nhanh…':'Đang soạn câu trả lời…');
       usage.resumeText=S.status;
       warnVision(images);
-      const answer=await callAI(q.buildFreeRequest({question,history,dossier:'',files,images,sources,read}),Object.assign({thinking,effort:'high'},usage));
+      const answer=await callAI(q.buildFreeRequest({question,history,dossier:'',files:await filesP,images,sources,read}),Object.assign({thinking,effort:'high'},usage));
       const text=String(answer).trim(),cited=q.citedCodes(text);
       ctx.reply({quick:quick||undefined,text,free:true,sources:read?sources.filter(s=>cited.includes(s.code)):sources,queries,read:read||undefined});
     }catch(error){failure(ctx,error,{free:true});}
@@ -8602,7 +8603,7 @@ window.TascoAsk=(()=>{
     if(at<1||S.busy)return;
     if(deep)S.deepOnce=true;
     const um=S.messages[at-1],question=um.text;
-    const keep=(um.files||[]).filter(f=>f.kind==='text'&&f.text).map(f=>({kind:'text',name:f.name,text:f.text,truncated:f.truncated}));
+    const keep=(um.files||[]).filter(f=>f.kind==='text'&&f.text).map(f=>({kind:'text',name:f.name,text:f.text,truncated:f.truncated,docId:f.docId||'',chars:f.chars||0}));
     if((um.files||[]).some(f=>f.kind==='image'))toast('Ảnh đính kèm không được lưu lại — hãy đính kèm lại ảnh nếu AI cần xem.');
     S.messages.splice(at-1,2);
     send(question,keep);
@@ -8658,6 +8659,103 @@ window.TascoAsk=(()=>{
       img.src=url;
     });
   }
+  /* ---------- Tài liệu dài: giữ NGUYÊN VĂN đầy đủ, mỗi câu hỏi chọn các đoạn liên quan nhất (không còn cắt cứng 30.000 ký tự) ---------- */
+  const FULL_MAX=800000,CHUNK_CHARS=1500,FILE_BUDGET=28000,FILES_BUDGET=56000;   // 28k/tệp & 56k/lượt = ngưỡng module Q gửi cho AI
+  const foldVN=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase();
+  const STOPW=new Set('la va cua cho cac nhung mot the nao gi co khong duoc trong khi thi de voi ve nay do toi ban hay nhu sao bao nhieu hoac neu thay tai tu den theo bi se da dang cung rat'.split(' '));
+  const termsOf=t=>foldVN(t).split(/[^a-z0-9]+/).filter(w=>w.length>1&&!STOPW.has(w));
+  const GENERIC_Q=/tom tat|toan bo|tat ca|liet ke|ra soat|kiem tra het|noi dung chinh|y chinh|tong quan|dien giai|giai thich tai lieu/;
+  const DocStore=(()=>{
+    const mem=new Map();let dbP=null;
+    const open=()=>dbP||(dbP=new Promise((ok,no)=>{try{const r=indexedDB.open('tasco_ask_docs',1);r.onupgradeneeded=()=>r.result.createObjectStore('docs');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error);}catch(e){no(e);}}));
+    const tx=async(mode,fn)=>{const db=await open();return new Promise((ok,no)=>{const t=db.transaction('docs',mode);let out;try{out=fn(t.objectStore('docs'));}catch(e){no(e);return;}t.oncomplete=()=>ok(out&&'result' in out?out.result:undefined);t.onerror=()=>no(t.error);t.onabort=()=>no(t.error);});};
+    const remember=(id,text)=>{mem.delete(id);mem.set(id,text);while(mem.size>4)mem.delete(mem.keys().next().value);};
+    return {
+      async put(id,text){
+        if(!id||!text)return;remember(id,text);
+        try{
+          await tx('readwrite',st=>st.put(text,id));
+          const idx=JSON.parse(ls(LS+'docidx')||'[]').filter(x=>x&&x.id!==id);idx.unshift({id,at:Date.now()});
+          const drop=idx.splice(40);ls(LS+'docidx',JSON.stringify(idx));   // giữ tối đa 40 tài liệu gần nhất
+          for(const d of drop){mem.delete(d.id);try{await tx('readwrite',st=>st.delete(d.id));}catch(_){}}
+        }catch(_){}
+      },
+      async get(id){
+        if(!id)return '';if(mem.has(id))return mem.get(id);
+        try{const v=await tx('readonly',st=>st.get(id));if(v)remember(id,v);return v||'';}catch(_){return '';}
+      }
+    };
+  })();
+  function docId(name,text){let h=2166136261;const t=String(name)+'|'+text.length+'|'+text.slice(0,400)+'|'+text.slice(-400);for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}return 'd'+h.toString(36)+text.length.toString(36);}
+  function chunkText(full){
+    const out=[];let cur='';
+    const push=()=>{if(cur.trim())out.push(cur);cur='';};
+    for(const para of String(full).split(/\n{2,}|\n(?=(?:Điều|Điểm|Khoản|Chương|Mục|\d+[.)]\s))/)){
+      if(para.length>CHUNK_CHARS*1.6){push();for(let i=0;i<para.length;i+=CHUNK_CHARS)out.push(para.slice(i,i+CHUNK_CHARS));continue;}
+      if(cur&&cur.length+para.length>CHUNK_CHARS)push();
+      cur+=(cur?'\n\n':'')+para;
+    }
+    push();return out;
+  }
+  /* Chọn các đoạn liên quan nhất tới câu hỏi trong tài liệu dài (BM25 rút gọn); câu hỏi chung ("tóm tắt…") thì lấy rải đều toàn tài liệu. */
+  function pickChunks(full,query,budget,needMatch){
+    full=String(full||'');
+    if(full.length<=budget)return {text:full,partial:false,pct:100,matched:true};
+    const chunks=chunkText(full),n=chunks.length,qt=[...new Set(termsOf(query))];
+    const generic=qt.length<2||GENERIC_Q.test(foldVN(query));
+    const pick=new Set([0]);let used=chunks[0].length,matched=false;
+    if(generic){
+      const per=used?Math.max(1,Math.floor(budget/(full.length/n))):1,step=Math.max(1,n/per);
+      for(let x=0;x<n&&used<budget;x+=step){const i=Math.floor(x);if(!pick.has(i)&&used+chunks[i].length<=budget){pick.add(i);used+=chunks[i].length;}}
+    }else{
+      const tf=chunks.map(c=>{const f=Object.create(null);termsOf(c).forEach(w=>{f[w]=(f[w]||0)+1;});return f;});
+      const df=Object.create(null);qt.forEach(w=>{df[w]=tf.reduce((k,f)=>k+(f[w]?1:0),0);});
+      const bigrams=[];for(let i=0;i<qt.length-1;i++)bigrams.push(qt[i]+' '+qt[i+1]);
+      const folded=chunks.map(foldVN);
+      const score=chunks.map((_,i)=>{
+        let sc=0;qt.forEach(w=>{const k=tf[i][w]||0;if(k)sc+=Math.log(1+(n-df[w]+.5)/(df[w]+.5))*(k*2.2)/(k+1.2);});
+        bigrams.forEach(b=>{if(folded[i].includes(b))sc+=1.5;});
+        return sc;
+      });
+      matched=score.some(v=>v>0);
+      if(needMatch&&!matched)return null;
+      const order=score.map((v,i)=>i).filter(i=>score[i]>0).sort((a,b)=>score[b]-score[a]);
+      for(const i of order){if(!pick.has(i)&&used+chunks[i].length<=budget){pick.add(i);used+=chunks[i].length;}}
+      for(let ring=1;ring<=4&&used<budget;ring++){   // còn chỗ → mở rộng dần sang đoạn liền kề để giữ mạch (điều khoản, ví dụ, ngoại lệ…)
+        for(const i of order){
+          for(const j of [i-ring,i+ring]){if(j>=0&&j<n&&!pick.has(j)&&used+chunks[j].length<=budget){pick.add(j);used+=chunks[j].length;}}
+        }
+      }
+    }
+    const idx=[...pick].sort((a,b)=>a-b);let text='',prev=-1;
+    for(const i of idx){
+      if(i!==prev+1){const skipped=chunks.slice(prev+1,i).reduce((k,c)=>k+c.length,0);text+=(text?'\n':'')+'[… lược '+skipped.toLocaleString('vi-VN')+' ký tự …]\n';}
+      text+=(text&&!text.endsWith('\n')?'\n\n':'')+chunks[i];prev=i;
+    }
+    if(prev<n-1)text+='\n[… lược '+chunks.slice(prev+1).reduce((k,c)=>k+c.length,0).toLocaleString('vi-VN')+' ký tự cuối …]';
+    return {text,partial:true,pct:Math.max(1,Math.round(used/full.length*100)),matched:generic||matched};
+  }
+  /* Tệp văn bản gửi cho AI ở một lượt hỏi: tệp vừa đính kèm + tài liệu đã đính kèm trước đó trong cuộc trò chuyện (hỏi tiếp vẫn tra được toàn văn). */
+  async function filesForTurn(att,question,history){
+    const cur=(att||[]).filter(a=>a.kind==='text');
+    try{
+      const query=[question].concat((history||[]).filter(m=>m.role==='user').slice(-2).map(m=>m.text)).join(' ');
+      const seen=new Set(cur.map(a=>a.docId).filter(Boolean)),extra=[];
+      for(const m of (history||[]).slice().reverse()){
+        if(m.role!=='user')continue;
+        for(const f of m.files||[]){if(f.kind==='text'&&f.docId&&!seen.has(f.docId)&&extra.length<2){seen.add(f.docId);extra.push({name:f.name,docId:f.docId,text:f.text||'',extra:true});}}
+      }
+      const all=cur.concat(extra),per=Math.min(FILE_BUDGET,Math.floor(FILES_BUDGET/Math.max(1,all.length))),out=[];
+      for(const a of all){
+        const full=a.full||(a.docId&&await DocStore.get(a.docId))||a.text||'';
+        const r=pickChunks(full,query,per,!!a.extra);
+        if(!r)continue;   // tài liệu cũ không liên quan câu hỏi mới → không gửi, đỡ tốn token
+        const head=r.partial?'(Tài liệu dài '+full.length.toLocaleString('vi-VN')+' ký tự — đây là các đoạn liên quan nhất tới câu hỏi, khoảng '+r.pct+'% nội dung; chỗ [… lược …] là phần chưa đưa vào. Nếu câu trả lời cần phần bị lược, hãy nói rõ và đề nghị người dùng hỏi cụ thể phần đó, đừng suy đoán.)\n':'';
+        out.push({name:a.name,text:head+r.text,truncated:r.partial||!!a.truncated&&!a.full,note:a.note||''});
+      }
+      return out;
+    }catch(_){return cur.map(a=>({name:a.name,text:a.text,truncated:a.truncated,note:a.note}));}
+  }
   async function prepDoc(file){
     const ext=extOf(file.name);
     if(!['pdf','docx','xlsx','xls','csv','txt','md','markdown'].includes(ext))throw new Error('"'+file.name+'" chưa đọc được — dùng ảnh, PDF, Word (.docx), Excel, CSV hoặc .txt.');
@@ -8668,8 +8766,9 @@ window.TascoAsk=(()=>{
     if(ext==='pdf'){try{apiKey=await B.Models.getKey('gemini')||'';}catch(_){}}
     const read=await P.readText(file,{apiKey});
     if(!read.text)throw new Error('"'+file.name+'" không có chữ để đọc (tệp trống hoặc là ảnh quét).');
-    const max=Q().FILE_CHARS||30000;
-    return {kind:'text',name:file.name,text:read.text.slice(0,max),truncated:read.text.length>max,note:read.note||''};
+    const max=Q().FILE_CHARS||30000,whole=read.text.slice(0,FULL_MAX);
+    // Giữ toàn văn (đến 800.000 ký tự) để mỗi câu hỏi chọn đúng đoạn cần; text chỉ là phần đầu dùng khi không chọn lọc được.
+    return {kind:'text',name:file.name,text:whole.slice(0,max),truncated:read.text.length>FULL_MAX,note:read.note||'',full:whole.length>HIST_CHARS?whole:'',docId:docId(file.name,whole),chars:read.text.length};
   }
   async function addFiles(list){
     const files=[...(list||[])].filter(Boolean);
@@ -8684,6 +8783,7 @@ window.TascoAsk=(()=>{
         const it=/^image\//i.test(f.type||'')||/\.(jpe?g|png|webp|heic|heif|gif)$/i.test(f.name||'')?await prepImage(f):await prepDoc(f);
         if(gen!==S.attGen)return;
         S.att.push(it);
+        if(it.kind==='text'&&it.chars>FILE_BUDGET)toast('“'+it.name+'” dài '+it.chars.toLocaleString('vi-VN')+' ký tự: AI sẽ đọc các đoạn liên quan nhất cho từng câu hỏi (kèm báo phần chưa đọc).');
       }catch(e){if(gen!==S.attGen)return;errors.push((e&&e.message)||'Không đọc được "'+f.name+'".');}
       S.attBusy=Math.max(0,S.attBusy-1);paintAtts();
     }
